@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration monitorInterval="5">
+
+    <Properties>
+		<Property name="log-path">/apps01/logs/WebSphere/nrgrest_was8/</Property>
+		<Property name="log-level-off">OFF</Property>
+		<Property name="log-level-fatal">FATAL</Property>
+		<Property name="log-level-error">ERROR</Property>
+		<Property name="log-level-warn">WARN</Property>
+		<Property name="log-level-info">INFO</Property>
+		<Property name="log-level-debug">DEBUG</Property>
+	</Properties>
+   <!-- ============================== -->
+   <!-- Append messages to the console -->
+   <!-- ============================== -->
+    
+    <Appenders>
+		<Console name="consoleApp" target="SYSTEM_OUT">
+
+ 			<PatternLayout>
+				<Pattern>%d [%t][%-5p] %c - %m%n</Pattern>
+			</PatternLayout>
+
+		</Console>
+
+		<RollingFile name="outputApp" fileName="${log-path}/output.log"
+			filePattern="${log-path}/NRGRESTInfo-%d{yyyy-MM-dd}.log">
+			<PatternLayout>
+				<!-- <Pattern>%5p %d{ISO8601} %l%n %m%n</Pattern> -->
+				<Pattern>%d [%t][%-5p] %c - %m%n</Pattern>
+			</PatternLayout>
+
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />  <!--Daily Rolling file appender -->
+			</Policies>
+			<DefaultRolloverStrategy max="4" />
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+	   <Logger name="NRGREST_LOGGER" level="${log-level-info}" additivity="false">
+	      <AppenderRef ref="consoleApp"/>
+		  <AppenderRef ref="outputApp"/>
+	   </Logger>
+	</Loggers>
+</Configuration>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+
+ 	<mvc:annotation-driven />
+    <aop:aspectj-autoproxy proxy-target-class="true" />
+    <context:annotation-config/>
+    <context:component-scan base-package="com.multibrand"/>
+  
+    <context:property-placeholder location="classpath*:properties/environment.properties, WEB-INF/spring/domain/stubs-properties/*.properties" order="0" ignore-unresolvable="false" />
+    
+    
+	<!-- <bean id="triangle" class="org.spring.test.Triangle"> -->
+	<!-- <property name="type" value="equilateral" /> -->
+	<!-- <constructor-arg value="equilateral" /> -->
+	<!-- <constructor-arg type="java.lang.String" value="20" /> -->
+	<!-- </bean> -->
+	
+	<bean id="validator"
+    	class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+    	<property name="validationMessageSource" ref="webI18nMessageSource" />
+    </bean>
+
+	<!-- Message Bundle for constants of Application -->
+	<bean id="appConstMessageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/classes/properties/appConstants" />
+		<property name="cacheSeconds" value="0" />
+	</bean>
+
+	<bean id="sqlQuerySource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/WEB-INF/classes/properties/db/dbsql"/> 		 
+		<property name="cacheSeconds" value="0" />
+		<qualifier value="sqlQuerySource"/>
+	</bean>
+	
+	<!-- Message Bundle for Locale Messages of Application-->
+	<bean id="environmentMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:properties/environment"/>
+		<property name="cacheSeconds" value="0" />
+	</bean>
+		
+	
+	<!-- Message bundle for internationalization -->
+	<bean id="webI18nMessageSource"
+		class="com.multibrand.web.i18n.WebI18nMessageSource">
+		<property name="basename" value="/WEB-INF/classes/messages/message_resources" />
+		<property name="cacheSeconds" value="0" />
+	</bean>
+	
+	<!-- Message bundle for internationalization -->
+	<bean id="oweRPMFactors"
+		class="com.multibrand.web.i18n.WebI18nMessageSource">
+		<property name="basename" value="/WEB-INF/classes/messages/oweRPMFactors" />
+		<property name="cacheSeconds" value="0" />
+	</bean>	
+	
+	<!-- SPRING CONFIG FILES TO DEFINE ALL THE JDBC SESSIONS/TEMPLATES -->
+	<import resource="NRGREST-dao-config.xml" />
+    
+	<!-- SPRING CONFIG FILES TO DEFINE ALL THE NRGWS CLIENT STUBS -->
+	 
+   	<import resource="/domain/oeDomainNrgWsStubsConfig.xml" />
+   	<import resource="/domain/profileDomainNrgWsStubsConfig.xml" />
+   	<import resource="/domain/billingDomainNrgWsStubsConfig.xml" />
+   	<import resource="/domain/addressvalidationDomainNrgWsStubsConfig.xml" />
+   	
+</beans>

@@ -1,0 +1,106 @@
+##### Enter comments here
+#Environment Properties file
+##########################################
+
+####### Credentials
+#CCS user name and password
+CCSPASSWORD=CustAlrt01
+CCSUSERNAME=WEBCPIC
+
+#Salesforce
+salesforce.grant.type=password
+salesforce.client.id=3MVG9CEn_O3jvv0wAHR1FBkcZYMf_6DD8IXddxyfvwNhCBEvtpBgZFp63fPkAjLDOFt8ivNjyfqiDxqugi2QK
+salesforce.client.secret=%%SALESFORCE.CLIENT.SECRET%%
+salesforce.username=communitysolarapi@nrg.renew
+salesforce.user.password=%%SALESFORCE.PASSWORD%%
+
+#LDAP BIND USER
+LDAP_ADMIN_UID=uid=ocsadmin,ou=cagroup,o=admin
+LDAP_ADMIN_UID_CSLR=uid=ocsadmin,ou=cagroup,o=admin
+
+#LDAP URLS
+LDAP_PROVIDER_URL=ldap://stg-dir.nrgenergy.com:14391
+LDAP_PROVIDER_URL_CSLR=ldap://stg-dir.nrgenergy.com:14391
+
+#LDAP AUTH TYPE
+LDAP_SECURITY_AUTHENTICATION=simple
+LDAP_SECURITY_AUTHENTICATION_CSLR=simple
+
+#LDAP BIND PASSWORD
+LDAP_SECURITY_CREDENTIALS=%%LDAP.PASSWORD%%
+LDAP_SECURITY_CREDENTIALS_CSLR=%%LDAP.PASSWORD.CSLR%%
+
+###################
+
+#####OTHER COMMON CONFIGURATIONS
+#Emails
+qc.bcc.mail=ebillpl@reliant.com
+swap.bcc.mail=DCTMGMEEMAILT@NRGENERGY.COM
+qc.cirro.bcc.mail=testcirro@nrgenergy.com
+swap.cirro.bcc.mail=DCTMMBEMAILT@nrgenergy.com 
+ebill.gme.bcc.email=ebillpl@reliant.com
+
+#Connfiguration constants
+OAM_MAX_INVALID_LOGIN_COUNT=5
+env.updatecrm.async.delay.ms=10000
+#added for supress the email for submit payment
+submit.pay.email.flag=N
+salesforce.timeout.in.sec=60
+cs.rest.url.timeout=60
+rest.url.timeout=60
+###################
+
+#OTHER THIRD PARTY END POINTS
+tokenServerUrl=https://pwared01:8443/cardsecure/cs
+cardsecureUrl=https://txaixpiid01:8443/cardsecure/cs
+#################
+                                 
+#OTHER INTERNAL END POINTS
+UTILITY_SERVICE_ENDPOINT_URL=http://stg1-ws.nrgenergy.com/UtilityWebServices/utilityWebServices
+ws.endpointURL.addressvalidationDomain=http://stg1-ws.nrgenergy.com/NRGWS02/AddressValidationDomain
+ws.endpointURL.billingDomain=http://stg1-ws.nrgenergy.com/NRGWS02/BillingDomain
+ws.endpointURL.historyDomain=http://stg1-ws.nrgenergy.com/NRGWS02/HistoryDomain
+ws.endpointURL.ldapDomain=http://stg1-ws.nrgenergy.com/NRGWS02/LDAPDomain
+ws.endpointURL.oeDomain=http://stg1-ws.nrgenergy.com/NRGWS02/OEDomain
+ws.endpointURL.paymentDomain=http://stg1-ws.nrgenergy.com/NRGWS02/PaymentDomain
+ws.endpointURL.profileDomain=http://stg1-ws.nrgenergy.com/NRGWS02//ProfileDomain
+ws.endpointURL.swapDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SwapDomain
+ws.endpointURL.tosDomain=http://stg1-ws.nrgenergy.com/NRGWS02/TOSDomain
+ws.endpointURL.ssDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SSDomain
+ws.endpointURL.temperatureService=http://txaixsexbls03:13180/UsageHistoryRest
+ws.endpointURL.preferenceDomain=http://stg1-ws.nrgenergy.com/NRGWS02/PreferencesDomain
+EBILL_DOCUMENTUM_END_POINT_URL=http://stg1-ws.nrgenergy.com/DocumentServiceClient/GetEBill
+ws.endpointURL.validationDomain=http://stg1-ws.nrgenergy.com/NRGWS02/ValidationDomain
+ws.rest.salesforce.token.service.url=https://stg1-ws.nrgenergy.com/services/oauth2/token
+ws.rest.salesforce.get.account.service.url=https://stg1-ws.nrgenergy.com/services/apexrest/SharedSolar/Account/
+ws.rest.salesforce.account.reg.service.url=https://stg1-ws.nrgenergy.com/services/apexrest/SharedSolar/AccountRegistration/
+ws.rest.salesforce.dashboard.service.url=https://stg1-ws.nrgenergy.com/services/apexrest/SharedSolar/PortalService/
+ws.rest.salesforce.updateaccount.service.url= https://stg1-ws.nrgenergy.com/services/apexrest/SharedSolar/UpdateAccount/
+ws.rest.salesforce.get.agreement.pdf.service.url=http://stg1-ws.nrgenergy.com/services/data/v20.0/sobjects/Attachment/{docid}/body
+rest.url.base.personalize=http://stg1-ws.nrgenergy.com/personalizeapi
+rest.url.base.sdl=http://stg1-ws.nrgenergy.com/sdlapi
+#################
+
+########CCS/CRM End Points
+CCS_AUTOPAY_DEENROLL=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_recur_pay_deenroll/900/z_e_isu_recur_pay_deenroll/z_e_isu_recur_pay_deenroll
+CCS_CRM_ACTIVATION=http://sapcmq02:8001/sap/bc/srt/rfc/sap/z_e_web_oam_identy_for_bp/530/z_e_web_oam_identy_for_bp/z_e_web_oam_identy_for_bp
+CCS_CRM_CONTACT_DETAILS=http://sapcmq02:8001/sap/bc/srt/rfc/sap/z_e_crm_bp_contact_detail_new/530/z_e_crm_bp_contact_detail_new/z_e_crm_bp_contact_detail_new
+CCS_CRM_PROD_UPDATE=http://sapcmq02:8001/sap/bc/srt/rfc/sap/z_e_crm_vas_web_prod_update/530/z_e_crm_vas_web_prod_update/z_e_crm_vas_web_prod_update
+CCS_ENVIRONMENTAL_IMPACT=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_environmental_impacts/900/z_e_isu_environmental_impacts/z_e_isu_environmental_impacts
+CCS_GET_BILL_INFO=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_bill_related_info/900/z_e_isu_get_bill_related_info/z_e_isu_get_bill_related_info
+CCS_GET_BILL_PAYMENT_HISTORY=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_ws_bill_payment_history/900/z_e_ws_bill_payment_history/z_e_ws_bill_payment_history
+CCS_GET_CONTRACT_INFO=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_offerdata_for_swap/900/z_e_isu_get_offerdata_for_swap/z_e_isu_get_offerdata_for_swap
+CCS_GET_PLAN_HISTORY=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_ws_isu_plan_history/900/z_e_ws_isu_plan_history/z_e_ws_isu_plan_history
+CCS_PROFILE_CADATA=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_ca_profile_data/900/z_e_isu_get_ca_profile_data/z_e_isu_get_ca_profile_data
+CCS_SECONDARY_NAME_UPDATE=http://sapcmq02:8001/sap/bc/srt/rfc/sap/z_crm_ws_bp_relation_read_upd/530/z_crm_ws_bp_relation_read_upd/z_crm_ws_bp_relation_read_upd
+xi.history.endpointURL=http://sapxiq02:8001/sap/xi/adapter_plain?namespace=http://reliant.com/xi/GreenMountain
+ws.rest.ccs.get.cslr.profile.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_SOLAR_ARGREEMENT_SRV/SolarArDetailsSet(LeaseId={0},Partner={1},ContractAcct={2})?sap-client=530&%24format=json;
+ws.rest.ccs.update.cslr.billing.address.at.bp.level.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_BP_BILL_ADDRESS_UPDATE_SRV/BPDetailsSet(Addrnumber={0},City1={1},Country={2},HouseNum1={3},HouseNum2={4},LeaseId={5},NameCo={6},Partner={7},PostCode1={8},PoBox={9},Region={10},Street={11},Vkont={12})?&$format=json
+ccs.tpv.api.trans.upd.wsdl.url=http://sapcmq02:8080/sap/bc/srt/scs/sap/z_e_news_tpv_api_trans_upd
+#################
+
+ws.rest.ccs.read.reliant.customer.status.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_CUSTOMER_ACTIVE_CHECK_SRV/CustomerDetailsSet(EmailId={0},FirstName={1},LastName={2},Street={3},HouseNo={4},ApartmentNo={5},City={6},State={7},Zipcode={8})?sap-client=53024format=json
+ws.rest.ccs.check.security.eligibility.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/SecurityZipEligiblitySet(ZipCode={0})?sap-client=53024format=json
+
+ws.rest.ccs.tos.eligible.noneligible.products.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/TOS_Product_Eligibility?ESID={0}&VKONT={1}&VERTRAG={2}&OFFER={3}&PROMO={4}&ZIPCODE={5}&BUKRS={6}&SECURITY=true
+ws.rest.ccs.tos.submit.eligible.products.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/TOS_Create_PP?ESID={0}&MVO_VERTRAG={1}&VKONT={2}&BUKRS={3}&Product1={4}&Product2={5}&Product3={6}&Product4={7}&Product5={8}&Product6={9}&Product7={10}&Product8={11}&Product9={12}&Product10={13}
