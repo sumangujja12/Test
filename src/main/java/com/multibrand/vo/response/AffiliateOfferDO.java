@@ -1,0 +1,222 @@
+package com.multibrand.vo.response;
+
+
+public class AffiliateOfferDO {
+  
+	private String sapPlanName;
+	private String sapOfferTagline;
+	private String offerCode;
+	private String promoCode;
+	private String campaignCode;
+	private String productPriceCode;
+	private String marketSegment;
+	private String incentiveCode;
+	private String planType;
+	private String eflURL;
+	private String tosURL;
+	private String yraacURL;
+	private String contractTerm;
+	private String cancelFee;
+	private String eflSmartCode;
+	private String tosSmartCode;
+	private String yraacSmartCode;
+	private String averagePrice500;
+	private String averagePrice1000;
+	private String averagePrice2000;
+	private String energyChargeText;
+	private String baseUsageChargeText;
+	private String tdspChargeText;
+	private String offerCategory;
+	private String averageEFLPrice500;
+	private String averageEFLPrice1000;
+	private String averageEFLPrice2000;
+	private String digitalDiscount;
+	private String autoPayDiscount;
+
+	public String getSapPlanName() {
+		return sapPlanName;
+	}
+	public void setSapPlanName(String sapPlanName) {
+		this.sapPlanName = sapPlanName;
+	}
+	public String getSapOfferTagline() {
+		return sapOfferTagline;
+	}
+	public void setSapOfferTagline(String sapOfferTagline) {
+		this.sapOfferTagline = sapOfferTagline;
+	}
+	public String getOfferCode() {
+		return offerCode;
+	}
+	public void setOfferCode(String offerCode) {
+		this.offerCode = offerCode;
+	}
+	public String getPromoCode() {
+		return promoCode;
+	}
+	public void setPromoCode(String promoCode) {
+		this.promoCode = promoCode;
+	}
+	public String getCampaignCode() {
+		return campaignCode;
+	}
+	public void setCampaignCode(String campaignCode) {
+		this.campaignCode = campaignCode;
+	}
+	public String getProductPriceCode() {
+		return productPriceCode;
+	}
+	public void setProductPriceCode(String productPriceCode) {
+		this.productPriceCode = productPriceCode;
+	}
+	public String getMarketSegment() {
+		return marketSegment;
+	}
+	public void setMarketSegment(String marketSegment) {
+		this.marketSegment = marketSegment;
+	}
+	public String getIncentiveCode() {
+		return incentiveCode;
+	}
+	public void setIncentiveCode(String incentiveCode) {
+		this.incentiveCode = incentiveCode;
+	}
+	public String getPlanType() {
+		return planType;
+	}
+	public void setPlanType(String planType) {
+		this.planType = planType;
+	}
+	public String getEflURL() {
+		return eflURL;
+	}
+	public void setEflURL(String eflURL) {
+		this.eflURL = eflURL;
+	}
+	public String getTosURL() {
+		return tosURL;
+	}
+	public void setTosURL(String tosURL) {
+		this.tosURL = tosURL;
+	}
+	public String getYraacURL() {
+		return yraacURL;
+	}
+	public void setYraacURL(String yraacURL) {
+		this.yraacURL = yraacURL;
+	}
+	public String getContractTerm() {
+		return contractTerm;
+	}
+	public void setContractTerm(String contractTerm) {
+		this.contractTerm = contractTerm;
+	}
+	public String getCancelFee() {
+		return cancelFee;
+	}
+	public void setCancelFee(String cancelFee) {
+		this.cancelFee = cancelFee;
+	}
+	public String getEflSmartCode() {
+		return eflSmartCode;
+	}
+	public void setEflSmartCode(String eflSmartCode) {
+		this.eflSmartCode = eflSmartCode;
+	}
+	public String getTosSmartCode() {
+		return tosSmartCode;
+	}
+	public void setTosSmartCode(String tosSmartCode) {
+		this.tosSmartCode = tosSmartCode;
+	}
+	public String getYraacSmartCode() {
+		return yraacSmartCode;
+	}
+	public void setYraacSmartCode(String yraacSmartCode) {
+		this.yraacSmartCode = yraacSmartCode;
+	}
+	public String getAveragePrice500() {
+		return averagePrice500;
+	}
+	public void setAveragePrice500(String averagePrice500) {
+		this.averagePrice500 = averagePrice500;
+	}
+	public String getAveragePrice1000() {
+		return averagePrice1000;
+	}
+	public void setAveragePrice1000(String averagePrice1000) {
+		this.averagePrice1000 = averagePrice1000;
+	}
+	public String getAveragePrice2000() {
+		return averagePrice2000;
+	}
+	public void setAveragePrice2000(String averagePrice2000) {
+		this.averagePrice2000 = averagePrice2000;
+	}
+	public String getEnergyChargeText() {
+		return energyChargeText;
+	}
+	public void setEnergyChargeText(String energyChargeText) {
+		this.energyChargeText = energyChargeText;
+	}
+	public String getBaseUsageChargeText() {
+		return baseUsageChargeText;
+	}
+	public void setBaseUsageChargeText(String baseUsageChargeText) {
+		this.baseUsageChargeText = baseUsageChargeText;
+	}
+	public String getTdspChargeText() {
+		return tdspChargeText;
+	}
+	public void setTdspChargeText(String tdspChargeText) {
+		this.tdspChargeText = tdspChargeText;
+	}
+	public String getOfferCategory() {
+		return offerCategory;
+	}
+	public void setOfferCategory(String offerCategory) {
+		this.offerCategory = offerCategory;
+	}
+
+	public String getAverageEFLPrice500() {
+		return averageEFLPrice500;
+	}
+
+	public void setAverageEFLPrice500(String averageEFLPrice500) {
+		this.averageEFLPrice500 = averageEFLPrice500;
+	}
+
+	public String getAverageEFLPrice1000() {
+		return averageEFLPrice1000;
+	}
+
+	public void setAverageEFLPrice1000(String averageEFLPrice1000) {
+		this.averageEFLPrice1000 = averageEFLPrice1000;
+	}
+
+	public String getAverageEFLPrice2000() {
+		return averageEFLPrice2000;
+	}
+
+	public void setAverageEFLPrice2000(String averageEFLPrice2000) {
+		this.averageEFLPrice2000 = averageEFLPrice2000;
+	}
+
+	public String getDigitalDiscount() {
+		return digitalDiscount;
+	}
+
+	public void setDigitalDiscount(String digitalDiscount) {
+		this.digitalDiscount = digitalDiscount;
+	}
+
+	public String getAutoPayDiscount() {
+		return autoPayDiscount;
+	}
+
+	public void setAutoPayDiscount(String autoPayDiscount) {
+		this.autoPayDiscount = autoPayDiscount;
+	}
+	
+
+}
