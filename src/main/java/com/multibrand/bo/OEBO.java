@@ -60,6 +60,7 @@ import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
+import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.BankDepositPaymentRequest;
 import com.multibrand.dto.request.CCDepositPaymentRequest;
 import com.multibrand.dto.request.CheckPendingServiceRequest;
@@ -99,6 +100,7 @@ import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.request.OESignupVO;
 import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.AffiliateOfferDO;
+import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
@@ -4366,6 +4368,29 @@ public class OEBO extends OeBoHelper {
 	}
 	// End : Validate for Power Genius Online Affiliates by KB
 	
+	
+	public AgentDetailsResponse getAgentDetails(AgentDetailsRequest request, String sessionId) {
+		
+		AgentDetailsResponse response = new AgentDetailsResponse();
+			
+		if(StringUtils.isBlank(request.getAgentID()))
+			{  //If Promo code is passed empty
+				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+				response.setResultDescription("agent id may not be Empty");
+				logger.info("getAgentDetailsResponse : ResultCode : XXX");
+				return response;	
+			}
+			
+		try {
+			response = oeService.getAgentDetails(request);
+		} catch (Exception e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			logger.error("Exception in getting Agent Details: ", e);
+		}
+		logger.info("getAgentDetailsResponse : ResultCode : "+response.getResultCode());
+		return response;
+		
+		}
 	
 }
 
