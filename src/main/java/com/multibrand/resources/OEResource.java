@@ -38,6 +38,7 @@ import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
+import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -47,6 +48,7 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
+import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
@@ -994,6 +996,24 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
+	/**
+	 * Alternate Channel : Sprint 13 :US 11783 
+	 * @author KDeshmu1
+	 * @param request
+	 * @return
+	 */
+	@POST
+	@Path("offer-data-for-TLP")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getOfferDataForTLP(
+			@Valid TLPOfferRequest request) {
+		Response response = null;
+		TLPOfferResponse offerResponse = oeBO.getOfferForTLP(request,
+				httpRequest.getSession(true).getId());
+		response = Response.status(Response.Status.OK).entity(offerResponse).build();
+		return response;
+	}
 	/**
 	 * Alternate Channel : Sprint 14 :US 11783 
 	 * @author KDeshmu1
