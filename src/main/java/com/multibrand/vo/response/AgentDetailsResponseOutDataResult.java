@@ -13,6 +13,8 @@ public class AgentDetailsResponseOutDataResult {
 	private String agentID;
 	@SerializedName("agentType")
     private String agentType;
+    @SerializedName("agentTypeDesc")
+    private String agentTypeDesc;
 	@SerializedName("agentFirstName")
     private String agentFirstName;
 	@SerializedName("agentLastName")
@@ -26,6 +28,12 @@ public class AgentDetailsResponseOutDataResult {
 	
 	
 	
+	public String getAgentTypeDesc() {
+		return agentTypeDesc;
+	}
+	public void setAgentTypeDesc(String agentTypeDesc) {
+		this.agentTypeDesc = agentTypeDesc;
+	}
 	public String getAgentVendorName() {
 		return agentVendorName;
 	}
