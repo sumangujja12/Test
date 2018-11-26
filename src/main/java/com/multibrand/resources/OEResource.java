@@ -29,6 +29,7 @@ import com.multibrand.bo.ValidationBO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
+import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.BankDepositPaymentRequest;
 import com.multibrand.dto.request.CCDepositPaymentRequest;
 import com.multibrand.dto.request.CheckPendingServiceRequest;
@@ -52,6 +53,7 @@ import com.multibrand.exception.OEException;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
@@ -1012,4 +1014,23 @@ public class OEResource extends BaseResource {
 		response = Response.status(Response.Status.OK).entity(offerResponse).build();
 		return response;
 	}
+	/**
+	 * Alternate Channel : Sprint 14 :US 11783 
+	 * @author KDeshmu1
+	 * @param request
+	 * @return
+	 */
+	@POST
+	@Path("getAgentDetails")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getAgentDetails(
+			@Valid AgentDetailsRequest request) {
+		Response response = null;
+		AgentDetailsResponse agentDetailsResponse = oeBO.getAgentDetails(request,
+				httpRequest.getSession(true).getId());
+		response = Response.status(Response.Status.OK).entity(agentDetailsResponse).build();
+		return response;
+	}
+	
 }
