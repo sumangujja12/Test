@@ -1103,6 +1103,7 @@ public class OEBO extends OeBoHelper {
 			OfferPriceDO offerPriceDO = new OfferPriceDO();
 			PromoOfferOutDataAvgPriceMapEntry promoOfferOutDataAvgPriceMapEntry = priceArr[j];
 			DecimalFormat decimalformat = new DecimalFormat("#0.0");
+			DecimalFormat energyChargeDecimalformat = new DecimalFormat("#0.0000");
 			DecimalFormat tdspDF = new DecimalFormat("#0.00");			
 			if (promoOfferOutDataAvgPriceMapEntry.getValue().getAvgPrice() != null) {
 
@@ -1118,7 +1119,19 @@ public class OEBO extends OeBoHelper {
 					offerPriceDO.setPrice(tdspDF.format(Double
 							.valueOf(promoOfferOutDataAvgPriceMapEntry
 									.getValue().getAvgPrice().toString())));
-				} else {
+				}
+				// Start | Sprint16 -US13873 | Pratyush -- 11/12/2018
+				else if (StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE)
+						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), EC)
+						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_GME_UNB)
+						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE2)) 	
+				{
+					offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
+							.valueOf(promoOfferOutDataAvgPriceMapEntry
+									.getValue().getAvgPrice().toString())));
+				
+				}
+				else {
 
 					offerPriceDO.setPrice(decimalformat.format(Double
 							.valueOf(promoOfferOutDataAvgPriceMapEntry
@@ -4136,6 +4149,12 @@ public class OEBO extends OeBoHelper {
 				affiliateOfferDOArr[i].setDigitalDiscount(getDigitalDiscountPrice(offerDO));
 				//End Alt Channels US8596
 				
+				//Start - Alt Channels -- US14171 | Pratyush -- 11/13/2018
+				affiliateOfferDOArr[i].setUsageCredit(getAveragePriceEUsageCR(offerDO));
+				affiliateOfferDOArr[i].setCreditMaxUsageThreshold(getAveragePriceMaxThreshold(offerDO));
+				affiliateOfferDOArr[i].setCreditMinUsageThreshold(getAveragePriceMinThreshold(offerDO));
+				//End - Alt Channels -- US14171
+				
 				if (!StringUtils.equalsIgnoreCase(
 						offerDO.getStrOfferCategory(), CATEGORY_TWW)) {
 					affiliateOfferDOArr[i]
@@ -4293,7 +4312,18 @@ public class OEBO extends OeBoHelper {
 		return getKeyPrice(offerDO,EFL_AP_KEY);
 	}
 	
+	//Start - Alt Channels -- US14171 | Pratyush 11/13/2018
+	private String getAveragePriceEUsageCR(OfferDO offerDO) {
+		return getKeyPrice(offerDO,E_USAGE_CR);
+	}
 	
+	private String getAveragePriceMaxThreshold(OfferDO offerDO) {
+		return getKeyPrice(offerDO,MAX_THRESHOLD);
+	}
+	private String getAveragePriceMinThreshold(OfferDO offerDO) {
+		return getKeyPrice(offerDO,MIN_THRESHOLD);
+	}
+	//End - Alt Channels -- US14171
 	
 	private String getEnergyCharge(OfferDO offerDO,String companyCode){
 		String operandName = StringUtils.EMPTY; 
