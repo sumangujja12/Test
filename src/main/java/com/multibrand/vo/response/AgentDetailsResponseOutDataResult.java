@@ -1,3 +1,4 @@
+
 package com.multibrand.vo.response;
 
 import java.util.List;
@@ -98,3 +99,4 @@ public class AgentDetailsResponseOutDataResult {
     
 	
 }
+

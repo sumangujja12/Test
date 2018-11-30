@@ -4400,7 +4400,7 @@ public class OEBO extends OeBoHelper {
 		logger.info("isEmailSent:"+ isEmailSent);
 	}
 	// End : Validate for Power Genius Online Affiliates by KB
-	
+
 /**
  * Alternate Channel : Sprint 13 :US 11783 
  * @author KDeshmu1	
@@ -4497,6 +4497,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 	
 }
 
+	
 	public AgentDetailsResponse getAgentDetails(AgentDetailsRequest request, String sessionId) {
 		
 		AgentDetailsResponse response = new AgentDetailsResponse();
@@ -4519,6 +4520,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		return response;
 		
 		}
+
 
 }
 
