@@ -1014,6 +1014,7 @@ public class OEResource extends BaseResource {
 		response = Response.status(Response.Status.OK).entity(offerResponse).build();
 		return response;
 	}
+	
 	/**
 	 * Alternate Channel : Sprint 14 :US 11783 
 	 * @author KDeshmu1
