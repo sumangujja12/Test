@@ -242,16 +242,13 @@ public class ProfileBO extends BaseBO {
 			else
 			{
 				logger.info("CCS Profile Call to fetch BP");
-				ProfileResponse profileResponse = profileService.getProfile(response.getAccountNumber(), companyCode, sessionId);
-				//Code was commented due to GME Admin Tool User not able to be identified. Requested by Vipul Patwari on 1/4/2019				
-				/*
 				Map<String, Object> responseMap = new HashMap<String, Object>();
 				ProfileResponse profileResponse = null;
 				responseMap = profileService.getProfile(response.getAccountNumber(), companyCode, sessionId);
 				if(responseMap!= null && responseMap.size()!= 0)
 				{
 					profileResponse= (ProfileResponse)responseMap.get("profileResponse");
-				} */					
+				} 					
 				CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
 				crmProfileRequest.setStrCANumber(response.getAccountNumber());
 				crmProfileRequest.setStrBPNumber(profileResponse.getContractAccountDO().getStrBPNumber());
