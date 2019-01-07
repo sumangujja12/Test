@@ -22,6 +22,8 @@ import com.multibrand.vo.response.AcctValidationResponse;
 import com.multibrand.vo.response.ChangeUsernameResponse;
 import com.multibrand.vo.response.CirroStructureResponse;
 import com.multibrand.vo.response.EnvironmentImpactsResponse;
+import com.multibrand.vo.response.ForgotPasswordResponse;
+import com.multibrand.vo.response.ForgotUserNameResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.SecondaryNameResponse;
 import com.multibrand.vo.response.SendMailForNewServiceAddressAddResponse;
@@ -61,6 +63,46 @@ public class ProfileResource {
 	private ProfileHelper profileHelper;
 	
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
+	
+	/** This service is to get the username or account number from LDAP.
+	 * @author cuppala
+	 * @param userID		Customer User Identification no
+	 * @return response			Provide JSON/XML customer  data response
+	 */
+	@POST
+	@Path("forgotUserName")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response forgotUserName(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("zip") String zip){
+		
+		logger.info("accountNumber :"+accountNumber+"companyCode :"+companyCode+"zip :"+zip);
+		
+		Response response = null;
+		String sessionId = httpRequest.getSession(true).getId();
+		ForgotUserNameResponse forgotPasswordResponse = profileBO.forgotUserName(accountNumber,companyCode,zip,sessionId);
+		response = Response.status(200).entity(forgotPasswordResponse).build();
+		return response;
+		
+	}
+	
+	/** This service is to get the username or account number from LDAP.
+	 * @author cuppala
+	 * @param userID		Customer User Identification no
+	 * @return response			Provide JSON/XML customer  data response
+	 */
+	@POST
+	@Path("forgotPassword")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response forgotPassword(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName,@FormParam("zip") String zip){
+		
+		Response response = null;
+		String sessionId = httpRequest.getSession(true).getId();
+		ForgotPasswordResponse forgotPasswordResponse = profileBO.forgotPassword(accountNumber,companyCode,brandName,zip,sessionId);
+		response = Response.status(200).entity(forgotPasswordResponse).build();
+		return response;
+		
+	}
 	
 	/** This service is to get the username or account number from LDAP.
 	 * @author kdeshmu1

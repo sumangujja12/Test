@@ -276,7 +276,7 @@ public class ProfileService extends BaseAbstractService {
 	 */
 	public Map<String, Object> getProfile(String accountNumber, String companyCode, String sessionId)
 			throws Exception {
-
+		
 		logger.info("ProfileService.getProfile::::::::::::::::::::START");
 		HashMap<String, Object> responseMap = new HashMap<String, Object>();
 		

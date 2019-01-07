@@ -192,20 +192,31 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		try {
 			logger.info("Billing response before");
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
+			
+			
+			
 			if(responseMap!= null && responseMap.size()!= 0)
 			{
 				profileResponse= (ProfileResponse)responseMap.get("profileResponse");
 			}
+			
 			logger.info("Billing response after ");
+			
+			
 			if(profileResponse.getContractAccountDO()!= null)
 			{
 				AddressDO billingAddress = profileResponse.getContractAccountDO().getBillingAddressDO();
+				
+				
+				
 				JavaBeanUtil.copy(billingAddress, getBillingAddressResp);
 				getBillingAddressResp.setResultCode(RESULT_CODE_SUCCESS);
 				getBillingAddressResp.setResultDescription(MSG_SUCCESS);
 			}
 			else
 			{
+				
+				
 			    getBillingAddressResp.setResultCode(RESULT_CODE_THREE);
 			    getBillingAddressResp.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}

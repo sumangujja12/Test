@@ -61,6 +61,8 @@ import com.multibrand.vo.response.CirroContractDO;
 import com.multibrand.vo.response.CirroStructureResponse;
 import com.multibrand.vo.response.ContractInfoDO;
 import com.multibrand.vo.response.EnvironmentImpactsResponse;
+import com.multibrand.vo.response.ForgotPasswordResponse;
+import com.multibrand.vo.response.ForgotUserNameResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.SecondaryNameResponse;
 import com.multibrand.vo.response.SendMailForNewServiceAddressAddResponse;
@@ -74,6 +76,8 @@ import com.multibrand.vo.response.WsEnrollmentResponse;
 import com.multibrand.vo.response.WsServiceResponse;
 import com.multibrand.vo.response.WseEligiblityStatusResponse;
 import com.multibrand.vo.response.WseEsenseEligibility;
+import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
+import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
@@ -104,6 +108,9 @@ public class ProfileBO extends BaseBO {
 		
 	@Autowired
 	private ProfileProxy profileProxy;
+	
+	@Autowired
+	private BillingBO billingBO;
 	
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
@@ -221,6 +228,115 @@ public class ProfileBO extends BaseBO {
 	 * @param userId
 	 * @return
 	 */
+		
+	public ForgotUserNameResponse forgotUserName(String userId,String companyCode,String zip, String sessionId){
+		
+		UserInfoResponse userInfoResponse = new UserInfoResponse();
+		ForgotUserNameResponse response = new ForgotUserNameResponse();
+		String request = userId+"userId";
+		long startTime = CommonUtil.getStartTime();
+		try {
+			
+			userInfoResponse = getUserOrAcctNumber(userId,companyCode,sessionId);
+			
+			
+			String accountNumber=userInfoResponse.getAccountNumber();
+		    String userName=userInfoResponse.getUserName();
+		    String emailID=userInfoResponse.getEmailID();
+		    
+		    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
+		  
+		   
+		    logger.info("billingAddressResp.getStrZip()"+billingAddressResp.getStrZip());
+		    if(billingAddressResp.getStrZip().indexOf(zip) > -1)
+		    	response.setUserName(userName);
+		    else
+		    	response.setErrorDescription("Invalid Zip Code");
+	    
+			} catch (Exception e) {
+			
+				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				utilityloggerHelper.logTransaction("forgotUserName", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+				if(logger.isDebugEnabled()){
+					logger.debug(XmlUtil.pojoToXML(request));
+					logger.debug(XmlUtil.pojoToXML(response));
+				}
+			}
+		
+	       
+		return response;
+		
+		
+	}
+	
+	
+	/**
+	 * This method is to get the username or/and account number from ldap.
+	 * @author mshukla1
+	 * @param userId
+	 * @return
+	 */
+		
+	public ForgotPasswordResponse forgotPassword(String userId,String companyCode,String brandName, String zip, String sessionId){
+		
+		UserInfoResponse userInfoResponse = new UserInfoResponse();
+		ForgotPasswordResponse response = new ForgotPasswordResponse();
+		String request = userId+"userId";
+		long startTime = CommonUtil.getStartTime();
+		try {
+			userInfoResponse = getUserOrAcctNumber(userId,companyCode,sessionId);
+			
+			
+			String accountNumber=userInfoResponse.getAccountNumber();
+		    String userName=userInfoResponse.getUserName();
+		    String emailID=userInfoResponse.getEmailID();
+		    
+		    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
+		    
+		    if(billingAddressResp.getStrZip().indexOf(zip) > -1){
+		    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId);
+		    	
+		    	
+		    if(getAccountDetailsResponse.getEmailID().equals(emailID))
+		     {
+				 response.setIsCallSuccess(BOOLEAN_TRUE);
+			 }
+			 else{
+				 
+				 response.setIsCallSuccess(BOOLEAN_FALSE);
+				 response.setErrorDescription("Email Address doesn't match");
+			 }
+			 
+		    }
+		    else
+		    	response.setErrorDescription("Invalid Zip Code");
+	    
+				
+		} 
+			catch (Exception e) {
+				
+				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				utilityloggerHelper.logTransaction("forgotUserName", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+				if(logger.isDebugEnabled()){
+					logger.debug(XmlUtil.pojoToXML(request));
+					logger.debug(XmlUtil.pojoToXML(response));
+				}
+			}
+		
+	       
+		return response;
+		
+		
+	}
+		
+	/**
+	 * This method is to get the username or/and account number from ldap.
+	 * @author mshukla1
+	 * @param userId
+	 * @return
+	 */
 
 	public UserInfoResponse getUserOrAcctNumber(String userId, String companyCode, String sessionId) {
 
@@ -230,6 +346,7 @@ public class ProfileBO extends BaseBO {
 
 		try {
 			response=ldapHelper.getUserorAcctInfo(userId, companyCode,response);
+			
 			
 			if(response.getAccountNumber()==null && response.getUserName()==null)
 			{
