@@ -229,7 +229,7 @@ public class ProfileBO extends BaseBO {
 	 * @return
 	 */
 		
-	public ForgotUserNameResponse forgotUserName(String userId,String companyCode,String zip, String sessionId){
+	public ForgotUserNameResponse forgotUserName(String userId,String companyCode,String zip, String sessionId, String brandName){
 		
 		UserInfoResponse userInfoResponse = new UserInfoResponse();
 		ForgotUserNameResponse response = new ForgotUserNameResponse();
@@ -365,7 +365,7 @@ public class ProfileBO extends BaseBO {
 				if(responseMap!= null && responseMap.size()!= 0)
 				{
 					profileResponse= (ProfileResponse)responseMap.get("profileResponse");
-				} 					
+				}					
 				CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
 				crmProfileRequest.setStrCANumber(response.getAccountNumber());
 				crmProfileRequest.setStrBPNumber(profileResponse.getContractAccountDO().getStrBPNumber());

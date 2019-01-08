@@ -73,13 +73,13 @@ public class ProfileResource {
 	@Path("forgotUserName")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response forgotUserName(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("zip") String zip){
+	public Response forgotUserName(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("zip") String zip,@FormParam("brandName") String brandName){
 		
 		logger.info("accountNumber :"+accountNumber+"companyCode :"+companyCode+"zip :"+zip);
 		
 		Response response = null;
 		String sessionId = httpRequest.getSession(true).getId();
-		ForgotUserNameResponse forgotPasswordResponse = profileBO.forgotUserName(accountNumber,companyCode,zip,sessionId);
+		ForgotUserNameResponse forgotPasswordResponse = profileBO.forgotUserName(accountNumber,companyCode,zip,sessionId,brandName);
 		response = Response.status(200).entity(forgotPasswordResponse).build();
 		return response;
 		
