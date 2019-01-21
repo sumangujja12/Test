@@ -343,4 +343,13 @@ public interface DBConstants {
 	public static final String RESPONSE_DATE_FORMAT = "yyyy-MM-dd";
 	public static final String CREATION_DATE = "CREATION_DATE";
 	public static final String UPDATE_DATE = "UPDATE_DATE";
+	
+	//Columns of Mobile_content table
+	public static final String COL_MOBILE_CONTENT_AREA = "AREA";
+	public static final String COL_MOBILE_CONTENT_CNTNT_ID = "CNTNT_ID";
+	public static final String COL_MOBILE_CONTENT_LANG = "LANG";
+	public static final String COL_MOBILE_CONTENT_NAME = "NAME";
+	public static final String COL_MOBILE_CONTENT_VALUE = "VALUE";
+		
+	public static final String QUERY_GET_ALL_CONTENT = "query.get.all.content";
 }

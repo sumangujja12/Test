@@ -1058,7 +1058,21 @@ public interface Constants {
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
 
+
 	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+
 	
-	
+	//Mobile Content API Data
+	public static final String language_EN = "EN";
+	public static final String ERRORS = "ERRORS";
+		
+
+	 public static final String USERNAME_VALID="Username is valid";
+	 public static final String ACCOUNT_INFO_VALID="Account information valid";
+	 public static final String USER_ALREADY_EXISTS_DESC = "User Already Exists";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
+
+	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+
 }
