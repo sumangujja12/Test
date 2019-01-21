@@ -1050,15 +1050,11 @@ public interface Constants {
 	public static final String CCS_CHECK_SECURITY_ELIGIBILITY_URL = "ws.rest.ccs.check.security.eligibility.url";
 
 	
-	
-
 	public static final String TEXT_FREEZE_CREDIT_CHECK = "text.reason.for.freeze.credit.check";
 	public static final String TEXT_FRAUD_CREDIT_CHECK = "text.reason.for.fraud.credit.check";
 
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
-
-
 	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 
 	
@@ -1073,6 +1069,5 @@ public interface Constants {
 	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
 	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
 
-	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 
 }
