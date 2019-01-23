@@ -2,6 +2,9 @@ package com.multibrand.resources;
 
 
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -19,6 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.AuthenticationBO;
+import com.multibrand.util.CommonUtil;
+import com.multibrand.util.Constants;
+import com.multibrand.vo.response.AuthenticationResponse;
 import com.multibrand.vo.response.LoginFailureResponse;
 import com.multibrand.vo.response.LoginResponse;
 
@@ -36,7 +42,7 @@ import com.multibrand.vo.response.LoginResponse;
  */
 @Component("authenticationResource")
 @Path("authorization")
-public class AuthenticationResource {
+public class AuthenticationResource implements Constants  {
 	
 	
 	
@@ -89,6 +95,29 @@ public class AuthenticationResource {
 		return response;
 	}
 	
+	@POST
+	@Path("/refreshtoken")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	public Response refreshToken() {
+		AuthenticationResponse authResponse = new AuthenticationResponse();
+		try {
+			logger.debug("Refreshing authentication token... ");
+			Calendar now = Calendar.getInstance();
+			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss SSS");
+			String refreshVal = CommonUtil.get(Constants.REFRESH_TOKEN_LENGTH);
+			authResponse.setRefreshVal(refreshVal);
+			logger.debug("User Session Extended on [" + sdf.format(now.getTime()) + "]");
+			
+		} catch (Exception e) {
+			logger.debug("Error getting while refreshing authentication token... " +e);
+			authResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+			authResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
+		}
+		Response response = Response.status(200).entity(authResponse).build();
+		return response;
+
+	}
 	
 
 	

@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -65,6 +66,8 @@ public class CommonUtil implements Constants {
 	
 	public static HashSet<String> privacyDataParams = null;
 	public static HashSet<String> logExcludeResponseMethodList = null;
+	private static final Random rand = new Random();
+	private static final char[] alphanumeric = alphanumeric();
 	
 	static {
 		init();
@@ -1735,5 +1738,27 @@ public class CommonUtil implements Constants {
 		return gson.toJson(error);
 		
 	}
+	
+	public static String get(int len) {
+		StringBuffer out = new StringBuffer();
+
+		while (out.length() < len) {
+			int idx = Math.abs((rand.nextInt() % alphanumeric.length));
+			out.append(alphanumeric[idx]);
+		}
+		return out.toString();
+	}
+	
+	// create alphanumeric char array
+		static char[] alphanumeric() {
+			StringBuffer buf = new StringBuffer(250);
+			for (int i = 48; i <= 57; i++)
+				buf.append((char) i); // 0-9
+			for (int i = 65; i <= 90; i++)
+				buf.append((char) i); // A-Z
+			for (int i = 97; i <= 122; i++)
+				buf.append((char) i); // a-z
+			return buf.toString().toCharArray();
+		}
 	
 }
