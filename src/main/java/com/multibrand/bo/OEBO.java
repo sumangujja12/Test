@@ -67,6 +67,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -78,6 +79,7 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
@@ -4365,6 +4367,35 @@ public class OEBO extends OeBoHelper {
 		logger.info("isEmailSent:"+ isEmailSent);
 	}
 	// End : Validate for Power Genius Online Affiliates by KB
+	
+	/**
+	 * 
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
+public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest request, String sessionId) {
+		
+	UpdateETFFlagToCRMResponse response = new UpdateETFFlagToCRMResponse();
+			
+		/*if(StringUtils.isBlank(request.getContractAccountNumber()))
+			{  //If Promo code is passed empty
+				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+				response.setResultDescription("contract Account number may not be Empty");
+				logger.info("updateETFFlagToCRM : ResultCode : XXX");
+				return response;	
+			}*/
+			
+		try {
+			response = oeService.updateETFFlagToCRM(request);
+		} catch (Exception e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			logger.error("Exception in updateETFFlagToCRM: ", e);
+		}
+		logger.info("updateETFFlagToCRM : ResultCode : "+response.getResultCode());
+		return response;
+		
+		}
 	
 	
 }

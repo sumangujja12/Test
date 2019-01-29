@@ -1051,6 +1051,6 @@ public interface Constants {
 
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
-
+	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
 
 }

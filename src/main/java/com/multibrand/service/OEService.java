@@ -1,12 +1,18 @@
 package com.multibrand.service;
 
 import java.rmi.RemoteException;
+import java.text.MessageFormat;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.OEDomain;
@@ -17,6 +23,8 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
@@ -201,6 +209,98 @@ public class OEService extends BaseAbstractService {
 		protected OEDomain getOEServiceProxy() throws Exception{
 			return (OEDomain) getServiceProxy(OEDomainPortBindingStub.class,
 					OE_DOMAIN_END_POINT_URL_JNDI_NAME);
+		}
+		
+		/**
+		 * 
+		 * @param request
+		 * @return
+		 * @throws Exception
+		 */
+		public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest request) throws Exception {
+			logger.debug("START :: oeService.getAgentDetails");
+			UpdateETFFlagToCRMResponse response = new UpdateETFFlagToCRMResponse();
+			
+				logger.info("Building the input args for Agent Details CCS REST call");
+				String[] args = readInputArgs(request,3);
+				String url = buildUpdateETFFlafToCRMURL();
+				MessageFormat urlFormat = new MessageFormat(url);
+				url = urlFormat.format(args);
+				logger.info("Get Agent Details CSS URL["+url+"]");
+
+				org.springframework.http.HttpHeaders headers = getBasicAuthSpringHttpHeadersForCCS();
+				
+				RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC));
+				HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+				ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+				
+				
+				String responseAsString = responseEntity.getBody();
+				logger.info("Response received after  updateETFFlagToCRM CRM call : " +responseAsString);
+				Gson gson = new Gson();
+				if(null != responseAsString) {
+					logger.info(" updateETFFlagToCRM Response is NOT empty");
+					response = gson.fromJson(responseAsString, UpdateETFFlagToCRMResponse.class);
+					logger.info("updateETFFlagToCRM Response is NOT empty and converted into required respose object");
+					
+					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getMsgType()!="S"){
+						
+						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+						
+					} else {
+						response.setResultCode(RESULT_CODE_SUCCESS);
+					}
+				}
+				
+			logger.debug("END :: OEService.getAgentDetails");
+			return response;
+		}
+		
+		private String[] readInputArgs(UpdateETFFlagToCRMRequest request, int totalArgs) {
+			
+			String[] inputArgs = new String[totalArgs];
+			StringBuilder strBuilder = null;
+			if(null == request) {
+				return inputArgs;
+			}
+			
+			/*
+			 * Important Note:
+			 * The order of building the String was made based on the CCS URL parameters input position.
+			 * It is advised to keep the order as-is.  If at at it is required to modify, carefully 
+			 * verify the CCS URL and change their position accordingly while building the String. 
+			 */
+			int iCount = 0;
+			//BP Number
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getPartner());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();
+			iCount++;
+			
+			//ContractAccountNumber
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getAccount());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();
+			/*iCount++;
+			
+			//Active
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getActivate());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();*/
+			
+			
+			return inputArgs;
+		}
+			
+
+		private String buildUpdateETFFlafToCRMURL() {
+			return getEndPointUrl(CCS_UPDATE_ETF_FLAG_TO_CRM_URL);
 		}
 		
 	  
