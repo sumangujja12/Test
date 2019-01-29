@@ -31,8 +31,11 @@ public class AutoPayDetails {
 
     private java.lang.String payment;
     
-    @XmlElement(name="businessPartnerId")
-    private String bpid;
+  	private String bpid;
+    
+    // Adding businessPartnerId to resolve 500 internal server error
+    private String businessPartnerId;
+    
 
 	public java.lang.String getBankAccountNumber() {
 		return bankAccountNumber;
@@ -125,6 +128,12 @@ public class AutoPayDetails {
 		this.bpid = bpid;
 	}
 
-	
+	public String getBusinessPartnerId() {
+		return bpid;
+	}
+
+	public void setBusinessPartnerId(String businessPartnerId) {
+		this.businessPartnerId = bpid;
+	}
     
 }
