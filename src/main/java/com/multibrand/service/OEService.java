@@ -243,7 +243,7 @@ public class OEService extends BaseAbstractService {
 					response = gson.fromJson(responseAsString, UpdateETFFlagToCRMResponse.class);
 					logger.info("updateETFFlagToCRM Response is NOT empty and converted into required respose object");
 					
-					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getMsgType()!="S"){
+					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getActivateETF().getMsgType()!="S"){
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 						
