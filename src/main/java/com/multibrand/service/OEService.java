@@ -243,7 +243,7 @@ public class OEService extends BaseAbstractService {
 					response = gson.fromJson(responseAsString, UpdateETFFlagToCRMResponse.class);
 					logger.info("updateETFFlagToCRM Response is NOT empty and converted into required respose object");
 					
-					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getMsgType()!="S"){
+					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getActivateETF().getMsgType()!="S"){
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 						
@@ -275,6 +275,7 @@ public class OEService extends BaseAbstractService {
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
 			strBuilder.append(request.getPartner());
+			logger.info(" input 1: "+request.getPartner());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			iCount++;
@@ -283,16 +284,18 @@ public class OEService extends BaseAbstractService {
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
 			strBuilder.append(request.getAccount());
+			logger.info(" input 2: "+request.getAccount());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
-			/*iCount++;
+			iCount++;
 			
 			//Active
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
 			strBuilder.append(request.getActivate());
+			logger.info(" input 3: "+request.getActivate());
 			strBuilder.append(SINGLE_QUOTE);
-			inputArgs[iCount] = strBuilder.toString();*/
+			inputArgs[iCount] = strBuilder.toString();
 			
 			
 			return inputArgs;

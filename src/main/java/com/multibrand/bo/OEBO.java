@@ -4378,13 +4378,13 @@ public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest r
 		
 	UpdateETFFlagToCRMResponse response = new UpdateETFFlagToCRMResponse();
 			
-		/*if(StringUtils.isBlank(request.getContractAccountNumber()))
+		if(StringUtils.isBlank(request.getAccount())&& StringUtils.isBlank(request.getPartner()))
 			{  //If Promo code is passed empty
 				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-				response.setResultDescription("contract Account number may not be Empty");
-				logger.info("updateETFFlagToCRM : ResultCode : XXX");
+				response.setResultDescription("contractAccountnumber and Partner ID may not be Empty");
+				logger.info("updateETFFlagToCRM : ResultCode : " +response.getResultCode());
 				return response;	
-			}*/
+			}
 			
 		try {
 			response = oeService.updateETFFlagToCRM(request);
