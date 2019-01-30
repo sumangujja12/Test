@@ -993,6 +993,12 @@ public class OEResource extends BaseResource {
 		response = Response.status(Response.Status.OK).entity(offerResponse).build();
 		return response;
 	}
+	
+	/**
+	 * START : OE | Sprint 46 | US15066 | Kdeshmu1
+	 * @param request
+	 * @return
+	 */
 	@POST
 	@Path("updateETFFlagToCRM")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })

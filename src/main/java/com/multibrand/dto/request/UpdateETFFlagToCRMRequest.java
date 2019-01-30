@@ -19,65 +19,26 @@ public class UpdateETFFlagToCRMRequest implements FormEntityRequest, Constants, 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-
+	private String partner;
+	private String account;
 	
-	//@NotBlank(groups = BasicConstraint.class)
-	private String Partner;
-	//@NotBlank(groups = BasicConstraint.class)
-	private String Account;
-	//@NotBlank(groups = BasicConstraint.class)
-	private String activate;
-	
-
-	
-	
-
-
-
-
-
 	public String getPartner() {
-		return Partner;
+		return partner;
 	}
-
-
-
-
 
 	public void setPartner(String partner) {
-		Partner = partner;
+		this.partner = partner;
 	}
-
-
-
-
 
 	public String getAccount() {
-		return Account;
+		return account;
 	}
-
 
 	public void setAccount(String account) {
-		Account = account;
+		this.account = account;
 	}
 
-
-	public String getActivate() {
-		return activate;
-	}
-
-
-
-
-
-	public void setActivate(String activate) {
-		this.activate = activate;
-	}
-
-
-
-
-
+	
 	/* (non-Javadoc)
 	 * @see com.multibrand.dto.request.BaseAffiliateRequest#toString()
 	 */

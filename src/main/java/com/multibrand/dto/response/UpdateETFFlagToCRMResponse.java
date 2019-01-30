@@ -16,13 +16,9 @@ public class UpdateETFFlagToCRMResponse extends GenericResponse implements Seria
 	@SerializedName("d")
 	 UpdateETFFlagToCRMResponseOutData updateETFFlagToCRMResponseOutData;
 
-
-
 	public UpdateETFFlagToCRMResponseOutData getUpdateETFFlagToCRMResponseOutData() {
 		return updateETFFlagToCRMResponseOutData;
 	}
-
-
 
 	public void setUpdateETFFlagToCRMResponseOutData(UpdateETFFlagToCRMResponseOutData updateETFFlagToCRMResponseOutData) {
 		this.updateETFFlagToCRMResponseOutData = updateETFFlagToCRMResponseOutData;
