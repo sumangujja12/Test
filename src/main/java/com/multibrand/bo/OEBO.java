@@ -69,9 +69,9 @@ import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
 
-import com.multibrand.dto.request.TLPOfferRequest;
-
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+
+import com.multibrand.dto.request.TLPOfferRequest;
 
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
@@ -84,11 +84,8 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
-
-import com.multibrand.dto.response.TLPOfferResponse;
-
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
-
+import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
@@ -4410,6 +4407,7 @@ public class OEBO extends OeBoHelper {
 	// End : Validate for Power Genius Online Affiliates by KB
 
 
+
 /**
  * Alternate Channel : Sprint 13 :US 11783 
  * @author KDeshmu1	
@@ -4532,8 +4530,9 @@ private TLPOfferDO[] constructTLPOfferDOList(
 
 
 	
+	
 	/**
-	 * 
+	 * START : OE | Sprint 46 | US15066 | Kdeshmu1
 	 * @param request
 	 * @param sessionId
 	 * @return
@@ -4560,6 +4559,7 @@ public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest r
 		return response;
 		
 		}
+
 	
 
 

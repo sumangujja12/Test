@@ -25,6 +25,7 @@ import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 
+
 import com.multibrand.dto.request.AgentDetailsRequest;
 
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -219,6 +220,7 @@ public class OEService extends BaseAbstractService {
 					OE_DOMAIN_END_POINT_URL_JNDI_NAME);
 		}
 		
+
 		/**
 		 * 
 		 * @param request
@@ -293,21 +295,21 @@ public class OEService extends BaseAbstractService {
 		}
 
 		/**
-		 * 
+		 * START : OE | Sprint 46 | US15066 | Kdeshmu1
 		 * @param request
 		 * @return
 		 * @throws Exception
 		 */
 		public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest request) throws Exception {
-			logger.debug("START :: oeService.getAgentDetails");
+			logger.debug("START :: oeService.updateETFFlagToCRM");
 			UpdateETFFlagToCRMResponse response = new UpdateETFFlagToCRMResponse();
 			
-				logger.info("Building the input args for Agent Details CCS REST call");
+				logger.info("Building the input args for updateETFFlagToCRM CCS REST call");
 				String[] args = readInputArgs(request,3);
 				String url = buildUpdateETFFlafToCRMURL();
 				MessageFormat urlFormat = new MessageFormat(url);
 				url = urlFormat.format(args);
-				logger.info("Get Agent Details CSS URL["+url+"]");
+				logger.info("updateETFFlagToCRM URL["+url+"]");
 
 				org.springframework.http.HttpHeaders headers = getBasicAuthSpringHttpHeadersForCCS();
 				
@@ -333,10 +335,15 @@ public class OEService extends BaseAbstractService {
 					}
 				}
 				
-			logger.debug("END :: OEService.getAgentDetails");
+			logger.debug("END :: OEService.updateETFFlagToCRM");
 			return response;
 		}
-		
+		/**
+		 * START : OE | Sprint 46 | US15066 | Kdeshmu1
+		 * @param request
+		 * @param totalArgs
+		 * @return
+		 */
 		private String[] readInputArgs(UpdateETFFlagToCRMRequest request, int totalArgs) {
 			
 			String[] inputArgs = new String[totalArgs];
@@ -368,15 +375,6 @@ public class OEService extends BaseAbstractService {
 			logger.info(" input 2: "+request.getAccount());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
-			iCount++;
-			
-			//Active
-			strBuilder = new StringBuilder();
-			strBuilder.append(SINGLE_QUOTE);
-			strBuilder.append(request.getActivate());
-			logger.info(" input 3: "+request.getActivate());
-			strBuilder.append(SINGLE_QUOTE);
-			inputArgs[iCount] = strBuilder.toString();
 			
 			
 			return inputArgs;
@@ -387,6 +385,7 @@ public class OEService extends BaseAbstractService {
 			return getEndPointUrl(CCS_UPDATE_ETF_FLAG_TO_CRM_URL);
 		}
 		
+
 	  
 
 }
