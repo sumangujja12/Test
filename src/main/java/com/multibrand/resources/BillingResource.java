@@ -72,6 +72,7 @@ import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
+import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 
 
 /** This Resource is to handle all the Billing Related API calls.
@@ -925,4 +926,19 @@ public class BillingResource {
 		logger.debug("END CourtesyCreditResource.courtesyCreditActivity :: END");
 		return response;
 	}	
+	
+	@POST
+	@Path("pendingpayments")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getPendingPayments(@FormParam("accountNumber") String accountNumber,
+			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
+			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
+		Response response = null;
+		SchedulePaymentResponse schedulePayments = billingBO.getSchedulePayments(accountNumber, startDate, endDate,
+				companyCode, brandName, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(schedulePayments).build();
+		return response;
+
+	}
 }

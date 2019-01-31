@@ -2,8 +2,13 @@ package com.multibrand.bo;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -92,6 +97,9 @@ import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
+import com.multibrand.vo.response.historyResponse.PaymentDO;
+import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
+import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 
 /**
  * This BO class is to handle all the Billing Related API calls.
@@ -130,6 +138,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	@Autowired 
 	private BillDAO billDao;
+	
+	@Autowired
+	private HistoryBO historyBO;
 	
 	//@Autowired
 	//private ReloadableResourceBundleMessageSource appConstMessageSource;
@@ -2254,4 +2265,73 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	}
 	
 
+   /**
+    * @author asha
+    * @param accountNumber
+    * @param startDate 
+    * @param endDate
+    * @param companyCode
+    * @param brandName
+    * @param sessionId
+    * @return
+    */
+	public SchedulePaymentResponse getSchedulePayments(String accountNumber, String startDate, String endDate,
+			String companyCode, String brandName, String sessionId) {
+		List<PaymentDO> pendingPayments = new ArrayList<PaymentDO>();
+		List<PaymentDO> paidPayments = new ArrayList<PaymentDO>();
+		SchedulePaymentResponse schedulePayment = new SchedulePaymentResponse();
+		try{
+		
+		PaymentHistoryResponse paymentHistoryResponse = historyBO.fetchPaymentHistory(accountNumber, startDate, endDate,
+				companyCode, brandName, sessionId);
+	    PaymentDO[] payments = paymentHistoryResponse.getPaymentDO();
+		if (payments != null && payments.length > 0) {
+			for (PaymentDO payment : payments) {
+				// retrieve pending payment details
+				if (Constants.PAYMENT_PENDING_STATUS.equalsIgnoreCase(payment.getStatus())) {
+					pendingPayments.add(payment);
+				}
+				// retrieve paid payment details
+				if (Constants.PAYMENT_PAID_STATUS.equalsIgnoreCase(payment.getStatus())) {
+					paidPayments.add(payment);
+				}
+			}
+		} else {
+			schedulePayment.setErrorCode(Constants.RESULT_CODE_NO_DATA);
+			schedulePayment.setErrorDescription(Constants.RESULT_CODE_DESCRIPTION_NO_DATA);
+		}
+		// sort the pending payments by payment date
+		if (pendingPayments.size() > 0) {
+			Collections.sort(pendingPayments, new PaymentDateComparator());
+			schedulePayment.setPendingPayments(pendingPayments);
+		}
+		// sort paid payments by payment date
+		if (paidPayments.size() > 0) {
+			Collections.sort(paidPayments, Collections.reverseOrder(new PaymentDateComparator()));
+			schedulePayment.setLastPaymentDate(paidPayments.get(0).getPaymentDate());
+		}
+		}catch(Exception e){
+			schedulePayment.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+			schedulePayment.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
+			logger.info("Exeception Occured in the ::getSchedulePayments" +e);
+		}
+		return schedulePayment;
+	}
 }
+
+class PaymentDateComparator implements Comparator<PaymentDO> {
+
+	public static final DateFormat format = new SimpleDateFormat("yyyyMMdd");
+
+	@Override
+	public int compare(PaymentDO o1, PaymentDO o2) {
+		try {
+			return format.parse(o1.getPaymentDate()).compareTo(format.parse(o2.getPaymentDate()));
+		} catch (ParseException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+}
+	
+	
