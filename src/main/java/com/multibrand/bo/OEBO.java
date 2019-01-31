@@ -60,6 +60,7 @@ import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
+import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.BankDepositPaymentRequest;
 import com.multibrand.dto.request.CCDepositPaymentRequest;
 import com.multibrand.dto.request.CheckPendingServiceRequest;
@@ -68,6 +69,7 @@ import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -80,6 +82,7 @@ import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
+import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
@@ -101,6 +104,7 @@ import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.request.OESignupVO;
 import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.AffiliateOfferDO;
+import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
@@ -114,6 +118,7 @@ import com.multibrand.vo.response.SegmentedFlagDO;
 import com.multibrand.vo.response.ServiceAddressDO;
 import com.multibrand.vo.response.TDSPChargeDO;
 import com.multibrand.vo.response.TDSPDO;
+import com.multibrand.vo.response.TLPOfferDO;
 import com.multibrand.vo.response.TdspResponse;
 import com.multibrand.vo.response.TokenizedResponse;
 import com.multibrand.vo.response.billingResponse.AddressDO;
@@ -1105,6 +1110,7 @@ public class OEBO extends OeBoHelper {
 			OfferPriceDO offerPriceDO = new OfferPriceDO();
 			PromoOfferOutDataAvgPriceMapEntry promoOfferOutDataAvgPriceMapEntry = priceArr[j];
 			DecimalFormat decimalformat = new DecimalFormat("#0.0");
+			DecimalFormat energyChargeDecimalformat = new DecimalFormat("#0.0000");
 			DecimalFormat tdspDF = new DecimalFormat("#0.00");			
 			if (promoOfferOutDataAvgPriceMapEntry.getValue().getAvgPrice() != null) {
 
@@ -1120,7 +1126,19 @@ public class OEBO extends OeBoHelper {
 					offerPriceDO.setPrice(tdspDF.format(Double
 							.valueOf(promoOfferOutDataAvgPriceMapEntry
 									.getValue().getAvgPrice().toString())));
-				} else {
+				}
+				// Start | Sprint16 -US13873 | Pratyush -- 11/12/2018
+				else if (StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE)
+						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), EC)
+						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_GME_UNB)
+						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE2)) 	
+				{
+					offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
+							.valueOf(promoOfferOutDataAvgPriceMapEntry
+									.getValue().getAvgPrice().toString())));
+				
+				}
+				else {
 
 					offerPriceDO.setPrice(decimalformat.format(Double
 							.valueOf(promoOfferOutDataAvgPriceMapEntry
@@ -4138,6 +4156,12 @@ public class OEBO extends OeBoHelper {
 				affiliateOfferDOArr[i].setDigitalDiscount(getDigitalDiscountPrice(offerDO));
 				//End Alt Channels US8596
 				
+				//Start - Alt Channels -- US14171 | Pratyush -- 11/13/2018
+				affiliateOfferDOArr[i].setUsageCredit(getAveragePriceEUsageCR(offerDO));
+				affiliateOfferDOArr[i].setCreditMaxUsageThreshold(getAveragePriceMaxThreshold(offerDO));
+				affiliateOfferDOArr[i].setCreditMinUsageThreshold(getAveragePriceMinThreshold(offerDO));
+				//End - Alt Channels -- US14171
+				
 				if (!StringUtils.equalsIgnoreCase(
 						offerDO.getStrOfferCategory(), CATEGORY_TWW)) {
 					affiliateOfferDOArr[i]
@@ -4295,7 +4319,18 @@ public class OEBO extends OeBoHelper {
 		return getKeyPrice(offerDO,EFL_AP_KEY);
 	}
 	
+	//Start - Alt Channels -- US14171 | Pratyush 11/13/2018
+	private String getAveragePriceEUsageCR(OfferDO offerDO) {
+		return getKeyPrice(offerDO,E_USAGE_CR);
+	}
 	
+	private String getAveragePriceMaxThreshold(OfferDO offerDO) {
+		return getKeyPrice(offerDO,MAX_THRESHOLD);
+	}
+	private String getAveragePriceMinThreshold(OfferDO offerDO) {
+		return getKeyPrice(offerDO,MIN_THRESHOLD);
+	}
+	//End - Alt Channels -- US14171
 	
 	private String getEnergyCharge(OfferDO offerDO,String companyCode){
 		String operandName = StringUtils.EMPTY; 
@@ -4397,7 +4432,127 @@ public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest r
 		
 		}
 	
+/**
+ * Alternate Channel : Sprint 13 :US 11783 
+ * @author KDeshmu1	
+ * @param request
+ * @param sessionId
+ * @return
+ */
+public TLPOfferResponse getOfferForTLP(TLPOfferRequest request, String sessionId) {
+		
+	TLPOfferResponse response = new TLPOfferResponse();
+		
+	if(StringUtils.isBlank(request.getPromoCode()))
+		{  //If Promo code is passed empty
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+			response.setResultDescription("promoCode may not be Empty");
+			return response;	
+		}
+		
+				
+		if(!StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_RELIANT) )
+		{  //If Tdsp Code & Esid are passed empty
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");			
+			return response;			
+		}
+		
+		if(StringUtils.isNotBlank(request.getTdspCodeCCS()) && !isServicedTDSPCode(request.getTdspCodeCCS())) {
+			response.setMessageCode(AREA_NOT_SERVICED);
+			//response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,null));
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_SUCCESS );
+			return response;
+		}
+		
+		OfferResponse offerResponse = getOffers(null,
+				request.getCompanyCode(), null, null,
+				null, null, null, request.getPromoCode(),
+				request.getTdspCodeCCS(),null, sessionId,null);
+		
+		logger.info("OfferResponse : strErrorCode : "+offerResponse.getStrErrorCode());
+		if(StringUtils.equalsIgnoreCase(MSG_CCSERR_8_GET_PROMO_OFFERS, offerResponse.getStrErrorCode()) || StringUtils.equalsIgnoreCase(MSG_CCSERR_E_GET_PROMO_OFFERS, offerResponse.getStrErrorCode())) {
+			response.setMessageCode(PROMO_INVALID);
+			//response.setMessageText(msgSource.getMessage(PROMO_INVALID_TEXT,null,null));
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_SUCCESS );
+			response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
+			//response = constructMainFields(response,offerResponse);
+			
+		} else if(StringUtils.isEmpty(offerResponse.getStrTDSPCode())|| !isServicedTDSPCode(offerResponse.getStrTDSPCode())) {
+			response.setMessageCode(AREA_NOT_SERVICED);			
+			//response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(request.getLanguageCode())));
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_SUCCESS );
+			if(StringUtils.isEmpty(offerResponse.getStrErrorCode())) {
+				response.setResultDescription("Failed");
+			} else {
+				response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
+			}
+			//response = constructMainFields(response,offerResponse);
+		} else{
+			TLPOfferDO offerDOList[] = constructTLPOfferDOList(offerResponse,request);
+			response.setTLPOfferList(offerDOList);
+		}
+		
+		
+		return response;
+	}
 	
+/**
+ * Alternate Channel : Sprint 13 :US 11783 
+ * @author KDeshmu1
+ * @param offerResponse
+ * @param request
+ * @return
+ */
+private TLPOfferDO[] constructTLPOfferDOList(
+		OfferResponse offerResponse, TLPOfferRequest request) {
+	OfferDO[] offerDOArr = offerResponse.getOfferDOList();
+	TLPOfferDO[] tlpOfferDOArr = null;
+	if (offerDOArr != null) {
+		tlpOfferDOArr = new TLPOfferDO[offerDOArr.length];
+		int i = 0;
+		for (OfferDO offerDO : offerDOArr) {
+			tlpOfferDOArr[i] = new TLPOfferDO();
+			
+			tlpOfferDOArr[i].setOfferCode(offerDO.getStrOfferCode());
+			tlpOfferDOArr[i].setOfferTeaser(offerDO.getStrOfferCodeTitle());		
+			i++;
+		}
+	}
+	return tlpOfferDOArr;
+	
+}
+	
+	public AgentDetailsResponse getAgentDetails(AgentDetailsRequest request, String sessionId) {
+		
+		AgentDetailsResponse response = new AgentDetailsResponse();
+			
+		if(StringUtils.isBlank(request.getAgentID()))
+			{  //If Promo code is passed empty
+				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+				response.setResultDescription("agent id may not be Empty");
+				logger.info("getAgentDetailsResponse : ResultCode : XXX");
+				return response;	
+			}
+			
+		try {
+			response = oeService.getAgentDetails(request);
+		} catch (Exception e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			logger.error("Exception in getting Agent Details: ", e);
+		}
+		logger.info("getAgentDetailsResponse : ResultCode : "+response.getResultCode());
+		return response;
+		
+		}
+
+
+
 }
 
 	
