@@ -32,6 +32,9 @@ public class AffiliateOfferDO {
 	private String averageEFLPrice2000;
 	private String digitalDiscount;
 	private String autoPayDiscount;
+	private String usageCredit;
+	private String creditMaxUsageThreshold;
+	private String creditMinUsageThreshold;
 
 	public String getSapPlanName() {
 		return sapPlanName;
@@ -217,6 +220,25 @@ public class AffiliateOfferDO {
 	public void setAutoPayDiscount(String autoPayDiscount) {
 		this.autoPayDiscount = autoPayDiscount;
 	}
+	public String getUsageCredit() {
+		return usageCredit;
+	}
+	public void setUsageCredit(String usageCredit) {
+		this.usageCredit = usageCredit;
+	}
+	public String getCreditMaxUsageThreshold() {
+		return creditMaxUsageThreshold;
+	}
+	public void setCreditMaxUsageThreshold(String creditMaxUsageThreshold) {
+		this.creditMaxUsageThreshold = creditMaxUsageThreshold;
+	}
+	public String getCreditMinUsageThreshold() {
+		return creditMinUsageThreshold;
+	}
+	public void setCreditMinUsageThreshold(String creditMinUsageThreshold) {
+		this.creditMinUsageThreshold = creditMinUsageThreshold;
+	}
+
 	
 
 }

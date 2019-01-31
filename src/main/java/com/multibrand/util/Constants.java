@@ -1040,6 +1040,12 @@ public interface Constants {
 	public static final String EFL_EPD_KEY = "EFL_EPD";
 	public static final String EFL_AP_KEY = "EFL_AP";
 
+	//Start - Alt Channels -- US14171 | Pratyush -- 11/13/2018
+	public static final String E_USAGE_CR = "E_USAGE_CR"; 
+	public static final String MAX_THRESHOLD = "E_MAX_KWH"; 
+	public static final String MIN_THRESHOLD = "E_MIN_KWH"; 
+	//End - Alt Channels -- US14171
+	
 	public static final String CCS_READ_RELIANT_CUSTOMER_STATUS_URL = "ws.rest.ccs.read.reliant.customer.status.url";
 	public static final String CCS_CHECK_SECURITY_ELIGIBILITY_URL = "ws.rest.ccs.check.security.eligibility.url";
 
@@ -1052,5 +1058,7 @@ public interface Constants {
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
 
-
+	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+	
+	
 }
