@@ -24,8 +24,9 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
-
-
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
+import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.AgentDetailsRequest;
 
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -384,8 +385,3 @@ public class OEService extends BaseAbstractService {
 		private String buildUpdateETFFlafToCRMURL() {
 			return getEndPointUrl(CCS_UPDATE_ETF_FLAG_TO_CRM_URL);
 		}
-		
-
-	  
-
-}

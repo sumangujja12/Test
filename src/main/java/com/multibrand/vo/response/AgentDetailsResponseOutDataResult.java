@@ -1,4 +1,3 @@
-
 package com.multibrand.vo.response;
 
 import java.util.List;
@@ -29,7 +28,6 @@ public class AgentDetailsResponseOutDataResult {
 	
 	
 	
-
 	public String getAgentTypeDesc() {
 		return agentTypeDesc;
 	}
@@ -99,4 +97,3 @@ public class AgentDetailsResponseOutDataResult {
     
 	
 }
-

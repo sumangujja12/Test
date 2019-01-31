@@ -68,7 +68,8 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
-
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 
 import com.multibrand.dto.request.TLPOfferRequest;
@@ -4406,8 +4407,6 @@ public class OEBO extends OeBoHelper {
 	}
 	// End : Validate for Power Genius Online Affiliates by KB
 
-
-
 /**
  * Alternate Channel : Sprint 13 :US 11783 
  * @author KDeshmu1	
@@ -4560,7 +4559,7 @@ public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest r
 		
 		}
 
-	
+
 
 
 }

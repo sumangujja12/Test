@@ -1055,8 +1055,7 @@ public interface Constants {
 
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
-
-
+	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
 
 	
@@ -1077,6 +1076,4 @@ public interface Constants {
 	 //Constants for Payment status
 	 public static final String  PAYMENT_PENDING_STATUS = "Pending";
 	 public static final String PAYMENT_PAID_STATUS = "Paid";
-
-	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 }

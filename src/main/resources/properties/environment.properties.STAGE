@@ -105,9 +105,8 @@ ws.rest.ccs.check.security.eligibility.url=http://sapcmq02:8001/sap/opu/odata/sa
 ws.rest.ccs.tos.eligible.noneligible.products.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/TOS_Product_Eligibility?ESID={0}&VKONT={1}&VERTRAG={2}&OFFER={3}&PROMO={4}&ZIPCODE={5}&BUKRS={6}&SECURITY=true
 ws.rest.ccs.tos.submit.eligible.products.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/TOS_Create_PP?ESID={0}&MVO_VERTRAG={1}&VKONT={2}&BUKRS={3}&Product1={4}&Product2={5}&Product3={6}&Product4={7}&Product5={8}&Product6={9}&Product7={10}&Product8={11}&Product9={12}&Product10={13}
 
-ws.rest.ccs.get.agent.details.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/AgentSet?$filter=agentID eq {0}&$expand=AgentPartnerSet/PartnerPromoSet
-
-
 ##START : OE | Sprint 46 | US15066 | Kdeshmu1
 ws.rest.ccs.update.etfflag.crm.url = http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/ActivateETF?Partner={0}&Account={1}
 ##END : OE | Sprint 46 | US15066 | Kdeshmu1
+
+ws.rest.ccs.get.agent.details.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/AgentSet?$filter=agentID eq {0}&$expand=AgentPartnerSet/PartnerPromoSet
