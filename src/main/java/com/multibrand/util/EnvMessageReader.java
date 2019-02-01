@@ -46,7 +46,6 @@ public class EnvMessageReader implements Constants {
 	 */
 	public String getMessage(String key){
 		String strMessage = getMessage(key,null, false, true);
-		logger.info(key +" :: " +strMessage);
 		return strMessage;
 	}
 
