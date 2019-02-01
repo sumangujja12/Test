@@ -1050,13 +1050,12 @@ public interface Constants {
 	public static final String CCS_CHECK_SECURITY_ELIGIBILITY_URL = "ws.rest.ccs.check.security.eligibility.url";
 
 	
-	
-
 	public static final String TEXT_FREEZE_CREDIT_CHECK = "text.reason.for.freeze.credit.check";
 	public static final String TEXT_FRAUD_CREDIT_CHECK = "text.reason.for.fraud.credit.check";
 
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
+
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
 	public static final String CONSTANT_S ="S";
 
@@ -1064,5 +1063,25 @@ public interface Constants {
 	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 	
 
+	
+	//Mobile Content API Data
+	public static final String language_EN = "EN";
+	public static final String ERRORS = "ERRORS";
+		
+
+	 public static final String USERNAME_VALID="Username is valid";
+	 public static final String ACCOUNT_INFO_VALID="Account information valid";
+	 public static final String USER_ALREADY_EXISTS_DESC = "User Already Exists";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
+	 
+	 //Refresh Token 
+	 public static final int REFRESH_TOKEN_LENGTH = 250;
+	 
+	 //Constants for Payment status
+	 public static final String  PAYMENT_PENDING_STATUS = "Pending";
+	 public static final String PAYMENT_PAID_STATUS = "Paid";
+
+	
 	
 }

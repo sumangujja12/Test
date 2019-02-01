@@ -925,20 +925,30 @@ public class BillingResource {
 			
 		logger.debug("END CourtesyCreditResource.courtesyCreditActivity :: END");
 		return response;
+
 	}	
 	
+	/**
+	 * This API is responsible for returning
+	 * pending payments and last paid date
+	 * @author NGASPerera
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * 
+	 */
 	@POST
-	@Path("pendingpayments")
+	@Path("scheduleAndLastPaymentetails")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getPendingPayments(@FormParam("accountNumber") String accountNumber,
-			@FormParam("startDate") String startDate, @FormParam("endDate") String endDate,
 			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
 		Response response = null;
-		SchedulePaymentResponse schedulePayments = billingBO.getSchedulePayments(accountNumber, startDate, endDate,
-				companyCode, brandName, httpRequest.getSession(true).getId());
+		SchedulePaymentResponse schedulePayments = billingBO.getSchedulePayments(accountNumber, companyCode, brandName,
+				httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(schedulePayments).build();
 		return response;
 
 	}
+
 }
