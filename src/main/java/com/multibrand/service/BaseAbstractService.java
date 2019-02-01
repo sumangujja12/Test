@@ -148,7 +148,7 @@ public class BaseAbstractService implements Constants{
 		String endPointUrl = null;
 		try{
 			endPointUrl = getEnvMessageReader().getMessage(srvEndPointUrlKey);	
-			logger.info("inside getEndPointUrl:: endpointurl is :: "+endPointUrl);
+			
 		}catch(Exception ex){
 			logger.error("error occured while getting the environment key::::"+srvEndPointUrlKey);
 		}

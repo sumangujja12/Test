@@ -26,12 +26,8 @@ import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
-import com.multibrand.dto.request.AgentDetailsRequest;
-import com.multibrand.dto.request.AgentDetailsRequest;
 
-import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
-import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
-
+import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
@@ -221,7 +217,6 @@ public class OEService extends BaseAbstractService {
 					OE_DOMAIN_END_POINT_URL_JNDI_NAME);
 		}
 		
-
 		/**
 		 * 
 		 * @param request
@@ -294,7 +289,6 @@ public class OEService extends BaseAbstractService {
 		private String buildGetAgentDetailsURL() {
 			return getEndPointUrl(CCS_GET_AGENT_DETAILS_URL);
 		}
-
 		/**
 		 * START : OE | Sprint 46 | US15066 | Kdeshmu1
 		 * @param request
@@ -305,13 +299,11 @@ public class OEService extends BaseAbstractService {
 			logger.debug("START :: oeService.updateETFFlagToCRM");
 			UpdateETFFlagToCRMResponse response = new UpdateETFFlagToCRMResponse();
 			
-				logger.info("Building the input args for updateETFFlagToCRM CCS REST call");
 				String[] args = readInputArgs(request,3);
 				String url = buildUpdateETFFlafToCRMURL();
 				MessageFormat urlFormat = new MessageFormat(url);
 				url = urlFormat.format(args);
-				logger.info("updateETFFlagToCRM URL["+url+"]");
-
+				
 				org.springframework.http.HttpHeaders headers = getBasicAuthSpringHttpHeadersForCCS();
 				
 				RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC));
@@ -320,14 +312,10 @@ public class OEService extends BaseAbstractService {
 				
 				
 				String responseAsString = responseEntity.getBody();
-				logger.info("Response received after  updateETFFlagToCRM CRM call : " +responseAsString);
 				Gson gson = new Gson();
 				if(null != responseAsString) {
-					logger.info(" updateETFFlagToCRM Response is NOT empty");
 					response = gson.fromJson(responseAsString, UpdateETFFlagToCRMResponse.class);
-					logger.info("updateETFFlagToCRM Response is NOT empty and converted into required respose object");
-					
-					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getActivateETF().getMsgType()!="S"){
+					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getActivateETF().getMsgType()!=CONSTANT_S){
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 						
@@ -364,7 +352,6 @@ public class OEService extends BaseAbstractService {
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
 			strBuilder.append(request.getPartner());
-			logger.info(" input 1: "+request.getPartner());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			iCount++;
@@ -373,7 +360,6 @@ public class OEService extends BaseAbstractService {
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
 			strBuilder.append(request.getAccount());
-			logger.info(" input 2: "+request.getAccount());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			
@@ -385,5 +371,7 @@ public class OEService extends BaseAbstractService {
 		private String buildUpdateETFFlafToCRMURL() {
 			return getEndPointUrl(CCS_UPDATE_ETF_FLAG_TO_CRM_URL);
 		}
+		
+	  
 
 }
