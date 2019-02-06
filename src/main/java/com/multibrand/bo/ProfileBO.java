@@ -221,15 +221,15 @@ public class ProfileBO extends BaseBO {
 	 * @param userId
 	 * @return
 	 */
-
-	public UserInfoResponse getUserOrAcctNumber(String userId, String companyCode, String sessionId) {
+	@Deprecated
+	public UserInfoResponse _getUserOrAcctNumber_Old(String userId, String companyCode, String sessionId) {
 
 		UserInfoResponse response = new UserInfoResponse();
 		long startTime = CommonUtil.getStartTime();
 		String request = "userId="+userId+",companyCode="+companyCode;
 
 		try {
-			response=ldapHelper.getUserorAcctInfo(userId, companyCode,response);
+			response=ldapHelper.getUserorAcctInfo(userId, companyCode);
 			
 			if(response.getAccountNumber()==null && response.getUserName()==null)
 			{
@@ -277,6 +277,176 @@ public class ProfileBO extends BaseBO {
 		return response;
 
 	}
+	
+	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+	/**
+	 * This method is to get the user name or/and account number from ldap.
+	 * 
+	 * @author mshukla1
+	 * @param userId
+	 * @return
+	 * 
+	 * 	Updated/Refactored of @see {@link #_getUserOrAcctNumber_Old(String, String, String)} 
+	 * 		by Jenith on 2/5/2019 
+	 * 
+	 *  for GME Admin Tool Issue Fix.
+	 *  
+	 *  @author JYogapa1
+	 *  
+	 */
+	public UserInfoResponse getUserOrAcctNumber(String userId, String companyCode, String sessionId) {
+		long startTime = CommonUtil.getStartTime();
+		String METHOD_NAME = "getUserOrAcctNumber";
+		
+		// User info response with empty.
+		UserInfoResponse userResponse = null;
+		
+		String requestParams = "userId=" + userId + ",companyCode=" + companyCode;
+
+		try {
+			// Get User info response from LDAP.
+			userResponse = ldapHelper.getUserorAcctInfo(userId, companyCode);
+
+			// Get CA from User info response.
+			String caNumber = userResponse.getAccountNumber();
+			
+			String bpNumber = Constants.EMPTY;
+			
+			// User response is empty.
+			if (StringUtils.isBlank(caNumber)
+					&& StringUtils.isBlank(userResponse.getUserName())) {
+				
+				// Set empty user response
+				userResponse.setAccountNumber(Constants.EMPTY);
+				userResponse.setUserName(Constants.EMPTY);
+				userResponse.setEmailID(Constants.EMPTY);
+				
+				// Set failure code in response.
+				userResponse.setResultCode(Constants.RESULT_CODE_THREE);
+				userResponse.setResultDescription(Constants.RESULT_CODE_DESCRIPTION_NO_DATA);
+			} else {
+				logger.info("Sets User Profile E-mail.");
+				
+				// Set EMail and success response.
+				this.loadUserProfileEmail(userResponse, caNumber, bpNumber, companyCode, sessionId);
+			}
+			
+			// Log transaction.
+			utilityloggerHelper.logTransaction(METHOD_NAME, false, requestParams, userResponse,
+					userResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId,
+					companyCode);
+
+			// Log request and response.
+			super.logRequestAndResponse(logger, requestParams, userResponse);
+
+		} catch (Exception e) {
+			// Set failure code in response.
+			userResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			userResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+
+			// Log transaction.
+			utilityloggerHelper.logTransaction(METHOD_NAME, false, requestParams, userResponse,
+					userResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId,
+					companyCode);
+			
+			// Log request and response.
+			super.logRequestAndResponse(logger, requestParams, userResponse);
+			
+			throw new OAMException(200, e.getMessage(), userResponse);
+		}
+		
+		return userResponse;
+	}
+	
+	/**
+	 * Gets Profile call and reads BP number to get Email.
+	 * 
+	 * @param userResponse
+	 * @param caNumber
+	 * @param bpNumber
+	 * @param companyCode
+	 * @param sessionId
+	 * @throws Exception
+	 * 
+	 * @author JYogapa1
+	 */
+	private void loadUserProfileEmail(UserInfoResponse userResponse, String caNumber, String bpNumber,
+			String companyCode, String sessionId) throws Exception {
+		logger.info("CCS Profile Call to fetch BP");
+
+		Map<String, Object> profileResponseMap = null;
+		ProfileResponse profileResponse = null;
+
+		// Get profile info as map.
+		profileResponseMap = profileService.getProfile(caNumber, companyCode, sessionId);
+
+		// Get profile data from map if it is not empty.
+		if (profileResponseMap != null && profileResponseMap.size() != 0) {
+
+			// Get profile data response.
+			profileResponse = (ProfileResponse) profileResponseMap.get(PROFILE_RESPONSE_KEY);
+		}
+
+		// Get BP number from profile response.
+		if (profileResponse != null && profileResponse.getContractAccountDO() != null) {
+			bpNumber = profileResponse.getContractAccountDO().getStrBPNumber();
+		}
+
+		// Get EMail.
+		String emailAddress = this.getEmailAddress(caNumber, bpNumber, companyCode, sessionId);
+
+		// Set Email in response.
+		userResponse.setEmailID(emailAddress);
+
+		// Set success code in response.
+		userResponse.setResultCode(RESULT_CODE_SUCCESS);
+		userResponse.setResultDescription(MSG_SUCCESS);
+	}
+	
+	/**
+	 * Calls the CRM profile call and returns the Email for the given CA and BP.
+	 * 
+	 * @param caNumber
+	 * @param bpNumber
+	 * @param companyCode
+	 * @param sessionId
+	 * 
+	 * @return E-mail
+	 * 
+	 * @author JYogapa1
+	 * 
+	 * @throws Exception 
+	 */
+	public String getEmailAddress(String caNumber, String bpNumber, String companyCode, String sessionId)
+			throws Exception {
+		logger.info("CRM Profile Call to fetch Email");
+
+		String emailFound = null;
+		CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
+		CrmProfileResponse crmProfileResponse = null;
+		
+		// Set crm profile request input parameters.
+		crmProfileRequest.setStrCANumber(caNumber);
+		crmProfileRequest.setStrBPNumber(bpNumber);
+
+		// Call getCRMProfile NRGWS.
+		try {
+			crmProfileResponse = profileService.getCRMProfile(crmProfileRequest, companyCode, sessionId);
+
+			emailFound = (crmProfileResponse != null ? crmProfileResponse.getEmailID() : Constants.EMPTY);
+
+		} catch (Exception e) {
+			logger.error(
+					"getUserOrAcctNumber > getEmailAddress: Email address is not found due to exception in the getCRMProfile call. ",
+					e.getMessage());
+
+			throw e;
+		}
+
+		return emailFound;
+	}
+	
+	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
 	
 	/**
 	 * This method is to to update the billing address in the CSS
@@ -1358,7 +1528,7 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 			 {
 				 profileResponse = (ProfileResponse)responseMap.get("profileResponse");
 			 }
-			if(profileResponse.getContractAccountDO()!=null)
+			if(profileResponse != null && profileResponse.getContractAccountDO()!=null)
 			{
 				String bpId = profileResponse.getContractAccountDO().getStrBPNumber();
 				logger.info("bpId :::: "+bpId);
