@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.xml.rpc.ServiceException;
-
+import org.apache.logging.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
