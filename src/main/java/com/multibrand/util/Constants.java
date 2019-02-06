@@ -902,7 +902,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -1082,6 +1082,10 @@ public interface Constants {
 	 public static final String  PAYMENT_PENDING_STATUS = "Pending";
 	 public static final String PAYMENT_PAID_STATUS = "Paid";
 
+	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
+	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+	
 	
 	
 }
