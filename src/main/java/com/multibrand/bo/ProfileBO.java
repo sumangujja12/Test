@@ -301,6 +301,7 @@ public class ProfileBO extends BaseBO {
 		// User info response with empty.
 		UserInfoResponse userResponse = null;
 		
+		// Request parameters query string.
 		String requestParams = "userId=" + userId + ",companyCode=" + companyCode;
 
 		try {
@@ -339,10 +340,9 @@ public class ProfileBO extends BaseBO {
 			// Log request and response.
 			super.logRequestAndResponse(logger, requestParams, userResponse);
 
-		} catch (Exception e) {
+		} catch (Exception e) {			
 			// Set failure code in response.
-			userResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			userResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			this.setUserInfoExceptionMessage(userResponse);
 
 			// Log transaction.
 			utilityloggerHelper.logTransaction(METHOD_NAME, false, requestParams, userResponse,
@@ -401,6 +401,21 @@ public class ProfileBO extends BaseBO {
 		// Set success code in response.
 		userResponse.setResultCode(RESULT_CODE_SUCCESS);
 		userResponse.setResultDescription(MSG_SUCCESS);
+	}
+
+	/**
+	 * Sets exception error message in user info response.
+	 * 
+	 * @param userResponse
+	 */
+	private void setUserInfoExceptionMessage(UserInfoResponse userResponse) {
+		if (userResponse == null) {
+			userResponse = new UserInfoResponse();
+		}
+
+		// Set failure code in response.
+		userResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+		userResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 	}
 	
 	/**
