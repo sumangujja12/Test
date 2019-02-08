@@ -110,3 +110,9 @@ ws.rest.ccs.update.etfflag.crm.url = http://sapcmq02:8001/sap/opu/odata/sap/ZE_W
 ##END : OE | Sprint 46 | US15066 | Kdeshmu1
 
 ws.rest.ccs.get.agent.details.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/AgentSet?$filter=agentID eq {0}&$expand=AgentPartnerSet/PartnerPromoSet
+
+
+#ECommerce End Points
+ws.rest.ccs.google.product.set.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/GoogleProductSet
+#################
+
