@@ -26,7 +26,7 @@ public class ECommerceService extends BaseAbstractService {
 		
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
-	public GoogleProductSetResponse googleProductSet() throws Exception {
+	public GoogleProductSetResponse getGoogleProductSet() throws Exception {
 
 		GoogleProductSetResponse response = new GoogleProductSetResponse();
 		String url = buildGoogleProductSetURL();
@@ -42,11 +42,8 @@ public class ECommerceService extends BaseAbstractService {
 		logger.info("Response received after Google Product Set CCS call : " +responseAsString);
 		Gson gson = new Gson();
 		if(null != responseAsString) {
-			logger.info("Read Google Product Response is NOT empty");
-			
-			response = gson.fromJson(responseAsString, GoogleProductSetResponse.class);
-			
-			logger.info("reponse json : "+ response);
+			logger.debug("Read Google Product Response is NOT empty");			
+			response = gson.fromJson(responseAsString, GoogleProductSetResponse.class);			
 			response.setResultCode(RESULT_CODE_SUCCESS);
 		}else{
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);

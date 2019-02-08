@@ -107,3 +107,7 @@ ws.rest.ccs.tos.submit.eligible.products.url=http://sapcmq02:8001/sap/opu/odata/
 #################
 
 ws.rest.ccs.get.agent.details.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/AgentSet?$filter=agentID eq {0}&$expand=AgentPartnerSet/PartnerPromoSet
+
+#ECommerce End Points
+ws.rest.ccs.google.product.set.url=http://sapcmd02:8000/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/GoogleProductSet
+#################

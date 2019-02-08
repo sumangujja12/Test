@@ -36,8 +36,8 @@ public class ECommerceResource extends BaseResource{
 	@POST
 	@Path("googleProductSet")
 	@Produces({MediaType.APPLICATION_JSON})
-	public Response googleProductSet(){Response response = null;
-		GoogleProductSetResponse googleProductSetResponse = ecommerceBO.googleProductSet();
+	public Response getGoogleProductSet(){Response response = null;
+		GoogleProductSetResponse googleProductSetResponse = ecommerceBO.getGoogleProductSet();
 		response = Response.status(Response.Status.OK).entity(googleProductSetResponse).build();
 		return response;
 		
