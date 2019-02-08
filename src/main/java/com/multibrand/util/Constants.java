@@ -1095,5 +1095,10 @@ public interface Constants {
 
 	
 	
+	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
+	
+
+	
+	
 	
 }
