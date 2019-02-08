@@ -1087,8 +1087,6 @@ public interface Constants {
 	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
 	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
 	
-
-	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 	
 	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
 	
