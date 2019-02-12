@@ -926,6 +926,7 @@ public class BillingResource {
 		logger.debug("END CourtesyCreditResource.courtesyCreditActivity :: END");
 		return response;
 
+
 	}	
 	
 	/**
@@ -950,5 +951,6 @@ public class BillingResource {
 		return response;
 
 	}
+
 
 }

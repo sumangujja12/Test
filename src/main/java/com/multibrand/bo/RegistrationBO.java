@@ -71,6 +71,8 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		ProfileResponse response = null;
 		ValidateAccountResponse validateAccountResponse = new ValidateAccountResponse();
 
+		accountNumber = CommonUtil.paddedCa(accountNumber);
+
 		try {
 			Map<String, Object> responseMap = new HashMap<String, Object>();			 
 			responseMap= profileService.getProfile(accountNumber, companyCode, sessionId);

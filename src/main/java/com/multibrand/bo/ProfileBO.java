@@ -349,6 +349,7 @@ public class ProfileBO extends BaseBO {
 			response=ldapHelper.getUserorAcctInfo(userId, companyCode);
 			
 			
+			
 			if(response.getAccountNumber()==null && response.getUserName()==null)
 			{
 				response.setAccountNumber(Constants.EMPTY);
