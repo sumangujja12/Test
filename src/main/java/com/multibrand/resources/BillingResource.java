@@ -925,6 +925,7 @@ public class BillingResource {
 			
 		logger.debug("END CourtesyCreditResource.courtesyCreditActivity :: END");
 		return response;
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< develop
 
 }	
 	
@@ -950,4 +951,30 @@ public class BillingResource {
 		return response;
 
 	}
+========================================================================
+	}	
+	
+	/**
+	 * This API is responsible for returning
+	 * pending payments and last paid date
+	 * @author NGASPerera
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * 
+	 */
+	@POST
+	@Path("scheduleAndLastPaymentetails")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getPendingPayments(@FormParam("accountNumber") String accountNumber,
+			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
+		Response response = null;
+		SchedulePaymentResponse schedulePayments = billingBO.getSchedulePayments(accountNumber, companyCode, brandName,
+				httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(schedulePayments).build();
+		return response;
+
+	}
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> features/gme-app-mobile-apis
 }
