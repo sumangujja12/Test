@@ -2263,7 +2263,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-checkRetroEligibility]");
 		return retroEligResp;
 	}
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< develop
+
 
    /** This method is responsible for getting all pending payments and 
     *  last paid date and assign to SchedulePaymentResponse
@@ -2329,6 +2329,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}
 
 		}
+
 		return pendingPayments;
 	}
 
@@ -2413,159 +2414,3 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		return unsortedList;
 	}
 }
-========================================================================
-	
-
-   /** This method is responsible for getting all pending payments and 
-    *  last paid date and assign to SchedulePaymentResponse
-    * @author NGASPerera
-    * @param accountNumber
-    * @param startDate 
-    * @param endDate
-    * @param companyCode
-    * @param brandName
-    * @param sessionId
-    * @return
-    */
-	public SchedulePaymentResponse getSchedulePayments(String accountNumber, String companyCode, String brandName,
-			String sessionId) {
-		List<PaymentDO> pendingPayments = new ArrayList<PaymentDO>();
-		String lastPaymentDate="";
-		SchedulePaymentResponse schedulePayment = new SchedulePaymentResponse();
-		String startDate = null;
-		DateFormat formatter = new SimpleDateFormat(Constants.yyyyMMdd);
-		String endDate = formatter.format(new Date());
-		try {
-			PaymentHistoryResponse paymentHistoryResponse = historyBO.fetchPaymentHistory(accountNumber, startDate,
-					endDate, companyCode, brandName, sessionId);
-			PaymentDO[] payments = paymentHistoryResponse.getPaymentDO();
-			if (payments != null && payments.length > 0) {
-				pendingPayments = getPendingPayemts(payments);
-				lastPaymentDate=getLastPaymentDate(payments);
-				
-				if(pendingPayments!=null && pendingPayments.size()>0){
-					schedulePayment.setPendingPayments(pendingPayments);
-				}
-				schedulePayment.setLastPaymentDate(lastPaymentDate);
-			
-			} else {
-				schedulePayment.setErrorCode(Constants.RESULT_CODE_NO_DATA);
-				schedulePayment.setErrorDescription(Constants.RESULT_CODE_DESCRIPTION_NO_DATA);
-			}
-		} catch (Exception e) {
-			schedulePayment.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			schedulePayment.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
-			logger.info("Exeception Occured in the ::getSchedulePayments" + e);
-		}
-		return schedulePayment;
-	}
-	
-	/** This method returns all pending payments and sorted by payment date
-	 * @param PaymentDO[] historyPayments
-	 * @return List<PaymentDO>
-	 */
-	public List<PaymentDO> getPendingPayemts(PaymentDO[] historyPayments) {
-		List<PaymentDO> pendingPayments = new ArrayList<PaymentDO>();
-		if (historyPayments != null && historyPayments.length > 0) {
-			for (PaymentDO payment : historyPayments) {
-				// retrieve pending payment details
-				if (Constants.PAYMENT_PENDING_STATUS.equalsIgnoreCase(payment.getStatus())) {
-					pendingPayments.add(payment);
-				}
-			}
-			// sort the pending payments by payment date
-			if (pendingPayments.size() > 0) {
-				pendingPayments=sortByPaymentDateAsc(pendingPayments);
-				
-			}
-
-		}
-		return pendingPayments;
-	}
-
-	/**
-	 * This method return last payment date
-	 * @param PaymentDO[] historyPayments
-	 * @return String lastPaidDate
-	 */
-	public String getLastPaymentDate(PaymentDO[] historyPayments) {
-		String lastPaymentDate = "";
-		List<PaymentDO> paidPayments = new ArrayList<PaymentDO>();
-		if (historyPayments != null && historyPayments.length > 0) {
-			for (PaymentDO payment : historyPayments) {
-				// retrieve pending payment details
-				if (Constants.PAYMENT_PAID_STATUS.equalsIgnoreCase(payment.getStatus())) {
-					paidPayments.add(payment);
-				}
-			}
-			// sort paid payments by payment date
-			if (paidPayments.size() > 0) {
-				paidPayments = sortByPaymentDateDesc(paidPayments);
-				lastPaymentDate = paidPayments.get(0).getPaymentDate();
-			}
-		}
-		return lastPaymentDate;
-	}	
-		
-	/**
-	 * This method sort List<PaymentDO> in ascending order
-	 * @param List<PaymentDO> unsortedList
-	 * @return List<PaymentDO> sortedList
-	 */
-	public List<PaymentDO> sortByPaymentDateAsc(List<PaymentDO> unsortedList) {
-		Collections.sort(unsortedList, new Comparator<PaymentDO>() {
-
-			@Override
-			public int compare(PaymentDO p1, PaymentDO p2) {
-				int compareInt = 0;
-				if (p1.getPaymentDate() != null && p2.getPaymentDate() != null) {
-					try {
-						Date date1 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p1.getPaymentDate());
-						Date date2 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p2.getPaymentDate());
-						return (date1.getTime() > date2.getTime() ? 1 : -1); // ascending
-					} catch (ParseException e) {
-						compareInt = 0;
-						logger.info("Error Occured in :::sortByPaymentDateAsc", e);
-					}
-
-				}
-				return compareInt;
-			}
-		});
-
-		return unsortedList;
-	}
-	
-	/**
-	 * This method sort List<PaymentDO> in descending order
-	 * @param List<PaymentDO> unsortedList
-	 * @return List<PaymentDO> sortedList
-	 */
-	public List<PaymentDO> sortByPaymentDateDesc(List<PaymentDO> unsortedList) {
-		Collections.sort(unsortedList, new Comparator<PaymentDO>() {
-
-			@Override
-			public int compare(PaymentDO p1, PaymentDO p2) {
-				int compareInt = 0;
-				if (p1.getPaymentDate() != null && p2.getPaymentDate() != null) {
-					try {
-						Date date1 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p1.getPaymentDate());
-						Date date2 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p2.getPaymentDate());
-						return (date1.getTime() > date2.getTime() ? -1 : 1); // descending
-					} catch (ParseException e) {
-						compareInt = 0;
-						logger.info("Error Occured in :::sortByPaymentDateAsc", e);
-					}
-
-				}
-				return compareInt;
-			}
-		});
-
-		return unsortedList;
-	}
-
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> features/gme-app-mobile-apis
-}
-
-
