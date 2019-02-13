@@ -1057,13 +1057,7 @@ public interface Constants {
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
 
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
-	public static final String CONSTANT_S ="S";
 
-
-	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
-	
-
-	
 	//Mobile Content API Data
 	public static final String language_EN = "EN";
 	public static final String ERRORS = "ERRORS";
@@ -1081,14 +1075,7 @@ public interface Constants {
 	 //Constants for Payment status
 	 public static final String  PAYMENT_PENDING_STATUS = "Pending";
 	 public static final String PAYMENT_PAID_STATUS = "Paid";
-
-	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
-	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
-	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
-	
-	
-	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
-	
+	 
 	 //Constants for Weekly Usage Details
 	 public static final String CURRENT_DAY_INDICATOR_N = "N";   
 	 public static final String DAILY_HOUR_INDICATOR_D = "D";
@@ -1097,4 +1084,18 @@ public interface Constants {
 	 public static final String DAILY_HIGH_TEMP_DUMMY_DATA = "0";
 	 public static final String DAILY_LOW_TEMP_DUMMY_DATA = "0";
 	 public static final String DAIY_USAGE_DUMMY_DATA = "0:00";
+
+	public static final String CONSTANT_S ="S";
+
+	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+	 
+	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
+	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+	
+	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
+
+	 
+	
+
 }

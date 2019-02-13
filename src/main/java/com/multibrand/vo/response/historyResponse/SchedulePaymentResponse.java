@@ -7,7 +7,6 @@ import com.multibrand.vo.response.GenericResponse;
 
 @XmlRootElement(name="schedulePaymentResponse")
 @Component
-
 public class SchedulePaymentResponse extends GenericResponse{
 	
 	private List<PaymentDO> pendingPayments;
