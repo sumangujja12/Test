@@ -9,14 +9,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.bo.HistoryBO;
-import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
@@ -28,6 +25,8 @@ import com.multibrand.vo.response.historyResponse.IntervalDataResponse;
 import com.multibrand.vo.response.historyResponse.InvoiceUsageHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PlanHistoryResponse;
+import com.multibrand.vo.response.historyResponse.WeeklyUsageResponse;
+
 
 /***
  * 
@@ -437,7 +436,21 @@ public class HistoryResource
 		
 		
 	}
-	
-	
-	
+
+	@POST
+	@Path("/getWeeklyUsage")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getWeeklyUsage(@FormParam("accountNumber") String accountNumber,
+			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
+			@FormParam("zoneId") String zoneId, @FormParam("companyCode") String companyCode,
+			@FormParam("brandName") String brandName, @FormParam("weekNumber") int weekNumber,
+			@FormParam("year") int year) {
+		Response response = null;
+		WeeklyUsageResponse weeklyUsageSummary = historyBO.getWeeklyUsageData(accountNumber, contractId, esid, zoneId,
+				companyCode, brandName, weekNumber, year, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(weeklyUsageSummary).build();
+		return response;
+	}
+
 }

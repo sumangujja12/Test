@@ -1,8 +1,12 @@
 package com.multibrand.vo.response.historyResponse;
 
 import java.util.List;
-
+import javax.xml.bind.annotation.XmlRootElement;
+import org.springframework.stereotype.Component;
 import com.multibrand.vo.response.GenericResponse;
+
+@XmlRootElement(name="schedulePaymentResponse")
+@Component
 
 public class SchedulePaymentResponse extends GenericResponse{
 	

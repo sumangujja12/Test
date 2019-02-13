@@ -902,7 +902,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -1055,6 +1055,7 @@ public interface Constants {
 
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
+
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
 	public static final String CONSTANT_S ="S";
 
@@ -1088,7 +1089,12 @@ public interface Constants {
 	
 	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
 	
-	
-	
-	
+	 //Constants for Weekly Usage Details
+	 public static final String CURRENT_DAY_INDICATOR_N = "N";   
+	 public static final String DAILY_HOUR_INDICATOR_D = "D";
+	 
+	 public static final String DAILY_COST_DUMMY_DATA = "0:00";
+	 public static final String DAILY_HIGH_TEMP_DUMMY_DATA = "0";
+	 public static final String DAILY_LOW_TEMP_DUMMY_DATA = "0";
+	 public static final String DAIY_USAGE_DUMMY_DATA = "0:00";
 }

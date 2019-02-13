@@ -949,6 +949,4 @@ public class BillingResource {
 		return response;
 
 	}
-
-
 }

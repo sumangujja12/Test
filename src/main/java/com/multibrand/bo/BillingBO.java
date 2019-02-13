@@ -2263,7 +2263,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-checkRetroEligibility]");
 		return retroEligResp;
 	}
-	
 
    /** This method is responsible for getting all pending payments and 
     *  last paid date and assign to SchedulePaymentResponse
@@ -2376,7 +2375,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						compareInt = 0;
 						logger.info("Error Occured in :::sortByPaymentDateAsc", e);
 					}
-
 				}
 				return compareInt;
 			}
@@ -2413,6 +2411,5 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 		return unsortedList;
 	}
-
 }
 

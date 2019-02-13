@@ -3,14 +3,19 @@ package com.multibrand.util;
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.apache.bcel.classfile.Constant;
+import org.springframework.stereotype.Component;
+
 
 /**
  * 
@@ -18,7 +23,8 @@ import org.apache.logging.log4j.Logger;
  * @version 1.0
  * 
  */
-public class DateUtil {
+@Component
+public class DateUtil implements Constants{
 
 	/**
 	 * Field Log.
@@ -674,4 +680,139 @@ public class DateUtil {
 
 		return returnDate;
 	}
+	
+	/** 
+	 * This method returns starting date of the given week
+	 * @author NGASPerera
+	 * @param year        Year          int
+	 * @param weekNumber  Week number   int
+	 * @param startingDay Starting day  int
+	 * @return Date       Fist day of the given week
+	 * @
+	 */
+	public Date getStartingDateOftheWeek(int year, int weekNumber, int weekStartingDay) {
+		Date date = null;
+		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy");
+			Calendar cal = Calendar.getInstance();
+			cal.set(Calendar.YEAR, year);
+			cal.set(Calendar.WEEK_OF_YEAR, weekNumber);
+			cal.set(Calendar.DAY_OF_WEEK, weekStartingDay);
+			date = formatter.parse(formatter.format(cal.getTime()));
+		} catch (ParseException e) {
+			throw new IllegalArgumentException();
+		}
+		return date;
+
+	}
+	
+	
+	/**
+	 * This method added number of days to a given date
+	 * @author NGASPerera
+	 * @param date    Date
+	 * @param addNum  int
+	 * @return Date 
+	 * The same method is in this class but the previous method is a static method and Calendar
+	 * is a not a thread safe. Because of that re written the same method.
+	 */
+	public Date addNumberOfDays(Date date, int addNum){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.DATE, addNum);
+		return cal.getTime();
+	}
+	
+	/**
+	 * This method compares the month of given two dates.
+	 * @author NGASPerera
+	 * @param startDate  Date
+	 * @param endDate    Date
+	 * @return an int 
+	 * if startDate month and endDate month both are same then will return 0
+	 * if startDate month is on previous month then will return > 0
+	 * if endDate month is on next moth then will return < 0
+	 */
+	public int compareMonths(Date startDate, Date endDate){
+		Calendar startCal = Calendar.getInstance();
+		Calendar endCal = Calendar.getInstance();
+		startCal.setTime(startDate);
+		endCal.setTime(endDate);
+		return startCal.get(startCal.MONTH) - endCal.get(endCal.MONTH);
+	}
+	
+	/**
+	 * This method will return next month of parameterized month
+	 * @author NGASPerera
+	 * @param currentDate
+	 * @return Date 
+	 */
+	public Date getNextMonth(Date currentDate){
+		Calendar currentCal = Calendar.getInstance();
+		currentCal.setTime(currentDate);
+		currentCal.set(currentCal.MONTH,1);
+		currentCal.set(currentCal.DATE,1);
+		return currentCal.getTime();
+	}
+
+	/**
+	 * This method will return previous month of parameterized month
+	 * @author NGASPerera
+	 * @param currentDate
+	 * @return Date
+	 */
+	public Date getPreviousMonth(Date currentDate){
+		Calendar currentCal  = Calendar.getInstance();
+		currentCal.setTime(currentDate);
+		currentCal.set(currentCal.MONTH,-1);
+		currentCal.set(currentCal.DATE,1);
+		return currentCal.getTime();
+		
+	}
+	/**
+	 * This method will parse String into Date
+	 * @author NGASPerera 
+	 * @param date String
+	 * @return date Date
+	 */
+	public Date getDate(String date){
+		Date d = null;
+		SimpleDateFormat formatter = new SimpleDateFormat(Constants.yyyyMMdd);
+		try {
+			d = formatter.parse(date);
+		} catch (ParseException e) {
+			Log.info(e);
+		}
+		return d;
+	}
+	
+	/**
+	 * This method will parse Date into String
+	 * @author NGASPerera 
+	 * @param date Date
+	 * @return date String
+	 */
+	public String getDate(Date date) {
+		SimpleDateFormat formatter = new SimpleDateFormat(Constants.yyyyMMdd);
+		return formatter.format(date);
+	}
+	
+	/**
+	 * This method returns List of Data that belongs to a range
+	 * @author NGASPerera
+	 * @param startDate Date
+	 * @param endDate Date
+	 * @return List<Date>
+	 */
+	public List<Date> getDatesInRange(Date startDate, Date endDate) {
+		List<Date> datesInRange = new ArrayList<>();
+		while (startDate.compareTo(endDate) <= 0) {
+			datesInRange.add(startDate);
+			startDate = addNumberOfDays(startDate, 1);
+
+		}
+		return datesInRange;
+	}
+
+	
 }
