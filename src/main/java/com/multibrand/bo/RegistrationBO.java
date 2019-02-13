@@ -282,6 +282,9 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		
 		ValidateAccountForMobileResponse validateAccountForMobileResponse = new ValidateAccountForMobileResponse();
 		ValidateAccountResponse validateAccountResponse = null;
+
+		accountNumber = CommonUtil.paddedCa(accountNumber);
+		
 		try{
 			//Step 1 - Validating Account name and last Name
 			if(accountNumber!=null&&lastName!=null&&StringUtils.isNotEmpty(accountNumber.trim())&&StringUtils.isNotEmpty(lastName.trim())

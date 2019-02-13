@@ -925,9 +925,7 @@ public class BillingResource {
 			
 		logger.debug("END CourtesyCreditResource.courtesyCreditActivity :: END");
 		return response;
-
-
-	}	
+}	
 	
 	/**
 	 * This API is responsible for returning
