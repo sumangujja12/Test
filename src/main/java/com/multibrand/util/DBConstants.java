@@ -352,4 +352,6 @@ public interface DBConstants {
 	public static final String COL_MOBILE_CONTENT_VALUE = "VALUE";
 		
 	public static final String QUERY_GET_ALL_CONTENT = "query.get.all.content";
+	public static final String QUERY_GME_INSERT_PASSWORD_TNX = "query.gme.insert.password.tnx";
+	
 }

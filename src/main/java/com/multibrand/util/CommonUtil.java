@@ -1761,4 +1761,34 @@ public class CommonUtil implements Constants {
 			return buf.toString().toCharArray();
 		}
 	
+	/**
+	 * Returns formatted account number with removed zeroes from front
+	 * 
+	 * @author Cuppala
+	 * 
+	 * @param number
+	 * @param length
+	 * @return
+	 */
+	public static String stripLeadingZeros(String arg) {
+		String accountNumber = arg;
+		int digitCnt = 0;
+		int argLength = arg.length();
+
+		for (int i = 0; i < argLength; i++) {
+			char charTemp = (char) accountNumber.charAt(i);
+			if (charTemp != '0') {
+				break;
+			} else {
+				digitCnt++;
+			}
+		}
+		if (digitCnt > 0 && accountNumber.length() > digitCnt) {
+			accountNumber = accountNumber.substring(digitCnt,
+					accountNumber.length());
+		}
+		return accountNumber;
+	}
+
+	
 }

@@ -66,6 +66,8 @@ public class EmailHelper implements Constants {
 		
 		if(templateName.equalsIgnoreCase(CIRRO_AUTO_PAY_UPDATE_EXTERNAL_ID_EN)|| 
 				templateName.equalsIgnoreCase(CIRRO_AVG_BILLING_CONF_EXTERNAL_ID_EN) || 
+				templateName.equalsIgnoreCase(GME_PASSWORD_CHANGE_EN_US) ||
+				templateName.equalsIgnoreCase(GME_USERNAME_EN_US) ||
 				templateName.equalsIgnoreCase(CIRRO_EMAIL_CHANGE_EXTERNAL_ID_EN)||
 				templateName.equalsIgnoreCase(CIRRO_PAYMENT_OPTIONS_UPDATE_EN)||
 				templateName.equalsIgnoreCase(CIRRO_BILLING_OPTION_CHANGE_EN)||

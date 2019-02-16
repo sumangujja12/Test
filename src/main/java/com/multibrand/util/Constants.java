@@ -207,6 +207,7 @@ public interface Constants {
     public static final String RESULT_DESCRIPTION_ACCOUNT_EXISTS="Account Already Registered";
     public static final String RESULT_CODE_NO_MATCH="2";
     public static final String RESULT_CODE_NO_MATCH_DESCRIPTION="No Match";
+    public static final String RESULT_CODE_INVALID_ACCOUNT_NUMBER_DESCRIPTION="Invalid Account Number";
     public static final String RESULT_CODE_ACCOUNT_ALREADY="Account Already Registered";
     public static final String RESULT_DESCRIPTION_ENROLL_FAILED="Enroll is failed";
     public static final String RESULT_DESCRIPTION_DEENROLL_FAILED="De-enroll is failed";
@@ -1056,6 +1057,35 @@ public interface Constants {
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
 
+	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+
+	//Mobile Content API Data
+	public static final String language_EN = "EN";
+	public static final String ERRORS = "ERRORS";
+		
+	 public static final String USERNAME_VALID="Username is valid";
+	 public static final String ACCOUNT_INFO_VALID="Account information valid";
+	 public static final String USER_ALREADY_EXISTS_DESC = "User Already Exists";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
+
+	 //Refresh Token 
+	 public static final int REFRESH_TOKEN_LENGTH = 250;
+	 
+	 public static final String GME_PASSWORD_CHANGE_EN_US="GME.PASSWORD.CHANGE.EN_US";
+	 public static final String GME_PASSWORD_CHANGE_ES_US="GME.PASSWORD.CHANGE.ES_US";
+	 public static final String GME_USERNAME_EN_US = "GME.USERNAME.EN_US";
+	 
+	 public static final String GME_MYACCOUNT_PASSWORD_RESET_URL ="GME.MYACCOUNT.PASSWORD.RESET.URL";
+	 public static final String GME_MYACCOUNT_LOGIN_URL="GME.MYACCOUNT.LOGIN.URL";
+	 
+	 //Added for GME Mobile
+	 
+	 public static final String RESULT_CODE_SIX="6";
+	 public static final String RESULT_DESCRIPTION_EMAIL_NOTFOUND="Email Address validation failed";
+	 public static final String RESULT_CODE_SEVEN="7";
+	 public static final String RESULT_DESCRIPTION_INVALID_ZIP_CODE="Invalid Zip Code";
+
 
 	
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
@@ -1063,7 +1093,7 @@ public interface Constants {
 
 	public static final String CONSTANT_S ="S";
 
-	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+
 	 
 	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
 	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
@@ -1072,19 +1102,6 @@ public interface Constants {
 	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
 
 	
-	//Mobile Content API Data
-	public static final String language_EN = "EN";
-	public static final String ERRORS = "ERRORS";
-		
-
-	 public static final String USERNAME_VALID="Username is valid";
-	 public static final String ACCOUNT_INFO_VALID="Account information valid";
-	 public static final String USER_ALREADY_EXISTS_DESC = "User Already Exists";
-	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
-	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
-	 
-	 //Refresh Token 
-	 public static final int REFRESH_TOKEN_LENGTH = 250;
 	 
 	 //Constants for Payment status
 	 public static final String  PAYMENT_PENDING_STATUS = "Pending";
@@ -1099,5 +1116,4 @@ public interface Constants {
 	 public static final String DAILY_LOW_TEMP_DUMMY_DATA = "0";
 	 public static final String DAIY_USAGE_DUMMY_DATA = "0:00";
 	 
-
 }

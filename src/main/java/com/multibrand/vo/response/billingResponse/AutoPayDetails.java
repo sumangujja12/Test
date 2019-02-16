@@ -31,6 +31,7 @@ public class AutoPayDetails {
 
     private java.lang.String payment;
     
+
   	private String bpid;
     
     // Adding businessPartnerId to resolve 500 internal server error
@@ -136,4 +137,5 @@ public class AutoPayDetails {
 		this.businessPartnerId = bpid;
 	}
     
+
 }

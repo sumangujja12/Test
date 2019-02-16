@@ -445,7 +445,7 @@ public class LDAPHelper extends BaseAbstractService{
 		
 		String searchBase = "o=" + Constants.LDAP_ORGANISATION;
 		String uidSearchFilter="uid="+userId;
-		String acctSearchFilter="accountnumber="+userId;
+		String acctSearchFilter="accountnumber="+CommonUtil.paddedCa(userId.trim());
 		String searchFilter="(|("+uidSearchFilter+")  ("+acctSearchFilter+"))";
 				
 		NamingEnumeration searchResults=getSearchResults(ctx, searchFilter, searchBase);

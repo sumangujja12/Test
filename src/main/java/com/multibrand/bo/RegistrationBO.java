@@ -275,6 +275,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		genricResp.setResultDescription(MSG_SUCCESS);
 		logger.info("END-[RegistrationBO-createUser]");
 		return genricResp;
+
 	}
 
 	public ValidateAccountForMobileResponse validateAccountForMobile(String accountNumber, String lastName, 
@@ -282,14 +283,16 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		
 		ValidateAccountForMobileResponse validateAccountForMobileResponse = new ValidateAccountForMobileResponse();
 		ValidateAccountResponse validateAccountResponse = null;
-
-		accountNumber = CommonUtil.paddedCa(accountNumber);
-		
+							
 		try{
 			//Step 1 - Validating Account name and last Name
-			if(accountNumber!=null&&lastName!=null&&StringUtils.isNotEmpty(accountNumber.trim())&&StringUtils.isNotEmpty(lastName.trim())
-				&&(companyCode!=null&&StringUtils.isNotEmpty(companyCode.trim()))&&(StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode))){
-				validateAccountResponse = validateAccount(accountNumber,lastName,companyCode,sessionId);
+			if(StringUtils.isNotEmpty(accountNumber.trim())&&StringUtils.isNotEmpty(lastName.trim())
+					&&StringUtils.isNotEmpty(companyCode.trim())&&StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)){
+				
+					accountNumber=CommonUtil.paddedCa(accountNumber.trim());
+					lastName=lastName.trim();
+				
+					validateAccountResponse = validateAccount(accountNumber,lastName,companyCode,sessionId);
 				
 				
 				if(validateAccountResponse!=null && validateAccountResponse.getResultCode().equalsIgnoreCase("0")){
@@ -302,21 +305,24 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 					//register.setUserName(userName);
 					register.setSessionId(sessionId);
 					
-					
-					
+									
 					//Step 2 - Checking if the account is already registered or not.	
 					
-					if (!registrationHelper.isAccountEnrolled(register)) {
+					System.out.println("registrationHelper.isAccountEnrolled(register)"+registrationHelper.isAccountEnrolled(register));
+					
+					if (!(registrationHelper.isAccountEnrolled(register))) {
 							
 							logger.info("validateAccountForMobile - Account Already Registered - Please login with Username");
 							validateAccountForMobileResponse.setResultCode(RESULT_CODE_THREE);
 							validateAccountForMobileResponse.setResultDescription(RESULT_CODE_ACCOUNT_ALREADY);
+							validateAccountForMobileResponse.setMessageText("Account Already Registered - Please login with Username");
 							validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
 							
 						}else{
 
 								if ( userName != null && StringUtils.isNotEmpty(userName.trim())) {
-								ValidateUserNameRequest validate = new ValidateUserNameRequest();
+									userName = userName.trim();
+									ValidateUserNameRequest validate = new ValidateUserNameRequest();
 								if(StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode))
 									validate.setStrLDAPOrg(Constants.LDAP_ORGANISATION);
 									validate.setStrUserName(userName);
@@ -327,21 +333,22 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 									logger.info("validateAccountForMobile -"+userName+" is a valid username - Success");
 									validateAccountForMobileResponse.setUserName(userName);
 									validateAccountForMobileResponse.setResultDescription(MSG_SUCCESS);
+									validateAccountForMobileResponse.setMessageText("UserName is a valid username - Success");
 									validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
-									
-									
 									
 								}else{
 									logger.info("validateAccountForMobile - User Already Exists - Username already present in LDAP");
 									validateAccountForMobileResponse.setResultCode(RESULT_CODE_FOUR);
 									validateAccountForMobileResponse.setResultDescription(RESULT_DESCRIPTION_USERNAME_EXISTS);
+									validateAccountForMobileResponse.setMessageText("User Already Exists - Username already present in LDAP");
 									validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
 									}
 							}else{
-								logger.info("validateAccountForMobile - Account information valid - Success you can now create username with this A/C and Lastname");
+								logger.info("validateAccountForMobile - Account information valid - you can now create username with this A/C and Lastname");
 								validateAccountForMobileResponse.setResultCode(RESULT_CODE_SUCCESS);
 								validateAccountForMobileResponse.setResultDescription(ACCOUNT_INFO_VALID);
 								validateAccountForMobileResponse.setStatusCode("00");
+								validateAccountForMobileResponse.setMessageText("Account information valid - Success you can now create username with this A/C and Lastname");
 								validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
 							}
 							
@@ -350,9 +357,10 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 				
 					
 					}else{
-						logger.info("validateAccountForMobile - Invalid Contract Account - Account validation failed");
+						logger.info("validateAccountForMobile - Invalid Contract Account details- Account validation failed");
 						validateAccountForMobileResponse.setResultCode(RESULT_CODE_TWO);
 						validateAccountForMobileResponse.setResultDescription(RESULT_CODE_NO_MATCH_DESCRIPTION);
+						validateAccountForMobileResponse.setMessageText("Invalid Contract Account details- Account validation failed");
 						validateAccountForMobileResponse.setLastName(lastName);
 						
 						
@@ -360,10 +368,11 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 				}else{
 					logger.info("validateAccountForMobile - Invalid Input Parameters - Please check entered A/C number and Lastname");
 					validateAccountForMobileResponse.setResultCode(RESULT_CODE_FIVE);
-					if(StringUtils.equalsIgnoreCase("0271", companyCode))
+					if(StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode))
 					validateAccountForMobileResponse.setResultDescription(RESULT_CODE_NOT_GME_TX_ACC);
-					if(!StringUtils.equalsIgnoreCase("0271", companyCode))
+					if(!(StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)))
 					validateAccountForMobileResponse.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
+					validateAccountForMobileResponse.setMessageText("Invalid Input Parameters - Please check entered A/C number and Lastname");
 					validateAccountForMobileResponse.setLastName(lastName);
 					
 				}
@@ -377,11 +386,14 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 			validateAccountForMobileResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
 			validateAccountForMobileResponse.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
 			validateAccountForMobileResponse.setLastName(lastName);
+			validateAccountForMobileResponse.setMessageText("Exeception Occured in the validateAccountForMobile Call");
 			throw new OAMException(200, e.getMessage(), validateAccountForMobileResponse);
 		
 			}
 		
 			return validateAccountForMobileResponse;
+	
+
 	
 	}
 }

@@ -15,6 +15,8 @@ public class UserInfoResponse extends GenericResponse{
 	    
 	    private java.lang.String emailID;
 	    
+	    private java.lang.String userUniqueID;
+	    
 	   
 
 		public java.lang.String getEmailID() {
@@ -39,6 +41,14 @@ public class UserInfoResponse extends GenericResponse{
 
 		public void setUserName(java.lang.String userName) {
 			this.userName = userName;
+		}
+
+		public java.lang.String getUserUniqueID() {
+			return userUniqueID;
+		}
+
+		public void setUserUniqueID(java.lang.String userUniqueID) {
+			this.userUniqueID = userUniqueID;
 		}
 
 				

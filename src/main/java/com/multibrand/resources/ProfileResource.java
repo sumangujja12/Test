@@ -34,6 +34,7 @@ import com.multibrand.vo.response.UpdateContactInfoResponse;
 import com.multibrand.vo.response.UpdatePasswordResponse;
 import com.multibrand.vo.response.UserIdResponse;
 import com.multibrand.vo.response.UserInfoResponse;
+import com.multibrand.vo.response.ValidatePasswordLinkResponse;
 import com.multibrand.vo.response.WsEnrollmentResponse;
 import com.multibrand.vo.response.WsServiceResponse;
 import com.multibrand.vo.response.WseEligiblityStatusResponse;
@@ -64,6 +65,7 @@ public class ProfileResource {
 	
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
 	
+
 	/** This service is to get the username or account number from LDAP.
 	 * @author cuppala
 	 * @param userID		Customer User Identification no
@@ -73,13 +75,13 @@ public class ProfileResource {
 	@Path("forgotUserName")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response forgotUserName(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("zip") String zip,@FormParam("brandName") String brandName){
+	public Response forgotUserName(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("zip") String zip,@FormParam("languageCode") String languageCode,@FormParam("brandName") String brandName){
 		
 		logger.info("accountNumber :"+accountNumber+"companyCode :"+companyCode+"zip :"+zip);
 		
 		Response response = null;
 		String sessionId = httpRequest.getSession(true).getId();
-		ForgotUserNameResponse forgotPasswordResponse = profileBO.forgotUserName(accountNumber,companyCode,zip,sessionId,brandName);
+		ForgotUserNameResponse forgotPasswordResponse = profileBO.forgotUserName(accountNumber,companyCode,zip,languageCode,sessionId,brandName);
 		response = Response.status(200).entity(forgotPasswordResponse).build();
 		return response;
 		
@@ -94,15 +96,30 @@ public class ProfileResource {
 	@Path("forgotPassword")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response forgotPassword(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName,@FormParam("zip") String zip){
+	public Response forgotPassword(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName,@FormParam("zip") String zip,@FormParam("languageCode") String languageCode){
 		
 		Response response = null;
 		String sessionId = httpRequest.getSession(true).getId();
-		ForgotPasswordResponse forgotPasswordResponse = profileBO.forgotPassword(accountNumber,companyCode,brandName,zip,sessionId);
+		ForgotPasswordResponse forgotPasswordResponse = profileBO.forgotPassword(accountNumber,companyCode,brandName,languageCode,zip,sessionId);
 		response = Response.status(200).entity(forgotPasswordResponse).build();
 		return response;
 		
 	}
+	
+	
+	@POST
+	@Path("validatePasswordlink")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	public Response validateForgotPasswordLink(@FormParam("transactionId") String transactionId,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName){
+		Response response = null;
+		ValidatePasswordLinkResponse validatePasswordLinkResp = profileBO.validateForgotPasswordLink(transactionId,companyCode,brandName);
+		response = Response.status(200).entity(validatePasswordLinkResp).build();
+		return response;
+		
+	}
+
+	
 	
 	/** This service is to get the username or account number from LDAP.
 	 * @author kdeshmu1

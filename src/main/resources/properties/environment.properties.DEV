@@ -106,6 +106,7 @@ ws.rest.ccs.tos.submit.eligible.products.url=http://sapcmq02:8001/sap/opu/odata/
 
 #################
 
+
 ##START : OE | Sprint 46 | US15066 | Kdeshmu1
 ws.rest.ccs.update.etfflag.crm.url = http://sapcmd02:8000/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/ActivateETF?Partner={0}&Account={1}
 ##END : OE | Sprint 46 | US15066 | Kdeshmu1
@@ -118,4 +119,12 @@ ws.rest.ccs.get.agent.details.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_
 #ECommerce End Points
 ws.rest.ccs.google.product.set.url=http://sapcmd02:8000/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/GoogleProductSet
 #################
+
+
+######## GME Related #######
+GME.MYACCOUNT.LOGIN.URL=https://myaccount-test.greenmountain.com/
+GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-test.greenmountain.com/ResetPassword/
+
+
+
 
