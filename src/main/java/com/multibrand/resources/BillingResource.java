@@ -57,6 +57,7 @@ import com.multibrand.vo.response.ProjectedBillResponseList;
 import com.multibrand.vo.response.RetroEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyCheckResponseVO;
 import com.multibrand.vo.response.billingResponse.AMBSignupResponseVO;
+import com.multibrand.vo.response.billingResponse.ArMobileGMEResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayInfoResponse;
 import com.multibrand.vo.response.billingResponse.BankCCInfoResponse;
 import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
@@ -950,6 +951,28 @@ public class BillingResource {
 		response = Response.status(200).entity(schedulePayments).build();
 		return response;
 
+	}
+	
+	/**
+	 * This API is responsible for returning account balance for GME mobile
+	 * @author NGASPerera
+	 * @param accountNumber
+	 * @param bpNumber
+	 * @param companyCode
+	 * @param brandName
+	 */
+	@POST
+	@Path("getBalanceForGMEMobile")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getBalanceForGMEMobile(@FormParam("accountNumber") String accountNumber,
+			@FormParam("bpid") String bpNumber, @FormParam("companyCode") String companyCode,
+			@FormParam("brandName") String brandName) {
+		Response response = null;
+		ArMobileGMEResponse mobileArResponse = billingBO.getBalanceForGMEMobile(accountNumber, bpNumber, companyCode,
+				httpRequest.getSession(true).getId(), brandName);
+		response = Response.status(200).entity(mobileArResponse).build();
+		return response;
 	}
 
 }	

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,6 +79,7 @@ import com.multibrand.vo.response.ProjectedBillResponseList;
 import com.multibrand.vo.response.RetroEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyCheckResponseVO;
 import com.multibrand.vo.response.billingResponse.AMBSignupResponseVO;
+import com.multibrand.vo.response.billingResponse.ArMobileGMEResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
 import com.multibrand.vo.response.billingResponse.AutoPayInfoResponse;
 import com.multibrand.vo.response.billingResponse.BankCCInfoResponse;
@@ -2412,5 +2414,81 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		});
 
 		return unsortedList;
+	}
+	
+	/**
+	 * This method is responsible for getting account balance details for gme
+	 * mobile
+	 * 
+	 * @param accountNumber
+	 * @param bpNumber
+	 * @param companyCode
+	 * @param sessionId
+	 * @param brandName
+	 * @return MobileGmeArResponse
+	 */
+	public ArMobileGMEResponse getBalanceForGMEMobile(String accountNumber, String bpNumber, String companyCode,
+			String sessionId, String brandName) {
+		ArMobileGMEResponse mobileArResponse = new ArMobileGMEResponse();
+		try {
+			GetArResponse arResponse = getBalance(accountNumber, bpNumber, companyCode, sessionId, brandName);
+			if (arResponse != null) {
+				mobileArResponse.setCurrentDueDate(arResponse.getStrCurrentDueDate());
+				mobileArResponse.setCurrentArBalance(arResponse.getStrCurrentARBalance());
+				mobileArResponse.setLastPayAmt(arResponse.getStrLastPayAmt());
+				mobileArResponse.setLastPayDate(arResponse.getStrLastPayDate());
+				mobileArResponse.setPastDueAmt(arResponse.getStrPastDueAmt());
+				mobileArResponse.setCreditAmt(arResponse.getStrCreditAmt());
+			}
+			// setting payment dates
+			String recentPendingPayDate = retriveRecentPendingPaymentDate(accountNumber, companyCode, brandName,sessionId);
+			if (!recentPendingPayDate.isEmpty()) {
+				mobileArResponse.setRecentPendingPayDate(recentPendingPayDate);
+			}
+		} catch (Exception e) {
+			logger.info(" Exeception Occured in the getBalanceForGMEMobile" + e.getCause());
+			mobileArResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			mobileArResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return mobileArResponse;
+	}
+	
+	/**
+	 * This method is responsible for getting last payment date and recent pending payment date
+	 * @author NGASPerera
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * @param sessionId
+	 * @return MobileGmeArResponse
+	 */
+	public String retriveRecentPendingPaymentDate(String accountNumber, String companyCode, String brandName,
+			String sessionId) {
+		String recentPendingPaymentDate = "";
+		// set end date as current date
+		DateFormat formatter = new SimpleDateFormat(Constants.yyyyMMdd);
+		String endDate = formatter.format(new Date());
+		List<PaymentDO> pendingPayments = new ArrayList<PaymentDO>();
+		// getting all payment history
+		PaymentHistoryResponse paymentHistoryResponse = historyBO.fetchPaymentHistory(accountNumber, null, endDate,
+				companyCode, brandName, sessionId);
+		if (paymentHistoryResponse != null) {
+			PaymentDO[] payments = paymentHistoryResponse.getPaymentDO();
+			if (payments != null && payments.length > 0) {
+				for (PaymentDO payment : payments) {
+					// retrieve pending payment details
+					if (Constants.PAYMENT_PENDING_STATUS.equalsIgnoreCase(payment.getStatus())) {
+						pendingPayments.add(payment);
+					}
+				}
+				// sort pending payments by date
+				if (!pendingPayments.isEmpty()) {
+					pendingPayments = sortByPaymentDateDesc(pendingPayments);
+					recentPendingPaymentDate = pendingPayments.get(0).getPaymentDate();
+				}
+			}
+
+		}
+		return recentPendingPaymentDate;
 	}
 }
