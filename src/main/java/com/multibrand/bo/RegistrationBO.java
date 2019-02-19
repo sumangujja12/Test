@@ -227,7 +227,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 						}
 					}
 					
-				}
+			}
 			} else {
 				logger.info("RegistrationBO- user already available in the database]");
 				genricResp.setResultCode(RESULT_CODE_THREE);
@@ -294,6 +294,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 				
 					validateAccountResponse = validateAccount(accountNumber,lastName,companyCode,sessionId);
 				
+								
 				
 				if(validateAccountResponse!=null && validateAccountResponse.getResultCode().equalsIgnoreCase("0")){
 					UserRegistrationRequest register = new UserRegistrationRequest();
@@ -317,6 +318,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 							validateAccountForMobileResponse.setResultDescription(RESULT_CODE_ACCOUNT_ALREADY);
 							validateAccountForMobileResponse.setMessageText("Account Already Registered - Please login with Username");
 							validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
+							validateAccountForMobileResponse.setCheckDigit(validateAccountResponse.getCheckDigit());
 							
 						}else{
 
@@ -335,6 +337,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 									validateAccountForMobileResponse.setResultDescription(MSG_SUCCESS);
 									validateAccountForMobileResponse.setMessageText("UserName is a valid username - Success");
 									validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
+									validateAccountForMobileResponse.setCheckDigit(validateAccountResponse.getCheckDigit());
 									
 								}else{
 									logger.info("validateAccountForMobile - User Already Exists - Username already present in LDAP");
@@ -342,6 +345,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 									validateAccountForMobileResponse.setResultDescription(RESULT_DESCRIPTION_USERNAME_EXISTS);
 									validateAccountForMobileResponse.setMessageText("User Already Exists - Username already present in LDAP");
 									validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
+									validateAccountForMobileResponse.setCheckDigit(validateAccountResponse.getCheckDigit());
 									}
 							}else{
 								logger.info("validateAccountForMobile - Account information valid - you can now create username with this A/C and Lastname");
@@ -350,6 +354,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 								validateAccountForMobileResponse.setStatusCode("00");
 								validateAccountForMobileResponse.setMessageText("Account information valid - Success you can now create username with this A/C and Lastname");
 								validateAccountForMobileResponse.setLastName(validateAccountResponse.getLastName());
+								validateAccountForMobileResponse.setCheckDigit(validateAccountResponse.getCheckDigit());
 							}
 							
 						

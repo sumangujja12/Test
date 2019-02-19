@@ -66,9 +66,13 @@ public class ProfileResource {
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
 	
 
-	/** This service is to get the username or account number from LDAP.
+	/** This service is to validate user info and then get the User Name to send it over to the Customer via Email.
 	 * @author cuppala
-	 * @param userID		Customer User Identification no
+	 * @param accountNumber		Customer Account Identification no
+	 * @param companyCode		Company code
+	 * @param zip				Billing Zip Code
+	 * @param languageCode		User preferred Language Code
+	 * @param brandName			Company Brand name
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@POST
@@ -81,15 +85,19 @@ public class ProfileResource {
 		
 		Response response = null;
 		String sessionId = httpRequest.getSession(true).getId();
-		ForgotUserNameResponse forgotPasswordResponse = profileBO.forgotUserName(accountNumber,companyCode,zip,languageCode,sessionId,brandName);
-		response = Response.status(200).entity(forgotPasswordResponse).build();
+		ForgotUserNameResponse forgotUserNameResponse  = profileBO.forgotUserName(accountNumber,companyCode,zip,languageCode,sessionId,brandName);
+		response = Response.status(200).entity(forgotUserNameResponse).build();
 		return response;
 		
 	}
 	
-	/** This service is to get the username or account number from LDAP.
+	/** This service is to validate user info and then generate new password reset link to send it over to the Customer via Email.
 	 * @author cuppala
-	 * @param userID		Customer User Identification no
+	 * @param accountNumber		Customer Account Identification no
+	 * @param companyCode		Company code
+	 * @param zip				Billing Zip Code
+	 * @param languageCode		User preferred Language Code
+	 * @param brandName			Company Brand name
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@POST
@@ -106,14 +114,21 @@ public class ProfileResource {
 		
 	}
 	
-	
+	/** This service is to validate Customer received Email i.e valid or expired.
+	 * @author cuppala
+	 * @param transactionId		Transaction Identification number received in email
+	 * @param companyCode		Company code
+	 * @param brandName			Company Brand name
+	 * @return response			Provide JSON/XML customer  data response
+	 */
 	@POST
 	@Path("validatePasswordlink")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 	public Response validateForgotPasswordLink(@FormParam("transactionId") String transactionId,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName){
 		Response response = null;
-		ValidatePasswordLinkResponse validatePasswordLinkResp = profileBO.validateForgotPasswordLink(transactionId,companyCode,brandName);
+		String sessionId = httpRequest.getSession(true).getId();
+		ValidatePasswordLinkResponse validatePasswordLinkResp = profileBO.validateForgotPasswordLink(transactionId,companyCode,brandName,sessionId);
 		response = Response.status(200).entity(validatePasswordLinkResp).build();
 		return response;
 		
