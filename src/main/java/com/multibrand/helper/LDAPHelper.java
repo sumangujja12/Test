@@ -443,9 +443,14 @@ public class LDAPHelper extends BaseAbstractService{
 		
 		DirContext ctx = getLdapConnection();
 		
+		String accountnumber = userId;
+		String regex = "\\d+";
+		if(accountnumber.matches(regex))
+			accountnumber = CommonUtil.paddedCa(userId.trim());
+			
 		String searchBase = "o=" + Constants.LDAP_ORGANISATION;
 		String uidSearchFilter="uid="+userId;
-		String acctSearchFilter="accountnumber="+CommonUtil.paddedCa(userId.trim());
+		String acctSearchFilter="accountnumber="+accountnumber;
 		String searchFilter="(|("+uidSearchFilter+")  ("+acctSearchFilter+"))";
 				
 		NamingEnumeration searchResults=getSearchResults(ctx, searchFilter, searchBase);
@@ -469,6 +474,9 @@ public class LDAPHelper extends BaseAbstractService{
 				}
 				if(attrib.getID().equals(Constants.LDAP_ACCOUNTNUMBER_ATTRIBUTE)){
 					response.setAccountNumber(attrib.get().toString());
+				}
+				if(attrib.getID().equals(Constants.LDAP_UNIQUEID_ATTRIBUTE)){
+					response.setUserUniqueID(attrib.get().toString());
 				}
 				logger.info(attrib.getID() + " : " + attrib.get().toString());
 				ctx.close();

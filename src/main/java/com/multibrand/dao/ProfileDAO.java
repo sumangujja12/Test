@@ -6,8 +6,7 @@ public interface ProfileDAO {
 	
 	public boolean validatePasswordLink(String transactionId);
 	
-	public boolean checkPasswordLinkValidity(String transactionId);
-	
-	public boolean updatePasswordLinkValidity(String transactionId);
+	public String getUserNameforTxn(String transactionId);
 
+	public int updateStatusFlag(String userName);
 }

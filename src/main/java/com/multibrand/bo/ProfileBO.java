@@ -136,6 +136,7 @@ public class ProfileBO extends BaseBO {
 
 		
 		Attributes attrs= null;
+		int update =0;
 		com.multibrand.vo.response.UpdatePasswordResponse updatePasswordResponse = new com.multibrand.vo.response.UpdatePasswordResponse();
 		long startTime = CommonUtil.getStartTime();
 		String request = "userId="+userId+",newPassword=##########"+",companyCode="+companyCode;
@@ -144,6 +145,13 @@ public class ProfileBO extends BaseBO {
 		
 			attrs = ldapHelper.modPasswordUserinfo(userId,DirContext.REPLACE_ATTRIBUTE,newPassword);
 			if(attrs!=null){
+				if(StringUtils.equalsIgnoreCase(companyCode, "0271")){
+					update = profileDAO.updateStatusFlag(userId);
+					if(update==0)
+						logger.error("Status Code='C'- duplicate transaction - profileDAO.updateStatusFlag call");
+					else
+						logger.info("Status Code changed to 'C'");
+				}
 				logger.info("::::::::::::::::Password updated successfully");
 				updatePasswordResponse.setResultCode(RESULT_CODE_SUCCESS);
 				updatePasswordResponse.setResultDescription(MSG_SUCCESS);
@@ -365,6 +373,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				    String emailID=userInfoResponse.getEmailID();
 				  
 				    String userUniqueID=userInfoResponse.getUserUniqueID();
+				    System.out.println("userUniqueID chakriiiiiiiiiii"+userUniqueID);
 				    
 				    //Call to get billing address
 				    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
@@ -386,19 +395,22 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 						
 						HashMap<String, String> templateProperties = new HashMap<String, String>();
 		                templateProperties.put("ACCOUNT_NUMBER", nonZeroAccountNumber);
-		                templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
-		                templateProperties.put("LOGIN_URL", envMessageReader.getMessage(GME_MYACCOUNT_LOGIN_URL));
+		               templateProperties.put("LOGIN_URL", envMessageReader.getMessage(GME_MYACCOUNT_LOGIN_URL));
 		                
 		                    Boolean status = false;
 		                    if(StringUtils.isEmpty(languageCode))
 		                    	languageCode="E";
 		                    
 		                	if(languageCode.equalsIgnoreCase("ES")){
+		                		resetPasswordURL = resetPasswordURL+"/ES";;
+		                		 templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
 		                		//status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_ES_US, templateProperties, companyCode);
 		                		logger.info("Spanish Conf mail send for Password reset: " + status);
 								}else{
  		
 			                		logger.info("Setting languageCode to English");
+			                		resetPasswordURL = resetPasswordURL+"/EN";
+			                		 templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
 			                		status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_EN_US, templateProperties, companyCode);
 									logger.info("English Conf mail send for Password reset: " + status);
 		
@@ -454,48 +466,63 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		return response;
 	}
 	
+/**
+ * This method is to get the validate forgot password link.
+ * @author Cuppala
+ * @param transactionId
+ * @param companyCode
+ * @param brandName
+ * @return
+ */
 	
-	public ValidatePasswordLinkResponse validateForgotPasswordLink(String transactionId,String companyCode,String brandName){
+	public ValidatePasswordLinkResponse validateForgotPasswordLink(String transactionId,String companyCode,String brandName, String sessionId){
 		
-		ValidatePasswordLinkResponse validatePasswordLinkResp= new ValidatePasswordLinkResponse();
-		
-		
+		ValidatePasswordLinkResponse response= new ValidatePasswordLinkResponse();
+		long startTime = CommonUtil.getStartTime();
+		String request = transactionId+"transactionId";
+		String userName = profileDAO.getUserNameforTxn(transactionId);;
 		
 		try {
-			if(companyCode.equalsIgnoreCase("0271") && brandName.equalsIgnoreCase("GME")){
+			if(companyCode.equalsIgnoreCase("0271") && brandName.equalsIgnoreCase("GME") && !StringUtils.isEmpty(transactionId)){
 				if(profileDAO.validatePasswordLink(transactionId))
 				{
-			
-				validatePasswordLinkResp.setValid(true);
-				validatePasswordLinkResp.setResultCode(RESULT_CODE_SUCCESS);
-				validatePasswordLinkResp.setResultDescription(MSG_SUCCESS);
-				validatePasswordLinkResp.setMessageText("Link Valid");
+				response.setValid(true);
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setUserName(userName);
+				response.setMessageText("Link Valid");
+								
 				}
 				else
 				{
 				
-				validatePasswordLinkResp.setValid(false);
-				validatePasswordLinkResp.setResultCode(RESULT_CODE_SUCCESS);
-				validatePasswordLinkResp.setResultDescription(MSG_SUCCESS);
-				validatePasswordLinkResp.setMessageText("Link Expired");
+				response.setValid(false);
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setUserName(userName);
+				response.setMessageText("Link Expired");
 				
 				}
 				
 			}
 			else
 			{
-				validatePasswordLinkResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				validatePasswordLinkResp.setResultDescription("Invalid Company Code or Brand Name");
-				validatePasswordLinkResp.setMessageText("Invalid Paramenter");
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
+				response.setMessageText("Invalid Paramenter");
 			}
 			
 		} catch (Exception e) {
-			
-			validatePasswordLinkResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			validatePasswordLinkResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			//utilityloggerHelper.logTransaction("validateForgotPasswordLink", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+			logger.error("Exception is validateForgotPasswordLink"+e);
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			utilityloggerHelper.logTransaction("validateForgotPasswordLink", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+			if(logger.isDebugEnabled()){
+				logger.debug(XmlUtil.pojoToXML(request));
+				logger.debug(XmlUtil.pojoToXML(response));
+			}
 		}
-		return validatePasswordLinkResp;
+		return response;
 		
 	}
 

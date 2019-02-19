@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 public class ValidatePasswordLinkResponse extends GenericResponse{
 
 	boolean isValid;
+	
+	String userName;
 
 	public boolean isValid() {
 		return isValid;
@@ -16,6 +18,14 @@ public class ValidatePasswordLinkResponse extends GenericResponse{
 
 	public void setValid(boolean isValid) {
 		this.isValid = isValid;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	}
