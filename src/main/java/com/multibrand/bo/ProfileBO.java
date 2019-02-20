@@ -373,7 +373,6 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				    String emailID=userInfoResponse.getEmailID();
 				  
 				    String userUniqueID=userInfoResponse.getUserUniqueID();
-				  
 				    
 				    //Call to get billing address
 				    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
