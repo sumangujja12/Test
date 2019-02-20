@@ -136,6 +136,7 @@ public class ProfileBO extends BaseBO {
 
 		
 		Attributes attrs= null;
+		int update =0;
 		com.multibrand.vo.response.UpdatePasswordResponse updatePasswordResponse = new com.multibrand.vo.response.UpdatePasswordResponse();
 		long startTime = CommonUtil.getStartTime();
 		String request = "userId="+userId+",newPassword=##########"+",companyCode="+companyCode;
@@ -144,6 +145,13 @@ public class ProfileBO extends BaseBO {
 		
 			attrs = ldapHelper.modPasswordUserinfo(userId,DirContext.REPLACE_ATTRIBUTE,newPassword);
 			if(attrs!=null){
+				if(StringUtils.equalsIgnoreCase(companyCode, "0271")){
+					update = profileDAO.updateStatusFlag(userId);
+					if(update==0)
+						logger.error("Status Code='C'- duplicate transaction - profileDAO.updateStatusFlag call");
+					else
+						logger.info("Status Code changed to 'C'");
+				}
 				logger.info("::::::::::::::::Password updated successfully");
 				updatePasswordResponse.setResultCode(RESULT_CODE_SUCCESS);
 				updatePasswordResponse.setResultDescription(MSG_SUCCESS);
@@ -365,7 +373,6 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				    String emailID=userInfoResponse.getEmailID();
 				  
 				    String userUniqueID=userInfoResponse.getUserUniqueID();
-				    System.out.println("userUniqueID chakriiiiiiiiiii"+userUniqueID);
 				    
 				    //Call to get billing address
 				    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);

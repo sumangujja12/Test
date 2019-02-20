@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
@@ -121,11 +122,10 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 			String query = "SELECT to_char(expiration_date,'YYYY-MM-DD hh24:mi:ss') FROM gme_res_main.OL_EXTERNAL_REQUEST WHERE TRANSACTION_ID ='"+transactionId+"' and STATUS_FLAG='O'";
 			String expDate = (String)gmeResJdbcTemplate.queryForObject(query, String.class);
 			
-			
 			Date convertedExpDate = sdf.parse(expDate);
-						
 			String sysDate = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
 			Date convertedSysDate = sdf.parse(sysDate);
+			
 			if(convertedExpDate.before(convertedSysDate))
 			{
 				result = false;//expired
@@ -135,13 +135,14 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 			{
 				result = true;//valid
 			}
-						
+			}
+			catch(EmptyResultDataAccessException dae)
+			{
+				logger.error("Duplicate hit - Link Expired");	
 			}
 			catch(Exception e)
 			{
-	
 			logger.error("Inside DB call expection block"+e);
-			
 			}
 				
 		
@@ -165,5 +166,29 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 		}
 		return userName;
 	}
+	
+	@Override
+	public int updateStatusFlag(String userName) {
+		
+		int result=0;
+		try{
+			
+			String query =sqlMessage.getMessage(DBConstants.QUERY_GME_INSERT_PASSWORD_STATUS_CODE, null, null);
+			
+		/*	String query = "UPDATE gme_res_main.ol_external_request set gme_res_main.ol_external_request.STATUS_FLAG='C' where  STATUS_FLAG='O' and gme_res_main.ol_external_request.user_unique_id = ( select distinct gme_res_main.Ol_ACCOUNT.user_unique_id from gme_res_main.OL_EXTERNAL_REQUEST , gme_res_main.Ol_ACCOUNT "
+			+ " where gme_res_main.ol_external_request.user_unique_id = gme_res_main.Ol_ACCOUNT.user_unique_id and gme_res_main.Ol_ACCOUNT.USER_LOGIN_ID = ? and STATUS_FLAG='O')";*/
+			
+		
+			Object[] args = new Object[1];
+			args[0] = userName;
+			result = gmeResJdbcTemplate.update(query, args);
+								
+		}catch(Exception e)
+		{
+			logger.error("Inside DB call expection block -  updateStatusFlag"+e);
+		}
+		return result;
+	}
+	
 
 }
