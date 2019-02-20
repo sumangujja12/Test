@@ -189,7 +189,6 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 		}
 		return result;
 	}
-
 	
 
 }

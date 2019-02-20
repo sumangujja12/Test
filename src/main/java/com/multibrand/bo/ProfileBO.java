@@ -1,7 +1,10 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -271,21 +274,26 @@ public class ProfileBO extends BaseBO {
 		    String emailID=userInfoResponse.getEmailID();
 		    
 		    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
+		    
+		    boolean EMAIL_VERIFIED=true;
+	    	boolean LDAPEmailValidation = ((StringUtils.isNotEmpty(emailID))?true:false);
+	    	boolean billingZipCodeValidation = ((StringUtils.isNotEmpty(billingAddressResp.getStrZip()))?true:false);
 		  		  	    
-		    if((CommonUtil.trimZipCode(billingAddressResp.getStrZip())).equalsIgnoreCase(zip.trim())){
+		    if(billingZipCodeValidation&&((CommonUtil.trimZipCode(billingAddressResp.getStrZip())).equalsIgnoreCase(zip.trim()))){
 		    	response.setUserName(userName);
 		  	
 		    	logger.info("User Email id"+emailID);		
 		    
-		       if(!(emailID.equalsIgnoreCase(null)&&StringUtils.isEmpty(emailID))){
+		       if(LDAPEmailValidation&&EMAIL_VERIFIED){
 				HashMap<String, String> templateProperties = new HashMap<String, String>();
                templateProperties.put("USER_NAME", userName);
+               templateProperties.put("LOGIN_URL", envMessageReader.getMessage(GME_MYACCOUNT_LOGIN_URL));
                Boolean status = false;
                if(StringUtils.isEmpty(languageCode))
-               	languageCode="E";
+               	languageCode="EN";
                
            			if(languageCode.equalsIgnoreCase("ES")){
-		           		//status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_ES_US, templateProperties, companyCode);
+		           		status = EmailHelper.sendMail( emailID ,"", GME_USERNAME_ES_US, templateProperties, companyCode);
 		           		logger.info("Spanish Conf mail send for Password reset: " + status);
 							}else{
 
@@ -293,6 +301,11 @@ public class ProfileBO extends BaseBO {
 		               		status = EmailHelper.sendMail( emailID ,"", GME_USERNAME_EN_US, templateProperties, companyCode);
 								logger.info("English Conf mail send for Password reset: " + status);
 							}
+           			
+	                response.setResultCode(RESULT_CODE_SUCCESS);
+	                response.setResultDescription(MSG_SUCCESS);
+	                response.setMessageText("Email with Username sent to user");
+	                response.setUserName(userName);
              }
 			 else{
 				 logger.info("Email Address validation failed");
@@ -355,7 +368,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		String request = userIdOrAcNum+"userIdOrAcNum";
 		
 		
-		//getEnviromentProp
+		
 		
 		
 		long startTime = CommonUtil.getStartTime();
@@ -373,19 +386,20 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				    String emailID=userInfoResponse.getEmailID();
 				  
 				    String userUniqueID=userInfoResponse.getUserUniqueID();
-				    System.out.println("userUniqueID chakriiiiiiiiiii"+userUniqueID);
 				    
 				    //Call to get billing address
 				    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
 				    
 				        
-				    if(CommonUtil.trimZipCode(billingAddressResp.getStrZip()).equalsIgnoreCase(zip.trim())){
+				    if((CommonUtil.trimZipCode(billingAddressResp.getStrZip()).equalsIgnoreCase(zip.trim()))&&StringUtils.isNotEmpty(billingAddressResp.getStrZip())){
 				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId);
 				    
-				  	    boolean EMAIL_VERIFIED=true;
-				   	    	
+				  	    // Verification code comes here
+				    	boolean EMAIL_VERIFIED=true;
+				    	boolean LDAPEmailValidation = ((StringUtils.isNotEmpty(userInfoResponse.getEmailID()))?true:false);
+				    	boolean accountCallEmailValidation = ((StringUtils.isNotEmpty(getAccountDetailsResponse.getEmailID()))?true:false);
 				  
-					  	if((getAccountDetailsResponse.getEmailID().equalsIgnoreCase(emailID))&&EMAIL_VERIFIED){
+					  	if(EMAIL_VERIFIED&&LDAPEmailValidation&&accountCallEmailValidation&&(getAccountDetailsResponse.getEmailID().equalsIgnoreCase(emailID))){
 						String TransID = profileDAO.insertTransaction(userUniqueID, companyCode);
 						
 						String resetPasswordURL = envMessageReader.getMessage(GME_MYACCOUNT_PASSWORD_RESET_URL)+TransID;
@@ -393,10 +407,16 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 						
 						String nonZeroAccountNumber = CommonUtil.stripLeadingZeros(accountNumber);
 						
+						int year = Calendar.getInstance().get(Calendar.YEAR);
+						
+						String currentYear = String.valueOf(year);
+						
+						
 						HashMap<String, String> templateProperties = new HashMap<String, String>();
 		                templateProperties.put("ACCOUNT_NUMBER", nonZeroAccountNumber);
-		               templateProperties.put("LOGIN_URL", envMessageReader.getMessage(GME_MYACCOUNT_LOGIN_URL));
-		                
+		                //getEnviromentProp
+		                templateProperties.put("LOGIN_URL", envMessageReader.getMessage(GME_MYACCOUNT_LOGIN_URL));
+		                templateProperties.put("CURRENT_YEAR", currentYear);
 		                    Boolean status = false;
 		                    if(StringUtils.isEmpty(languageCode))
 		                    	languageCode="E";
@@ -404,7 +424,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		                	if(languageCode.equalsIgnoreCase("ES")){
 		                		resetPasswordURL = resetPasswordURL+"/ES";;
 		                		 templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
-		                		//status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_ES_US, templateProperties, companyCode);
+		                		status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_ES_US, templateProperties, companyCode);
 		                		logger.info("Spanish Conf mail send for Password reset: " + status);
 								}else{
  		
@@ -483,7 +503,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		String userName = profileDAO.getUserNameforTxn(transactionId);;
 		
 		try {
-			if(companyCode.equalsIgnoreCase("0271") && brandName.equalsIgnoreCase("GME") && !StringUtils.isEmpty(transactionId)){
+			if(companyCode.equalsIgnoreCase("0271") && !StringUtils.isEmpty(transactionId)){
 				if(profileDAO.validatePasswordLink(transactionId))
 				{
 				response.setValid(true);
