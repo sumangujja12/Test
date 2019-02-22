@@ -20,7 +20,7 @@ import com.multibrand.vo.response.GoogleProductSetResponse;
  *
  */
 @Component
-@Path("ecommerceResource")
+@Path("public/ecommerceResource")
 public class ECommerceResource extends BaseResource{
 
 	@Autowired
