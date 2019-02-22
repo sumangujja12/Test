@@ -68,6 +68,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
@@ -80,6 +81,7 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
@@ -4401,6 +4403,34 @@ public class OEBO extends OeBoHelper {
 	}
 	// End : Validate for Power Genius Online Affiliates by KB
 	
+	/**
+	 * START : OE | Sprint 46 | US15066 | Kdeshmu1
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
+public UpdateETFFlagToCRMResponse updateETFFlagToCRM(UpdateETFFlagToCRMRequest request, String sessionId) {
+		
+	UpdateETFFlagToCRMResponse response = new UpdateETFFlagToCRMResponse();
+			
+		if(StringUtils.isBlank(request.getAccount())&& StringUtils.isBlank(request.getPartner()))
+			{  //If Promo code is passed empty
+				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+				response.setResultDescription("contractAccountnumber and Partner ID may not be Empty");
+				return response;	
+			}
+			
+		try {
+			response = oeService.updateETFFlagToCRM(request);
+		} catch (Exception e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			logger.error("Exception in updateETFFlagToCRM: ", e);
+		}
+		logger.info("updateETFFlagToCRM : ResultCode : "+response.getResultCode());
+		return response;
+		
+		}
+	
 /**
  * Alternate Channel : Sprint 13 :US 11783 
  * @author KDeshmu1	
@@ -4519,6 +4549,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		return response;
 		
 		}
+
 
 
 }
