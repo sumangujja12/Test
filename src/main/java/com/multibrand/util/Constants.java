@@ -1075,6 +1075,7 @@ public interface Constants {
 	 public static final String GME_PASSWORD_CHANGE_EN_US="GME.PASSWORD.CHANGE.EN_US";
 	 public static final String GME_PASSWORD_CHANGE_ES_US="GME.PASSWORD.CHANGE.ES_US";
 	 public static final String GME_USERNAME_EN_US = "GME.USERNAME.EN_US";
+	 public static final String GME_USERNAME_ES_US = "GME.USERNAME.ES_US";
 	 
 	 public static final String GME_MYACCOUNT_PASSWORD_RESET_URL ="GME.MYACCOUNT.PASSWORD.RESET.URL";
 	 public static final String GME_MYACCOUNT_LOGIN_URL="GME.MYACCOUNT.LOGIN.URL";
