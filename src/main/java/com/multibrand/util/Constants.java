@@ -1057,6 +1057,15 @@ public interface Constants {
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
 
+	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
+	public static final String CONSTANT_S ="S";
+
+
+	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+	
+	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
+	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
 	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 
 	//Mobile Content API Data
@@ -1087,19 +1096,7 @@ public interface Constants {
 	 public static final String RESULT_CODE_SEVEN="7";
 	 public static final String RESULT_DESCRIPTION_INVALID_ZIP_CODE="Invalid Zip Code";
 
-
-	
-	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
-
-
-	public static final String CONSTANT_S ="S";
-
-
-	 
-	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
-	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
-	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
-	
+		
 	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
 
 	
@@ -1116,5 +1113,6 @@ public interface Constants {
 	 public static final String DAILY_HIGH_TEMP_DUMMY_DATA = "0";
 	 public static final String DAILY_LOW_TEMP_DUMMY_DATA = "0";
 	 public static final String DAIY_USAGE_DUMMY_DATA = "0:00";
-	 
+	
+	public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
 }

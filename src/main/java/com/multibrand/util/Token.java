@@ -49,6 +49,8 @@ public class Token {
 	private static final String ERROR_ACTION = "ER";
 	private static final String CONTENT_TYPE_HEADER_ACTION = "action";
 	private static final String CONTENT_TYPE_HEADER_DATA = "data";
+	private static final String SSN_DETOKEN_ACTION = "SD";
+	private static final String DRIVER_LICENCE_DETOKEN_ACTION = "PD";
 	
 	private static LoggerUtil logger = LoggerUtil.getInstance(Token.class.getName());
 
@@ -141,6 +143,10 @@ public class Token {
 			return connectTokenServer(SSN_ACTION, tobeTokenizedTxt);
 		case DRIVER_LICENCE_ACTION:
 			return connectTokenServer(DRIVER_LICENCE_ACTION, tobeTokenizedTxt);
+		case SSN_DETOKEN_ACTION:
+			return connectTokenServer(SSN_DETOKEN_ACTION, tobeTokenizedTxt);
+		case DRIVER_LICENCE_DETOKEN_ACTION:
+			return connectTokenServer(DRIVER_LICENCE_DETOKEN_ACTION, tobeTokenizedTxt);
 		default:
 			throw new RuntimeException("Invalid token action. Action Requested[" + tokenAction +"] To be tokenized text [" + tobeTokenizedTxt + "]");
 		} 
@@ -367,6 +373,24 @@ public class Token {
         
         //Get the thread safe CloseableHttpClient
         return builder.setSSLSocketFactory(sslsf).build();
+	}
+	
+	
+	
+	public static String getSSNDeTokenization(String ssnTokenNumber) {
+		return getTokenizeText(SSN_DETOKEN_ACTION, ssnTokenNumber);
+	}
+	
+	public static String getDriverLicenceDeTokenization(String dlTokenNumber) {
+		return getTokenizeText(DRIVER_LICENCE_DETOKEN_ACTION, dlTokenNumber);
+	}
+
+	public static String getSSNDetokenAction() {
+		return SSN_DETOKEN_ACTION;
+	}
+
+	public static String getDriverLicenceDetokenAction() {
+		return DRIVER_LICENCE_DETOKEN_ACTION;
 	}
 	
 	
