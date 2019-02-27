@@ -132,13 +132,5 @@ public class BaseBO implements Constants {
 	}
 	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019 
 
-	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019 
-	protected void logRequestAndResponse(Logger logger, String requestParams, Object responseObject){
-		if (logger.isDebugEnabled()) {
-			logger.debug(XmlUtil.pojoToXML(requestParams));
-			logger.debug(XmlUtil.pojoToXML(responseObject));
-		}
-	}
-	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019 
 
 }
