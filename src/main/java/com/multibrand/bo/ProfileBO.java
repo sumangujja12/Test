@@ -419,7 +419,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		                templateProperties.put("CURRENT_YEAR", currentYear);
 		                    Boolean status = false;
 		                    if(StringUtils.isEmpty(languageCode))
-		                    	languageCode="E";
+		                    	languageCode="EN";
 		                    
 		                	if(languageCode.equalsIgnoreCase("ES")){
 		                		resetPasswordURL = resetPasswordURL+"/ES";;

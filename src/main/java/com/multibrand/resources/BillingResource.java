@@ -69,6 +69,7 @@ import com.multibrand.vo.response.billingResponse.GetArResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
+import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
@@ -974,6 +975,27 @@ public class BillingResource {
 		response = Response.status(200).entity(mobileArResponse).build();
 		return response;
 	}
+	
+	/**
+	 * This API is responsible for returning account balance for GME mobile
+	 * @author Cuppala
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 */
+	@POST
+	@Path("getPaymentMethods")
+	@Consumes({  MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getPaymentMethods(@FormParam("contractAccountNumber") String contractAccountNumber , @FormParam("companyCode") String companyCode,
+			@FormParam("brandName") String brandName) {
+		Response response = null;
+		PaymentMethodsResponse paymentMethodsResponse = billingBO.getPaymentMethods(contractAccountNumber, companyCode,
+				httpRequest.getSession(true).getId(), brandName);
+		response = Response.status(200).entity(paymentMethodsResponse).build();
+		return response;
+	}
+	
 
 }	
 
