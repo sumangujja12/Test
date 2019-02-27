@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,14 +93,21 @@ import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
+import com.multibrand.vo.response.billingResponse.PayAccount;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
+import com.multibrand.vo.response.billingResponse.PaymentMethodB;
+import com.multibrand.vo.response.billingResponse.PaymentMethodCC;
+import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
+
 import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
+
+import oracle.net.aso.e;
 
 /**
  * This BO class is to handle all the Billing Related API calls.
@@ -2490,5 +2496,119 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 		}
 		return recentPendingPaymentDate;
+	}
+	
+	/**
+	 * This API is responsible for returning account balance for GME mobile
+	 * @author Cuppala
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 */
+	public PaymentMethodsResponse getPaymentMethods(String contractAccountNumber, String companyCode, String sessionId,
+			String brandName) {
+		logger.info("START-[BillingBO-getPaymentMethods]");
+		PaymentMethodsResponse response = new PaymentMethodsResponse();
+		GetAccountDetailsResponse accountDetailsResponse = new GetAccountDetailsResponse();
+		
+		try {
+			
+			if(StringUtils.isNotEmpty(contractAccountNumber.trim())&&StringUtils.isNotEmpty(companyCode.trim())&&StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)){
+				
+				contractAccountNumber=CommonUtil.paddedCa(contractAccountNumber.trim());
+					
+			
+			
+			accountDetailsResponse = getAccountDetails(contractAccountNumber, companyCode, brandName, sessionId);
+			
+			if(accountDetailsResponse!=null && (accountDetailsResponse.getResultCode().equalsIgnoreCase("0"))){
+			String NCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
+			String NCCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
+			
+ 
+			List<Object> paymentMethodsList = new ArrayList<Object>();
+			PayAccountInfoResponse payAccountInfoResp = new PayAccountInfoResponse();
+			payAccountInfoResp = getPayAccounts(contractAccountNumber, companyCode, brandName, sessionId);
+			
+			if(payAccountInfoResp!=null && (payAccountInfoResp.getResultCode().equalsIgnoreCase("0"))
+					&&(payAccountInfoResp.getPayAccountList().size()>0)){
+				List<PayAccount> responselist = payAccountInfoResp.getPayAccountList();	
+			PaymentMethodB paymentMethodB = new PaymentMethodB();
+			PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
+			
+			int i=0;
+			int j=0;
+			
+			//To get Credit card info
+			while(responselist.size()>i){
+			if((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))
+			{	paymentMethodCC.setIsAllowed(NCCAFlag);
+				paymentMethodCC.setIsRegisteredWithAutopay(responselist.get(i).getAutoPay());
+				paymentMethodCC.setNameOnAccount(responselist.get(i).getNameOnAccount());
+				paymentMethodCC.setCreditCardExpYear(responselist.get(i).getCcExpYear());
+				paymentMethodCC.setCreditCardExpMonth(responselist.get(i).getCcExpMonth());
+				paymentMethodCC.setCreditCardType(responselist.get(i).getCcType());
+				paymentMethodCC.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
+				paymentMethodCC.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
+				paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+				paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
+				paymentMethodsList.add(paymentMethodCC);
+				
+				response.setPaymentMethodsList(paymentMethodsList);
+			}
+			i++;
+			}
+			
+			//To get bank account info
+			while(responselist.size()>j){
+				
+			if((responselist.get(j).getOnlinePayAccountType()).equalsIgnoreCase("B")){
+				paymentMethodB.setIsAllowed(NCAFlag);
+				paymentMethodB.setIsRegisteredWithAutopay(responselist.get(j).getAutoPay());
+				paymentMethodB.setNameOnAccount(responselist.get(j).getNameOnAccount());
+				paymentMethodB.setRoutingNumber(responselist.get(j).getRoutingNumber());
+				paymentMethodB.setPaymentMethodType(responselist.get(j).getOnlinePayAccountType());
+				paymentMethodB.setPaymentMethodToken(responselist.get(j).getPayAccountToken());
+				paymentMethodB.setPaymentMethodNickName(responselist.get(j).getPayAccountNickName());
+				paymentMethodB.setZipCode(responselist.get(j).getZipCode());
+				paymentMethodsList.add(paymentMethodB);
+				
+				response.setPaymentMethodsList(paymentMethodsList);
+			}
+			j++;
+			}
+			response.setResultCode(RESULT_CODE_SUCCESS);
+			response.setResultDescription(MSG_SUCCESS);
+			response.setMessageCode("Successfully retrieved all Menthods of Payments");
+						
+			}else
+				{
+							
+							response.setResultCode(RESULT_CODE_NO_DATA);
+							response.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+							response.setMessageCode("No Data was retrieved from getPayAccounts call");
+				}
+				}
+				else
+				{
+							response.setResultCode(RESULT_CODE_CCS_ERROR);
+							response.setResultDescription(accountDetailsResponse.getErrorCode());
+							response.setMessageCode("Could not find Account Details");
+				}
+			}else
+				{
+					response.setResultCode(RESULT_CODE_FIVE);
+					response.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
+					response.setMessageCode("Invalid Input Parameters - Please check entered A/C number and Company Code");
+				
+				}
+			
+		} catch (Exception e) {
+			logger.error(" Error in getPaymentMethods call "+e.getMessage());
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		logger.info("END-[BillingBO-getPaymentMethods]");
+		return response;
 	}
 }
