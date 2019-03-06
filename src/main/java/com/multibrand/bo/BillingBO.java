@@ -2489,7 +2489,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				}
 				// sort pending payments by date
 				if (!pendingPayments.isEmpty()) {
-					pendingPayments = sortByPaymentDateDesc(pendingPayments);
+					pendingPayments = sortByPaymentDateAsc(pendingPayments);
 					recentPendingPaymentDate = pendingPayments.get(0).getPaymentDate();
 				}
 			}
