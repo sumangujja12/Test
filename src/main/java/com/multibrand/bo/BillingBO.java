@@ -2115,12 +2115,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 		} else {
 			// checking for invalid BPID
-			if(StringUtils.isNotEmpty(bankCCInfoResponse.getEReturnCode()) && bankCCInfoResponse.getEReturnCode().equalsIgnoreCase(CCS_ERETURN_CODE_INVALID_BPID)){
+			if(bankCCInfoResponse.getEReturnCode()!=null && StringUtils.isNotEmpty(bankCCInfoResponse.getEReturnCode()) && bankCCInfoResponse.getEReturnCode().equalsIgnoreCase(CCS_ERETURN_CODE_INVALID_BPID)){
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
 				response.setResultDescription(CCS_INVALID_BPID_RESULT_DESCRIPTION);
 			}else{
 			    // copy the data from NRGWS Layer to REST Response
-				logger.info(bankCCInfoResponse.getAutoPayDetailsList().length);
+			
 				JavaBeanUtil.copy(bankCCInfoResponse,response);
 				response.setResultCode(SUCCESS_CODE);
 			    }
@@ -2489,7 +2489,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				}
 				// sort pending payments by date
 				if (!pendingPayments.isEmpty()) {
-					pendingPayments = sortByPaymentDateDesc(pendingPayments);
+					pendingPayments = sortByPaymentDateAsc(pendingPayments);
 					recentPendingPaymentDate = pendingPayments.get(0).getPaymentDate();
 				}
 			}
@@ -2510,7 +2510,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("START-[BillingBO-getPaymentMethods]");
 		PaymentMethodsResponse response = new PaymentMethodsResponse();
 		GetAccountDetailsResponse accountDetailsResponse = new GetAccountDetailsResponse();
-		
+		String autoPayNumber ="empty";
+		AutoPayDetails[] adr =null;
 		try {
 			
 			if(StringUtils.isNotEmpty(contractAccountNumber.trim())&&StringUtils.isNotEmpty(companyCode.trim())&&StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)){
@@ -2525,58 +2526,80 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			String NCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
 			String NCCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
 			
+			AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
+			AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
+			autoPayRequest.setBusinessPartnerID(accountDetailsResponse.getContractAccountDO().getStrBPNumber());
+			autoPayRequest.setCompanyCode(companyCode);
+			autoPayRequest.setBrandName(brandName);
+				try{
+				autoPayResponse = getAutopayInfo(autoPayRequest);
+				}
+				catch(Exception e)
+				{
+					logger.error("Error in getAutopayInfo");
+				}
  
+				if(autoPayResponse!=null&&autoPayResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE)&&autoPayResponse.getAutoPayDetailsList().length>0)
+				{
+					adr =autoPayResponse.getAutoPayDetailsList();
+				}
 			List<Object> paymentMethodsList = new ArrayList<Object>();
 			PayAccountInfoResponse payAccountInfoResp = new PayAccountInfoResponse();
 			payAccountInfoResp = getPayAccounts(contractAccountNumber, companyCode, brandName, sessionId);
 			
 			if(payAccountInfoResp!=null && (payAccountInfoResp.getResultCode().equalsIgnoreCase("0"))
 					&&(payAccountInfoResp.getPayAccountList().size()>0)){
-				List<PayAccount> responselist = payAccountInfoResp.getPayAccountList();	
-			PaymentMethodB paymentMethodB = new PaymentMethodB();
-			PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
-			
-			int i=0;
-			int j=0;
-			
+			List<PayAccount> responselist = payAccountInfoResp.getPayAccountList();	
+					
+			if(adr!=null&&adr.length>0){
+				if(!(adr[0].getCardNumber().toString().isEmpty()))
+					autoPayNumber = adr[0].getCardNumber().toString();
+				if(!(adr[0].getBankAccountNumber().toString().isEmpty()))
+					autoPayNumber = adr[0].getBankAccountNumber().toString();
+	
+			}else
+				autoPayNumber="NoAutoPay";
 			//To get Credit card info
-			while(responselist.size()>i){
-			if((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))
-			{	paymentMethodCC.setIsAllowed(NCCAFlag);
-				paymentMethodCC.setIsRegisteredWithAutopay(responselist.get(i).getAutoPay());
-				paymentMethodCC.setNameOnAccount(responselist.get(i).getNameOnAccount());
-				paymentMethodCC.setCreditCardExpYear(responselist.get(i).getCcExpYear());
-				paymentMethodCC.setCreditCardExpMonth(responselist.get(i).getCcExpMonth());
-				paymentMethodCC.setCreditCardType(responselist.get(i).getCcType());
-				paymentMethodCC.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
-				paymentMethodCC.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
-				paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
-				paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
-				paymentMethodsList.add(paymentMethodCC);
+			for(int i=0;i<payAccountInfoResp.getPayAccountList().size();){
+				PaymentMethodB paymentMethodB = new PaymentMethodB();
+				PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
 				
-				response.setPaymentMethodsList(paymentMethodsList);
-			}
-			i++;
-			}
-			
-			//To get bank account info
-			while(responselist.size()>j){
 				
-			if((responselist.get(j).getOnlinePayAccountType()).equalsIgnoreCase("B")){
-				paymentMethodB.setIsAllowed(NCAFlag);
-				paymentMethodB.setIsRegisteredWithAutopay(responselist.get(j).getAutoPay());
-				paymentMethodB.setNameOnAccount(responselist.get(j).getNameOnAccount());
-				paymentMethodB.setRoutingNumber(responselist.get(j).getRoutingNumber());
-				paymentMethodB.setPaymentMethodType(responselist.get(j).getOnlinePayAccountType());
-				paymentMethodB.setPaymentMethodToken(responselist.get(j).getPayAccountToken());
-				paymentMethodB.setPaymentMethodNickName(responselist.get(j).getPayAccountNickName());
-				paymentMethodB.setZipCode(responselist.get(j).getZipCode());
-				paymentMethodsList.add(paymentMethodB);
 				
-				response.setPaymentMethodsList(paymentMethodsList);
+				if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase("Y")))
+				{	
+					paymentMethodCC.setIsAllowed(NCCAFlag);
+					paymentMethodCC.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?"true":"false"));
+					paymentMethodCC.setNameOnAccount(responselist.get(i).getNameOnAccount());
+					paymentMethodCC.setCreditCardExpYear(responselist.get(i).getCcExpYear());
+					paymentMethodCC.setCreditCardExpMonth(responselist.get(i).getCcExpMonth());
+					paymentMethodCC.setCreditCardType(responselist.get(i).getCcType());
+					paymentMethodCC.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
+					paymentMethodCC.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
+					paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
+					paymentMethodsList.add(paymentMethodCC);
+					i++;
+				}
+				else if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("B"))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase("Y"))){
+					
+					paymentMethodB.setIsAllowed(NCAFlag);
+					paymentMethodB.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?"true":"false"));
+					paymentMethodB.setNameOnAccount(responselist.get(i).getNameOnAccount());
+					paymentMethodB.setRoutingNumber(responselist.get(i).getRoutingNumber());
+					paymentMethodB.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
+					paymentMethodB.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
+					paymentMethodB.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodB.setZipCode(responselist.get(i).getZipCode());
+					paymentMethodsList.add(paymentMethodB);
+					i++;
+												
+				}
+				else{
+					i++;
+					}
 			}
-			j++;
-			}
+			response.setPaymentMethodsList(paymentMethodsList);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(MSG_SUCCESS);
 			response.setMessageCode("Successfully retrieved all Menthods of Payments");
