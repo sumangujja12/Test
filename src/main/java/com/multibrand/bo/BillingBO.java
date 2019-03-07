@@ -2497,6 +2497,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return recentPendingPaymentDate;
 	}
+
 	
 	/**
 	 * This API is responsible for returning account balance for GME mobile
@@ -2532,51 +2533,40 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			
 			if(payAccountInfoResp!=null && (payAccountInfoResp.getResultCode().equalsIgnoreCase("0"))
 					&&(payAccountInfoResp.getPayAccountList().size()>0)){
-				List<PayAccount> responselist = payAccountInfoResp.getPayAccountList();	
-			PaymentMethodB paymentMethodB = new PaymentMethodB();
-			PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
-			
-			int i=0;
-			int j=0;
-			
+			List<PayAccount> responselist = payAccountInfoResp.getPayAccountList();	
+					
 			//To get Credit card info
-			while(responselist.size()>i){
-			if((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))
-			{	paymentMethodCC.setIsAllowed(NCCAFlag);
-				paymentMethodCC.setIsRegisteredWithAutopay(responselist.get(i).getAutoPay());
-				paymentMethodCC.setNameOnAccount(responselist.get(i).getNameOnAccount());
-				paymentMethodCC.setCreditCardExpYear(responselist.get(i).getCcExpYear());
-				paymentMethodCC.setCreditCardExpMonth(responselist.get(i).getCcExpMonth());
-				paymentMethodCC.setCreditCardType(responselist.get(i).getCcType());
-				paymentMethodCC.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
-				paymentMethodCC.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
-				paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
-				paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
-				paymentMethodsList.add(paymentMethodCC);
-				
-				response.setPaymentMethodsList(paymentMethodsList);
+			for(int i=0;i<payAccountInfoResp.getPayAccountList().size();i++){
+				PaymentMethodB paymentMethodB = new PaymentMethodB();
+				PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
+				if((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))
+				{	
+					paymentMethodCC.setIsAllowed(NCCAFlag);
+					paymentMethodCC.setIsRegisteredWithAutopay(responselist.get(i).getAutoPay());
+					paymentMethodCC.setNameOnAccount(responselist.get(i).getNameOnAccount());
+					paymentMethodCC.setCreditCardExpYear(responselist.get(i).getCcExpYear());
+					paymentMethodCC.setCreditCardExpMonth(responselist.get(i).getCcExpMonth());
+					paymentMethodCC.setCreditCardType(responselist.get(i).getCcType());
+					paymentMethodCC.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
+					paymentMethodCC.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
+					paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
+					paymentMethodsList.add(i,paymentMethodCC);
+				}else{
+					
+					paymentMethodB.setIsAllowed(NCAFlag);
+					paymentMethodB.setIsRegisteredWithAutopay(responselist.get(i).getAutoPay());
+					paymentMethodB.setNameOnAccount(responselist.get(i).getNameOnAccount());
+					paymentMethodB.setRoutingNumber(responselist.get(i).getRoutingNumber());
+					paymentMethodB.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
+					paymentMethodB.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
+					paymentMethodB.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodB.setZipCode(responselist.get(i).getZipCode());
+					paymentMethodsList.add(i,paymentMethodB);
+												
+				}
 			}
-			i++;
-			}
-			
-			//To get bank account info
-			while(responselist.size()>j){
-				
-			if((responselist.get(j).getOnlinePayAccountType()).equalsIgnoreCase("B")){
-				paymentMethodB.setIsAllowed(NCAFlag);
-				paymentMethodB.setIsRegisteredWithAutopay(responselist.get(j).getAutoPay());
-				paymentMethodB.setNameOnAccount(responselist.get(j).getNameOnAccount());
-				paymentMethodB.setRoutingNumber(responselist.get(j).getRoutingNumber());
-				paymentMethodB.setPaymentMethodType(responselist.get(j).getOnlinePayAccountType());
-				paymentMethodB.setPaymentMethodToken(responselist.get(j).getPayAccountToken());
-				paymentMethodB.setPaymentMethodNickName(responselist.get(j).getPayAccountNickName());
-				paymentMethodB.setZipCode(responselist.get(j).getZipCode());
-				paymentMethodsList.add(paymentMethodB);
-				
-				response.setPaymentMethodsList(paymentMethodsList);
-			}
-			j++;
-			}
+			response.setPaymentMethodsList(paymentMethodsList);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(MSG_SUCCESS);
 			response.setMessageCode("Successfully retrieved all Menthods of Payments");
@@ -2611,4 +2601,5 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-getPaymentMethods]");
 		return response;
 	}
+
 }
