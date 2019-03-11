@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.AuthenticationBO;
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AuthenticationResponse;
@@ -50,6 +51,9 @@ public class AuthenticationResource implements Constants  {
 	@Autowired 
 	AuthenticationBO authenticationBO;
 	
+	@Autowired
+	ErrorContentHelper errorContentHelper;
+	
 	@Context 
 	private HttpServletRequest httpRequest;
 	
@@ -72,6 +76,11 @@ public class AuthenticationResource implements Constants  {
 		
 		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
 		
+		// Added for GME Mobile
+		loginSuccessCallResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(loginSuccessCallResponse.getResultDisplayCode()!=null)
+			loginSuccessCallResponse.setResultDisplayText(errorContentHelper.getErrorMessage(loginSuccessCallResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(loginSuccessCallResponse).build();
 		logger.debug("Exiting loginSuccessCall of AuthenticationResource");
 		return response;
@@ -90,6 +99,12 @@ public class AuthenticationResource implements Constants  {
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
 		Response response = null;
 		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(userId,hh, request);
+		
+		// Added for GME Mobile
+		loginFailureCallResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(loginFailureCallResponse.getResultDisplayCode()!=null)
+			loginFailureCallResponse.setResultDisplayText(errorContentHelper.getErrorMessage(loginFailureCallResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
 		return response;
@@ -107,12 +122,23 @@ public class AuthenticationResource implements Constants  {
 			SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss SSS");
 			String refreshVal = CommonUtil.get(Constants.REFRESH_TOKEN_LENGTH);
 			authResponse.setRefreshVal(refreshVal);
+			// Added for GME Mobile
+			authResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+			if(authResponse.getResultDisplayCode()!=null)
+				authResponse.setResultDisplayText(errorContentHelper.getErrorMessage(authResponse.getResultDisplayCode()));
+			
+			
 			logger.debug("User Session Extended on [" + sdf.format(now.getTime()) + "]");
 			
 		} catch (Exception e) {
 			logger.debug("Error getting while refreshing authentication token... " +e);
 			authResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
 			authResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
+			
+			// Added for GME Mobile
+			authResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+			if(authResponse.getResultDisplayCode()!=null)
+				authResponse.setResultDisplayText(errorContentHelper.getErrorMessage(authResponse.getResultDisplayCode()));
 		}
 		Response response = Response.status(200).entity(authResponse).build();
 		return response;

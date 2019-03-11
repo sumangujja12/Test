@@ -1,5 +1,7 @@
 package com.multibrand.vo.response.billingResponse;
 
+import java.sql.Date;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
@@ -12,6 +14,9 @@ public class PaymentMethodB {
 	private String paymentMethodType;
 	private String paymentMethodToken;
 	private String paymentMethodNickName;
+	private String activationDate;
+	private String verifyCard;
+	private String onlinePayAccountId;
 	private String zipCode;
 	
 	public String getIsAllowed() {
@@ -61,5 +66,29 @@ public class PaymentMethodB {
 	}
 	public void setRoutingNumber(String routingNumber) {
 		this.routingNumber = routingNumber;
+	}
+	public String getActivationDate() {
+		return activationDate;
+	}
+	public void setActivationDate(String activationDate) {
+		this.activationDate = activationDate;
+	}
+	public String getVerifyCard() {
+		return verifyCard;
+	}
+	public void setVerifyCard(String verifyCard) {
+		this.verifyCard = verifyCard;
+	}
+	/**
+	 * @return the onlinePayAccountId
+	 */
+	public String getOnlinePayAccountId() {
+		return onlinePayAccountId;
+	}
+	/**
+	 * @param onlinePayAccountId the onlinePayAccountId to set
+	 */
+	public void setOnlinePayAccountId(String onlinePayAccountId) {
+		this.onlinePayAccountId = onlinePayAccountId;
 	}
 }

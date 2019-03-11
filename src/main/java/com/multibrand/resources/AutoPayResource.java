@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.AutoPayBO;
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.response.AutoPayBankResponse;
 import com.multibrand.vo.response.AutoPayCCResponse;
@@ -33,7 +34,8 @@ public class AutoPayResource {
 	@Context 
 	private HttpServletRequest httpRequest;
 
-
+	@Autowired
+	ErrorContentHelper errorContentHelper;
 	
 	@Autowired
 	private AutoPayBO autoPayBO;
@@ -92,7 +94,13 @@ public class AutoPayResource {
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
 		Response response = null;
 		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(accountNumber, bankAccountNumber, bankRountingNumber, companyCode, accountName, accountChkDigit, locale, email, httpRequest.getSession(true).getId(),emailTypeId,brandName);
-		response = Response.status(200).entity(autoPayBankRep).build();
+		
+		// Added for GME Mobile
+		autoPayBankRep.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(autoPayBankRep.getResultDisplayCode()!=null)
+			autoPayBankRep.setResultDisplayText(errorContentHelper.getErrorMessage(autoPayBankRep.getResultDisplayCode()));
+		
+				response = Response.status(200).entity(autoPayBankRep).build();
 		logger.debug("End AutoPayResource.submitBankAutoPay :: END");
 		
 		return response;
@@ -152,6 +160,11 @@ public class AutoPayResource {
 		
 		AutoPayCCResponse autoPayCCResp = autoPayBO.submitCCAutoPay(authType,accountName, accountNumber, bpid, ccNumber, expirationDate, billingZip, companyCode, email, httpRequest.getSession(true).getId(), languageCode,emailTypeId,brandName);
 		
+		// Added for GME Mobile
+		autoPayCCResp.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(autoPayCCResp.getResultDisplayCode()!=null)
+			autoPayCCResp.setResultDisplayText(errorContentHelper.getErrorMessage(autoPayCCResp.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(autoPayCCResp).build();
 		logger.debug("End AutoPayResource.submitCCAutoPay :: END");
 		return response;
@@ -174,6 +187,11 @@ public class AutoPayResource {
 		Response response = null;
 		
 		DeEnrollResponse deEnrollResponse = autoPayBO.deEnroll(accountNumber, companyCode, httpRequest.getSession(true).getId(), email, languageCode,brandName);
+		
+		// Added for GME Mobile
+		deEnrollResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(deEnrollResponse.getResultDisplayCode()!=null)
+			deEnrollResponse.setResultDisplayText(errorContentHelper.getErrorMessage(deEnrollResponse.getResultDisplayCode()));
 		
 		response = Response.status(200).entity(deEnrollResponse).build();
 		logger.debug("End AutoPayResource.deEnroll :: END");
