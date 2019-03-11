@@ -92,6 +92,8 @@ public class AutoPayResource {
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
 		Response response = null;
 		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(accountNumber, bankAccountNumber, bankRountingNumber, companyCode, accountName, accountChkDigit, locale, email, httpRequest.getSession(true).getId(),emailTypeId,brandName);
+		// Added for GME Mobile
+		autoPayBankRep.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(autoPayBankRep).build();
 		logger.debug("End AutoPayResource.submitBankAutoPay :: END");
 		
@@ -151,7 +153,8 @@ public class AutoPayResource {
 		Response response = null;
 		
 		AutoPayCCResponse autoPayCCResp = autoPayBO.submitCCAutoPay(authType,accountName, accountNumber, bpid, ccNumber, expirationDate, billingZip, companyCode, email, httpRequest.getSession(true).getId(), languageCode,emailTypeId,brandName);
-		
+		// Added for GME Mobile
+		autoPayCCResp.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(autoPayCCResp).build();
 		logger.debug("End AutoPayResource.submitCCAutoPay :: END");
 		return response;
@@ -174,7 +177,8 @@ public class AutoPayResource {
 		Response response = null;
 		
 		DeEnrollResponse deEnrollResponse = autoPayBO.deEnroll(accountNumber, companyCode, httpRequest.getSession(true).getId(), email, languageCode,brandName);
-		
+		// Added for GME Mobile
+		deEnrollResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(deEnrollResponse).build();
 		logger.debug("End AutoPayResource.deEnroll :: END");
 		return response;

@@ -107,6 +107,8 @@ import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 
+import oracle.net.aso.e;
+
 
 /**
  * This BO class is to handle all the Billing Related API calls.
@@ -2496,6 +2498,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return recentPendingPaymentDate;
 	}
+
 	
 	/**
 	 * This API is responsible for returning account balance for GME mobile
@@ -2559,7 +2562,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}else
 				autoPayNumber="NoAutoPay";
 			
-			DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			DateFormat df = new SimpleDateFormat(DT_FMT_REQUEST);
 			//To get Credit card info
 			for(int i=0;i<payAccountInfoResp.getPayAccountList().size();){
 				PaymentMethodB paymentMethodB = new PaymentMethodB();
@@ -2578,6 +2581,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
 					paymentMethodCC.setActivationDate((responselist.get(i).getActivationDate()!=null?(df.format(responselist.get(i).getActivationDate())):null));
 					paymentMethodCC.setVerifyCard(responselist.get(i).getVerifyCard());
+					paymentMethodCC.setOnlinePayAccountId(responselist.get(i).getOnlinePayAccountId());
 					paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
 					paymentMethodsList.add(paymentMethodCC);
 					i++;
@@ -2593,6 +2597,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					paymentMethodB.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
 					paymentMethodB.setActivationDate((responselist.get(i).getActivationDate()!=null?(df.format(responselist.get(i).getActivationDate())):null));
 					paymentMethodB.setVerifyCard(responselist.get(i).getVerifyCard());
+					paymentMethodB.setOnlinePayAccountId(responselist.get(i).getOnlinePayAccountId());
 					paymentMethodB.setZipCode(responselist.get(i).getZipCode());
 					paymentMethodsList.add(paymentMethodB);
 					i++;

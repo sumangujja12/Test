@@ -155,6 +155,8 @@ public class BillingResource {
 		logger.info(" START ******* getAccountDetails API**********");
 		Response response = null;
 		GetAccountDetailsResponse getAccountDetailsResp = billingBO.getAccountDetails(accountNumber, companyCode,brandName, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		getAccountDetailsResp.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(getAccountDetailsResp).build();
 		
 		logger.info("END of the getAccountDetails API*************");
@@ -197,6 +199,8 @@ public class BillingResource {
 		
 		Response response = null;
 		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = billingBO.updatePaperFreeBilling(accountNumber,flag,companyCode, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		updatePaperFreeBillingResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(updatePaperFreeBillingResponse).build();
 		return response;
 		
@@ -236,6 +240,8 @@ public class BillingResource {
 		PayByBankResponse payByBankResp = billingBO.submitBankPayment(accountNumber, bpid, bankAccountNumber,bankRoutingNumber, paymentAmount, paymentDate, companyCode, 
 				accountName, accountChkDigit, locale, email, httpRequest.getSession(true).getId(), brandName, emailTypeId);
 		
+		// Added for GME Mobile
+		payByBankResp.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(payByBankResp).build();
 		logger.debug("END BillingResource.submitBankPayment :: END");
 		return response;
@@ -290,7 +296,8 @@ public class BillingResource {
 		PayByCCResponse payByCCResp = billingBO.submitCCPayment(authType, accountNumber, bpid, ccNumber, cvvNumber, expirationDate, billingZip, paymentAmount, accountName, 
 				accountChkDigit, locale, email, companyCode, httpRequest.getSession(true).getId(), paymentDate, brandName, emailTypeId);
 		
-		
+		// Added for GME Mobile
+		payByCCResp.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(payByCCResp).build();
 				
 		logger.debug("END BillingResource.submitCCPayment :: END");
@@ -320,6 +327,8 @@ public class BillingResource {
 
 		ProjectedBillResponseList projectedResp = billingBO.getProjectedBill(esiId,
 				accountNumber, companyCode, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		projectedResp.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(projectedResp).build();
 
 		logger.debug("Start BillingResource.getProjectedeBill :: END");
@@ -412,8 +421,9 @@ public class BillingResource {
 		
 		CancelPaymentResponse cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode, paymentId,brandName,httpRequest.getSession(true).getId());
 		
+		// Added for GME Mobile
+		cancelPaymentResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(cancelPaymentResponse).build();
-		
 		
 		logger.debug("END BillingResource.doCancelPayment :: END");
 		return response;
@@ -625,6 +635,8 @@ public class BillingResource {
 						companyCode,
 						brandName,
 						httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		scheduleOTCCPaymentResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(scheduleOTCCPaymentResponse).build();
 				
 		return response;
@@ -680,6 +692,8 @@ public class BillingResource {
 		Response response = null;
 		
 		PayAccountInfoResponse payAccountResponse = billingBO.getPayAccounts(contractAccountNumber, companyCode, brandName, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		payAccountResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(payAccountResponse).build();
 				
 		return response;
@@ -709,6 +723,8 @@ public class BillingResource {
 		Response response = null;		
 		
 		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.updatePayAccount(request, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		storeUpdatePayAccountResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(storeUpdatePayAccountResponse).build();
 				
 		return response;
@@ -801,6 +817,9 @@ public class BillingResource {
 		
 		Response response = null;
 		AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = billingBO.ambeligibilityCheck(ambEligRequest, httpRequest.getSession(true).getId());
+		
+		// Added for GME Mobile
+		ambEligibiltyCheckResponseVO.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(ambEligibiltyCheckResponseVO).build();
 			
 	    return response;
@@ -838,6 +857,8 @@ public class BillingResource {
 	public Response getAutoPayInfo(AutoPayInfoRequest request){
 		Response response=null;
 		AutoPayInfoResponse autoPayInfoRes = billingBO.getAutopayInfo(request);
+		// Added for GME Mobile
+		autoPayInfoRes.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response= Response.status(200).entity(autoPayInfoRes).build();
 		return response;
 	}
@@ -972,6 +993,8 @@ public class BillingResource {
 		Response response = null;
 		ArMobileGMEResponse mobileArResponse = billingBO.getBalanceForGMEMobile(accountNumber, bpNumber, companyCode,
 				httpRequest.getSession(true).getId(), brandName);
+		// Added for GME Mobile
+		mobileArResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(mobileArResponse).build();
 		return response;
 	}
@@ -992,6 +1015,8 @@ public class BillingResource {
 		Response response = null;
 		PaymentMethodsResponse paymentMethodsResponse = billingBO.getPaymentMethods(contractAccountNumber, companyCode,
 				httpRequest.getSession(true).getId(), brandName);
+		// Added for GME Mobile
+		paymentMethodsResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(paymentMethodsResponse).build();
 		return response;
 	}

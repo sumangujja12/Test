@@ -15,7 +15,8 @@ public class PaymentMethodCC {
 	private String paymentMethodToken;
 	private String paymentMethodNickName;
 	private String activationDate;
-	private String verifyCard; 
+	private String verifyCard;
+	private String onlinePayAccountId; 
 	private String zipCode;
 	
 	public String getIsAllowed() {
@@ -89,5 +90,17 @@ public class PaymentMethodCC {
 	}
 	public void setActivationDate(String activationDate) {
 		this.activationDate = activationDate;
+	}
+	/**
+	 * @return the onlinePayAccountId
+	 */
+	public String getOnlinePayAccountId() {
+		return onlinePayAccountId;
+	}
+	/**
+	 * @param onlinePayAccountId the onlinePayAccountId to set
+	 */
+	public void setOnlinePayAccountId(String onlinePayAccountId) {
+		this.onlinePayAccountId = onlinePayAccountId;
 	}
 }

@@ -125,7 +125,8 @@ public class PreferencesResource {
 		GetContactInfoResponse contactInfoResp = preferenceBO
 				.getContactInformation(request,
 						httpRequest.getSession(true).getId());
-
+		// Added for GME Mobile
+		contactInfoResp.setResultDisplayText("getContactInfo");
 		response = Response.status(200).entity(contactInfoResp).build();
 		return response;
 	}

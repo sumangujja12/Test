@@ -96,6 +96,8 @@ public class Registration {
 		logger.info("START-[Registration-createUser]");
 		GenericResponse responseVo = registrationBO.createUser(accountNumber,
 				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit);
+		// Added for GME Mobile
+		responseVo.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(responseVo).build();
 		logger.info("END-[Registration-createUser]");
 		return response;
@@ -138,7 +140,8 @@ public class Registration {
 		String sessionId = httpRequest.getSession(true).getId();
 		validateAccountForMobileResponse= registrationBO.validateAccountForMobile(accountNumber,
 				lastName, userName, companyCode,brandName,sessionId);
-		
+		// Added for GME Mobile
+		validateAccountForMobileResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(validateAccountForMobileResponse).build();
 		logger.info("END-[Registration-validateAccountForMobile]");
 		return response;

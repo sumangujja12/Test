@@ -81,6 +81,8 @@ public class HistoryResource
 		GenericResponse usageResponse = historyBO
 					.getUsage(accountNumber, contractId, esid,zoneId,curDtInd,curDayInd,dyHrInd,
 							  httpRequest.getSession(true).getId(),companyCode);
+		// Added for GME Mobile
+		usageResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(usageResponse).build();
 		logger.info("END-[HistoryResourse-getUsage]");
 		logger.debug("Exiting getUsage in History Resource");
@@ -172,6 +174,8 @@ public class HistoryResource
 		logger.info("START-[getBillPaymentHistory- ]");
 		BillPaymentHistoryResponse billPaymentHistoryResponse = historyBO.getBillPaymentHistory(accountNumber, legacyAccountNumber, conversionDate, 
 				startDate, endDate, companyCode, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		billPaymentHistoryResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(billPaymentHistoryResponse).build();
 		logger.info("END-[getBillPaymentHistory]"); 
 		return response;
@@ -241,6 +245,8 @@ public class HistoryResource
 		
 		MonthlyUsageResponseList monthlyUsageResp = historyBO.getMonthlyUsageDetails(accountNumber, contractId, 
 				esid, zoneId, curDate, companyCode, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		monthlyUsageResp.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(monthlyUsageResp).build();
 		
 		logger.info("END-[getMonthlyUsage]"); 
@@ -368,6 +374,8 @@ public class HistoryResource
 		Response response = null;
 		logger.info("START-[HistoryResourse-fetchPaymentHistory]");
 		PaymentHistoryResponse historyResponse = historyBO.fetchPaymentHistory(accountNumber,startDate,endDate,companyCode,brandName,httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		historyResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
 		response = Response.status(200).entity(historyResponse).build();
 			
 		logger.info("END-[HistoryResourse-fetchPaymentHistory]");

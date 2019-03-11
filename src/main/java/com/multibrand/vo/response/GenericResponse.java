@@ -20,6 +20,7 @@ public class GenericResponse implements Constants{
 	private String errorDescription="";
 	private String messageCode="";
 	private String messageText="";
+	private String resultDisplayText="";
 	private String statusCode=STATUS_CODE_CONTINUE;
 	
 	public String getResultCode() {
@@ -93,5 +94,32 @@ public class GenericResponse implements Constants{
 	 */
 	public void setMessageText(String messageText) {
 		this.messageText = messageText;
+	}
+	/**
+	 * @return the resultDisplayText
+	 */
+	public String getResultDisplayText() {
+		return resultDisplayText;
+	}
+	/**
+	 * @param resultDisplayText the resultDisplayText to set
+	 */
+	public void setResultDisplayText(String methodName) {
+		if(this.errorCode.isEmpty()&&!this.resultCode.isEmpty()&&!methodName.isEmpty()){
+			if(this.resultCode.equalsIgnoreCase("0")||this.resultCode.equalsIgnoreCase("00"))
+				this.resultDisplayText = "";
+			else{
+				if(this.resultCode.length()==1)
+					this.resultDisplayText = methodName+"-0"+this.resultCode;
+				else
+					this.resultDisplayText = methodName+"-"+this.resultCode;
+			}
+		}else if(!this.errorCode.isEmpty()&&!methodName.isEmpty()&&!this.resultCode.isEmpty()){
+			if(this.resultCode.length()==1)
+				this.resultDisplayText = methodName+"-0"+this.resultCode+"-"+this.errorCode;
+			else
+				this.resultDisplayText = methodName+"-"+this.resultCode+"-"+this.errorCode;
+		}else
+			this.resultDisplayText = "";
 	}
 }
