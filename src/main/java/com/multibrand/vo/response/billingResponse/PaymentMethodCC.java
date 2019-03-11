@@ -14,6 +14,8 @@ public class PaymentMethodCC {
 	private String paymentMethodType;
 	private String paymentMethodToken;
 	private String paymentMethodNickName;
+	private String activationDate;
+	private String verifyCard; 
 	private String zipCode;
 	
 	public String getIsAllowed() {
@@ -76,5 +78,16 @@ public class PaymentMethodCC {
 	public void setZipCode(String zipCode) {
 		this.zipCode = zipCode;
 	}
-
+	public String getVerifyCard() {
+		return verifyCard;
+	}
+	public void setVerifyCard(String verifyCard) {
+		this.verifyCard = verifyCard;
+	}
+	public String getActivationDate() {
+		return activationDate;
+	}
+	public void setActivationDate(String activationDate) {
+		this.activationDate = activationDate;
+	}
 }

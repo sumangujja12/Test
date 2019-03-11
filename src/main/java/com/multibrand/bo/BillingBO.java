@@ -107,7 +107,6 @@ import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 
-import oracle.net.aso.e;
 
 /**
  * This BO class is to handle all the Billing Related API calls.
@@ -2559,13 +2558,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 			}else
 				autoPayNumber="NoAutoPay";
+			
+			DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
 			//To get Credit card info
 			for(int i=0;i<payAccountInfoResp.getPayAccountList().size();){
 				PaymentMethodB paymentMethodB = new PaymentMethodB();
 				PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
-				
-				
-				
+						
 				if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase("Y")))
 				{	
 					paymentMethodCC.setIsAllowed(NCCAFlag);
@@ -2577,6 +2576,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					paymentMethodCC.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
 					paymentMethodCC.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
 					paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodCC.setActivationDate((responselist.get(i).getActivationDate()!=null?(df.format(responselist.get(i).getActivationDate())):null));
+					paymentMethodCC.setVerifyCard(responselist.get(i).getVerifyCard());
 					paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
 					paymentMethodsList.add(paymentMethodCC);
 					i++;
@@ -2590,6 +2591,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					paymentMethodB.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
 					paymentMethodB.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
 					paymentMethodB.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodB.setActivationDate((responselist.get(i).getActivationDate()!=null?(df.format(responselist.get(i).getActivationDate())):null));
+					paymentMethodB.setVerifyCard(responselist.get(i).getVerifyCard());
 					paymentMethodB.setZipCode(responselist.get(i).getZipCode());
 					paymentMethodsList.add(paymentMethodB);
 					i++;
@@ -2634,4 +2637,5 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-getPaymentMethods]");
 		return response;
 	}
+
 }
