@@ -109,7 +109,6 @@ import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 
 import oracle.net.aso.e;
 
-
 /**
  * This BO class is to handle all the Billing Related API calls.
  * 
@@ -350,6 +349,18 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					/*}catch (Exception ex){
 						logger.error("Exception occured in date parsing!!" + ex);
 					}*/
+					
+					//Average Billing Eligibility Check goes here
+					AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
+					ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber,12));
+					ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
+					ambEligRequest.setCompanyCode(companyCode);
+					ambEligRequest.setContractId(contract.getStrContractID());
+					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest, sessionId);
+					String averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
+					contract.setStrAvgBillFlag(averageBillingEligibilty.equals("Yes")?"Y":"N");
+					
+					
 				}
 				//Changes End for adding EFL, TOS & YRAAC codes
 				CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
@@ -2498,7 +2509,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return recentPendingPaymentDate;
 	}
-
 	
 	/**
 	 * This API is responsible for returning account balance for GME mobile
@@ -2642,5 +2652,4 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-getPaymentMethods]");
 		return response;
 	}
-
 }
