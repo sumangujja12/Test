@@ -903,7 +903,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -1110,11 +1110,17 @@ public interface Constants {
 	 public static final String DAILY_LOW_TEMP_DUMMY_DATA = "0";
 	 public static final String DAIY_USAGE_DUMMY_DATA = "0:00";
 	
-	public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
+	 public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
 	 
+
+	 public static final String PY ="PY";
+	 public static final String SY ="SY";
+	
 	 public static final String AVG_BILL_FLAG_Y = "Y";
 	 public static final String AVG_BILL_FLAG_N = "N";
 	 public static final String AVG_BILL_FLAG_YES = "Yes";
 	 public static final String AVG_BILL_FLAG_NO = "No";
+	 
+	 
 
 }

@@ -33,7 +33,9 @@ public class TokenBO extends BaseBO {
 					|| (!request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceAction())
 					    && !request.getActionCode().equalsIgnoreCase(Token.getSsnAction())
 					    && !request.getActionCode().equalsIgnoreCase(Token.getSSNDetokenAction())
-					    && !request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceDetokenAction())))
+					    && !request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceDetokenAction())
+						&& !request.getActionCode().equalsIgnoreCase(SY)
+						&& !request.getActionCode().equalsIgnoreCase(PY)))
 			{
 				tokenizedResponse.setResultCode(RESULT_CODE_SUCCESS);
 				tokenizedResponse.setResultDescription(ACTION_CODE_DETOKNIZED_INVALID);
@@ -54,8 +56,13 @@ public class TokenBO extends BaseBO {
 			} else if (request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceDetokenAction())) {
 				returnToken = Token.getDriverLicenceDeTokenization(request.getNumToBeTokenized());
 				tokenizedResponse.setReturnToken(returnToken);
-			}
-			
+			} else if (request.getActionCode().equalsIgnoreCase(SY)) { 
+                returnToken = Token.getSSNDeTokenization(request.getNumToBeTokenized()); 
+                tokenizedResponse.setReturnToken(returnToken); 
+            } else if (request.getActionCode().equalsIgnoreCase(PY)) { 
+                returnToken = Token.getDriverLicenceDeTokenization(request.getNumToBeTokenized()); 
+                tokenizedResponse.setReturnToken(returnToken); 
+            }
 		} catch (Exception e) {
 			logger.error(e);
 			tokenizedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
