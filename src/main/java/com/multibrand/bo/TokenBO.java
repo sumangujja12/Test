@@ -35,7 +35,7 @@ public class TokenBO extends BaseBO {
 					    && !request.getActionCode().equalsIgnoreCase(Token.getSSNDetokenAction())
 					    && !request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceDetokenAction())
 						&& !request.getActionCode().equalsIgnoreCase(SY)
-						&& !request.getActionCode().equalsIgnoreCase(PY))) ))
+						&& !request.getActionCode().equalsIgnoreCase(PY)))
 			{
 				tokenizedResponse.setResultCode(RESULT_CODE_SUCCESS);
 				tokenizedResponse.setResultDescription(ACTION_CODE_DETOKNIZED_INVALID);
@@ -56,7 +56,7 @@ public class TokenBO extends BaseBO {
 			} else if (request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceDetokenAction())) {
 				returnToken = Token.getDriverLicenceDeTokenization(request.getNumToBeTokenized());
 				tokenizedResponse.setReturnToken(returnToken);
-			}else if (request.getActionCode().equalsIgnoreCase(SY)) { 
+			} else if (request.getActionCode().equalsIgnoreCase(SY)) { 
                 returnToken = Token.getSSNDeTokenization(request.getNumToBeTokenized()); 
                 tokenizedResponse.setReturnToken(returnToken); 
             } else if (request.getActionCode().equalsIgnoreCase(PY)) { 
