@@ -358,7 +358,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					ambEligRequest.setContractId(contract.getStrContractID());
 					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest, sessionId);
 					String averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
-					contract.setStrAvgBillFlag(averageBillingEligibilty.equals("Yes")?"Y":"N");
+					//contract.setStrAvgBillFlag(averageBillingEligibilty.equals("Yes")?"Y":"N");
 					
 					
 				}
