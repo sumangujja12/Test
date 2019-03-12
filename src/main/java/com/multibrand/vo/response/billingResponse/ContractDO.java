@@ -48,18 +48,7 @@ public class ContractDO {
     
     private String strTouFlag;    
     
-    private String strAvgBillFlag;
-
-   
-	public String getStrAvgBillFlag() {
-		return strAvgBillFlag;
-	}
-
-	public void setStrAvgBillFlag(String strAvgBillFlag) {
-		this.strAvgBillFlag = strAvgBillFlag;
-	}
-
-	public String getStrTouFlag() {
+ 	public String getStrTouFlag() {
 		return strTouFlag;
 	}
 

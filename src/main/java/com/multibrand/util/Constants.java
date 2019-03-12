@@ -1096,8 +1096,6 @@ public interface Constants {
 
 		
 	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
-
-	
 	 
 	 //Constants for Payment status
 	 public static final String  PAYMENT_PENDING_STATUS = "Pending";
@@ -1113,4 +1111,10 @@ public interface Constants {
 	 public static final String DAIY_USAGE_DUMMY_DATA = "0:00";
 	
 	public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
+	 
+	 public static final String AVG_BILL_FLAG_Y = "Y";
+	 public static final String AVG_BILL_FLAG_N = "N";
+	 public static final String AVG_BILL_FLAG_YES = "Yes";
+	 public static final String AVG_BILL_FLAG_NO = "No";
+
 }
