@@ -1057,13 +1057,20 @@ public interface Constants {
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
 
-	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
+	
 
 	public static final String UCC_DATA = "UCC_DATA";
 	public static final String SECURITY_METHOD_UCC = "UCC";
 	public static final String MESSAGE_TEXT_TRACKING_NUMBER_NOT_UPDATED = "Tracking details are not updated";
+	public static final String MESSAGE_TEXT_TRACKING_NUMBER_NOT_FOUND = "Tracking details are not found";
 	public static final String MESSAGE_TEXT_PERSON_NOT_UPDATED = "Person details are not updated";
 	public static final String MESSAGE_TEXT_PERSON_NOT_FOUND = "Person details are not found";
+	public static final String MESSAGE_CODE_INFO_MISMATCH = "INFO_MISMATCH";
+	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
+	
+	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
+
+
 	
 	public static final String CONSTANT_S ="S";
 
