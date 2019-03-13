@@ -857,7 +857,7 @@ public interface Constants {
 	};
 	
 	public static enum PRIVACY_DATA_PARAMETERS {
-		ssn, tdl, cvvNumber, password
+		ssn, tdl, cvvNumber, password, strNum
 	};
 	
 	public static enum ESID_CALENDAR_REQ_TYPE {
