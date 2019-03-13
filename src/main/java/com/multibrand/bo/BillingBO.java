@@ -349,31 +349,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					/*}catch (Exception ex){
 						logger.error("Exception occured in date parsing!!" + ex);
 					}*/
-					
-					//Average Billing Eligibility Check goes here
-					AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
-					ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber,12));
-					ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
-					ambEligRequest.setCompanyCode(companyCode);
-					ambEligRequest.setContractId(contract.getStrContractID());
-					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest, sessionId);
-					String averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
-					//contract.setStrAvgBillFlag(averageBillingEligibilty.equals("Yes")?"Y":"N");
-					
-					
 				}
-				//Setting Average Billing Eligibility & Average Billing Enrollment 
-				AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
-				ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber,12));
-				ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
-				ambEligRequest.setCompanyCode(companyCode);
-				ambEligRequest.setContractId(contractDO[0].getStrContractID());
-				AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest, sessionId);
-				String averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
-				String averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
-				accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(averageBillingEligibilty.equals(AVG_BILL_FLAG_YES)?AVG_BILL_FLAG_Y:AVG_BILL_FLAG_N);
-				accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(averageBillingEnrolment.equals(AVG_BILL_FLAG_YES)?AVG_BILL_FLAG_Y:AVG_BILL_FLAG_N);
-				
 				//Changes End for adding EFL, TOS & YRAAC codes
 				
 					// Setting Average Billing Eligibility & Average Billing
