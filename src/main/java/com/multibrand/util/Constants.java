@@ -858,7 +858,7 @@ public interface Constants {
 	};
 	
 	public static enum PRIVACY_DATA_PARAMETERS {
-		ssn, tdl, cvvNumber, password
+		ssn, tdl, cvvNumber, password, strNum
 	};
 	
 	public static enum ESID_CALENDAR_REQ_TYPE {
@@ -1066,6 +1066,7 @@ public interface Constants {
 	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
 	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
 	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+
 	//Mobile Content API Data
 	public static final String language_EN = "EN";
 	public static final String ERRORS = "ERRORS";
@@ -1120,7 +1121,5 @@ public interface Constants {
 	 public static final String AVG_BILL_FLAG_N = "N";
 	 public static final String AVG_BILL_FLAG_YES = "Yes";
 	 public static final String AVG_BILL_FLAG_NO = "No";
-	 
-	 
 
 }
