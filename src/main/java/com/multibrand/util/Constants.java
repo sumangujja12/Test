@@ -1069,5 +1069,10 @@ public interface Constants {
 	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
 	public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
 
+	public static final String UCC_DATA = "UCC_DATA";
+	public static final String SECURITY_METHOD_UCC = "UCC";
+	public static final String MESSAGE_TEXT_TRACKING_NUMBER_NOT_UPDATED = "Tracking details are not updated";
+	public static final String MESSAGE_TEXT_PERSON_NOT_UPDATED = "Person details are not updated";
+	public static final String MESSAGE_TEXT_PERSON_NOT_FOUND = "Person details are not found";
 	
 }
