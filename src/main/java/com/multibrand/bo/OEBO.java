@@ -4567,8 +4567,8 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		
 		if(serviceLocationResponse != null){
 			
-			if( ( StringUtils.isNotEmpty(uccDataRequest.getFirstName())  && !StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
-					|| (StringUtils.isNotEmpty(uccDataRequest.getLastName())  && !StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), uccDataRequest.getLastName())) ) {
+			if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
+					|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), uccDataRequest.getLastName())) ) {
 				
 				uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				uccDataResponse.setStatusCode(STATUS_CODE_STOP);

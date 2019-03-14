@@ -1065,6 +1065,46 @@ public class OEResource extends BaseResource {
 	public Response submitUCCData(@Valid UCCDataRequest request) {
 
 		Response response = null;
+		String errorDesc = null;
+		HashMap<String, Object> mandatoryParamList = null;
+		HashMap<String, Object> mandatoryParamCheckResponse = null;
+		
+		mandatoryParamList = new HashMap<String, Object>();
+
+			// Either Billing PO box or Billing Street num/name should be supplied
+			mandatoryParamList.put("firstName",
+					request.getFirstName());
+
+			mandatoryParamList.put("lastName",
+					request.getLastName());
+			mandatoryParamList.put("depositAmount",
+					request.getDepositAmount());
+		
+
+		mandatoryParamCheckResponse = CommonUtil
+		.checkMandatoryParam(mandatoryParamList);
+		String resultCode = (String) mandatoryParamCheckResponse
+		.get("resultCode");
+		
+		if (StringUtils.isNotBlank(resultCode)
+				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+
+					errorDesc = (String) mandatoryParamCheckResponse
+					.get("errorDesc");
+					
+					if (StringUtils.isNotBlank(errorDesc)) {
+						response = CommonUtil.buildNotValidResponse(resultCode,
+						errorDesc);
+					} else {
+						response = CommonUtil.buildNotValidResponse(errorDesc,
+						Constants.STATUS_CODE_ASK);
+					}
+					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
+				
+					return response;
+				}
+		
+		
 		UCCDataResponse uccResp = oeBO.submitUCCData(request,
 				httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(uccResp).build();
