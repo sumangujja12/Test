@@ -4563,13 +4563,12 @@ private TLPOfferDO[] constructTLPOfferDOList(
 			requestData.setTrackingId(uccDataRequest.getTrackingId());
 		requestData.setCompanyCode(uccDataRequest.getCompanyCode());
 
-		ServiceLocationResponse servceLocatioResp =  getEnrollmentData(uccDataRequest.getTrackingId());
+		ServiceLocationResponse serviceLocationResponse =  getEnrollmentData(uccDataRequest.getTrackingId());
 		
-		if(servceLocatioResp != null){
+		if(serviceLocationResponse != null){
 			
-			if( ( StringUtils.isNotEmpty(uccDataRequest.getFirstName())  && !StringUtils.equalsIgnoreCase(servceLocatioResp.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
-					|| (StringUtils.isNotEmpty(uccDataRequest.getLastName())  && !StringUtils.equalsIgnoreCase(servceLocatioResp.getPersonResponse().getLastName(), uccDataRequest.getLastName())) 
-					|| (StringUtils.isNotEmpty(uccDataRequest.getTokenizedSSN())  &&  !StringUtils.equalsIgnoreCase(servceLocatioResp.getPersonResponse().getSsn(), uccDataRequest.getTokenizedSSN()))  ) {
+			if( ( StringUtils.isNotEmpty(uccDataRequest.getFirstName())  && !StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
+					|| (StringUtils.isNotEmpty(uccDataRequest.getLastName())  && !StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), uccDataRequest.getLastName())) ) {
 				
 				uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				uccDataResponse.setStatusCode(STATUS_CODE_STOP);
@@ -4627,23 +4626,14 @@ private TLPOfferDO[] constructTLPOfferDOList(
 					requestDataPerson.setPersonId(personId);
 					// requestDataPerson.setLanguageCode(locale);
 					requestDataPerson.setFirstName(uccDataRequest.getFirstName());
-					requestDataPerson.setLastName(uccDataRequest.getLastName());
-					if (StringUtils.isNotBlank(uccDataRequest.getTokenizedSSN()))
-						requestDataPerson.setSsn(uccDataRequest.getTokenizedSSN());
-					if (StringUtils.isNotBlank(uccDataRequest
-							.getCreditBucket()))
+					requestDataPerson.setLastName(uccDataRequest.getLastName());					
+						requestDataPerson.setSsn(uccDataRequest.getTokenizedSSN());		
 						requestDataPerson.setCredLevelNum(uccDataRequest
 								.getCreditBucket());
-					if (StringUtils.isNotBlank(uccDataRequest
-							.getCreditSource()))
 						requestDataPerson.setCredSourceNum(uccDataRequest
 								.getCreditSource());
-					if (StringUtils.isNotBlank(uccDataRequest
-							.getCreditScore()))
 						requestDataPerson.setCredScoreNum(uccDataRequest
 								.getCreditScore());
-					if (StringUtils.isNotBlank(uccDataRequest
-							.getCreditFactors()))
 						requestDataPerson.setAdvActionData(uccDataRequest
 								.getCreditFactors());
 		
