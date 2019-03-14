@@ -15,10 +15,12 @@ public class UCCDataRequest extends BaseAffiliateRequest {
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String trackingId;
 	
+	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 40, groups = SizeConstraint.class)
 	String lastName;
 	
 
+	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 40, groups = SizeConstraint.class)
 	String firstName;
 		
