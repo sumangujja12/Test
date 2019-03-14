@@ -857,7 +857,7 @@ public interface Constants {
 	};
 	
 	public static enum PRIVACY_DATA_PARAMETERS {
-		ssn, tdl, cvvNumber, password
+		ssn, tdl, cvvNumber, password, strNum
 	};
 	
 	public static enum ESID_CALENDAR_REQ_TYPE {
@@ -902,7 +902,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -1068,6 +1068,8 @@ public interface Constants {
 	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
 	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
 	public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
+	public static final String PY ="PY";
+	public static final String SY ="SY";
 
 	
 }
