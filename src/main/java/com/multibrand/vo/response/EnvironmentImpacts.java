@@ -8,6 +8,7 @@ public class EnvironmentImpacts {
 	private String contractNumber;
 	private String installation;
 	private String moveOutDate;
+	private String moveInDate;
 	private String esiid;
 	private String operand;
 	private String value;
@@ -46,6 +47,12 @@ public class EnvironmentImpacts {
 	}
 	public void setValue(String value) {
 		this.value = value;
+	}
+	public String getMoveInDate() {
+		return CommonUtil.changeDateFormat(moveInDate);
+	}
+	public void setMoveInDate(String moveInDate) {
+		this.moveInDate = moveInDate;
 	}
 	
 	

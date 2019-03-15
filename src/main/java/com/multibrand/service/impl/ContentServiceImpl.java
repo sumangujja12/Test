@@ -185,34 +185,5 @@ public class ContentServiceImpl extends BaseRestService implements ContentServic
 		}
 		return returnResp;
 	}
-
-	@Override
-	public MobileContentResponse getMobileContentData() {
-		MobileContentItem errors = new MobileContentItem();
-		MobileContentResponse mobileResponse = new MobileContentResponse();
-		try {
-		List<MobileContentDto> mobileContentData = contentDao.getMobileContentData();
-		if (mobileContentData != null && mobileContentData.size() > 0) {
-			for (MobileContentDto content : mobileContentData) {
-				if (Constants.ERRORS.equalsIgnoreCase(content.getArea())) {
-					if (Constants.EN.equalsIgnoreCase(content.getLanuage())) {
-						errors.getEnglish().add(new MobileContent(content.getName(), content.getValue()));
-					} else {
-						errors.getSpanish().add(new MobileContent(content.getName(), content.getValue()));
-					}
-				}
-			}
-		} else {
-			mobileResponse.setErrorCode(Constants.RESULT_CODE_THREE);
-			mobileResponse.setErrorDescription(Constants.RESULT_CODE_DESCRIPTION_NO_DATA);
-		}
-		mobileResponse.setErrors(errors);
-		} catch (Exception e) {
-			logger.error("Exception Occured while getting mobile content data.. "+e);
-			mobileResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			mobileResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
-		}
-		return mobileResponse;
-
-	}
+	
 }

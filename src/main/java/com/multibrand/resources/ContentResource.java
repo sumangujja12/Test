@@ -18,7 +18,6 @@ import com.multibrand.dto.request.ContentUserPrefRequest;
 import com.multibrand.dto.request.MessageContentRequest;
 import com.multibrand.service.ContentService;
 import com.multibrand.vo.response.contentResponse.MobileContentResponse;
-import com.multibrand.bo.ContentBO;
 import com.multibrand.util.Constants;
 /*
  * @Author bbachin1
@@ -32,10 +31,6 @@ public class ContentResource implements Constants{
 	
 	@Autowired
 	private ContentService contentService;
-	
-	@Autowired
-	private ContentBO contentBO;
-
 	
 	
 	@POST
@@ -128,23 +123,4 @@ public class ContentResource implements Constants{
 		Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
 		return response;
 	}
-	
-	@POST
-	@Path("/mobilecontent")
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({ MediaType.APPLICATION_JSON +";charset=UTF-8", MediaType.APPLICATION_XML})
-	public Response getContent() {
-		MobileContentResponse mobileRes = null;
-		try {
-			mobileRes = contentBO.getContent();
-		} catch (Exception e) {
-			logger.error("Error Occured while getting mobile contents..." +e);
-			mobileRes.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			mobileRes.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
-		}
-		Response response = Response.status(Response.Status.OK).entity(mobileRes).build();
-		return response;
-	}
-	
-
 }

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multibrand.bo.RegistrationBO;
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.ValidateAccountForMobileResponse;
 import com.multibrand.vo.response.ValidateAccountResponse;
@@ -36,6 +37,11 @@ public class Registration {
 	
 	@Autowired
 	RegistrationBO registrationBO;
+	
+	@Autowired
+	ErrorContentHelper errorContentHelper;
+	
+	
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
@@ -97,7 +103,10 @@ public class Registration {
 		GenericResponse responseVo = registrationBO.createUser(accountNumber,
 				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit);
 		// Added for GME Mobile
-		responseVo.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
+		responseVo.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(responseVo.getResultDisplayCode()!=null)
+			responseVo.setResultDisplayText(errorContentHelper.getErrorMessage(responseVo.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(responseVo).build();
 		logger.info("END-[Registration-createUser]");
 		return response;
@@ -141,7 +150,9 @@ public class Registration {
 		validateAccountForMobileResponse= registrationBO.validateAccountForMobile(accountNumber,
 				lastName, userName, companyCode,brandName,sessionId);
 		// Added for GME Mobile
-		validateAccountForMobileResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
+		validateAccountForMobileResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(validateAccountForMobileResponse.getResultDisplayCode()!=null)
+			validateAccountForMobileResponse.setResultDisplayText(errorContentHelper.getErrorMessage(validateAccountForMobileResponse.getResultDisplayCode()));
 		response = Response.status(200).entity(validateAccountForMobileResponse).build();
 		logger.info("END-[Registration-validateAccountForMobile]");
 		return response;

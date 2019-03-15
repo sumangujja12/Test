@@ -21,6 +21,5 @@ public interface ContentService {
 	public String readComponentByItemIds(BaseContentRequest Request);
 
 	public String readMessageContent(BaseContentRequest Request);
-	
-	public MobileContentResponse getMobileContentData();
+
 }

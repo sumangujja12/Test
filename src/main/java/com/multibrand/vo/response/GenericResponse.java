@@ -1,7 +1,9 @@
 package com.multibrand.vo.response;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.util.Constants;
 
 /**
@@ -20,9 +22,9 @@ public class GenericResponse implements Constants{
 	private String errorDescription="";
 	private String messageCode="";
 	private String messageText="";
-	private String resultDisplayText="";
+	private String resultDisplayCode="";
+ 	private String resultDisplayText="";
 	private String statusCode=STATUS_CODE_CONTINUE;
-	
 	public String getResultCode() {
 		return resultCode;
 	}
@@ -98,28 +100,35 @@ public class GenericResponse implements Constants{
 	/**
 	 * @return the resultDisplayText
 	 */
-	public String getResultDisplayText() {
-		return resultDisplayText;
+ 	@JsonIgnore
+	public String getResultDisplayCode() {
+		return resultDisplayCode;
 	}
 	/**
 	 * @param resultDisplayText the resultDisplayText to set
 	 */
-	public void setResultDisplayText(String methodName) {
+	public void setResultDisplayCode(String methodName) {
 		if(this.errorCode.isEmpty()&&!this.resultCode.isEmpty()&&!methodName.isEmpty()){
 			if(this.resultCode.equalsIgnoreCase("0")||this.resultCode.equalsIgnoreCase("00"))
-				this.resultDisplayText = "";
+				this.resultDisplayCode = null;
 			else{
 				if(this.resultCode.length()==1)
-					this.resultDisplayText = methodName+"-0"+this.resultCode;
+					this.resultDisplayCode = methodName+"-0"+this.resultCode;
 				else
-					this.resultDisplayText = methodName+"-"+this.resultCode;
+					this.resultDisplayCode = methodName+"-"+this.resultCode;
 			}
 		}else if(!this.errorCode.isEmpty()&&!methodName.isEmpty()&&!this.resultCode.isEmpty()){
 			if(this.resultCode.length()==1)
-				this.resultDisplayText = methodName+"-0"+this.resultCode+"-"+this.errorCode;
+				this.resultDisplayCode = methodName+"-0"+this.resultCode+"-"+this.errorCode;
 			else
-				this.resultDisplayText = methodName+"-"+this.resultCode+"-"+this.errorCode;
+				this.resultDisplayCode = methodName+"-"+this.resultCode+"-"+this.errorCode;
 		}else
-			this.resultDisplayText = "";
+			this.resultDisplayCode = null;
+	}
+	public String getResultDisplayText() {
+		return resultDisplayText;
+	}
+	public void setResultDisplayText(String resultDisplayText) {
+		this.resultDisplayText = resultDisplayText;
 	}
 }

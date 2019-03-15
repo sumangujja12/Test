@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.multibrand.bo.HistoryBO;
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
@@ -47,6 +48,9 @@ public class HistoryResource
 	/** Object of HistoryBO class. */
 	@Autowired
 	private HistoryBO historyBO;
+	
+	@Autowired
+	ErrorContentHelper errorContentHelper;
 
 	/**
 	 * 
@@ -81,8 +85,12 @@ public class HistoryResource
 		GenericResponse usageResponse = historyBO
 					.getUsage(accountNumber, contractId, esid,zoneId,curDtInd,curDayInd,dyHrInd,
 							  httpRequest.getSession(true).getId(),companyCode);
+		
 		// Added for GME Mobile
-		usageResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
+		usageResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(usageResponse.getResultDisplayCode()!=null)
+			usageResponse.setResultDisplayText(errorContentHelper.getErrorMessage(usageResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(usageResponse).build();
 		logger.info("END-[HistoryResourse-getUsage]");
 		logger.debug("Exiting getUsage in History Resource");
@@ -175,7 +183,10 @@ public class HistoryResource
 		BillPaymentHistoryResponse billPaymentHistoryResponse = historyBO.getBillPaymentHistory(accountNumber, legacyAccountNumber, conversionDate, 
 				startDate, endDate, companyCode, httpRequest.getSession(true).getId());
 		// Added for GME Mobile
-		billPaymentHistoryResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
+		billPaymentHistoryResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(billPaymentHistoryResponse.getResultDisplayCode()!=null)
+			billPaymentHistoryResponse.setResultDisplayText(errorContentHelper.getErrorMessage(billPaymentHistoryResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(billPaymentHistoryResponse).build();
 		logger.info("END-[getBillPaymentHistory]"); 
 		return response;
@@ -246,7 +257,10 @@ public class HistoryResource
 		MonthlyUsageResponseList monthlyUsageResp = historyBO.getMonthlyUsageDetails(accountNumber, contractId, 
 				esid, zoneId, curDate, companyCode, httpRequest.getSession(true).getId());
 		// Added for GME Mobile
-		monthlyUsageResp.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
+		monthlyUsageResp.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(monthlyUsageResp.getResultDisplayCode()!=null)
+			monthlyUsageResp.setResultDisplayText(errorContentHelper.getErrorMessage(monthlyUsageResp.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(monthlyUsageResp).build();
 		
 		logger.info("END-[getMonthlyUsage]"); 
@@ -374,8 +388,12 @@ public class HistoryResource
 		Response response = null;
 		logger.info("START-[HistoryResourse-fetchPaymentHistory]");
 		PaymentHistoryResponse historyResponse = historyBO.fetchPaymentHistory(accountNumber,startDate,endDate,companyCode,brandName,httpRequest.getSession(true).getId());
+		
 		// Added for GME Mobile
-		historyResponse.setResultDisplayText(new Object(){}.getClass().getEnclosingMethod().getName());
+		historyResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(historyResponse.getResultDisplayCode()!=null)
+			historyResponse.setResultDisplayText(errorContentHelper.getErrorMessage(historyResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(historyResponse).build();
 			
 		logger.info("END-[HistoryResourse-fetchPaymentHistory]");
