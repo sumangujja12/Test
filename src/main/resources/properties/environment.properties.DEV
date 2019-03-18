@@ -116,3 +116,6 @@ ws.rest.ccs.get.agent.details.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_
 #ECommerce End Points
 ws.rest.ccs.google.product.set.url=http://sapcmd02:8000/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/GoogleProductSet
 #################
+######## GME Related #######
+GME.MYACCOUNT.LOGIN.URL=https://myaccount-dev.greenmountain.com/
+GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-dev.greenmountain.com/ResetPassword/

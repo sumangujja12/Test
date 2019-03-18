@@ -1736,4 +1736,79 @@ public class CommonUtil implements Constants {
 		
 	}
 	
+	/**
+	 * Returns formatted account number with removed zeroes from front
+	 * 
+	 * @author Cuppala
+	 * 
+	 * @param number
+	 * @param length
+	 * @return
+	 */
+	public static String stripLeadingZeros(String arg) {
+		String accountNumber = arg;
+		int digitCnt = 0;
+		int argLength = arg.length();
+
+		for (int i = 0; i < argLength; i++) {
+			char charTemp = (char) accountNumber.charAt(i);
+			if (charTemp != '0') {
+				break;
+			} else {
+				digitCnt++;
+			}
+		}
+		if (digitCnt > 0 && accountNumber.length() > digitCnt) {
+			accountNumber = accountNumber.substring(digitCnt,
+					accountNumber.length());
+		}
+		return accountNumber;
+	}
+	public static HashMap<String, Object> checkNegaviteValueInParam(Map<String, Object> paramMap)
+	{
+		logger.info("inside checkMandatoryParam:: entering method");
+		HashMap<String, Object> negativeParamChkResponse= new HashMap<String, Object>(); 
+		ArrayList<Object> negativeParam = new ArrayList<Object>();
+		String errorDesc="";
+		if(paramMap!=null && ((paramMap.size())>0)){
+			for(String key:paramMap.keySet() )
+			{
+				logger.debug("inside negative param values and total values are::"+paramMap.size());
+				String value = (String) paramMap.get(key);
+				double doublValue = 0.0;
+				if(StringUtils.isNotEmpty(value)){					
+					doublValue = Double.parseDouble(value);
+				}
+				if(doublValue<0){
+					negativeParam.add(key);
+					if(StringUtils.isBlank(errorDesc)){
+						errorDesc=key;
+					}else{
+						errorDesc+=", "+key;
+					}
+				}
+				logger.debug("inside checkMandatoryParam:: "+negativeParam.size());
+			}
+			if(negativeParam!=null &&(negativeParam.size()>0))
+			{
+				errorDesc="Negative Value for Parameters :: "+errorDesc;
+				negativeParamChkResponse.put("resultCode", RESULT_CODE_EXCEPTION_FAILURE);
+				negativeParamChkResponse.put("errorDesc", errorDesc);
+			}
+			else
+			{
+				negativeParamChkResponse.put("resultCode", SUCCESS_CODE);
+				negativeParamChkResponse.put("errorDesc", errorDesc);
+			}
+		}
+		else
+		{
+			negativeParamChkResponse.put("resultCode", SUCCESS_CODE);
+			negativeParamChkResponse.put("errorDesc", errorDesc);
+		}
+		logger.info("inside checkNegativeParam:: response is :: "+negativeParamChkResponse);
+		return negativeParamChkResponse;
+	}
+	
+	
 }
