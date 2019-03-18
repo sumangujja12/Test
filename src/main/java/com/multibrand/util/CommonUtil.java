@@ -1739,13 +1739,13 @@ public class CommonUtil implements Constants {
 	public static HashMap<String, Object> checkNegaviteValueInParam(Map<String, Object> paramMap)
 	{
 		logger.info("inside checkMandatoryParam:: entering method");
-		HashMap<String, Object> mandatoryParamChkResponse= new HashMap<String, Object>(); 
+		HashMap<String, Object> negativeParamChkResponse= new HashMap<String, Object>(); 
 		ArrayList<Object> negativeParam = new ArrayList<Object>();
 		String errorDesc="";
 		if(paramMap!=null && ((paramMap.size())>0)){
 			for(String key:paramMap.keySet() )
 			{
-				logger.debug("inside checkmandatory param values and total values are::"+paramMap.size());
+				logger.debug("inside negative param values and total values are::"+paramMap.size());
 				String value = (String) paramMap.get(key);
 				double doublValue = 0.0;
 				if(StringUtils.isNotEmpty(value)){					
@@ -1764,22 +1764,22 @@ public class CommonUtil implements Constants {
 			if(negativeParam!=null &&(negativeParam.size()>0))
 			{
 				errorDesc="Negative Value for Parameters :: "+errorDesc;
-				mandatoryParamChkResponse.put("resultCode", RESULT_CODE_EXCEPTION_FAILURE);
-				mandatoryParamChkResponse.put("errorDesc", errorDesc);
+				negativeParamChkResponse.put("resultCode", RESULT_CODE_EXCEPTION_FAILURE);
+				negativeParamChkResponse.put("errorDesc", errorDesc);
 			}
 			else
 			{
-				mandatoryParamChkResponse.put("resultCode", SUCCESS_CODE);
-				mandatoryParamChkResponse.put("errorDesc", errorDesc);
+				negativeParamChkResponse.put("resultCode", SUCCESS_CODE);
+				negativeParamChkResponse.put("errorDesc", errorDesc);
 			}
 		}
 		else
 		{
-			mandatoryParamChkResponse.put("resultCode", SUCCESS_CODE);
-			mandatoryParamChkResponse.put("errorDesc", errorDesc);
+			negativeParamChkResponse.put("resultCode", SUCCESS_CODE);
+			negativeParamChkResponse.put("errorDesc", errorDesc);
 		}
-		logger.info("inside checkMandatoryParam:: response is :: "+mandatoryParamChkResponse);
-		return mandatoryParamChkResponse;
+		logger.info("inside checkNegativeParam:: response is :: "+negativeParamChkResponse);
+		return negativeParamChkResponse;
 	}
 	
 	
