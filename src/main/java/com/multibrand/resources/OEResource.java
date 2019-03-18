@@ -1105,6 +1105,47 @@ public class OEResource extends BaseResource {
 				}
 		
 		
+		
+		HashMap<String, Object> nagativeParamList = null;
+		HashMap<String, Object> negativeParamCheckResponse = null;
+		
+		nagativeParamList = new HashMap<String, Object>();
+
+
+		nagativeParamList.put("depositAmount",
+				request.getDepositAmount());
+
+		if(StringUtils.isNotEmpty(request.getCreditScore())) {
+			nagativeParamList.put("creditScore",
+					request.getCreditScore());
+		}
+
+		
+
+		negativeParamCheckResponse = CommonUtil
+		.checkNegaviteValueInParam(nagativeParamList);
+		 resultCode = (String) negativeParamCheckResponse
+		.get("resultCode");
+		
+		if (StringUtils.isNotBlank(resultCode)
+				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+
+					errorDesc = (String) negativeParamCheckResponse
+					.get("errorDesc");
+					
+					if (StringUtils.isNotBlank(errorDesc)) {
+						response = CommonUtil.buildNotValidResponse(resultCode,
+						errorDesc);
+					} else {
+						response = CommonUtil.buildNotValidResponse(errorDesc,
+						Constants.STATUS_CODE_ASK);
+					}
+					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
+				
+					return response;
+				}
+		
+		
 		UCCDataResponse uccResp = oeBO.submitUCCData(request,
 				httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(uccResp).build();
