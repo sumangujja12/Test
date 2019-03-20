@@ -1,7 +1,10 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +12,7 @@ import java.util.Map;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+import javax.ws.rs.FormParam;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.dao.ProfileDAO;
 import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AllAccountDetailsRequest;
 import com.multibrand.domain.ChangeUsrNameRequest;
@@ -50,6 +55,7 @@ import com.multibrand.service.LDAPService;
 import com.multibrand.service.ProfileService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.EnvMessageReader;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.SecondaryNameUpdateReqVO;
 import com.multibrand.vo.request.ValidateUserNameRequest;
@@ -61,6 +67,8 @@ import com.multibrand.vo.response.CirroContractDO;
 import com.multibrand.vo.response.CirroStructureResponse;
 import com.multibrand.vo.response.ContractInfoDO;
 import com.multibrand.vo.response.EnvironmentImpactsResponse;
+import com.multibrand.vo.response.ForgotPasswordResponse;
+import com.multibrand.vo.response.ForgotUserNameResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.SecondaryNameResponse;
 import com.multibrand.vo.response.SendMailForNewServiceAddressAddResponse;
@@ -70,10 +78,13 @@ import com.multibrand.vo.response.UpdateBillingAddressResponse;
 import com.multibrand.vo.response.UpdateContactInfoResponse;
 import com.multibrand.vo.response.UpdatePasswordResponse;
 import com.multibrand.vo.response.UserInfoResponse;
+import com.multibrand.vo.response.ValidatePasswordLinkResponse;
 import com.multibrand.vo.response.WsEnrollmentResponse;
 import com.multibrand.vo.response.WsServiceResponse;
 import com.multibrand.vo.response.WseEligiblityStatusResponse;
 import com.multibrand.vo.response.WseEsenseEligibility;
+import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
+import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
@@ -100,10 +111,21 @@ public class ProfileBO extends BaseBO {
 	private LDAPHelper ldapHelper;
 	
 	@Autowired
+	private ProfileDAO profileDAO;
+	
+	@Autowired
 	private BPAccountContractPayHelper bpAccountPayHelper;
 		
 	@Autowired
 	private ProfileProxy profileProxy;
+	
+
+	@Autowired
+	private BillingBO billingBO;
+	
+	@Autowired
+	protected EnvMessageReader envMessageReader;
+
 	
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
@@ -117,6 +139,7 @@ public class ProfileBO extends BaseBO {
 
 		
 		Attributes attrs= null;
+		int update =0;
 		com.multibrand.vo.response.UpdatePasswordResponse updatePasswordResponse = new com.multibrand.vo.response.UpdatePasswordResponse();
 		long startTime = CommonUtil.getStartTime();
 		String request = "userId="+userId+",newPassword=##########"+",companyCode="+companyCode;
@@ -125,6 +148,13 @@ public class ProfileBO extends BaseBO {
 		
 			attrs = ldapHelper.modPasswordUserinfo(userId,DirContext.REPLACE_ATTRIBUTE,newPassword);
 			if(attrs!=null){
+				if(StringUtils.equalsIgnoreCase(companyCode, COMPANY_CODE_GME)){
+					update = profileDAO.updateStatusFlag(userId);
+					if(update==0)
+						logger.error("Status Code='C'- duplicate transaction - profileDAO.updateStatusFlag call");
+					else
+						logger.info("Status Code changed to 'C'");
+				}
 				logger.info("::::::::::::::::Password updated successfully");
 				updatePasswordResponse.setResultCode(RESULT_CODE_SUCCESS);
 				updatePasswordResponse.setResultDescription(MSG_SUCCESS);
@@ -216,63 +246,300 @@ public class ProfileBO extends BaseBO {
 	}
 	
 	/**
-	 * This method is to get the username or/and account number from ldap.
-	 * @author mshukla1
+	 * This method is will get user and email with his Username.
+	 * @author cuppala
 	 * @param userId
+	 * @param companyCode
+	 * @param zip
+	 * @param brandName
 	 * @return
 	 */
-	@Deprecated
-	public UserInfoResponse _getUserOrAcctNumber_Old(String userId, String companyCode, String sessionId) {
-
-		UserInfoResponse response = new UserInfoResponse();
+		
+	public ForgotUserNameResponse forgotUserName(String userId,String companyCode,String zip, String languageCode, String sessionId, String brandName){
+		
+		UserInfoResponse userInfoResponse = new UserInfoResponse();
+		ForgotUserNameResponse response = new ForgotUserNameResponse();
+		String request = userId+"userId";
+		logger.info("Inside ProfileBO - forgotUserName call");
 		long startTime = CommonUtil.getStartTime();
-		String request = "userId="+userId+",companyCode="+companyCode;
-
 		try {
-			response=ldapHelper.getUserorAcctInfo(userId, companyCode);
+			if(StringUtils.isNotEmpty(userId.trim())&&StringUtils.isNotEmpty(zip.trim())&&StringUtils.isNotEmpty(companyCode.trim())&&StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)){
 			
-			if(response.getAccountNumber()==null && response.getUserName()==null)
-			{
-				response.setAccountNumber(Constants.EMPTY);
-				response.setUserName(Constants.EMPTY);
-				response.setEmailID(Constants.EMPTY);
-				response.setResultCode(Constants.RESULT_CODE_THREE);
-				response.setResultDescription(Constants.RESULT_CODE_DESCRIPTION_NO_DATA);
+			userInfoResponse = getUserOrAcctNumber(userId,companyCode,sessionId);
+			
+			if(userInfoResponse!=null && userInfoResponse.getResultCode().equalsIgnoreCase("0")){
+			String accountNumber=userInfoResponse.getAccountNumber();
+		    String userName=userInfoResponse.getUserName();
+		    String emailID=userInfoResponse.getEmailID();
+		    
+		    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
+		    
+		    boolean EMAIL_VERIFIED=true;
+	    	boolean LDAPEmailValidation = ((StringUtils.isNotEmpty(emailID))?true:false);
+	    	boolean billingZipCodeValidation = ((StringUtils.isNotEmpty(billingAddressResp.getStrZip()))?true:false);
+		  		  	    
+		    if(billingZipCodeValidation&&((CommonUtil.trimZipCode(billingAddressResp.getStrZip())).equalsIgnoreCase(zip.trim()))){
+		    	response.setUserName(userName);
+		  	
+		    	logger.info("User Email id"+emailID);		
+		    
+		       if(LDAPEmailValidation&&EMAIL_VERIFIED){
+				HashMap<String, String> templateProperties = new HashMap<String, String>();
+               templateProperties.put("USER_NAME", userName);
+               templateProperties.put("LOGIN_URL", envMessageReader.getMessage(GME_MYACCOUNT_LOGIN_URL));
+               Boolean status = false;
+               if(StringUtils.isEmpty(languageCode))
+               	languageCode=EN;
+               
+           			if(languageCode.equalsIgnoreCase(ES)){
+		           		status = EmailHelper.sendMail( emailID ,"", GME_USERNAME_ES_US, templateProperties, companyCode);
+		           		logger.info("Spanish Conf mail send for Password reset: " + status);
+							}else{
+
+		               		logger.info("Setting languageCode to English");
+		               		status = EmailHelper.sendMail( emailID ,"", GME_USERNAME_EN_US, templateProperties, companyCode);
+								logger.info("English Conf mail send for Password reset: " + status);
+							}
+           			
+	                response.setResultCode(RESULT_CODE_SUCCESS);
+	                response.setResultDescription(MSG_SUCCESS);
+	                response.setMessageText("Email with Username sent to user");
+	                response.setUserName(userName);
+             }
+			 else{
+				 logger.info("Email Address validation failed");
+				 response.setResultCode(RESULT_CODE_SIX);
+	             response.setResultDescription(RESULT_DESCRIPTION_EMAIL_NOTFOUND);
+				 response.setMessageText("Email Address validation failed");
+				 response.setUserName(userName);
+			    
+			 }
+		       }else{
+		    	response.setResultCode(RESULT_CODE_SEVEN);
+           		response.setResultDescription(RESULT_DESCRIPTION_INVALID_ZIP_CODE);
+           		response.setMessageText("Invalid Zip Code");
+           		response.setUserName(userName);
+		    }
+			}else{
+						
+				logger.info("Invalid Contract Account details- Account validation failed");
+				response.setResultCode(RESULT_CODE_TWO);
+				response.setResultDescription(RESULT_CODE_INVALID_ACCOUNT_NUMBER_DESCRIPTION);
+				response.setMessageText("Invalid Contract Account details- Account validation failed");
+			}
+			}else{
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
+				response.setMessageText("Invalid Input Parameters");
+			}	
+			} catch (Exception e) {
+				logger.info("Inside Exception block of ProfileBO - forgotUserName call"+e);
+				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				utilityloggerHelper.logTransaction("forgotUserName", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+				if(logger.isDebugEnabled()){
+					logger.debug(XmlUtil.pojoToXML(request));
+					logger.debug(XmlUtil.pojoToXML(response));
+				}
+			}
+		
+	       
+		return response;
+		
+		
+	}
+	
+	
+	/**
+	 * This method is to get the username or/and account number from ldap.
+	 * @author Cuppala
+	 * @param userId/accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * @param zip
+	 * @return
+	 */
+		
+public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String companyCode,String brandName,String languageCode, String zip, String sessionId){
+		
+		UserInfoResponse userInfoResponse = new UserInfoResponse();
+		ForgotPasswordResponse response = new ForgotPasswordResponse();
+		String request = userIdOrAcNum+"userIdOrAcNum";
+		
+		
+		
+		
+		
+		long startTime = CommonUtil.getStartTime();
+		try {
+			
+			if(StringUtils.isNotEmpty(userIdOrAcNum.trim())&&StringUtils.isNotEmpty(zip.trim())
+					&&StringUtils.isNotEmpty(companyCode.trim())&&StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)){
+							
+				//Call to get user information including Email id.
+				userInfoResponse = getUserOrAcctNumber(userIdOrAcNum,companyCode,sessionId);
+			
+				if(userInfoResponse!=null && userInfoResponse.getResultCode().equalsIgnoreCase("0")){
+					String accountNumber=userInfoResponse.getAccountNumber();
+				    String userName=userInfoResponse.getUserName();
+				    String emailID=userInfoResponse.getEmailID();
+				  
+				    String userUniqueID=userInfoResponse.getUserUniqueID();
+				    
+				    //Call to get billing address
+				    GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, sessionId);
+				    
+				        
+				    if((CommonUtil.trimZipCode(billingAddressResp.getStrZip()).equalsIgnoreCase(zip.trim()))&&StringUtils.isNotEmpty(billingAddressResp.getStrZip())){
+				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId);
+				    
+				  	    // Verification code comes here
+				    	boolean EMAIL_VERIFIED=true;
+				    	boolean LDAPEmailValidation = ((StringUtils.isNotEmpty(userInfoResponse.getEmailID()))?true:false);
+				    	boolean accountCallEmailValidation = ((StringUtils.isNotEmpty(getAccountDetailsResponse.getEmailID()))?true:false);
+				  
+					  	if(EMAIL_VERIFIED&&LDAPEmailValidation&&accountCallEmailValidation&&(getAccountDetailsResponse.getEmailID().equalsIgnoreCase(emailID))){
+						String TransID = profileDAO.insertTransaction(userUniqueID, companyCode);
+						
+						String resetPasswordURL = envMessageReader.getMessage(GME_MYACCOUNT_PASSWORD_RESET_URL)+TransID;
+						logger.info("Reset URL ="+resetPasswordURL);
+						
+						String nonZeroAccountNumber = CommonUtil.stripLeadingZeros(accountNumber);
+						
+						int year = Calendar.getInstance().get(Calendar.YEAR);
+						
+						String currentYear = String.valueOf(year);
+						
+						
+						HashMap<String, String> templateProperties = new HashMap<String, String>();
+		                templateProperties.put("ACCOUNT_NUMBER", nonZeroAccountNumber);
+		                //getEnviromentProp
+		                templateProperties.put("LOGIN_URL", envMessageReader.getMessage(GME_MYACCOUNT_LOGIN_URL));
+		                templateProperties.put("CURRENT_YEAR", currentYear);
+		                    Boolean status = false;
+		                    if(StringUtils.isEmpty(languageCode))
+		                    	languageCode=EN;
+		                    
+		                	if(languageCode.equalsIgnoreCase(ES)){
+		                		resetPasswordURL = resetPasswordURL+"/ES";;
+		                		 templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
+		                		status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_ES_US, templateProperties, companyCode);
+		                		logger.info("Spanish Conf mail send for Password reset: " + status);
+								}else{
+ 		
+			                		logger.info("Setting languageCode to English");
+			                		resetPasswordURL = resetPasswordURL+"/EN";
+			                		 templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
+			                		status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_EN_US, templateProperties, companyCode);
+									logger.info("English Conf mail send for Password reset: " + status);
+		
+		                	}
+		                	
+		                
+		                response.setIsCallSuccess(BOOLEAN_TRUE);
+		                response.setResultCode(RESULT_CODE_SUCCESS);
+		                response.setResultDescription(MSG_SUCCESS);
+		                response.setMessageText("Password reset call sucessfull");
+					 }
+					 else{
+						 logger.info("Email Address validation failed");
+						 response.setResultCode(RESULT_CODE_SIX);
+			             response.setResultDescription(RESULT_DESCRIPTION_EMAIL_NOTFOUND);
+						 response.setIsCallSuccess(BOOLEAN_FALSE);
+						 response.setMessageText("Email Address validation failed");
+					 }
+					 }
+					 else{
+				    	response.setResultCode(RESULT_CODE_SEVEN);
+		            	response.setResultDescription(RESULT_DESCRIPTION_INVALID_ZIP_CODE);
+		            	response.setIsCallSuccess(BOOLEAN_FALSE);
+				    	response.setMessageText("Invalid Zip Code");
+				    }
+				}else{
+					
+					logger.info("Invalid Contract Account details- Account validation failed");
+					response.setResultCode(RESULT_CODE_TWO);
+					response.setResultDescription(RESULT_CODE_INVALID_ACCOUNT_NUMBER_DESCRIPTION);
+					response.setMessageText("Invalid Contract Account details- Account validation failed");
+				}
+			}else{
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
+				response.setMessageText("Invalid Input Parameters");
+				response.setIsCallSuccess(BOOLEAN_FALSE);
+			}
+			}catch (Exception e) {
+					
+					logger.error("Exception is forgotPassword"+e);
+					response.setIsCallSuccess(BOOLEAN_FALSE);
+					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+					response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+					utilityloggerHelper.logTransaction("forgotPassword", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+					if(logger.isDebugEnabled()){
+						logger.debug(XmlUtil.pojoToXML(request));
+						logger.debug(XmlUtil.pojoToXML(response));
+					}
+
+				}
+			      
+		return response;
+	}
+	
+/**
+ * This method is to get the validate forgot password link.
+ * @author Cuppala
+ * @param transactionId
+ * @param companyCode
+ * @param brandName
+ * @return
+ */
+	
+	public ValidatePasswordLinkResponse validateForgotPasswordLink(String transactionId,String companyCode,String brandName, String sessionId){
+		
+		ValidatePasswordLinkResponse response= new ValidatePasswordLinkResponse();
+		long startTime = CommonUtil.getStartTime();
+		String request = transactionId+"transactionId";
+		String userName = profileDAO.getUserNameforTxn(transactionId);;
+		
+		try {
+			if(companyCode.equalsIgnoreCase(COMPANY_CODE_GME) && !StringUtils.isEmpty(transactionId)){
+				if(profileDAO.validatePasswordLink(transactionId))
+				{
+				response.setValid(true);
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setUserName(userName);
+				response.setMessageText("Link Valid");
+								
+				}
+				else
+				{
+				
+				response.setValid(false);
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setUserName(userName);
+				response.setMessageText("Link Expired");
+				
+				}
+				
 			}
 			else
 			{
-				logger.info("CCS Profile Call to fetch BP");
-				Map<String, Object> responseMap = new HashMap<String, Object>();
-				ProfileResponse profileResponse = null;
-				responseMap = profileService.getProfile(response.getAccountNumber(), companyCode, sessionId);
-				if(responseMap!= null && responseMap.size()!= 0)
-				{
-					profileResponse= (ProfileResponse)responseMap.get("profileResponse");
-				}					
-				CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
-				crmProfileRequest.setStrCANumber(response.getAccountNumber());
-				crmProfileRequest.setStrBPNumber(profileResponse.getContractAccountDO().getStrBPNumber());
-				logger.info("CRM Profile Call to fetch Email");
-				CrmProfileResponse crmProfileResponse = profileService.getCRMProfile(crmProfileRequest, companyCode, sessionId);
-				response.setEmailID(crmProfileResponse.getEmailID());
-				response.setResultCode(RESULT_CODE_SUCCESS);
-				response.setResultDescription(MSG_SUCCESS);
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
+				response.setMessageText("Invalid Paramenter");
 			}
-			utilityloggerHelper.logTransaction("getUserOrAcctNumber", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			if(logger.isDebugEnabled()){
-				logger.debug(XmlUtil.pojoToXML(request));
-				logger.debug(XmlUtil.pojoToXML(response));
-			}
-		}  catch (Exception e) {
 			
+		} catch (Exception e) {
+			logger.error("Exception is validateForgotPasswordLink"+e);
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			utilityloggerHelper.logTransaction("getUserOrAcctNumber", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+			utilityloggerHelper.logTransaction("validateForgotPasswordLink", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 			if(logger.isDebugEnabled()){
 				logger.debug(XmlUtil.pojoToXML(request));
 				logger.debug(XmlUtil.pojoToXML(response));
 			}
-			throw new OAMException(200, e.getMessage(), response);
 		}
 		return response;
 
