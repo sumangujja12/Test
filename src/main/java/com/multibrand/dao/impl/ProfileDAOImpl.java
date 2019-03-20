@@ -62,7 +62,7 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 		final String transactionId = GuidGenerator.getGuid(true);
 		Calendar expiryDt = Calendar.getInstance();
 		Date expirationDate = new Date();
-		expiryDt.add(Calendar.MINUTE, 30);
+		expiryDt.add(Calendar.MINUTE, 59);
 		expirationDate.setTime(expiryDt.getTimeInMillis());			
 		//transactionId = GuidGenerator.getGuid(true);
 		final Timestamp   sqlDate = new java.sql.Timestamp(expirationDate.getTime()); 
