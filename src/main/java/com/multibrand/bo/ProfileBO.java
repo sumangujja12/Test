@@ -502,7 +502,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		String userName = profileDAO.getUserNameforTxn(transactionId);;
 		
 		try {
-			if(companyCode.equalsIgnoreCase("0271") && !StringUtils.isEmpty(transactionId)){
+			if(companyCode.equalsIgnoreCase(COMPANY_CODE_GME) && !StringUtils.isEmpty(transactionId)){
 				if(profileDAO.validatePasswordLink(transactionId))
 				{
 				response.setValid(true);
