@@ -1135,5 +1135,13 @@ public interface Constants {
 	 public static final String AVG_BILL_FLAG_N = "N";
 	 public static final String AVG_BILL_FLAG_YES = "Yes";
 	 public static final String AVG_BILL_FLAG_NO = "No";
+	 
+	 //enviornmental impact for GME Mobile app
+	 
+	 public static final String TREES_PER_SECOND = "trees.per.second";
+	 public static final String CO2_PER_SECOND = "co2.per.second";
+	 public static final String TOATL_BASELINE = "total.baseline";
+	 public static final String TOTAL_BASELINE_TREE = "total.baseline.tree";
+	 
 
 }

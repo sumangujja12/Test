@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -111,6 +112,7 @@ import com.multibrand.vo.response.AffiliateOfferDO;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
+import com.multibrand.vo.response.GMEEnviornmentalImpact;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.OfferPriceDO;
@@ -136,7 +138,7 @@ import com.reliant.domain.AddressValidateResponse;
  *
  */
 @Component
-public class OEBO extends OeBoHelper {
+public class OEBO extends OeBoHelper implements Constants{
 	
 	LoggerUtil logger = LoggerUtil.getInstance("NRGREST_LOGGER");
 	
@@ -184,6 +186,9 @@ public class OEBO extends OeBoHelper {
 	
 	@Autowired
 	private PaymentService paymentService;
+	
+	@Autowired
+	private DateUtil dateUtil;
 	
 	/**
 	 * Method to return Company Code + Brand Id specific offers based on TDSP code or address or esid
@@ -4674,8 +4679,37 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		
 		return uccDataResponse;
 	}
-
-
+	
+	/**
+	 * This method is responsible for get environment impact for GME mobile app
+	 * @author NGASPerera
+	 * @return GMEEnviornmentalImpact
+	 */
+	public GMEEnviornmentalImpact getEnviornmentalImpactForAllGMECommunity() {
+		GMEEnviornmentalImpact gMEEnviornmentalImpact = new GMEEnviornmentalImpact();
+		double treesPerSecond = Double
+				.parseDouble(appConstMessageSource.getMessage(Constants.TREES_PER_SECOND, null, null));
+		double co2PerSecond = Double
+				.parseDouble(appConstMessageSource.getMessage(Constants.CO2_PER_SECOND, null, null));
+		long baselineTotal = Long.parseLong(appConstMessageSource.getMessage(Constants.TOATL_BASELINE, null, null));
+		long treesBaselineTotal = Long
+				.parseLong(appConstMessageSource.getMessage(Constants.TOTAL_BASELINE_TREE, null, null));
+		Calendar cal = Calendar.getInstance();
+		// This year is hard coded, because web team still using 2018 (used same as for the compatibility)
+		// need to remove this below one line to get the current year
+		cal.set(Calendar.YEAR, 2018);
+		cal.set(Calendar.DAY_OF_YEAR, 1);
+		cal.set(Calendar.HOUR_OF_DAY, 00);
+		cal.set(Calendar.MINUTE, 00);
+		cal.set(Calendar.SECOND, 00);
+		Date baselineDate = cal.getTime();
+		long secondsSinceBaseline = dateUtil.getTimeDifferenceInSeconds(new Date(), baselineDate);
+		long totTreesPlantedForCurrentYr = Math.round((treesPerSecond * secondsSinceBaseline) + treesBaselineTotal);
+		long totPoundOfCarbonForCurrentYr = Math.round(((co2PerSecond * secondsSinceBaseline) + baselineTotal));
+		gMEEnviornmentalImpact.setToatlTreesPlantedForCurrentYr(totTreesPlantedForCurrentYr);
+		gMEEnviornmentalImpact.setTotalPoundOfCO2ForCurrentYr(totPoundOfCarbonForCurrentYr);
+		return gMEEnviornmentalImpact;
+	}
 
 
 }

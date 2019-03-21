@@ -813,6 +813,16 @@ public class DateUtil implements Constants{
 		}
 		return datesInRange;
 	}
+	/**
+	 * This method returns difference between two time in seconds
+	 * @author NGASPerera
+	 * @param Date startDate
+	 * @param Date endDate
+	 * @return long timeDiffInSeconds
+	 */
+	public long getTimeDifferenceInSeconds(Date startDate, Date endDate){
+		return  (startDate.getTime() - endDate.getTime()) / 1000;
+	}
 
 	
 }
