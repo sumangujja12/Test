@@ -70,6 +70,7 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
+import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -83,6 +84,7 @@ import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
+import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
@@ -4551,6 +4553,121 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		}
 
 
+	public UCCDataResponse submitUCCData(UCCDataRequest uccDataRequest, String sessionId){
+		
+		
+		UCCDataResponse uccDataResponse = new UCCDataResponse();
+		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+
+		if (StringUtils.isNotEmpty(uccDataRequest.getTrackingId()))
+			requestData.setTrackingId(uccDataRequest.getTrackingId());
+		requestData.setCompanyCode(uccDataRequest.getCompanyCode());
+
+		ServiceLocationResponse serviceLocationResponse =  getEnrollmentData(uccDataRequest.getTrackingId());
+		
+		if(serviceLocationResponse != null){
+			
+			if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
+					|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), uccDataRequest.getLastName())) ) {
+				
+				uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+				uccDataResponse.setMessageCode(MESSAGE_CODE_INFO_MISMATCH);
+				uccDataResponse.setMessageText(MESSAGE_TEXT_INFO_MISMATCH);
+				
+			}else{
+				
+				String personId = getPersonIdByTrackingNo(requestData
+						.getTrackingId());
+		
+				// Update service location and person table only when a valid person
+				// id
+				// is returned from getPersonIdByTrackingNo
+		
+				if (StringUtils.isNotEmpty(personId)) {
+		
+					/* Setting service addresses */
+					requestData.setRecentCallMade(UCC_DATA);
+					
+					requestData.setSecurityMethod(SECURITY_METHOD_UCC);
+					
+					if(!StringUtils.equals(ZERO, uccDataRequest.getDepositAmount())) {
+						requestData.setPayCode(YES);	
+						requestData.setDepositCode(DEPOSIT_OWED);
+						requestData.setDepositAmount(uccDataRequest.getDepositAmount());
+						
+					} else {					
+						requestData.setPayCode(FLAG_NO);
+						requestData.setDepositCode(DEPOSIT_NONE);
+						requestData.setDepositAmount(ZERO);
+					}
+					
+		
+					/* Updating service location affiliate table */
+					
+					String errorCode = this.updateServiceLocation(requestData);
+					if (StringUtils.isNotBlank(errorCode)){
+						logger.debug("Finished processing updateServiceLocation, errorCode = "
+								+ errorCode);
+																				
+						uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+						uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+						uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+						uccDataResponse.setMessageText(MESSAGE_TEXT_TRACKING_NUMBER_NOT_UPDATED);
+						
+					} else {
+						uccDataResponse.setResultCode(RESULT_CODE_SUCCESS);
+						uccDataResponse.setStatusCode(STATUS_CODE_CONTINUE);
+					}
+		
+					UpdatePersonRequest requestDataPerson = new UpdatePersonRequest();
+					/* Updating person affiliate table */
+					errorCode = EMPTY;
+					requestDataPerson.setPersonId(personId);
+					// requestDataPerson.setLanguageCode(locale);
+					requestDataPerson.setFirstName(uccDataRequest.getFirstName());
+					requestDataPerson.setLastName(uccDataRequest.getLastName());					
+						requestDataPerson.setSsn(uccDataRequest.getTokenizedSSN());		
+						requestDataPerson.setCredLevelNum(uccDataRequest
+								.getCreditBucket());
+						requestDataPerson.setCredSourceNum(uccDataRequest
+								.getCreditSource());
+						requestDataPerson.setCredScoreNum(uccDataRequest
+								.getCreditScore());
+						requestDataPerson.setAdvActionData(uccDataRequest
+								.getCreditFactors());
+		
+					errorCode = this.updatePerson(requestDataPerson);
+					if (StringUtils.isNotBlank(errorCode)) {
+						logger.debug("Finished processing updateServiceLocation, errorCode = "
+								+ errorCode);
+						
+						uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+						uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+						uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+						uccDataResponse.setMessageText(MESSAGE_TEXT_PERSON_NOT_UPDATED);
+						
+					} else {
+						uccDataResponse.setResultCode(RESULT_CODE_SUCCESS);
+						uccDataResponse.setStatusCode(STATUS_CODE_CONTINUE);
+					}
+				}else{
+					uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+					uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+					uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+					uccDataResponse.setMessageText(MESSAGE_TEXT_PERSON_NOT_FOUND);
+					
+				}
+			}
+		}else{
+			uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+			uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+			uccDataResponse.setMessageText(MESSAGE_TEXT_TRACKING_NUMBER_NOT_FOUND);
+		}
+		
+		return uccDataResponse;
+	}
 
 }
 

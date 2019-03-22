@@ -40,6 +40,7 @@ import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
+import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -51,6 +52,7 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
+import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
@@ -1052,6 +1054,101 @@ public class OEResource extends BaseResource {
 		AgentDetailsResponse agentDetailsResponse = oeBO.getAgentDetails(request,
 				httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(agentDetailsResponse).build();
+		return response;
+	}
+	
+	
+	@POST
+	@Path("submitUCCData")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitUCCData(@Valid UCCDataRequest request) {
+
+		Response response = null;
+		String errorDesc = null;
+		HashMap<String, Object> mandatoryParamList = null;
+		HashMap<String, Object> mandatoryParamCheckResponse = null;
+		
+		mandatoryParamList = new HashMap<String, Object>();
+
+			// Either Billing PO box or Billing Street num/name should be supplied
+			mandatoryParamList.put("firstName",
+					request.getFirstName());
+
+			mandatoryParamList.put("lastName",
+					request.getLastName());
+			mandatoryParamList.put("depositAmount",
+					request.getDepositAmount());
+		
+
+		mandatoryParamCheckResponse = CommonUtil
+		.checkMandatoryParam(mandatoryParamList);
+		String resultCode = (String) mandatoryParamCheckResponse
+		.get("resultCode");
+		
+		if (StringUtils.isNotBlank(resultCode)
+				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+
+					errorDesc = (String) mandatoryParamCheckResponse
+					.get("errorDesc");
+					
+					if (StringUtils.isNotBlank(errorDesc)) {
+						response = CommonUtil.buildNotValidResponse(resultCode,
+						errorDesc);
+					} else {
+						response = CommonUtil.buildNotValidResponse(errorDesc,
+						Constants.STATUS_CODE_ASK);
+					}
+					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
+				
+					return response;
+				}
+		
+		
+		
+		HashMap<String, Object> nagativeParamList = null;
+		HashMap<String, Object> negativeParamCheckResponse = null;
+		
+		nagativeParamList = new HashMap<String, Object>();
+
+
+		nagativeParamList.put("depositAmount",
+				request.getDepositAmount());
+
+		if(StringUtils.isNotEmpty(request.getCreditScore())) {
+			nagativeParamList.put("creditScore",
+					request.getCreditScore());
+		}
+
+		
+
+		negativeParamCheckResponse = CommonUtil
+		.checkNegaviteValueInParam(nagativeParamList);
+		 resultCode = (String) negativeParamCheckResponse
+		.get("resultCode");
+		
+		if (StringUtils.isNotBlank(resultCode)
+				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+
+					errorDesc = (String) negativeParamCheckResponse
+					.get("errorDesc");
+					
+					if (StringUtils.isNotBlank(errorDesc)) {
+						response = CommonUtil.buildNotValidResponse(resultCode,
+						errorDesc);
+					} else {
+						response = CommonUtil.buildNotValidResponse(errorDesc,
+						Constants.STATUS_CODE_ASK);
+					}
+					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
+				
+					return response;
+				}
+		
+		
+		UCCDataResponse uccResp = oeBO.submitUCCData(request,
+				httpRequest.getSession(true).getId());
+		response = Response.status(Response.Status.OK).entity(uccResp).build();
 		return response;
 	}
 	
