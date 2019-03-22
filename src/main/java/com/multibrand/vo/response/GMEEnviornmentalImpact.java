@@ -1,6 +1,9 @@
 package com.multibrand.vo.response;
 
-public class GMEEnviornmentalImpact {
+import org.springframework.stereotype.Component;
+
+@Component("gmeEnvImpact")
+public class GMEEnviornmentalImpact extends GenericResponse {
 
 	private double totalPoundOfCO2ForCurrentYr;
 	private double toatlTreesPlantedForCurrentYr;
