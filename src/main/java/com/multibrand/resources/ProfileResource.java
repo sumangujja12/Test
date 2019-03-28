@@ -22,6 +22,8 @@ import com.multibrand.vo.response.AcctValidationResponse;
 import com.multibrand.vo.response.ChangeUsernameResponse;
 import com.multibrand.vo.response.CirroStructureResponse;
 import com.multibrand.vo.response.EnvironmentImpactsResponse;
+import com.multibrand.vo.response.ForgotPasswordResponse;
+import com.multibrand.vo.response.ForgotUserNameResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.SecondaryNameResponse;
 import com.multibrand.vo.response.SendMailForNewServiceAddressAddResponse;
@@ -32,6 +34,7 @@ import com.multibrand.vo.response.UpdateContactInfoResponse;
 import com.multibrand.vo.response.UpdatePasswordResponse;
 import com.multibrand.vo.response.UserIdResponse;
 import com.multibrand.vo.response.UserInfoResponse;
+import com.multibrand.vo.response.ValidatePasswordLinkResponse;
 import com.multibrand.vo.response.WsEnrollmentResponse;
 import com.multibrand.vo.response.WsServiceResponse;
 import com.multibrand.vo.response.WseEligiblityStatusResponse;
@@ -61,6 +64,77 @@ public class ProfileResource {
 	private ProfileHelper profileHelper;
 	
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
+	
+
+	/** This service is to validate user info and then get the User Name to send it over to the Customer via Email.
+	 * @author cuppala
+	 * @param accountNumber		Customer Account Identification no
+	 * @param companyCode		Company code
+	 * @param zip				Billing Zip Code
+	 * @param languageCode		User preferred Language Code
+	 * @param brandName			Company Brand name
+	 * @return response			Provide JSON/XML customer  data response
+	 */
+	@POST
+	@Path("forgotUserName")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response forgotUserName(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("zip") String zip,@FormParam("languageCode") String languageCode,@FormParam("brandName") String brandName){
+		
+		logger.info("accountNumber :"+accountNumber+"companyCode :"+companyCode+"zip :"+zip);
+		
+		Response response = null;
+		String sessionId = httpRequest.getSession(true).getId();
+		ForgotUserNameResponse forgotUserNameResponse  = profileBO.forgotUserName(accountNumber,companyCode,zip,languageCode,sessionId,brandName);
+		response = Response.status(200).entity(forgotUserNameResponse).build();
+		return response;
+		
+	}
+	
+	/** This service is to validate user info and then generate new password reset link to send it over to the Customer via Email.
+	 * @author cuppala
+	 * @param accountNumber		Customer Account Identification no
+	 * @param companyCode		Company code
+	 * @param zip				Billing Zip Code
+	 * @param languageCode		User preferred Language Code
+	 * @param brandName			Company Brand name
+	 * @return response			Provide JSON/XML customer  data response
+	 */
+	@POST
+	@Path("forgotPassword")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response forgotPassword(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName,@FormParam("zip") String zip,@FormParam("languageCode") String languageCode){
+		
+		Response response = null;
+		String sessionId = httpRequest.getSession(true).getId();
+		ForgotPasswordResponse forgotPasswordResponse = profileBO.forgotPassword(accountNumber,companyCode,brandName,languageCode,zip,sessionId);
+		response = Response.status(200).entity(forgotPasswordResponse).build();
+		return response;
+		
+	}
+	
+	/** This service is to validate Customer received Email i.e valid or expired.
+	 * @author cuppala
+	 * @param transactionId		Transaction Identification number received in email
+	 * @param companyCode		Company code
+	 * @param brandName			Company Brand name
+	 * @return response			Provide JSON/XML customer  data response
+	 */
+	@POST
+	@Path("validatePasswordlink")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	public Response validateForgotPasswordLink(@FormParam("transactionId") String transactionId,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName){
+		Response response = null;
+		String sessionId = httpRequest.getSession(true).getId();
+		ValidatePasswordLinkResponse validatePasswordLinkResp = profileBO.validateForgotPasswordLink(transactionId,companyCode,brandName,sessionId);
+		response = Response.status(200).entity(validatePasswordLinkResp).build();
+		return response;
+		
+	}
+
+	
 	
 	/** This service is to get the username or account number from LDAP.
 	 * @author kdeshmu1

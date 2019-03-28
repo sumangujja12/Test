@@ -343,4 +343,7 @@ public interface DBConstants {
 	public static final String RESPONSE_DATE_FORMAT = "yyyy-MM-dd";
 	public static final String CREATION_DATE = "CREATION_DATE";
 	public static final String UPDATE_DATE = "UPDATE_DATE";
+	public static final String QUERY_GME_INSERT_PASSWORD_TNX = "query.gme.insert.password.tnx";
+	public static final String QUERY_GME_INSERT_PASSWORD_STATUS_CODE = "query.gme.update.password.status.code";
+	
 }

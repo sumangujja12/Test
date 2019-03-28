@@ -207,6 +207,7 @@ public interface Constants {
     public static final String RESULT_DESCRIPTION_ACCOUNT_EXISTS="Account Already Registered";
     public static final String RESULT_CODE_NO_MATCH="2";
     public static final String RESULT_CODE_NO_MATCH_DESCRIPTION="No Match";
+    public static final String RESULT_CODE_INVALID_ACCOUNT_NUMBER_DESCRIPTION="Invalid Account Number";
     public static final String RESULT_CODE_ACCOUNT_ALREADY="Account Already Registered";
     public static final String RESULT_DESCRIPTION_ENROLL_FAILED="Enroll is failed";
     public static final String RESULT_DESCRIPTION_DEENROLL_FAILED="De-enroll is failed";
@@ -1080,4 +1081,20 @@ public interface Constants {
 	public static final String MESSAGE_CODE_INFO_MISMATCH = "INFO_MISMATCH";
 	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
 	
+	public static final String language_EN = "EN";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
+	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
+	 public static final String GME_PASSWORD_CHANGE_EN_US="GME.PASSWORD.CHANGE.EN_US";
+	 public static final String GME_PASSWORD_CHANGE_ES_US="GME.PASSWORD.CHANGE.ES_US";
+	 public static final String GME_USERNAME_EN_US = "GME.USERNAME.EN_US";
+	 public static final String GME_USERNAME_ES_US = "GME.USERNAME.ES_US";
+	 
+	 public static final String GME_MYACCOUNT_PASSWORD_RESET_URL ="GME.MYACCOUNT.PASSWORD.RESET.URL";
+	 public static final String GME_MYACCOUNT_LOGIN_URL="GME.MYACCOUNT.LOGIN.URL";
+	 //Added for GME Mobile
+	 
+	 public static final String RESULT_CODE_SIX="6";
+	 public static final String RESULT_DESCRIPTION_EMAIL_NOTFOUND="Email Address validation failed";
+	 public static final String RESULT_CODE_SEVEN="7";
+	 public static final String RESULT_DESCRIPTION_INVALID_ZIP_CODE="Invalid Zip Code";
 }
