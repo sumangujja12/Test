@@ -63,6 +63,7 @@ public class TokenBO extends BaseBO {
                 returnToken = Token.getDriverLicenceDeTokenization(request.getNumToBeTokenized()); 
                 tokenizedResponse.setReturnToken(returnToken); 
             }
+			
 		} catch (Exception e) {
 			logger.error(e);
 			tokenizedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
