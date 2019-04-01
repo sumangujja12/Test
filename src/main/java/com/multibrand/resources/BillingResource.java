@@ -403,7 +403,7 @@ public class BillingResource {
 	@Path("doCancelPayment")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response doCancelPayment(@FormParam("accountNumber") String accountNumber, @FormParam("companyCode")String companyCode, @FormParam("paymentId") String paymentId, @FormParam("brandName") String brandName){
+	public Response doCancelPayment(@FormParam("accountNumber") String accountNumber, @FormParam("companyCode")String companyCode, @FormParam("paymentId") String paymentId, @FormParam("brandName") String brandName, @FormParam("businessPartnerId") String bpid){
 		logger.debug("Start BillingResource.doCancelPayment :: START");
 		Response response = null;
 		
