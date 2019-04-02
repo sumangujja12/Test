@@ -410,15 +410,14 @@ public class BillingResource {
 			@FormParam("action") String action) {
 		logger.debug("Start BillingResource.doCancelPayment :: START");
 		Response response = null;
-				
+		CancelPaymentResponse cancelPaymentResponse  = new CancelPaymentResponse();		
 		if (StringUtils.isNotBlank(action) && action.equalsIgnoreCase(Constants.ONLINE_ACCOUNT_TYPE_CC)) {
 			EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(bpid, accountNumber, paymentId, action,
 					companyCode, brandName, httpRequest.getSession(true).getId());
-			CancelPaymentResponse cancelPaymentResponse  = new CancelPaymentResponse();
 			BeanUtils.copyProperties(editCancelOTCCPaymentResponse, cancelPaymentResponse);
 			response = Response.status(200).entity(cancelPaymentResponse).build();
 		} else {
-			CancelPaymentResponse cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode,
+			cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode,
 					paymentId, brandName, httpRequest.getSession(true).getId());
 			response = Response.status(200).entity(cancelPaymentResponse).build();
 		}		
