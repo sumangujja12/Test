@@ -33,6 +33,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -436,14 +437,28 @@ public class BillingResource {
 	@Path("doCancelPayment")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response doCancelPayment(@FormParam("accountNumber") String accountNumber, @FormParam("companyCode")String companyCode, @FormParam("paymentId") String paymentId, @FormParam("brandName") String brandName, @FormParam("businessPartnerId") String bpid){
+	public Response doCancelPayment(@FormParam("accountNumber") String accountNumber,
+			@FormParam("companyCode") String companyCode, @FormParam("paymentId") String paymentId,
+			@FormParam("brandName") String brandName, @FormParam("businessPartnerId") String bpid,
+			@FormParam("action") String action) {
 		logger.debug("Start BillingResource.doCancelPayment :: START");
 		Response response = null;
+		CancelPaymentResponse cancelPaymentResponse  = null;
 		
-		CancelPaymentResponse cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode, paymentId,brandName,httpRequest.getSession(true).getId());
+		if (StringUtils.isNotBlank(action) && action.equalsIgnoreCase(Constants.ONLINE_ACCOUNT_TYPE_CC)) {
+			EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(bpid, accountNumber, paymentId, action,
+					companyCode, brandName, httpRequest.getSession(true).getId());
+			cancelPaymentResponse  = new CancelPaymentResponse();	
+			BeanUtils.copyProperties(editCancelOTCCPaymentResponse, cancelPaymentResponse);
+		} else {
+			CancelPaymentResponse cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode,
+					paymentId, brandName, httpRequest.getSession(true).getId());
+		}		
+		
 		
 		// Added for GME Mobile
 		cancelPaymentResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		
 		if(cancelPaymentResponse.getResultDisplayCode()!=null)
 			cancelPaymentResponse.setResultDisplayText(errorContentHelper.getErrorMessage(cancelPaymentResponse.getResultDisplayCode()));
 		
