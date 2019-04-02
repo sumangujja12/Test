@@ -451,7 +451,7 @@ public class BillingResource {
 			cancelPaymentResponse  = new CancelPaymentResponse();	
 			BeanUtils.copyProperties(editCancelOTCCPaymentResponse, cancelPaymentResponse);
 		} else {
-			CancelPaymentResponse cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode,
+			 cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode,
 					paymentId, brandName, httpRequest.getSession(true).getId());
 		}		
 		
