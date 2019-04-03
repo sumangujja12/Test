@@ -1,6 +1,8 @@
 package com.multibrand.vo.response;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import com.multibrand.helper.ErrorContentHelper;
@@ -129,6 +131,6 @@ public class GenericResponse implements Constants{
 		return resultDisplayText;
 	}
 	public void setResultDisplayText(String resultDisplayText) {
-		this.resultDisplayText = resultDisplayText;
+		this.resultDisplayText = StringEscapeUtils.unescapeHtml(resultDisplayText);
 	}
 }
