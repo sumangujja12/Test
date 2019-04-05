@@ -24,6 +24,7 @@ import com.multibrand.dto.request.ReadContactAlertRequest;
 import com.multibrand.dto.request.SaveUpdateAlertPrefRequest;
 import com.multibrand.dto.request.SendActivateRequest;
 import com.multibrand.dto.request.SendNewActivateRequest;
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.request.OptInOptOutRequest;
 import com.multibrand.vo.request.PrivacyPreferencesRequest;
 import com.multibrand.vo.request.SMSOptInOutEligibilityRequest;
@@ -51,6 +52,9 @@ public class PreferencesResource {
 
 	@Autowired
 	PreferenceBO preferenceBO;
+	
+	@Autowired
+	ErrorContentHelper errorContentHelper;
 
 	@Context
 	private HttpServletRequest httpRequest;
@@ -125,7 +129,11 @@ public class PreferencesResource {
 		GetContactInfoResponse contactInfoResp = preferenceBO
 				.getContactInformation(request,
 						httpRequest.getSession(true).getId());
-
+		// Added for GME Mobile
+		contactInfoResp.setResultDisplayCode("getContactInfo");
+		if(contactInfoResp.getResultDisplayCode()!=null)
+			contactInfoResp.setResultDisplayText(errorContentHelper.getErrorMessage(contactInfoResp.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(contactInfoResp).build();
 		return response;
 	}

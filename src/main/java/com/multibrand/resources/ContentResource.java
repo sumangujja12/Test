@@ -17,14 +17,15 @@ import com.multibrand.dto.request.ContentOfferRequest;
 import com.multibrand.dto.request.ContentUserPrefRequest;
 import com.multibrand.dto.request.MessageContentRequest;
 import com.multibrand.service.ContentService;
-
+import com.multibrand.vo.response.contentResponse.MobileContentResponse;
+import com.multibrand.util.Constants;
 /*
  * @Author bbachin1
  */
 
 @Component
 @Path("personalize")
-public class ContentResource {
+public class ContentResource implements Constants{
 	
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
 	
@@ -122,6 +123,4 @@ public class ContentResource {
 		Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
 		return response;
 	}
-	
-
 }

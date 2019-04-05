@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.ProfileBO;
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.helper.ProfileHelper;
 import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.AcctValidationResponse;
@@ -63,6 +64,9 @@ public class ProfileResource {
 	@Autowired
 	private ProfileHelper profileHelper;
 	
+	@Autowired
+	ErrorContentHelper errorContentHelper;
+	
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
 	
 
@@ -86,6 +90,12 @@ public class ProfileResource {
 		Response response = null;
 		String sessionId = httpRequest.getSession(true).getId();
 		ForgotUserNameResponse forgotUserNameResponse  = profileBO.forgotUserName(accountNumber,companyCode,zip,languageCode,sessionId,brandName);
+		
+		// Added for GME Mobile
+		forgotUserNameResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(forgotUserNameResponse.getResultDisplayCode()!=null)
+			forgotUserNameResponse.setResultDisplayText(errorContentHelper.getErrorMessage(forgotUserNameResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(forgotUserNameResponse).build();
 		return response;
 		
@@ -109,6 +119,12 @@ public class ProfileResource {
 		Response response = null;
 		String sessionId = httpRequest.getSession(true).getId();
 		ForgotPasswordResponse forgotPasswordResponse = profileBO.forgotPassword(accountNumber,companyCode,brandName,languageCode,zip,sessionId);
+		
+		// Added for GME Mobile
+		forgotPasswordResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(forgotPasswordResponse.getResultDisplayCode()!=null)
+			forgotPasswordResponse.setResultDisplayText(errorContentHelper.getErrorMessage(forgotPasswordResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(forgotPasswordResponse).build();
 		return response;
 		
@@ -191,6 +207,11 @@ public class ProfileResource {
 		
 		Response response = null;
 		UpdatePasswordResponse updatePasswordResponse = profileBO.updatePasswordBehindLogin(userName,newPassword,oldPassword,companyCode, httpRequest.getSession(true).getId());
+		// Added for GME Mobile
+		updatePasswordResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(updatePasswordResponse.getResultDisplayCode()!=null)
+			updatePasswordResponse.setResultDisplayText(errorContentHelper.getErrorMessage(updatePasswordResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(updatePasswordResponse).build();
 		return response;
 		
@@ -224,6 +245,11 @@ public class ProfileResource {
 		
 		UpdateBillingAddressResponse updateBillingAddressResponse = profileBO.updateBillingAddress(accountNumber,streetName,streetNum,city,state,
 				aptNum,country,zip,companyCode,bpNumber,poBox,httpRequest.getSession(true).getId(), brandName);
+		// Added for GME Mobile
+		updateBillingAddressResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(updateBillingAddressResponse.getResultDisplayCode()!=null)
+			updateBillingAddressResponse.setResultDisplayText(errorContentHelper.getErrorMessage(updateBillingAddressResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(updateBillingAddressResponse).build();
 		
 		
@@ -251,6 +277,11 @@ public class ProfileResource {
 		
 		//companyCode="0391";
 		ChangeUsernameResponse changeUsernameResponse = profileBO.changeUsername(userName,oldUserName,companyCode,httpRequest.getSession(true).getId());
+		
+		// Added for GME Mobile
+		changeUsernameResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(changeUsernameResponse.getResultDisplayCode()!=null)
+			changeUsernameResponse.setResultDisplayText(errorContentHelper.getErrorMessage(changeUsernameResponse.getResultDisplayCode()));
 		
 		response = Response.status(200).entity(changeUsernameResponse).build();
 		return response;
@@ -286,6 +317,10 @@ public class ProfileResource {
 		logger.info(" START ******* Input for the updateContactInfo API**********");
 		UpdateContactInfoResponse updateContactInfoResponse = profileBO.updateContactInfo(accountNumber,homePhone,email,bpNumber,
 				uniqueID,userName,companyCode,workPhone,cellPhone,httpRequest.getSession(true).getId(), brandName,marketingPref, existingEmail, billingOptionChangeFlag);
+		// Added for GME Mobile
+		updateContactInfoResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(updateContactInfoResponse.getResultDisplayCode()!=null)
+			updateContactInfoResponse.setResultDisplayText(errorContentHelper.getErrorMessage(updateContactInfoResponse.getResultDisplayCode()));
 		
 		response = Response.status(200).entity(updateContactInfoResponse).build();
 			
@@ -310,6 +345,11 @@ public class ProfileResource {
 		Response response = null;
 		logger.info("Start-[ProfileResource-getContractInfo]");
 		GetContractInfoResponse getContractInfoResponse = profileBO.getContractInfo(accountNumber,bpNumber,esid,contractId,languageCode,companyCode,brandName,httpRequest.getSession(true).getId());
+		
+		// Added for GME Mobile
+		getContractInfoResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(getContractInfoResponse.getResultDisplayCode()!=null)
+			getContractInfoResponse.setResultDisplayText(errorContentHelper.getErrorMessage(getContractInfoResponse.getResultDisplayCode()));
 		
 		response = Response.status(200).entity(getContractInfoResponse).build();
 		logger.info("Start-[ProfileResource-getContractInfo]");
@@ -360,6 +400,12 @@ public class ProfileResource {
 		Response response = null;
 		ProductUpdateResponse productResponse = new ProductUpdateResponse();
 		productResponse = profileBO.productUpdate(accountNumber, action , objectId, extUi, enrollType , requestDate , manuPartNo, companyCode,httpRequest.getSession(true).getId());
+		
+		// Added for GME Mobile
+		productResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(productResponse.getResultDisplayCode()!=null)
+			productResponse.setResultDisplayText(errorContentHelper.getErrorMessage(productResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(productResponse).build();
 		return response;
 		
@@ -376,6 +422,12 @@ public class ProfileResource {
 		Response response = null;
 		EnvironmentImpactsResponse environmentImpactsResponse = new EnvironmentImpactsResponse();
 		environmentImpactsResponse = profileBO.environmentalImpacts(accountNumber,companyCode, httpRequest.getSession(true).getId());
+		
+		// Added for GME Mobile
+		environmentImpactsResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
+		if(environmentImpactsResponse.getResultDisplayCode()!=null)
+			environmentImpactsResponse.setResultDisplayText(errorContentHelper.getErrorMessage(environmentImpactsResponse.getResultDisplayCode()));
+		
 		response = Response.status(200).entity(environmentImpactsResponse).build();
 		return response;
 		

@@ -3,6 +3,7 @@ package com.multibrand.service;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dto.request.BaseContentRequest;
+import com.multibrand.vo.response.contentResponse.MobileContentResponse;
 
 /**
  * @author bbachin1
@@ -20,4 +21,5 @@ public interface ContentService {
 	public String readComponentByItemIds(BaseContentRequest Request);
 
 	public String readMessageContent(BaseContentRequest Request);
+
 }

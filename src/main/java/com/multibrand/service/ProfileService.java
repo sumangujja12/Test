@@ -15,8 +15,8 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +44,7 @@ import com.multibrand.domain.WseEnrollmentResponse;
 import com.multibrand.domain.WseEsenseEligibilityResponse;
 import com.multibrand.domain.WseServiceRequest;
 import com.multibrand.domain.WseServiceResponse;
+import com.multibrand.helper.ProfileHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
@@ -136,6 +137,9 @@ public class ProfileService extends BaseAbstractService {
 	
 	@Autowired
 	private OfferService offerService;
+	
+	@Autowired
+	private ProfileHelper profileHelper;
 	
 	
 	/**
@@ -276,7 +280,7 @@ public class ProfileService extends BaseAbstractService {
 	 */
 	public Map<String, Object> getProfile(String accountNumber, String companyCode, String sessionId)
 			throws Exception {
-
+		
 		logger.info("ProfileService.getProfile::::::::::::::::::::START");
 		HashMap<String, Object> responseMap = new HashMap<String, Object>();
 		
@@ -1308,11 +1312,9 @@ public class ProfileService extends BaseAbstractService {
 		BindingProvider binding = (BindingProvider)stub;
 		
 		binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,this.envMessageReader.getMessage(CCS_USER_NAME));
-		
 		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PASSWORD));
-		
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,this.envMessageReader.getMessage(ENVIRONMENT_IMPACT_ENDPOINT_URL_JNDINAME));
-		
+
 		javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.ZetEnviDetails> hTZETEnviDetails = new javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.ZetEnviDetails>();
 		javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.Bapiret2T> hTBapiret2 = new  javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.Bapiret2T>();
 	    
@@ -1345,12 +1347,15 @@ public class ProfileService extends BaseAbstractService {
 			
 			environmentImpacts[count].setOperand(zesEnviDetails.getOperand());
 			environmentImpacts[count].setMoveOutDate(zesEnviDetails.getMoveoutdate());
+			environmentImpacts[count].setMoveInDate(zesEnviDetails.getMoveindate());
 			environmentImpacts[count].setEsiid(zesEnviDetails.getEsiid());
 			environmentImpacts[count].setValue(zesEnviDetails.getValue().toString());
 			count++;
 		}
 		
 		response.setEnvironmentImpacts(environmentImpacts);
+		List<ZesEnviDetails> newList = profileHelper.sortList(listZesEnviDetails);		
+		response.setCustomerSince(newList.get(0).getMoveindate());
 		response.setResultCode(RESULT_CODE_SUCCESS);
 		 response.setResultDescription(MSG_SUCCESS);
 		logger.info("EnvironmentService ends");
@@ -1774,4 +1779,6 @@ public class ProfileService extends BaseAbstractService {
 		return response;
 		
 	}	
+	
+
 }
