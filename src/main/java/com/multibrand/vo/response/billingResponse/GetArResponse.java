@@ -36,7 +36,7 @@ public class GetArResponse extends GenericResponse{
 	
 	@XmlElement(name="currentBalance")
 	public String getStrCurrentARBalance() {
-		return strCurrentARBalance;
+		return strCurrentARBalance.trim();
 	}
 	public void setStrCurrentARBalance(String strCurrentARBalance) {
 		this.strCurrentARBalance = strCurrentARBalance;
@@ -44,7 +44,7 @@ public class GetArResponse extends GenericResponse{
 	
 	@XmlElement(name="lastPaymentAmount")
 	public String getStrLastPayAmt() {
-		return strLastPayAmt;
+		return strLastPayAmt.trim();
 	}
 	public void setStrLastPayAmt(String strLastPayAmt) {
 		this.strLastPayAmt = strLastPayAmt;
@@ -60,7 +60,7 @@ public class GetArResponse extends GenericResponse{
 	
 	@XmlElement(name="pastDueAmount")
 	public String getStrPastDueAmt() {
-		return strPastDueAmt;
+		return strPastDueAmt.trim();
 	}
 	public void setStrPastDueAmt(String strPastDueAmt) {
 		this.strPastDueAmt = strPastDueAmt;

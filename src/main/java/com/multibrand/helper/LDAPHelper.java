@@ -437,10 +437,10 @@ public class LDAPHelper extends BaseAbstractService{
 	 * @throws RemoteException 
 	 * 
 	 * */
-	public UserInfoResponse getUserorAcctInfo(String userId,String companyCode) throws NamingException, RemoteException{
+		public UserInfoResponse getUserorAcctInfo(String userId,String companyCode) throws NamingException, RemoteException{
 		// User info response with empty.
 		UserInfoResponse response = new UserInfoResponse();
-				
+		
 		DirContext ctx = getLdapConnection();
 		
 		String accountnumber = userId;

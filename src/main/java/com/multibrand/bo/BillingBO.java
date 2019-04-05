@@ -2,8 +2,13 @@ package com.multibrand.bo;
 
 import java.math.BigDecimal;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +78,7 @@ import com.multibrand.vo.response.ProjectedBillResponseList;
 import com.multibrand.vo.response.RetroEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyCheckResponseVO;
 import com.multibrand.vo.response.billingResponse.AMBSignupResponseVO;
+import com.multibrand.vo.response.billingResponse.ArMobileGMEResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
 import com.multibrand.vo.response.billingResponse.AutoPayInfoResponse;
 import com.multibrand.vo.response.billingResponse.BankCCInfoResponse;
@@ -87,11 +93,22 @@ import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
+import com.multibrand.vo.response.billingResponse.PayAccount;
+import com.multibrand.vo.response.billingResponse.PayAccountDO;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
+import com.multibrand.vo.response.billingResponse.PaymentMethodB;
+import com.multibrand.vo.response.billingResponse.PaymentMethodCC;
+import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
+
+import com.multibrand.vo.response.historyResponse.PaymentDO;
+import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
+import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
+
+import oracle.net.aso.e;
 
 /**
  * This BO class is to handle all the Billing Related API calls.
@@ -130,6 +147,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	@Autowired 
 	private BillDAO billDao;
+	
+	@Autowired
+	private HistoryBO historyBO;
 	
 	//@Autowired
 	//private ReloadableResourceBundleMessageSource appConstMessageSource;
@@ -192,20 +212,31 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		try {
 			logger.info("Billing response before");
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
+			
+			
+			
 			if(responseMap!= null && responseMap.size()!= 0)
 			{
 				profileResponse= (ProfileResponse)responseMap.get("profileResponse");
 			}
+			
 			logger.info("Billing response after ");
+			
+			
 			if(profileResponse.getContractAccountDO()!= null)
 			{
 				AddressDO billingAddress = profileResponse.getContractAccountDO().getBillingAddressDO();
+				
+				
+				
 				JavaBeanUtil.copy(billingAddress, getBillingAddressResp);
 				getBillingAddressResp.setResultCode(RESULT_CODE_SUCCESS);
 				getBillingAddressResp.setResultDescription(MSG_SUCCESS);
 			}
 			else
 			{
+				
+				
 			    getBillingAddressResp.setResultCode(RESULT_CODE_THREE);
 			    getBillingAddressResp.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
@@ -319,8 +350,30 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					/*}catch (Exception ex){
 						logger.error("Exception occured in date parsing!!" + ex);
 					}*/
+				
+					//Changes End for adding EFL, TOS & YRAAC codes
+					
+					// Setting Average Billing Eligibility & Average Billing
+					// Enrollment
+					AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
+					ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber, 12));
+					ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
+					ambEligRequest.setCompanyCode(companyCode);
+					ambEligRequest.setContractId(contractDO[0].getStrContractID());
+					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest,
+							sessionId);
+					String averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
+					String averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
+					accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(
+							averageBillingEligibilty.equals(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+					accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(
+							averageBillingEnrolment.equals(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+					// Changes end for setting Average Billing Eligibility &
+					// Average Billing Enrollment
+				
 				}
-				//Changes End for adding EFL, TOS & YRAAC codes
+				
+
 				CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
 				crmProfileRequest.setStrCANumber(accountNumber);
 				if(response != null && CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)&& StringUtils.isNotEmpty(response.getSuperBPID())){
@@ -1833,7 +1886,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	{
 		AMBEligibiltyCheckResponseVO response = new AMBEligibiltyCheckResponseVO();
 		try {
-
+			if(!ambEligRequest.getAccountNumber().isEmpty() && !ambEligRequest.getBpNumber().isEmpty() && !ambEligRequest.getContractId().isEmpty()) {
 			AmbCheckRequest request = new AmbCheckRequest();
 			request.setBpNumber(ambEligRequest.getBpNumber());
 			request.setCaNumber(ambEligRequest.getAccountNumber());
@@ -1865,7 +1918,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
 				response.setResultDescription(responseService.getErrMessage());
 			}
-
+			}
+			else {
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_BAD_REQUEST);
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -2085,12 +2142,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 		} else {
 			// checking for invalid BPID
-			if(StringUtils.isNotEmpty(bankCCInfoResponse.getEReturnCode()) && bankCCInfoResponse.getEReturnCode().equalsIgnoreCase(CCS_ERETURN_CODE_INVALID_BPID)){
+			if(bankCCInfoResponse.getEReturnCode()!=null && StringUtils.isNotEmpty(bankCCInfoResponse.getEReturnCode()) && bankCCInfoResponse.getEReturnCode().equalsIgnoreCase(CCS_ERETURN_CODE_INVALID_BPID)){
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
 				response.setResultDescription(CCS_INVALID_BPID_RESULT_DESCRIPTION);
 			}else{
 			    // copy the data from NRGWS Layer to REST Response
-				logger.info(bankCCInfoResponse.getAutoPayDetailsList().length);
+			
 				JavaBeanUtil.copy(bankCCInfoResponse,response);
 				response.setResultCode(SUCCESS_CODE);
 			    }
@@ -2241,6 +2298,481 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-checkRetroEligibility]");
 		return retroEligResp;
 	}
-	
 
+
+   /** This method is responsible for getting all pending payments and 
+    *  last paid date and assign to SchedulePaymentResponse
+    * @author NGASPerera
+    * @param accountNumber
+    * @param startDate 
+    * @param endDate
+    * @param companyCode
+    * @param brandName
+    * @param sessionId
+    * @return
+    */
+	public SchedulePaymentResponse getSchedulePayments(String accountNumber, String companyCode, String brandName,
+			String sessionId) {
+		List<PaymentDO> pendingPayments = new ArrayList<PaymentDO>();
+		String lastPaymentDate="";
+		SchedulePaymentResponse schedulePayment = new SchedulePaymentResponse();
+		String startDate = null;
+		DateFormat formatter = new SimpleDateFormat(Constants.yyyyMMdd);
+		String endDate = formatter.format(new Date());
+		try {
+			PaymentHistoryResponse paymentHistoryResponse = historyBO.fetchPaymentHistory(accountNumber, startDate,
+					endDate, companyCode, brandName, sessionId);
+			PaymentDO[] payments = paymentHistoryResponse.getPaymentDO();
+			if (payments != null && payments.length > 0) {
+				pendingPayments = getPendingPayemts(payments);
+				lastPaymentDate=getLastPaymentDate(payments);
+				
+				if(pendingPayments!=null && pendingPayments.size()>0){
+					schedulePayment.setPendingPayments(pendingPayments);
+				}
+				schedulePayment.setLastPaymentDate(lastPaymentDate);
+			
+			} else {
+				schedulePayment.setErrorCode(Constants.RESULT_CODE_NO_DATA);
+				schedulePayment.setErrorDescription(Constants.RESULT_CODE_DESCRIPTION_NO_DATA);
+			}
+		} catch (Exception e) {
+			schedulePayment.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+			schedulePayment.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
+			logger.info("Exeception Occured in the ::getSchedulePayments" + e);
+		}
+		return schedulePayment;
+	}
+	
+	/** This method returns all pending payments and sorted by payment date
+	 * @param PaymentDO[] historyPayments
+	 * @return List<PaymentDO>
+	 */
+	public List<PaymentDO> getPendingPayemts(PaymentDO[] historyPayments) {
+		List<PaymentDO> pendingPayments = new ArrayList<PaymentDO>();
+		if (historyPayments != null && historyPayments.length > 0) {
+			for (PaymentDO payment : historyPayments) {
+				// retrieve pending payment details
+				if (Constants.PAYMENT_PENDING_STATUS.equalsIgnoreCase(payment.getStatus())) {
+					pendingPayments.add(payment);
+				}
+			}
+			// sort the pending payments by payment date
+			if (pendingPayments.size() > 0) {
+				sortByPaymentDateAsc(pendingPayments);
+				// schedulePayment.setPendingPayments(pendingPayments);
+			}
+
+		}
+
+		return pendingPayments;
+	}
+
+	/**
+	 * This method return last payment date
+	 * @param PaymentDO[] historyPayments
+	 * @return String lastPaidDate
+	 */
+	public String getLastPaymentDate(PaymentDO[] historyPayments) {
+		String lastPaymentDate = "";
+		List<PaymentDO> paidPayments = new ArrayList<PaymentDO>();
+		if (historyPayments != null && historyPayments.length > 0) {
+			for (PaymentDO payment : historyPayments) {
+				// retrieve pending payment details
+				if (Constants.PAYMENT_PAID_STATUS.equalsIgnoreCase(payment.getStatus())) {
+					paidPayments.add(payment);
+				}
+			}
+			// sort paid payments by payment date
+			if (paidPayments.size() > 0) {
+				sortByPaymentDateDesc(paidPayments);
+				lastPaymentDate = paidPayments.get(0).getPaymentDate();
+			}
+		}
+		return lastPaymentDate;
+	}	
+		
+	/**
+	 * This method sort List<PaymentDO> in ascending order
+	 * @param List<PaymentDO> unsortedList
+	 * @return List<PaymentDO> sortedList
+	 */
+	public List<PaymentDO> sortByPaymentDateAsc(List<PaymentDO> unsortedList) {
+		Collections.sort(unsortedList, new Comparator<PaymentDO>() {
+
+			@Override
+			public int compare(PaymentDO p1, PaymentDO p2) {
+				int compareInt = 0;
+				if (p1.getPaymentDate() != null && p2.getPaymentDate() != null) {
+					try {
+						Date date1 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p1.getPaymentDate());
+						Date date2 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p2.getPaymentDate());
+						return (date1.getTime() > date2.getTime() ? 1 : -1); // ascending
+					} catch (ParseException e) {
+						compareInt = 0;
+						logger.info("Error Occured in :::sortByPaymentDateAsc", e);
+					}
+				}
+				return compareInt;
+			}
+		});
+
+		return unsortedList;
+	}
+	
+	/**
+	 * This method sort List<PaymentDO> in descending order
+	 * @param List<PaymentDO> unsortedList
+	 * @return List<PaymentDO> sortedList
+	 */
+	public List<PaymentDO> sortByPaymentDateDesc(List<PaymentDO> unsortedList) {
+		Collections.sort(unsortedList, new Comparator<PaymentDO>() {
+
+			@Override
+			public int compare(PaymentDO p1, PaymentDO p2) {
+				int compareInt = 0;
+				if (p1.getPaymentDate() != null && p2.getPaymentDate() != null) {
+					try {
+						Date date1 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p1.getPaymentDate());
+						Date date2 = new SimpleDateFormat(Constants.yyyyMMdd).parse(p2.getPaymentDate());
+						return (date1.getTime() > date2.getTime() ? -1 : 1); // descending
+					} catch (ParseException e) {
+						compareInt = 0;
+						logger.info("Error Occured in :::sortByPaymentDateAsc", e);
+					}
+
+				}
+				return compareInt;
+			}
+		});
+
+		return unsortedList;
+	}
+	
+	/**
+	 * This method is responsible for getting account balance details for gme
+	 * mobile
+	 * 
+	 * @param accountNumber
+	 * @param bpNumber
+	 * @param companyCode
+	 * @param sessionId
+	 * @param brandName
+	 * @return MobileGmeArResponse
+	 */
+	public ArMobileGMEResponse getBalanceForGMEMobile(String accountNumber, String bpNumber, String companyCode,
+			String sessionId, String brandName) {
+		ArMobileGMEResponse mobileArResponse = new ArMobileGMEResponse();
+		try {
+			GetArResponse arResponse = getBalance(accountNumber, bpNumber, companyCode, sessionId, brandName);
+			if (arResponse != null) {
+				mobileArResponse.setCurrentDueDate(arResponse.getStrCurrentDueDate());
+				mobileArResponse.setCurrentArBalance(arResponse.getStrCurrentARBalance());
+				mobileArResponse.setLastPayAmt(arResponse.getStrLastPayAmt());
+				mobileArResponse.setLastPayDate(arResponse.getStrLastPayDate());
+				mobileArResponse.setPastDueAmt(arResponse.getStrPastDueAmt());
+				mobileArResponse.setCreditAmt(arResponse.getStrCreditAmt());
+			}
+			// setting payment dates
+			String recentPendingPayDate = retriveRecentPendingPaymentDate(accountNumber, companyCode, brandName,sessionId);
+			if (!recentPendingPayDate.isEmpty()) {
+				mobileArResponse.setRecentPendingPayDate(recentPendingPayDate);
+			}
+		} catch (Exception e) {
+			logger.info(" Exeception Occured in the getBalanceForGMEMobile" + e.getCause());
+			mobileArResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			mobileArResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return mobileArResponse;
+	}
+	
+	/**
+	 * This method is responsible for getting last payment date and recent pending payment date
+	 * @author NGASPerera
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * @param sessionId
+	 * @return MobileGmeArResponse
+	 */
+	public String retriveRecentPendingPaymentDate(String accountNumber, String companyCode, String brandName,
+			String sessionId) {
+		String recentPendingPaymentDate = "";
+		// set end date as current date
+		DateFormat formatter = new SimpleDateFormat(Constants.yyyyMMdd);
+		String endDate = formatter.format(new Date());
+		List<PaymentDO> pendingPayments = new ArrayList<PaymentDO>();
+		// getting all payment history
+		PaymentHistoryResponse paymentHistoryResponse = historyBO.fetchPaymentHistory(accountNumber, null, endDate,
+				companyCode, brandName, sessionId);
+		if (paymentHistoryResponse != null) {
+			PaymentDO[] payments = paymentHistoryResponse.getPaymentDO();
+			if (payments != null && payments.length > 0) {
+				for (PaymentDO payment : payments) {
+					// retrieve pending payment details
+					if (Constants.PAYMENT_PENDING_STATUS.equalsIgnoreCase(payment.getStatus())) {
+						pendingPayments.add(payment);
+					}
+				}
+				// sort pending payments by date
+				if (!pendingPayments.isEmpty()) {
+					pendingPayments = sortByPaymentDateAsc(pendingPayments);
+					recentPendingPaymentDate = pendingPayments.get(0).getPaymentDate();
+				}
+			}
+
+		}
+		return recentPendingPaymentDate;
+	}
+	
+	/**
+	 * This API is responsible for returning account balance for GME mobile
+	 * @author Cuppala
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 */
+	public PaymentMethodsResponse getPaymentMethods(String contractAccountNumber, String companyCode, String sessionId,
+			String brandName) {
+		logger.info("START-[BillingBO-getPaymentMethods]");
+		PaymentMethodsResponse response = new PaymentMethodsResponse();
+		GetAccountDetailsResponse accountDetailsResponse = new GetAccountDetailsResponse();
+		String autoPayNumber ="empty";
+		AutoPayDetails[] adr =null;
+		try {
+			
+			if(StringUtils.isNotEmpty(contractAccountNumber.trim())&&StringUtils.isNotEmpty(companyCode.trim())&&StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)){
+				
+				contractAccountNumber=CommonUtil.paddedCa(contractAccountNumber.trim());
+					
+			
+			
+			accountDetailsResponse = getAccountDetails(contractAccountNumber, companyCode, brandName, sessionId);
+			
+			if(accountDetailsResponse!=null && (accountDetailsResponse.getResultCode().equalsIgnoreCase("0"))){
+			String NCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
+			String NCCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
+			
+			AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
+			AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
+			autoPayRequest.setBusinessPartnerID(accountDetailsResponse.getContractAccountDO().getStrBPNumber());
+			autoPayRequest.setCompanyCode(companyCode);
+			autoPayRequest.setBrandName(brandName);
+				try{
+				autoPayResponse = getAutopayInfo(autoPayRequest);
+				}
+				catch(Exception e)
+				{
+					logger.error("Error in getAutopayInfo");
+				}
+ 
+				if(autoPayResponse!=null&&autoPayResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE)&&autoPayResponse.getAutoPayDetailsList().length>0)
+				{
+					adr =autoPayResponse.getAutoPayDetailsList();
+				}
+			List<Object> paymentMethodsList = new ArrayList<Object>();
+			PayAccountInfoResponse payAccountInfoResp = new PayAccountInfoResponse();
+			payAccountInfoResp = getPayAccounts(contractAccountNumber, companyCode, brandName, sessionId);
+			
+			if(payAccountInfoResp!=null && (payAccountInfoResp.getResultCode().equalsIgnoreCase("0"))
+					&&(payAccountInfoResp.getPayAccountList().size()>0)){
+			List<PayAccount> responselist = payAccountInfoResp.getPayAccountList();	
+					
+			if(adr!=null&&adr.length>0){
+				if(!(adr[0].getCardNumber().toString().isEmpty()))
+					autoPayNumber = adr[0].getCardNumber().toString();
+				if(!(adr[0].getBankAccountNumber().toString().isEmpty()))
+					autoPayNumber = adr[0].getBankAccountNumber().toString();
+	
+			}else
+				autoPayNumber="NoAutoPay";
+			
+			DateFormat df = new SimpleDateFormat(DT_FMT_REQUEST);
+			//To get Credit card info
+			for(int i=0;i<payAccountInfoResp.getPayAccountList().size();){
+				PaymentMethodB paymentMethodB = new PaymentMethodB();
+				PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
+						
+				if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase("Y")))
+				{	
+					paymentMethodCC.setIsAllowed(NCCAFlag);
+					paymentMethodCC.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?"true":"false"));
+					paymentMethodCC.setNameOnAccount(responselist.get(i).getNameOnAccount());
+					paymentMethodCC.setCreditCardExpYear(responselist.get(i).getCcExpYear());
+					paymentMethodCC.setCreditCardExpMonth(responselist.get(i).getCcExpMonth());
+					paymentMethodCC.setCreditCardType(responselist.get(i).getCcType());
+					paymentMethodCC.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
+					paymentMethodCC.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
+					paymentMethodCC.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodCC.setActivationDate((responselist.get(i).getActivationDate()!=null?(df.format(responselist.get(i).getActivationDate())):null));
+					paymentMethodCC.setVerifyCard(responselist.get(i).getVerifyCard());
+					paymentMethodCC.setOnlinePayAccountId(responselist.get(i).getOnlinePayAccountId());
+					paymentMethodCC.setZipCode(responselist.get(i).getZipCode());
+					paymentMethodsList.add(paymentMethodCC);
+					i++;
+				}
+				else if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("B"))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase("Y"))){
+					
+					paymentMethodB.setIsAllowed(NCAFlag);
+					paymentMethodB.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?"true":"false"));
+					paymentMethodB.setNameOnAccount(responselist.get(i).getNameOnAccount());
+					paymentMethodB.setRoutingNumber(responselist.get(i).getRoutingNumber());
+					paymentMethodB.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
+					paymentMethodB.setPaymentMethodToken(responselist.get(i).getPayAccountToken());
+					paymentMethodB.setPaymentMethodNickName(responselist.get(i).getPayAccountNickName());
+					paymentMethodB.setActivationDate((responselist.get(i).getActivationDate()!=null?(df.format(responselist.get(i).getActivationDate())):null));
+					paymentMethodB.setVerifyCard(responselist.get(i).getVerifyCard());
+					paymentMethodB.setOnlinePayAccountId(responselist.get(i).getOnlinePayAccountId());
+					paymentMethodB.setZipCode(responselist.get(i).getZipCode());
+					paymentMethodsList.add(paymentMethodB);
+					i++;
+												
+				}
+				else{
+					i++;
+					}
+			}
+			response.setPaymentMethodsList(paymentMethodsList);
+			response.setResultCode(RESULT_CODE_SUCCESS);
+			response.setResultDescription(MSG_SUCCESS);
+			response.setMessageCode("Successfully retrieved all Menthods of Payments");
+						
+			}else
+				{
+							
+							response.setResultCode(RESULT_CODE_NO_DATA);
+							response.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+							response.setMessageCode("No Data was retrieved from getPayAccounts call");
+				}
+				}
+				else
+				{
+							response.setResultCode(RESULT_CODE_CCS_ERROR);
+							response.setResultDescription(accountDetailsResponse.getErrorCode());
+							response.setMessageCode("Could not find Account Details");
+				}
+			}else
+				{
+					response.setResultCode(RESULT_CODE_FIVE);
+					response.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
+					response.setMessageCode("Invalid Input Parameters - Please check entered A/C number and Company Code");
+				
+				}
+			
+		} catch (Exception e) {
+			logger.error(" Error in getPaymentMethods call "+e.getMessage());
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		logger.info("END-[BillingBO-getPaymentMethods]");
+		return response;
+	}
+	public StoreUpdatePayAccountResponse savePayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
+	{
+		logger.info("START-[BillingBO-savePayAccount]");
+		
+		StoreUpdatePayAccountResponse response = new StoreUpdatePayAccountResponse();
+		PayAccountDO payAccountDO = new PayAccountDO();
+		long startTime = CommonUtil.getStartTime();
+		
+		try {
+			
+			if(!StringUtils.isEmpty(request.getContractAccountNumber())){
+				payAccountDO = billDao.savePayAccount(request);
+			
+			if(payAccountDO != null){
+				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isAccountDuplicate())){
+					response.setResultCode(RESULT_CODE_THREE);
+					response.setResultDescription(PAY_ACCOUNT_ALREADY_EXISTS);
+					response.setSuccessFlag(false);
+				}
+				else if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
+					response.setResultCode(RESULT_CODE_FOUR);
+					response.setResultDescription(NICKNAME_ALREADY_EXISTS);
+					response.setSuccessFlag(false);
+				}
+				else{
+				logger.info("payment account successfully added :: ");
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setSuccessFlag(true);
+				}
+			}
+			}else{
+				logger.info("payment account not added as contract account number is null or empty :: ");
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_INVALID_ACCOUNT_NUMBER_DESCRIPTION);
+				response.setSuccessFlag(false);
+			}
+			
+			utilityloggerHelper.logTransaction("savePayAccount", false, request,response, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			if(logger.isDebugEnabled()){
+				logger.debug(XmlUtil.pojoToXML(request));
+				logger.debug(XmlUtil.pojoToXML(response));
+			}
+		} catch (Exception e) {
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(e);
+			utilityloggerHelper.logTransaction("savePayAccount", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			response = new StoreUpdatePayAccountResponse();
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			
+		}
+		logger.info("END-[BillingBO-savePayAccount]");
+		return response;
+	}
+	
+	
+	
+	public StoreUpdatePayAccountResponse modifiyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
+	{
+		logger.info("START-[BillingBO-modifiyPayAccount]");
+		
+		StoreUpdatePayAccountResponse response = new StoreUpdatePayAccountResponse();;
+		long startTime = CommonUtil.getStartTime();
+		PayAccountDO payAccountDO = new PayAccountDO();
+		
+		try {
+			
+			
+			payAccountDO = billDao.modifiyPayAccount(request);
+			
+			if(payAccountDO != null){
+				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
+				response.setResultCode(RESULT_CODE_FOUR);
+				response.setResultDescription(NICKNAME_ALREADY_EXISTS);
+				response.setSuccessFlag(false);
+				}
+				else{
+				logger.info("payment account successfully updated :: ");
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setSuccessFlag(true);
+				}
+			} else{
+				logger.info("no payment account update :: ");
+				response.setResultCode(RESULT_CODE_TWO);
+				response.setResultDescription(NO_ACCOUNT_UPDATE);
+				response.setSuccessFlag(false);
+			}
+			
+			utilityloggerHelper.logTransaction("modifiyPayAccount", false, request,response, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+            if(logger.isDebugEnabled()){
+            	logger.debug(XmlUtil.pojoToXML(request));
+            	logger.debug(XmlUtil.pojoToXML(response));
+            }
+		} catch (Exception e) {
+			if(logger.isDebugEnabled())
+			   logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(e);
+			utilityloggerHelper.logTransaction("modifiyPayAccount", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), response);
+		}
+		logger.info("END-[BillingBO-modifiyPayAccount]");
+		return response;
+	}
 }

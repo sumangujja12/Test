@@ -48,8 +48,7 @@ public class ContractDO {
     
     private String strTouFlag;    
     
-
-    public String getStrTouFlag() {
+ 	public String getStrTouFlag() {
 		return strTouFlag;
 	}
 

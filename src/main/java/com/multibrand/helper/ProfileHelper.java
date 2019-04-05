@@ -1,5 +1,12 @@
 package com.multibrand.helper;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,6 +20,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.UserIdResponse;
+import com.nrg.cxfstubs.environmentalimpact.ZesEnviDetails;
 
 @Component
 public class ProfileHelper {
@@ -55,4 +63,38 @@ public class ProfileHelper {
 		return response;
 	}
 	
+	
+public  List<ZesEnviDetails> sortList(List<ZesEnviDetails> unsortList){
+        
+        
+        Collections.sort(unsortList, new Comparator<ZesEnviDetails>() {
+            
+            @Override
+            public int compare(ZesEnviDetails pd1,
+            		ZesEnviDetails pd2) {
+                int returnInt = 0;
+                try {
+                if(pd1.getMoveindate()!= null && pd2.getMoveindate()!=null){    
+                Date d1 = new SimpleDateFormat("MMddyyyy").parse(pd1.getMoveindate());
+                Date d2 = new SimpleDateFormat("MMddyyyy").parse(pd2.getMoveindate());
+                if(d1.getTime() < d2.getTime())
+                    returnInt = -1;
+                else if(d1.getTime() > d2.getTime())
+                    returnInt = 1;
+                }            
+                
+            } catch (ParseException e) {
+                logger.error(":::error occured in sortList List<ZesEnviDetails>::",e);
+                //TODO - Verify $$Exception$$ Handing
+                returnInt = 0;
+            }
+            return returnInt;
+            
+            }
+            
+            
+        });
+        return unsortList;
+        
+    }
 }

@@ -4,7 +4,15 @@ public class ProductDO {
 	private String accountNumber;
 	private String bpNumber;
 	private String esid;
+	private String contractStartDate;
 	private Products[] products;
+	
+	public String getContractStartDate() {
+		return contractStartDate;
+	}
+	public void setContractStartDate(String contractStartDate) {
+		this.contractStartDate = contractStartDate;
+	}
 	public String getAccountNumber() {
 		return accountNumber;
 	}

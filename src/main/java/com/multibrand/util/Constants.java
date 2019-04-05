@@ -1051,26 +1051,13 @@ public interface Constants {
 	public static final String CCS_CHECK_SECURITY_ELIGIBILITY_URL = "ws.rest.ccs.check.security.eligibility.url";
 
 	
-	
-
 	public static final String TEXT_FREEZE_CREDIT_CHECK = "text.reason.for.freeze.credit.check";
 	public static final String TEXT_FRAUD_CREDIT_CHECK = "text.reason.for.fraud.credit.check";
 
 	public static final String CCS_TOS_ELIGIBLE_NONELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.eligible.noneligible.products.url";
 	public static final String CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL = "ws.rest.ccs.tos.submit.eligible.products.url";
-	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
-	public static final String CONSTANT_S ="S";
 
-
-	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
 	
-	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
-	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
-	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
-	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
-	public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
-	public static final String PY ="PY";
-	public static final String SY ="SY";
 
 	public static final String UCC_DATA = "UCC_DATA";
 	public static final String SECURITY_METHOD_UCC = "UCC";
@@ -1081,9 +1068,33 @@ public interface Constants {
 	public static final String MESSAGE_CODE_INFO_MISMATCH = "INFO_MISMATCH";
 	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
 	
+	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
+
+
+	
+	public static final String CONSTANT_S ="S";
+
+
+	public static final String CCS_GET_AGENT_DETAILS_URL = "ws.rest.ccs.get.agent.details.url";
+	
+	// Start | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+	public static final String PROFILE_RESPONSE_KEY = "profileResponse";
+	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019  	
+
+	//Mobile Content API Data
 	public static final String language_EN = "EN";
+	public static final String ERRORS = "ERRORS";
+		
+	 public static final String USERNAME_VALID="Username is valid";
+	 public static final String ACCOUNT_INFO_VALID="Account information valid";
+	 public static final String USER_ALREADY_EXISTS_DESC = "User Already Exists";
 	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
 	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
+	 public static final String RESULT_CODE_BAD_REQUEST = "Bad Request";
+
+	 //Refresh Token 
+	 public static final int REFRESH_TOKEN_LENGTH = 250;
+	 
 	 public static final String GME_PASSWORD_CHANGE_EN_US="GME.PASSWORD.CHANGE.EN_US";
 	 public static final String GME_PASSWORD_CHANGE_ES_US="GME.PASSWORD.CHANGE.ES_US";
 	 public static final String GME_USERNAME_EN_US = "GME.USERNAME.EN_US";
@@ -1091,10 +1102,75 @@ public interface Constants {
 	 
 	 public static final String GME_MYACCOUNT_PASSWORD_RESET_URL ="GME.MYACCOUNT.PASSWORD.RESET.URL";
 	 public static final String GME_MYACCOUNT_LOGIN_URL="GME.MYACCOUNT.LOGIN.URL";
+	 
 	 //Added for GME Mobile
 	 
 	 public static final String RESULT_CODE_SIX="6";
 	 public static final String RESULT_DESCRIPTION_EMAIL_NOTFOUND="Email Address validation failed";
 	 public static final String RESULT_CODE_SEVEN="7";
 	 public static final String RESULT_DESCRIPTION_INVALID_ZIP_CODE="Invalid Zip Code";
+
+		
+	public static final String CCS_GOOGLE_PRODUCT_SET_URL ="ws.rest.ccs.google.product.set.url";
+	 
+	 //Constants for Payment status
+	 public static final String  PAYMENT_PENDING_STATUS = "Pending";
+	 public static final String PAYMENT_PAID_STATUS = "Paid";
+	 
+	 //Constants for Weekly Usage Details
+	 public static final String CURRENT_DAY_INDICATOR_N = "N";   
+	 public static final String DAILY_HOUR_INDICATOR_D = "D";
+	 
+	 public static final String DAILY_COST_DUMMY_DATA = "0:00";
+	 public static final String DAILY_HIGH_TEMP_DUMMY_DATA = "0";
+	 public static final String DAILY_LOW_TEMP_DUMMY_DATA = "0";
+	 public static final String DAIY_USAGE_DUMMY_DATA = "0:00";
+	
+	 public static final String ACTION_CODE_DETOKNIZED_INVALID ="Action code is invalid. Try either  PE (DL Token), or SE (SSN Token) or SD (SSN DE-Token) or PD (DL DE-Token).";
+	 
+
+	 public static final String PY ="PY";
+	 public static final String SY ="SY";
+	
+	 public static final String AVG_BILL_FLAG_Y = "Y";
+	 public static final String AVG_BILL_FLAG_N = "N";
+	 public static final String AVG_BILL_FLAG_YES = "Yes";
+	 public static final String AVG_BILL_FLAG_NO = "No";
+	 
+	 //enviornmental impact for GME Mobile app
+	 
+	 public static final String TREES_PER_SECOND = "trees.per.second";
+	 public static final String CO2_PER_SECOND = "co2.per.second";
+	 public static final String TOATL_BASELINE = "total.baseline";
+	 public static final String TOTAL_BASELINE_TREE = "total.baseline.tree";
+	 public static final String CONTENT_SERVER_ENDPOINT_URL = ".content.server.endpoint.url";
+	 public static final String CONTENT_REST_SERVER_URL = "content.rest.server.url";
+	 public static final String PUB = ".pub.id_";
+	 public static final String TEMPLATE_DESKTOP = ".tempalte.id_desktop";
+	 public static final String TEMPLATE_MOBILE = ".tempalte.id_mobile";
+	 public static final String RE_TAXONOMY_ID = "re.taxonomy.id";
+	 public static final String PW_TAXONOMY_ID = "pw.taxonomy.id";
+	 public static final String CE_TAXONOMY_ID = "ce.taxonomy.id";
+	 public static final String GM_TAXONOMY_ID = "gm.taxonomy.id";
+	 public static final String PROD_OFFER_SCHEMA_ID = ".prodoffer.schema.id";
+	 public static final String PROD_BONUS_SCHEMA_ID = ".prodbonus.schema.id";
+	 public static final String CONTENT_TITLE_JSON_END_POINT_URL = "endPointUri";
+	 public static final String CONTENT_TITLE_JSON_PUBLICATION_ID = "publicationId";
+	 public static final String CONTENT_TITLE_JSON_BRAND_ID = "brandId";
+	 public static final String CONTENT_TITLE_JSON_TRANSACTION_ID = "transactionId";
+	 public static final String CONTENT_TITLE_TEMPLATE_ID = "templateId";
+	 public static final String CONTENT_TITLE_PROD_BONUS_SCHEMA_ID = "prodBonusSchemaId";
+	 public static final String CONTENT_TITLE_PROD_OFFER_SCHEMA_ID = "prodOfferSchemaId";
+	 public static final String CONTENT_OFFER_MESSAGE_KEY = ".offer.messagekey.name";
+	 public static final String CONTENT_TITLE_TAXONOMY_ID = "taxonomyId";
+	 public static final String CONTENT_TITLE_MESSAGEKEYS = "messageKeys";
+	 public static final String CONTENT_TITLE_MESSAGEKEY_LIST = "messageKeyList";
+	 public static final String CONTET_ERROR_MESSAGEKEY = "No Mapping for offer Code in the content server or Something went wrong!!!!!";
+	 public static final String ERROR_CONTENT_CACHE ="ErrorContent";
+	 public static final String STR_SYMBOL_EIPHEN = "-";
+	 public static final String ERROR_CONTENT_DEFAULT = "Sorry! Something went wrong. Please try again";
+	 public static final String PAY_ACCOUNT_ALREADY_EXISTS = "Pay Account already Exists";
+	 public static final String NICKNAME_ALREADY_EXISTS = "Nickname already Exists";
+	 public static final String NO_ACCOUNT_UPDATE = "No Payment Account Update";
+	 public static final String ACCOUNT_ALREADY_ENROLLED = "Account already enrolled";
 }
