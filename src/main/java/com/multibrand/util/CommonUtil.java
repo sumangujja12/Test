@@ -39,8 +39,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
@@ -52,6 +52,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.multibrand.dto.ErrorDTO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.vo.request.UserIdRequest;
@@ -1835,6 +1837,29 @@ public class CommonUtil implements Constants {
 		}
 		logger.info("inside checkNegativeParam:: response is :: "+negativeParamChkResponse);
 		return negativeParamChkResponse;
+	}
+	
+	public static  JsonObject getJsonObject(String restContentJson) {
+		com.google.gson.JsonParser parser = new com.google.gson.JsonParser();
+		JsonObject json = (JsonObject) parser.parse(restContentJson);
+		return json;
+	}
+	
+		
+	public static String getJsonValue(JsonObject JsonObject, String strKey) {
+		String strRetVal = EMPTY;
+		try {
+			JsonElement  strJsonElement = JsonObject.get(strKey);
+			if(strJsonElement != null 
+					&& StringUtils.isNotBlank(strJsonElement.toString())) {
+				return strJsonElement.toString();
+			}
+
+		} catch (Exception e) {
+			logger.error("getJsonValueFailed", e);
+		}
+		
+		return strRetVal;
 	}
 	
 	

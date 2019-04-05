@@ -186,4 +186,19 @@ public class ContentServiceImpl extends BaseRestService implements ContentServic
 		return returnResp;
 	}
 	
+	
+	public String getJSONContentResponse(String requestJson) {
+		logger.info(":::::::::: INFO getJSONContentResponse INPUT JSON:::::::::::" + requestJson);
+		long entryTime;
+		long elapsedTime;
+		entryTime = System.currentTimeMillis();
+		logger.info("Starting call for REST getJSONContentResponse:");
+		String endPoint = getEndPointUrl(CONTENT_REST_SERVER_URL);
+		String strResturn = callRestContentService(requestJson, endPoint);
+		elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
+		logger.info("::::::::::: CONTENT RESPONSE getJSONContentResponse :::::::::::"+strResturn);
+		logger.info("::::::::::Execution Time for getJSONContentResponse:::::::::::" + elapsedTime);
+		return strResturn;
+	}
+	
 }

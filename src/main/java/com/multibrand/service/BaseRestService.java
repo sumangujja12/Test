@@ -79,5 +79,30 @@ public class BaseRestService extends BaseAbstractService {
 		return 45*1000;
 	}
 	*/
+	
+	public String callRestContentService(String restReqJSON, String url) {
+		String restResponse = null;
+		logger.info(":::::::::: INFO callRestContentService INPUT JSON:::::::::::");
+		logger.info(":::::::::: INFO callRestContentService endPoint URL:::::::::::" + url);
+		try {
+			if (logger.isDebugEnabled()) {
+				logger.debug("REST REQUEST JSON::::::" + restReqJSON);
+			}
+			RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<String> entity = new HttpEntity<String>(restReqJSON, headers);
+			Map<String, String> map = new HashMap<String, String>();
+			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class, map);
+			restResponse = null != responseEntity.getBody() ? responseEntity.getBody() : "";
+		} catch (Exception ex) {
+			logger.error("ERROR OCCURED CALLING THE REST CALL FOR THE URL:::::" + url + "::", ex);
+			return CommonUtil.getErrorJson(ex, "001");
+		}
+		logger.info(":::::::::: END callRestContentService :::::::::::");
+		return restResponse;
+	}
+	
+	
 }
 
