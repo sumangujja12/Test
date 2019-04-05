@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
 
@@ -38,8 +39,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
@@ -51,6 +52,8 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.multibrand.dto.ErrorDTO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.vo.request.UserIdRequest;
@@ -65,6 +68,8 @@ public class CommonUtil implements Constants {
 	
 	public static HashSet<String> privacyDataParams = null;
 	public static HashSet<String> logExcludeResponseMethodList = null;
+	private static final Random rand = new Random();
+	private static final char[] alphanumeric = alphanumeric();
 	
 	static {
 		init();
@@ -1736,6 +1741,28 @@ public class CommonUtil implements Constants {
 		
 	}
 	
+	public static String get(int len) {
+		StringBuffer out = new StringBuffer();
+
+		while (out.length() < len) {
+			int idx = Math.abs((rand.nextInt() % alphanumeric.length));
+			out.append(alphanumeric[idx]);
+		}
+		return out.toString();
+	}
+	
+	// create alphanumeric char array
+		static char[] alphanumeric() {
+			StringBuffer buf = new StringBuffer(250);
+			for (int i = 48; i <= 57; i++)
+				buf.append((char) i); // 0-9
+			for (int i = 65; i <= 90; i++)
+				buf.append((char) i); // A-Z
+			for (int i = 97; i <= 122; i++)
+				buf.append((char) i); // a-z
+			return buf.toString().toCharArray();
+		}
+	
 	/**
 	 * Returns formatted account number with removed zeroes from front
 	 * 
@@ -1764,6 +1791,8 @@ public class CommonUtil implements Constants {
 		}
 		return accountNumber;
 	}
+	
+
 	public static HashMap<String, Object> checkNegaviteValueInParam(Map<String, Object> paramMap)
 	{
 		logger.info("inside checkMandatoryParam:: entering method");
@@ -1808,6 +1837,38 @@ public class CommonUtil implements Constants {
 		}
 		logger.info("inside checkNegativeParam:: response is :: "+negativeParamChkResponse);
 		return negativeParamChkResponse;
+	}
+	
+	public static  JsonObject getJsonObject(String restContentJson) {
+		com.google.gson.JsonParser parser = new com.google.gson.JsonParser();
+		JsonObject json = (JsonObject) parser.parse(restContentJson);
+		return json;
+	}
+	
+		
+	public static String getJsonValue(JsonObject JsonObject, String strKey) {
+		String strRetVal = EMPTY;
+		try {
+			JsonElement  strJsonElement = JsonObject.get(strKey);
+			if(strJsonElement != null 
+					&& StringUtils.isNotBlank(strJsonElement.toString())) {
+				return strJsonElement.toString();
+			}
+
+		} catch (Exception e) {
+			logger.error("getJsonValueFailed", e);
+		}
+		
+		return strRetVal;
+	}
+	
+	public static String runRegex(String input, String pattern, String replace) {
+		
+		if(StringUtils.isNotBlank(input)) {
+			return input.replaceAll(pattern,"");
+		}
+		
+		return input;
 	}
 	
 	

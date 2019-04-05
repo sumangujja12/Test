@@ -1,10 +1,14 @@
 package com.multibrand.aop;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
-import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,6 +18,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.GenericResponse;
@@ -38,13 +43,15 @@ public class LoggerAspect {
 	@Autowired(required = true)
 	private HttpServletRequest request;
 
+	@Autowired
+	private ErrorContentHelper errorContentHelper;
+
 	@Pointcut("execution(public * com.multibrand.resources.*.*(..))")
 	public void resourceMethods() {
 	}
 
 	@Around("resourceMethods()")
-	public Object logRequestDetailsForResourceMethods(
-			ProceedingJoinPoint methodPoint) throws Throwable {
+	public Object logRequestDetailsForResourceMethods(ProceedingJoinPoint methodPoint) throws Throwable {
 
 		return logRequestDetails(methodPoint, METHOD_TYPE.RESOURCE);
 	}
@@ -63,13 +70,10 @@ public class LoggerAspect {
 	 * </ul>
 	 * </p>
 	 * 
-	 * @param methodPoint
-	 *            Instance of <code>ProceedingJoinPoint</code>.
-	 * @param methodType
-	 *            Instance of <code>METHOD_TYPE</code>.
+	 * @param methodPoint Instance of <code>ProceedingJoinPoint</code>.
+	 * @param methodType  Instance of <code>METHOD_TYPE</code>.
 	 */
-	public Object logRequestDetails(ProceedingJoinPoint methodPoint,
-			METHOD_TYPE methodType) throws Throwable {
+	public Object logRequestDetails(ProceedingJoinPoint methodPoint, METHOD_TYPE methodType) throws Throwable {
 
 		Response output = null;
 
@@ -88,6 +92,7 @@ public class LoggerAspect {
 		long startTime = System.currentTimeMillis();
 		try {
 			output = (Response) methodPoint.proceed();
+			getErrorDisplay(output,methodName);
 		} catch (Exception ex) {
 			logger.info("System Exception: " + ex.getMessage());
 			logger.error("ERROR LOG:", ex);
@@ -97,8 +102,7 @@ public class LoggerAspect {
 			 */
 			GenericResponse genericResponse = new GenericResponse();
 			genericResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			output = Response.status(Response.Status.OK)
-					.entity(genericResponse).build();
+			output = Response.status(Response.Status.OK).entity(genericResponse).build();
 		}
 		long endTime = System.currentTimeMillis();
 		long elapsedTime = endTime - startTime;
@@ -110,8 +114,7 @@ public class LoggerAspect {
 			// logger.info(output);
 			logger.info("Response status code: " + output.getStatus());
 			if (!CommonUtil.shouldExcludeResponseLog(methodName)) {
-				logger.info("Response: "
-						+ mapper.writeValueAsString(output.getEntity()));
+				logger.info("Response: " + mapper.writeValueAsString(output.getEntity()));
 			}
 		}
 		logger.info("###########END-" + logMessagePrefix + "-###########");
@@ -140,8 +143,7 @@ public class LoggerAspect {
 		String[] parameterNames = sig.getParameterNames();
 		Object[] parameters = methodPoint.getArgs();
 
-		if (parameterNames != null && parameterNames.length > 0
-				&& parameters != null && parameters.length > 0) {
+		if (parameterNames != null && parameterNames.length > 0 && parameters != null && parameters.length > 0) {
 
 			int i = 0;
 
@@ -193,4 +195,130 @@ public class LoggerAspect {
 		return logPrefix;
 	}
 
+	private void getErrorDisplay(Response output, String methodName) {
+		logger.info("###########START- getErrorDisplay -###########");
+
+		Object obj = output.getEntity();
+		if (obj != null && obj.getClass().getSuperclass().isAssignableFrom(GenericResponse.class)) {
+			String resultCode;
+			try {
+				resultCode =  isParentMethod(obj, "getResultCode", null);
+				String errorCode = isParentMethod(obj, "getErrorCode", null);
+				StringBuffer key = new StringBuffer();
+
+				if (StringUtils.isBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
+					if (!isReplace(resultCode).equalsIgnoreCase(Constants.ZERO)) {
+						if (resultCode.length() == 1) {
+							key.append(methodName);
+							key.append(Constants.STR_SYMBOL_EIPHEN);
+							key.append(Constants.ZERO);
+							key.append(isReplace(resultCode));
+						} else {
+							key.append(methodName);
+							key.append(Constants.STR_SYMBOL_EIPHEN);
+							key.append(isReplace(resultCode));
+						}
+					}
+
+				} else if (StringUtils.isNotBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
+
+					if (resultCode.length() == 1) {
+						key.append(methodName);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(Constants.ZERO);
+						key.append(isReplace(resultCode));
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(isReplace(errorCode));
+					}
+					else {
+						key.append(methodName);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(isReplace(resultCode));
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(isReplace(errorCode));
+					}
+
+				}
+				
+				if (StringUtils.isNotBlank(key.toString())) {
+					String genericError = errorContentHelper.getErrorMessage(key.toString());
+
+					if (StringUtils.isNotBlank(genericError)) {
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayText", String.class), obj, genericError);
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayCode", String.class), obj,
+								key.toString());
+					}
+				}
+
+			} catch (Exception ex) {
+				logger.info("System Exception: " + ex.getMessage());
+				logger.error("ERROR LOG:", ex);
+				logger.error("ERROR LOG in the generic error display process:");
+			}
+		}
+		logger.info("###########END- getErrorDisplay -###########");
+	}
+
+	private Method getSuperClassMethod(Object obj, String methodName, Class<?> param)
+			throws NoSuchMethodException, SecurityException {
+		if (param != null) {
+			return obj.getClass().getSuperclass().getDeclaredMethod(methodName, param);
+		}
+
+		return obj.getClass().getSuperclass().getDeclaredMethod(methodName);
+	}
+
+	private Object getMethodRun(Method method, Object obj, String param)
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		method.setAccessible(true);
+		if (param == null) {
+			return method.invoke(obj);
+		} else {
+			return method.invoke(obj, param);
+		}
+
+	}
+private String isParentMethod(Object obj, String methodName, Class<?> param) {
+        String strReturn = "";
+        try {
+            if (param != null) {
+                strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName, param), obj, null);
+            }
+
+            strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName), obj, null);
+        } catch (Exception e) {
+            logger.info("DOES NOT HAVE Method " + methodName + " in Object " + obj.toString()
+                    + " so going to look in parent");
+            try {
+                return (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
+            } catch (Exception e1) {
+                logger.info("DOES NOT HAVE Method in Child " + methodName + " in Object " + obj.toString()
+                        + " so return blank string");
+            }
+            return strReturn;
+        }
+
+        if (StringUtils.isBlank(strReturn)) {
+            logger.info("Value is null in child Method " + methodName + " in Object " + obj.toString()
+                    + " so going to look in parent");
+            try {
+                strReturn = (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
+            } catch (Exception e1) {
+                logger.info("DOES NOT HAVE Method in super class " + methodName + " in Object " + obj.toString()
+                        + " so return blank string");
+            }
+        }
+
+        return strReturn;
+
+    }
+	private String isReplace(String str) {
+		if(StringUtils.isNotBlank(str)) {
+			String strPattern = "[^a-zA-Z0-9_-]";
+			str =  CommonUtil.runRegex(str,strPattern, "");
+			strPattern = "^00{1}+";
+			str =  CommonUtil.runRegex(str,strPattern, "");
+		}	
+		return str;
+	}
 }

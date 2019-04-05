@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.xml.rpc.ServiceException;
-
+import org.apache.logging.log4j.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,5 +131,6 @@ public class BaseBO implements Constants {
 		}
 	}
 	// End | US16458 | MBAR: Sprint 14 - GME Admin tool password reset issue fixes. | Jenith | 2/5/2019 
+
 
 }

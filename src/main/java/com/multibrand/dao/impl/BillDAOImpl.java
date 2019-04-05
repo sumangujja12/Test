@@ -1,5 +1,7 @@
 package com.multibrand.dao.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -47,6 +49,7 @@ import com.multibrand.vo.response.billingResponse.BankCCInfoResponse;
 import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.PayAccount;
+import com.multibrand.vo.response.billingResponse.PayAccountDO;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 
 import oracle.jdbc.OracleTypes;
@@ -860,4 +863,286 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 		return paymentReceiptMap;
 	}	
 	//US-F222-DK | 10312018
+     public PayAccountDO savePayAccount(StoreUpdatePayAccountRequest request) throws Exception{
+		logger.info("BillDAO-savePayAccount :: Start");	
+		PayAccountDO payAccountDO = new PayAccountDO();
+		PayAccountDO upatePayAccountDO = new PayAccountDO();
+		boolean flagNewPayAccount = false;
+		long maxOnlinePayAccountId=0;
+		String nName = request.getPayAccountNickName();
+		int rows = -1; // rows added or updated;
+		
+		PayAccountInfoResponse payAccountInfoResponse = getPayAccounts(request.getContractAccountNumber());
+		
+		if(payAccountInfoResponse != null){
+			List<PayAccount> payAccounts = payAccountInfoResponse.getPayAccountList();
+			if(payAccounts.size() != 0){
+					for(int i=0;i<payAccounts.size();){
+					
+					if((payAccounts.get(i).getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken()))&&(request.getActiveFlag().equalsIgnoreCase(FLAG_Y))&& (payAccounts.get(i).getActiveFlag().equalsIgnoreCase(FLAG_Y))){
+						payAccountDO.setAccountDuplicate(true);
+						payAccountDO.setCallSuccess(false);
+						flagNewPayAccount=false;
+						logger.info("Pay  Account Already exists :::: " + request.getPayAccountToken());
+						break;						
+					}
+					else if((payAccounts.get(i).getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken()))&& (payAccounts.get(i).getActiveFlag().equalsIgnoreCase(FLAG_Y))&&(request.getActiveFlag().equalsIgnoreCase(FLAG_N)))
+					{
+						payAccountDO.setAccountDuplicate(true);
+						payAccountDO.setCallSuccess(false);
+						flagNewPayAccount=false;
+						logger.info("Pay Account Already exists :::: " + request.getPayAccountToken());
+						break;
+						
+					}
+					else if((payAccounts.get(i).getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken()))&& (payAccounts.get(i).getActiveFlag().equalsIgnoreCase(FLAG_N))&&(request.getActiveFlag().equalsIgnoreCase(FLAG_Y)))
+					{
+						payAccountDO.setAccountDuplicate(false);
+						flagNewPayAccount=false;
+						request.setOnlinePayAccountId(Long.parseLong(payAccounts.get(i).getOnlinePayAccountId()));
+						upatePayAccountDO = modifiyPayAccount(request);
+						if(upatePayAccountDO.isCallSuccess()){
+							logger.info("Reactivated Inactive Pay Account :::: " + request.getPayAccountToken());
+							payAccountDO.setRows(upatePayAccountDO.getRows());
+							payAccountDO.setCallSuccess(true);
+						}else
+						{
+							payAccountDO.setNickNameExistsFlag(upatePayAccountDO.isNickNameExistsFlag());
+							payAccountDO.setCallSuccess(false);
+						}
+						break;
+						
+					}
+					else if((payAccounts.get(i).getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken()))&& (payAccounts.get(i).getActiveFlag().equalsIgnoreCase(FLAG_N))&&(request.getActiveFlag().equalsIgnoreCase("N")))
+					{
+						payAccountDO.setAccountDuplicate(false);
+						flagNewPayAccount=false;
+						request.setOnlinePayAccountId(Long.parseLong(payAccounts.get(i).getOnlinePayAccountId()));
+						upatePayAccountDO = modifiyPayAccount(request);
+						if(upatePayAccountDO.isCallSuccess()){
+							logger.info("Stored Inactive Pay Account :::: " + request.getPayAccountToken());
+							payAccountDO.setRows(upatePayAccountDO.getRows());
+							payAccountDO.setCallSuccess(true);
+						}else
+						{
+							payAccountDO.setNickNameExistsFlag(upatePayAccountDO.isNickNameExistsFlag());
+							payAccountDO.setCallSuccess(false);
+						}
+						break;
+						
+					}else{
+					payAccountDO.setAccountDuplicate(false);
+					maxOnlinePayAccountId = Long.parseLong(payAccounts.get(i).getOnlinePayAccountId());
+					flagNewPayAccount=true;
+					i++;
+					}
+					}
+					
+				}
+			
+			if(!(payAccountDO.isNickNameExistsFlag())){
+				//to get active nicknames
+				List<PayAccount> modifiedList = new ArrayList<PayAccount>();
+				
+				for(int i=0;i<payAccountInfoResponse.getPayAccountList().size();){
+				if(payAccounts.get(i).getActiveFlag().equalsIgnoreCase(FLAG_Y))
+				{
+					modifiedList.add(payAccounts.get(i));
+					i++;
+					}else{ 
+						i++;
+					}
+				}
+			  		if(modifiedList.size() != 0){
+						for(PayAccount nickName : modifiedList){
+								if((nickName.getPayAccountNickName().equalsIgnoreCase(nName))){
+									payAccountDO.setNickNameExistsFlag(true);
+									break;
+							}
+						}
+			  		} 		
+				}	
+			}
+		
+		logger.info("Nickname Already exists :::: " + nName);
+		if(flagNewPayAccount){
+			if(!(payAccountDO.isNickNameExistsFlag())){	
+			// new pay account addition
+	   		maxOnlinePayAccountId = maxOnlinePayAccountId + 1;
+	   		logger.info("maxOnlinePayAccountId :::: " + maxOnlinePayAccountId);
+	   		
+	   		String currentDate = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+    		
+    		if(!((request.getActivationDate().isEmpty()) || (request.getActivationDate().trim().equalsIgnoreCase(""))|| (request.getActivationDate()==null)))
+    		{
+    			currentDate = request.getActivationDate();
+    		}
+	   		
+	   		Date creationDate = Calendar.getInstance().getTime();
+	   		Date activationDate=CommonUtil.getSqlDate(currentDate,DT_FMT_REQUEST);
+	   		String query = "INSERT INTO ol_pay_account (USER_ACCOUNT_NUMBER, ONLINE_PAY_ACCOUNT_TYPE, LAST_FOUR_DIGIT, NAME_ON_ACCOUNT, PAY_ACCOUNT_NICKNAME, PAY_ACCOUNT_TOKEN,"
+	   				+ " ZIP_CODE, ACTIVE_FLAG, ACTIVATION_DATE, CPDB_CREATION_DATE, VERIFY_CARD, ROUTING_NUMBER, CC_EXP_MONTH, CC_EXP_YEAR,"
+	   				+ " ONLINE_PAY_ACCOUNT_ID, CC_TYPE, AUTO_PAY,PAYMENT_INSTITUTION_NAME ) "+
+	   				" VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+	   		
+	   		
+	   		Object[] args = new Object[18];
+	   		args[0] = request.getContractAccountNumber();
+	   		args[1] = request.getOnlinePayAccountType();
+	   		args[2] = request.getLastFourDigit();
+	   		args[3] = request.getNameOnAccount();
+	   		args[4] = request.getPayAccountNickName();
+	   		args[5] = request.getPayAccountToken();
+	   		args[6] = request.getZipCode();
+	   		args[7] = request.getActiveFlag();
+	   		args[8] = activationDate;
+	   		args[9] = creationDate;
+	   		args[10] = request.getVerifyCard();
+	   		args[11] =request.getRoutingNumber();
+	   		args[12] = request.getCcExpMonth();
+	   		args[13] = request.getCcExpYear();
+	   		args[14] = maxOnlinePayAccountId;
+	   		args[15] = request.getCcType();
+	   		args[16] = request.getAutoPay();
+	   		args[17] = request.getPaymentInstitutionName();
+	   		rows = gmeResJdbcTemplate.update(query, args);
+	   		payAccountDO.setRows(rows);
+	   		payAccountDO.setCallSuccess(true);
+			}
+		}
+
+		logger.info("Rows added/updated to DB : " + rows);
+		
+		logger.info("BillDAO-savePayAccount :: End");
+		return payAccountDO;
+	}    
+	
+     /**
+    	 * Enhanced API of updatePayAccount to update Pay Accounts with check on Existing Nick names.
+    	 * @param request
+    	 * @return
+    	 * @throws Exception
+    	 */      
+     
+     public PayAccountDO modifiyPayAccount(StoreUpdatePayAccountRequest request) throws Exception{
+    		
+    		logger.info("BillDAO-modifiyPayAccount :: Start");	
+    		String query = null;
+    		PayAccountDO payAccountDO = new PayAccountDO();
+    		Object[] args = null;
+    		boolean isExistsFlag = false;
+    		int rows = 0;
+    		
+    		String nName = request.getPayAccountNickName();
+    		
+    		if(request.getActiveFlag().equalsIgnoreCase(FLAG_Y)){
+    		
+    		PayAccountInfoResponse payAccountInfoResponse = getPayAccounts(request.getContractAccountNumber());
+  		
+    		if(payAccountInfoResponse != null){
+    			
+    			List<PayAccount> payAccounts = payAccountInfoResponse.getPayAccountList();
+	      		
+    			List<PayAccount> modifiedList = new ArrayList<PayAccount>();
+    			for(int i=0;i<payAccountInfoResponse.getPayAccountList().size();){
+	      			if(payAccounts.get(i).getActiveFlag().equalsIgnoreCase(FLAG_Y))
+	      			{
+	      				modifiedList.add(payAccounts.get(i));
+	      				i++;
+	      			}else{ 
+	      				i++;
+	      			}
+	      		}
+	      		   			
+  			if(modifiedList.size() != 0){
+  	
+  				for(PayAccount nickName : modifiedList){
+  					if((nickName.getPayAccountNickName().equalsIgnoreCase(nName))){
+  						isExistsFlag = true;
+  						break;
+  					}
+  				}
+  			} 	
+    		}
+    	}    		
+    		String currentDate = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+    		
+    		if(!((request.getActivationDate().isEmpty()) || (request.getActivationDate().trim().equalsIgnoreCase(""))|| (request.getActivationDate()==null)))
+    		{
+    			currentDate = request.getActivationDate();
+    		}
+    		
+    		Date updationDate = Calendar.getInstance().getTime();
+    		Date activationDate=CommonUtil.getSqlDate(currentDate,DT_FMT_REQUEST);
+    		
+    		if(!isExistsFlag){
+    		if(ONLINE_ACCOUNT_TYPE_CC.equalsIgnoreCase(request.getOnlinePayAccountType())){
+    		
+    	    query = "UPDATE ol_pay_account SET LAST_FOUR_DIGIT=?, NAME_ON_ACCOUNT=?, PAY_ACCOUNT_NICKNAME=?, PAY_ACCOUNT_TOKEN=?, "+
+                 " ZIP_CODE=?, ACTIVE_FLAG=?,ACTIVATION_DATE=?, CPDB_UPDATE_DATE=?, VERIFY_CARD=?, "
+                 + "CC_EXP_MONTH=?, CC_EXP_YEAR=?, CC_TYPE=?, AUTO_PAY=?"
+                 + " WHERE (USER_ACCOUNT_NUMBER=? AND ONLINE_PAY_ACCOUNT_ID=?) ";
+    	    
+    	    args = new Object[15];
+	 		args[0] = request.getLastFourDigit();
+	 		args[1] = request.getNameOnAccount();
+	 		args[2] = request.getPayAccountNickName();
+	 		args[3] = request.getPayAccountToken();
+	 		args[4] = request.getZipCode();
+	 		args[5] = request.getActiveFlag();
+	 		args[6] = activationDate;
+	 		args[7] = updationDate;
+	 		args[8] = request.getVerifyCard();
+	 		args[9] = request.getCcExpMonth();
+	 		args[10] = request.getCcExpYear();
+	 		args[11] = request.getCcType();
+	 		args[12] = request.getAutoPay();
+	 		args[13] = request.getContractAccountNumber();
+	 		args[14] = request.getOnlinePayAccountId();
+ 		
+ 		
+ 			rows = gmeResJdbcTemplate.update(query, args);
+ 			logger.info("Rows updated in DB : " + rows);
+ 			payAccountDO.setRows(rows);
+    		payAccountDO.setNickNameExistsFlag(false);
+    		payAccountDO.setCallSuccess(true);
+    		}
+    		
+    		if(ONLINE_ACCOUNT_TYPE_BANK.equalsIgnoreCase(request.getOnlinePayAccountType())){
+    	   		
+    	   	    query = "UPDATE ol_pay_account SET LAST_FOUR_DIGIT=?, NAME_ON_ACCOUNT=?, PAY_ACCOUNT_NICKNAME=?, PAY_ACCOUNT_TOKEN=?, "+
+    	                " ZIP_CODE=?, ACTIVE_FLAG=?, ACTIVATION_DATE=?, CPDB_UPDATE_DATE=?, VERIFY_CARD=?, "
+    	                + "ROUTING_NUMBER=?, AUTO_PAY=?,PAYMENT_INSTITUTION_NAME=?"
+    	                + " WHERE (USER_ACCOUNT_NUMBER=? AND ONLINE_PAY_ACCOUNT_ID=?) ";
+    	   	    
+    	   	 args = new Object[14];
+	  		args[0] = request.getLastFourDigit();
+	  		args[1] = request.getNameOnAccount();
+	  		args[2] = request.getPayAccountNickName();
+	  		args[3] = request.getPayAccountToken();
+	  		args[4] = request.getZipCode();
+	  		args[5] = request.getActiveFlag();
+	  		args[6] = activationDate;
+	  		args[7] = updationDate;
+	  		args[8] = request.getVerifyCard();
+	  		args[9] = request.getRoutingNumber();
+	  		args[10] = request.getAutoPay();
+	  		args[11] = request.getPaymentInstitutionName();
+	  		args[12] = request.getContractAccountNumber();
+	  		args[13] = request.getOnlinePayAccountId();
+          
+  			rows = gmeResJdbcTemplate.update(query, args);
+    			logger.info("Rows updated in DB : " + rows);
+    		payAccountDO.setRows(rows);
+    		payAccountDO.setNickNameExistsFlag(false);
+    		payAccountDO.setCallSuccess(true);
+    	   		}	
+    		}else
+    		{
+    			payAccountDO.setNickNameExistsFlag(true);
+    			payAccountDO.setCallSuccess(false);
+    		}	
+    		logger.info("BillDAO-modifiyPayAccount :: End");
+    		return payAccountDO;
+    	}   
 }

@@ -59,6 +59,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
+import com.multibrand.vo.response.GMEEnviornmentalImpact;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
@@ -1057,6 +1058,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
+
 	
 	@POST
 	@Path("submitUCCData")
@@ -1149,6 +1151,22 @@ public class OEResource extends BaseResource {
 		UCCDataResponse uccResp = oeBO.submitUCCData(request,
 				httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(uccResp).build();
+		return response;
+	}
+	
+	/**
+	 * This method is responsible for get environment impact for GME mobile app
+	 * @author NGASPerera 
+	 * @return
+	 */
+	@POST
+	@Path("/getEnviornmentalImpactForAllGMECommunity")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getEnviornmentalImpactForAllGMECommunity(){
+		Response response;
+		GMEEnviornmentalImpact impact = oeBO.getEnviornmentalImpactForAllGMECommunity();
+		response = Response.status(Response.Status.OK).entity(impact).build();
 		return response;
 	}
 	

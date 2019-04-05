@@ -3,15 +3,20 @@ package com.multibrand.bo;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.domain.ConsumptionHistory;
 import com.multibrand.domain.GetUsageHistoryRequest;
 import com.multibrand.domain.UsageHistoryDO;
@@ -22,6 +27,7 @@ import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.HistoryService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.DateUtil;
 import com.multibrand.util.JAXBUtil;
 import com.multibrand.util.XIApacheClient;
 import com.multibrand.util.XmlUtil;
@@ -35,6 +41,7 @@ import com.multibrand.vo.request.historyRequest.PlanHistoryRequestVO;
 import com.multibrand.vo.request.historyRequest.xi.IntervalDataRequest;
 import com.multibrand.vo.request.historyRequest.xi.PaymentHistoryRequest;
 import com.multibrand.vo.response.DailyHourlyUsageResponseVO;
+import com.multibrand.vo.response.DailyResponseVO;
 import com.multibrand.vo.response.DailyUsageResponse;
 import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.GenericResponse;
@@ -51,6 +58,7 @@ import com.multibrand.vo.response.historyResponse.InvoiceUsageHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PlanHistoryResponse;
+import com.multibrand.vo.response.historyResponse.WeeklyUsageResponse;
 import com.multibrand.vo.response.historyResponse.xi.IntervalResponse;
 import com.multibrand.vo.response.historyResponse.xi.MTGetIntervalDataResponse;
 import com.multibrand.vo.response.historyResponse.xi.MTGetPaymentHistoryResponse;
@@ -75,6 +83,9 @@ public class HistoryBO extends BaseAbstractService implements Constants
 	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
+	
+	@Autowired
+	private DateUtil dateUtil;
 	
 	/**
 	 * 
@@ -1148,5 +1159,195 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 
 		return response;
 	}
-}
+	
+	/**
+	 * This method returns weekly usage data for the given week number & year
+	 * @author NGASPerera
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param zoneId
+	 * @param companyCode
+	 * @param brandName
+	 * @param weekNumber
+	 * @param year
+	 * @param sessionId
+	 * @return WeeklyUsageResponse
+	 */
+	public WeeklyUsageResponse getWeeklyUsageData(String accountNumber, String contractId, String esid, String zoneId,
+			String companyCode, String brandName, int weekNumber, int year, String sessionId) {
 
+		WeeklyUsageResponse weeklyUsageResponse = new WeeklyUsageResponse();
+		List<DailyResponseVO> dailyUsageListForSameMonth = new ArrayList<>();
+		List<DailyResponseVO> dailyUsageListForPreviousMonth = new ArrayList<>();
+		List<DailyResponseVO> dailyUsageListForNextMonth = new ArrayList<>();
+		Set<DailyResponseVO> weeklyUsageData = new HashSet<>();
+
+		try {
+			UsageRequestVO usageReq = new UsageRequestVO();
+			usageReq.setContractAcctId(CommonUtil.paddedCa(accountNumber));
+			usageReq.setContractId(contractId);
+			usageReq.setEsiId(esid);
+			usageReq.setCurDayInd(Constants.CURRENT_DAY_INDICATOR_N);
+			usageReq.setDyHrInd(Constants.DAILY_HOUR_INDICATOR_D);
+			usageReq.setZoneId(zoneId);
+
+			// get start date and end date of the week
+			// GME starts week by Sunday, because of that parameter passed as 1
+			Date startDate = dateUtil.getStartingDateOftheWeek(year, weekNumber, 1);
+			// Need to get weekly data, because of that parameter passed as 6 to
+			// get 7 days
+			Date endDate = dateUtil.addNumberOfDays(startDate, 6);
+
+			/**
+			 * to check weather dates of week belongs to same month , previous
+			 * month or next month
+			 */
+			int monthComparison = dateUtil.compareMonths(startDate, endDate);
+			// Dates belongs to same month
+			if (monthComparison == 0) {
+				dailyUsageListForSameMonth = getUsageDataForMonth(usageReq, sessionId, companyCode, startDate);
+				weeklyUsageData = getDailyUsagesByDate(dailyUsageListForSameMonth, startDate, endDate);
+				weeklyUsageResponse.setWeeklyUsageData(weeklyUsageData);
+			}
+			// Dates belongs to previous month also
+			if (monthComparison > 0) {
+				dailyUsageListForPreviousMonth = getUsageDataForMonth(usageReq, sessionId, companyCode, startDate);
+				dailyUsageListForSameMonth = getUsageDataForMonth(usageReq, sessionId, companyCode, endDate);
+				dailyUsageListForPreviousMonth.addAll(dailyUsageListForSameMonth);
+				weeklyUsageData = getDailyUsagesByDate(dailyUsageListForPreviousMonth, startDate, endDate);
+				weeklyUsageResponse.setWeeklyUsageData(weeklyUsageData);
+			}
+			// Dates belongs to next month also
+			if (monthComparison < 0) {
+				dailyUsageListForSameMonth = getUsageDataForMonth(usageReq, sessionId, companyCode, startDate);
+				dailyUsageListForNextMonth = getUsageDataForMonth(usageReq, sessionId, companyCode, endDate);
+				dailyUsageListForSameMonth.addAll(dailyUsageListForNextMonth);
+				weeklyUsageData = getDailyUsagesByDate(dailyUsageListForSameMonth, startDate, endDate);
+				weeklyUsageResponse.setWeeklyUsageData(weeklyUsageData);
+			}
+
+			if (weeklyUsageResponse.getWeeklyUsageData() != null
+					&& weeklyUsageResponse.getWeeklyUsageData().size() > 0) {
+				if (weeklyUsageResponse.getWeeklyUsageData().size() > 1
+						&& weeklyUsageResponse.getWeeklyUsageData().size() < 7) {
+					weeklyUsageData = createDummyData(usageReq, weeklyUsageResponse.getWeeklyUsageData(), startDate,
+							endDate);
+					weeklyUsageResponse.setWeeklyUsageData(weeklyUsageData);
+				}
+				weeklyUsageResponse.setResultCode(Constants.RESULT_CODE_SUCCESS);
+				weeklyUsageResponse.setResultDescription(Constants.MSG_SUCCESS);
+			} else {
+				weeklyUsageData = createDummyDataForWeek(usageReq, startDate, endDate);
+				weeklyUsageResponse.setWeeklyUsageData(weeklyUsageData);
+			}
+		} catch (Exception e) {
+			logger.info("Exception Occured : " + e);
+			weeklyUsageResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+			weeklyUsageResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return weeklyUsageResponse;
+	}	
+	
+	/**
+	 * This method returns usage data for a time period
+	 * @author NGASPerera
+	 * @param monthlyUsageData
+	 * @param startDate
+	 * @param endDate
+	 * @return Set<DailyResponseVO>
+	 */
+	public Set<DailyResponseVO> getDailyUsagesByDate(List<DailyResponseVO> monthlyUsageData, Date startDate,
+			Date endDate) {
+		Set<DailyResponseVO> dailyUsageData = new LinkedHashSet<>();
+		for (DailyResponseVO dailyResponse : monthlyUsageData) {
+			if (dateUtil.getDate(dailyResponse.getActualDay()).compareTo(startDate) >= 0
+					&& dateUtil.getDate(dailyResponse.getActualDay()).compareTo(endDate) <= 0) {
+				dailyUsageData.add(dailyResponse);
+			}
+		}
+		return dailyUsageData;
+	}
+	
+	/**
+	 * This method return usage data for month
+	 * @author NGASPerera
+	 * @param usageReq DailyResponseVO
+	 * @param sessionId
+	 * @param companyCode
+	 * @param monthDate
+	 * @return List<DailyResponseVO>
+	 */
+	public List<DailyResponseVO> getUsageDataForMonth(UsageRequestVO usageReq, String sessionId, String companyCode,
+			Date monthDate) {
+		SimpleDateFormat formatter = new SimpleDateFormat(Constants.MM_dd_yyyy);
+		String curDate = formatter.format(monthDate);
+		usageReq.setCurDtInd(curDate);
+		DailyHourlyUsageResponseVO dailyHourlyUsageResponse = usageHelper.getHourlyUsageFromDB(usageReq, sessionId,
+				companyCode);
+		List<DailyResponseVO> dailyUsageList = dailyHourlyUsageResponse.getDailyUsageList();
+		return dailyUsageList;
+	}
+	
+	/**
+	 * This method creates dummy data for a consecutive week
+	 * @author NGASPerera
+	 * @param req DailyResponseVO
+	 * @param startDate
+	 * @param endDate
+	 * @return Set<DailyResponseVO>
+	 */
+	public Set<DailyResponseVO> createDummyDataForWeek(UsageRequestVO req, Date startDate, Date endDate) {
+		Set<DailyResponseVO> dummyWeeklyUsageData = new LinkedHashSet<>();
+		List<Date> datesInRange = dateUtil.getDatesInRange(startDate, endDate);
+		for (Date date : datesInRange) {
+			DailyResponseVO dummyResponseData = new DailyResponseVO();
+			dummyResponseData.setActualDay(dateUtil.getDate(date));
+			dummyResponseData.setContractAcctId(req.getContractAcctId());
+			dummyResponseData.setContractId(req.getContractId());
+			dummyResponseData.setDayCst(Constants.DAILY_COST_DUMMY_DATA);
+			dummyResponseData.setDayTempHigh(Constants.DAILY_HIGH_TEMP_DUMMY_DATA);
+			dummyResponseData.setDayTempLow(Constants.DAILY_LOW_TEMP_DUMMY_DATA);
+			dummyResponseData.setDayUsg(Constants.DAIY_USAGE_DUMMY_DATA);
+			dummyResponseData.setEsiId(req.getEsiId());
+			dummyWeeklyUsageData.add(dummyResponseData);
+		}
+		return dummyWeeklyUsageData;
+	}
+	
+	/**
+	 * This method creates dummy data for random days for a week
+	 * @param req UsageRequestVO
+	 * @param weeklyUsageData
+	 * @param startDate
+	 * @param endDate
+	 * @return Set<DailyResponseVO>
+	 */
+	public Set<DailyResponseVO> createDummyData(UsageRequestVO req, Set<DailyResponseVO> weeklyUsageData,
+			Date startDate, Date endDate) {
+		Map<Date, DailyResponseVO> dummyData = new LinkedHashMap<>();
+		List<Date> datesInRange = dateUtil.getDatesInRange(startDate, endDate);
+		for (Date currentDate : datesInRange) {
+			DailyResponseVO dummyResponseData = new DailyResponseVO();
+			dummyResponseData.setContractAcctId(req.getContractAcctId());
+			dummyResponseData.setContractId(req.getContractId());
+			dummyResponseData.setDayCst(Constants.DAILY_COST_DUMMY_DATA);
+			dummyResponseData.setDayTempHigh(Constants.DAILY_HIGH_TEMP_DUMMY_DATA);
+			dummyResponseData.setDayTempLow(Constants.DAILY_LOW_TEMP_DUMMY_DATA);
+			dummyResponseData.setDayUsg(Constants.DAIY_USAGE_DUMMY_DATA);
+			dummyResponseData.setEsiId(req.getEsiId());
+			dummyResponseData.setActualDay(dateUtil.getDate(currentDate));
+			dummyData.put(currentDate, dummyResponseData);
+			dummyResponseData = null;
+		}
+		for (DailyResponseVO res : weeklyUsageData) {
+			if (dummyData.containsKey(dateUtil.getDate(res.getActualDay()))) {
+				dummyData.put(dateUtil.getDate(res.getActualDay()), res);
+			}
+		}
+		Set<DailyResponseVO> weeklyUsageDummy = new LinkedHashSet<DailyResponseVO>(dummyData.values());
+		return weeklyUsageDummy;
+	}
+	
+}
+	

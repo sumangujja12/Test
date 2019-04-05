@@ -2,6 +2,9 @@ package com.multibrand.vo.response;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import com.multibrand.util.Constants;
 
 /**
@@ -20,8 +23,9 @@ public class GenericResponse implements Constants{
 	private String errorDescription="";
 	private String messageCode="";
 	private String messageText="";
+	private String resultDisplayCode="";
+ 	private String resultDisplayText="";
 	private String statusCode=STATUS_CODE_CONTINUE;
-	
 	public String getResultCode() {
 		return resultCode;
 	}
@@ -93,5 +97,25 @@ public class GenericResponse implements Constants{
 	 */
 	public void setMessageText(String messageText) {
 		this.messageText = messageText;
+	}
+	/**
+	 * @return the resultDisplayText
+	 */
+ 	@JsonIgnore
+	public String getResultDisplayCode() {
+		return resultDisplayCode;
+	}
+	/**
+	 * @param resultDisplayText the resultDisplayText to set
+	 */
+	public void setResultDisplayCode(String resultDisplayCode) {
+		this.resultDisplayCode = resultDisplayCode;
+	}
+
+	public String getResultDisplayText() {
+		return resultDisplayText;
+	}
+	public void setResultDisplayText(String resultDisplayText) {
+		this.resultDisplayText = StringEscapeUtils.unescapeHtml(resultDisplayText);
 	}
 }
