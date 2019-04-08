@@ -128,9 +128,9 @@ re.content.server.endpoint.url=http://txaixebnbld01:8081/client/v2/content.svc/
 #Tempalte Id's
 re.tempalte.id_desktop=111201
 re.tempalte.id_mobile=TODO
-pw.tempalte.id_desktop=884
+pw.tempalte.id_desktop=TODO
 pw.tempalte.id_mobile=TODO
-ce.tempalte.id_desktop=884
+ce.tempalte.id_desktop=TODO
 ce.tempalte.id_mobile=TODO
 gm.tempalte.id_desktop=11829
 gm.tempalte.id_mobile=TODO
