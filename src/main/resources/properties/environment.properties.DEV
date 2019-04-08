@@ -120,6 +120,11 @@ ws.rest.ccs.google.product.set.url=http://sapcmd02:8000/sap/opu/odata/sap/ZE_WEB
 GME.MYACCOUNT.LOGIN.URL=https://myaccount-dev.greenmountain.com/
 GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-dev.greenmountain.com/ResetPassword/
 
+#Content server props
+gm.content.server.endpoint.url=http://txaixebnbld01.retail.nrgenergy.com:18081/client/v2/content.svc/
+content.rest.server.url=http://txaixebxindxs02:9085/contentService/content/getContentData
+re.content.server.endpoint.url=http://txaixebnbld01:8081/client/v2/content.svc/
+
 #Tempalte Id's
 re.tempalte.id_desktop=111201
 re.tempalte.id_mobile=TODO
