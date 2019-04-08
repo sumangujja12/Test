@@ -121,7 +121,7 @@ GME.MYACCOUNT.LOGIN.URL=https://myaccount-test.greenmountain.com/
 GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-test.greenmountain.com/ResetPassword/
 
 #Content server props
-gm.content.server.endpoint.url=http://txaixebnbld01.retail.nrgenergy.com:18081/client/v2/content.svc/
+gm.content.server.endpoint.url=http://txaixebxindxs01:13180/cd-service/gme/cdws/odata.svc/
 content.rest.server.url=http://txaixebxindxs02:9085/contentService/content/getContentData
 re.content.server.endpoint.url=http://txaixebnbld01:8081/client/v2/content.svc/
 
