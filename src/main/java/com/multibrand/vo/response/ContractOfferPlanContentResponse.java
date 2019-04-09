@@ -6,8 +6,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.stereotype.Component;
 
-import com.multibrand.dto.response.OfferContentResponse;
-
 @Component
 @XmlRootElement(name="ContractOfferPlanContentResponse")
 public class ContractOfferPlanContentResponse extends GenericResponse {

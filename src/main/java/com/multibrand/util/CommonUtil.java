@@ -1862,5 +1862,14 @@ public class CommonUtil implements Constants {
 		return strRetVal;
 	}
 	
+	public static String runRegex(String input, String pattern, String replace) {
+		
+		if(StringUtils.isNotBlank(input)) {
+			return input.replaceAll(pattern,"");
+		}
+		
+		return input;
+	}
+	
 	
 }

@@ -8,8 +8,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.dao.ContentDao;
-import com.multibrand.dao.impl.ContentDaoImpl;
 import com.multibrand.dto.MobileContentDto;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.contentResponse.MobileContent;
@@ -27,12 +27,13 @@ public class ErrorContentHelper {
 	//public static final String GME_ERROR_CONTENT_CACHE ="contentpackage";
 	public static List<MobileContentDto> slist;
 	
+	@Cacheable(value = Constants.ERROR_CONTENT_CACHE, key = "#key")
 	public String getErrorMessage(String key)
 	{
 		
-		String value = "No Value";
+		String value = Constants.ERROR_CONTENT_DEFAULT;
 		if(key.isEmpty())
-			key = "Default";
+			key = value;
 		
 		List<MobileContentDto> mobileContentData = getErrorContentList();
 		
@@ -41,11 +42,11 @@ public class ErrorContentHelper {
 				if(!content.getName().isEmpty()&&content.getName().equalsIgnoreCase(key))
 				{
 					value = content.getValue();
-					break;
+					break; 
 				}
 			}
 		}else{
-			value = "No Value";
+			logger.info("Database Mapping for key {0} is not available",key);
 		}
 							
 	return value;

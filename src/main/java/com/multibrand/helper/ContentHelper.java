@@ -24,6 +24,7 @@ import com.multibrand.util.MessageKey;
 import com.multibrand.util.MessageKeyTypeEnum;
 import com.multibrand.util.SearchTypeEnum;
 import com.multibrand.vo.request.ContractInfoRequest;
+import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.OfferDO;
@@ -218,7 +219,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 				contractOffer.setYrracDocId(offerVO.getStrYRAACDocID());
 				contractOffer.setEflDocId(offerVO.getStrEFLDocID());
 				contractOffer.setCancellationFee(offerVO.getStrCancelFee());
-				contractOffer.setOfferName(offerVO.getStrOfferCodeTitle());
+				contractOffer.setOfferName(offerVO.getStrPlanName());
 				contractOffer.setOfferTeaser(offerVO.getStrOfferTeaser());
 				contractOffer.setOfferCode(offerVO.getStrOfferCode());
 				contractOffer.setTermLength(offerVO.getStrContractTerm());
@@ -232,6 +233,21 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 						}
 					}
 				}
+				CampEnvironmentDO[] campEnvironmentDetails = offerVO.getCampEnvironmentDetails();
+				
+				if (campEnvironmentDetails != null) {
+					
+					for (CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
+						if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
+							contractOffer.setNumberOfTreesSaved(campEnvironment.getValue());
+							break;
+						}
+						
+					}
+					
+				}
+				
+
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					offerCode[count] = offerVO.getStrOfferCode();
 					count++;
@@ -282,14 +298,13 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 				}
 
 			} else {
-				response.setErrorCode("NOCONTENTMSGKEY");
-				response.setErrorDescription("Content return empty from the server");
-
+				response.setResultCode("01");
+				response.setResultDescription(ERROR_CONTENT_DEFAULT);
 			}
 
 		} else {
-			response.setErrorCode("NOCONTENTMSGKEY");
-			response.setErrorDescription("Content MessageKey is not available");
+			response.setResultCode(response.getErrorCode());
+			response.setResultDescription(response.getMessageCode());
 		}
 		
 	}
@@ -306,13 +321,13 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		String errorCode = CommonUtil.getJsonValue(json, "errorCode");
 		String errorMsg = CommonUtil.getJsonValue(json, "errorMsg");
 		if (errorCode != null && StringUtils.isNotEmpty(errorCode)) {
-			response.setErrorCode(errorCode.toString());
-			response.setErrorDescription(json.get("errorMessage").toString());
+			response.setResultCode("01");
+			response.setResultDescription(json.get("errorMessage").toString());
 			return false;
 		} else if (errorMsg != null && !errorMsg.equalsIgnoreCase("null")
 				&& StringUtils.isNotEmpty(errorMsg.toString())) {
-			response.setErrorCode("ERRORRESTSERVER");
-			response.setErrorDescription(errorMsg);
+			response.setResultCode("01");
+			response.setResultDescription(errorMsg);
 			return false;
 		}
 		return true;
