@@ -1150,7 +1150,7 @@ public interface Constants {
 	public static final String CONTENT_TITLE_TAXONOMY_ID = "taxonomyId";
 	public static final String CONTENT_TITLE_MESSAGEKEYS = "messageKeys";
 	public static final String CONTENT_TITLE_MESSAGEKEY_LIST = "messageKeyList";
-	public static final String CONTET_ERROR_MESSAGEKEY = "Error in the geting offer Code content data";
+	public static final String CONTET_ERROR_MESSAGEKEY = "No Mapping for offer Code in the content server or Something went wrong!!!!!";
 	public static final String ERROR_CONTENT_CACHE ="ErrorContent";
 	public static final String STR_SYMBOL_EIPHEN = "-";
 	public static final String ERROR_CONTENT_DEFAULT = "Sorry! Something went wrong. Please try again";
