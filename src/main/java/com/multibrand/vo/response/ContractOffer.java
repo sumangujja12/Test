@@ -1,11 +1,13 @@
 package com.multibrand.vo.response;
 
-import com.multibrand.dto.response.OfferContentResponse;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
-public class ContractOffer {
+import com.google.gson.annotations.SerializedName;
+import com.multibrand.util.Constants;
+
+public class ContractOffer implements Constants {
 	
 	private String offerName;
-	private String offerCode;
 	private String price;
 	private String termLength;
 	private String cancellationFee;
@@ -15,7 +17,18 @@ public class ContractOffer {
 	private String offerTeaser;
 	private String planDisclaimer;
 	private String eflDocId;
-	private OfferContentResponse OfferContent; 
+	private String offerHeadline;
+	private String offerDescription;
+	private String energyTypeDescription;
+	private String energyTypeIcon;
+	private String specialOfferDescription;
+	private String specialOfferIcon;
+	private String productDisclaimer;
+	private String genericDisclaimer;
+	@SerializedName("messageKey")
+	@JsonIgnore
+	private String offerCode;
+	private String errorMessage;
 	
 	/**
 	 * @return the offerName
@@ -151,17 +164,118 @@ public class ContractOffer {
 		this.offerCode = offerCode;
 	}
 	/**
-	 * @return the offerContent
+	 * @return the offerHeadline
 	 */
-	public OfferContentResponse getOfferContent() {
-		return OfferContent;
+	public String getOfferHeadline() {
+		return offerHeadline;
 	}
 	/**
-	 * @param offerContent the offerContent to set
+	 * @param offerHeadline the offerHeadline to set
 	 */
-	public void setOfferContent(OfferContentResponse offerContent) {
-		OfferContent = offerContent;
+	public void setOfferHeadline(String offerHeadline) {
+		this.offerHeadline = offerHeadline;
 	}
+	/**
+	 * @return the offerDescription
+	 */
+	public String getOfferDescription() {
+		return offerDescription;
+	}
+	/**
+	 * @param offerDescription the offerDescription to set
+	 */
+	public void setOfferDescription(String offerDescription) {
+		this.offerDescription = offerDescription;
+	}
+	/**
+	 * @return the energyTypeDescription
+	 */
+	public String getEnergyTypeDescription() {
+		return energyTypeDescription;
+	}
+	/**
+	 * @param energyTypeDescription the energyTypeDescription to set
+	 */
+	public void setEnergyTypeDescription(String energyTypeDescription) {
+		this.energyTypeDescription = energyTypeDescription;
+	}
+	/**
+	 * @return the energyTypeIcon
+	 */
+	public String getEnergyTypeIcon() {
+		return energyTypeIcon;
+	}
+	/**
+	 * @param energyTypeIcon the energyTypeIcon to set
+	 */
+	public void setEnergyTypeIcon(String energyTypeIcon) {
+		this.energyTypeIcon = energyTypeIcon;
+	}
+	/**
+	 * @return the specialOfferDescription
+	 */
+	public String getSpecialOfferDescription() {
+		return specialOfferDescription;
+	}
+	/**
+	 * @param specialOfferDescription the specialOfferDescription to set
+	 */
+	public void setSpecialOfferDescription(String specialOfferDescription) {
+		this.specialOfferDescription = specialOfferDescription;
+	}
+	/**
+	 * @return the specialOfferIcon
+	 */
+	public String getSpecialOfferIcon() {
+		return specialOfferIcon;
+	}
+	/**
+	 * @param specialOfferIcon the specialOfferIcon to set
+	 */
+	public void setSpecialOfferIcon(String specialOfferIcon) {
+		this.specialOfferIcon = specialOfferIcon;
+	}
+	/**
+	 * @return the productDisclaimer
+	 */
+	public String getProductDisclaimer() {
+		return productDisclaimer;
+	}
+	/**
+	 * @param productDisclaimer the productDisclaimer to set
+	 */
+	public void setProductDisclaimer(String productDisclaimer) {
+		this.productDisclaimer = productDisclaimer;
+	}
+	/**
+	 * @return the genericDisclaimer
+	 */
+	public String getGenericDisclaimer() {
+		return genericDisclaimer;
+	}
+	/**
+	 * @param genericDisclaimer the genericDisclaimer to set
+	 */
+	public void setGenericDisclaimer(String genericDisclaimer) {
+		this.genericDisclaimer = genericDisclaimer;
+	}
+	
+	/**
+	 * @return the errorMessage
+	 */
+	public String getErrorMessage() {
+		if(this.errorMessage != null && this.errorMessage.contains("ERROR")) {
+			return CONTET_ERROR_MESSAGEKEY;
+		}
+		return errorMessage;
+	}
+	/**
+	 * @param errorMessage the errorMessage to set
+	 */
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
+	}
+	
 	
 	
 	

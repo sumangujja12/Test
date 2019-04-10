@@ -285,12 +285,20 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 				if (isValidContent(response, restContentJson)) {
 					MultiBrandOfferDTO offerConetent = gson.fromJson(restContentJson, MultiBrandOfferDTO.class);
 					for (int i = 0; i < offerConetent.getMultiBrandOfferList().size(); i++) {
-						for (ContractOffer offerVO : response.getContractOffer()) {
+						for (ContractOffer offerVO : response.getPlans()) {
 							String tempOfferCode = offerConetent.getMultiBrandOfferList().get(i).getOfferCode();
 							if (offerVO.getOfferCode() != null
 									&& offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
-								offerVO.setOfferContent(offerConetent.getMultiBrandOfferList().get(i));
-								break;
+								ContractOffer tempJsonConten= offerConetent.getMultiBrandOfferList().get(i);
+								offerVO.setOfferHeadline(tempJsonConten.getOfferHeadline());
+								offerVO.setOfferDescription(tempJsonConten.getOfferDescription());
+								offerVO.setEnergyTypeDescription(tempJsonConten.getEnergyTypeDescription());
+								offerVO.setEnergyTypeIcon(tempJsonConten.getEnergyTypeIcon());
+								offerVO.setSpecialOfferDescription(tempJsonConten.getSpecialOfferDescription());
+								offerVO.setSpecialOfferIcon(tempJsonConten.getSpecialOfferIcon());
+								offerVO.setProductDisclaimer(tempJsonConten.getProductDisclaimer());
+								offerVO.setGenericDisclaimer(tempJsonConten.getGenericDisclaimer());
+								offerVO.setErrorMessage(tempJsonConten.getErrorMessage());
 							}
 						}
 					}

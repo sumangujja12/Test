@@ -52,7 +52,7 @@ public class ContentBO extends BaseBO implements Constants {
 			String[] offerCode = null;
 			List<ContractOffer> contractList = new LinkedList<ContractOffer>();
 			offerCode = contentHelper.getContractOffer(offerStrAr,contractList);
-			response.setContractOffer(contractList);
+			response.setPlans(contractList);
 			contentHelper.getOfferContent(offerCode,response,request);
 
 		} catch (RemoteException e) {

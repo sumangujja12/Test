@@ -3,24 +3,24 @@ package com.multibrand.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.multibrand.dto.response.OfferContentResponse;
+import com.multibrand.vo.response.ContractOffer;
 
 public class MultiBrandOfferDTO {
 	
 	
-	private List<OfferContentResponse> multiBrandOfferList = new ArrayList<OfferContentResponse>();
+	private List<ContractOffer> multiBrandOfferList = new ArrayList<ContractOffer>();
 
 	/**
 	 * @return the multiBrandOfferList
 	 */
-	public List<OfferContentResponse> getMultiBrandOfferList() {
+	public List<ContractOffer> getMultiBrandOfferList() {
 		return multiBrandOfferList;
 	}
 
 	/**
 	 * @param multiBrandOfferList the multiBrandOfferList to set
 	 */
-	public void setMultiBrandOfferList(List<OfferContentResponse> multiBrandOfferList) {
+	public void setMultiBrandOfferList(List<ContractOffer> multiBrandOfferList) {
 		this.multiBrandOfferList = multiBrandOfferList;
 	} 
 	
