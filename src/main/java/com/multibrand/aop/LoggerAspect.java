@@ -207,15 +207,17 @@ public class LoggerAspect {
 				StringBuffer key = new StringBuffer();
 
 				if (StringUtils.isBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
-					if (resultCode.length() == 1) {
-						key.append(methodName);
-						key.append(Constants.STR_SYMBOL_EIPHEN);
-						key.append(Constants.ZERO);
-						key.append(isReplace(resultCode));
-					} else {
-						key.append(methodName);
-						key.append(Constants.STR_SYMBOL_EIPHEN);
-						key.append(isReplace(resultCode));
+					if (!isReplace(resultCode).equalsIgnoreCase(Constants.ZERO)) {
+						if (resultCode.length() == 1) {
+							key.append(methodName);
+							key.append(Constants.STR_SYMBOL_EIPHEN);
+							key.append(Constants.ZERO);
+							key.append(isReplace(resultCode));
+						} else {
+							key.append(methodName);
+							key.append(Constants.STR_SYMBOL_EIPHEN);
+							key.append(isReplace(resultCode));
+						}
 					}
 
 				} else if (StringUtils.isNotBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
