@@ -109,23 +109,8 @@ public class GenericResponse implements Constants{
 	/**
 	 * @param resultDisplayText the resultDisplayText to set
 	 */
-	public void setResultDisplayCode(String methodName) {
-		if(this.errorCode.isEmpty()&&!this.resultCode.isEmpty()&&!methodName.isEmpty()){
-			if(this.resultCode.equalsIgnoreCase("0")||this.resultCode.equalsIgnoreCase("00"))
-				this.resultDisplayCode = null;
-			else{
-				if(this.resultCode.length()==1)
-					this.resultDisplayCode = methodName+"-0"+this.resultCode;
-				else
-					this.resultDisplayCode = methodName+"-"+this.resultCode;
-			}
-		}else if(!this.errorCode.isEmpty()&&!methodName.isEmpty()&&!this.resultCode.isEmpty()){
-			if(this.resultCode.length()==1)
-				this.resultDisplayCode = methodName+"-0"+this.resultCode+"-"+this.errorCode;
-			else
-				this.resultDisplayCode = methodName+"-"+this.resultCode+"-"+this.errorCode;
-		}else
-			this.resultDisplayCode = null;
+	public void setResultDisplayCode(String resultDisplayCode) {
+		this.resultDisplayCode = resultDisplayCode;
 	}
 	public String getResultDisplayText() {
 		return resultDisplayText;

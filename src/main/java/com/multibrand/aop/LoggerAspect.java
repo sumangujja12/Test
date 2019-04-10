@@ -242,7 +242,7 @@ public class LoggerAspect {
 
 				if (StringUtils.isNotBlank(genericError)) {
 					 getMethodRun(getSuperClassMethod(obj ,"setResultDisplayText", String.class),obj,genericError);
-					 //getMethodRun(getSuperClassMethod(obj ,"setResultDisplayCode", String.class),obj,key.toString());
+					 getMethodRun(getSuperClassMethod(obj ,"setResultDisplayCode", String.class),obj,key.toString());
 				}
 
 			} catch (Exception ex) {
