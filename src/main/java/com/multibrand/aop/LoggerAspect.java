@@ -237,12 +237,15 @@ public class LoggerAspect {
 					}
 
 				}
+				
+				if (StringUtils.isNotBlank(key.toString())) {
+					String genericError = errorContentHelper.getErrorMessage(key.toString());
 
-				String genericError = errorContentHelper.getErrorMessage(key.toString());
-
-				if (StringUtils.isNotBlank(genericError)) {
-					 getMethodRun(getSuperClassMethod(obj ,"setResultDisplayText", String.class),obj,genericError);
-					 getMethodRun(getSuperClassMethod(obj ,"setResultDisplayCode", String.class),obj,key.toString());
+					if (StringUtils.isNotBlank(genericError)) {
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayText", String.class), obj, genericError);
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayCode", String.class), obj,
+								key.toString());
+					}
 				}
 
 			} catch (Exception ex) {
