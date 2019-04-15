@@ -7,6 +7,7 @@ import com.multibrand.util.Constants;
 
 public class ContractOffer implements Constants {
 	
+	private String averageMonthlyPlanUsage = "2320";
 	private String offerName;
 	private String price;
 	private String termLength;
@@ -274,6 +275,18 @@ public class ContractOffer implements Constants {
 	 */
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
+	}
+	/**
+	 * @return the averageMonthlyPlanUsage
+	 */
+	public String getAverageMonthlyPlanUsage() {
+		return averageMonthlyPlanUsage;
+	}
+	/**
+	 * @param averageMonthlyPlanUsage the averageMonthlyPlanUsage to set
+	 */
+	public void setAverageMonthlyPlanUsage(String averageMonthlyPlanUsage) {
+		this.averageMonthlyPlanUsage = averageMonthlyPlanUsage;
 	}
 	
 	

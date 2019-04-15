@@ -15,6 +15,11 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.multibrand.domain.AllAlertsOfferSwapInput;
+import com.multibrand.domain.AllAlertsRequest;
+import com.multibrand.domain.AllAlertsResponse;
+import com.multibrand.domain.ContractAccountDO;
+import com.multibrand.domain.ContractDO;
 import com.multibrand.dto.MultiBrandOfferDTO;
 import com.multibrand.service.impl.ContentServiceImpl;
 import com.multibrand.util.CommonUtil;
@@ -32,29 +37,28 @@ import com.multibrand.vo.response.OfferPriceDO;
 
 @Component
 public class ContentHelper implements Constants {
-	
-Logger logger = LogManager.getLogger("NRGREST_LOGGER");
-	
+
+	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+
 	@Autowired
 	protected EnvMessageReader envMessageReader;
-	
+
 	@Autowired
 	@Qualifier("appConstMessageSource")
 	protected ReloadableResourceBundleMessageSource appConstMessageSource;
-	
 
 	@Autowired
 	private ContentServiceImpl contentService;
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
 	 * @param languageCode
 	 * @return
 	 */
-	public String getPublicationId(String brandId,  String languageCode) {
+	public String getPublicationId(String brandId, String languageCode) {
 
-		 brandId = brandId != null ? brandId : StringUtils.EMPTY;
+		brandId = brandId != null ? brandId : StringUtils.EMPTY;
 
 		if (languageCode != null && Constants.LANG_ES.equalsIgnoreCase(languageCode)) {
 			return envMessageReader.getMessage(brandId.toLowerCase() + Constants.PUB + Constants.ES.toLowerCase());
@@ -62,7 +66,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 			return envMessageReader.getMessage(brandId.toLowerCase() + Constants.PUB + Constants.EN.toLowerCase());
 		}
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -70,14 +74,14 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	 * @return
 	 */
 	public String getTemplateId(String brandId, boolean isDesktop) {
-		
+
 		if (isDesktop) {
 			return envMessageReader.getMessage(brandId.toLowerCase() + Constants.TEMPLATE_DESKTOP);
 		} else {
 			return envMessageReader.getMessage(brandId.toLowerCase() + Constants.TEMPLATE_MOBILE);
 		}
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -85,18 +89,18 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	 */
 	public String getTaxonomyId(String brandId) {
 		if (brandId.equalsIgnoreCase(Constants.RELIANT_BRAND_NAME)) {
-			return this.appConstMessageSource.getMessage( Constants.RE_TAXONOMY_ID, null, null);
+			return this.appConstMessageSource.getMessage(Constants.RE_TAXONOMY_ID, null, null);
 		} else if (brandId.equalsIgnoreCase(Constants.GME_BRAND_NAME)) {
-			return StringUtils.EMPTY ;
+			return StringUtils.EMPTY;
 		} else if (brandId.equalsIgnoreCase(Constants.BRAND_NAME_PENNYWISE)) {
-			return  StringUtils.EMPTY;
+			return StringUtils.EMPTY;
 		} else if (brandId.equalsIgnoreCase(Constants.BRAND_NAME_CIRRO)) {
 			return StringUtils.EMPTY;
 		}
 
 		return StringUtils.EMPTY;
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -106,7 +110,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		brandId = brandId != null ? brandId : StringUtils.EMPTY;
 		return envMessageReader.getMessage(brandId.toLowerCase() + Constants.PROD_OFFER_SCHEMA_ID);
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -116,7 +120,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		brandId = brandId != null ? brandId : StringUtils.EMPTY;
 		return envMessageReader.getMessage(brandId.toLowerCase() + Constants.PROD_BONUS_SCHEMA_ID);
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -126,7 +130,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		brandId = brandId != null ? brandId : StringUtils.EMPTY;
 		return envMessageReader.getMessage(brandId.toLowerCase() + Constants.CONTENT_SERVER_ENDPOINT_URL);
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param keyName
@@ -134,16 +138,16 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	 * @param searchType
 	 * @param messageKeyList
 	 */
-	public void createMsgKey(String [] keyName, MessageKeyTypeEnum keyType, SearchTypeEnum searchType,
+	public void createMsgKey(String[] keyName, MessageKeyTypeEnum keyType, SearchTypeEnum searchType,
 			List<MessageKey> messageKeyList) {
 		if (keyName != null && keyName.length > 0) {
 			for (String strKeyVal : keyName) {
-				createMsgKey(strKeyVal,keyType,searchType,messageKeyList);
+				createMsgKey(strKeyVal, keyType, searchType, messageKeyList);
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param keyName
@@ -151,14 +155,15 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	 * @param searchType
 	 * @param messageKeyList
 	 */
-	public void createMsgKey(String keyName, MessageKeyTypeEnum keyType, SearchTypeEnum searchType, List<MessageKey> messageKeyList) {
+	public void createMsgKey(String keyName, MessageKeyTypeEnum keyType, SearchTypeEnum searchType,
+			List<MessageKey> messageKeyList) {
 		MessageKey msgKey = new MessageKey();
 		msgKey.setKeyName(keyName);
 		msgKey.setKeyType(keyType);
 		msgKey.setSearchType(searchType);
 		messageKeyList.add(msgKey);
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -178,7 +183,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		jsonMap.put(CONTENT_TITLE_JSON_TRANSACTION_ID, String.valueOf(CommonUtil.getStartTime()));
 		return jsonMap;
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param messageKeyList
@@ -189,7 +194,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		jsonMap.put(CONTENT_TITLE_MESSAGEKEY_LIST, messageKeyList);
 		return jsonMap;
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -197,11 +202,10 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	 */
 	public String getOfferMessageKey(String brandId) {
 		brandId = brandId != null ? brandId : StringUtils.EMPTY;
-		String OfferList =  envMessageReader.getMessage(brandId.toLowerCase() + Constants.CONTENT_OFFER_MESSAGE_KEY);
+		String OfferList = envMessageReader.getMessage(brandId.toLowerCase() + Constants.CONTENT_OFFER_MESSAGE_KEY);
 		return OfferList;
 	}
-	
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param offerStrAr
@@ -212,10 +216,11 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		String[] offerCode = null;
 		int count = 0;
 		if (offerStrAr != null) {
-			
+
 			offerCode = new String[offerStrAr.length];
 			for (OfferDO offerVO : offerStrAr) {
 				ContractOffer contractOffer = new ContractOffer();
+				contractOffer.setAverageMonthlyPlanUsage("");
 				contractOffer.setYrracDocId(offerVO.getStrYRAACDocID());
 				contractOffer.setEflDocId(offerVO.getStrEFLDocID());
 				contractOffer.setCancellationFee(offerVO.getStrCancelFee());
@@ -234,19 +239,17 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 					}
 				}
 				CampEnvironmentDO[] campEnvironmentDetails = offerVO.getCampEnvironmentDetails();
-				
+
 				if (campEnvironmentDetails != null) {
-					
+
 					for (CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
 						if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
 							contractOffer.setNumberOfTreesSaved(campEnvironment.getValue());
 							break;
 						}
-						
+
 					}
-					
 				}
-				
 
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					offerCode[count] = offerVO.getStrOfferCode();
@@ -256,28 +259,30 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 				contractList.add(contractOffer);
 			}
 		}
-		
+
 		return offerCode;
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param offerCode
 	 * @param response
 	 * @param request
 	 */
-	public void getOfferContent(String[] offerCode, ContractOfferPlanContentResponse response, ContractInfoRequest request) {
-		
-		if (offerCode != null && offerCode.length > 0) {
-			logger.info(":::::::::::GET CONTENT FOR OFFER CODE FROM REST SERVER ContractOfferPlanContentResponse Method :::::::::::"+offerCode);
+	public void getOfferContent(String[] offerCode, ContractOfferPlanContentResponse response,
+			ContractInfoRequest request) {
 
-			Map<String, Object> jsonMap = getContentRequestJSON(request.getBrandId(),
-					request.getLanguageCode(), true);
+		if (offerCode != null && offerCode.length > 0) {
+			logger.info(
+					":::::::::::GET CONTENT FOR OFFER CODE FROM REST SERVER ContractOfferPlanContentResponse Method :::::::::::"
+							+ offerCode);
+
+			Map<String, Object> jsonMap = getContentRequestJSON(request.getBrandId(), request.getLanguageCode(), true);
 			List<MessageKey> messageKeyList = new ArrayList<MessageKey>();
 			Gson gson = new Gson();
 			for (String strOfferCode : offerCode) {
-				createMsgKey(strOfferCode, MessageKeyTypeEnum.OFFER_CODE,
-						SearchTypeEnum.STR_VALUE_FILTER, messageKeyList);
+				createMsgKey(strOfferCode, MessageKeyTypeEnum.OFFER_CODE, SearchTypeEnum.STR_VALUE_FILTER,
+						messageKeyList);
 			}
 			jsonMap.put(CONTENT_TITLE_MESSAGEKEYS, getMessageMap(messageKeyList));
 			String restContentJson = contentService.getJSONContentResponse(gson.toJson(jsonMap));
@@ -289,7 +294,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 							String tempOfferCode = offerConetent.getMultiBrandOfferList().get(i).getOfferCode();
 							if (offerVO.getOfferCode() != null
 									&& offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
-								ContractOffer tempJsonConten= offerConetent.getMultiBrandOfferList().get(i);
+								ContractOffer tempJsonConten = offerConetent.getMultiBrandOfferList().get(i);
 								offerVO.setOfferHeadline(tempJsonConten.getOfferHeadline());
 								offerVO.setOfferDescription(tempJsonConten.getOfferDescription());
 								offerVO.setEnergyTypeDescription(tempJsonConten.getEnergyTypeDescription());
@@ -314,9 +319,9 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 			response.setResultCode(response.getErrorCode());
 			response.setResultDescription(response.getMessageCode());
 		}
-		
+
 	}
-	
+
 	/**
 	 * @author SMarimuthu
 	 * @param response
@@ -340,8 +345,121 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		}
 		return true;
 	}
+
+	/**
+	 * @author SMarimuthu
+	 * @param request
+	 * @return
+	 */
+	public AllAlertsRequest getContractInfoParallelRequest(ContractInfoRequest request) {
+		AllAlertsRequest allAlertsRequest = new AllAlertsRequest();
+		AllAlertsOfferSwapInput[] inputOfferSwapList = new AllAlertsOfferSwapInput[1];
+		AllAlertsOfferSwapInput inputOffer = new AllAlertsOfferSwapInput();
+		inputOffer.setStrBusinessPartnerId(request.getBpNumber());
+		inputOffer.setStrCaNumber(request.getAccountNumber());
+		inputOffer.setStrCo(request.getContractId());
+		inputOffer.setStrEsiId(request.getEsid());
+		inputOffer.setStrLangCode(request.getLanguageCode());
+		inputOfferSwapList[0] = inputOffer;
+		allAlertsRequest.setInputOfferSwapList(inputOfferSwapList);
+		return allAlertsRequest;
+	}
+
+	public void getOfferContent(String offerCode, ContractOfferPlanContentResponse response,
+			ContractInfoRequest request) {
+
+		if (StringUtils.isNotEmpty(offerCode)) {
+			logger.info(
+					":::::::::::GET CONTENT FOR OFFER CODE FROM REST SERVER ContractOfferPlanContentResponse Method :::::::::::"
+							+ offerCode);
+
+			Map<String, Object> jsonMap = getContentRequestJSON(request.getBrandId(), request.getLanguageCode(), true);
+			List<MessageKey> messageKeyList = new ArrayList<MessageKey>();
+			Gson gson = new Gson();
+
+			createMsgKey(offerCode, MessageKeyTypeEnum.OFFER_CODE, SearchTypeEnum.STR_VALUE_FILTER, messageKeyList);
+
+			jsonMap.put(CONTENT_TITLE_MESSAGEKEYS, getMessageMap(messageKeyList));
+			String restContentJson = contentService.getJSONContentResponse(gson.toJson(jsonMap));
+			if (StringUtils.isNotBlank(restContentJson) && CommonUtil.isValidJson(restContentJson)) {
+				if (isValidContent(response, restContentJson)) {
+					MultiBrandOfferDTO offerConetent = gson.fromJson(restContentJson, MultiBrandOfferDTO.class);
+					for (int i = 0; i < offerConetent.getMultiBrandOfferList().size(); i++) {
+						ContractOffer offerVO = response.getCurrentPlan();
+						String tempOfferCode = offerConetent.getMultiBrandOfferList().get(i).getOfferCode();
+						if (offerVO.getOfferCode() != null && offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
+							ContractOffer tempJsonConten = offerConetent.getMultiBrandOfferList().get(i);
+							offerVO.setOfferHeadline(tempJsonConten.getOfferHeadline());
+							offerVO.setOfferDescription(tempJsonConten.getOfferDescription());
+							offerVO.setEnergyTypeDescription(tempJsonConten.getEnergyTypeDescription());
+							offerVO.setEnergyTypeIcon(tempJsonConten.getEnergyTypeIcon());
+							offerVO.setSpecialOfferDescription(tempJsonConten.getSpecialOfferDescription());
+							offerVO.setSpecialOfferIcon(tempJsonConten.getSpecialOfferIcon());
+							offerVO.setProductDisclaimer(tempJsonConten.getProductDisclaimer());
+							offerVO.setGenericDisclaimer(tempJsonConten.getGenericDisclaimer());
+							offerVO.setErrorMessage(tempJsonConten.getErrorMessage());
+						}
+					}
+				}
+
+			} else {
+				response.setResultCode("01");
+				response.setResultDescription(ERROR_CONTENT_DEFAULT);
+			}
+
+		} else {
+			response.setResultCode(response.getErrorCode());
+			response.setResultDescription(response.getMessageCode());
+		}
+
+	}
+
+	public ContractOffer getContractCurrentPlan(AllAlertsResponse allRequestResponse) {
+		ContractOffer contractOffer = null;
+		com.multibrand.domain.OfferDO offerDO = getCurrentPlanOfferDO(allRequestResponse);
+		if (offerDO != null) {
+
+			contractOffer = new ContractOffer();
+			contractOffer.setYrracDocId(offerDO.getStrYRAACDocId());
+			contractOffer.setEflDocId(offerDO.getStrEFLDocId());
+			contractOffer.setCancellationFee(offerDO.getStrCancellationFee());
+			contractOffer.setOfferName(offerDO.getStrPlanName());
+			contractOffer.setOfferTeaser(offerDO.getStrOfferTeaser());
+			contractOffer.setOfferCode(offerDO.getStrOfferCode());
+			contractOffer.setTermLength(offerDO.getStrContractTerm());
+			contractOffer.setTosDocId(offerDO.getStrTOSDocId());
+			com.multibrand.domain.OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
+			if (offerPriceEntry != null) {
+				for (com.multibrand.domain.OfferPriceDO priceType : offerPriceEntry) {
+					if (priceType.getPriceType().equalsIgnoreCase("EFL_BR2000")) {
+						contractOffer.setPrice(priceType.getPrice());
+						break;
+					}
+				}
+			}
+		}
+		return contractOffer;
+	}
 	
-		
-	
+	/**
+	 * @author SMarimuthu
+	 * @param allRequestResponse
+	 * @return
+	 */
+	private com.multibrand.domain.OfferDO getCurrentPlanOfferDO(AllAlertsResponse allRequestResponse) {
+		com.multibrand.domain.OfferDO returnOfferDO = null;
+		ContractAccountDO[] contractAccountList = allRequestResponse.getContractAccDoList();
+		if (contractAccountList != null) {
+			for (ContractAccountDO contractAccount : contractAccountList) {
+				ContractDO[] contractDOList = contractAccount.getListOfContracts();
+				if (contractDOList != null) {
+					ContractDO contractDO = contractDOList[0];
+					returnOfferDO = contractDO.getCurrentPlan();
+					return returnOfferDO;
+				}
+			}
+		}
+		return returnOfferDO;
+	}
 
 }
