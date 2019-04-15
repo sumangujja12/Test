@@ -1171,4 +1171,9 @@ public interface Constants {
 	 public static final String ERROR_CONTENT_CACHE ="ErrorContent";
 	 public static final String STR_SYMBOL_EIPHEN = "-";
 	 public static final String ERROR_CONTENT_DEFAULT = "Sorry! Something went wrong. Please try again";
+	 
+	 public static final String PAY_ACCOUNT_ALREADY_EXISTS = "Pay Account already Exists";
+	 public static final String NICKNAME_ALREADY_EXISTS = "Nickname already Exists";
+	 public static final String NO_ACCOUNT_UPDATE = "No Payment Account Update";
+	 public static final String ACCOUNT_ALREADY_ENROLLED = "Account already enrolled";
 }

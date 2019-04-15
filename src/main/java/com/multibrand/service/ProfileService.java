@@ -5,7 +5,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,8 +24,6 @@ import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAccountDetailsRequest;
 import com.multibrand.domain.AllAccountDetailsResponse;
-import com.multibrand.domain.AllAlertsRequest;
-import com.multibrand.domain.AllAlertsResponse;
 import com.multibrand.domain.CirroStructureCallRequest;
 import com.multibrand.domain.CirroStructureCallResponse;
 import com.multibrand.domain.ContractDO;
@@ -51,7 +48,6 @@ import com.multibrand.helper.ProfileHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
-import com.multibrand.util.LoggerUtil;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.SecondaryNameUpdateReqVO;
 import com.multibrand.vo.request.UserRegistrationRequest;
@@ -123,6 +119,8 @@ import com.nrg.cxfstubs.sundriverclub.ZesWebncProducts;
 import com.nrg.cxfstubs.sundriverclub.ZetEnrollProd;
 import com.nrg.cxfstubs.sundriverclub.ZetPrdDetails;
 import com.nrg.cxfstubs.sundriverclub.ZetWebncProducts;
+import com.multibrand.domain.AllAlertsRequest;
+import com.multibrand.domain.AllAlertsResponse;
 
 /**
  * 
@@ -323,15 +321,16 @@ public class ProfileService extends BaseAbstractService {
 		 * "http://saprd101.reinternal.com:8000/sap/bc/srt/rfc/sap/z_e_isu_get_ca_profile_data/130/z_e_isu_get_ca_profile_data/z_e_isu_get_ca_profile_data"
 		 * );
 		 * 
-		 * ZEISUGETCAPROFILEDATA port =(ZEISUGETCAPROFILEDATA) proxyFactory.create();
-		 * Client client = ClientProxy.getClient(port);
+		 * ZEISUGETCAPROFILEDATA port =(ZEISUGETCAPROFILEDATA)
+		 * proxyFactory.create(); Client client = ClientProxy.getClient(port);
 		 * 
 		 * HTTPConduit http = (HTTPConduit) client.getConduit();
 		 * 
 		 * AuthorizationPolicy authPolicy = http.getAuthorization();
 		 * 
-		 * authPolicy.setUserName(this.envMessageReader.getMessage(CCS_USER_NAME));
-		 * authPolicy.setPassword( this.envMessageReader.getMessage(CCS_PASSWORD));
+		 * authPolicy.setUserName(this.envMessageReader.getMessage(CCS_USER_NAME
+		 * )); authPolicy.setPassword(
+		 * this.envMessageReader.getMessage(CCS_PASSWORD));
 		 */
 
 		String imCaOnly = null;
@@ -472,7 +471,8 @@ public class ProfileService extends BaseAbstractService {
 
 			// constructing contract details
 
-			// bapiret2 = (com.reliant.cxfstubs.profile.getcaprofiledata.Bapiret2[])
+			// bapiret2 =
+			// (com.reliant.cxfstubs.profile.getcaprofiledata.Bapiret2[])
 			// bapiret2List.toArray();
 
 			if (null != zcontractOutputList && zcontractOutputList.size() > 0) {
@@ -705,7 +705,8 @@ public class ProfileService extends BaseAbstractService {
 	/**
 	 * @author mshukla1
 	 * @param request
-	 * @throws RemoteException Method added for update CRM call
+	 * @throws RemoteException
+	 *             Method added for update CRM call
 	 */
 	public UpdateContactResponse updateContactInfo(UserRegistrationRequest request, String businessPartner,
 			String sessionId, String companyCode) throws RemoteException {
@@ -1093,8 +1094,10 @@ public class ProfileService extends BaseAbstractService {
 	/**
 	 * This method is used to get the Esid details.
 	 * 
-	 * @param companyCode represent the compony code number
-	 * @param esId        represent the esid number.
+	 * @param companyCode
+	 *            represent the compony code number
+	 * @param esId
+	 *            represent the esid number.
 	 * @return EsidProfileResponse Details of the esid.
 	 * @throws Exception
 	 */
@@ -1164,9 +1167,33 @@ public class ProfileService extends BaseAbstractService {
 		javax.xml.ws.Holder<com.nrg.cxfstubs.sundriverclub.ZetWebncProducts> hZetWebncProducts = new javax.xml.ws.Holder<com.nrg.cxfstubs.sundriverclub.ZetWebncProducts>();
 		javax.xml.ws.Holder<Bapiret2T> hTBapiret2 = new javax.xml.ws.Holder<Bapiret2T>();
 		long startTime = CommonUtil.getStartTime();
+		boolean isEnrolled = false;
 		try {
-			stub.zeCrmVasWebProdUpdate(action, "", accountNumber, "", enrollType, extUi, objectId, requestDate,
-					zetEnrollProd, hZetWebncProducts, hTBapiret2);
+			if (action.equalsIgnoreCase("2")) {
+				stub.zeCrmVasWebProdUpdate("1", "", accountNumber, "", enrollType, extUi, objectId, requestDate,
+						zetEnrollProd, hZetWebncProducts, hTBapiret2);
+				ZetWebncProducts webncProducts = hZetWebncProducts.value;
+				List<ZesWebncProducts> webncProductsList = webncProducts.getItem();
+				if (webncProductsList != null && webncProductsList.size() > 0) {
+					for (ZesWebncProducts products : webncProductsList) {
+						ZetPrdDetails zttypeprods = products.getProducts();
+						List<ZesPrdDetails> zvvasprodsList = zttypeprods.getItem();
+
+						for (ZesPrdDetails zvvasprods : zvvasprodsList) {
+							if (zvvasprods.getManuPartNo().equalsIgnoreCase(manuPartNo)) {
+								isEnrolled = true;
+								break;
+							}
+
+						}
+					}
+				}
+
+			}
+			if (!isEnrolled) {
+				stub.zeCrmVasWebProdUpdate(action, "", accountNumber, "", enrollType, extUi, objectId, requestDate,
+						zetEnrollProd, hZetWebncProducts, hTBapiret2);
+			}
 		} catch (Exception ex) {
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("productUpdate", false, request, ex, "",
@@ -1247,27 +1274,35 @@ public class ProfileService extends BaseAbstractService {
 					companyCode);
 			return productResponse;
 		} else if (action.equalsIgnoreCase("2")) {
-			Bapiret2T bapiret2T = hTBapiret2.value;
+			System.out.println("Value of isenrolled is" + isEnrolled);
 
-			List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
-			if (listBapiret2 != null && listBapiret2.size() > 0) {
-				for (com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2 : listBapiret2) {
-					if (bapiret2.getNumber() != null && bapiret2.getNumber().equals("000")) {
-						productResponse.setResultCode(RESULT_CODE_SUCCESS);
-						productResponse.setResultDescription(MSG_SUCCESS);
-					} else {
-						productResponse.setResultCode(RESULT_CODE_CCS_ERROR);
-						productResponse.setResultDescription(bapiret2.getMessage());
+			if (!isEnrolled) {
+				Bapiret2T bapiret2T = hTBapiret2.value;
+
+				List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
+				if (listBapiret2 != null && listBapiret2.size() > 0) {
+					for (com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2 : listBapiret2) {
+						if (bapiret2.getNumber() != null && bapiret2.getNumber().equals("000")) {
+							productResponse.setResultCode(RESULT_CODE_SUCCESS);
+							productResponse.setResultDescription(MSG_SUCCESS);
+						} else {
+							productResponse.setResultCode(RESULT_CODE_CCS_ERROR);
+							productResponse.setResultDescription(bapiret2.getMessage());
+						}
 					}
 				}
 			} else {
-				productResponse.setResultCode(RESULT_CODE_THREE);
-				productResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+				productResponse.setResultCode(RESULT_CODE_FOUR);
+				productResponse.setResultDescription(ACCOUNT_ALREADY_ENROLLED);
 			}
 			utilityloggerHelper.logTransaction("productUpdate", false, request, productResponse,
 					productResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId,
 					companyCode);
 			return productResponse;
+
+		} else {
+			productResponse.setResultCode(RESULT_CODE_THREE);
+			productResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 		}
 		utilityloggerHelper.logTransaction("productUpdate", false, request, productResponse,
 				productResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId,
@@ -1501,8 +1536,8 @@ public class ProfileService extends BaseAbstractService {
 			logger.info(XmlUtil.pojoToXML(request));
 			utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request, e, "",
 					CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			throw e;// throwing is required so that proper API response is generated in BO layer for
-					// exception scenario
+			throw e;// throwing is required so that proper API response is
+					// generated in BO layer for exception scenario
 		}
 		logger.info("ProfileService - secondaryNameUpdate ccs call ends...");
 		utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request, response,
@@ -1563,9 +1598,9 @@ public class ProfileService extends BaseAbstractService {
 
 		/*
 		 * ZetBut0Id zetId = hzetbutid01.value; List<ZesBut0Id> listZes =
-		 * zetId.getItem(); logger.info("List size "+listZes.size()); for(ZesBut0Id z:
-		 * listZes) { logger.info("Main Holder"); logger.info(z.getBusinesspartner());
-		 * logger.info(z.getIdType()); }
+		 * zetId.getItem(); logger.info("List size "+listZes.size());
+		 * for(ZesBut0Id z: listZes) { logger.info("Main Holder");
+		 * logger.info(z.getBusinesspartner()); logger.info(z.getIdType()); }
 		 */
 	}
 
@@ -1749,7 +1784,7 @@ public class ProfileService extends BaseAbstractService {
 		return response;
 
 	}
-
+	
 	
 	/**
 	 * @author SMarimuthu
@@ -1789,5 +1824,6 @@ public class ProfileService extends BaseAbstractService {
 		}
 		return response;
 	}
+
 
 }
