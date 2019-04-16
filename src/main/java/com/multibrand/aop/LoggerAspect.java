@@ -288,24 +288,24 @@ public class LoggerAspect {
 
 			strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName), obj, null);
 		} catch (Exception e) {
-			logger.info("DOES NOT HAVE Method " + methodName + " in Object " + obj.getClass().getName()
+			logger.info("DOES NOT HAVE Method " + methodName + " in Object " + obj.toString()
 					+ " so going to look in parent");
 			try {
 				return (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
 			} catch (Exception e1) {
-				logger.info("DOES NOT HAVE Method in Child " + methodName + " in Object " + obj.getClass().getName()
+				logger.info("DOES NOT HAVE Method in Child " + methodName + " in Object " + obj.toString()
 						+ " so return blank string");
 			}
 			return strReturn;
 		}
 
 		if (StringUtils.isBlank(strReturn)) {
-			logger.info("Value is null in child Method " + methodName + " in Object " + obj.getClass().getName()
+			logger.info("Value is null in child Method " + methodName + " in Object " + obj.toString()
 					+ " so going to look in parent");
 			try {
 				strReturn = (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
 			} catch (Exception e1) {
-				logger.info("DOES NOT HAVE Method super class " + methodName + " in Object " + obj.getClass().getName()
+				logger.info("DOES NOT HAVE Method in super class " + methodName + " in Object " + obj.toString()
 						+ " so return blank string");
 			}
 		}
