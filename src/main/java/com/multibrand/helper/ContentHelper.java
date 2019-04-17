@@ -2,6 +2,7 @@ package com.multibrand.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import com.multibrand.domain.AllAlertsRequest;
 import com.multibrand.domain.AllAlertsResponse;
 import com.multibrand.domain.ContractAccountDO;
 import com.multibrand.domain.ContractDO;
+import com.multibrand.domain.OfferDO;
 import com.multibrand.dto.MultiBrandOfferDTO;
 import com.multibrand.service.impl.ContentServiceImpl;
 import com.multibrand.util.CommonUtil;
@@ -29,11 +31,9 @@ import com.multibrand.util.MessageKey;
 import com.multibrand.util.MessageKeyTypeEnum;
 import com.multibrand.util.SearchTypeEnum;
 import com.multibrand.vo.request.ContractInfoRequest;
-import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
-import com.multibrand.vo.response.OfferDO;
-import com.multibrand.vo.response.OfferPriceDO;
+
 
 @Component
 public class ContentHelper implements Constants {
@@ -212,55 +212,30 @@ public class ContentHelper implements Constants {
 	 * @param contractList
 	 * @return
 	 */
-	public String[] getContractOffer(OfferDO[] offerStrAr, List<ContractOffer> contractList) {
-		String[] offerCode = null;
-		int count = 0;
+	public String [] getContractOffer(AllAlertsResponse allRequestResponse, ContractOfferPlanContentResponse response) {
+		List <String> offerCode = new LinkedList<String>();
+		OfferDO[] offerStrAr = getEligibleOfferDO(allRequestResponse);
+		List<ContractOffer> contractList = new LinkedList<ContractOffer>();
+		response.setPlans(contractList);
 		if (offerStrAr != null) {
-
-			offerCode = new String[offerStrAr.length];
+			offerCode = new ArrayList<String>();
 			for (OfferDO offerVO : offerStrAr) {
-				ContractOffer contractOffer = new ContractOffer();
-				contractOffer.setAverageMonthlyPlanUsage("");
-				contractOffer.setYrracDocId(offerVO.getStrYRAACDocID());
-				contractOffer.setEflDocId(offerVO.getStrEFLDocID());
-				contractOffer.setCancellationFee(offerVO.getStrCancelFee());
-				contractOffer.setOfferName(offerVO.getStrPlanName());
-				contractOffer.setOfferTeaser(offerVO.getStrOfferTeaser());
-				contractOffer.setOfferCode(offerVO.getStrOfferCode());
-				contractOffer.setTermLength(offerVO.getStrContractTerm());
-				contractOffer.setTosDocId(offerVO.getStrTOSDocID());
-				OfferPriceDO[] offerPriceEntry = offerVO.getOfferPriceEntry();
-				if (offerPriceEntry != null) {
-					for (OfferPriceDO priceType : offerPriceEntry) {
-						if (priceType.getPriceType().equalsIgnoreCase("EFL_BR2000")) {
-							contractOffer.setPrice(priceType.getPrice());
-							break;
-						}
-					}
-				}
-				CampEnvironmentDO[] campEnvironmentDetails = offerVO.getCampEnvironmentDetails();
-
-				if (campEnvironmentDetails != null) {
-
-					for (CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
-						if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
-							contractOffer.setNumberOfTreesSaved(campEnvironment.getValue());
-							break;
-						}
-
-					}
-				}
-
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
-					offerCode[count] = offerVO.getStrOfferCode();
-					count++;
+					ContractOffer contractOffer = new ContractOffer();
+					loadContractOfferResponse(contractOffer, offerVO);
+					offerCode.add(offerVO.getStrOfferCode());
+					contractList.add(contractOffer);
 				}
-
-				contractList.add(contractOffer);
 			}
 		}
-
-		return offerCode;
+		
+		ContractOffer currentPlan = getContractCurrentPlan(allRequestResponse);
+		if(currentPlan != null && StringUtils.isNotBlank(currentPlan.getOfferCode())) {
+			response.setCurrentPlan(currentPlan);
+			offerCode.add(currentPlan.getOfferCode());
+		}
+		String [] strOfferCode = new String[offerCode.size()];
+		return offerCode.toArray(strOfferCode);
 	}
 
 	/**
@@ -289,21 +264,25 @@ public class ContentHelper implements Constants {
 			if (StringUtils.isNotBlank(restContentJson) && CommonUtil.isValidJson(restContentJson)) {
 				if (isValidContent(response, restContentJson)) {
 					MultiBrandOfferDTO offerConetent = gson.fromJson(restContentJson, MultiBrandOfferDTO.class);
-					for (int i = 0; i < offerConetent.getMultiBrandOfferList().size(); i++) {
-						for (ContractOffer offerVO : response.getPlans()) {
-							String tempOfferCode = offerConetent.getMultiBrandOfferList().get(i).getOfferCode();
-							if (offerVO.getOfferCode() != null
-									&& offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
-								ContractOffer tempJsonConten = offerConetent.getMultiBrandOfferList().get(i);
-								offerVO.setOfferHeadline(tempJsonConten.getOfferHeadline());
-								offerVO.setOfferDescription(tempJsonConten.getOfferDescription());
-								offerVO.setEnergyTypeDescription(tempJsonConten.getEnergyTypeDescription());
-								offerVO.setEnergyTypeIcon(tempJsonConten.getEnergyTypeIcon());
-								offerVO.setSpecialOfferDescription(tempJsonConten.getSpecialOfferDescription());
-								offerVO.setSpecialOfferIcon(tempJsonConten.getSpecialOfferIcon());
-								offerVO.setProductDisclaimer(tempJsonConten.getProductDisclaimer());
-								offerVO.setGenericDisclaimer(tempJsonConten.getGenericDisclaimer());
-								offerVO.setErrorMessage(tempJsonConten.getErrorMessage());
+					int listSize = offerConetent.getMultiBrandOfferList().size();
+					for (int i = 0; i < listSize; i++) {
+						String tempOfferCode = offerConetent.getMultiBrandOfferList().get(i).getOfferCode();
+						ContractOffer tempJsonConten = offerConetent.getMultiBrandOfferList().get(i);
+						if (i < response.getPlans().size()) {
+							for (ContractOffer offerVO : response.getPlans() ) {
+								if (offerVO.getOfferCode() != null
+										&& offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
+									copyToContractOffer(offerVO,tempJsonConten);
+									break;
+								}
+							}
+						} else {
+							ContractOffer currentOfferVO = response.getCurrentPlan();
+							if (response.getCurrentPlan() != null
+									&& (currentOfferVO.getOfferCode() != null && currentOfferVO.getOfferCode()
+											.equalsIgnoreCase(response.getCurrentPlan().getOfferCode()))) {
+								copyToContractOffer(currentOfferVO,tempJsonConten);
+								break;
 							}
 						}
 					}
@@ -365,78 +344,24 @@ public class ContentHelper implements Constants {
 		return allAlertsRequest;
 	}
 
-	public void getOfferContent(String offerCode, ContractOfferPlanContentResponse response,
-			ContractInfoRequest request) {
-
-		if (StringUtils.isNotEmpty(offerCode)) {
-			logger.info(
-					":::::::::::GET CONTENT FOR OFFER CODE FROM REST SERVER ContractOfferPlanContentResponse Method :::::::::::"
-							+ offerCode);
-
-			Map<String, Object> jsonMap = getContentRequestJSON(request.getBrandId(), request.getLanguageCode(), true);
-			List<MessageKey> messageKeyList = new ArrayList<MessageKey>();
-			Gson gson = new Gson();
-
-			createMsgKey(offerCode, MessageKeyTypeEnum.OFFER_CODE, SearchTypeEnum.STR_VALUE_FILTER, messageKeyList);
-
-			jsonMap.put(CONTENT_TITLE_MESSAGEKEYS, getMessageMap(messageKeyList));
-			String restContentJson = contentService.getJSONContentResponse(gson.toJson(jsonMap));
-			if (StringUtils.isNotBlank(restContentJson) && CommonUtil.isValidJson(restContentJson)) {
-				if (isValidContent(response, restContentJson)) {
-					MultiBrandOfferDTO offerConetent = gson.fromJson(restContentJson, MultiBrandOfferDTO.class);
-					for (int i = 0; i < offerConetent.getMultiBrandOfferList().size(); i++) {
-						ContractOffer offerVO = response.getCurrentPlan();
-						String tempOfferCode = offerConetent.getMultiBrandOfferList().get(i).getOfferCode();
-						if (offerVO.getOfferCode() != null && offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
-							ContractOffer tempJsonConten = offerConetent.getMultiBrandOfferList().get(i);
-							offerVO.setOfferHeadline(tempJsonConten.getOfferHeadline());
-							offerVO.setOfferDescription(tempJsonConten.getOfferDescription());
-							offerVO.setEnergyTypeDescription(tempJsonConten.getEnergyTypeDescription());
-							offerVO.setEnergyTypeIcon(tempJsonConten.getEnergyTypeIcon());
-							offerVO.setSpecialOfferDescription(tempJsonConten.getSpecialOfferDescription());
-							offerVO.setSpecialOfferIcon(tempJsonConten.getSpecialOfferIcon());
-							offerVO.setProductDisclaimer(tempJsonConten.getProductDisclaimer());
-							offerVO.setGenericDisclaimer(tempJsonConten.getGenericDisclaimer());
-							offerVO.setErrorMessage(tempJsonConten.getErrorMessage());
-						}
-					}
-				}
-
-			} else {
-				response.setResultCode("01");
-				response.setResultDescription(ERROR_CONTENT_DEFAULT);
-			}
-
-		} else {
-			response.setResultCode(response.getErrorCode());
-			response.setResultDescription(response.getMessageCode());
-		}
-
-	}
-
-	public ContractOffer getContractCurrentPlan(AllAlertsResponse allRequestResponse) {
+	/**
+	 * @author SMarimuthu
+	 * @param allRequestResponse
+	 * @return
+	 */
+	private ContractOffer getContractCurrentPlan(AllAlertsResponse allRequestResponse) {
 		ContractOffer contractOffer = null;
 		com.multibrand.domain.OfferDO offerDO = getCurrentPlanOfferDO(allRequestResponse);
 		if (offerDO != null) {
 
 			contractOffer = new ContractOffer();
-			contractOffer.setYrracDocId(offerDO.getStrYRAACDocId());
-			contractOffer.setEflDocId(offerDO.getStrEFLDocId());
-			contractOffer.setCancellationFee(offerDO.getStrCancellationFee());
-			contractOffer.setOfferName(offerDO.getStrPlanName());
-			contractOffer.setOfferTeaser(offerDO.getStrOfferTeaser());
-			contractOffer.setOfferCode(offerDO.getStrOfferCode());
-			contractOffer.setTermLength(offerDO.getStrContractTerm());
-			contractOffer.setTosDocId(offerDO.getStrTOSDocId());
-			com.multibrand.domain.OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
-			if (offerPriceEntry != null) {
-				for (com.multibrand.domain.OfferPriceDO priceType : offerPriceEntry) {
-					if (priceType.getPriceType().equalsIgnoreCase("EFL_BR2000")) {
-						contractOffer.setPrice(priceType.getPrice());
-						break;
-					}
-				}
-			}
+			loadContractOfferResponse(contractOffer,offerDO);
+			ContractDO returnContractDO =  getContractDO(allRequestResponse);
+			contractOffer.setNewContractBegins(returnContractDO.getStrContractStartDate());
+			contractOffer.setNewContractEnds(returnContractDO.getStrContractEndDate());
+			contractOffer.setAvgPrice(returnContractDO.getStrAvgPrice());
+			
+			
 		}
 		return contractOffer;
 	}
@@ -451,6 +376,7 @@ public class ContentHelper implements Constants {
 		ContractAccountDO[] contractAccountList = allRequestResponse.getContractAccDoList();
 		if (contractAccountList != null) {
 			for (ContractAccountDO contractAccount : contractAccountList) {
+				
 				ContractDO[] contractDOList = contractAccount.getListOfContracts();
 				if (contractDOList != null) {
 					ContractDO contractDO = contractDOList[0];
@@ -460,6 +386,85 @@ public class ContentHelper implements Constants {
 			}
 		}
 		return returnOfferDO;
+	}
+	
+	/**
+	 * @author SMarimuthu
+	 * @param allRequestResponse
+	 * @return
+	 */
+	private com.multibrand.domain.OfferDO [] getEligibleOfferDO(AllAlertsResponse allRequestResponse) {
+		com.multibrand.domain.OfferDO returnOfferDO [] = null;
+		ContractAccountDO[] contractAccountList = allRequestResponse.getContractAccDoList();
+		if (contractAccountList != null) {
+			for (ContractAccountDO contractAccount : contractAccountList) {
+				ContractDO[] contractDOList = contractAccount.getListOfContracts();
+				if (contractDOList != null) {
+					ContractDO contractDO = contractDOList[0];
+					returnOfferDO = contractDO.getEligibleOffersList();
+					return returnOfferDO;
+				}
+			}
+		}
+		return returnOfferDO;
+	}
+	
+	/**
+	 * @author SMarimuthu
+	 * @param offerSourceVO
+	 * @param offerDesVO
+	 */
+	private void copyToContractOffer(ContractOffer offerSourceVO, ContractOffer offerDesVO) {
+		offerSourceVO.setOfferHeadline(offerDesVO.getOfferHeadline());
+		offerSourceVO.setOfferDescription(offerDesVO.getOfferDescription());
+		offerSourceVO.setEnergyTypeDescription(offerDesVO.getEnergyTypeDescription());
+		offerSourceVO.setEnergyTypeIcon(offerDesVO.getEnergyTypeIcon());
+		offerSourceVO.setSpecialOfferDescription(offerDesVO.getSpecialOfferDescription());
+		offerSourceVO.setSpecialOfferIcon(offerDesVO.getSpecialOfferIcon());
+		offerSourceVO.setProductDisclaimer(offerDesVO.getProductDisclaimer());
+		offerSourceVO.setGenericDisclaimer(offerDesVO.getGenericDisclaimer());
+		offerSourceVO.setErrorMessage(offerDesVO.getErrorMessage());
+	}
+	
+	private ContractDO getContractDO(AllAlertsResponse allRequestResponse) {
+		ContractDO returnContractDO = null;
+		ContractAccountDO[] contractAccountList = allRequestResponse.getContractAccDoList();
+		if (contractAccountList != null) {
+			for (ContractAccountDO contractAccount : contractAccountList) {
+				
+				ContractDO[] contractDOList = contractAccount.getListOfContracts();
+				if (contractDOList != null) {
+					returnContractDO = contractDOList[0];
+					return returnContractDO;
+				}
+			}
+		}
+		return returnContractDO;
+	}
+	
+	private void loadContractOfferResponse(ContractOffer contractOffer, OfferDO offerDO) {
+		contractOffer.setYrracDocId(offerDO.getStrYRAACDocId());
+		contractOffer.setEflDocId(offerDO.getStrEFLDocId());
+		contractOffer.setCancellationFee(offerDO.getStrCancellationFee());
+		contractOffer.setOfferName(offerDO.getStrPlanName());
+		contractOffer.setOfferTeaser(offerDO.getStrOfferTeaser());
+		contractOffer.setOfferCode(offerDO.getStrOfferCode());
+		contractOffer.setTermLength(offerDO.getStrContractTerm());
+		contractOffer.setTosDocId(offerDO.getStrTOSDocId());
+		contractOffer.setCampaignCode(offerDO.getStrCampaignCode());
+		contractOffer.setOfferRank(offerDO.getStrOfferRank());
+		contractOffer.setEFLSmartCode(offerDO.getStrEFLCode());
+		contractOffer.setYRAACSmartCode(offerDO.getStrYRAACCode());
+		contractOffer.setTOSSmartCode(offerDO.getStrTOSCode());
+		com.multibrand.domain.OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
+		if (offerPriceEntry != null) {
+			for (com.multibrand.domain.OfferPriceDO priceType : offerPriceEntry) {
+				if (priceType.getPriceType().equalsIgnoreCase("EFL_BR2000")) {
+					contractOffer.setPrice(priceType.getPrice());
+					break;
+				}
+			}
+		}
 	}
 
 }

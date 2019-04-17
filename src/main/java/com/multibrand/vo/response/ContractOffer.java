@@ -1,12 +1,13 @@
 package com.multibrand.vo.response;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.google.gson.annotations.SerializedName;
 import com.multibrand.util.Constants;
-
+@JsonSerialize(include=Inclusion.NON_EMPTY)
 public class ContractOffer implements Constants {
-	
 	private String averageMonthlyPlanUsage = "2320";
 	private String offerName;
 	private String price;
@@ -26,6 +27,27 @@ public class ContractOffer implements Constants {
 	private String specialOfferIcon;
 	private String productDisclaimer;
 	private String genericDisclaimer;
+	private String campaignCode;
+	private String newContractBegins;
+	private String newContractEnds;
+	private String avgPrice;
+	private String baseCharge;
+	private String bccEmail;
+	private String tdspCharge;
+	private String promoCode;
+	private String tosURL;
+	private String yraacURL;
+	private String marketingText;
+	private String incentives;
+	private String energyCharge;
+	private String eflURL;
+	private String disclaimer;
+	private String EFLSmartCode;
+	private String YRAACSmartCode;
+	private String TOSSmartCode;
+	private String OfferRank;
+	private String planType;
+	
 	@SerializedName("messageKey")
 	@JsonIgnore
 	private String offerCode;
@@ -288,10 +310,246 @@ public class ContractOffer implements Constants {
 	public void setAverageMonthlyPlanUsage(String averageMonthlyPlanUsage) {
 		this.averageMonthlyPlanUsage = averageMonthlyPlanUsage;
 	}
-	
-	
-	
-	
+	/**
+	 * @return the campaignCode
+	 */
+	public String getCampaignCode() {
+		return campaignCode;
+	}
+	/**
+	 * @param campaignCode the campaignCode to set
+	 */
+	public void setCampaignCode(String campaignCode) {
+		this.campaignCode = campaignCode;
+	}
+	/**
+	 * @return the newContractBegins
+	 */
+	public String getNewContractBegins() {
+		return newContractBegins;
+	}
+	/**
+	 * @param newContractBegins the newContractBegins to set
+	 */
+	public void setNewContractBegins(String newContractBegins) {
+		this.newContractBegins = newContractBegins;
+	}
+	/**
+	 * @return the newContractEnds
+	 */
+	public String getNewContractEnds() {
+		return newContractEnds;
+	}
+	/**
+	 * @param newContractEnds the newContractEnds to set
+	 */
+	public void setNewContractEnds(String newContractEnds) {
+		this.newContractEnds = newContractEnds;
+	}
+	/**
+	 * @return the avgPrice
+	 */
+	public String getAvgPrice() {
+		return avgPrice;
+	}
+	/**
+	 * @param avgPrice the avgPrice to set
+	 */
+	public void setAvgPrice(String avgPrice) {
+		this.avgPrice = avgPrice;
+	}
+	/**
+	 * @return the baseCharge
+	 */
+	public String getBaseCharge() {
+		return baseCharge;
+	}
+	/**
+	 * @param baseCharge the baseCharge to set
+	 */
+	public void setBaseCharge(String baseCharge) {
+		this.baseCharge = baseCharge;
+	}
+	/**
+	 * @return the bccEmail
+	 */
+	public String getBccEmail() {
+		return bccEmail;
+	}
+	/**
+	 * @param bccEmail the bccEmail to set
+	 */
+	public void setBccEmail(String bccEmail) {
+		this.bccEmail = bccEmail;
+	}
+	/**
+	 * @return the tdspCharge
+	 */
+	public String getTdspCharge() {
+		return tdspCharge;
+	}
+	/**
+	 * @param tdspCharge the tdspCharge to set
+	 */
+	public void setTdspCharge(String tdspCharge) {
+		this.tdspCharge = tdspCharge;
+	}
+	/**
+	 * @return the promoCode
+	 */
+	public String getPromoCode() {
+		return promoCode;
+	}
+	/**
+	 * @param promoCode the promoCode to set
+	 */
+	public void setPromoCode(String promoCode) {
+		this.promoCode = promoCode;
+	}
+	/**
+	 * @return the tosURL
+	 */
+	public String getTosURL() {
+		return tosURL;
+	}
+	/**
+	 * @param tosURL the tosURL to set
+	 */
+	public void setTosURL(String tosURL) {
+		this.tosURL = tosURL;
+	}
+	/**
+	 * @return the yraacURL
+	 */
+	public String getYraacURL() {
+		return yraacURL;
+	}
+	/**
+	 * @param yraacURL the yraacURL to set
+	 */
+	public void setYraacURL(String yraacURL) {
+		this.yraacURL = yraacURL;
+	}
+	/**
+	 * @return the marketingText
+	 */
+	public String getMarketingText() {
+		return marketingText;
+	}
+	/**
+	 * @param marketingText the marketingText to set
+	 */
+	public void setMarketingText(String marketingText) {
+		this.marketingText = marketingText;
+	}
+	/**
+	 * @return the incentives
+	 */
+	public String getIncentives() {
+		return incentives;
+	}
+	/**
+	 * @param incentives the incentives to set
+	 */
+	public void setIncentives(String incentives) {
+		this.incentives = incentives;
+	}
+	/**
+	 * @return the energyCharge
+	 */
+	public String getEnergyCharge() {
+		return energyCharge;
+	}
+	/**
+	 * @param energyCharge the energyCharge to set
+	 */
+	public void setEnergyCharge(String energyCharge) {
+		this.energyCharge = energyCharge;
+	}
+	/**
+	 * @return the eflURL
+	 */
+	public String getEflURL() {
+		return eflURL;
+	}
+	/**
+	 * @param eflURL the eflURL to set
+	 */
+	public void setEflURL(String eflURL) {
+		this.eflURL = eflURL;
+	}
+	/**
+	 * @return the disclaimer
+	 */
+	public String getDisclaimer() {
+		return disclaimer;
+	}
+	/**
+	 * @param disclaimer the disclaimer to set
+	 */
+	public void setDisclaimer(String disclaimer) {
+		this.disclaimer = disclaimer;
+	}
+	/**
+	 * @return the eFLSmartCode
+	 */
+	public String getEFLSmartCode() {
+		return EFLSmartCode;
+	}
+	/**
+	 * @param eFLSmartCode the eFLSmartCode to set
+	 */
+	public void setEFLSmartCode(String eFLSmartCode) {
+		EFLSmartCode = eFLSmartCode;
+	}
+	/**
+	 * @return the yRAACSmartCode
+	 */
+	public String getYRAACSmartCode() {
+		return YRAACSmartCode;
+	}
+	/**
+	 * @param yRAACSmartCode the yRAACSmartCode to set
+	 */
+	public void setYRAACSmartCode(String yRAACSmartCode) {
+		YRAACSmartCode = yRAACSmartCode;
+	}
+	/**
+	 * @return the tOSSmartCode
+	 */
+	public String getTOSSmartCode() {
+		return TOSSmartCode;
+	}
+	/**
+	 * @param tOSSmartCode the tOSSmartCode to set
+	 */
+	public void setTOSSmartCode(String tOSSmartCode) {
+		TOSSmartCode = tOSSmartCode;
+	}
+	/**
+	 * @return the offerRank
+	 */
+	public String getOfferRank() {
+		return OfferRank;
+	}
+	/**
+	 * @param offerRank the offerRank to set
+	 */
+	public void setOfferRank(String offerRank) {
+		OfferRank = offerRank;
+	}
+	/**
+	 * @return the planType
+	 */
+	public String getPlanType() {
+		return planType;
+	}
+	/**
+	 * @param planType the planType to set
+	 */
+	public void setPlanType(String planType) {
+		this.planType = planType;
+	}
 	
 	
 	

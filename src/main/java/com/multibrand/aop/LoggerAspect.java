@@ -15,6 +15,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -86,7 +87,7 @@ public class LoggerAspect {
 		String logMessagePrefix = logPrefix + methodSignature;
 
 		// Jackson mapper for JSON
-		ObjectMapper mapper = new ObjectMapper();
+		ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY);
 
 		logger.info("###########START-" + logMessagePrefix + "-###########");
 
@@ -242,7 +243,7 @@ public class LoggerAspect {
 				
 				if (StringUtils.isNotBlank(key.toString())) {
 					String genericError = errorContentHelper.getErrorMessage(key.toString());
-
+					
 					if (StringUtils.isNotBlank(genericError)) {
 						getMethodRun(getSuperClassMethod(obj, "setResultDisplayText", String.class), obj, genericError);
 						getMethodRun(getSuperClassMethod(obj, "setResultDisplayCode", String.class), obj,
