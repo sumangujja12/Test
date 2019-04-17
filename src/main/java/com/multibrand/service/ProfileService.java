@@ -1159,8 +1159,30 @@ public class ProfileService extends BaseAbstractService {
        javax.xml.ws.Holder<com.nrg.cxfstubs.sundriverclub.ZetWebncProducts> hZetWebncProducts = new javax.xml.ws.Holder<com.nrg.cxfstubs.sundriverclub.ZetWebncProducts>();
        javax.xml.ws.Holder<Bapiret2T> hTBapiret2 = new javax.xml.ws.Holder<Bapiret2T>();
        long startTime = CommonUtil.getStartTime();
+		boolean isEnrolled = false;
        try{
-       stub.zeCrmVasWebProdUpdate(action, "", accountNumber, "", enrollType, extUi, objectId, requestDate, zetEnrollProd, hZetWebncProducts, hTBapiret2);
+			if (action.equalsIgnoreCase("2")) {
+				stub.zeCrmVasWebProdUpdate("1", "", accountNumber, "", enrollType, extUi, objectId, requestDate,
+						zetEnrollProd, hZetWebncProducts, hTBapiret2);
+				ZetWebncProducts webncProducts = hZetWebncProducts.value;
+				List<ZesWebncProducts> webncProductsList = webncProducts.getItem();
+				if (webncProductsList != null && webncProductsList.size() > 0) {
+					for (ZesWebncProducts products : webncProductsList) {
+						ZetPrdDetails zttypeprods = products.getProducts();
+						List<ZesPrdDetails> zvvasprodsList = zttypeprods.getItem();
+						for (ZesPrdDetails zvvasprods : zvvasprodsList) {
+							if (zvvasprods.getManuPartNo().equalsIgnoreCase(manuPartNo)) {
+								isEnrolled = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+			if (!isEnrolled) {
+				stub.zeCrmVasWebProdUpdate(action, "", accountNumber, "", enrollType, extUi, objectId, requestDate,
+						zetEnrollProd, hZetWebncProducts, hTBapiret2);
+			}
        }catch(Exception ex){
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("productUpdate", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -1251,36 +1273,38 @@ public class ProfileService extends BaseAbstractService {
        	}
     	utilityloggerHelper.logTransaction("productUpdate", false, request,productResponse, productResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
        	return productResponse;
-       }
-       else if(action.equalsIgnoreCase("2"))
-       {
-       	Bapiret2T bapiret2T = hTBapiret2.value;
-
-       	List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
-       	if(listBapiret2!=null && listBapiret2.size()>0)
-       	{
-       		for(com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2:listBapiret2)
-       		{
-       			if(bapiret2.getNumber()!=null && bapiret2.getNumber().equals("000"))
-       			{
-       				productResponse.setResultCode(RESULT_CODE_SUCCESS);
-       				productResponse.setResultDescription(MSG_SUCCESS);
-       			}
-       			else
-       			{
-       				productResponse.setResultCode(RESULT_CODE_CCS_ERROR);
-       				productResponse.setResultDescription(bapiret2.getMessage());
-       			}
-       		}
-       	}
-       	else
-       	{
-       		productResponse.setResultCode(RESULT_CODE_THREE);
-       		productResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
-       	}
-    	utilityloggerHelper.logTransaction("productUpdate", false, request,productResponse, productResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-       	return productResponse;
-       }
+		} else if (action.equalsIgnoreCase("2")) {
+			
+		if (!isEnrolled) {
+	       	Bapiret2T bapiret2T = hTBapiret2.value;
+	
+	       	List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
+	       	if(listBapiret2!=null && listBapiret2.size()>0)
+	       	{
+	       		for(com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2:listBapiret2)
+	       		{
+	       			if(bapiret2.getNumber()!=null && bapiret2.getNumber().equals("000"))
+	       			{
+	       				productResponse.setResultCode(RESULT_CODE_SUCCESS);
+	       				productResponse.setResultDescription(MSG_SUCCESS);
+					} else {
+	       			
+	       				productResponse.setResultCode(RESULT_CODE_CCS_ERROR);
+	       				productResponse.setResultDescription(bapiret2.getMessage());
+	       			}
+	       		}
+	       	}else {
+					productResponse.setResultCode(RESULT_CODE_THREE);
+					productResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+					
+				}
+	    	utilityloggerHelper.logTransaction("productUpdate", false, request,productResponse, productResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+	       	return productResponse;
+		} else {
+			productResponse.setResultCode(RESULT_CODE_FOUR);
+			productResponse.setResultDescription(ACCOUNT_ALREADY_ENROLLED);
+		} 
+	}
      	utilityloggerHelper.logTransaction("productUpdate", false, request,productResponse, productResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
        return productResponse;
 	}
