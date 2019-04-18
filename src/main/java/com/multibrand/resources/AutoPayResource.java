@@ -95,10 +95,6 @@ public class AutoPayResource {
 		Response response = null;
 		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(accountNumber, bankAccountNumber, bankRountingNumber, companyCode, accountName, accountChkDigit, locale, email, httpRequest.getSession(true).getId(),emailTypeId,brandName);
 		
-		// Added for GME Mobile
-		autoPayBankRep.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
-		if(autoPayBankRep.getResultDisplayCode()!=null)
-			autoPayBankRep.setResultDisplayText(errorContentHelper.getErrorMessage(autoPayBankRep.getResultDisplayCode()));
 		
 				response = Response.status(200).entity(autoPayBankRep).build();
 		logger.debug("End AutoPayResource.submitBankAutoPay :: END");
@@ -160,10 +156,6 @@ public class AutoPayResource {
 		
 		AutoPayCCResponse autoPayCCResp = autoPayBO.submitCCAutoPay(authType,accountName, accountNumber, bpid, ccNumber, expirationDate, billingZip, companyCode, email, httpRequest.getSession(true).getId(), languageCode,emailTypeId,brandName);
 		
-		// Added for GME Mobile
-		autoPayCCResp.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
-		if(autoPayCCResp.getResultDisplayCode()!=null)
-			autoPayCCResp.setResultDisplayText(errorContentHelper.getErrorMessage(autoPayCCResp.getResultDisplayCode()));
 		
 		response = Response.status(200).entity(autoPayCCResp).build();
 		logger.debug("End AutoPayResource.submitCCAutoPay :: END");
@@ -188,10 +180,6 @@ public class AutoPayResource {
 		
 		DeEnrollResponse deEnrollResponse = autoPayBO.deEnroll(accountNumber, companyCode, httpRequest.getSession(true).getId(), email, languageCode,brandName);
 		
-		// Added for GME Mobile
-		deEnrollResponse.setResultDisplayCode(new Object(){}.getClass().getEnclosingMethod().getName());
-		if(deEnrollResponse.getResultDisplayCode()!=null)
-			deEnrollResponse.setResultDisplayText(errorContentHelper.getErrorMessage(deEnrollResponse.getResultDisplayCode()));
 		
 		response = Response.status(200).entity(deEnrollResponse).build();
 		logger.debug("End AutoPayResource.deEnroll :: END");

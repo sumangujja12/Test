@@ -1090,6 +1090,7 @@ public interface Constants {
 	 public static final String USER_ALREADY_EXISTS_DESC = "User Already Exists";
 	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS="Invalid Input Parameters";
 	 public static final String RESULT_CODE_INVALID_INPUT_PARAMETERS_DESC="Invalid Input Parameters - Please verify";
+	 public static final String RESULT_CODE_BAD_REQUEST = "Bad Request";
 
 	 //Refresh Token 
 	 public static final int REFRESH_TOKEN_LENGTH = 250;
@@ -1142,4 +1143,34 @@ public interface Constants {
 	 public static final String CO2_PER_SECOND = "co2.per.second";
 	 public static final String TOATL_BASELINE = "total.baseline";
 	 public static final String TOTAL_BASELINE_TREE = "total.baseline.tree";
+	 public static final String CONTENT_SERVER_ENDPOINT_URL = ".content.server.endpoint.url";
+	 public static final String CONTENT_REST_SERVER_URL = "content.rest.server.url";
+	 public static final String PUB = ".pub.id_";
+	 public static final String TEMPLATE_DESKTOP = ".tempalte.id_desktop";
+	 public static final String TEMPLATE_MOBILE = ".tempalte.id_mobile";
+	 public static final String RE_TAXONOMY_ID = "re.taxonomy.id";
+	 public static final String PW_TAXONOMY_ID = "pw.taxonomy.id";
+	 public static final String CE_TAXONOMY_ID = "ce.taxonomy.id";
+	 public static final String GM_TAXONOMY_ID = "gm.taxonomy.id";
+	 public static final String PROD_OFFER_SCHEMA_ID = ".prodoffer.schema.id";
+	 public static final String PROD_BONUS_SCHEMA_ID = ".prodbonus.schema.id";
+	 public static final String CONTENT_TITLE_JSON_END_POINT_URL = "endPointUri";
+	 public static final String CONTENT_TITLE_JSON_PUBLICATION_ID = "publicationId";
+	 public static final String CONTENT_TITLE_JSON_BRAND_ID = "brandId";
+	 public static final String CONTENT_TITLE_JSON_TRANSACTION_ID = "transactionId";
+	 public static final String CONTENT_TITLE_TEMPLATE_ID = "templateId";
+	 public static final String CONTENT_TITLE_PROD_BONUS_SCHEMA_ID = "prodBonusSchemaId";
+	 public static final String CONTENT_TITLE_PROD_OFFER_SCHEMA_ID = "prodOfferSchemaId";
+	 public static final String CONTENT_OFFER_MESSAGE_KEY = ".offer.messagekey.name";
+	 public static final String CONTENT_TITLE_TAXONOMY_ID = "taxonomyId";
+	 public static final String CONTENT_TITLE_MESSAGEKEYS = "messageKeys";
+	 public static final String CONTENT_TITLE_MESSAGEKEY_LIST = "messageKeyList";
+	 public static final String CONTET_ERROR_MESSAGEKEY = "No Mapping for offer Code in the content server or Something went wrong!!!!!";
+	 public static final String ERROR_CONTENT_CACHE ="ErrorContent";
+	 public static final String STR_SYMBOL_EIPHEN = "-";
+	 public static final String ERROR_CONTENT_DEFAULT = "Sorry! Something went wrong. Please try again";
+	 public static final String PAY_ACCOUNT_ALREADY_EXISTS = "Pay Account already Exists";
+	 public static final String NICKNAME_ALREADY_EXISTS = "Nickname already Exists";
+	 public static final String NO_ACCOUNT_UPDATE = "No Payment Account Update";
+	 public static final String ACCOUNT_ALREADY_ENROLLED = "Account already enrolled";
 }

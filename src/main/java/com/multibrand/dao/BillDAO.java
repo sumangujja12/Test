@@ -12,6 +12,7 @@ import com.multibrand.vo.response.RetroEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.BankCCInfoResponse;
 import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
+import com.multibrand.vo.response.billingResponse.PayAccountDO;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 
 public interface BillDAO
@@ -32,4 +33,6 @@ public interface BillDAO
 	 public int insertRetroPopup(RetroPopupRequestVO request) throws Exception;
 	 public RetroEligibilityResponse checkRetroEligibility(RetroPopupRequestVO retroReq, String companyCode, String sessionId) throws Exception;
 	 public Map<String, Object> getThirdPartyPaymentLog(String companyCode, String accountNumber) throws Exception;
+	 public PayAccountDO savePayAccount(StoreUpdatePayAccountRequest request) throws Exception;
+	 public PayAccountDO modifiyPayAccount(StoreUpdatePayAccountRequest request) throws Exception;
 }

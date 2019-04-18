@@ -94,6 +94,7 @@ import com.multibrand.vo.response.billingResponse.GetArResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
 import com.multibrand.vo.response.billingResponse.PayAccount;
+import com.multibrand.vo.response.billingResponse.PayAccountDO;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 import com.multibrand.vo.response.billingResponse.PaymentMethodB;
 import com.multibrand.vo.response.billingResponse.PaymentMethodCC;
@@ -349,9 +350,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					/*}catch (Exception ex){
 						logger.error("Exception occured in date parsing!!" + ex);
 					}*/
-				}
-				//Changes End for adding EFL, TOS & YRAAC codes
 				
+					//Changes End for adding EFL, TOS & YRAAC codes
+					
 					// Setting Average Billing Eligibility & Average Billing
 					// Enrollment
 					AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
@@ -369,6 +370,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							averageBillingEnrolment.equals(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
 					// Changes end for setting Average Billing Eligibility &
 					// Average Billing Enrollment
+				
+				}
+				
 
 				CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
 				crmProfileRequest.setStrCANumber(accountNumber);
@@ -1882,7 +1886,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	{
 		AMBEligibiltyCheckResponseVO response = new AMBEligibiltyCheckResponseVO();
 		try {
-
+			if(!ambEligRequest.getAccountNumber().isEmpty() && !ambEligRequest.getBpNumber().isEmpty() && !ambEligRequest.getContractId().isEmpty()) {
 			AmbCheckRequest request = new AmbCheckRequest();
 			request.setBpNumber(ambEligRequest.getBpNumber());
 			request.setCaNumber(ambEligRequest.getAccountNumber());
@@ -1914,7 +1918,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
 				response.setResultDescription(responseService.getErrMessage());
 			}
-
+			}
+			else {
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_BAD_REQUEST);
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -2657,6 +2665,114 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
 		logger.info("END-[BillingBO-getPaymentMethods]");
+		return response;
+	}
+	public StoreUpdatePayAccountResponse savePayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
+	{
+		logger.info("START-[BillingBO-savePayAccount]");
+		
+		StoreUpdatePayAccountResponse response = new StoreUpdatePayAccountResponse();
+		PayAccountDO payAccountDO = new PayAccountDO();
+		long startTime = CommonUtil.getStartTime();
+		
+		try {
+			
+			if(!StringUtils.isEmpty(request.getContractAccountNumber())){
+				payAccountDO = billDao.savePayAccount(request);
+			
+			if(payAccountDO != null){
+				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isAccountDuplicate())){
+					response.setResultCode(RESULT_CODE_THREE);
+					response.setResultDescription(PAY_ACCOUNT_ALREADY_EXISTS);
+					response.setSuccessFlag(false);
+				}
+				else if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
+					response.setResultCode(RESULT_CODE_FOUR);
+					response.setResultDescription(NICKNAME_ALREADY_EXISTS);
+					response.setSuccessFlag(false);
+				}
+				else{
+				logger.info("payment account successfully added :: ");
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setSuccessFlag(true);
+				}
+			}
+			}else{
+				logger.info("payment account not added as contract account number is null or empty :: ");
+				response.setResultCode(RESULT_CODE_FIVE);
+				response.setResultDescription(RESULT_CODE_INVALID_ACCOUNT_NUMBER_DESCRIPTION);
+				response.setSuccessFlag(false);
+			}
+			
+			utilityloggerHelper.logTransaction("savePayAccount", false, request,response, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			if(logger.isDebugEnabled()){
+				logger.debug(XmlUtil.pojoToXML(request));
+				logger.debug(XmlUtil.pojoToXML(response));
+			}
+		} catch (Exception e) {
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(e);
+			utilityloggerHelper.logTransaction("savePayAccount", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			response = new StoreUpdatePayAccountResponse();
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			
+		}
+		logger.info("END-[BillingBO-savePayAccount]");
+		return response;
+	}
+	
+	
+	
+	public StoreUpdatePayAccountResponse modifiyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
+	{
+		logger.info("START-[BillingBO-modifiyPayAccount]");
+		
+		StoreUpdatePayAccountResponse response = new StoreUpdatePayAccountResponse();;
+		long startTime = CommonUtil.getStartTime();
+		PayAccountDO payAccountDO = new PayAccountDO();
+		
+		try {
+			
+			
+			payAccountDO = billDao.modifiyPayAccount(request);
+			
+			if(payAccountDO != null){
+				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
+				response.setResultCode(RESULT_CODE_FOUR);
+				response.setResultDescription(NICKNAME_ALREADY_EXISTS);
+				response.setSuccessFlag(false);
+				}
+				else{
+				logger.info("payment account successfully updated :: ");
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setSuccessFlag(true);
+				}
+			} else{
+				logger.info("no payment account update :: ");
+				response.setResultCode(RESULT_CODE_TWO);
+				response.setResultDescription(NO_ACCOUNT_UPDATE);
+				response.setSuccessFlag(false);
+			}
+			
+			utilityloggerHelper.logTransaction("modifiyPayAccount", false, request,response, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+            if(logger.isDebugEnabled()){
+            	logger.debug(XmlUtil.pojoToXML(request));
+            	logger.debug(XmlUtil.pojoToXML(response));
+            }
+		} catch (Exception e) {
+			if(logger.isDebugEnabled())
+			   logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(e);
+			utilityloggerHelper.logTransaction("modifiyPayAccount", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), response);
+		}
+		logger.info("END-[BillingBO-modifiyPayAccount]");
 		return response;
 	}
 }

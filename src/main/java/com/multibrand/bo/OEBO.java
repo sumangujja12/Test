@@ -4687,6 +4687,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 	 */
 	public GMEEnviornmentalImpact getEnviornmentalImpactForAllGMECommunity() {
 		GMEEnviornmentalImpact gMEEnviornmentalImpact = new GMEEnviornmentalImpact();
+		try{
 		double treesPerSecond = Double
 				.parseDouble(appConstMessageSource.getMessage(Constants.TREES_PER_SECOND, null, null));
 		double co2PerSecond = Double
@@ -4708,6 +4709,12 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		long totPoundOfCarbonForCurrentYr = Math.round(((co2PerSecond * secondsSinceBaseline) + baselineTotal));
 		gMEEnviornmentalImpact.setToatlTreesPlantedForCurrentYr(totTreesPlantedForCurrentYr);
 		gMEEnviornmentalImpact.setTotalPoundOfCO2ForCurrentYr(totPoundOfCarbonForCurrentYr);
+		gMEEnviornmentalImpact.setResultCode(SUCCESS_CODE);
+		gMEEnviornmentalImpact.setResultDescription(MSG_SUCCESS);
+		} catch(Exception ex){
+			gMEEnviornmentalImpact.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			gMEEnviornmentalImpact.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
 		return gMEEnviornmentalImpact;
 	}
 
