@@ -96,6 +96,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 				
 					validateAccountResponse.setResultCode(RESULT_CODE_FIVE);
 					validateAccountResponse.setResultDescription(RESULT_CODE_NOT_GME_TX_ACC);
+					validateAccountResponse.setLastName(response.getContractAccountDO().getStrLastName());
 				}
 				//END US515 : GME_MyAccount_CompanyCode Validation :adadan
 				else if(lastName.trim().equalsIgnoreCase(lastNameFromProfile)) {
@@ -369,20 +370,24 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 				
 					
 					}else{
+						if(validateAccountResponse!=null && validateAccountResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_FIVE) && validateAccountResponse.getLastName().equalsIgnoreCase(lastName)){
+							logger.info("validateAccountForMobile - This account is ineligible to be managed via My Account");
+							validateAccountForMobileResponse.setResultCode(RESULT_CODE_FIVE);
+							validateAccountForMobileResponse.setResultDescription(RESULT_CODE_NOT_GME_TX_ACC);
+							validateAccountForMobileResponse.setLastName(lastName);
+						}else{
+						
 						logger.info("validateAccountForMobile - Invalid Contract Account details- Account validation failed");
 						validateAccountForMobileResponse.setResultCode(RESULT_CODE_TWO);
 						validateAccountForMobileResponse.setResultDescription(RESULT_CODE_NO_MATCH_DESCRIPTION);
 						validateAccountForMobileResponse.setMessageText("Invalid Contract Account details- Account validation failed");
 						validateAccountForMobileResponse.setLastName(lastName);
-						
+						}
 						
 					}
 				}else{
 					logger.info("validateAccountForMobile - Invalid Input Parameters - Please check entered A/C number and Lastname");
-					validateAccountForMobileResponse.setResultCode(RESULT_CODE_FIVE);
-					if(StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode))
-					validateAccountForMobileResponse.setResultDescription(RESULT_CODE_NOT_GME_TX_ACC);
-					if(!(StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)))
+					validateAccountForMobileResponse.setResultCode(RESULT_CODE_SIX);
 					validateAccountForMobileResponse.setResultDescription(RESULT_CODE_INVALID_INPUT_PARAMETERS);
 					validateAccountForMobileResponse.setMessageText("Invalid Input Parameters - Please check entered A/C number and Lastname");
 					validateAccountForMobileResponse.setLastName(lastName);
