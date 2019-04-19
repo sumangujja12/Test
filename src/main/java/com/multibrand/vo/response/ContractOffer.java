@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import com.multibrand.util.Constants;
 @JsonSerialize(include=Inclusion.NON_EMPTY)
 public class ContractOffer implements Constants {
-	private String averageMonthlyPlanUsage = "2320";
+	private String averageMonthlyPlanUsage;
 	private String offerName;
 	private String price;
 	private String termLength;

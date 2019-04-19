@@ -1,9 +1,14 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,9 @@ import com.multibrand.vo.request.ContractInfoRequest;
 import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
+import com.multibrand.vo.response.MonthlyUsageResponse;
+import com.multibrand.vo.response.MonthlyUsageResponseList;
+import com.multibrand.vo.response.OfferDO;
 
 /**
  * Handle Reuest to get the contents from the Rest Content service
@@ -34,6 +42,9 @@ public class ContentBO extends BaseBO implements Constants {
 
 	@Autowired
 	private ContentHelper contentHelper;
+	
+	@Autowired
+	private HistoryBO historyBO;
 
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
@@ -67,6 +78,37 @@ public class ContentBO extends BaseBO implements Constants {
 
 		return response;
 	}
+	/**
+	 * This method is responsible for getting average monthly bill amount
+	 * @param contractInfo
+	 * @param sessionId
+	 * @return
+	 */
+	public double getAverageMonthlyBilling(ContractInfoRequest contractInfo, String sessionId) {
+		double avgUsage = 0;
+		String currentDate = new SimpleDateFormat(MM_dd_yyyy).format(Calendar.getInstance().getTime());
+		MonthlyUsageResponseList monthlyUsage = historyBO.getMonthlyUsageDetails(contractInfo.getAccountNumber(),
+				contractInfo.getContractId(), contractInfo.getEsid(), contractInfo.getZoneId(), currentDate,
+				contractInfo.getCompanyCode(), sessionId);
+		List<MonthlyUsageResponse> monthlyUsageList = monthlyUsage.getMonthlyUsageResponse();
+		if (!monthlyUsageList.isEmpty() && monthlyUsageList.size() > 0) {
+			double totMontlyUsageAmt = 0;
+			int numberOfMonths = 0;
+			for (MonthlyUsageResponse usage : monthlyUsageList) {
+				Double monthlyUsageAmt = Double.parseDouble(usage.getTotalMonthCost());
+				if (monthlyUsageAmt > 0.00) {
+					totMontlyUsageAmt += monthlyUsageAmt;
+					numberOfMonths++;
+				}
+			}
+			if(totMontlyUsageAmt==0 || numberOfMonths==0){
+				avgUsage = 0;
+			} else {
+				avgUsage = totMontlyUsageAmt / numberOfMonths;
+			}
+		}
+		return avgUsage;
+	}
 	
 	/**
 	 * @author SMarimuthu
@@ -85,11 +127,4 @@ public class ContentBO extends BaseBO implements Constants {
 		}
 		return contentHelper.getContractNoOfTrees(contractInfoResponse.getEligibleOffersList());
 	}
-	
-	
-	
-	
-	
-	
-
 }

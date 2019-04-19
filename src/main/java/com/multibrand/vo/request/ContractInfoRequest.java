@@ -10,6 +10,15 @@ public class ContractInfoRequest extends BaseRequest {
 	private String brandName;
 	private String contractId;
 	private String esid;
+	private String zoneId;
+	
+	public String getZoneId() {
+		return zoneId;
+	}
+	public void setZoneId(String zoneId) {
+		this.zoneId = zoneId;
+	}
+	
 	/**
 	 * @return the accountNumber
 	 */
