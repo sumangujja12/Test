@@ -1,7 +1,5 @@
 package com.multibrand.service.impl;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.multibrand.dao.ContentDao;
 import com.multibrand.dto.ComponentDTO;
-import com.multibrand.dto.MobileContentDto;
 import com.multibrand.dto.request.BaseContentRequest;
 import com.multibrand.dto.request.ComponentByItemIdRequest;
 import com.multibrand.dto.request.ComponentByItemIdsRequest;
@@ -22,9 +19,6 @@ import com.multibrand.service.BaseRestService;
 import com.multibrand.service.ContentService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
-import com.multibrand.vo.response.contentResponse.MobileContent;
-import com.multibrand.vo.response.contentResponse.MobileContentItem;
-import com.multibrand.vo.response.contentResponse.MobileContentResponse;
 
 /**
  * @author bbachin1

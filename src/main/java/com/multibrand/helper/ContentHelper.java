@@ -2,6 +2,7 @@ package com.multibrand.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -443,6 +444,7 @@ public class ContentHelper implements Constants {
 	}
 	
 	private void loadContractOfferResponse(ContractOffer contractOffer, OfferDO offerDO) {
+		String OfferEFamily = "";
 		contractOffer.setYrracDocId(offerDO.getStrYRAACDocId());
 		contractOffer.setEflDocId(offerDO.getStrEFLDocId());
 		contractOffer.setCancellationFee(offerDO.getStrCancellationFee());
@@ -461,10 +463,49 @@ public class ContentHelper implements Constants {
 			for (com.multibrand.domain.OfferPriceDO priceType : offerPriceEntry) {
 				if (priceType.getPriceType().equalsIgnoreCase("EFL_BR2000")) {
 					contractOffer.setPrice(priceType.getPrice());
-					break;
+				}
+				
+				if (priceType.getPriceType().equalsIgnoreCase("E_FAMILY")) {
+					OfferEFamily = priceType.getPrice();
 				}
 			}
 		}
+		
+		 if(StringUtils.isNotBlank(OfferEFamily) && StringUtils.isNumeric(OfferEFamily)) {
+			 contractOffer.setOfferCode(OfferEFamily);
+		 } 
+	}
+	
+	
+	/**
+	 * @author SMarimuthu
+	 * @param offerStrAr
+	 * @param contractList
+	 * @return
+	 */
+	public Map<String, String> getContractNoOfTrees(com.multibrand.vo.response.OfferDO[] offerStrAr) {
+		Map<String, String> offerCodMap = new LinkedHashMap<String, String>();
+		if (offerStrAr != null) {
+			for (com.multibrand.vo.response.OfferDO offerVO : offerStrAr) {
+				com.multibrand.vo.response.CampEnvironmentDO[] campEnvironmentDetails = offerVO
+						.getCampEnvironmentDetails();
+
+				if (campEnvironmentDetails != null) {
+
+					for (com.multibrand.vo.response.CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
+						if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
+							offerCodMap.put(offerVO.getStrOfferCode(), campEnvironment.getCalcOperand());
+							break;
+						}
+
+					}
+
+				}
+
+			}
+		}
+
+		return offerCodMap;
 	}
 
 }
