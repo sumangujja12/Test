@@ -64,6 +64,7 @@ public class ContentBO extends BaseBO implements Constants {
 			for(ContractOffer contractOffer: response.getPlans()) {
 				contractOffer.setNumberOfTreesSaved(noOfTrees.get(contractOffer.getOfferCode()));
 			}
+			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
