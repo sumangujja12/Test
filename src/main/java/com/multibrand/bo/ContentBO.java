@@ -3,12 +3,10 @@ package com.multibrand.bo;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +18,10 @@ import com.multibrand.helper.ContentHelper;
 import com.multibrand.service.ProfileService;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.ContractInfoRequest;
-import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.MonthlyUsageResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
-import com.multibrand.vo.response.OfferDO;
 
 /**
  * Handle Reuest to get the contents from the Rest Content service
@@ -55,15 +51,18 @@ public class ContentBO extends BaseBO implements Constants {
 		ContractOfferPlanContentResponse response = new ContractOfferPlanContentResponse();
 
 		try {
-			 /*** call get getContractInfoParallel NRGWS details  **/
+			GetContractInfoResponse contractInfoResponse = profileService.getContractInfo(request.getAccountNumber(),
+					request.getBpNumber(), request.getEsid(), request.getContractId(), request.getLanguageCode(),
+					request.getCompanyCode(), sessionId);
+			/*** call get getContractInfoParallel NRGWS details  **/
 			AllAlertsResponse allRequestResponse = profileService.getContractInfoParallel(contentHelper.getContractInfoParallelRequest(request), sessionId);
 			String[] offerCode = null;
-			offerCode = contentHelper.getContractOffer(allRequestResponse,response);
+			offerCode = contentHelper.getContractOffer(contractInfoResponse, allRequestResponse,response);
 			contentHelper.getOfferContent(offerCode,response,request);
-			Map<String, String> noOfTrees = getNoOfTreeServerd(request, sessionId);
-			for(ContractOffer contractOffer: response.getPlans()) {
-				contractOffer.setNumberOfTreesSaved(noOfTrees.get(contractOffer.getOfferCode()));
-			}
+//			Map<String, String> noOfTrees = getNoOfTreeServerd(request, sessionId);
+//			for(ContractOffer contractOffer: response.getPlans()) {
+//				contractOffer.setNumberOfTreesSaved(noOfTrees.get(contractOffer.getOfferCode()));
+//			}
 			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);

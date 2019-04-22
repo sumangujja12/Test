@@ -1176,4 +1176,8 @@ public interface Constants {
 	 public static final String NICKNAME_ALREADY_EXISTS = "Nickname already Exists";
 	 public static final String NO_ACCOUNT_UPDATE = "No Payment Account Update";
 	 public static final String ACCOUNT_ALREADY_ENROLLED = "Account already enrolled";
+	 
+	 public static final String GME_BASE_URL = "gm.base.url";
+	 public static final String IMG_URL = "<img src=\"{0}\"/>";
+	 
 }

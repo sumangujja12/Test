@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -22,7 +24,6 @@ import com.multibrand.domain.AllAlertsRequest;
 import com.multibrand.domain.AllAlertsResponse;
 import com.multibrand.domain.ContractAccountDO;
 import com.multibrand.domain.ContractDO;
-import com.multibrand.domain.OfferDO;
 import com.multibrand.dto.MultiBrandOfferDTO;
 import com.multibrand.service.impl.ContentServiceImpl;
 import com.multibrand.util.CommonUtil;
@@ -34,6 +35,9 @@ import com.multibrand.util.SearchTypeEnum;
 import com.multibrand.vo.request.ContractInfoRequest;
 import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
+import com.multibrand.vo.response.GetContractInfoResponse;
+import com.multibrand.vo.response.OfferDO;
+import com.multibrand.vo.response.OfferPriceDO;
 
 
 @Component
@@ -50,6 +54,7 @@ public class ContentHelper implements Constants {
 
 	@Autowired
 	private ContentServiceImpl contentService;
+		
 
 	/**
 	 * @author SMarimuthu
@@ -213,9 +218,9 @@ public class ContentHelper implements Constants {
 	 * @param contractList
 	 * @return
 	 */
-	public String [] getContractOffer(AllAlertsResponse allRequestResponse, ContractOfferPlanContentResponse response) {
+	public String [] getContractOffer(GetContractInfoResponse contractInfoResponse, AllAlertsResponse allRequestResponse, ContractOfferPlanContentResponse response) {
 		List <String> offerCode = new LinkedList<String>();
-		OfferDO[] offerStrAr = getEligibleOfferDO(allRequestResponse);
+		OfferDO[] offerStrAr = contractInfoResponse.getEligibleOffersList();
 		List<ContractOffer> contractList = new LinkedList<ContractOffer>();
 		response.setPlans(contractList);
 		if (offerStrAr != null) {
@@ -356,7 +361,7 @@ public class ContentHelper implements Constants {
 		if (offerDO != null) {
 
 			contractOffer = new ContractOffer();
-			loadContractOfferResponse(contractOffer,offerDO);
+			loadContractOfferCurrenPlanResponse(contractOffer,offerDO);
 			ContractDO returnContractDO =  getContractDO(allRequestResponse);
 			contractOffer.setNewContractBegins(returnContractDO.getStrContractStartDate());
 			contractOffer.setNewContractEnds(returnContractDO.getStrContractEndDate());
@@ -419,9 +424,9 @@ public class ContentHelper implements Constants {
 		offerSourceVO.setOfferHeadline(offerDesVO.getOfferHeadline());
 		offerSourceVO.setOfferDescription(offerDesVO.getOfferDescription());
 		offerSourceVO.setEnergyTypeDescription(offerDesVO.getEnergyTypeDescription());
-		offerSourceVO.setEnergyTypeIcon(offerDesVO.getEnergyTypeIcon());
+		offerSourceVO.setEnergyTypeIcon(getReplaceImageString(offerDesVO.getEnergyTypeIcon()));
 		offerSourceVO.setSpecialOfferDescription(offerDesVO.getSpecialOfferDescription());
-		offerSourceVO.setSpecialOfferIcon(offerDesVO.getSpecialOfferIcon());
+		offerSourceVO.setSpecialOfferIcon(getReplaceImageString(offerDesVO.getSpecialOfferIcon()));
 		offerSourceVO.setProductDisclaimer(offerDesVO.getProductDisclaimer());
 		offerSourceVO.setGenericDisclaimer(offerDesVO.getGenericDisclaimer());
 		offerSourceVO.setErrorMessage(offerDesVO.getErrorMessage());
@@ -443,7 +448,42 @@ public class ContentHelper implements Constants {
 		return returnContractDO;
 	}
 	
-	private void loadContractOfferResponse(ContractOffer contractOffer, OfferDO offerDO) {
+	private void loadContractOfferResponse(ContractOffer contractOffer, com.multibrand.vo.response.OfferDO offerDO) {
+		String OfferEFamily = "";
+		contractOffer.setYrracDocId(offerDO.getStrYRAACDocID());
+		contractOffer.setEflDocId(offerDO.getStrEFLDocID());
+		contractOffer.setCancellationFee(offerDO.getStrCancelFee());
+		contractOffer.setOfferName(offerDO.getStrPlanName());
+		contractOffer.setOfferTeaser(offerDO.getStrOfferTeaser());
+		contractOffer.setOfferCode(offerDO.getStrOfferCode());
+		contractOffer.setTermLength(offerDO.getStrContractTerm());
+		contractOffer.setTosDocId(offerDO.getStrTOSDocID());
+		contractOffer.setCampaignCode(offerDO.getStrCampaignCode());
+		contractOffer.setOfferRank(offerDO.getStrOfferRank());
+		contractOffer.setEFLSmartCode(offerDO.getStrEFLSmartCode());
+		contractOffer.setYRAACSmartCode(offerDO.getStrYRAACSmartCode());
+		contractOffer.setTOSSmartCode(offerDO.getStrTOSSmartCode());
+		contractOffer.setEflURL(getURL(contractOffer.getEflURL()));
+		contractOffer.setTosURL(getURL(contractOffer.getTosURL()));
+		contractOffer.setYraacURL(getURL(contractOffer.getYraacURL()));
+		
+		OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
+		if (offerPriceEntry != null) {
+			for (OfferPriceDO priceType : offerPriceEntry) {
+				if (priceType.getPriceType().equalsIgnoreCase("EFL_BR2000")) {
+					contractOffer.setPrice(priceType.getPrice());
+				}
+				
+			}
+		}
+		
+		 if(StringUtils.isNotBlank(OfferEFamily) && StringUtils.isNumeric(OfferEFamily)) {
+			 contractOffer.setOfferCode(OfferEFamily);
+		 } 
+	}
+	
+	
+	private void loadContractOfferCurrenPlanResponse(ContractOffer contractOffer, com.multibrand.domain.OfferDO offerDO) {
 		String OfferEFamily = "";
 		contractOffer.setYrracDocId(offerDO.getStrYRAACDocId());
 		contractOffer.setEflDocId(offerDO.getStrEFLDocId());
@@ -458,15 +498,15 @@ public class ContentHelper implements Constants {
 		contractOffer.setEFLSmartCode(offerDO.getStrEFLCode());
 		contractOffer.setYRAACSmartCode(offerDO.getStrYRAACCode());
 		contractOffer.setTOSSmartCode(offerDO.getStrTOSCode());
+		contractOffer.setEflURL(getURL(contractOffer.getEflURL()));
+		contractOffer.setTosURL(getURL(contractOffer.getTosURL()));
+		contractOffer.setYraacURL(getURL(contractOffer.getYraacURL()));
+		
 		com.multibrand.domain.OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
 		if (offerPriceEntry != null) {
 			for (com.multibrand.domain.OfferPriceDO priceType : offerPriceEntry) {
 				if (priceType.getPriceType().equalsIgnoreCase("EFL_BR2000")) {
 					contractOffer.setPrice(priceType.getPrice());
-				}
-				
-				if (priceType.getPriceType().equalsIgnoreCase("E_FAMILY")) {
-					OfferEFamily = priceType.getPrice();
 				}
 			}
 		}
@@ -506,6 +546,40 @@ public class ContentHelper implements Constants {
 		}
 
 		return offerCodMap;
+	}
+	
+	private String getURL(String documentName) {
+		if(StringUtils.isBlank(documentName)) {
+			return BLANK;
+		}
+		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
+		baseURL = baseURL +CONST_FILES+documentName+CONST_DOT_PDF;
+		return baseURL;
+	}
+	
+	private String getReplaceImageString(String strReplace) {
+		String imageURL = "";
+		
+		if(StringUtils.isEmpty(strReplace)) {
+			return imageURL = "";
+		}
+		
+		Pattern p = Pattern.compile("<img[^>]*src=[\"']([^\"^']*)",  Pattern.CASE_INSENSITIVE);
+		String codeGroup ="";
+		
+		 Matcher m = p.matcher(strReplace);
+		 if (m.find()) {
+		      codeGroup = m.group(1);
+		 } else {
+			 return strReplace;
+		 }
+		 String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
+		 if(StringUtils.isNotBlank(codeGroup)) {
+			 codeGroup =  baseURL +codeGroup;
+			 imageURL = IMG_URL.replace("{0}", codeGroup);
+		 }
+		 
+		 return imageURL;
 	}
 
 }
