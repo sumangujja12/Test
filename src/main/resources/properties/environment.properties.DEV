@@ -157,3 +157,4 @@ pw.prodoffer.schema.id=63
 pw.prodbonus.schema.id=TODO
 gm.prodoffer.schema.id = 11791
 gm.prodbonus.schema.id=TODO
+gm.base.url=https://signup.greenmountain.com 
