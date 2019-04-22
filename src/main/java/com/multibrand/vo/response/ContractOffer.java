@@ -1,12 +1,10 @@
 package com.multibrand.vo.response;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 import com.google.gson.annotations.SerializedName;
 import com.multibrand.util.Constants;
-@JsonSerialize(include=Inclusion.NON_EMPTY)
+//@JsonSerialize(include=Inclusion.NON_EMPTY)
 public class ContractOffer implements Constants {
 	private String averageMonthlyPlanUsage;
 	private String offerName;
