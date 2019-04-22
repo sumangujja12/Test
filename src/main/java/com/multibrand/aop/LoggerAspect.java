@@ -87,7 +87,7 @@ public class LoggerAspect {
 		String logMessagePrefix = logPrefix + methodSignature;
 
 		// Jackson mapper for JSON
-		ObjectMapper mapper = new ObjectMapper().setSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY);
+		ObjectMapper mapper = new ObjectMapper();
 
 		logger.info("###########START-" + logMessagePrefix + "-###########");
 
@@ -115,6 +115,7 @@ public class LoggerAspect {
 			// logger.info(output);
 			logger.info("Response status code: " + output.getStatus());
 			if (!CommonUtil.shouldExcludeResponseLog(methodName)) {
+				//mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY);
 				logger.info("Response: " + mapper.writeValueAsString(output.getEntity()));
 			}
 		}
