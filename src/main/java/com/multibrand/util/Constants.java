@@ -1182,6 +1182,6 @@ public interface Constants {
 	 public static final String INVALID_REQUEST = "Please provide valid request for {0}";
 	 public static final String CONTRACT_ID ="contractId";
 	 public static final String LANGUAGE_CODE ="languageCode";
-	 public static final String ZONE_ID ="zoneId";
+	 public static final String ZONE_ID_IN ="zoneId";
 	  
 }

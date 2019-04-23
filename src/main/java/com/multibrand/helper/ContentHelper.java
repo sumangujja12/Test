@@ -661,7 +661,7 @@ public class ContentHelper implements Constants {
 		}
 
 		if (StringUtils.isBlank(request.getZoneId())) {
-			getErrorString(ZONE_ID,variableField);
+			getErrorString(ZONE_ID_IN,variableField);
 		}
 		
 		if(variableField.length() > 0) {
