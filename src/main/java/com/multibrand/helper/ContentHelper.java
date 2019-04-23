@@ -6,6 +6,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -218,18 +220,18 @@ public class ContentHelper implements Constants {
 	 * @param contractList
 	 * @return
 	 */
-	public String [] getContractOffer(GetContractInfoResponse contractInfoResponse, AllAlertsResponse allRequestResponse, ContractOfferPlanContentResponse response) {
-		List <String> offerCode = new LinkedList<String>();
+	public Set<String> getContractOffer(GetContractInfoResponse contractInfoResponse, AllAlertsResponse allRequestResponse, ContractOfferPlanContentResponse response) {
+		Set <String> offerCode = null;
 		OfferDO[] offerStrAr = contractInfoResponse.getEligibleOffersList();
 		List<ContractOffer> contractList = new LinkedList<ContractOffer>();
 		response.setPlans(contractList);
 		if (offerStrAr != null) {
-			offerCode = new ArrayList<String>();
+			offerCode =  new TreeSet<String>();
 			for (OfferDO offerVO : offerStrAr) {
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					ContractOffer contractOffer = new ContractOffer();
 					loadContractOfferResponse(contractOffer, offerVO);
-					offerCode.add(offerVO.getStrOfferCode());
+					offerCode.add(contractOffer.getOfferCode());
 					contractList.add(contractOffer);
 				}
 			}
@@ -238,10 +240,10 @@ public class ContentHelper implements Constants {
 		ContractOffer currentPlan = getContractCurrentPlan(allRequestResponse);
 		if(currentPlan != null && StringUtils.isNotBlank(currentPlan.getOfferCode())) {
 			response.setCurrentPlan(currentPlan);
-			offerCode.add(currentPlan.getOfferCode());
+			//offerCode.add(currentPlan.getOfferCode());
 		}
-		String [] strOfferCode = new String[offerCode.size()];
-		return offerCode.toArray(strOfferCode);
+
+		return offerCode;
 	}
 
 	/**
@@ -250,10 +252,10 @@ public class ContentHelper implements Constants {
 	 * @param response
 	 * @param request
 	 */
-	public void getOfferContent(String[] offerCode, ContractOfferPlanContentResponse response,
+	public void getOfferContent(Set<String> offerCode, ContractOfferPlanContentResponse response,
 			ContractInfoRequest request) {
 
-		if (offerCode != null && offerCode.length > 0) {
+		if (offerCode != null && offerCode.size() > 0) {
 			logger.info(
 					":::::::::::GET CONTENT FOR OFFER CODE FROM REST SERVER ContractOfferPlanContentResponse Method :::::::::::"
 							+ offerCode);
@@ -279,7 +281,6 @@ public class ContentHelper implements Constants {
 								if (offerVO.getOfferCode() != null
 										&& offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
 									copyToContractOffer(offerVO,tempJsonConten);
-									break;
 								}
 							}
 						} else {
