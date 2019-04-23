@@ -474,7 +474,23 @@ public class ContentHelper implements Constants {
 					contractOffer.setPrice(priceType.getPrice());
 				}
 				
+				if (priceType.getPriceType().equalsIgnoreCase("E_FAMILY")) {
+					OfferEFamily = priceType.getOfferPriceCode();
+				}
 			}
+		}
+		
+		com.multibrand.vo.response.CampEnvironmentDO[] campEnvironmentDetails = offerDO
+				.getCampEnvironmentDetails();
+
+		if (campEnvironmentDetails != null) {
+			for (com.multibrand.vo.response.CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
+				if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
+					contractOffer.setNumberOfTreesSaved(campEnvironment.getValue());
+					break;
+				}
+			}
+
 		}
 		
 		 if(StringUtils.isNotBlank(OfferEFamily) && StringUtils.isNumeric(OfferEFamily)) {
@@ -509,6 +525,7 @@ public class ContentHelper implements Constants {
 					contractOffer.setPrice(priceType.getPrice());
 				}
 			}
+			
 		}
 		
 		 if(StringUtils.isNotBlank(OfferEFamily) && StringUtils.isNumeric(OfferEFamily)) {
@@ -534,7 +551,7 @@ public class ContentHelper implements Constants {
 
 					for (com.multibrand.vo.response.CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
 						if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
-							offerCodMap.put(offerVO.getStrOfferCode(), campEnvironment.getCalcOperand());
+							offerCodMap.put(offerVO.getStrOfferCode(), campEnvironment.getValue());
 							break;
 						}
 
