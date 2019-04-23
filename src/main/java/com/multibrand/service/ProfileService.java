@@ -1083,6 +1083,7 @@ public class ProfileService extends BaseAbstractService {
 			offerPriceDOList[count].setStartDate(zesAvgPrice.getDateStart());
 			offerPriceDOList[count].setEndDate(zesAvgPrice.getDateEnd());
 			offerPriceDOList[count].setPrice(zesAvgPrice.getAvgPrice().toString());
+			offerPriceDOList[count].setOfferPriceCode(zesAvgPrice.getString2());
 			count++;
 		}
 		offerDO.setOfferPriceEntry(offerPriceDOList);
