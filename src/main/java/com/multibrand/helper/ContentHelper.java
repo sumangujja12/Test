@@ -661,9 +661,9 @@ public class ContentHelper implements Constants {
 			getErrorString(LANGUAGE_CODE,variableField);
 		}
 
-		if (StringUtils.isBlank(request.getZoneId())) {
-			getErrorString(ZONE_ID_IN,variableField);
-		}
+		//if (StringUtils.isBlank(request.getZoneId())) {
+		///	getErrorString(ZONE_ID_IN,variableField);
+		//}
 		
 		if(variableField.length() > 0) {
 			variableField.deleteCharAt(variableField.length()-1);
