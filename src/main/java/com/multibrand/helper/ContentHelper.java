@@ -432,6 +432,11 @@ public class ContentHelper implements Constants {
 		offerSourceVO.setErrorMessage(offerDesVO.getErrorMessage());
 	}
 	
+	/**
+	 * @author SMarimuthu
+	 * @param allRequestResponse
+	 * @return
+	 */
 	private ContractDO getContractDO(AllAlertsResponse allRequestResponse) {
 		ContractDO returnContractDO = null;
 		ContractAccountDO[] contractAccountList = allRequestResponse.getContractAccDoList();
@@ -448,6 +453,11 @@ public class ContentHelper implements Constants {
 		return returnContractDO;
 	}
 	
+	/**
+	 * @author SMarimuthu
+	 * @param contractOffer
+	 * @param offerDO
+	 */
 	private void loadContractOfferResponse(ContractOffer contractOffer, com.multibrand.vo.response.OfferDO offerDO) {
 		String OfferEFamily = "";
 		contractOffer.setYrracDocId(offerDO.getStrYRAACDocID());
@@ -463,9 +473,9 @@ public class ContentHelper implements Constants {
 		contractOffer.setEFLSmartCode(offerDO.getStrEFLSmartCode());
 		contractOffer.setYRAACSmartCode(offerDO.getStrYRAACSmartCode());
 		contractOffer.setTOSSmartCode(offerDO.getStrTOSSmartCode());
-		contractOffer.setEflURL(getURL(contractOffer.getEflURL()));
-		contractOffer.setTosURL(getURL(contractOffer.getTosURL()));
-		contractOffer.setYraacURL(getURL(contractOffer.getYraacURL()));
+		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
+		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
+		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
 		
 		OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
 		if (offerPriceEntry != null) {
@@ -514,9 +524,9 @@ public class ContentHelper implements Constants {
 		contractOffer.setEFLSmartCode(offerDO.getStrEFLCode());
 		contractOffer.setYRAACSmartCode(offerDO.getStrYRAACCode());
 		contractOffer.setTOSSmartCode(offerDO.getStrTOSCode());
-		contractOffer.setEflURL(getURL(contractOffer.getEflURL()));
-		contractOffer.setTosURL(getURL(contractOffer.getTosURL()));
-		contractOffer.setYraacURL(getURL(contractOffer.getYraacURL()));
+		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
+		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
+		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
 		
 		com.multibrand.domain.OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
 		if (offerPriceEntry != null) {
@@ -565,15 +575,25 @@ public class ContentHelper implements Constants {
 		return offerCodMap;
 	}
 	
+	/**
+	 * @author SMarimuthu
+	 * @param documentName
+	 * @return
+	 */
 	private String getURL(String documentName) {
 		if(StringUtils.isBlank(documentName)) {
 			return BLANK;
 		}
 		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
-		baseURL = baseURL +CONST_FILES+documentName+CONST_DOT_PDF;
+		baseURL = baseURL.trim() +CONST_FILES+documentName+CONST_DOT_PDF;
 		return baseURL;
 	}
 	
+	/**
+	 * @author SMarimuthu
+	 * @param strReplace
+	 * @return
+	 */
 	private String getReplaceImageString(String strReplace) {
 		String imageURL = "";
 		
@@ -592,11 +612,76 @@ public class ContentHelper implements Constants {
 		 }
 		 String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
 		 if(StringUtils.isNotBlank(codeGroup)) {
-			 codeGroup =  baseURL +codeGroup;
+			 codeGroup =  baseURL.trim() +codeGroup.trim();
 			 imageURL = IMG_URL.replace("{0}", codeGroup);
 		 }
 		 
 		 return imageURL;
+	}
+	
+	/**
+	 * @author SMarimuthu
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	public boolean handleValidationContentRequest(ContractInfoRequest request,
+			ContractOfferPlanContentResponse response) {
+		StringBuffer variableField = new StringBuffer("");
+
+		if (StringUtils.isBlank(request.getAccountNumber())) {
+			getErrorString(ACCOUNT_NUMBER,variableField);
+		}
+
+		if (StringUtils.isBlank(request.getBpNumber())) {
+			getErrorString(BP_NUMBER,variableField);
+		}
+
+		if (StringUtils.isBlank(request.getContractId())) {
+			getErrorString(CONTRACT_ID,variableField);
+		}
+
+		if (StringUtils.isBlank(request.getBrandId())) {
+			getErrorString(CONTENT_TITLE_JSON_BRAND_ID,variableField);
+		} else if (!request.getBrandId().equalsIgnoreCase(BRAND_ID_GME)) {
+			getErrorString(CONTENT_TITLE_JSON_BRAND_ID,variableField);
+		}
+
+		if (StringUtils.isBlank(request.getCompanyCode())) {
+			getErrorString(COMPANY_CODE,variableField);
+		} else if (!request.getCompanyCode().equalsIgnoreCase(COMPANY_CODE_GME)) {
+			getErrorString(COMPANY_CODE,variableField);
+		}
+
+		if (StringUtils.isBlank(request.getLanguageCode())) {
+			getErrorString(LANGUAGE_CODE,variableField);
+		} else if (!request.getLanguageCode().equalsIgnoreCase(LANG_EN)
+				  && !request.getLanguageCode().equalsIgnoreCase(LANG_ES)) {
+			getErrorString(LANGUAGE_CODE,variableField);
+		}
+
+		if (StringUtils.isBlank(request.getZoneId())) {
+			getErrorString(ZONE_ID,variableField);
+		}
+		
+		if(variableField.length() > 0) {
+			variableField.deleteCharAt(variableField.length()-1);
+			response.setResultCode("05");
+			response.setResultDescription(INVALID_REQUEST.replace("{0}", variableField.toString()));
+			return true;
+		}
+
+		return false;
+
+	}
+	
+	private void getErrorString(String errorVariable, StringBuffer variableField) {
+		
+		if(variableField.length() > 0) {
+			variableField.append(" ");
+		}
+		variableField.append(errorVariable);
+		variableField.append(SYMBOL_COMMA);
 	}
 
 }

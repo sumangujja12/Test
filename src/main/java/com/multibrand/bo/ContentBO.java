@@ -51,18 +51,18 @@ public class ContentBO extends BaseBO implements Constants {
 		ContractOfferPlanContentResponse response = new ContractOfferPlanContentResponse();
 
 		try {
+			if (contentHelper.handleValidationContentRequest(request, response)) {
+				return response;
+			}
 			GetContractInfoResponse contractInfoResponse = profileService.getContractInfo(request.getAccountNumber(),
 					request.getBpNumber(), request.getEsid(), request.getContractId(), request.getLanguageCode(),
 					request.getCompanyCode(), sessionId);
+			
 			/*** call get getContractInfoParallel NRGWS details  **/
 			AllAlertsResponse allRequestResponse = profileService.getContractInfoParallel(contentHelper.getContractInfoParallelRequest(request), sessionId);
 			String[] offerCode = null;
 			offerCode = contentHelper.getContractOffer(contractInfoResponse, allRequestResponse,response);
 			contentHelper.getOfferContent(offerCode,response,request);
-//			Map<String, String> noOfTrees = getNoOfTreeServerd(request, sessionId);
-//			for(ContractOffer contractOffer: response.getPlans()) {
-//				contractOffer.setNumberOfTreesSaved(noOfTrees.get(contractOffer.getOfferCode()));
-//			}
 			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
