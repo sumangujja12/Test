@@ -6,8 +6,6 @@ import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
 import org.codehaus.jackson.JsonParser.Feature;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
@@ -33,9 +31,6 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
         mapper.setSerializationInclusion(Inclusion.NON_DEFAULT); 
         mapper.setSerializationInclusion(Inclusion.NON_NULL);
         mapper.setSerializationInclusion(Inclusion.NON_EMPTY);
-    
-        mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationConfig.Feature.FAIL_ON_EMPTY_BEANS, false);
         return mapper;
     }
 }
