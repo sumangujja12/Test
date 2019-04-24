@@ -254,7 +254,7 @@ public class ContentHelper implements Constants {
 	 */
 	public void getOfferContent(Set<String> offerCode, ContractOfferPlanContentResponse response,
 			ContractInfoRequest request) {
-
+		
 		if (offerCode != null && offerCode.size() > 0) {
 			logger.info(
 					":::::::::::GET CONTENT FOR OFFER CODE FROM REST SERVER ContractOfferPlanContentResponse Method :::::::::::"
@@ -498,16 +498,20 @@ public class ContentHelper implements Constants {
 			for (com.multibrand.vo.response.CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
 				if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
 					contractOffer.setNumberOfTreesSaved(campEnvironment.getValue());
+
 				}
 				if (campEnvironment.getCalcOperand().equalsIgnoreCase("RENEW_PERCENT_CD")) {
-					if(StringUtils.isNotBlank(campEnvironment.getValue()) && StringUtils.isNumeric(campEnvironment.getValue())) {
-						int key = Integer.parseInt(campEnvironment.getValue());
-						 
+					if(StringUtils.isNotBlank(campEnvironment.getValue())) {
+						int key = 0;
+						try {
+						 key =  (int) Double.parseDouble(campEnvironment.getValue());
+						} catch (Exception e) {
+							logger.info("RENEW_PERCENT_CD FROM SAP IS"+campEnvironment.getValue());
+						}
 						switch (key) {
 							case 1 :
 									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.ONE.getProductContent());
-									break;
-								
+									break;						
 							case 2 :
 									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.TWO.getProductContent());
 									break;
@@ -525,9 +529,8 @@ public class ContentHelper implements Constants {
 	
 						}
 						 
-						contractOffer.setProductContent(campEnvironment.getValue());
 					}
-					
+										
 				}
 				
 			}
