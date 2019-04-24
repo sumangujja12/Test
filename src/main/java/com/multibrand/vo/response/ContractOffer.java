@@ -47,6 +47,7 @@ public class ContractOffer implements Constants {
 	private String TOSSmartCode;
 	private String OfferRank;
 	private String planType;
+	private String productContent;
 	
 	@SerializedName("messageKey")
 	@JsonIgnore
@@ -549,6 +550,18 @@ public class ContractOffer implements Constants {
 	 */
 	public void setPlanType(String planType) {
 		this.planType = planType;
+	}
+	/**
+	 * @return the productContent
+	 */
+	public String getProductContent() {
+		return productContent;
+	}
+	/**
+	 * @param productContent the productContent to set
+	 */
+	public void setProductContent(String productContent) {
+		this.productContent = productContent;
 	}
 	
 	

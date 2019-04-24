@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -498,8 +499,41 @@ public class ContentHelper implements Constants {
 			for (com.multibrand.vo.response.CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
 				if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
 					contractOffer.setNumberOfTreesSaved(campEnvironment.getValue());
-					break;
 				}
+				if (campEnvironment.getCalcOperand().equalsIgnoreCase("RENEW_PERCENT_CD")) {
+					if(StringUtils.isNotBlank(campEnvironment.getValue())) {
+						int key = 0;
+						try {
+						 key =  (int) Double.parseDouble(campEnvironment.getValue());
+						} catch (Exception e) {
+							logger.info("RENEW_PERCENT_CD FROM SAP IS"+campEnvironment.getValue());
+						}
+						switch (key) {
+							case 1 :
+									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.ONE.getProductContent());
+									break;
+								
+							case 2 :
+									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.TWO.getProductContent());
+									break;
+								
+							case 3 :
+									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.THREE.getProductContent());
+									break;
+								
+							case 4:
+									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.FOUR.getProductContent());
+									break;
+									
+							default :
+								contractOffer.setProductContent(Constants.BLANK);
+	
+						}
+						 
+					}
+					
+				}
+				
 			}
 
 		}
