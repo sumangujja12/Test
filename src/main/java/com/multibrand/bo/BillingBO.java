@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -21,7 +20,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.BillDAO;
 import com.multibrand.domain.ActEbillRequest;
 import com.multibrand.domain.ActEbillResponse;
@@ -71,7 +69,10 @@ import com.multibrand.vo.request.RetroPopupRequestVO;
 import com.multibrand.vo.request.SaveAMBSingupRequestVO;
 import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
 import com.multibrand.vo.response.AvgTempResponse;
+import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.CancelPaymentResponse;
+import com.multibrand.vo.response.GetContractInfoResponse;
+import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.PayByBankResponse;
 import com.multibrand.vo.response.PayByCCResponse;
 import com.multibrand.vo.response.ProjectedBillResponseList;
@@ -89,10 +90,13 @@ import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
+import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
+import com.multibrand.vo.response.billingResponse.GMEContractDO;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
+import com.multibrand.vo.response.billingResponse.GetSwapEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.PayAccount;
 import com.multibrand.vo.response.billingResponse.PayAccountDO;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
@@ -103,7 +107,6 @@ import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
-
 import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
@@ -266,7 +269,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		ProfileResponse response = null;
 		GetAccountDetailsResponse accountDetailsResp = new GetAccountDetailsResponse();
 		Map<String, Object> responseMap = new HashMap<String, Object>();
-
+		String averageBillingEligibilty = AVG_BILL_FLAG_NO;
+		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
 			if(responseMap!= null && responseMap.size()!= 0)
@@ -350,9 +354,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					/*}catch (Exception ex){
 						logger.error("Exception occured in date parsing!!" + ex);
 					}*/
-				
-					//Changes End for adding EFL, TOS & YRAAC codes
-					
 					// Setting Average Billing Eligibility & Average Billing
 					// Enrollment
 					AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
@@ -362,19 +363,22 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					ambEligRequest.setContractId(contractDO[0].getStrContractID());
 					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest,
 							sessionId);
-					String averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
-					String averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
+					if(ambEligibiltyCheckResponseVO.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)){
+						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible()!=null)
+							averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
+						
+						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive()!=null)
+							averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
+					}		
 					accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(
-							averageBillingEligibilty.equals(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+							averageBillingEligibilty.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
 					accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(
-							averageBillingEnrolment.equals(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+							averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
 					// Changes end for setting Average Billing Eligibility &
 					// Average Billing Enrollment
-				
 				}
-				
-
-				CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
+				//Changes End for adding EFL, TOS & YRAAC codes
+								CrmProfileRequest crmProfileRequest = new CrmProfileRequest();
 				crmProfileRequest.setStrCANumber(accountNumber);
 				if(response != null && CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)&& StringUtils.isNotEmpty(response.getSuperBPID())){
 					logger.info("Brand name :::: CE :::::::");
@@ -2667,6 +2671,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-getPaymentMethods]");
 		return response;
 	}
+	
 	public StoreUpdatePayAccountResponse savePayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
 		logger.info("START-[BillingBO-savePayAccount]");
@@ -2775,4 +2780,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-modifiyPayAccount]");
 		return response;
 	}
+	
+
 }
