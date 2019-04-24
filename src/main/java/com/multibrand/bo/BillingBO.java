@@ -266,7 +266,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		ProfileResponse response = null;
 		GetAccountDetailsResponse accountDetailsResp = new GetAccountDetailsResponse();
 		Map<String, Object> responseMap = new HashMap<String, Object>();
-
+		String averageBillingEligibilty = AVG_BILL_FLAG_NO;
+		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
 			if(responseMap!= null && responseMap.size()!= 0)
@@ -362,12 +363,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					ambEligRequest.setContractId(contractDO[0].getStrContractID());
 					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest,
 							sessionId);
-					String averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
-					String averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
+					if(ambEligibiltyCheckResponseVO.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)){
+						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible()!=null)
+							averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
+						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive()!=null)
+							averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
+					}		
 					accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(
-							averageBillingEligibilty.equals(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+							averageBillingEligibilty.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
 					accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(
-							averageBillingEnrolment.equals(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+							averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
 					// Changes end for setting Average Billing Eligibility &
 					// Average Billing Enrollment
 				
