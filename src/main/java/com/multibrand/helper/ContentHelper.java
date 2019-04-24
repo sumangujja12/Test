@@ -255,6 +255,7 @@ public class ContentHelper implements Constants {
 	 */
 	public void getOfferContent(Set<String> offerCode, ContractOfferPlanContentResponse response,
 			ContractInfoRequest request) {
+		
 		if (offerCode != null && offerCode.size() > 0) {
 			logger.info(
 					":::::::::::GET CONTENT FOR OFFER CODE FROM REST SERVER ContractOfferPlanContentResponse Method :::::::::::"
