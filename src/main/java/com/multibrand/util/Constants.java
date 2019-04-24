@@ -1182,6 +1182,30 @@ public interface Constants {
 	 public static final String INVALID_REQUEST = "Please provide valid request for {0}";
 	 public static final String CONTRACT_ID ="contractId";
 	 public static final String LANGUAGE_CODE ="languageCode";
-	 public static final String ZONE_ID_IN ="zoneId";
+	 public static final String PRODUCT_CONTENT_ONE ="100% Wind";
+	 public static final String PRODUCT_CONTENT_TWO ="15% Wind";
+	 public static final String PRODUCT_CONTENT_THREE ="95% Wind, 5% Solar";
+	 public static final String PRODUCT_CONTENT_FOUR ="100% Solar";
+	
+	public static enum ENUM_PRODUCT_CONTENT {
+		ONE(1, PRODUCT_CONTENT_ONE), TWO(2, PRODUCT_CONTENT_TWO), THREE(3, PRODUCT_CONTENT_THREE),
+		FOUR(4, PRODUCT_CONTENT_FOUR);
+
+		public final String productContent;
+		public final Integer productKey;
+
+		ENUM_PRODUCT_CONTENT(Integer productKey, String productContent) {
+			this.productContent = productContent;
+			this.productKey = productKey;
+		}
+		
+		public String getProductContent() {
+			return productContent;
+		}
+
+		public int getProductKey() {
+			return productKey;
+		}
+	}
 	  
 }
