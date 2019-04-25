@@ -230,8 +230,7 @@ public class ContentHelper implements Constants {
 			for (OfferDO offerVO : offerStrAr) {
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					ContractOffer contractOffer = new ContractOffer();
-					loadContractOfferResponse(contractOffer, offerVO);
-					offerCode.add(contractOffer.getOfferCode());
+					offerCode.add(loadContractOfferResponse(contractOffer, offerVO));
 					contractList.add(contractOffer);
 				}
 			}
@@ -278,8 +277,10 @@ public class ContentHelper implements Constants {
 						ContractOffer tempJsonConten = offerConetent.getMultiBrandOfferList().get(i);
 						if (i < response.getPlans().size()) {
 							for (ContractOffer offerVO : response.getPlans() ) {
-								if (offerVO.getOfferCode() != null
-										&& offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode)) {
+								if ((offerVO.getOfferCode() != null
+										&& offerVO.getOfferCode().equalsIgnoreCase(tempOfferCode))
+										|| (offerVO.getOfferFamily() != null
+												&& offerVO.getOfferFamily().equalsIgnoreCase(tempOfferCode))) {
 									copyToContractOffer(offerVO,tempJsonConten);
 								}
 							}
@@ -459,7 +460,7 @@ public class ContentHelper implements Constants {
 	 * @param contractOffer
 	 * @param offerDO
 	 */
-	private void loadContractOfferResponse(ContractOffer contractOffer, com.multibrand.vo.response.OfferDO offerDO) {
+	private String loadContractOfferResponse(ContractOffer contractOffer, com.multibrand.vo.response.OfferDO offerDO) {
 		String OfferEFamily = "";
 		contractOffer.setYrracDocId(offerDO.getStrYRAACDocID());
 		contractOffer.setEflDocId(offerDO.getStrEFLDocID());
@@ -487,6 +488,7 @@ public class ContentHelper implements Constants {
 				
 				if (priceType.getPriceType().equalsIgnoreCase("E_FAMILY")) {
 					OfferEFamily = priceType.getOfferPriceCode();
+					contractOffer.setOfferFamily(OfferEFamily);
 				}
 			}
 		}
@@ -539,7 +541,11 @@ public class ContentHelper implements Constants {
 		
 		 if(StringUtils.isNotBlank(OfferEFamily) && StringUtils.isNumeric(OfferEFamily)) {
 			 contractOffer.setOfferCode(OfferEFamily);
-		 } 
+		 } else {
+			 OfferEFamily = contractOffer.getOfferCode();
+		 }
+		 
+		 return OfferEFamily;
 	}
 	
 	
