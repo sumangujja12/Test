@@ -1,57 +1,54 @@
 package com.multibrand.vo.response;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.annotations.SerializedName;
 import com.multibrand.util.Constants;
-@JsonInclude(JsonInclude.Include.NON_NULL)
+
 public class ContractOffer implements Constants {
-	private String averageMonthlyPlanUsage;
-	private String offerName;
-	private String price;
-	private String termLength;
-	private String cancellationFee;
-	private String yrracDocId;
-	private String tosDocId;
-	private String numberOfTreesSaved;
-	private String offerTeaser;
-	private String planDisclaimer;
-	private String eflDocId;
-	private String offerHeadline;
-	private String offerDescription;
-	private String energyTypeDescription;
-	private String energyTypeIcon;
-	private String specialOfferDescription;
-	private String specialOfferIcon;
-	private String productDisclaimer;
-	private String genericDisclaimer;
-	private String campaignCode;
-	private String newContractBegins;
-	private String newContractEnds;
-	private String avgPrice;
-	private String baseCharge;
-	private String bccEmail;
-	private String tdspCharge;
-	private String promoCode;
-	private String tosURL;
-	private String yraacURL;
-	private String marketingText;
-	private String incentives;
-	private String energyCharge;
-	private String eflURL;
-	private String disclaimer;
-	private String EFLSmartCode;
-	private String YRAACSmartCode;
-	private String TOSSmartCode;
-	private String OfferRank;
-	private String planType;
-	private String productContent;
+	private String averageMonthlyPlanUsage="";
+	private String offerName="";
+	private String price="";
+	private String termLength="";
+	private String cancellationFee="";
+	private String yrracDocId="";
+	private String tosDocId="";
+	private String numberOfTreesSaved="";
+	private String offerTeaser="";
+	private String planDisclaimer="";
+	private String eflDocId="";
+	private String offerHeadline="";
+	private String offerDescription="";
+	private String energyTypeDescription="";
+	private String energyTypeIcon="";
+	private String specialOfferDescription="";
+	private String specialOfferIcon="";
+	private String productDisclaimer="";
+	private String genericDisclaimer="";
+	private String campaignCode="";
+	private String newContractBegins="";
+	private String newContractEnds="";
+	private String avgPrice="";
+	private String baseCharge="";
+	private String bccEmail="";
+	private String tdspCharge="";
+	private String promoCode="";
+	private String tosURL="";
+	private String yraacURL="";
+	private String marketingText="";
+	private String incentives="";
+	private String energyCharge="";
+	private String eflURL="";
+	private String disclaimer="";
+	private String EFLSmartCode="";
+	private String YRAACSmartCode ="";
+	private String TOSSmartCode ="";
+	private String OfferRank ="";
+	private String planType ="";
+	private String productContent ="";
 	
 	@SerializedName("messageKey")
-	@JsonIgnore
-	private String offerCode;
-	private String errorMessage;
+	private String offerCode="";
+	private String errorMessage="";
+	private transient  String offerFamily ="";
 	
 	/**
 	 * @return the offerName
@@ -561,6 +558,18 @@ public class ContractOffer implements Constants {
 	 */
 	public void setProductContent(String productContent) {
 		this.productContent = productContent;
+	}
+	/**
+	 * @return the offerFamily
+	 */
+	public String getOfferFamily() {
+		return offerFamily;
+	}
+	/**
+	 * @param offerFamily the offerFamily to set
+	 */
+	public void setOfferFamily(String offerFamily) {
+		this.offerFamily = offerFamily;
 	}
 	
 	
