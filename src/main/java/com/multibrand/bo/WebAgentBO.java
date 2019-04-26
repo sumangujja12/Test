@@ -58,7 +58,10 @@ public class WebAgentBO implements Constants {
 			{
 				profileRes = (ProfileResponse)responseMap.get("profileResponse");
 			}
-			ContractAccountDO ctrdo = profileRes.getContractAccountDO();
+			ContractAccountDO ctrdo = null;
+			if (profileRes != null) {
+				ctrdo = profileRes.getContractAccountDO();
+			}
 	      if (ctrdo != null)
 	      {
 	        this.logger.info("bp number " + ctrdo.getStrBPNumber());
