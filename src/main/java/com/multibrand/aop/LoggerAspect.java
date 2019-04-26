@@ -202,49 +202,64 @@ public class LoggerAspect {
 		Object obj = output.getEntity();
 		if (obj != null && obj.getClass().getSuperclass().isAssignableFrom(GenericResponse.class)) {
 			String resultCode;
-			try {
-				resultCode =  isParentMethod(obj, "getResultCode", null);
-				String errorCode = isParentMethod(obj, "getErrorCode", null);
+			try {				
+				resultCode =  isReplace(isParentMethod(obj, "getResultCode", null));
+				String errorCodeActual = isParentMethod(obj, "getErrorCode", null);
+				String errorCode = isReplace(errorCodeActual);
 				StringBuffer key = new StringBuffer();
 
-				if (StringUtils.isBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
-					if (!isReplace(resultCode).equalsIgnoreCase(Constants.ZERO)) {
-						if (resultCode.length() == 1) {
-							key.append(methodName);
-							key.append(Constants.STR_SYMBOL_EIPHEN);
-							key.append(Constants.ZERO);
-							key.append(isReplace(resultCode));
-						} else {
-							key.append(methodName);
-							key.append(Constants.STR_SYMBOL_EIPHEN);
-							key.append(isReplace(resultCode));
-						}
-					}
-
-				} else if (StringUtils.isNotBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
-
+				if (((StringUtils.isBlank(errorCode) || errorCode.equalsIgnoreCase(Constants.ZERO))
+					&& StringUtils.isNotBlank(resultCode)) && !resultCode.equalsIgnoreCase(Constants.ZERO)) {
 					if (resultCode.length() == 1) {
 						key.append(methodName);
 						key.append(Constants.STR_SYMBOL_EIPHEN);
 						key.append(Constants.ZERO);
-						key.append(isReplace(resultCode));
-						key.append(Constants.STR_SYMBOL_EIPHEN);
-						key.append(isReplace(errorCode));
-					}
-					else {
+						key.append(resultCode);
+					} else {
 						key.append(methodName);
 						key.append(Constants.STR_SYMBOL_EIPHEN);
-						key.append(isReplace(resultCode));
+						key.append(resultCode);
+					}
+
+				} else if ((StringUtils.isNotBlank(errorCode) && StringUtils.isNotBlank(resultCode))
+						&& (!resultCode.equalsIgnoreCase(Constants.ZERO)
+								&& !errorCode.equalsIgnoreCase(Constants.ZERO))) {
+					if (resultCode.length() == 1) {
+						key.append(methodName);
 						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(Constants.ZERO);
+						key.append(resultCode);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						if (errorCode.length() == 1) {
+							key.append(Constants.ZERO);
+						}
 						key.append(isReplace(errorCode));
+					} else {
+						key.append(methodName);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(resultCode);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						if (errorCode.length() == 1) {
+							key.append(Constants.ZERO);
+						}
+						key.append(errorCode);
 					}
 
 				}
 				
 				if (StringUtils.isNotBlank(key.toString())) {
 					String genericError = errorContentHelper.getErrorMessage(key.toString());
-					
-					if (StringUtils.isNotBlank(genericError)) {
+					String errorDescription = isParentMethod(obj, "getErrorDescription", null);
+
+					if ((StringUtils.isNotBlank(genericError)
+							&& genericError.equalsIgnoreCase(Constants.ERROR_CONTENT_DEFAULT))
+							&& StringUtils.isNotBlank(errorDescription)) {
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayText", String.class), obj,
+								errorDescription);
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayCode", String.class), obj,
+								errorCodeActual);
+					} else {
+
 						getMethodRun(getSuperClassMethod(obj, "setResultDisplayText", String.class), obj, genericError);
 						getMethodRun(getSuperClassMethod(obj, "setResultDisplayCode", String.class), obj,
 								key.toString());
