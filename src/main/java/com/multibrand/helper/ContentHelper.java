@@ -651,7 +651,7 @@ public class ContentHelper implements Constants {
 		 String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
 		 if(StringUtils.isNotBlank(codeGroup)) {
 			 codeGroup =  baseURL.trim() +codeGroup.trim();
-			 imageURL = IMG_URL.replace("{0}", codeGroup);
+			 imageURL = codeGroup;
 		 }
 		 
 		 return imageURL;
