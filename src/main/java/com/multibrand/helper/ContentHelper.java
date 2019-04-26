@@ -539,9 +539,7 @@ public class ContentHelper implements Constants {
 
 		}
 		
-		 if(StringUtils.isNotBlank(OfferEFamily) && StringUtils.isNumeric(OfferEFamily)) {
-			 contractOffer.setOfferCode(OfferEFamily);
-		 } else {
+		 if(!StringUtils.isNotBlank(OfferEFamily)) {
 			 OfferEFamily = contractOffer.getOfferCode();
 		 }
 		 
