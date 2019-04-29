@@ -1,9 +1,11 @@
 package com.multibrand.resources;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -11,17 +13,19 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.bo.ContentBO;
 import com.multibrand.dto.request.ComponentByItemIdRequest;
 import com.multibrand.dto.request.ComponentByItemIdsRequest;
 import com.multibrand.dto.request.ContentOfferRequest;
 import com.multibrand.dto.request.ContentUserPrefRequest;
 import com.multibrand.dto.request.MessageContentRequest;
 import com.multibrand.service.ContentService;
-import com.multibrand.vo.response.contentResponse.MobileContentResponse;
 import com.multibrand.util.Constants;
 /*
  * @Author bbachin1
  */
+import com.multibrand.vo.request.ContractInfoRequest;
+import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 
 @Component
 @Path("personalize")
@@ -31,6 +35,12 @@ public class ContentResource implements Constants{
 	
 	@Autowired
 	private ContentService contentService;
+	
+	@Autowired
+	private ContentBO contentServiceBO;
+	
+	@Context
+	private HttpServletRequest httpRequest;
 	
 	
 	@POST
@@ -123,4 +133,24 @@ public class ContentResource implements Constants{
 		Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
 		return response;
 	}
+	
+	/**
+	 * @author SMarimuthu
+	 * @param request
+	 * @return
+	 */
+	@POST
+	@Path("gme/getPlanOffers")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON})
+	public Response getMultiBrandPlanOffers(ContractInfoRequest request){
+		
+		Response response = null;
+		logger.info("Start-[ContentResource-getMultiBrandPlanOffers]");
+		ContractOfferPlanContentResponse getContractInfoResponse = contentServiceBO.getMultiBrandPlanOffers(request, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(getContractInfoResponse).build();
+		logger.info("END-[ContentResource-getMultiBrandPlanOffers]");
+		return response;
+	}
+	
 }

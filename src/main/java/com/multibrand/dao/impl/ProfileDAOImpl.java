@@ -91,7 +91,7 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 		if(rows==1)
 			logger.info("Inside ProfileDAO:insertTransaction -DB call transactionId"+transactionId);
 		else
-			new SQLException("Record not inserted into DB");
+			logger.error("Record not inserted into DB");
 		
 		returnValue=transactionId;
 		}

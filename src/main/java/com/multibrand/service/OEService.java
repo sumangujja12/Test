@@ -254,7 +254,7 @@ public class OEService extends BaseAbstractService {
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 						
-					} else {
+					} else if(response!= null){
 						response.setResultCode(RESULT_CODE_SUCCESS);
 					}
 				}
@@ -319,7 +319,7 @@ public class OEService extends BaseAbstractService {
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 						
-					} else {
+					} else if(response!= null) {
 						response.setResultCode(RESULT_CODE_SUCCESS);
 					}
 				}

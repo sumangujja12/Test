@@ -25,7 +25,8 @@ import com.multibrand.vo.response.GenericResponse;
 
 /**
  * 
- * An aspect class that logs request, response details of every NRGREST API calls.
+ * An aspect class that logs request, response details of every NRGREST API
+ * calls.
  * 
  * @author Jenith (jyogapa1)
  * @version Since JDK 1.6, Spring 3.2 and Jersey 1.17 (1.x)
@@ -97,8 +98,7 @@ public class LoggerAspect {
 			logger.info("System Exception: " + ex.getMessage());
 			logger.error("ERROR LOG:", ex);
 			/**
-			 * Handling General/unknown/Runtime Exception which is thrown from
-			 * Resource
+			 * Handling General/unknown/Runtime Exception which is thrown from Resource
 			 */
 			GenericResponse genericResponse = new GenericResponse();
 			genericResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
@@ -107,8 +107,8 @@ public class LoggerAspect {
 		long endTime = System.currentTimeMillis();
 		long elapsedTime = endTime - startTime;
 
-		logger.info("Execution Time: " + elapsedTime + " ms "+"-API URL: " + CommonUtil.getFullURL(request));
-		//logger.info("Execution Time: " + elapsedTime + " milliseconds.");
+		logger.info("Execution Time: " + elapsedTime + " ms " + "-API URL: " + CommonUtil.getFullURL(request));
+		// logger.info("Execution Time: " + elapsedTime + " milliseconds.");
 		logger.info("Request: " + buildParameterMap(methodPoint));
 		if (output != null) {
 			// logger.info(output);
@@ -153,7 +153,7 @@ public class LoggerAspect {
 				if (parameters[i] != null && !(parameters[i] instanceof String)) {
 					parameterData.append((parameters[i]).toString());
 				} else {
-					if (CommonUtil.hasPrivacyData(paramKey)){
+					if (CommonUtil.hasPrivacyData(paramKey)) {
 						parameterData.append(paramKey + "=" + Constants.MASK_CHAR);
 					} else {
 						parameterData.append(paramKey + "=" + parameters[i]);
@@ -201,49 +201,64 @@ public class LoggerAspect {
 		Object obj = output.getEntity();
 		if (obj != null && obj.getClass().getSuperclass().isAssignableFrom(GenericResponse.class)) {
 			String resultCode;
-			try {
-				resultCode =  isParentMethod(obj, "getResultCode", null);
-				String errorCode = isParentMethod(obj, "getErrorCode", null);
+			try {				
+				resultCode =  isReplace(isParentMethod(obj, "getResultCode", null));
+				String errorCodeActual = isParentMethod(obj, "getErrorCode", null);
+				String errorCode = isReplace(errorCodeActual);
 				StringBuffer key = new StringBuffer();
 
-				if (StringUtils.isBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
-					if (!isReplace(resultCode).equalsIgnoreCase(Constants.ZERO)) {
-						if (resultCode.length() == 1) {
-							key.append(methodName);
-							key.append(Constants.STR_SYMBOL_EIPHEN);
-							key.append(Constants.ZERO);
-							key.append(isReplace(resultCode));
-						} else {
-							key.append(methodName);
-							key.append(Constants.STR_SYMBOL_EIPHEN);
-							key.append(isReplace(resultCode));
-						}
-					}
-
-				} else if (StringUtils.isNotBlank(errorCode) && StringUtils.isNotBlank(resultCode)) {
-
+				if (((StringUtils.isBlank(errorCode) || errorCode.equalsIgnoreCase(Constants.ZERO))
+					&& StringUtils.isNotBlank(resultCode)) && !resultCode.equalsIgnoreCase(Constants.ZERO)) {
 					if (resultCode.length() == 1) {
 						key.append(methodName);
 						key.append(Constants.STR_SYMBOL_EIPHEN);
 						key.append(Constants.ZERO);
-						key.append(isReplace(resultCode));
-						key.append(Constants.STR_SYMBOL_EIPHEN);
-						key.append(isReplace(errorCode));
-					}
-					else {
+						key.append(resultCode);
+					} else {
 						key.append(methodName);
 						key.append(Constants.STR_SYMBOL_EIPHEN);
-						key.append(isReplace(resultCode));
+						key.append(resultCode);
+					}
+
+				} else if ((StringUtils.isNotBlank(errorCode) && StringUtils.isNotBlank(resultCode))
+						&& (!resultCode.equalsIgnoreCase(Constants.ZERO)
+								&& !errorCode.equalsIgnoreCase(Constants.ZERO))) {
+					if (resultCode.length() == 1) {
+						key.append(methodName);
 						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(Constants.ZERO);
+						key.append(resultCode);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						if (errorCode.length() == 1) {
+							key.append(Constants.ZERO);
+						}
 						key.append(isReplace(errorCode));
+					} else {
+						key.append(methodName);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						key.append(resultCode);
+						key.append(Constants.STR_SYMBOL_EIPHEN);
+						if (errorCode.length() == 1) {
+							key.append(Constants.ZERO);
+						}
+						key.append(errorCode);
 					}
 
 				}
 				
 				if (StringUtils.isNotBlank(key.toString())) {
 					String genericError = errorContentHelper.getErrorMessage(key.toString());
+					String errorDescription = isParentMethod(obj, "getErrorDescription", null);
 
-					if (StringUtils.isNotBlank(genericError)) {
+					if ((StringUtils.isNotBlank(genericError)
+							&& genericError.equalsIgnoreCase(Constants.ERROR_CONTENT_DEFAULT))
+							&& StringUtils.isNotBlank(errorDescription)) {
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayText", String.class), obj,
+								errorDescription);
+						getMethodRun(getSuperClassMethod(obj, "setResultDisplayCode", String.class), obj,
+								errorCodeActual);
+					} else {
+
 						getMethodRun(getSuperClassMethod(obj, "setResultDisplayText", String.class), obj, genericError);
 						getMethodRun(getSuperClassMethod(obj, "setResultDisplayCode", String.class), obj,
 								key.toString());
@@ -278,40 +293,42 @@ public class LoggerAspect {
 		}
 
 	}
-private String isParentMethod(Object obj, String methodName, Class<?> param) {
-        String strReturn = "";
-        try {
-            if (param != null) {
-                strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName, param), obj, null);
-            }
+	
+	private String isParentMethod(Object obj, String methodName, Class<?> param) {
+		String strReturn = "";
+		try {
+			if (param != null) {
+				strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName, param), obj, null);
+			}
 
-            strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName), obj, null);
-        } catch (Exception e) {
-            logger.info("DOES NOT HAVE Method " + methodName + " in Object " + obj.toString()
-                    + " so going to look in parent");
-            try {
-                return (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
-            } catch (Exception e1) {
-                logger.info("DOES NOT HAVE Method in Child " + methodName + " in Object " + obj.toString()
-                        + " so return blank string");
-            }
-            return strReturn;
-        }
+			strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName), obj, null);
+		} catch (Exception e) {
+			logger.info("DOES NOT HAVE Method " + methodName + " in Object " + obj.toString()
+					+ " so going to look in parent");
+			try {
+				return (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
+			} catch (Exception e1) {
+				logger.info("DOES NOT HAVE Method in Child " + methodName + " in Object " + obj.toString()
+						+ " so return blank string");
+			}
+			return strReturn;
+		}
 
-        if (StringUtils.isBlank(strReturn)) {
-            logger.info("Value is null in child Method " + methodName + " in Object " + obj.toString()
-                    + " so going to look in parent");
-            try {
-                strReturn = (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
-            } catch (Exception e1) {
-                logger.info("DOES NOT HAVE Method in super class " + methodName + " in Object " + obj.toString()
-                        + " so return blank string");
-            }
-        }
+		if (StringUtils.isBlank(strReturn)) {
+			logger.info("Value is null in child Method " + methodName + " in Object " + obj.toString()
+					+ " so going to look in parent");
+			try {
+				strReturn = (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
+			} catch (Exception e1) {
+				logger.info("DOES NOT HAVE Method in super class " + methodName + " in Object " + obj.toString()
+						+ " so return blank string");
+			}
+		}
 
-        return strReturn;
+		return strReturn;
 
-    }
+	}
+	
 	private String isReplace(String str) {
 		if(StringUtils.isNotBlank(str)) {
 			String strPattern = "[^a-zA-Z0-9_-]";
@@ -321,4 +338,5 @@ private String isParentMethod(Object obj, String methodName, Class<?> param) {
 		}	
 		return str;
 	}
+
 }

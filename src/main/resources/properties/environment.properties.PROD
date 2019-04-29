@@ -119,3 +119,41 @@ ws.rest.ccs.google.product.set.url=http://sapcmp01:8080/sap/opu/odata/sap/ZE_WEB
 ######## GME Related #######
 GME.MYACCOUNT.LOGIN.URL=https://myaccount.greenmountain.com/
 GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount.greenmountain.com/ResetPassword/
+
+#Content server props
+gm.content.server.endpoint.url=http://txaixebxindxs01:13180/cd-service/gme/cdws/odata.svc/
+content.rest.server.url=http://txaixebxindxs02:13180/contentService/content/getContentData
+
+#Tempalte Id's
+re.tempalte.id_desktop=TODO
+re.tempalte.id_mobile=TODO
+pw.tempalte.id_desktop=TODO
+pw.tempalte.id_mobile=TODO
+ce.tempalte.id_desktop=TODO
+ce.tempalte.id_mobile=TODO
+gm.tempalte.id_desktop=11213
+gm.tempalte.id_mobile=TODO
+
+#Publication Id's
+re.pub.id_en=TODO
+re.pub.id_es=TODO
+pw.pub.id_en=TODO
+pw.pub.id_es=TODO
+ce.pub.id_en=TODO
+ce.pub.id_es=TODO
+gm.pub.id_en=123
+gm.pub.id_es=124
+
+re.taxonomy.id = TODO
+pw.taxonomy.id = TODO
+ce.taxonomy.id = TODO
+gm.taxonomy.id = TODO
+
+#Schema Id's
+re.prodoffer.schema.id=TODO
+re.prodbonus.schema.id=TODO
+pw.prodoffer.schema.id=TODO
+pw.prodbonus.schema.id=TODO
+gm.prodoffer.schema.id =11211
+gm.prodbonus.schema.id=TODO
+gm.base.url=https://signup.greenmountain.com 

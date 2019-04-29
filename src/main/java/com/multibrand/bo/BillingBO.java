@@ -223,7 +223,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			logger.info("Billing response after ");
 			
 			
-			if(profileResponse.getContractAccountDO()!= null)
+			if(profileResponse != null && profileResponse.getContractAccountDO()!= null)
 			{
 				AddressDO billingAddress = profileResponse.getContractAccountDO().getBillingAddressDO();
 				
