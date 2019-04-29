@@ -519,6 +519,7 @@ public class TOSService extends BaseAbstractService
 				}
 				
 				if(!isCcsResponseSuccess) {
+					tosEligibleNonEligibleProductsResponse = new TOSEligibleNonEligibleProductsResponse();
 					tosEligibleNonEligibleProductsResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 					tosEligibleNonEligibleProductsResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 				}

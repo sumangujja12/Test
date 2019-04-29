@@ -80,7 +80,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 			{
 				response= (ProfileResponse)responseMap.get("profileResponse");
 			} 
-			if(response.getContractAccountDO()!=null)
+			if(response != null && response.getContractAccountDO()!=null)
 			{
 				String lastNameFromProfile = response.getContractAccountDO().getStrExLastName();
 				String firstNameFromProfile=response.getContractAccountDO().getStrExFirstName();

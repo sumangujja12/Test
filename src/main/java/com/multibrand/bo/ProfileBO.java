@@ -610,12 +610,12 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		} catch (Exception e) {			
 			// Set failure code in response.
 			this.setUserInfoExceptionMessage(userResponse);
-
-			// Log transaction.
-			utilityloggerHelper.logTransaction(METHOD_NAME, false, requestParams, userResponse,
-					userResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId,
-					companyCode);
-			
+			if (userResponse != null) {
+				// Log transaction.
+				utilityloggerHelper.logTransaction(METHOD_NAME, false, requestParams, userResponse,
+						userResponse.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId,
+						companyCode);
+			}
 			// Log request and response.
 			super.logRequestAndResponse(logger, requestParams, userResponse);
 			
