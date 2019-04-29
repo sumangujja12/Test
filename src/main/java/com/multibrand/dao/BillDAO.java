@@ -34,5 +34,5 @@ public interface BillDAO
 	 public RetroEligibilityResponse checkRetroEligibility(RetroPopupRequestVO retroReq, String companyCode, String sessionId) throws Exception;
 	 public Map<String, Object> getThirdPartyPaymentLog(String companyCode, String accountNumber) throws Exception;
 	 public PayAccountDO savePayAccount(StoreUpdatePayAccountRequest request) throws Exception;
-	 public PayAccountDO modifiyPayAccount(StoreUpdatePayAccountRequest request) throws Exception;
+	 public PayAccountDO modifyPayAccount(StoreUpdatePayAccountRequest request) throws Exception;
 }

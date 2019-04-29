@@ -24,6 +24,8 @@ import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAccountDetailsRequest;
 import com.multibrand.domain.AllAccountDetailsResponse;
+import com.multibrand.domain.AllAlertsRequest;
+import com.multibrand.domain.AllAlertsResponse;
 import com.multibrand.domain.CirroStructureCallRequest;
 import com.multibrand.domain.CirroStructureCallResponse;
 import com.multibrand.domain.ContractDO;
@@ -1081,6 +1083,7 @@ public class ProfileService extends BaseAbstractService {
 			offerPriceDOList[count].setStartDate(zesAvgPrice.getDateStart());
 			offerPriceDOList[count].setEndDate(zesAvgPrice.getDateEnd());
 			offerPriceDOList[count].setPrice(zesAvgPrice.getAvgPrice().toString());
+			offerPriceDOList[count].setOfferPriceCode(zesAvgPrice.getString2());
 			count++;
 		}
 		offerDO.setOfferPriceEntry(offerPriceDOList);
@@ -1232,6 +1235,7 @@ public class ProfileService extends BaseAbstractService {
 	        		productDO[counter].setAccountNumber(products.getVkont());
 	        		productDO[counter].setBpNumber(products.getPartner());
 	        		productDO[counter].setEsid(products.getExtUi());
+					productDO[counter].setContractStartDate(products.getCtrtStartDate());
 	        		ZetPrdDetails zttypeprods = products.getProducts();
 	        		List<ZesPrdDetails> zvvasprodsList = zttypeprods.getItem();
 	        		Products[] product = new Products[zvvasprodsList.size()];
@@ -1800,8 +1804,46 @@ public class ProfileService extends BaseAbstractService {
 			logger.debug(XmlUtil.pojoToXML(request));
 			logger.debug(XmlUtil.pojoToXML(response));
 		}
+		return response;	
+	}
+	
+	/**
+	 * @author SMarimuthu
+	 * @param allAlertsRequest
+	 * @param sessionId
+	 * @return
+	 * @throws RemoteException
+	 */
+	public AllAlertsResponse getContractInfoParallel(AllAlertsRequest allAlertsRequest, String sessionId) throws RemoteException {
+
+		ProfileDomain proxy = getProfileDomainProxy();
+
+		long startTime = CommonUtil.getStartTime();
+		AllAlertsResponse response = null;
+		try {
+			response = proxy.getContractInfoInParallel(allAlertsRequest);
+		} catch (RemoteException ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
+			throw ex;
+		} catch (Exception ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
+			throw ex;
+		}
+		utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, response, response.getErrorMessage(),
+				CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
+		if (logger.isDebugEnabled()) {
+			logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
 		return response;
-		
 	}	
 	
 

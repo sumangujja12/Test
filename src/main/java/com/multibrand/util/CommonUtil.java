@@ -474,8 +474,6 @@ public class CommonUtil implements Constants {
 		java.util.Date date = null;
 		SimpleDateFormat sdf = new SimpleDateFormat(DateFrmt);
 		try {
-			System.out.println("strDate" + strDate);
-			System.out.println("DateFrmt" + DateFrmt);
 			date = sdf.parse(strDate);
 		} catch (ParseException e) {
 			e.printStackTrace();
@@ -483,7 +481,6 @@ public class CommonUtil implements Constants {
 		}
 
 		java.sql.Date sqlDate = new java.sql.Date(date.getTime());
-		System.out.println("sqlDate" + sqlDate.toString());
 		return sqlDate;
 	}
 
