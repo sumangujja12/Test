@@ -114,7 +114,6 @@ public class LoggerAspect {
 			// logger.info(output);
 			logger.info("Response status code: " + output.getStatus());
 			if (!CommonUtil.shouldExcludeResponseLog(methodName)) {
-				//mapper.setSerializationInclusion(JsonSerialize.Inclusion.NON_EMPTY);
 				logger.info("Response: " + mapper.writeValueAsString(output.getEntity()));
 			}
 		}
