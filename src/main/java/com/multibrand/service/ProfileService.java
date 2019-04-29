@@ -24,6 +24,8 @@ import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAccountDetailsRequest;
 import com.multibrand.domain.AllAccountDetailsResponse;
+import com.multibrand.domain.AllAlertsRequest;
+import com.multibrand.domain.AllAlertsResponse;
 import com.multibrand.domain.CirroStructureCallRequest;
 import com.multibrand.domain.CirroStructureCallResponse;
 import com.multibrand.domain.ContractDO;
@@ -1081,6 +1083,7 @@ public class ProfileService extends BaseAbstractService {
 			offerPriceDOList[count].setStartDate(zesAvgPrice.getDateStart());
 			offerPriceDOList[count].setEndDate(zesAvgPrice.getDateEnd());
 			offerPriceDOList[count].setPrice(zesAvgPrice.getAvgPrice().toString());
+			offerPriceDOList[count].setOfferPriceCode(zesAvgPrice.getString2());
 			count++;
 		}
 		offerDO.setOfferPriceEntry(offerPriceDOList);
@@ -1279,9 +1282,12 @@ public class ProfileService extends BaseAbstractService {
 	       	Bapiret2T bapiret2T = hTBapiret2.value;
 	
 	       	List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
-				if (listBapiret2 != null && listBapiret2.size() > 0) {
-					for (com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2 : listBapiret2){
-						if (bapiret2.getNumber() != null && bapiret2.getNumber().equals("000")) {
+	       	if(listBapiret2!=null && listBapiret2.size()>0)
+	       	{
+	       		for(com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2:listBapiret2)
+	       		{
+	       			if(bapiret2.getNumber()!=null && bapiret2.getNumber().equals("000"))
+	       			{
 	       				productResponse.setResultCode(RESULT_CODE_SUCCESS);
 	       				productResponse.setResultDescription(MSG_SUCCESS);
 					} else {
@@ -1799,7 +1805,46 @@ public class ProfileService extends BaseAbstractService {
 		}
 		return response;
 		
-	}	
+	}
+	
+	/**
+	 * @author SMarimuthu
+	 * @param allAlertsRequest
+	 * @param sessionId
+	 * @return
+	 * @throws RemoteException
+	 */
+	public AllAlertsResponse getContractInfoParallel(AllAlertsRequest allAlertsRequest, String sessionId) throws RemoteException {
+
+		ProfileDomain proxy = getProfileDomainProxy();
+
+		long startTime = CommonUtil.getStartTime();
+		AllAlertsResponse response = null;
+		try {
+			response = proxy.getContractInfoInParallel(allAlertsRequest);
+		} catch (RemoteException ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
+			throw ex;
+		} catch (Exception ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
+			throw ex;
+		}
+		utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, response, response.getErrorMessage(),
+				CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
+		if (logger.isDebugEnabled()) {
+			logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		return response;
+	}
 	
 
 }
