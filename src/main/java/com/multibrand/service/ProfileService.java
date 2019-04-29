@@ -1282,7 +1282,7 @@ public class ProfileService extends BaseAbstractService {
 
 				List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
 				if (listBapiret2 != null && listBapiret2.size() > 0) {
-					for (com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2 : listBapiret2) {
+					for (com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2 : listBapiret2){
 						if (bapiret2.getNumber() != null && bapiret2.getNumber().equals("000")) {
 							productResponse.setResultCode(RESULT_CODE_SUCCESS);
 							productResponse.setResultDescription(MSG_SUCCESS);
