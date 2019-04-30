@@ -1,14 +1,18 @@
 package com.multibrand.vo.response.billingResponse;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 
 @XmlRootElement(name="AutoPayDetails")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class AutoPayDetails {
 
 	private java.lang.String bankAccountNumber;
@@ -31,13 +35,11 @@ public class AutoPayDetails {
 
     private java.lang.String payment;
     
-
+    @XmlElement(name ="businessPartnerId")
+    @JsonProperty("businessPartnerId")
   	private String bpid;
     
-    // Adding businessPartnerId to resolve 500 internal server error
-    private String businessPartnerId;
-    
-
+   
 	public java.lang.String getBankAccountNumber() {
 		return bankAccountNumber;
 	}
@@ -127,14 +129,6 @@ public class AutoPayDetails {
 
 	public void setBpid(String bpid) {
 		this.bpid = bpid;
-	}
-
-	public String getBusinessPartnerId() {
-		return bpid;
-	}
-
-	public void setBusinessPartnerId(String businessPartnerId) {
-		this.businessPartnerId = bpid;
 	}
     
 
