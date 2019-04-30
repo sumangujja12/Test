@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAlertsOfferSwapInput;
 import com.multibrand.domain.AllAlertsRequest;
 import com.multibrand.domain.AllAlertsResponse;
@@ -40,6 +42,8 @@ import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.OfferPriceDO;
+import com.multibrand.vo.response.PendingSwapDO;
+import com.multibrand.vo.response.ServiceAddressDO;
 
 
 @Component
@@ -220,7 +224,8 @@ public class ContentHelper implements Constants {
 	 * @param contractList
 	 * @return
 	 */
-	public Set<String> getContractOffer(GetContractInfoResponse contractInfoResponse, AllAlertsResponse allRequestResponse, ContractOfferPlanContentResponse response) {
+	public Set<String> getContractOffer(GetContractInfoResponse contractInfoResponse,
+			AllAlertsResponse allRequestResponse, ContractOfferPlanContentResponse response) {
 		Set <String> offerCode = null;
 		OfferDO[] offerStrAr = contractInfoResponse.getEligibleOffersList();
 		List<ContractOffer> contractList = new LinkedList<ContractOffer>();
@@ -236,7 +241,8 @@ public class ContentHelper implements Constants {
 			}
 		}
 		
-		ContractOffer currentPlan = getContractCurrentPlan(allRequestResponse);
+		
+		ContractOffer currentPlan = getContractCurrentPlan(allRequestResponse, contractInfoResponse);
 		if(currentPlan != null && StringUtils.isNotBlank(currentPlan.getOfferCode())) {
 			response.setCurrentPlan(currentPlan);
 			//offerCode.add(currentPlan.getOfferCode());
@@ -357,7 +363,8 @@ public class ContentHelper implements Constants {
 	 * @param allRequestResponse
 	 * @return
 	 */
-	private ContractOffer getContractCurrentPlan(AllAlertsResponse allRequestResponse) {
+	private ContractOffer getContractCurrentPlan(AllAlertsResponse allRequestResponse,
+			GetContractInfoResponse contractInfoResponse) {
 		ContractOffer contractOffer = null;
 		com.multibrand.domain.OfferDO offerDO = getCurrentPlanOfferDO(allRequestResponse);
 		if (offerDO != null) {
@@ -368,7 +375,35 @@ public class ContentHelper implements Constants {
 			contractOffer.setNewContractBegins(returnContractDO.getStrContractStartDate());
 			contractOffer.setNewContractEnds(returnContractDO.getStrContractEndDate());
 			contractOffer.setAvgPrice(returnContractDO.getStrAvgPrice());
+			ContractDO contractDo = getContractDO(allRequestResponse);
+			AddressDO address = contractDo.getServiceAddressDO();
+			ServiceAddressDO serviceAddressDO = new ServiceAddressDO();
+			contractOffer.setServiceAddress(serviceAddressDO);
+			BeanUtils.copyProperties(address, serviceAddressDO);
+			PendingSwapDO pendingSwapDO = contractInfoResponse.getPendingSwapDO();
 			
+			if (pendingSwapDO != null ) {
+				
+				if (pendingSwapDO.getStrStartDate() != null
+						&& (!pendingSwapDO.getStrStartDate().equalsIgnoreCase(invalidDate)
+								&& !pendingSwapDO.getStrStartDate().equalsIgnoreCase(invalidDate1))) {
+					contractOffer.setSwapPendingDate(pendingSwapDO.getStrStartDate());
+				}
+				
+				if(pendingSwapDO.getStrOfferCode() != null)  {
+					Integer offerCode = 0;
+					try {
+						offerCode = Integer.parseInt(pendingSwapDO.getStrOfferCode());
+					} catch (NumberFormatException e) {
+						offerCode = 0;
+					}
+					
+					if(offerCode > 0) {
+						contractOffer.setPendingSwap(true);
+					}
+				}
+				
+			}
 			
 		}
 		return contractOffer;
@@ -478,6 +513,14 @@ public class ContentHelper implements Constants {
 		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
 		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
 		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
+		
+		if (offerDO.getAttribute1() != null && offerDO.getAttribute1().equalsIgnoreCase("R")) {
+			contractOffer.setRenewalOffers(true);
+		}
+		
+		if (offerDO.getAttribute1() != null && offerDO.getAttribute1().equalsIgnoreCase("P")) {
+			contractOffer.setSwapOffers(true);
+		}
 		
 		OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
 		if (offerPriceEntry != null) {
