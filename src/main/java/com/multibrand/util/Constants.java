@@ -447,6 +447,7 @@ public interface Constants {
 	 public static final String DT_SQL_FMT ="yyyy-MM-dd HH:mm:ss.sss";
 	 public static final String DT_SQL_FMT_DB ="yyyy-MM-dd HH:mm:ss";
 	 public static final String DT_FMT_REQUEST ="MM/dd/yyyy";
+	 public static final String DT_FMT_DD_MM_YYYY= "dd/MM/yyyy";
 	 
 	 public static final String WS_CONTACT_LOG ="X";
 	 public static final String WS_CONTACT_ACTIVITY_EN ="0810";

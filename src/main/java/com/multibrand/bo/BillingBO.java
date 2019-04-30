@@ -108,7 +108,6 @@ import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 
-import oracle.net.aso.e;
 
 /**
  * This BO class is to handle all the Billing Related API calls.
@@ -363,7 +362,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					ambEligRequest.setContractId(contractDO[0].getStrContractID());
 					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest,
 							sessionId);
-					if(ambEligibiltyCheckResponseVO.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)){
+					if(ambEligibiltyCheckResponseVO!=null && (ambEligibiltyCheckResponseVO.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS))){
 						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible()!=null)
 							averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
 						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive()!=null)
@@ -2731,9 +2730,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	
 	
-	public StoreUpdatePayAccountResponse modifiyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
+	public StoreUpdatePayAccountResponse modifyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
-		logger.info("START-[BillingBO-modifiyPayAccount]");
+		logger.info("START-[BillingBO-modifyPayAccount]");
 		
 		StoreUpdatePayAccountResponse response = new StoreUpdatePayAccountResponse();;
 		long startTime = CommonUtil.getStartTime();
@@ -2742,7 +2741,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		try {
 			
 			
-			payAccountDO = billDao.modifiyPayAccount(request);
+			payAccountDO = billDao.modifyPayAccount(request);
 			
 			if(payAccountDO != null){
 				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
@@ -2777,7 +2776,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
 		}
-		logger.info("END-[BillingBO-modifiyPayAccount]");
+		logger.info("END-[BillingBO-modifyPayAccount]");
 		return response;
 	}
 }

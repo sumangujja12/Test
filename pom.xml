@@ -15,7 +15,7 @@
 				<enabled>true</enabled>
 			</releases>
 			<snapshots>
-				<enabled>${snapshot-enabled}</enabled>
+			<enabled>${snapshot-enabled}</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
@@ -765,7 +765,7 @@
  		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-ccs-ws-client-nrg-rest</artifactId>
-			<version>3</version> 		
+			<version>4</version> 		
  		</dependency>
 		<dependency>
 			<groupId>com.nrg.util</groupId>

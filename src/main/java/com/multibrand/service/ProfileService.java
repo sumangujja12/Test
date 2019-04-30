@@ -1235,6 +1235,7 @@ public class ProfileService extends BaseAbstractService {
 	        		productDO[counter].setAccountNumber(products.getVkont());
 	        		productDO[counter].setBpNumber(products.getPartner());
 	        		productDO[counter].setEsid(products.getExtUi());
+					productDO[counter].setContractStartDate(products.getCtrtStartDate());
 	        		ZetPrdDetails zttypeprods = products.getProducts();
 	        		List<ZesPrdDetails> zvvasprodsList = zttypeprods.getItem();
 	        		Products[] product = new Products[zvvasprodsList.size()];

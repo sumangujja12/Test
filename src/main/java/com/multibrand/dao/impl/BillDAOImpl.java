@@ -900,7 +900,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 						payAccountDO.setAccountDuplicate(false);
 						flagNewPayAccount=false;
 						request.setOnlinePayAccountId(Long.parseLong(payAccounts.get(i).getOnlinePayAccountId()));
-						upatePayAccountDO = modifiyPayAccount(request);
+						upatePayAccountDO = modifyPayAccount(request);
 						if(upatePayAccountDO.isCallSuccess()){
 							logger.info("Reactivated Inactive Pay Account :::: " + request.getPayAccountToken());
 							payAccountDO.setRows(upatePayAccountDO.getRows());
@@ -918,7 +918,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 						payAccountDO.setAccountDuplicate(false);
 						flagNewPayAccount=false;
 						request.setOnlinePayAccountId(Long.parseLong(payAccounts.get(i).getOnlinePayAccountId()));
-						upatePayAccountDO = modifiyPayAccount(request);
+						upatePayAccountDO = modifyPayAccount(request);
 						if(upatePayAccountDO.isCallSuccess()){
 							logger.info("Stored Inactive Pay Account :::: " + request.getPayAccountToken());
 							payAccountDO.setRows(upatePayAccountDO.getRows());
@@ -1024,9 +1024,9 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
     	 * @throws Exception
     	 */      
      
-     public PayAccountDO modifiyPayAccount(StoreUpdatePayAccountRequest request) throws Exception{
+     public PayAccountDO modifyPayAccount(StoreUpdatePayAccountRequest request) throws Exception{
     		
-    		logger.info("BillDAO-modifiyPayAccount :: Start");	
+    		logger.info("BillDAO-modifyPayAccount :: Start");	
     		String query = null;
     		PayAccountDO payAccountDO = new PayAccountDO();
     		Object[] args = null;
@@ -1142,7 +1142,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
     			payAccountDO.setNickNameExistsFlag(true);
     			payAccountDO.setCallSuccess(false);
     		}	
-    		logger.info("BillDAO-modifiyPayAccount :: End");
+    		logger.info("BillDAO-modifyPayAccount :: End");
     		return payAccountDO;
     	}   
 }

@@ -1060,12 +1060,12 @@ public class BillingResource {
 	 */
 
 	@POST
-	@Path("modifiyPayAccount")
+	@Path("modifyPayAccount")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response modifiyPayAccount(StoreUpdatePayAccountRequest request){
+	public Response modifyPayAccount(StoreUpdatePayAccountRequest request){
 		Response response = null;		
-		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.modifiyPayAccount(request, httpRequest.getSession(true).getId());
+		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.modifyPayAccount(request, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(storeUpdatePayAccountResponse).build();
 		return response;
 }	
