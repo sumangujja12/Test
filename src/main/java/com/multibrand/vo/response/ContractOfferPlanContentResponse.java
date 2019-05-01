@@ -17,6 +17,7 @@ public class ContractOfferPlanContentResponse extends GenericResponse {
 	private boolean swapOffers = false;
 	private String swapPendingDate ="";
 	private boolean pendingSwap = false;
+	private String yearlyTreesAbsorbed = "";
 
 	/**
 	 * @return the plans
@@ -115,14 +116,19 @@ public class ContractOfferPlanContentResponse extends GenericResponse {
 	public void setPendingSwap(boolean pendingSwap) {
 		this.pendingSwap = pendingSwap;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	/**
+	 * @return the yearlyTreesAbsorbed
+	 */
+	public String getYearlyTreesAbsorbed() {
+		return yearlyTreesAbsorbed;
+	}
+
+	/**
+	 * @param yearlyTreesAbsorbed the yearlyTreesAbsorbed to set
+	 */
+	public void setYearlyTreesAbsorbed(String yearlyTreesAbsorbed) {
+		this.yearlyTreesAbsorbed = yearlyTreesAbsorbed;
+	}
 	
 }
