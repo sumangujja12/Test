@@ -77,6 +77,7 @@ import com.multibrand.vo.response.PayByCCResponse;
 import com.multibrand.vo.response.ProjectedBillResponseList;
 import com.multibrand.vo.response.RetroEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyCheckResponseVO;
+import com.multibrand.vo.response.billingResponse.AMBEligibiltyStatusResponse;
 import com.multibrand.vo.response.billingResponse.AMBSignupResponseVO;
 import com.multibrand.vo.response.billingResponse.ArMobileGMEResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
@@ -345,36 +346,27 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					{
 						logger.info("Inactive contract!! MVO Date :: " +contract.getStrMoveOutDate()+" or Company code is "+companyCode);
 					}
-						
-						// disabled this catch because this code is already in try catch block which handles response in case of exceptions of type Exception. Enabling this catch block wouldn't allow proper response generation for Exception scenario
-					/*}catch (Exception ex){
-						logger.error("Exception occured in date parsing!!" + ex);
-					}*/
 				
-					//Changes End for adding EFL, TOS & YRAAC codes
+						// Setting Average Billing Eligibility & Average Billing
+						// Enrollment
+						AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
+						ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber, 12));
+						ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
+						ambEligRequest.setCompanyCode(companyCode);
+						ambEligRequest.setContractId(contractDO[0].getStrContractID());
+
+						AMBEligibiltyStatusResponse aMBEligibiltyStatusResponse = getAmbEligibilityStatus(
+								ambEligRequest, sessionId);
+						if (aMBEligibiltyStatusResponse != null) {
+							accountDetailsResp.getContractAccountDO()
+									.setStrAvgBillFlag(aMBEligibiltyStatusResponse.getAvgBillFlag());
+							accountDetailsResp.getContractAccountDO()
+									.setStrAvlBillFlag(aMBEligibiltyStatusResponse.getAvlBillFlag());
+						} else {
+							accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(averageBillingEligibilty);
+							accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(averageBillingEnrolment);
+						}
 					
-					// Setting Average Billing Eligibility & Average Billing
-					// Enrollment
-					AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
-					ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber, 12));
-					ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
-					ambEligRequest.setCompanyCode(companyCode);
-					ambEligRequest.setContractId(contractDO[0].getStrContractID());
-					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest,
-							sessionId);
-					if(ambEligibiltyCheckResponseVO!=null && (ambEligibiltyCheckResponseVO.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS))){
-						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible()!=null)
-							averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
-						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive()!=null)
-							averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
-					}		
-					accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(
-							averageBillingEligibilty.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
-					accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(
-							averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
-					// Changes end for setting Average Billing Eligibility &
-					// Average Billing Enrollment
-				
 				}
 				
 
@@ -2778,5 +2770,39 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		logger.info("END-[BillingBO-modifyPayAccount]");
 		return response;
+	}
+	
+	/**
+	 * This method is responsible for getting eligibility
+	 * @param ambEligRequest
+	 * @param sessionId
+	 * @return
+	 */
+	public AMBEligibiltyStatusResponse getAmbEligibilityStatus(AMBEligibilityCheckRequest ambEligRequest,
+			String sessionId) {
+		String averageBillingEligibilty = AVG_BILL_FLAG_N;
+		String averageBillingEnrolment = AVG_BILL_FLAG_N;
+		AMBEligibiltyStatusResponse aMBEligibiltyStatusResponse = new AMBEligibiltyStatusResponse();
+		try {
+			AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest, sessionId);
+			if (ambEligibiltyCheckResponseVO != null && ambEligibiltyCheckResponseVO.getPrgStatus() != null) {
+				if (ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible() != null) {
+					averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
+					aMBEligibiltyStatusResponse
+							.setAvlBillFlag(averageBillingEligibilty.equalsIgnoreCase(AVG_BILL_FLAG_YES)
+									? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+				}
+				if (ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive() != null) {
+					averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
+					aMBEligibiltyStatusResponse
+							.setAvgBillFlag(averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES)
+									? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+				}
+			}
+		} catch (Exception e) {
+			aMBEligibiltyStatusResponse.setAvgBillFlag(averageBillingEligibilty);
+			aMBEligibiltyStatusResponse.setAvlBillFlag(averageBillingEnrolment);
+		}
+		return aMBEligibiltyStatusResponse;
 	}
 }
