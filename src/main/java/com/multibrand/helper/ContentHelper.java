@@ -236,18 +236,21 @@ public class ContentHelper implements Constants {
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					ContractOffer contractOffer = new ContractOffer();
 					offerCode.add(loadContractOfferResponse(contractOffer, offerVO));
+					if (offerVO.getAttribute1() != null && offerVO.getAttribute1().equalsIgnoreCase("R")) {
+						response.setRenewalOffers(true);
+					}
+
+					if (offerVO.getAttribute1() != null && offerVO.getAttribute1().equalsIgnoreCase("P")) {
+						response.setSwapOffers(true);
+					}
 					contractList.add(contractOffer);
 				}
 			}
 		}
 		
 		
-		ContractOffer currentPlan = getContractCurrentPlan(allRequestResponse, contractInfoResponse);
-		if(currentPlan != null && StringUtils.isNotBlank(currentPlan.getOfferCode())) {
-			response.setCurrentPlan(currentPlan);
-			//offerCode.add(currentPlan.getOfferCode());
-		}
-
+		getContractCurrentPlan(allRequestResponse, contractInfoResponse,response);
+		
 		return offerCode;
 	}
 
@@ -363,8 +366,8 @@ public class ContentHelper implements Constants {
 	 * @param allRequestResponse
 	 * @return
 	 */
-	private ContractOffer getContractCurrentPlan(AllAlertsResponse allRequestResponse,
-			GetContractInfoResponse contractInfoResponse) {
+	private void getContractCurrentPlan(AllAlertsResponse allRequestResponse,
+			GetContractInfoResponse contractInfoResponse,ContractOfferPlanContentResponse response) {
 		ContractOffer contractOffer = null;
 		com.multibrand.domain.OfferDO offerDO = getCurrentPlanOfferDO(allRequestResponse);
 		if (offerDO != null) {
@@ -378,7 +381,7 @@ public class ContentHelper implements Constants {
 			ContractDO contractDo = getContractDO(allRequestResponse);
 			AddressDO address = contractDo.getServiceAddressDO();
 			ServiceAddressDO serviceAddressDO = new ServiceAddressDO();
-			contractOffer.setServiceAddress(serviceAddressDO);
+			response.setServiceAddress(serviceAddressDO);
 			BeanUtils.copyProperties(address, serviceAddressDO);
 			PendingSwapDO pendingSwapDO = contractInfoResponse.getPendingSwapDO();
 			
@@ -387,7 +390,7 @@ public class ContentHelper implements Constants {
 				if (pendingSwapDO.getStrStartDate() != null
 						&& (!pendingSwapDO.getStrStartDate().equalsIgnoreCase(invalidDate)
 								&& !pendingSwapDO.getStrStartDate().equalsIgnoreCase(invalidDate1))) {
-					contractOffer.setSwapPendingDate(pendingSwapDO.getStrStartDate());
+					response.setSwapPendingDate(pendingSwapDO.getStrStartDate());
 				}
 				
 				if(pendingSwapDO.getStrOfferCode() != null)  {
@@ -399,14 +402,14 @@ public class ContentHelper implements Constants {
 					}
 					
 					if(offerCode > 0) {
-						contractOffer.setPendingSwap(true);
+						response.setPendingSwap(true);
 					}
 				}
 				
 			}
 			
 		}
-		return contractOffer;
+		response.setCurrentPlan(contractOffer);
 	}
 	
 	/**
@@ -513,14 +516,6 @@ public class ContentHelper implements Constants {
 		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
 		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
 		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
-		
-		if (offerDO.getAttribute1() != null && offerDO.getAttribute1().equalsIgnoreCase("R")) {
-			contractOffer.setRenewalOffers(true);
-		}
-		
-		if (offerDO.getAttribute1() != null && offerDO.getAttribute1().equalsIgnoreCase("P")) {
-			contractOffer.setSwapOffers(true);
-		}
 		
 		OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
 		if (offerPriceEntry != null) {
