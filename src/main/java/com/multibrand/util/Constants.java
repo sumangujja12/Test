@@ -1210,6 +1210,8 @@ public interface Constants {
 	 }
 	
 	 public static final String EMPTY_DATE = "00000000";
+	 public static final String EMPTY_OFFER = "00000000";
+	 public static final String RENEW_FLAG = "R";
 	 public static final String CUMTREES = "CUMTREES";
 	 public static final String NO_CONTRACT = "No Contracts found for the Given Account";
 }
