@@ -76,6 +76,7 @@ public class RetailServicesServiceImpl extends BaseAbstractService implements Re
 			}
 			
 			if(!isCcsResponseSuccess) {
+				checkReliantCustomerStatusResponse = new CheckReliantCustomerStatusResponse();
 				checkReliantCustomerStatusResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				checkReliantCustomerStatusResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
@@ -218,6 +219,7 @@ public class RetailServicesServiceImpl extends BaseAbstractService implements Re
 			}
 			
 			if(!isCcsResponseSuccess) {
+				checkZipSecurityEligibilityResponse = new CheckZipSecurityEligibilityResponse();
 				checkZipSecurityEligibilityResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				checkZipSecurityEligibilityResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}

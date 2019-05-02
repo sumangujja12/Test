@@ -10,6 +10,7 @@ public class OfferPriceDO
   private String startDate;
   private String endDate;
   private String price;
+  private String offerPriceCode;
   private String season;
 
   public String getPriceType()
@@ -49,4 +50,12 @@ public class OfferPriceDO
   public void setSeason(String season) {
     this.season = season;
   }
+	
+  public String getOfferPriceCode() {
+		return offerPriceCode;
+	}
+	
+  public void setOfferPriceCode(String offerPriceCode) {
+		this.offerPriceCode = offerPriceCode;
+	}
 }

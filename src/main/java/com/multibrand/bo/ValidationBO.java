@@ -839,11 +839,13 @@ public class ValidationBO extends BaseBO {
 		
 		} catch (RemoteException e) {
 			logger.error("SERVICE ERROR:validateReferralId:", e);
+			response = new ValidateCustReferralIdResponse();
 			response.setErrCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setErrMessage(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (Exception e) {
 			logger.error("SERVICE ERROR:validateReferralId:", e);
+			response = new ValidateCustReferralIdResponse();
 			response.setErrCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setErrMessage(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);

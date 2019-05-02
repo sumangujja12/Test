@@ -1,6 +1,5 @@
 package com.multibrand.vo.response.billingResponse;
 
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
@@ -34,8 +33,8 @@ public class AutoPayDetails {
 
   	private String bpid;
     
-    // Adding businessPartnerId to resolve 500 internal server error
-    private String businessPartnerId;
+   
+	private String businessPartnerId;
     
 
 	public java.lang.String getBankAccountNumber() {
@@ -128,14 +127,12 @@ public class AutoPayDetails {
 	public void setBpid(String bpid) {
 		this.bpid = bpid;
 	}
-
 	public String getBusinessPartnerId() {
 		return bpid;
 	}
-
 	public void setBusinessPartnerId(String businessPartnerId) {
 		this.businessPartnerId = bpid;
 	}
-    
+   
 
 }

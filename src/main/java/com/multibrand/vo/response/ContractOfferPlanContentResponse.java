@@ -10,23 +10,51 @@ import org.springframework.stereotype.Component;
 @XmlRootElement(name="ContractOfferPlanContentResponse")
 public class ContractOfferPlanContentResponse extends GenericResponse {
 		
-	private List<ContractOffer> contractOffer;
-	
-	
+	private ContractOffer currentPlan;
+	private List<ContractOffer> plans;
+	private ServiceAddressDO serviceAddress;
+
 	/**
-	 * @return the contractOffer
+	 * @return the plans
 	 */
-	public List<ContractOffer> getContractOffer() {
-		return contractOffer;
+	public List<ContractOffer> getPlans() {
+		return plans;
 	}
+
 	/**
-	 * @param contractOffer the contractOffer to set
+	 * @param plans the plans to set
 	 */
-	public void setContractOffer(List<ContractOffer> contractOffer) {
-		this.contractOffer = contractOffer;
+	public void setPlans(List<ContractOffer> plans) {
+		this.plans = plans;
 	}
-	
-	
+
+	/**
+	 * @return the currentPlan
+	 */
+	public ContractOffer getCurrentPlan() {
+		return currentPlan;
+	}
+
+	/**
+	 * @param currentPlan the currentPlan to set
+	 */
+	public void setCurrentPlan(ContractOffer currentPlan) {
+		this.currentPlan = currentPlan;
+	}
+
+	/**
+	 * @return the serviceAddress
+	 */
+	public ServiceAddressDO getServiceAddress() {
+		return serviceAddress;
+	}
+
+	/**
+	 * @param serviceAddress the serviceAddress to set
+	 */
+	public void setServiceAddress(ServiceAddressDO serviceAddress) {
+		this.serviceAddress = serviceAddress;
+	}
 	
 	
 }

@@ -384,8 +384,11 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("checkOptInOutEligibility", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
 		}
-		
-		utilityloggerHelper.logTransaction("checkOptInOutEligibility", false, request,response, response.getMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+		if (response != null) {
+			utilityloggerHelper.logTransaction("checkOptInOutEligibility", false, request, response,
+					response.getMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId,
+					request.getCompanyCode());
+		}
 		if(logger.isDebugEnabled()){
 			logger.debug(XmlUtil.pojoToXML(request));
 			logger.debug(XmlUtil.pojoToXML(response));

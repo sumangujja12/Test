@@ -253,7 +253,6 @@ public class OEService extends BaseAbstractService {
 							&& StringUtils.isBlank(response.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode())){
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-						
 					} else {
 						response.setResultCode(RESULT_CODE_SUCCESS);
 					}
@@ -319,7 +318,7 @@ public class OEService extends BaseAbstractService {
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 						
-					} else {
+					} else if(response!= null) {
 						response.setResultCode(RESULT_CODE_SUCCESS);
 					}
 				}

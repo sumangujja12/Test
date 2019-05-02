@@ -447,6 +447,7 @@ public interface Constants {
 	 public static final String DT_SQL_FMT ="yyyy-MM-dd HH:mm:ss.sss";
 	 public static final String DT_SQL_FMT_DB ="yyyy-MM-dd HH:mm:ss";
 	 public static final String DT_FMT_REQUEST ="MM/dd/yyyy";
+	 public static final String DT_FMT_DD_MM_YYYY= "dd/MM/yyyy";
 	 
 	 public static final String WS_CONTACT_LOG ="X";
 	 public static final String WS_CONTACT_ACTIVITY_EN ="0810";
@@ -1169,8 +1170,48 @@ public interface Constants {
 	 public static final String ERROR_CONTENT_CACHE ="ErrorContent";
 	 public static final String STR_SYMBOL_EIPHEN = "-";
 	 public static final String ERROR_CONTENT_DEFAULT = "Sorry! Something went wrong. Please try again";
+	 
 	 public static final String PAY_ACCOUNT_ALREADY_EXISTS = "Pay Account already Exists";
 	 public static final String NICKNAME_ALREADY_EXISTS = "Nickname already Exists";
 	 public static final String NO_ACCOUNT_UPDATE = "No Payment Account Update";
 	 public static final String ACCOUNT_ALREADY_ENROLLED = "Account already enrolled";
+	 
+	 public static final String GME_BASE_URL = "gm.base.url";
+	 public static final String IMG_URL = "<img src=\"{0}\"/>";
+	 public static final String INVALID_REQUEST = "Please provide valid request for {0}";
+	 public static final String CONTRACT_ID ="contractId";
+	 public static final String LANGUAGE_CODE ="languageCode";
+
+	 public static final String ZONE_ID_IN ="zoneId";
+	 public static final String PRODUCT_CONTENT_ONE ="100% Wind";
+	 public static final String PRODUCT_CONTENT_TWO ="15% Wind";
+	 public static final String PRODUCT_CONTENT_THREE ="95% Wind, 5% Solar";
+	 public static final String PRODUCT_CONTENT_FOUR ="100% Solar";
+	
+	 public static enum ENUM_PRODUCT_CONTENT {
+		ONE(1, PRODUCT_CONTENT_ONE), TWO(2, PRODUCT_CONTENT_TWO), THREE(3, PRODUCT_CONTENT_THREE),
+		FOUR(4, PRODUCT_CONTENT_FOUR);
+
+		public final String productContent;
+		public final Integer productKey;
+
+		ENUM_PRODUCT_CONTENT(Integer productKey, String productContent) {
+			this.productContent = productContent;
+			this.productKey = productKey;
+		}
+		
+		public String getProductContent() {
+			return productContent;
+		}
+
+		public int getProductKey() {
+			return productKey;
+		}
+	 }
+	
+	 public static final String EMPTY_DATE = "00000000";
+	 public static final String EMPTY_OFFER = "00000000";
+	 public static final String RENEW_FLAG = "R";
+	 public static final String CUMTREES = "CUMTREES";
+	 public static final String NO_CONTRACT = "No Contracts found for the Given Account";
 }

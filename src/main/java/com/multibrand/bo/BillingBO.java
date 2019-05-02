@@ -72,11 +72,16 @@ import com.multibrand.vo.request.SaveAMBSingupRequestVO;
 import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
 import com.multibrand.vo.response.AvgTempResponse;
 import com.multibrand.vo.response.CancelPaymentResponse;
+import com.multibrand.vo.response.EnvironmentImpacts;
+import com.multibrand.vo.response.EnvironmentImpactsResponse;
+import com.multibrand.vo.response.GetContractInfoResponse;
+import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.PayByBankResponse;
 import com.multibrand.vo.response.PayByCCResponse;
 import com.multibrand.vo.response.ProjectedBillResponseList;
 import com.multibrand.vo.response.RetroEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyCheckResponseVO;
+import com.multibrand.vo.response.billingResponse.AMBEligibiltyStatusResponse;
 import com.multibrand.vo.response.billingResponse.AMBSignupResponseVO;
 import com.multibrand.vo.response.billingResponse.ArMobileGMEResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
@@ -86,9 +91,12 @@ import com.multibrand.vo.response.billingResponse.BankDetails;
 import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.BillInfoResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
+import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
+import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
+import com.multibrand.vo.response.billingResponse.GMEContractDO;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
@@ -108,7 +116,6 @@ import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 
-import oracle.net.aso.e;
 
 /**
  * This BO class is to handle all the Billing Related API calls.
@@ -223,7 +230,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			logger.info("Billing response after ");
 			
 			
-			if(profileResponse.getContractAccountDO()!= null)
+			if(profileResponse != null && profileResponse.getContractAccountDO()!= null)
 			{
 				AddressDO billingAddress = profileResponse.getContractAccountDO().getBillingAddressDO();
 				
@@ -346,36 +353,27 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					{
 						logger.info("Inactive contract!! MVO Date :: " +contract.getStrMoveOutDate()+" or Company code is "+companyCode);
 					}
-						
-						// disabled this catch because this code is already in try catch block which handles response in case of exceptions of type Exception. Enabling this catch block wouldn't allow proper response generation for Exception scenario
-					/*}catch (Exception ex){
-						logger.error("Exception occured in date parsing!!" + ex);
-					}*/
 				
-					//Changes End for adding EFL, TOS & YRAAC codes
+						// Setting Average Billing Eligibility & Average Billing
+						// Enrollment
+						AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
+						ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber, 12));
+						ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
+						ambEligRequest.setCompanyCode(companyCode);
+						ambEligRequest.setContractId(contractDO[0].getStrContractID());
+
+						AMBEligibiltyStatusResponse aMBEligibiltyStatusResponse = getAmbEligibilityStatus(
+								ambEligRequest, sessionId);
+						if (aMBEligibiltyStatusResponse != null) {
+							accountDetailsResp.getContractAccountDO()
+									.setStrAvgBillFlag(aMBEligibiltyStatusResponse.getAvgBillFlag());
+							accountDetailsResp.getContractAccountDO()
+									.setStrAvlBillFlag(aMBEligibiltyStatusResponse.getAvlBillFlag());
+						} else {
+							accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(averageBillingEligibilty);
+							accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(averageBillingEnrolment);
+						}
 					
-					// Setting Average Billing Eligibility & Average Billing
-					// Enrollment
-					AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
-					ambEligRequest.setAccountNumber(CommonUtil.addLeadingZeros(accountNumber, 12));
-					ambEligRequest.setBpNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
-					ambEligRequest.setCompanyCode(companyCode);
-					ambEligRequest.setContractId(contractDO[0].getStrContractID());
-					AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest,
-							sessionId);
-					if(ambEligibiltyCheckResponseVO.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)){
-						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible()!=null)
-							averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
-						if(ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive()!=null)
-							averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
-					}		
-					accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(
-							averageBillingEligibilty.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
-					accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(
-							averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES) ? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
-					// Changes end for setting Average Billing Eligibility &
-					// Average Billing Enrollment
-				
 				}
 				
 
@@ -2731,9 +2729,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	
 	
-	public StoreUpdatePayAccountResponse modifiyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
+	public StoreUpdatePayAccountResponse modifyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
-		logger.info("START-[BillingBO-modifiyPayAccount]");
+		logger.info("START-[BillingBO-modifyPayAccount]");
 		
 		StoreUpdatePayAccountResponse response = new StoreUpdatePayAccountResponse();;
 		long startTime = CommonUtil.getStartTime();
@@ -2742,7 +2740,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		try {
 			
 			
-			payAccountDO = billDao.modifiyPayAccount(request);
+			payAccountDO = billDao.modifyPayAccount(request);
 			
 			if(payAccountDO != null){
 				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
@@ -2777,7 +2775,191 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
 		}
-		logger.info("END-[BillingBO-modifiyPayAccount]");
+		logger.info("END-[BillingBO-modifyPayAccount]");
 		return response;
+	}
+	
+	/**
+	 * 
+	 * *This method retrieve SWAP information for all COs for a given CA.
+	 * @author cuppala
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * @param sessionId
+	 * @return
+	 */
+	public CheckSwapEligibilityResponse checkSwapEligibility(String accountNumber, String companyCode, String brandName, String sessionId) {
+		
+		logger.info("START-[BillingBO-checkSwapEligibility]");
+		CheckSwapEligibilityResponse reponse = new CheckSwapEligibilityResponse();
+		
+		GetAccountDetailsResponse getAccountDetailsResponse = new GetAccountDetailsResponse();
+		EnvironmentImpactsResponse environmentImpactsResponse = new EnvironmentImpactsResponse();
+		GetContractInfoResponse getContractInfoResponse = new GetContractInfoResponse();
+		GMEContractAccountDO gmeContractAccountDO = new GMEContractAccountDO();
+		GMEContractDO[] gmeContractDO;
+		boolean isEligible = false;
+		boolean isRenewable = false;
+		ContractDO[] contractDO = new ContractDO[5];
+		OfferDO[] offerDO = new OfferDO[10];
+		try {	
+		getAccountDetailsResponse = getAccountDetails(accountNumber,companyCode,brandName,sessionId);
+		String youngTreesValue = null;
+		String bpNumber = getAccountDetailsResponse.getContractAccountDO().getStrBPNumber();
+		String esid = null;
+		String contractId = null;
+		String languageCode= "";
+		
+		contractDO = getAccountDetailsResponse.getContractAccountDO().getListOfContracts();
+		if(contractDO!=null){
+		if(contractDO.length>0){
+			gmeContractDO = new GMEContractDO[contractDO.length];
+			for(int i=0;i<contractDO.length;i++)	
+			{
+			esid = contractDO[i].getStrESIID();
+			contractId = contractDO[i].getStrContractID();
+				getContractInfoResponse = profileService.getContractInfo(accountNumber, bpNumber, esid,contractId, languageCode, companyCode, sessionId);
+				gmeContractDO[i] = new GMEContractDO();
+				gmeContractDO[i].setCurrentPlan(contractDO[i].getCurrentPlan());
+				gmeContractDO[i].setStrContractStartDate(contractDO[i].getStrContractStartDate());
+				gmeContractDO[i].setStrContractEndDate(contractDO[i].getStrContractEndDate());
+				gmeContractDO[i].setStrContractID(contractDO[i].getStrContractID());
+				gmeContractDO[i].setStrESIID(contractDO[i].getStrESIID());
+				gmeContractDO[i].setServiceAddressDO(contractDO[i].getServiceAddressDO());
+				gmeContractDO[i].setStrAvgPrice(contractDO[i].getStrAvgPrice());
+				gmeContractDO[i].setStrCancelFee(contractDO[i].getStrCancelFee());
+				gmeContractDO[i].setStrMoveOutDate(contractDO[i].getStrMoveOutDate());
+				gmeContractDO[i].setEflDocID(contractDO[i].getEflDocID());
+				gmeContractDO[i].setTosDocID(contractDO[i].getTosDocID());
+				gmeContractDO[i].setYraacDocID(contractDO[i].getYraacDocID());
+			if(getContractInfoResponse!=null){
+					offerDO = getContractInfoResponse.getEligibleOffersList();
+				if(getContractInfoResponse.getPendingSwapDO()!= null && !(getContractInfoResponse.getPendingSwapDO().getStrStartDate().equalsIgnoreCase(EMPTY_DATE))){
+				gmeContractDO[i].setSwapPendingDate(getContractInfoResponse.getPendingSwapDO().getStrStartDate());
+				}else{
+				gmeContractDO[i].setSwapPendingDate(null);
+				}
+				
+				if(getContractInfoResponse.getPendingSwapDO()!= null&&getContractInfoResponse.getPendingSwapDO().getStrOfferCode()!= null&&!(getContractInfoResponse.getPendingSwapDO().getStrOfferCode().equalsIgnoreCase(EMPTY_OFFER))){
+					gmeContractDO[i].setPendingSwap(true);	
+				}else{
+					gmeContractDO[i].setPendingSwap(false);
+				}
+				
+				if(getContractInfoResponse.getPendingSwapDO()!= null && (getContractInfoResponse.getPendingSwapDO().getStrOfferCode()!=null) && !(getContractInfoResponse.getPendingSwapDO().getStrOfferCode().equalsIgnoreCase(EMPTY_DATE))){
+						isEligible=false;
+					}else{
+						isEligible=true;
+						
+					}
+					if(offerDO!=null)
+					{
+						if(offerDO[0].getAttribute1()!=null&offerDO[0].getAttribute1().equalsIgnoreCase(RENEW_FLAG))
+							isRenewable = true;
+					}
+					if(offerDO!=null&&isEligible&&!(gmeContractDO[i].isPendingSwap()))
+					{
+						if(isRenewable){
+							gmeContractDO[i].setRenewalOffers(true);
+							gmeContractDO[i].setSwapOffers(false);
+						}else{
+							gmeContractDO[i].setRenewalOffers(false);
+						gmeContractDO[i].setSwapOffers(true);
+						}	
+					}else{
+						gmeContractDO[i].setRenewalOffers(false);
+						gmeContractDO[i].setSwapOffers(false);
+					}
+				}else{
+					gmeContractDO[i].setRenewalOffers(false);
+					gmeContractDO[i].setSwapOffers(false);
+					gmeContractDO[i].setSwapPendingDate(null);
+					gmeContractDO[i].setPendingSwap(false);
+					
+				}	
+					gmeContractAccountDO.setListOfContracts(gmeContractDO);
+					gmeContractAccountDO.setStrBPNumber(getAccountDetailsResponse.getContractAccountDO().getStrBPNumber());
+					gmeContractAccountDO.setStrCANumber(getAccountDetailsResponse.getContractAccountDO().getStrCANumber());
+					
+					reponse.setContractAccountDO(gmeContractAccountDO);
+				
+			}
+			
+			
+			environmentImpactsResponse = profileService.environmentImpacts(accountNumber,companyCode,sessionId);
+			if(environmentImpactsResponse!=null){
+			EnvironmentImpacts[] youngTrees = new EnvironmentImpacts[environmentImpactsResponse.getEnvironmentImpacts().length];
+			youngTrees = environmentImpactsResponse.getEnvironmentImpacts();
+		
+		
+			for(int j=0;j<youngTrees.length;)
+			{
+				if(youngTrees[j].getOperand().equalsIgnoreCase(CUMTREES))
+				{
+					youngTreesValue = youngTrees[j].getValue();
+					break;
+				}else
+				{
+					j++;
+				}
+				
+			}
+			}else{
+				youngTreesValue = DEFAULT_BIG_DECIMAL_VALUE;
+			}
+			
+			reponse.setYearlyTreesAbsorbed(youngTreesValue);
+			reponse.setResultCode(RESULT_CODE_SUCCESS);
+			reponse.setResultDescription(MSG_SUCCESS);
+		}
+			}else{
+				reponse.setResultCode(RESULT_CODE_TWO);
+				reponse.setResultDescription(NO_CONTRACT);
+			
+			}
+		} catch (Exception e) {
+			if(logger.isDebugEnabled())
+				logger.error(e);
+				reponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				reponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		logger.info("END-[BillingBO- checkSwapEligibility]");		
+		return reponse;
+			
+	}
+	
+	/**
+	 * This method is responsible for getting eligibility 
+	 * @param ambEligRequest
+	 * @param sessionId
+	 * @return
+	 */
+	public AMBEligibiltyStatusResponse getAmbEligibilityStatus(AMBEligibilityCheckRequest ambEligRequest,
+			String sessionId) {
+		String averageBillingEligibilty = AVG_BILL_FLAG_N;
+		String averageBillingEnrolment = AVG_BILL_FLAG_N;
+		AMBEligibiltyStatusResponse aMBEligibiltyStatusResponse = new AMBEligibiltyStatusResponse();
+		try {
+			AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = ambeligibilityCheck(ambEligRequest, sessionId);
+			if (ambEligibiltyCheckResponseVO != null && ambEligibiltyCheckResponseVO.getPrgStatus() != null) {
+				if (ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible() != null) {
+					averageBillingEligibilty = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanEligible();
+					aMBEligibiltyStatusResponse
+							.setAvlBillFlag(averageBillingEligibilty.equalsIgnoreCase(AVG_BILL_FLAG_YES)
+									? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+				}
+				if (ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive() != null) {
+					averageBillingEnrolment = ambEligibiltyCheckResponseVO.getPrgStatus().getAbPlanActive();
+					aMBEligibiltyStatusResponse
+							.setAvgBillFlag(averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES)
+									? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+				}
+			}
+		} catch (Exception e) {
+			aMBEligibiltyStatusResponse.setAvgBillFlag(averageBillingEligibilty);
+			aMBEligibiltyStatusResponse.setAvlBillFlag(averageBillingEnrolment);
+		}
+		return aMBEligibiltyStatusResponse;
 	}
 }
