@@ -45,12 +45,10 @@ public class ContractOffer implements Constants {
 	private String planType ="";
 	private String productContent ="";
 	
-	
 	@SerializedName("messageKey")
 	private String offerCode="";
 	private String errorMessage="";
 	private transient  String offerFamily ="";
-	 
 	
 	/**
 	 * @return the offerName
@@ -572,6 +570,8 @@ public class ContractOffer implements Constants {
 	 */
 	public void setOfferFamily(String offerFamily) {
 		this.offerFamily = offerFamily;
-	}	
+	}
+	
+	
 	
 }
