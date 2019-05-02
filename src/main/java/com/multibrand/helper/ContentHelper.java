@@ -42,7 +42,6 @@ import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.OfferPriceDO;
-import com.multibrand.vo.response.PendingSwapDO;
 import com.multibrand.vo.response.ServiceAddressDO;
 
 
@@ -236,13 +235,6 @@ public class ContentHelper implements Constants {
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					ContractOffer contractOffer = new ContractOffer();
 					offerCode.add(loadContractOfferResponse(contractOffer, offerVO));
-					if (offerVO.getAttribute1() != null && offerVO.getAttribute1().equalsIgnoreCase("R")) {
-						response.setRenewalOffers(true);
-					}
-
-					if (offerVO.getAttribute1() != null && offerVO.getAttribute1().equalsIgnoreCase("P")) {
-						response.setSwapOffers(true);
-					}
 					contractList.add(contractOffer);
 				}
 			}
@@ -383,30 +375,6 @@ public class ContentHelper implements Constants {
 			ServiceAddressDO serviceAddressDO = new ServiceAddressDO();
 			response.setServiceAddress(serviceAddressDO);
 			BeanUtils.copyProperties(address, serviceAddressDO);
-			PendingSwapDO pendingSwapDO = contractInfoResponse.getPendingSwapDO();
-			
-			if (pendingSwapDO != null ) {
-				
-				if (pendingSwapDO.getStrStartDate() != null
-						&& (!pendingSwapDO.getStrStartDate().equalsIgnoreCase(invalidDate)
-								&& !pendingSwapDO.getStrStartDate().equalsIgnoreCase(invalidDate1))) {
-					response.setSwapPendingDate(pendingSwapDO.getStrStartDate());
-				}
-				
-				if(pendingSwapDO.getStrOfferCode() != null)  {
-					Integer offerCode = 0;
-					try {
-						offerCode = Integer.parseInt(pendingSwapDO.getStrOfferCode());
-					} catch (NumberFormatException e) {
-						offerCode = 0;
-					}
-					
-					if(offerCode > 0) {
-						response.setPendingSwap(true);
-					}
-				}
-				
-			}
 			
 		}
 		response.setCurrentPlan(contractOffer);

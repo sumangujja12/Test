@@ -65,6 +65,7 @@ import com.multibrand.vo.response.billingResponse.BankCCInfoResponse;
 import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.BillInfoResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
+import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
@@ -1069,5 +1070,24 @@ public class BillingResource {
 		response = Response.status(200).entity(storeUpdatePayAccountResponse).build();
 		return response;
 }	
+	/**
+	 * This API is responsible to notify users if they have any pending SWAP offers.
+	 * @author Cuppala
+	 * @param accountNumber,companyCode,brandName;
+	 */
+
+	@POST
+	@Path("checkSwapEligibility")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response checkSwapEligibility(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName){
+		Response response = null;		
+		
+		CheckSwapEligibilityResponse checkSwapEligibilityResponse = billingBO.checkSwapEligibility(accountNumber,companyCode,brandName, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(checkSwapEligibilityResponse).build();
+				
+		return response;
+		
+	}
 
 }	

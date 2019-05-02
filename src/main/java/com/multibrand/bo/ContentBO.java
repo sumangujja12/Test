@@ -3,7 +3,9 @@ package com.multibrand.bo;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -19,8 +21,6 @@ import com.multibrand.service.ProfileService;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.ContractInfoRequest;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
-import com.multibrand.vo.response.EnvironmentImpacts;
-import com.multibrand.vo.response.EnvironmentImpactsResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.MonthlyUsageResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
@@ -65,7 +65,6 @@ public class ContentBO extends BaseBO implements Constants {
 			Set<String> offerCode = new TreeSet<String>();
 			offerCode = contentHelper.getContractOffer(contractInfoResponse, allRequestResponse,response);
 			contentHelper.getOfferContent(offerCode,response,request);
-			response.setYearlyTreesAbsorbed(getYearlyTreesAbsorbed(request, sessionId));
 			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -120,22 +119,13 @@ public class ContentBO extends BaseBO implements Constants {
 	 * @return
 	 * @throws Exception
 	 */
-	private String getYearlyTreesAbsorbed(ContractInfoRequest request, String sessionId) throws Exception {
-		String yearlyTreesAbsorbed ="";
-		EnvironmentImpactsResponse environmentResponse = profileService.environmentImpacts(request.getAccountNumber(),
+	private Map<String, String> getNoOfTreeServerd(ContractInfoRequest request, String sessionId) throws Exception {
+		GetContractInfoResponse contractInfoResponse = profileService.getContractInfo(request.getAccountNumber(),
+				request.getBpNumber(), request.getEsid(), request.getContractId(), request.getLanguageCode(),
 				request.getCompanyCode(), sessionId);
-		EnvironmentImpacts[]  environmentImpact = environmentResponse.getEnvironmentImpacts();
-		
-		if(environmentImpact == null) {
-			return yearlyTreesAbsorbed;
+		if (contractInfoResponse == null || contractInfoResponse.getEligibleOffersList() == null) {
+			return new LinkedHashMap<String, String>();
 		}
-		
-		for (EnvironmentImpacts environment : environmentImpact) {
-			if (environment.getOperand().equalsIgnoreCase(CUMTREES)) {
-				yearlyTreesAbsorbed = environment.getValue();
-				break;
-			}
-		}
-		return yearlyTreesAbsorbed;
+		return contentHelper.getContractNoOfTrees(contractInfoResponse.getEligibleOffersList());
 	}
 }

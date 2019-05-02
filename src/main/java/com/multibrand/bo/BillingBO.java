@@ -72,6 +72,10 @@ import com.multibrand.vo.request.SaveAMBSingupRequestVO;
 import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
 import com.multibrand.vo.response.AvgTempResponse;
 import com.multibrand.vo.response.CancelPaymentResponse;
+import com.multibrand.vo.response.EnvironmentImpacts;
+import com.multibrand.vo.response.EnvironmentImpactsResponse;
+import com.multibrand.vo.response.GetContractInfoResponse;
+import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.PayByBankResponse;
 import com.multibrand.vo.response.PayByCCResponse;
 import com.multibrand.vo.response.ProjectedBillResponseList;
@@ -87,9 +91,12 @@ import com.multibrand.vo.response.billingResponse.BankDetails;
 import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.BillInfoResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
+import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
+import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
+import com.multibrand.vo.response.billingResponse.GMEContractDO;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
@@ -2773,7 +2780,157 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	}
 	
 	/**
-	 * This method is responsible for getting eligibility
+	 * 
+	 * *This method retrieve SWAP information for all COs for a given CA.
+	 * @author cuppala
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * @param sessionId
+	 * @return
+	 */
+	public CheckSwapEligibilityResponse checkSwapEligibility(String accountNumber, String companyCode, String brandName, String sessionId) {
+		
+		logger.info("START-[BillingBO-checkSwapEligibility]");
+		CheckSwapEligibilityResponse reponse = new CheckSwapEligibilityResponse();
+		
+		GetAccountDetailsResponse getAccountDetailsResponse = new GetAccountDetailsResponse();
+		EnvironmentImpactsResponse environmentImpactsResponse = new EnvironmentImpactsResponse();
+		GetContractInfoResponse getContractInfoResponse = new GetContractInfoResponse();
+		GMEContractAccountDO gmeContractAccountDO = new GMEContractAccountDO();
+		GMEContractDO[] gmeContractDO;
+		boolean isEligible = false;
+		boolean isRenewable = false;
+		ContractDO[] contractDO = new ContractDO[5];
+		OfferDO[] offerDO = new OfferDO[10];
+		try {	
+		getAccountDetailsResponse = getAccountDetails(accountNumber,companyCode,brandName,sessionId);
+		String youngTreesValue = null;
+		String bpNumber = getAccountDetailsResponse.getContractAccountDO().getStrBPNumber();
+		String esid = null;
+		String contractId = null;
+		String languageCode= "";
+		
+		contractDO = getAccountDetailsResponse.getContractAccountDO().getListOfContracts();
+		if(contractDO!=null){
+		if(contractDO.length>0){
+			gmeContractDO = new GMEContractDO[contractDO.length];
+			for(int i=0;i<contractDO.length;i++)	
+			{
+			esid = contractDO[i].getStrESIID();
+			contractId = contractDO[i].getStrContractID();
+				getContractInfoResponse = profileService.getContractInfo(accountNumber, bpNumber, esid,contractId, languageCode, companyCode, sessionId);
+				gmeContractDO[i] = new GMEContractDO();
+				gmeContractDO[i].setCurrentPlan(contractDO[i].getCurrentPlan());
+				gmeContractDO[i].setStrContractStartDate(contractDO[i].getStrContractStartDate());
+				gmeContractDO[i].setStrContractEndDate(contractDO[i].getStrContractEndDate());
+				gmeContractDO[i].setStrContractID(contractDO[i].getStrContractID());
+				gmeContractDO[i].setStrESIID(contractDO[i].getStrESIID());
+				gmeContractDO[i].setServiceAddressDO(contractDO[i].getServiceAddressDO());
+				gmeContractDO[i].setStrAvgPrice(contractDO[i].getStrAvgPrice());
+				gmeContractDO[i].setStrCancelFee(contractDO[i].getStrCancelFee());
+				gmeContractDO[i].setStrMoveOutDate(contractDO[i].getStrMoveOutDate());
+				gmeContractDO[i].setEflDocID(contractDO[i].getEflDocID());
+				gmeContractDO[i].setTosDocID(contractDO[i].getTosDocID());
+				gmeContractDO[i].setYraacDocID(contractDO[i].getYraacDocID());
+			if(getContractInfoResponse!=null){
+					offerDO = getContractInfoResponse.getEligibleOffersList();
+				if(getContractInfoResponse.getPendingSwapDO()!= null && !(getContractInfoResponse.getPendingSwapDO().getStrStartDate().equalsIgnoreCase(EMPTY_DATE))){
+				gmeContractDO[i].setSwapPendingDate(getContractInfoResponse.getPendingSwapDO().getStrStartDate());
+				}else{
+				gmeContractDO[i].setSwapPendingDate(null);
+				}
+				
+				if(getContractInfoResponse.getPendingSwapDO()!= null&&getContractInfoResponse.getPendingSwapDO().getStrOfferCode()!= null&&!(getContractInfoResponse.getPendingSwapDO().getStrOfferCode().equalsIgnoreCase(EMPTY_OFFER))){
+					gmeContractDO[i].setPendingSwap(true);	
+				}else{
+					gmeContractDO[i].setPendingSwap(false);
+				}
+				
+				if(getContractInfoResponse.getPendingSwapDO()!= null && (getContractInfoResponse.getPendingSwapDO().getStrOfferCode()!=null) && !(getContractInfoResponse.getPendingSwapDO().getStrOfferCode().equalsIgnoreCase(EMPTY_DATE))){
+						isEligible=false;
+					}else{
+						isEligible=true;
+						
+					}
+					if(offerDO!=null)
+					{
+						if(offerDO[0].getAttribute1()!=null&offerDO[0].getAttribute1().equalsIgnoreCase(RENEW_FLAG))
+							isRenewable = true;
+					}
+					if(offerDO!=null&&isEligible&&gmeContractDO[i].isPendingSwap())
+					{
+						if(isRenewable){
+							gmeContractDO[i].setRenewalOffers(true);
+							gmeContractDO[i].setSwapOffers(false);
+						}else{
+							gmeContractDO[i].setRenewalOffers(false);
+						gmeContractDO[i].setSwapOffers(true);
+						}	
+					}else{
+						gmeContractDO[i].setRenewalOffers(false);
+						gmeContractDO[i].setSwapOffers(false);
+					}
+				}else{
+					gmeContractDO[i].setRenewalOffers(false);
+					gmeContractDO[i].setSwapOffers(false);
+					gmeContractDO[i].setSwapPendingDate(null);
+					gmeContractDO[i].setPendingSwap(false);
+					
+				}	
+					gmeContractAccountDO.setListOfContracts(gmeContractDO);
+					gmeContractAccountDO.setStrBPNumber(getAccountDetailsResponse.getContractAccountDO().getStrBPNumber());
+					gmeContractAccountDO.setStrCANumber(getAccountDetailsResponse.getContractAccountDO().getStrCANumber());
+					
+					reponse.setContractAccountDO(gmeContractAccountDO);
+				
+			}
+			
+			
+			environmentImpactsResponse = profileService.environmentImpacts(accountNumber,companyCode,sessionId);
+			if(environmentImpactsResponse!=null){
+			EnvironmentImpacts[] youngTrees = new EnvironmentImpacts[environmentImpactsResponse.getEnvironmentImpacts().length];
+			youngTrees = environmentImpactsResponse.getEnvironmentImpacts();
+		
+		
+			for(int j=0;j<youngTrees.length;)
+			{
+				if(youngTrees[j].getOperand().equalsIgnoreCase(CUMTREES))
+				{
+					youngTreesValue = youngTrees[j].getValue();
+					break;
+				}else
+				{
+					j++;
+				}
+				
+			}
+			}else{
+				youngTreesValue = DEFAULT_BIG_DECIMAL_VALUE;
+			}
+			
+			reponse.setYearlyTreesAbsorbed(youngTreesValue);
+			reponse.setResultCode(RESULT_CODE_SUCCESS);
+			reponse.setResultDescription(MSG_SUCCESS);
+		}
+			}else{
+				reponse.setResultCode(RESULT_CODE_TWO);
+				reponse.setResultDescription(NO_CONTRACT);
+			
+			}
+		} catch (Exception e) {
+			if(logger.isDebugEnabled())
+				logger.error(e);
+				reponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				reponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		logger.info("END-[BillingBO- checkSwapEligibility]");		
+		return reponse;
+			
+	}
+	
+	/**
+	 * This method is responsible for getting eligibility 
 	 * @param ambEligRequest
 	 * @param sessionId
 	 * @return
