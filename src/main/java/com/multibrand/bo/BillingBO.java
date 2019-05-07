@@ -1833,7 +1833,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		return response;
 	}
 	
-	
+	/**
+	 * @author 
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
 	public StoreUpdatePayAccountResponse updatePayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
 		logger.info("START-[BillingBO-updatePayAccount]");
@@ -2670,6 +2675,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-getPaymentMethods]");
 		return response;
 	}
+	
+	/** This method Save pay accounts for customer.
+	 * @author cuppala
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
 	public StoreUpdatePayAccountResponse savePayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
 		logger.info("START-[BillingBO-savePayAccount]");
@@ -2728,7 +2740,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	}
 	
 	
-	
+	/** This method update pay accounts in customer's wallet.
+	 * @author cuppala
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
 	public StoreUpdatePayAccountResponse modifyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
 		logger.info("START-[BillingBO-modifyPayAccount]");
@@ -2853,10 +2870,15 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						isEligible=true;
 						
 					}
-					if(offerDO!=null)
+						if(offerDO!=null)
 					{
-						if(offerDO[0].getAttribute1()!=null&offerDO[0].getAttribute1().equalsIgnoreCase(RENEW_FLAG))
-							isRenewable = true;
+						for (OfferDO Rvalue : offerDO)  
+				        { 
+				            if(Rvalue.getAttribute1()!=null && (StringUtils.isNotBlank(Rvalue.getAttribute1()))&& Rvalue.getAttribute1().equalsIgnoreCase(RENEW_FLAG)) 
+				            { 
+				            	isRenewable = true;
+				            } 
+				        } 
 					}
 					if(offerDO!=null&&isEligible&&!(gmeContractDO[i].isPendingSwap()))
 					{
