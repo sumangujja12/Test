@@ -484,7 +484,7 @@ public class ContentHelper implements Constants {
 		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
 		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
 		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
-		contractOffer.setPromoCode(contractOffer.getPromoCode());
+		contractOffer.setPromoCode(offerDO.getStrPromoCode());
 		
 		OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
 		if (offerPriceEntry != null) {
