@@ -941,6 +941,9 @@ public class ProfileService extends BaseAbstractService {
 							.getCampaignCd());
 					eligibleOffersList[count].setStrOfferCellTrackCode(zesEligoffer
 							.getPromoCd());
+					
+					eligibleOffersList[count].setStrPromoCode(zesEligoffer
+							.getPromoCd());
 					eligibleOffersList[count].setStrTarrifType(zesEligoffer
 							.getTariftyp());
 					//Start : CampEnv Detail & Segment Flag data
