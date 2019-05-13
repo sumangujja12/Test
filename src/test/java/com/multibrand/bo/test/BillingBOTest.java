@@ -16,6 +16,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.multibrand.bo.BillingBO;
 import com.multibrand.util.test.TestConstants;
+import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import org.junit.Before;
 
@@ -61,6 +62,30 @@ public class BillingBOTest implements TestConstants {
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(json, clazz);
 	}
+	
+	/**** Begining of modifyPayAccount test cases *****/
+	
+	@Test
+	public void modifyPayAccount_EditccExpMonth_Success(){
+		StoreUpdatePayAccountRequest storeUpdatePayAccountRequest = new StoreUpdatePayAccountRequest();
+		storeUpdatePayAccountRequest.setCcExpMonth("02");
+		storeUpdatePayAccountRequest.setNameOnAccount("James Jonah Jameson");
+		storeUpdatePayAccountRequest.setZipCode("12345");
+		storeUpdatePayAccountRequest.setContractAccountNumber("000072938063");
+		storeUpdatePayAccountRequest.setOnlinePayAccountId(6); 
+		storeUpdatePayAccountRequest.setActiveFlag("Y");
+		storeUpdatePayAccountRequest.setPayAccountToken("T651000698351711248");
+		storeUpdatePayAccountRequest.setLastFourDigit("");
+		storeUpdatePayAccountRequest.setVerifyCard("");
+		storeUpdatePayAccountRequest.setCcExpYear("2023");
+	
+		
+	}
+	
+	
+	/**** End of modifyPayAccount test cases *****/
+	
+	
 	
 	/**
 	 * Initializing class members and mocks
