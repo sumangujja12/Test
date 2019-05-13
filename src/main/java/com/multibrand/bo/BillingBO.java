@@ -2760,7 +2760,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			payAccountDO = billDao.modifyPayAccount(request);
 			
 			if(payAccountDO != null){
-				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
+				if((payAccountDO.isNickNameExistsFlag() && !(payAccountDO.getIsCCExpYearChange() || payAccountDO.getIsCCExpMonthChange()))){
 				response.setResultCode(RESULT_CODE_FOUR);
 				response.setResultDescription(NICKNAME_ALREADY_EXISTS);
 				response.setSuccessFlag(false);
