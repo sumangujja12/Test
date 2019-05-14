@@ -10,4 +10,6 @@ public interface TestConstants {
 	
 	//response mock json names
 	public static final String GET_ACCOUNT_DETAILS_JSON_RES  = "getAccountDetailsResponse.json";
-}
+	public static final String STORE_UPDATE_PAYACCOUNT_SUCCESS_RES   = "storeUpdatePayAccountResponse.json";
+	public static final String STORE_UPDATE_PAYACCOUNT_NICKNAME_ALREADY_EXISTING_RES = "storeUpdatePayAccountResponse_nicknamealreadyExist.json";
+} 

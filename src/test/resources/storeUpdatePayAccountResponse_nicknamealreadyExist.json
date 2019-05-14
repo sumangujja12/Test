@@ -1,0 +1,11 @@
+{
+    "successFlag": false,
+    "resultCode": "4",
+    "resultDescription": "Nickname already Exists",
+    "errorCode": "",
+    "errorDescription": "",
+    "statusCode": "00",
+    "messageCode": "",
+    "messageText": "",
+    "resultDisplayText": "Sorry! Something went wrong. Please try again"
+}
