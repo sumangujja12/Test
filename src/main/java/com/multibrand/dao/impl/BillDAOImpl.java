@@ -1058,17 +1058,19 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  								isNickNameExist = true;
  							}
  						}
- 						// check weather CC expiration month change
- 						if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
- 								&& !(activePayAccount.getCcExpMonth().equalsIgnoreCase(request.getCcExpMonth())))) {
- 							isCCExpMonthChange = true;
- 						}
+						if (activePayAccount.getOnlinePayAccountType() == "C") {
+							// check weather CC expiration month change
+							if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
+									&& !(activePayAccount.getCcExpMonth().equalsIgnoreCase(request.getCcExpMonth())))) {
+								isCCExpMonthChange = true;
+							}
 
- 						// check weather CC expiration year change
- 						if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
- 								&& !(activePayAccount.getCcExpYear().equalsIgnoreCase(request.getCcExpYear())))) {
- 							isCCExpYearChange = true;
- 						}
+							// check weather CC expiration year change
+							if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
+									&& !(activePayAccount.getCcExpYear().equalsIgnoreCase(request.getCcExpYear())))) {
+								isCCExpYearChange = true;
+							}
+						}
  					} // end for loop for the active pay accounts
  				}
  			}
