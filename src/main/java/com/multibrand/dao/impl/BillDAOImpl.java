@@ -1058,7 +1058,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  								isNickNameExist = true;
  							}
  						}
-						if (activePayAccount.getOnlinePayAccountType() == "C") {
+						if (activePayAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_CC)) {
 							// check weather CC expiration month change
 							if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
 									&& !(activePayAccount.getCcExpMonth().equalsIgnoreCase(request.getCcExpMonth())))) {
