@@ -664,5 +664,6 @@ public class ProfileResource {
 		response = Response.status(200).entity(passwordValidityResponse).build();
 		return response;
 	}
+	
 }	
 	

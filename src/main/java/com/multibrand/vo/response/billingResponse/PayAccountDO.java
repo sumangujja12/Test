@@ -6,9 +6,9 @@ public class PayAccountDO{
 	private boolean isAccountDuplicate;
 	private boolean isNickNameExistsFlag;
 	private boolean isCallSuccess;
-	private int rows;
 	private boolean isCCExpMonthChange;
 	private boolean isCCExpYearChange;
+	private int rows;
 	
 	public boolean getIsCCExpMonthChange() {
 		return isCCExpMonthChange;
@@ -22,7 +22,7 @@ public class PayAccountDO{
 	public void setCCExpYearChange(boolean isCCExpYearChange) {
 		this.isCCExpYearChange = isCCExpYearChange;
 	}
-	
+
 	public boolean isAccountDuplicate() {
 		return isAccountDuplicate;
 	}
