@@ -8,6 +8,14 @@ public class PayAccountDO{
 	private boolean isCallSuccess;
 	private boolean isCCExpMonthChange;
 	private boolean isCCExpYearChange;
+	private boolean isActiveFlagChange;
+	
+	public boolean getIsActiveFlagChange() {
+		return isActiveFlagChange;
+	}
+	public void setActiveFlagChange(boolean isActiveFlagChange) {
+		this.isActiveFlagChange = isActiveFlagChange;
+	}
 	private int rows;
 	
 	public boolean getIsCCExpMonthChange() {
