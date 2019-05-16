@@ -6,8 +6,31 @@ public class PayAccountDO{
 	private boolean isAccountDuplicate;
 	private boolean isNickNameExistsFlag;
 	private boolean isCallSuccess;
+	private boolean isCCExpMonthChange;
+	private boolean isCCExpYearChange;
+	private boolean isActiveFlagChange;
+	
+	public boolean getIsActiveFlagChange() {
+		return isActiveFlagChange;
+	}
+	public void setActiveFlagChange(boolean isActiveFlagChange) {
+		this.isActiveFlagChange = isActiveFlagChange;
+	}
 	private int rows;
 	
+	public boolean getIsCCExpMonthChange() {
+		return isCCExpMonthChange;
+	}
+	public void setCCExpMonthChange(boolean isCCExpMonthChange) {
+		this.isCCExpMonthChange = isCCExpMonthChange;
+	}
+	public boolean getIsCCExpYearChange() {
+		return isCCExpYearChange;
+	}
+	public void setCCExpYearChange(boolean isCCExpYearChange) {
+		this.isCCExpYearChange = isCCExpYearChange;
+	}
+
 	public boolean isAccountDuplicate() {
 		return isAccountDuplicate;
 	}

@@ -26,6 +26,7 @@ import com.multibrand.vo.response.EnvironmentImpactsResponse;
 import com.multibrand.vo.response.ForgotPasswordResponse;
 import com.multibrand.vo.response.ForgotUserNameResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
+import com.multibrand.vo.response.PasswordValidityResponse;
 import com.multibrand.vo.response.SecondaryNameResponse;
 import com.multibrand.vo.response.SendMailForNewServiceAddressAddResponse;
 import com.multibrand.vo.response.SendMailForPasswordChangeResponse;
@@ -651,5 +652,18 @@ public class ProfileResource {
 		logger.info("End-[ProfileResource-sendMailForNewServiceAddressAddition]");
 		return response;
 	}
+	
+	@POST
+	@Path("validatePassword")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response validatePassword(@FormParam("userName") String userName, @FormParam("password") String password,
+			@FormParam("companyCode") String companyCode) {
+		Response response = null;
+		PasswordValidityResponse passwordValidityResponse = profileBO.validatePassword(userName, password, companyCode);
+		response = Response.status(200).entity(passwordValidityResponse).build();
+		return response;
+	}
+	
 }	
 	

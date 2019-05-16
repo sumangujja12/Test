@@ -1025,124 +1025,147 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
     	 */      
      
      public PayAccountDO modifyPayAccount(StoreUpdatePayAccountRequest request) throws Exception{
-    		
-    		logger.info("BillDAO-modifyPayAccount :: Start");	
-    		String query = null;
-    		PayAccountDO payAccountDO = new PayAccountDO();
-    		Object[] args = null;
-    		boolean isExistsFlag = false;
-    		int rows = 0;
-    		
-    		String nName = request.getPayAccountNickName();
-    		
-    		if(request.getActiveFlag().equalsIgnoreCase(FLAG_Y)){
-    		
-    		PayAccountInfoResponse payAccountInfoResponse = getPayAccounts(request.getContractAccountNumber());
-  		
-    		if(payAccountInfoResponse != null){
-    			
-    			List<PayAccount> payAccounts = payAccountInfoResponse.getPayAccountList();
-	      		
-    			List<PayAccount> modifiedList = new ArrayList<PayAccount>();
-    			for(int i=0;i<payAccountInfoResponse.getPayAccountList().size();){
-	      			if(payAccounts.get(i).getActiveFlag().equalsIgnoreCase(FLAG_Y))
-	      			{
-	      				modifiedList.add(payAccounts.get(i));
-	      				i++;
-	      			}else{ 
-	      				i++;
-	      			}
-	      		}
-	      		   			
-  			if(modifiedList.size() != 0){
-  	
-  				for(PayAccount nickName : modifiedList){
-  					if((nickName.getPayAccountNickName().equalsIgnoreCase(nName))){
-  						isExistsFlag = true;
-  						break;
-  					}
-  				}
-  			} 	
-    		}
-    	}    		
-    		String currentDate = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-    		
-    		if(!((request.getActivationDate().isEmpty()) || (request.getActivationDate().trim().equalsIgnoreCase(""))|| (request.getActivationDate()==null)))
-    		{
-    			currentDate = request.getActivationDate();
-    		}
-    		
-    		Date updationDate = Calendar.getInstance().getTime();
-    		Date activationDate=CommonUtil.getSqlDate(currentDate,DT_FMT_REQUEST);
-    		
-    		if(!isExistsFlag){
-    		if(ONLINE_ACCOUNT_TYPE_CC.equalsIgnoreCase(request.getOnlinePayAccountType())){
-    		
-    	    query = "UPDATE ol_pay_account SET LAST_FOUR_DIGIT=?, NAME_ON_ACCOUNT=?, PAY_ACCOUNT_NICKNAME=?, PAY_ACCOUNT_TOKEN=?, "+
-                 " ZIP_CODE=?, ACTIVE_FLAG=?,ACTIVATION_DATE=?, CPDB_UPDATE_DATE=?, VERIFY_CARD=?, "
-                 + "CC_EXP_MONTH=?, CC_EXP_YEAR=?, CC_TYPE=?, AUTO_PAY=?"
-                 + " WHERE (USER_ACCOUNT_NUMBER=? AND ONLINE_PAY_ACCOUNT_ID=?) ";
-    	    
-    	    args = new Object[15];
-	 		args[0] = request.getLastFourDigit();
-	 		args[1] = request.getNameOnAccount();
-	 		args[2] = request.getPayAccountNickName();
-	 		args[3] = request.getPayAccountToken();
-	 		args[4] = request.getZipCode();
-	 		args[5] = request.getActiveFlag();
-	 		args[6] = activationDate;
-	 		args[7] = updationDate;
-	 		args[8] = request.getVerifyCard();
-	 		args[9] = request.getCcExpMonth();
-	 		args[10] = request.getCcExpYear();
-	 		args[11] = request.getCcType();
-	 		args[12] = request.getAutoPay();
-	 		args[13] = request.getContractAccountNumber();
-	 		args[14] = request.getOnlinePayAccountId();
- 		
- 		
- 			rows = gmeResJdbcTemplate.update(query, args);
- 			logger.info("Rows updated in DB : " + rows);
- 			payAccountDO.setRows(rows);
-    		payAccountDO.setNickNameExistsFlag(false);
-    		payAccountDO.setCallSuccess(true);
-    		}
-    		
-    		if(ONLINE_ACCOUNT_TYPE_BANK.equalsIgnoreCase(request.getOnlinePayAccountType())){
-    	   		
-    	   	    query = "UPDATE ol_pay_account SET LAST_FOUR_DIGIT=?, NAME_ON_ACCOUNT=?, PAY_ACCOUNT_NICKNAME=?, PAY_ACCOUNT_TOKEN=?, "+
-    	                " ZIP_CODE=?, ACTIVE_FLAG=?, ACTIVATION_DATE=?, CPDB_UPDATE_DATE=?, VERIFY_CARD=?, "
-    	                + "ROUTING_NUMBER=?, AUTO_PAY=?,PAYMENT_INSTITUTION_NAME=?"
-    	                + " WHERE (USER_ACCOUNT_NUMBER=? AND ONLINE_PAY_ACCOUNT_ID=?) ";
-    	   	    
-    	   	 args = new Object[14];
-	  		args[0] = request.getLastFourDigit();
-	  		args[1] = request.getNameOnAccount();
-	  		args[2] = request.getPayAccountNickName();
-	  		args[3] = request.getPayAccountToken();
-	  		args[4] = request.getZipCode();
-	  		args[5] = request.getActiveFlag();
-	  		args[6] = activationDate;
-	  		args[7] = updationDate;
-	  		args[8] = request.getVerifyCard();
-	  		args[9] = request.getRoutingNumber();
-	  		args[10] = request.getAutoPay();
-	  		args[11] = request.getPaymentInstitutionName();
-	  		args[12] = request.getContractAccountNumber();
-	  		args[13] = request.getOnlinePayAccountId();
-          
-  			rows = gmeResJdbcTemplate.update(query, args);
-    			logger.info("Rows updated in DB : " + rows);
-    		payAccountDO.setRows(rows);
-    		payAccountDO.setNickNameExistsFlag(false);
-    		payAccountDO.setCallSuccess(true);
-    	   		}	
-    		}else
-    		{
-    			payAccountDO.setNickNameExistsFlag(true);
-    			payAccountDO.setCallSuccess(false);
-    		}	
-    		logger.info("BillDAO-modifyPayAccount :: End");
-    		return payAccountDO;
-    	}   
+    	 logger.info("BillDAO-modifyPayAccount :: Start");
+ 		String query = null;
+ 		PayAccountDO payAccountDO = new PayAccountDO();
+ 		Object[] args = null;
+ 		boolean isNickNameExist = false;
+ 		boolean isCCExpMonthChange = false;
+ 		boolean isCCExpYearChange = false;
+ 		boolean isActiveFlagChange = false;
+ 		int rows = 0;
+
+ 		String nName = request.getPayAccountNickName();
+
+ 		if (request.getActiveFlag().equalsIgnoreCase(FLAG_Y)) {
+
+ 			PayAccountInfoResponse payAccountInfoResponse = getPayAccounts(request.getContractAccountNumber());
+
+ 			if (payAccountInfoResponse != null) {
+ 				List<PayAccount> payAccountList = payAccountInfoResponse.getPayAccountList();
+ 				List<PayAccount> activePayAccountList = new ArrayList<PayAccount>();
+
+ 				for (PayAccount payAccount : payAccountList)
+ 					if (payAccount.getActiveFlag().equalsIgnoreCase(FLAG_Y)) {
+ 						activePayAccountList.add(payAccount);
+ 					}
+
+ 				if (!activePayAccountList.isEmpty()) {
+
+ 					for (PayAccount activePayAccount : activePayAccountList) {
+ 						if (activePayAccount.getPayAccountNickName() != null) {
+ 							// Check weather nick name change or not
+ 							if ((activePayAccount.getPayAccountNickName().equalsIgnoreCase(nName))) {
+ 								isNickNameExist = true;
+ 							}
+ 						}
+						if (activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
+								&& !(activePayAccount.getActiveFlag().equalsIgnoreCase(request.getActiveFlag()))) {
+							isActiveFlagChange = true;
+						}
+						if (activePayAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_CC)) {
+							// check weather CC expiration month change
+							if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
+									&& !(activePayAccount.getCcExpMonth().equalsIgnoreCase(request.getCcExpMonth())))) {
+								isCCExpMonthChange = true;
+							}
+
+							// check weather CC expiration year change
+							if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
+									&& !(activePayAccount.getCcExpYear().equalsIgnoreCase(request.getCcExpYear())))) {
+								isCCExpYearChange = true;
+							}
+						}
+ 					} // end for loop for the active pay accounts
+ 				}
+ 			}
+ 		}
+ 		String currentDate = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+
+ 		if (!((request.getActivationDate().isEmpty()) || (request.getActivationDate().trim().equalsIgnoreCase(""))
+ 				|| (request.getActivationDate() == null))) {
+ 			currentDate = request.getActivationDate();
+ 		}
+
+ 		Date updationDate = Calendar.getInstance().getTime();
+ 		Date activationDate = CommonUtil.getSqlDate(currentDate, DT_FMT_REQUEST);
+
+ 		if (!isNickNameExist || isCCExpMonthChange || isCCExpYearChange || isActiveFlagChange) {
+ 			if (ONLINE_ACCOUNT_TYPE_CC.equalsIgnoreCase(request.getOnlinePayAccountType())) {
+
+ 				query = "UPDATE ol_pay_account SET LAST_FOUR_DIGIT=?, NAME_ON_ACCOUNT=?, PAY_ACCOUNT_NICKNAME=?, PAY_ACCOUNT_TOKEN=?, "
+ 						+ " ZIP_CODE=?, ACTIVE_FLAG=?,ACTIVATION_DATE=?, CPDB_UPDATE_DATE=?, VERIFY_CARD=?, "
+ 						+ "CC_EXP_MONTH=?, CC_EXP_YEAR=?, CC_TYPE=?, AUTO_PAY=?"
+ 						+ " WHERE (USER_ACCOUNT_NUMBER=? AND ONLINE_PAY_ACCOUNT_ID=?) ";
+
+ 				args = new Object[15];
+ 				args[0] = request.getLastFourDigit();
+ 				args[1] = request.getNameOnAccount();
+ 				args[2] = request.getPayAccountNickName();
+ 				args[3] = request.getPayAccountToken();
+ 				args[4] = request.getZipCode();
+ 				args[5] = request.getActiveFlag();
+ 				args[6] = activationDate;
+ 				args[7] = updationDate;
+ 				args[8] = request.getVerifyCard();
+ 				args[9] = request.getCcExpMonth();
+ 				args[10] = request.getCcExpYear();
+ 				args[11] = request.getCcType();
+ 				args[12] = request.getAutoPay();
+ 				args[13] = request.getContractAccountNumber();
+ 				args[14] = request.getOnlinePayAccountId();
+
+ 				rows = gmeResJdbcTemplate.update(query, args);
+ 				logger.info("Rows updated in DB : " + rows);
+ 				payAccountDO.setRows(rows);
+ 				payAccountDO.setNickNameExistsFlag(isNickNameExist);
+ 				payAccountDO.setCCExpMonthChange(isCCExpMonthChange);
+ 				payAccountDO.setCCExpYearChange(isCCExpYearChange);
+ 				payAccountDO.setActiveFlagChange(isActiveFlagChange);
+ 				payAccountDO.setCallSuccess(true);
+ 			}
+
+ 			if (ONLINE_ACCOUNT_TYPE_BANK.equalsIgnoreCase(request.getOnlinePayAccountType())) {
+
+ 				query = "UPDATE ol_pay_account SET LAST_FOUR_DIGIT=?, NAME_ON_ACCOUNT=?, PAY_ACCOUNT_NICKNAME=?, PAY_ACCOUNT_TOKEN=?, "
+ 						+ " ZIP_CODE=?, ACTIVE_FLAG=?, ACTIVATION_DATE=?, CPDB_UPDATE_DATE=?, VERIFY_CARD=?, "
+ 						+ "ROUTING_NUMBER=?, AUTO_PAY=?,PAYMENT_INSTITUTION_NAME=?"
+ 						+ " WHERE (USER_ACCOUNT_NUMBER=? AND ONLINE_PAY_ACCOUNT_ID=?) ";
+
+ 				args = new Object[14];
+ 				args[0] = request.getLastFourDigit();
+ 				args[1] = request.getNameOnAccount();
+ 				args[2] = request.getPayAccountNickName();
+ 				args[3] = request.getPayAccountToken();
+ 				args[4] = request.getZipCode();
+ 				args[5] = request.getActiveFlag();
+ 				args[6] = activationDate;
+ 				args[7] = updationDate;
+ 				args[8] = request.getVerifyCard();
+ 				args[9] = request.getRoutingNumber();
+ 				args[10] = request.getAutoPay();
+ 				args[11] = request.getPaymentInstitutionName();
+ 				args[12] = request.getContractAccountNumber();
+ 				args[13] = request.getOnlinePayAccountId();
+
+ 				rows = gmeResJdbcTemplate.update(query, args);
+ 				logger.info("Rows updated in DB : " + rows);
+ 				payAccountDO.setRows(rows);
+ 				payAccountDO.setNickNameExistsFlag(isNickNameExist);
+ 				payAccountDO.setCCExpMonthChange(isCCExpMonthChange);
+ 				payAccountDO.setCCExpYearChange(isCCExpYearChange);
+ 				payAccountDO.setActiveFlagChange(isActiveFlagChange);
+ 				payAccountDO.setCallSuccess(true);
+ 			}
+ 		} else {
+ 			payAccountDO.setNickNameExistsFlag(isNickNameExist);
+ 			payAccountDO.setCCExpMonthChange(isCCExpMonthChange);
+			payAccountDO.setCCExpYearChange(isCCExpYearChange);
+			payAccountDO.setActiveFlagChange(isActiveFlagChange);
+ 			payAccountDO.setCallSuccess(false);
+ 		}
+ 		logger.info("BillDAO-modifyPayAccount :: End");
+ 		return payAccountDO;
+
+     }   
 }
