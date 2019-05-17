@@ -61,10 +61,10 @@ public class WebAgentResource {
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response updatePaperFreeBilling(@FormParam("accountNumber") String accountNumber,@FormParam("flag") String flag,
-			@FormParam("companyCode") String companyCode){
+			@FormParam("companyCode") String companyCode, @FormParam("bpNumber")String bpNumber, @FormParam("source")String source){
 		
 		Response response = null;
-		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = billingBO.updatePaperFreeBilling(accountNumber,flag,companyCode, httpRequest.getSession(true).getId());
+		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = billingBO.updatePaperFreeBilling(accountNumber,flag,companyCode, httpRequest.getSession(true).getId(),bpNumber,source);
 		response = Response.status(200).entity(updatePaperFreeBillingResponse).build();
 		return response;
 		
