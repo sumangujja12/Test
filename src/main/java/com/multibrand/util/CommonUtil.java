@@ -1868,5 +1868,10 @@ public class CommonUtil implements Constants {
 		return input;
 	}
 	
+	public static String getCurrentDateandTime() {
+		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+		Date date = new Date();
+		return dateFormat.format(date); //05/07/2019 06:53:11 PM
+	}
 	
 }

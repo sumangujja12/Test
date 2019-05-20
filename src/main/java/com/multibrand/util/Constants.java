@@ -1211,7 +1211,22 @@ public interface Constants {
 	
 	 public static final String EMPTY_DATE = "00000000";
 	 public static final String EMPTY_OFFER = "00000000";
-	 public static final String RENEW_FLAG = "R";
+	 public static final String PROACTIVE_FLAG = "P";
 	 public static final String CUMTREES = "CUMTREES";
 	 public static final String NO_CONTRACT = "No Contracts found for the Given Account";
+
+	public static final String METHOD_SYNCHRONIZE_CSS_CONTACT_LOG = "updateContactLog";
+
+	public static final String CONTACT_LOG_CC_CONTACT_CLASS = "1400";
+	public static final String CONTACT_LOG_BANK_CONTACT_CLASS = "400";
+	public static final String CONTACT_LOG_SWAP_CONTACT_CLASS = "2000";
+
+	public static final String CONTACT_LOG_ENROLL_CONTACT_ACTIVITY = "700";
+	public static final String CONTACT_LOG_DEENROLL_CONTACT_ACTIVITY = "750";
+	public static final String CONTACT_LOG_SWAP_CONTACT_ACTIVITY = "92";
+
+	public static final String CONTACT_LOG_COMMIT_FLAG = "X";
+	public static final String CONTACT_LOG_CONTACT_TYPE = "014";
+	public static final String CONTACT_LOG_DIVISION = "10";
+	 
 }
