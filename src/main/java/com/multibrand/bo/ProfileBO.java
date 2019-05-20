@@ -1,8 +1,6 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -12,8 +10,6 @@ import java.util.Map;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
-import javax.ws.rs.FormParam;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,6 +24,7 @@ import com.multibrand.domain.ChangeUsrNameResponse;
 import com.multibrand.domain.CirroStructureCallRequest;
 import com.multibrand.domain.CirroStructureCallResponse;
 import com.multibrand.domain.ContractAccountDO;
+import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.EsidProfileResponse;
@@ -53,6 +50,7 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.proxy.ProfileProxy;
 import com.multibrand.service.LDAPService;
 import com.multibrand.service.ProfileService;
+import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnvMessageReader;
@@ -117,11 +115,10 @@ public class ProfileBO extends BaseBO {
 	private BPAccountContractPayHelper bpAccountPayHelper;
 		
 	@Autowired
-	private ProfileProxy profileProxy;
-	
-
-	@Autowired
 	private BillingBO billingBO;
+	
+	@Autowired
+	private TOSService tosService;
 	
 	@Autowired
 	protected EnvMessageReader envMessageReader;
@@ -1085,7 +1082,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 	
 	public ProductUpdateResponse productUpdate(String accountNumber, String action ,
 			 String objectId, String extUi, String enrollType ,
-			 String requestDate , String manuPartNo, String companyCode, String sessionId)
+			 String requestDate , String manuPartNo, String companyCode, String sessionId, String bpNumber, String source)
 	{
 		ProductUpdateResponse productResponse = new ProductUpdateResponse();
 		try
@@ -1104,6 +1101,57 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			productResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(),productResponse);
 		}
+		
+		if(productResponse.getResultCode()!=null && bpNumber!=null && source!=null &&
+				(productResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||productResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode) && source.equalsIgnoreCase(MOBILE)){
+			logger.info("Inside productUpdate:updateContactLog(...) block - in ProfileBO");
+			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+			cssUpdateLogRequest.setBusinessPartnerNumber(bpNumber);
+			cssUpdateLogRequest.setContractAccountNumber(accountNumber);
+			cssUpdateLogRequest.setContactClass(CONTACT_LOG_SUN_CULB_TX_DRIVER_CONTACT_CLASS);
+			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+			
+			if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(SUN_CLUB)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " enrolled in Sun Club on +" + CommonUtil.getCurrentDateandTime() + ".");
+			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(TX_DRIVER)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " enrolled in GME Driver on " + CommonUtil.getCurrentDateandTime() + ".");
+			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_DE_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(SUN_CLUB)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_OUT_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " de-enrolled from Sun Club on " + CommonUtil.getCurrentDateandTime() + ".");
+			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_DE_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(TX_DRIVER)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_OUT_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " de-enrolled from GME Driver on " + CommonUtil.getCurrentDateandTime() + ".");
+			}
+			cssUpdateLogRequest.setFormatCol("");//Should be Blank
+			cssUpdateLogRequest.setCompanyCode(companyCode);
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
+			logger.info("End of productUpdate:updateContactLog(...) block - in ProfileBO");
+			
+		}		
+		
 		return productResponse;
 	}
 	

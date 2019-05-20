@@ -200,10 +200,10 @@ public class BillingResource {
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response updatePaperFreeBilling(@FormParam("accountNumber") String accountNumber,@FormParam("flag") String flag,
-			@FormParam("companyCode") String companyCode){
+			@FormParam("companyCode") String companyCode,@FormParam("bpNumber")String bpNumber, @FormParam("source")String source){
 		
 		Response response = null;
-		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = billingBO.updatePaperFreeBilling(accountNumber,flag,companyCode, httpRequest.getSession(true).getId());
+		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = billingBO.updatePaperFreeBilling(accountNumber,flag,companyCode, httpRequest.getSession(true).getId(),bpNumber,source);
 		
 		
 		response = Response.status(200).entity(updatePaperFreeBillingResponse).build();
@@ -634,7 +634,9 @@ public class BillingResource {
 			@FormParam("scheduledDate")String scheduledDate,
 			@FormParam("zipCode")String zipCode,
 			@FormParam("companyCode") String companyCode, 
-			@FormParam("brandName") String brandName){
+			@FormParam("brandName") String brandName,
+			@FormParam("emailId")String emailId,
+			@FormParam("isMobileRequest")boolean isMobileRequest){
 		Response response = null;
 		ScheduleOTCCPaymentResponse scheduleOTCCPaymentResponse = billingBO
 				.scheduleOneTimeCCPayment(
@@ -648,7 +650,7 @@ public class BillingResource {
 						zipCode, 
 						companyCode,
 						brandName,
-						httpRequest.getSession(true).getId());
+						httpRequest.getSession(true).getId(),emailId,isMobileRequest);
 		
 		response = Response.status(200).entity(scheduleOTCCPaymentResponse).build();
 				
@@ -1022,10 +1024,10 @@ public class BillingResource {
 	@Consumes({  MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getPaymentMethods(@FormParam("contractAccountNumber") String contractAccountNumber , @FormParam("companyCode") String companyCode,
-			@FormParam("brandName") String brandName) {
+			@FormParam("brandName") String brandName, @FormParam("bpnumber") String bpnumber) {
 		Response response = null;
 		PaymentMethodsResponse paymentMethodsResponse = billingBO.getPaymentMethods(contractAccountNumber, companyCode,
-				httpRequest.getSession(true).getId(), brandName);
+				httpRequest.getSession(true).getId(), brandName, bpnumber);
 		response = Response.status(200).entity(paymentMethodsResponse).build();
 		return response;
 	}
