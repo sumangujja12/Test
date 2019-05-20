@@ -44,7 +44,7 @@ ebill.gme.bcc.email=ebillpl@reliant.com
 OAM_MAX_INVALID_LOGIN_COUNT=5
 env.updatecrm.async.delay.ms=10000
 #added for supress the email for submit payment
-submit.pay.email.flag=N
+submit.pay.email.flag=Y
 salesforce.timeout.in.sec=60
 cs.rest.url.timeout=60
 rest.url.timeout=60
