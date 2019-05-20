@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.PendingSwapRequest;
 import com.multibrand.domain.PendingSwapResponseMaster;
 import com.multibrand.domain.RolloverPlanDetailsRequest;
@@ -19,9 +20,11 @@ import com.multibrand.domain.RolloverPlanDetailsResponse;
 import com.multibrand.domain.SwapRequest;
 import com.multibrand.domain.SwapResponse;
 import com.multibrand.exception.OAMException;
+import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.SwapService;
+import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
 import com.multibrand.vo.request.SubmitSwapRequest;
@@ -42,6 +45,10 @@ public class SwapBO extends BaseAbstractService implements Constants {
 	
 	@Autowired
 	EmailHelper emailHelper;
+	
+	@Autowired
+	AsyncHelper asyncHelper;
+	
 	
 
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -279,6 +286,38 @@ public class SwapBO extends BaseAbstractService implements Constants {
 					.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), submitSwapResponse);
 		}
+		
+		if(submitSwapResponse.getResultCode()!=null && 
+				(submitSwapResponse.getResultCode().equalsIgnoreCase("0")||submitSwapResponse.getResultCode().equalsIgnoreCase("00"))&& 
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode()))
+		{
+			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+			cssUpdateLogRequest.setBusinessPartnerNumber(request.getBpNumber());
+			cssUpdateLogRequest.setContractAccountNumber(request.getAccountNumber());
+			cssUpdateLogRequest.setContactClass(CONTACT_LOG_SWAP_CONTACT_CLASS);
+			cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SWAP_CONTACT_ACTIVITY);
+			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+			cssUpdateLogRequest.setTextLines("User with name "+request.getCaName()+" and account number "+request.getAccountNumber()+" has submitted a plan swap request for Contract ID "+request.getContractId()+", ESIID "+request.getEsid()+"+ via the GME Mobile App on "+CommonUtil.getCurrentDateandTime()+". Offer details:"
+					+ "Offer Code: "+request.getOfferCode()+""
+					+ "Plan Name: "+request.getPlanName()+""
+					+ "Term Length: "+request.getContractTerm()+" months+"
+					+ "Average Price: "+request.getAvgPrice()+""
+					+ "Cancelation Fee: "+request.getCancelFee()+""
+					+ "iDoc No: "+submitSwapResponse.getIDOCNumber()+""
+					+ "EFL SmartCode: "+request.getEflSmartCode()+""
+					+ "TOS SmartCode: "+request.getTosSmartCode()+"");
+			cssUpdateLogRequest.setFormatCol("");//Should be Blank
+			cssUpdateLogRequest.setCompanyCode(request.getCompanyCode());
+			
+			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
+			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
+			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			
+		}
+		
+		
 		return submitSwapResponse;
 	}
 
