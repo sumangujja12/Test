@@ -364,11 +364,11 @@ public class ProfileResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response productUpdate(@FormParam("accountNumber") String accountNumber,@FormParam("action") String action ,
 			@FormParam("objectId") String objectId,@FormParam("extUi") String extUi,@FormParam("enrollType") String enrollType ,
-			@FormParam("requestDate") String requestDate ,@FormParam("manuPartNo") String manuPartNo,@FormParam("companyCode") String companyCode){
+			@FormParam("requestDate") String requestDate ,@FormParam("manuPartNo") String manuPartNo,@FormParam("companyCode") String companyCode,@FormParam("bpNumber")String bpNumber,@FormParam("source")String source){
 		
 		Response response = null;
 		ProductUpdateResponse productResponse = new ProductUpdateResponse();
-		productResponse = profileBO.productUpdate(accountNumber, action , objectId, extUi, enrollType , requestDate , manuPartNo, companyCode,httpRequest.getSession(true).getId());
+		productResponse = profileBO.productUpdate(accountNumber, action , objectId, extUi, enrollType , requestDate , manuPartNo, companyCode,httpRequest.getSession(true).getId(),bpNumber,source);
 		
 		response = Response.status(200).entity(productResponse).build();
 		return response;

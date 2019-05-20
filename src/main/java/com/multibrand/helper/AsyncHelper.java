@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.UpdateContactRequest;
 import com.multibrand.proxy.ProfileProxy;
 import com.multibrand.util.Constants;
@@ -25,17 +26,7 @@ public class AsyncHelper implements Constants  {
 	/** The logger. */
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		 
-     public void asychLogging(LoggingVO logvo) {
-		
-	    logger.debug("START: synchronizing LOGGING in asynchronous manner");
-    	
-		excuteASyncService(UtilityLoggerHelper.class, METHOD_SYNCHRONIZE_LOGGING, logvo);
-		logger.debug("END: synchronizing LOGGING in asynchronous manner");
-		
-	 }
-	
-	
-	/**
+   	/**
 	 * Run in separate thread which is managed by ExecutorService.
 	 *
 	 * @param request the request
@@ -63,15 +54,7 @@ public class AsyncHelper implements Constants  {
 		return true;		
 	}
 	
-	  
-    public void updateContactInCRM(UpdateContactRequest updateContactRequest) {
-		
-	    logger.debug("START: Updating CRM in asynchronous manner");
-		excuteASyncService(ProfileProxy.class, METHOD_UPDATE_CONTACT_ASYNC, updateContactRequest);
-		logger.debug("END: Updating CRM in asynchronous manner");
-	 }
-	
-	
+
 	/**
 	 * Returns the response object by executing the service call using reflection package.
 	 *
@@ -97,4 +80,29 @@ public class AsyncHelper implements Constants  {
 		
 	}
 		
+	
+	/** Methods to be running Asynchronously*/
+	
+	public void asychLogging(LoggingVO logvo) {
+
+		logger.debug("START: synchronizing LOGGING in asynchronous manner");
+		excuteASyncService(UtilityLoggerHelper.class, METHOD_SYNCHRONIZE_LOGGING, logvo);
+		logger.debug("END: synchronizing LOGGING in asynchronous manner");
+	}
+
+	public void updateContactInCRM(UpdateContactRequest updateContactRequest) {
+
+		logger.debug("START: Updating CRM in asynchronous manner");
+		excuteASyncService(ProfileProxy.class, METHOD_UPDATE_CONTACT_ASYNC, updateContactRequest);
+		logger.debug("END: Updating CRM in asynchronous manner");
+	}
+
+	public void asychUpdateContactLog(CreateContactLogRequest request) {
+
+		logger.debug("START: Updating CCSContactLog in asynchronous manner");
+		excuteASyncService(ContactLogHelper.class, METHOD_SYNCHRONIZE_CSS_CONTACT_LOG, request);
+		logger.debug("END: Updating CCSContactLog in asynchronous manner");
+
+	}
+	
 }

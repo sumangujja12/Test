@@ -1211,7 +1211,49 @@ public interface Constants {
 	
 	 public static final String EMPTY_DATE = "00000000";
 	 public static final String EMPTY_OFFER = "00000000";
-	 public static final String RENEW_FLAG = "R";
+	 public static final String PROACTIVE_FLAG = "P";
 	 public static final String CUMTREES = "CUMTREES";
 	 public static final String NO_CONTRACT = "No Contracts found for the Given Account";
+
+	public static final String METHOD_SYNCHRONIZE_CSS_CONTACT_LOG = "updateContactLog";
+
+	public static final String CONTACT_LOG_CC_CONTACT_CLASS = "1400";
+	public static final String CONTACT_LOG_BANK_CONTACT_CLASS = "0400";
+	public static final String CONTACT_LOG_SWAP_CONTACT_CLASS = "2000";
+	public static final String CONTACT_LOG_SUN_CULB_TX_DRIVER_CONTACT_CLASS = "3550";
+	public static final String CONTACT_LOG_TREE_FREE_BILL_CONTACT_CLASS = "2400";
+	public static final String CONTACT_LOG_CREATE_USER_CONTACT_CLASS = "2400";
+	
+	public static final String CONTACT_LOG_ENROLL_CONTACT_ACTIVITY = "0700";
+	public static final String CONTACT_LOG_DEENROLL_CONTACT_ACTIVITY = "0750";
+	public static final String CONTACT_LOG_SWAP_CONTACT_ACTIVITY = "0092";
+	public static final String CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY = "0401";
+	public static final String CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_OUT_CONTACT_ACTIVITY = "0325";
+	public static final String CONTACT_LOG_TREE_FREE_BILL_ENROLL_CONTACT_ACTIVITY = "1260";
+	public static final String CONTACT_LOG_TREE_FREE_BILL_DEENROLL_CONTACT_ACTIVITY = "1560";
+	public static final String CONTACT_LOG_CREATE_USER_CONTACT_ACTIVITY = "1800";
+	
+	public static final String SUN_CLUB = "S001";
+	public static final String TX_DRIVER = "G001";
+	public static final String SUN_CLUB_TX_DRIVER_ENROLL_ACTION = "2";
+	public static final String SUN_CLUB_TX_DRIVER_DE_ENROLL_ACTION = "3";
+	
+	public static final String CONTACT_LOG_COMMIT_FLAG = "X";
+	public static final String CONTACT_LOG_CONTACT_TYPE = "018";
+	public static final String CONTACT_LOG_DIVISION = "10";
+	
+	public static final String BASE64HTML = "BASE64HTML"; 
+    public static final String TXN_DATE = "TXN_DATE"; 
+    public static final String E_PAYMENT_AMOUNT = "PAYMENT_AMOUNT"; 
+    public static final String E_CONTR_ACCT_ID = "CONTR_ACCT_ID"; 
+    public static final String SCH_PAYMENT_DATE = "SCH_PAYMENT_DATE"; 
+    public static final String E_CARD_NUMBER = "CARD_NUMBER"; 
+    public static final String E_EXP_DATE = "EXP_DATE"; 
+    public static final String E_CONFIRM_NUM = "CONFIRM_NUM";
+    public static final String SCHEDULE_CC_PAYMENT_GME = "SCHEDULE_CC_PAYMENT_GME"; 
+    public static final String SCHEDULE_CC_PAYMENT_GME_SUB = "Scheduled Payment Acknowledgment";
+
+    public static final String MOBILE = "Mobile";
+    public static final String AUTOPAY_G_FLAG = "G";
+	 
 }
