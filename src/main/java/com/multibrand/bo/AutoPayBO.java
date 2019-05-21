@@ -105,7 +105,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	}
 	
 	
-	public AutoPayBankResponse submitBankAutoPay(String accountNumber, String bankAccountNumber, String bankRountingNumber, String companyCode, String accountName, String accountChkDigit, String locale,  String email, String sessionId,String emailTypeId, String brandName){
+	public AutoPayBankResponse submitBankAutoPay(String accountNumber, String bankAccountNumber, String bankRountingNumber, String companyCode, String accountName, String accountChkDigit, String locale,  String email, String sessionId,String emailTypeId, String brandName, String bpNumber, String source){
 		
 		logger.info("AutoPayBO.submitBankAutoPay :: START");
 		AutoPayBankResponse autoPayBankResponse = new AutoPayBankResponse();
@@ -226,12 +226,12 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		
 		if(autoPayBankResponse.getResultCode()!=null && 
 				(autoPayBankResponse.getResultCode().equalsIgnoreCase("0")||autoPayBankResponse.getResultCode().equalsIgnoreCase("00"))&& 
-				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode))
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE))
 		{
 			
 			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
 			//Chakri
-			cssUpdateLogRequest.setBusinessPartnerNumber("00000000");
+			cssUpdateLogRequest.setBusinessPartnerNumber(bpNumber);
 			cssUpdateLogRequest.setContractAccountNumber(accountNumber);
 			cssUpdateLogRequest.setContactClass(CONTACT_LOG_BANK_CONTACT_CLASS);
 			cssUpdateLogRequest.setContactActivity(CONTACT_LOG_ENROLL_CONTACT_ACTIVITY);
@@ -308,7 +308,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	}
 	
 	
-public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  String accountNumber, String bpid, String ccNumber, String expirationDate, String billingZip, String companyCode, String email, String sessionId, String locale,String emailTypeId,String brandName){
+public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  String accountNumber, String bpid, String ccNumber, String expirationDate, String billingZip, String companyCode, String email, String sessionId, String locale,String emailTypeId,String brandName, String source){
 		
 		logger.info("AutoPayBO.submitCCAutoPay :: START");
 		
@@ -443,7 +443,7 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 		
 		if(autoPayCCResponse.getResultCode()!=null && 
 				(autoPayCCResponse.getResultCode().equalsIgnoreCase("0")||autoPayCCResponse.getResultCode().equalsIgnoreCase("00"))&& 
-				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode))
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase("Mobile"))
 		{
 			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
 			cssUpdateLogRequest.setBusinessPartnerNumber(bpid);
@@ -475,7 +475,7 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
  * @param companyCode
  * @return
  */
-public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String sessionId, String email, String locale,String brandName){
+public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String sessionId, String email, String locale,String brandName, String bpNumber, String source ){
 	
 	
 	logger.info("AutoPayBO.deEnroll :: START");
@@ -594,24 +594,11 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 		throw new OAMException(200, e.getMessage(), response);
 	}
 	
-	if(response.getResultCode()!=null &&(response.getResultCode().equalsIgnoreCase("0")||response.getResultCode().equalsIgnoreCase("00"))&& GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode))
+	if(response.getResultCode()!=null &&(response.getResultCode().equalsIgnoreCase("0")||response.getResultCode().equalsIgnoreCase("00"))&& GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE))
 	{
 		AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
 		AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
-		try {
-			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
-		} catch (Exception e) {
-			logger.error("Error in getProfile Call");
-		}
-		if(responseMap!= null && responseMap.size()!= 0)
-		{
-			profileResponse= (ProfileResponse)responseMap.get("profileResponse");
-		}
-		else
-		{
-			logger.error("Couldn't find the profile for given account number :: deEnroll - updateContactLog(...)");
-		}
-		String businessPartnerID = profileResponse.getSuperBPID();
+		String businessPartnerID = bpNumber;
 		autoPayRequest.setBusinessPartnerID(businessPartnerID);
 		autoPayRequest.setCompanyCode(companyCode);
 		autoPayRequest.setBrandName(brandName);

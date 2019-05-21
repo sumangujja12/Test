@@ -87,7 +87,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
  * @param clientSource
  * @return
  */
-	public SubmitSwapResponse submitSwap(SubmitSwapRequest request, String sessionId) {
+	public SubmitSwapResponse submitSwap(SubmitSwapRequest request, String sessionId,String source) {
 
 		SwapResponse response = null;
 		
@@ -289,7 +289,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 		
 		if(submitSwapResponse.getResultCode()!=null && 
 				(submitSwapResponse.getResultCode().equalsIgnoreCase("0")||submitSwapResponse.getResultCode().equalsIgnoreCase("00"))&& 
-				GME_RES_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode()))
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode())&&source.equalsIgnoreCase(MOBILE))
 		{
 			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
 			cssUpdateLogRequest.setBusinessPartnerNumber(request.getBpNumber());

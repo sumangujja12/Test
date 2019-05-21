@@ -49,6 +49,7 @@ import com.multibrand.domain.ScheduleOtccPaymentResponse;
 import com.multibrand.domain.UpdPaperBillRequest;
 import com.multibrand.domain.UpdPaperBillResponse;
 import com.multibrand.domain.ZesAmbOutput;
+import com.multibrand.dto.request.EmailRequest;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.BillHelper;
 import com.multibrand.helper.EmailHelper;
@@ -56,6 +57,7 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.proxy.BillingProxy;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.BillingService;
+import com.multibrand.service.EmailService;
 import com.multibrand.service.OfferService;
 import com.multibrand.service.PaymentService;
 import com.multibrand.service.ProfileService;
@@ -111,7 +113,6 @@ import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
-
 import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
@@ -142,6 +143,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	@Autowired
 	private EmailHelper emailHelper;
+	
+	@Autowired
+	private EmailService emailService;
+	
 	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
@@ -428,7 +433,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param flag
 	 * @return
 	 */
-	public UpdatePaperFreeBillingResponse updatePaperFreeBilling(String accountNumber,String flag,String companyCode, String sessionId) {
+	public UpdatePaperFreeBillingResponse updatePaperFreeBilling(String accountNumber,String flag,String companyCode, String sessionId,String bpNumber, String source) {
 
 		ActEbillResponse actEbillResponse = null;
 		ActEbillRequest actEbillRequest = null;
@@ -1569,7 +1574,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public ScheduleOTCCPaymentResponse scheduleOneTimeCCPayment(String bpid,String contractAccountNumber, String ccNumber, String expMonth, String expYear, String paymentAmount, String scheduledDate, String  zipCode, String companyCode, String brandName, String sessionId)
+	public ScheduleOTCCPaymentResponse scheduleOneTimeCCPayment(String bpid,String contractAccountNumber, String ccNumber, String expMonth, String expYear, String paymentAmount, String scheduledDate, String  zipCode, String companyCode, String brandName, String sessionId, String emailId, boolean isMobileRequest)
 	{
 		logger.info("START-[BillingBO-scheduleOneTimeCCPayment]");
 		//padding the bpid with 0s
@@ -1604,6 +1609,14 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   scheduleOTCCPaymentResponse.seteTrackingId(response.getETrackingId());
 			   scheduleOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			   scheduleOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
+			   
+			   if (isMobileRequest ) {
+	               EmailRequest emailRequest= createSchedulePayEmailReq(emailId,expMonth, expYear, request, response); 
+	               emailService.sendEmail(emailRequest);
+			   }
+
+
+               
 			
 			} else{
 				
@@ -2531,7 +2544,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param brandName
 	 */
 	public PaymentMethodsResponse getPaymentMethods(String contractAccountNumber, String companyCode, String sessionId,
-			String brandName) {
+			String brandName, String bpnumber) {
 		logger.info("START-[BillingBO-getPaymentMethods]");
 		PaymentMethodsResponse response = new PaymentMethodsResponse();
 		GetAccountDetailsResponse accountDetailsResponse = new GetAccountDetailsResponse();
@@ -3068,4 +3081,53 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return aMBEligibiltyStatusResponse;
 	}
+	
+	/**
+	 * This method is responsible for getting sending emails
+	 * 
+	 * @param ScheduleOtccPaymentRequest
+	 * @param ScheduleOtccPaymentResponse
+	 * @return EmailRequest
+	 */
+	public EmailRequest createSchedulePayEmailReq(String emailid, String expMonth, String expYear,
+			ScheduleOtccPaymentRequest request, ScheduleOtccPaymentResponse response) {
+
+		EmailRequest emailRequest = new EmailRequest();
+
+		try {
+
+			emailRequest.setExternalId(SCHEDULE_CC_PAYMENT_GME);
+			emailRequest.setSubject(SCHEDULE_CC_PAYMENT_GME_SUB);
+			emailRequest.setCompanyCode(COMPANY_CODE_GME);
+			emailRequest.setLanguageCode(EN);
+			emailRequest.setBrandName(GME_BRAND_NAME);
+			emailRequest.setTemplateType(BASE64HTML);
+
+			List<String> emailList = new ArrayList<String>();
+			emailList.add(emailid);
+			emailRequest.setToEmailList(emailList);
+
+			List<String> prop = new ArrayList<String>();
+			prop.add(TXN_DATE + ":"
+					+ CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(), yyyy_MM_dd, MM_dd_yyyy));
+
+			prop.add(E_PAYMENT_AMOUNT + ":$" + request.getPaymentAmount());
+
+			prop.add(E_CONTR_ACCT_ID + ":" + request.getContractAccount());
+			prop.add(SCH_PAYMENT_DATE + ":"
+					+ CommonUtil.changeDateFormat(request.getScheduledDate(), yyyy_MM_dd, MM_dd_yyyy));
+
+			prop.add(E_CARD_NUMBER + ":" + request);
+			prop.add(E_EXP_DATE + ":" + expMonth + "/" + expYear.substring(2));
+			prop.add(E_CONFIRM_NUM + ":" + response.getETrackingId());
+
+			emailRequest.setPropertyList(prop);
+
+		} catch (Exception e) {
+
+		}
+		return emailRequest;
+	}
+
+
 }

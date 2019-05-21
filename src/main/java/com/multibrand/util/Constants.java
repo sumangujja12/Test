@@ -1228,5 +1228,18 @@ public interface Constants {
 	public static final String CONTACT_LOG_COMMIT_FLAG = "X";
 	public static final String CONTACT_LOG_CONTACT_TYPE = "014";
 	public static final String CONTACT_LOG_DIVISION = "10";
+	
+	public static final String BASE64HTML = "BASE64HTML"; 
+    public static final String TXN_DATE = "TXN_DATE"; 
+    public static final String E_PAYMENT_AMOUNT = "PAYMENT_AMOUNT"; 
+    public static final String E_CONTR_ACCT_ID = "CONTR_ACCT_ID"; 
+    public static final String SCH_PAYMENT_DATE = "SCH_PAYMENT_DATE"; 
+    public static final String E_CARD_NUMBER = "CARD_NUMBER"; 
+    public static final String E_EXP_DATE = "EXP_DATE"; 
+    public static final String E_CONFIRM_NUM = "CONFIRM_NUM";
+    public static final String SCHEDULE_CC_PAYMENT_GME = "SCHEDULE_CC_PAYMENT_GME"; 
+    public static final String SCHEDULE_CC_PAYMENT_GME_SUB = "Scheduled Payment Acknowledgment";
+
+    public static final String MOBILE = "Mobile";
 	 
 }

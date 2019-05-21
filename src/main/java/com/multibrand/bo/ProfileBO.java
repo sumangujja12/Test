@@ -1086,7 +1086,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 	
 	public ProductUpdateResponse productUpdate(String accountNumber, String action ,
 			 String objectId, String extUi, String enrollType ,
-			 String requestDate , String manuPartNo, String companyCode, String sessionId)
+			 String requestDate , String manuPartNo, String companyCode, String sessionId, String bpNumber, String source)
 	{
 		ProductUpdateResponse productResponse = new ProductUpdateResponse();
 		try
