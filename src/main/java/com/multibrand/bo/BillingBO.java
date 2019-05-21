@@ -187,14 +187,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			getArResponse.setResultCode(RESULT_CODE_SUCCESS);
 			getArResponse.setResultDescription(MSG_SUCCESS);			
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occured in getBalance : " +e.getStackTrace());
 			getArResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			getArResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), getArResponse);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occured in getBalance : " +e.getStackTrace());
 			getArResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			getArResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), getArResponse);
@@ -248,11 +246,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			    getBillingAddressResp.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
 		} catch (RemoteException e) {
-			
+			logger.error("Exception Occured in getBillingAddress : " +e.getStackTrace());
 			getBillingAddressResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			getBillingAddressResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), getBillingAddressResp);
 		} catch (Exception e) {
+			logger.error("Exception Occured in getBillingAddress : " +e.getStackTrace());
 			getBillingAddressResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			getBillingAddressResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), getBillingAddressResp);
@@ -407,14 +406,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				accountDetailsResp.setResultDescription(response.getErrorCode());
 			}				
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			logger.error(e);
+			logger.error("Exception occured in getAccountDetails : " +e.getStackTrace());
 			accountDetailsResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			accountDetailsResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), accountDetailsResp);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			logger.error(e);
+			logger.error("Exception occured in getAccountDetails : " +e.getStackTrace());
 			accountDetailsResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			accountDetailsResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), accountDetailsResp);
@@ -485,12 +482,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				updatePaperFreeBillingResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
 		} catch (RemoteException e) {
+			logger.error("Exception Occured in updatePaperFreeBilling : " +e.getStackTrace());
 			updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			updatePaperFreeBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), updatePaperFreeBillingResponse);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occured in updatePaperFreeBilling : " +e.getStackTrace());
 			updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			updatePaperFreeBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), updatePaperFreeBillingResponse);
@@ -584,13 +581,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}
 			
 		} catch (RemoteException e) {
-
+			logger.error("Exception Occured in submitBankPayment : " +e.getStackTrace());
 			payByBankResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			payByBankResponse.setResultDescription("Exception Occured");
 			throw new OAMException(200, e.getMessage(), payByBankResponse);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			logger.error("Exception Occured in submitBankPayment : " +e.getStackTrace());
 			payByBankResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			payByBankResponse.setResultDescription("Exception Occured");
 			throw new OAMException(200, e.getMessage(), payByBankResponse);
@@ -702,7 +699,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}
 			
 		} catch (RemoteException e) {
-
+			logger.error("Exception occured in submitCCPayment : " +e.getStackTrace());
 			payByCCResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			payByCCResponse.setResultDescription("Exception Occured");
 			throw new OAMException(200, e.getMessage(), payByCCResponse);
@@ -1031,22 +1028,15 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}
 			
 		} catch (RemoteException e) {
-			updatePaperFreeBillingResponse
-					.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			updatePaperFreeBillingResponse
-					.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.info("Exception Occured !!!! in the UpdateDeliveryMethod Call");
-			throw new OAMException(200, e.getMessage(),
-					updatePaperFreeBillingResponse);
+			logger.error("Exception Occured in updateInvoiceDelivery : " + e.getStackTrace());
+			updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			updatePaperFreeBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), updatePaperFreeBillingResponse);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			updatePaperFreeBillingResponse
-					.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			updatePaperFreeBillingResponse
-					.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			throw new OAMException(200, e.getMessage(),
-					updatePaperFreeBillingResponse);
+			logger.error("Exception Occured in updateInvoiceDelivery : " + e.getStackTrace());
+			updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			updatePaperFreeBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), updatePaperFreeBillingResponse);
 		}
 		
 		
@@ -1833,7 +1823,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		return response;
 	}
 	
-	
+	/**
+	 * @author 
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
 	public StoreUpdatePayAccountResponse updatePayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
 		logger.info("START-[BillingBO-updatePayAccount]");
@@ -1927,12 +1922,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultDescription(RESULT_CODE_BAD_REQUEST);
 			}
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			logger.error("Exception occured in ambeligibilityCheck : " +e.getStackTrace());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception occured in ambeligibilityCheck : " +e.getStackTrace());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
@@ -2096,12 +2091,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}
 
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			logger.error("Exception occured in saveAMBSignUp : " +e.getStackTrace());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception occured in saveAMBSignUp : " +e.getStackTrace());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
@@ -2603,7 +2598,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				{
 					
 					adr =autoPayResponse.getAutoPayDetailsList();
-						System.out.println("inside autopay loop");
+					
 						if(!(adr[0].getCardNumber().toString().isEmpty())){
 							autoPayNumber = adr[0].getCardNumber().toString();
 						}
@@ -2751,6 +2746,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-getPaymentMethods]");
 		return response;
 	}
+	/** This method Save pay accounts for customer.
+	 * @author cuppala
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
 	public StoreUpdatePayAccountResponse savePayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
 		logger.info("START-[BillingBO-savePayAccount]");
@@ -2809,7 +2810,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	}
 	
 	
-	
+	/** This method update pay accounts in customer's wallet.
+	 * @author cuppala
+	 * @param request
+	 * @param sessionId
+	 * @return
+	 */
 	public StoreUpdatePayAccountResponse modifyPayAccount(StoreUpdatePayAccountRequest request, String sessionId)throws OAMException
 	{
 		logger.info("START-[BillingBO-modifyPayAccount]");
@@ -2824,7 +2830,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			payAccountDO = billDao.modifyPayAccount(request);
 			
 			if(payAccountDO != null){
-				if(!(payAccountDO.isCallSuccess())&&(payAccountDO.isNickNameExistsFlag())){
+				if ((payAccountDO.isNickNameExistsFlag() && !(payAccountDO.getIsCCExpYearChange()
+						|| payAccountDO.getIsCCExpMonthChange() || payAccountDO.getIsActiveFlagChange()))) {
 				response.setResultCode(RESULT_CODE_FOUR);
 				response.setResultDescription(NICKNAME_ALREADY_EXISTS);
 				response.setSuccessFlag(false);
@@ -2952,6 +2959,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						}
 						
 					}
+								
 					if(offerDO!=null&&isEligible&&!(gmeContractDO[i].isPendingSwap()))
 					{
 						if(isRenewable){
@@ -2962,7 +2970,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							gmeContractDO[i].setSwapOffers(true);
 						}else{
 							gmeContractDO[i].setRenewalOffers(false);
-						}	gmeContractDO[i].setSwapOffers(false);	
+							gmeContractDO[i].setSwapOffers(false);
+						}	
 					}else{
 						gmeContractDO[i].setRenewalOffers(false);
 						gmeContractDO[i].setSwapOffers(false);
