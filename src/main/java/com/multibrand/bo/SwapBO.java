@@ -92,11 +92,17 @@ public class SwapBO extends BaseAbstractService implements Constants {
 		SwapResponse response = null;
 		
 		SubmitSwapResponse submitSwapResponse = new SubmitSwapResponse();
+		String serviceAddress = "";
+		String serviceCity ="";
+		String serviceState ="";
+		String serviceZipCode ="";
 		
 		try {
 
 			SwapRequest swapRequest = new SwapRequest();
 			String agreementNumber = "";
+			
+			
 			if(request.getBrandName()!=null && request.getBrandName().equals(CIRRO_BRAND_NAME)) 
 			{
 				agreementNumber = this.generateAgreementNumber(Constants.WEBCE);
@@ -144,13 +150,13 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			templateProps.put(ACCOUNT_NUMBER, request.getAccountNumber());
 			templateProps.put(CHECK_DIGIT, request.getCheckDigit());
 			templateProps.put(BP_NUMBER, request.getBpNumber());
-			String serviceAddress = "";
+			
 			serviceAddress = request.getServStreetNum()+ " "+ request.getServStreetName();
 			if(!StringUtils.isEmpty(request.getServStreetAptNum()))
 				serviceAddress = serviceAddress	+ ", APT# "+ request.getServStreetAptNum();
-			String serviceCity = request.getServCity();
-			String serviceState = request.getServState();
-			String serviceZipCode = request.getServZipCode();
+			serviceCity = request.getServCity();
+			serviceState = request.getServState();
+			serviceZipCode = request.getServZipCode();
 			templateProps.put(SERVICE_ADDRESS, serviceAddress);
 			templateProps.put(SERVICE_CITY, serviceCity);
 			templateProps.put(SERVICE_STATE, serviceState);
@@ -287,7 +293,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			throw new OAMException(200, e.getMessage(), submitSwapResponse);
 		}
 		
-if(submitSwapResponse.getResultCode()!=null && source!=null &&
+		if(submitSwapResponse.getResultCode()!=null && source!=null &&
 				(submitSwapResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||submitSwapResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
 				GME_RES_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode())&&source.equalsIgnoreCase(MOBILE))
 		{
@@ -315,6 +321,7 @@ if(submitSwapResponse.getResultCode()!=null && source!=null &&
 							+ ", Service ZipCode: "+serviceZipCode+".");
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(request.getCompanyCode());
+			
 			logger.info("Start: call TOSService.updateContactLog(...)");
 			try {
 				tosService.updateContactLog(cssUpdateLogRequest);
@@ -513,5 +520,3 @@ if(submitSwapResponse.getResultCode()!=null && source!=null &&
 	}
 	
 }
-
-
