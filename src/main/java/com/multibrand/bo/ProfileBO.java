@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -115,11 +114,10 @@ public class ProfileBO extends BaseBO {
 	
 	@Autowired
 	private BPAccountContractPayHelper bpAccountPayHelper;
-		
+	
 	@Autowired
 	private BillingBO billingBO;
 	
-
 	@Autowired
 	private TOSService tosService;
 	
@@ -1121,7 +1119,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 					&& manuPartNo.equalsIgnoreCase(SUN_CLUB)) {
 				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY);
 				cssUpdateLogRequest
-						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+						.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)
 								+ " enrolled in Sun Club on " + CommonUtil.getCurrentDateandTime() + ".");
 			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_ENROLL_ACTION)
 					&& manuPartNo.equalsIgnoreCase(TX_DRIVER)) {
@@ -2167,3 +2165,5 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 	}
 	
 }
+	
+
