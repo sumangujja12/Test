@@ -36,6 +36,7 @@ import com.multibrand.domain.BankPaymentInstitutionResponse;
 import com.multibrand.domain.CancelOtccPaymentResp;
 import com.multibrand.domain.CancelSchdOtccPaymetReq;
 import com.multibrand.domain.ContractAccountDO;
+import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.DeActEbillRequest;
@@ -49,6 +50,7 @@ import com.multibrand.domain.ScheduleOtccPaymentResponse;
 import com.multibrand.domain.UpdPaperBillRequest;
 import com.multibrand.domain.UpdPaperBillResponse;
 import com.multibrand.domain.ZesAmbOutput;
+import com.multibrand.dto.request.EmailRequest;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.BillHelper;
 import com.multibrand.helper.EmailHelper;
@@ -56,9 +58,11 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.proxy.BillingProxy;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.BillingService;
+import com.multibrand.service.EmailService;
 import com.multibrand.service.OfferService;
 import com.multibrand.service.PaymentService;
 import com.multibrand.service.ProfileService;
+import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
@@ -142,6 +146,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	@Autowired
 	private EmailHelper emailHelper;
+	
+	@Autowired
+	private EmailService emailService;
+	
+	@Autowired
+	private TOSService tosService;
 	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
@@ -426,12 +436,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param flag
 	 * @return
 	 */
-	public UpdatePaperFreeBillingResponse updatePaperFreeBilling(String accountNumber,String flag,String companyCode, String sessionId) {
+	public UpdatePaperFreeBillingResponse updatePaperFreeBilling(String accountNumber,String flag,String companyCode, String sessionId,String bpNumber, String source) {
 
 		ActEbillResponse actEbillResponse = null;
 		ActEbillRequest actEbillRequest = null;
 		DeActEbillResponse deActEbillResponse = null;
 		DeActEbillRequest deActEbillRequest = null;
+		boolean enrolledFlag = false;
 		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = new UpdatePaperFreeBillingResponse();
 		try {
 			
@@ -448,6 +459,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				actEbillRequest.setStrSource(Constants.EBPP_SOURCE);
 				actEbillResponse = billingService.activateEbill(actEbillRequest, companyCode, sessionId);				
 				if (actEbillResponse.getStrRespCode()!=null && actEbillResponse.getStrRespCode().equals("0")){
+					enrolledFlag = true;
 					updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_SUCCESS);
 					updatePaperFreeBillingResponse.setResultDescription(MSG_SUCCESS);
 				}
@@ -464,6 +476,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				deActEbillRequest.setStrMessage("");
 				deActEbillResponse = billingService.deactivateEbill(deActEbillRequest, companyCode, sessionId);
 				if (deActEbillResponse.getStrResponseCode()!=null && deActEbillResponse.getStrResponseCode().equals("0")){
+					enrolledFlag = false;
 					updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_SUCCESS);
 					updatePaperFreeBillingResponse.setResultDescription(MSG_SUCCESS);
 				}
@@ -490,6 +503,42 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			updatePaperFreeBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), updatePaperFreeBillingResponse);
 		}
+		
+		if(updatePaperFreeBillingResponse.getResultCode()!=null && bpNumber!=null && source!=null &&
+				(updatePaperFreeBillingResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||updatePaperFreeBillingResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE)){
+			logger.info("Inside updatePaperFreeBilling:updateContactLog(...) block - in BillingBO");
+			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+			cssUpdateLogRequest.setBusinessPartnerNumber(bpNumber);
+			cssUpdateLogRequest.setContractAccountNumber(accountNumber);
+			if(enrolledFlag){
+				cssUpdateLogRequest.setContactClass(CONTACT_LOG_TREE_FREE_BILL_CONTACT_CLASS);
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_TREE_FREE_BILL_ENROLL_CONTACT_ACTIVITY);
+				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in Tree Free on "+CommonUtil.getCurrentDateandTime()+".");
+			}else{
+				cssUpdateLogRequest.setContactClass(CONTACT_LOG_TREE_FREE_BILL_CONTACT_CLASS);
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_TREE_FREE_BILL_DEENROLL_CONTACT_ACTIVITY);
+				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" de-enrolled from Tree Free on "+CommonUtil.getCurrentDateandTime()+".");
+			}
+			cssUpdateLogRequest.setFormatCol("");//Should be Blank
+			cssUpdateLogRequest.setCompanyCode(companyCode);
+			
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
+			logger.info("End updatePaperFreeBilling:updateContactLog(...) block - in BillingBO");
+		}
+		
 		return updatePaperFreeBillingResponse;
 	}
 	
@@ -549,22 +598,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(StringUtils.isNotBlank(submitPayFlag) && StringUtils.equalsIgnoreCase(submitPayFlag, "Y")){
 					logger.info("Sending mail for payment successful");
 					
-					HashMap<String, String> templateProps = new HashMap<String,String>();
-					
-					String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
-					
-					String maskBankAcctNumber = CommonUtil.maskBankAccountNo(bankAccountNumber);
-					
-					String splitPaymentAmount = "";
-					
-					if(!StringUtils.isEmpty(paymentAmount))
-						splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
-					
-					templateProps.put(TRANSACTION_DATE, transactionDate);
-					templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
-					templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
-					templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
-					templateProps.put(BANK_ROUTING_NUMBER, bankRoutingNumber);
+					HashMap<String, String> templateProps = createBankEmailRequest(bankAccountNumber, bankRoutingNumber,
+							paymentAmount, paymentDate);
 					
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
@@ -574,6 +609,19 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
 						logger.info("Sending mail for successful payment ES");
 						emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL), "", BILL_PAY_BANK_ES, templateProps, companyCode);
+					}
+				} else {
+					HashMap<String, String> templateProps = createBankEmailRequest(bankAccountNumber, bankRoutingNumber,
+							paymentAmount, paymentDate);
+					
+					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
+						logger.info("Sending mail for successful payment EN");
+						emailHelper.sendMail(email, "", BILL_PAY_BANK_EN, templateProps, companyCode);
+					} else{
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
+						logger.info("Sending mail for successful payment ES");
+						emailHelper.sendMail(email, "", BILL_PAY_BANK_ES, templateProps, companyCode);
 					}
 				}
 			}
@@ -592,6 +640,27 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return payByBankResponse;
 		
+	}
+
+	private HashMap<String, String> createBankEmailRequest(String bankAccountNumber, String bankRoutingNumber,
+			String paymentAmount, String paymentDate) {
+		HashMap<String, String> templateProps = new HashMap<String,String>();
+		
+		String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
+		
+		String maskBankAcctNumber = CommonUtil.maskBankAccountNo(bankAccountNumber);
+		
+		String splitPaymentAmount = "";
+		
+		if(!StringUtils.isEmpty(paymentAmount))
+			splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
+		
+		templateProps.put(TRANSACTION_DATE, transactionDate);
+		templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
+		templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
+		templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
+		templateProps.put(BANK_ROUTING_NUMBER, bankRoutingNumber);
+		return templateProps;
 	}
 	
 	/**
@@ -655,31 +724,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(StringUtils.isNotBlank(submitPayFlag) && StringUtils.equalsIgnoreCase(submitPayFlag, "Y")){
 	                logger.info("Sending mail for payment successful");
 					
-					HashMap<String, String> templateProps = new HashMap<String,String>();
-					
-					String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
-					
-					String cardType = "";
-					if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZVIS))
-						cardType = VISA;
-					else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZMCD))
-						cardType = MASTERCARD;
-					else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
-						cardType = DISCOVER;
-					
-					String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
-					
-					String splitPaymentAmount = "";
-					
-					if(!StringUtils.isEmpty(paymentAmount))
-						splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
-					
-					templateProps.put(TRANSACTION_DATE, transactionDate);
-					templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
-					templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
-					templateProps.put(CARD_TYPE, cardType);
-					templateProps.put(CARD_NUMBER, maskCCNumber);
-					templateProps.put(EXP_DATE, expirationDate);
+					HashMap<String, String> templateProps = createCCPEmailrequest(authType, ccNumber, expirationDate,
+							paymentAmount, paymentDate);
 					
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
@@ -689,6 +735,19 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 						logger.info("Sending mail for successful payment ES");
 						emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL), "", BILL_PAY_CC_ES, templateProps, companyCode);
+					}
+				} else {
+					HashMap<String, String> templateProps = createCCPEmailrequest(authType, ccNumber, expirationDate,
+							paymentAmount, paymentDate);
+					
+					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
+						logger.info("Sending mail for successful payment EN");
+						emailHelper.sendMail(email, "", BILL_PAY_CC_EN, templateProps, companyCode);
+					} else{
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
+						logger.info("Sending mail for successful payment ES");
+						emailHelper.sendMail(email,  "", BILL_PAY_CC_ES, templateProps, companyCode);
 					}
 				}
 			}
@@ -710,6 +769,36 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("BillingBO.submitCCPayment :: END");
 		return payByCCResponse;
 	
+	}
+
+	private HashMap<String, String> createCCPEmailrequest(String authType, String ccNumber, String expirationDate,
+			String paymentAmount, String paymentDate) {
+		HashMap<String, String> templateProps = new HashMap<String,String>();
+		
+		String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
+		
+		String cardType = "";
+		if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZVIS))
+			cardType = VISA;
+		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZMCD))
+			cardType = MASTERCARD;
+		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
+			cardType = DISCOVER;
+		
+		String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
+		
+		String splitPaymentAmount = "";
+		
+		if(!StringUtils.isEmpty(paymentAmount))
+			splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
+		
+		templateProps.put(TRANSACTION_DATE, transactionDate);
+		templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
+		templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
+		templateProps.put(CARD_TYPE, cardType);
+		templateProps.put(CARD_NUMBER, maskCCNumber);
+		templateProps.put(EXP_DATE, expirationDate);
+		return templateProps;
 	}
 	
 	/**
@@ -1563,7 +1652,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public ScheduleOTCCPaymentResponse scheduleOneTimeCCPayment(String bpid,String contractAccountNumber, String ccNumber, String expMonth, String expYear, String paymentAmount, String scheduledDate, String  zipCode, String companyCode, String brandName, String sessionId)
+	public ScheduleOTCCPaymentResponse scheduleOneTimeCCPayment(String bpid,String contractAccountNumber, String ccNumber, String expMonth, String expYear, String paymentAmount, String scheduledDate, String  zipCode, String companyCode, String brandName, String sessionId, String emailId, boolean isMobileRequest)
 	{
 		logger.info("START-[BillingBO-scheduleOneTimeCCPayment]");
 		//padding the bpid with 0s
@@ -1598,6 +1687,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   scheduleOTCCPaymentResponse.seteTrackingId(response.getETrackingId());
 			   scheduleOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			   scheduleOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
+			   if (isMobileRequest ) {
+	               EmailRequest emailRequest= createSchedulePayEmailReq(emailId,expMonth, expYear, request, response); 
+	               emailService.sendEmail(emailRequest);
+			   }
 			
 			} else{
 				
@@ -2525,12 +2618,25 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param brandName
 	 */
 	public PaymentMethodsResponse getPaymentMethods(String contractAccountNumber, String companyCode, String sessionId,
-			String brandName) {
+			String brandName, String bpnumber) {
 		logger.info("START-[BillingBO-getPaymentMethods]");
 		PaymentMethodsResponse response = new PaymentMethodsResponse();
 		GetAccountDetailsResponse accountDetailsResponse = new GetAccountDetailsResponse();
+		List<PayAccount> responselist = new ArrayList<PayAccount>();
+				
 		String autoPayNumber ="empty";
+		boolean NoData = false;
+		boolean NoDataInAutoPay = false;
+		boolean presentInWallet = false;
+		long count=0;
+		String onlinePayIdforAutoPay;
 		AutoPayDetails[] adr =null;
+		PaymentMethodB paymentMethodB = new PaymentMethodB();
+		PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
+		List<Object> paymentMethodsList = new ArrayList<Object>();
+		PayAccountInfoResponse payAccountInfoResp = new PayAccountInfoResponse();
+		AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
+		AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
 		try {
 			
 			if(StringUtils.isNotEmpty(contractAccountNumber.trim())&&StringUtils.isNotEmpty(companyCode.trim())&&StringUtils.equalsIgnoreCase(COMPANY_CODE_GME, companyCode)){
@@ -2545,13 +2651,30 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			String NCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
 			String NCCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
 			
-			AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
-			AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
+			try{
+				payAccountInfoResp = getPayAccounts(contractAccountNumber, companyCode, brandName, sessionId);
+				}
+			catch(Exception e)
+				{
+					logger.error("Error in getPayAccounts");
+				}
+			
+			
+			if(payAccountInfoResp!=null && (payAccountInfoResp.getResultCode().equalsIgnoreCase("0"))
+					&&(payAccountInfoResp.getPayAccountList().size()>0)){
+				responselist = payAccountInfoResp.getPayAccountList();
+			}else
+			{
+				NoData = true;
+			}
+			
+			
+			
 			autoPayRequest.setBusinessPartnerID(accountDetailsResponse.getContractAccountDO().getStrBPNumber());
 			autoPayRequest.setCompanyCode(companyCode);
 			autoPayRequest.setBrandName(brandName);
 				try{
-				autoPayResponse = getAutopayInfo(autoPayRequest);
+					autoPayResponse = getAutopayInfo(autoPayRequest);
 				}
 				catch(Exception e)
 				{
@@ -2561,34 +2684,80 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(autoPayResponse!=null&&autoPayResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE)&&autoPayResponse.getAutoPayDetailsList().length>0)
 				{
 					adr =autoPayResponse.getAutoPayDetailsList();
-				}
-			List<Object> paymentMethodsList = new ArrayList<Object>();
-			PayAccountInfoResponse payAccountInfoResp = new PayAccountInfoResponse();
-			payAccountInfoResp = getPayAccounts(contractAccountNumber, companyCode, brandName, sessionId);
-			
-			if(payAccountInfoResp!=null && (payAccountInfoResp.getResultCode().equalsIgnoreCase("0"))
-					&&(payAccountInfoResp.getPayAccountList().size()>0)){
-			List<PayAccount> responselist = payAccountInfoResp.getPayAccountList();	
 					
-			if(adr!=null&&adr.length>0){
-				if(!(adr[0].getCardNumber().toString().isEmpty()))
-					autoPayNumber = adr[0].getCardNumber().toString();
-				if(!(adr[0].getBankAccountNumber().toString().isEmpty()))
-					autoPayNumber = adr[0].getBankAccountNumber().toString();
-	
-			}else
-				autoPayNumber="NoAutoPay";
+						if(!(adr[0].getCardNumber().toString().isEmpty())){
+							autoPayNumber = adr[0].getCardNumber().toString();
+						}
+						if(!(adr[0].getBankAccountNumber().toString().isEmpty())){
+							autoPayNumber = adr[0].getBankAccountNumber().toString();
+						}
+							
+						if (!NoData) {
+							for (PayAccount autoPayNumberFlag : responselist) {
+								if (autoPayNumberFlag.getActiveFlag().equalsIgnoreCase(FLAG_YES)) {
+									if (autoPayNumberFlag.getPayAccountToken().equalsIgnoreCase(autoPayNumber)) {
+										presentInWallet = true;
+										break;
+									}else{
+										presentInWallet = false;
+									}
+								}	
+							}
+						}
+							if(!presentInWallet){
+								for(PayAccount onlinePayId : responselist){
+									count = Long.parseLong(onlinePayId.getOnlinePayAccountId());
+								}
+								onlinePayIdforAutoPay =  String.valueOf(count+1);
+								paymentMethodB = new PaymentMethodB();
+								if(adr[0].getPayment().equalsIgnoreCase("G"))
+								{
+									paymentMethodCC.setIsAllowed(NCCAFlag);
+									paymentMethodCC.setIsRegisteredWithAutopay(FLAG_TRUE);
+									paymentMethodCC.setNameOnAccount(accountDetailsResponse.getContractAccountDO().getCAName());
+									paymentMethodCC.setCreditCardExpYear(adr[0].getExpDate().substring(0, 4));
+									paymentMethodCC.setCreditCardExpMonth(adr[0].getExpDate().substring(5, 6));
+									paymentMethodCC.setCreditCardType(adr[0].getCardType());
+									paymentMethodCC.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_CC);
+									paymentMethodCC.setPaymentMethodToken(adr[0].getCardNumber());
+									paymentMethodCC.setPaymentMethodNickName("Autopay_"+adr[0].getCardNumber().substring(adr[0].getCardNumber().length()-4,adr[0].getCardNumber().length()));
+									paymentMethodCC.setActivationDate(null);
+									paymentMethodCC.setVerifyCard(null);
+									paymentMethodCC.setOnlinePayAccountId(onlinePayIdforAutoPay);
+									paymentMethodCC.setZipCode(CommonUtil.trimZipCode(accountDetailsResponse.getContractAccountDO().getBillingAddressDO().getStrZip()));
+									paymentMethodsList.add(paymentMethodCC);
+								}else{
+									paymentMethodB.setIsAllowed(NCAFlag);
+									paymentMethodB.setIsRegisteredWithAutopay(FLAG_TRUE);
+									paymentMethodB.setNameOnAccount(accountDetailsResponse.getContractAccountDO().getCAName());
+									paymentMethodB.setRoutingNumber(adr[0].getBankRoutingNumber());
+									paymentMethodB.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_BANK);
+									paymentMethodB.setPaymentMethodToken(adr[0].getBankAccountNumber());
+									paymentMethodB.setPaymentMethodNickName("Autopay_"+adr[0].getBankAccountNumber().substring(adr[0].getBankAccountNumber().length()-3,adr[0].getBankAccountNumber().length()));
+									paymentMethodB.setActivationDate(null);
+									paymentMethodB.setVerifyCard(null);
+									paymentMethodB.setOnlinePayAccountId(onlinePayIdforAutoPay);
+									paymentMethodB.setZipCode(CommonUtil.trimZipCode(accountDetailsResponse.getContractAccountDO().getBillingAddressDO().getStrZip()));
+									paymentMethodsList.add(paymentMethodB);
+								}
+							}
+							
+					}else
+					{
+					NoDataInAutoPay=true;
+					}	
+			
+			if(!NoData) {
 			
 			DateFormat df = new SimpleDateFormat(DT_FMT_REQUEST);
 			//To get Credit card info
 			for(int i=0;i<payAccountInfoResp.getPayAccountList().size();){
-				PaymentMethodB paymentMethodB = new PaymentMethodB();
-				PaymentMethodCC paymentMethodCC = new PaymentMethodCC();
-						
-				if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("C"))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase("Y")))
+				paymentMethodCC = new PaymentMethodCC();
+				paymentMethodB = new PaymentMethodB();
+				if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_CC))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase(FLAG_YES)))
 				{	
 					paymentMethodCC.setIsAllowed(NCCAFlag);
-					paymentMethodCC.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?"true":"false"));
+					paymentMethodCC.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?FLAG_TRUE:FLAG_FALSE));
 					paymentMethodCC.setNameOnAccount(responselist.get(i).getNameOnAccount());
 					paymentMethodCC.setCreditCardExpYear(responselist.get(i).getCcExpYear());
 					paymentMethodCC.setCreditCardExpMonth(responselist.get(i).getCcExpMonth());
@@ -2603,10 +2772,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					paymentMethodsList.add(paymentMethodCC);
 					i++;
 				}
-				else if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase("B"))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase("Y"))){
+				else if(((responselist.get(i).getOnlinePayAccountType()).equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_BANK))&&(responselist.get(i).getActiveFlag().equalsIgnoreCase(FLAG_YES))){
 					
 					paymentMethodB.setIsAllowed(NCAFlag);
-					paymentMethodB.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?"true":"false"));
+					paymentMethodB.setIsRegisteredWithAutopay((responselist.get(i).getPayAccountToken().equalsIgnoreCase(autoPayNumber)?FLAG_TRUE:FLAG_FALSE));
 					paymentMethodB.setNameOnAccount(responselist.get(i).getNameOnAccount());
 					paymentMethodB.setRoutingNumber(responselist.get(i).getRoutingNumber());
 					paymentMethodB.setPaymentMethodType(responselist.get(i).getOnlinePayAccountType());
@@ -2619,8 +2788,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					paymentMethodsList.add(paymentMethodB);
 					i++;
 												
-				}
-				else{
+				}else{
 					i++;
 					}
 			}
@@ -2631,13 +2799,18 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						
 			}else
 				{
-							
-							response.setResultCode(RESULT_CODE_NO_DATA);
-							response.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
-							response.setMessageCode("No Data was retrieved from getPayAccounts call");
-				}
-				}
-				else
+				 if(NoDataInAutoPay){
+						response.setResultCode(RESULT_CODE_NO_DATA);
+						response.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+						response.setMessageCode("No Data was retrieved from getPayAccounts call");
+				 }else{
+				 		response.setPaymentMethodsList(paymentMethodsList);
+				 		response.setResultCode(RESULT_CODE_SUCCESS);
+				 		response.setResultDescription(MSG_SUCCESS);
+				 		response.setMessageCode("Successfully retrieved all Menthods of Payments");	
+				 	}
+			}	
+			}else
 				{
 							response.setResultCode(RESULT_CODE_CCS_ERROR);
 							response.setResultDescription(accountDetailsResponse.getErrorCode());
@@ -2803,6 +2976,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		GMEContractDO[] gmeContractDO;
 		boolean isEligible = false;
 		boolean isRenewable = false;
+		boolean isProactive = false;
 		ContractDO[] contractDO = new ContractDO[5];
 		OfferDO[] offerDO = new OfferDO[10];
 		try {	
@@ -2857,22 +3031,33 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					}
 						if(offerDO!=null)
 					{
-						for (OfferDO Rvalue : offerDO)  
+						for (OfferDO Pvalue : offerDO)  
 				        { 
-				            if(Rvalue.getAttribute1()!=null && (StringUtils.isNotBlank(Rvalue.getAttribute1()))&& Rvalue.getAttribute1().equalsIgnoreCase(RENEW_FLAG)) 
+				            if(Pvalue.getAttribute1()!=null && (StringUtils.isNotBlank(Pvalue.getAttribute1()))&& Pvalue.getAttribute1().equalsIgnoreCase(PROACTIVE_FLAG)) 
 				            { 
-				            	isRenewable = true;
+				            	isProactive = true;
+				            	break;
 				            } 
 				        } 
+						
+						if(!isProactive)
+						{
+							isRenewable = true;
+						}
+						
 					}
+								
 					if(offerDO!=null&&isEligible&&!(gmeContractDO[i].isPendingSwap()))
 					{
 						if(isRenewable){
 							gmeContractDO[i].setRenewalOffers(true);
 							gmeContractDO[i].setSwapOffers(false);
+						}else if(isProactive){
+							gmeContractDO[i].setRenewalOffers(false);
+							gmeContractDO[i].setSwapOffers(true);
 						}else{
 							gmeContractDO[i].setRenewalOffers(false);
-						gmeContractDO[i].setSwapOffers(true);
+							gmeContractDO[i].setSwapOffers(false);
 						}	
 					}else{
 						gmeContractDO[i].setRenewalOffers(false);
@@ -2969,4 +3154,52 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return aMBEligibiltyStatusResponse;
 	}
+	
+	/**
+	 * This method is responsible for getting sending emails
+	 * 
+	 * @param ScheduleOtccPaymentRequest
+	 * @param ScheduleOtccPaymentResponse
+	 * @return EmailRequest
+	 */
+	public EmailRequest createSchedulePayEmailReq(String emailid, String expMonth, String expYear,
+			ScheduleOtccPaymentRequest request, ScheduleOtccPaymentResponse response) {
+
+		EmailRequest emailRequest = new EmailRequest();
+
+		try {
+
+			emailRequest.setExternalId(SCHEDULE_CC_PAYMENT_GME);
+			emailRequest.setSubject(SCHEDULE_CC_PAYMENT_GME_SUB);
+			emailRequest.setCompanyCode(COMPANY_CODE_GME);
+			emailRequest.setLanguageCode(EN);
+			emailRequest.setBrandName(GME_BRAND_NAME);
+			emailRequest.setTemplateType(BASE64HTML);
+
+			List<String> emailList = new ArrayList<String>();
+			emailList.add(emailid);
+			emailRequest.setToEmailList(emailList);
+
+			List<String> prop = new ArrayList<String>();
+			prop.add(TXN_DATE + ":"
+					+ CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(), yyyy_MM_dd, MM_dd_yyyy));
+
+			prop.add(E_PAYMENT_AMOUNT + ":$" + request.getPaymentAmount());
+
+			prop.add(E_CONTR_ACCT_ID + ":" + request.getContractAccount());
+			prop.add(SCH_PAYMENT_DATE + ":"
+					+ CommonUtil.changeDateFormat(request.getScheduledDate(), yyyy_MM_dd, MM_dd_yyyy));
+
+			prop.add(E_CARD_NUMBER + ":" + request);
+			prop.add(E_EXP_DATE + ":" + expMonth + "/" + expYear.substring(2));
+			prop.add(E_CONFIRM_NUM + ":" + response.getETrackingId());
+
+			emailRequest.setPropertyList(prop);
+
+		} catch (Exception e) {
+
+		}
+		return emailRequest;
+	}
+
 }

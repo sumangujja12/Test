@@ -1029,10 +1029,11 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  		String query = null;
  		PayAccountDO payAccountDO = new PayAccountDO();
  		Object[] args = null;
+ 		String currentDate;
  		boolean isNickNameExist = false;
  		boolean isCCExpMonthChange = false;
  		boolean isCCExpYearChange = false;
- 		boolean isActiveFlagChange = false;
+ 		boolean activeFlag = false;
  		int rows = 0;
 
  		String nName = request.getPayAccountNickName();
@@ -1044,11 +1045,16 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  			if (payAccountInfoResponse != null) {
  				List<PayAccount> payAccountList = payAccountInfoResponse.getPayAccountList();
  				List<PayAccount> activePayAccountList = new ArrayList<PayAccount>();
+ 				
+ 				if(!payAccountList.isEmpty()){
+ 					activeFlag = isActiveFlagChange(request,payAccountList);
+ 				}
 
  				for (PayAccount payAccount : payAccountList)
  					if (payAccount.getActiveFlag().equalsIgnoreCase(FLAG_Y)) {
  						activePayAccountList.add(payAccount);
  					}
+ 				
 
  				if (!activePayAccountList.isEmpty()) {
 
@@ -1059,10 +1065,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  								isNickNameExist = true;
  							}
  						}
-						if (activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
-								&& !(activePayAccount.getActiveFlag().equalsIgnoreCase(request.getActiveFlag()))) {
-							isActiveFlagChange = true;
-						}
+						
 						if (activePayAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_CC)) {
 							// check weather CC expiration month change
 							if ((activePayAccount.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
@@ -1080,17 +1083,20 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  				}
  			}
  		}
- 		String currentDate = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
+ 		 
 
  		if (!((request.getActivationDate().isEmpty()) || (request.getActivationDate().trim().equalsIgnoreCase(""))
  				|| (request.getActivationDate() == null))) {
  			currentDate = request.getActivationDate();
+ 		} else {
+ 			currentDate = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
  		}
+ 			
 
  		Date updationDate = Calendar.getInstance().getTime();
  		Date activationDate = CommonUtil.getSqlDate(currentDate, DT_FMT_REQUEST);
 
- 		if (!isNickNameExist || isCCExpMonthChange || isCCExpYearChange || isActiveFlagChange) {
+ 		if (!isNickNameExist || isCCExpMonthChange || isCCExpYearChange || activeFlag) {
  			if (ONLINE_ACCOUNT_TYPE_CC.equalsIgnoreCase(request.getOnlinePayAccountType())) {
 
  				query = "UPDATE ol_pay_account SET LAST_FOUR_DIGIT=?, NAME_ON_ACCOUNT=?, PAY_ACCOUNT_NICKNAME=?, PAY_ACCOUNT_TOKEN=?, "
@@ -1121,7 +1127,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  				payAccountDO.setNickNameExistsFlag(isNickNameExist);
  				payAccountDO.setCCExpMonthChange(isCCExpMonthChange);
  				payAccountDO.setCCExpYearChange(isCCExpYearChange);
- 				payAccountDO.setActiveFlagChange(isActiveFlagChange);
+ 				payAccountDO.setActiveFlagChange(activeFlag);
  				payAccountDO.setCallSuccess(true);
  			}
 
@@ -1154,18 +1160,33 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
  				payAccountDO.setNickNameExistsFlag(isNickNameExist);
  				payAccountDO.setCCExpMonthChange(isCCExpMonthChange);
  				payAccountDO.setCCExpYearChange(isCCExpYearChange);
- 				payAccountDO.setActiveFlagChange(isActiveFlagChange);
+ 				payAccountDO.setActiveFlagChange(activeFlag);
  				payAccountDO.setCallSuccess(true);
  			}
  		} else {
  			payAccountDO.setNickNameExistsFlag(isNickNameExist);
  			payAccountDO.setCCExpMonthChange(isCCExpMonthChange);
 			payAccountDO.setCCExpYearChange(isCCExpYearChange);
-			payAccountDO.setActiveFlagChange(isActiveFlagChange);
+			payAccountDO.setActiveFlagChange(activeFlag);
  			payAccountDO.setCallSuccess(false);
  		}
  		logger.info("BillDAO-modifyPayAccount :: End");
  		return payAccountDO;
 
      }   
+     
+	public boolean isActiveFlagChange(StoreUpdatePayAccountRequest request, List<PayAccount> payAccountList) {
+		boolean isActiveFlagChanged = false;
+		try {
+			for (PayAccount payAcc : payAccountList) {
+				if (payAcc.getPayAccountToken().equalsIgnoreCase(request.getPayAccountToken())
+						&& !(payAcc.getActiveFlag().equalsIgnoreCase(request.getActiveFlag()))) {
+					isActiveFlagChanged = true;
+				}
+			}
+		} catch (Exception e) {
+			isActiveFlagChanged = false;
+		}
+		return isActiveFlagChanged;
+	}
 }
