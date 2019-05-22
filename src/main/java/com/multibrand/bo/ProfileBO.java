@@ -68,6 +68,7 @@ import com.multibrand.vo.response.EnvironmentImpactsResponse;
 import com.multibrand.vo.response.ForgotPasswordResponse;
 import com.multibrand.vo.response.ForgotUserNameResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
+import com.multibrand.vo.response.PasswordValidityResponse;
 import com.multibrand.vo.response.SecondaryNameResponse;
 import com.multibrand.vo.response.SendMailForNewServiceAddressAddResponse;
 import com.multibrand.vo.response.SendMailForPasswordChangeResponse;
@@ -113,7 +114,7 @@ public class ProfileBO extends BaseBO {
 	
 	@Autowired
 	private BPAccountContractPayHelper bpAccountPayHelper;
-		
+	
 	@Autowired
 	private BillingBO billingBO;
 	
@@ -2146,7 +2147,22 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		return response;
 	}
 	
-
+	public PasswordValidityResponse validatePassword(String userName, String password, String companyCode) {
+		PasswordValidityResponse passwordValidityResponse = new PasswordValidityResponse();
+		try {
+			if (ldapHelper.validateUser(userName, password)) {
+				passwordValidityResponse.setResultCode(RESULT_CODE_SUCCESS);
+				passwordValidityResponse.setResultDescription(MSG_SUCCESS);
+			} else {
+				passwordValidityResponse.setResultCode(RESULT_CODE_FOUR);
+				passwordValidityResponse.setResultDescription(RESULT_CODE_DESC_PWD_MISMATCH);
+			}
+		} catch (Exception e) {
+			passwordValidityResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			passwordValidityResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return passwordValidityResponse;
+	}
 	
 }
 	
