@@ -482,8 +482,40 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 	DeEnrollResponse response  = new DeEnrollResponse();
 	ProfileResponse profileResponse = new ProfileResponse();
 	Map<String, Object> responseMap = new HashMap<String, Object>();
-	
+	String payMethodIndicator = "";
+	String authType ="";
+	String maskCCNumber="";
+	String maskBankAcctNumber="";
+	String cardType = "";
 	try {
+		
+		if (bpNumber!= null && source!= null && GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode) && source.equalsIgnoreCase(MOBILE))
+		{
+			AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
+			AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
+			String businessPartnerID = bpNumber;
+			autoPayRequest.setBusinessPartnerID(businessPartnerID);
+			autoPayRequest.setCompanyCode(companyCode);
+			autoPayRequest.setBrandName(brandName);
+			autoPayResponse =  billingBO.getAutopayInfo(autoPayRequest);
+			AutoPayDetails[] autoPayDetailsList = autoPayResponse.getAutoPayDetailsList();
+			if(autoPayResponse!=null&&autoPayResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE)&&autoPayDetailsList.length>0)
+			{
+				payMethodIndicator = autoPayDetailsList[0].getPayment();
+				if(payMethodIndicator.equalsIgnoreCase(AUTOPAY_G_FLAG)){
+					authType = autoPayDetailsList[0].getCardType();
+					maskCCNumber = CommonUtil.maskCCNo(autoPayDetailsList[0].getCardNumber());
+					}else{
+					maskBankAcctNumber = CommonUtil.maskBankAccountNo(autoPayDetailsList[0].getBankAccountNumber());
+					}
+					
+			}else
+			{
+					logger.error("Nothing to De Eroll Skipping updateContactLog(...) entry");
+			}		
+		}
+		
+		
 		response = paymentService.deEnroll(accountNumber,companyCode,sessionId,brandName);
 		if(response.getSuccessCode()!=null && response.getSuccessCode().equals("00")){
 		 response.setResultCode(RESULT_CODE_SUCCESS);
@@ -600,33 +632,18 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 	{
 			
 		logger.info("Inside deEnroll:updateContactLog(...) block - in AutoPayBO");		
-		AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
-		AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
-		String businessPartnerID = bpNumber;
-		autoPayRequest.setBusinessPartnerID(businessPartnerID);
-		autoPayRequest.setCompanyCode(companyCode);
-		autoPayRequest.setBrandName(brandName);
-		autoPayResponse =  billingBO.getAutopayInfo(autoPayRequest);
-		AutoPayDetails[] autoPayDetailsList = autoPayResponse.getAutoPayDetailsList();
-		String payMethodIndicator = "";
-		CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
-		cssUpdateLogRequest.setBusinessPartnerNumber(businessPartnerID);
-		cssUpdateLogRequest.setContractAccountNumber(accountNumber);
 		
-		if(autoPayResponse!=null&&autoPayResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE)&&autoPayDetailsList.length>0)
-		{
-			payMethodIndicator = autoPayDetailsList[0].getPayment();
+		CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+		cssUpdateLogRequest.setBusinessPartnerNumber(bpNumber);
+		cssUpdateLogRequest.setContractAccountNumber(accountNumber);
 			if(payMethodIndicator.equalsIgnoreCase(AUTOPAY_G_FLAG)){
-				String authType = autoPayDetailsList[0].getCardType();
-				
-				String cardType = "";
 				if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZVIS))
 					cardType = VISA;
 				else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZMCD))
 					cardType = MASTERCARD;
 				else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
 					cardType = DISCOVER;
-				String maskCCNumber = CommonUtil.maskCCNo(autoPayDetailsList[0].getCardNumber());
+				
 				cssUpdateLogRequest.setContactClass(CONTACT_LOG_CC_CONTACT_CLASS);
 				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_DEENROLL_CONTACT_ACTIVITY);
 				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
@@ -634,7 +651,7 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
 				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a "+cardType+" card with last four digits "+maskCCNumber+" on +"+CommonUtil.getCurrentDateandTime()+".");
 			}else{
-				String maskBankAcctNumber = CommonUtil.maskBankAccountNo(autoPayDetailsList[0].getBankAccountNumber());
+				
 				cssUpdateLogRequest.setContactClass(CONTACT_LOG_BANK_CONTACT_CLASS);
 				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_DEENROLL_CONTACT_ACTIVITY);
 				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
@@ -648,13 +665,7 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
 			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
 			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
-			
-		}else
-		{
-			logger.error("Nothing to De Eroll Skipping updateContactLog(...) entry");
-		}
-		
-		logger.info("End deEnroll:updateContactLog(...) block - in AutoPayBO");	
+			logger.info("End deEnroll:updateContactLog(...) block - in AutoPayBO");	
 	}	
 
 	logger.info("AutoPayBO.deEnroll :: END");

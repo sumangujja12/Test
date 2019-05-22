@@ -595,22 +595,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(StringUtils.isNotBlank(submitPayFlag) && StringUtils.equalsIgnoreCase(submitPayFlag, "Y")){
 					logger.info("Sending mail for payment successful");
 					
-					HashMap<String, String> templateProps = new HashMap<String,String>();
-					
-					String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
-					
-					String maskBankAcctNumber = CommonUtil.maskBankAccountNo(bankAccountNumber);
-					
-					String splitPaymentAmount = "";
-					
-					if(!StringUtils.isEmpty(paymentAmount))
-						splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
-					
-					templateProps.put(TRANSACTION_DATE, transactionDate);
-					templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
-					templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
-					templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
-					templateProps.put(BANK_ROUTING_NUMBER, bankRoutingNumber);
+					HashMap<String, String> templateProps = createBankEmailRequest(bankAccountNumber, bankRoutingNumber,
+							paymentAmount, paymentDate);
 					
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
@@ -620,6 +606,19 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
 						logger.info("Sending mail for successful payment ES");
 						emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL), "", BILL_PAY_BANK_ES, templateProps, companyCode);
+					}
+				} else {
+					HashMap<String, String> templateProps = createBankEmailRequest(bankAccountNumber, bankRoutingNumber,
+							paymentAmount, paymentDate);
+					
+					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
+						logger.info("Sending mail for successful payment EN");
+						emailHelper.sendMail(email, "", BILL_PAY_BANK_EN, templateProps, companyCode);
+					} else{
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
+						logger.info("Sending mail for successful payment ES");
+						emailHelper.sendMail(email, "", BILL_PAY_BANK_ES, templateProps, companyCode);
 					}
 				}
 			}
@@ -641,6 +640,27 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		
 		return payByBankResponse;
 		
+	}
+
+	private HashMap<String, String> createBankEmailRequest(String bankAccountNumber, String bankRoutingNumber,
+			String paymentAmount, String paymentDate) {
+		HashMap<String, String> templateProps = new HashMap<String,String>();
+		
+		String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
+		
+		String maskBankAcctNumber = CommonUtil.maskBankAccountNo(bankAccountNumber);
+		
+		String splitPaymentAmount = "";
+		
+		if(!StringUtils.isEmpty(paymentAmount))
+			splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
+		
+		templateProps.put(TRANSACTION_DATE, transactionDate);
+		templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
+		templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
+		templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
+		templateProps.put(BANK_ROUTING_NUMBER, bankRoutingNumber);
+		return templateProps;
 	}
 	
 	/**
@@ -704,31 +724,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(StringUtils.isNotBlank(submitPayFlag) && StringUtils.equalsIgnoreCase(submitPayFlag, "Y")){
 	                logger.info("Sending mail for payment successful");
 					
-					HashMap<String, String> templateProps = new HashMap<String,String>();
-					
-					String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
-					
-					String cardType = "";
-					if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZVIS))
-						cardType = VISA;
-					else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZMCD))
-						cardType = MASTERCARD;
-					else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
-						cardType = DISCOVER;
-					
-					String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
-					
-					String splitPaymentAmount = "";
-					
-					if(!StringUtils.isEmpty(paymentAmount))
-						splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
-					
-					templateProps.put(TRANSACTION_DATE, transactionDate);
-					templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
-					templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
-					templateProps.put(CARD_TYPE, cardType);
-					templateProps.put(CARD_NUMBER, maskCCNumber);
-					templateProps.put(EXP_DATE, expirationDate);
+					HashMap<String, String> templateProps = createCCPEmailrequest(authType, ccNumber, expirationDate,
+							paymentAmount, paymentDate);
 					
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
@@ -738,6 +735,19 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 						logger.info("Sending mail for successful payment ES");
 						emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL), "", BILL_PAY_CC_ES, templateProps, companyCode);
+					}
+				} else {
+					HashMap<String, String> templateProps = createCCPEmailrequest(authType, ccNumber, expirationDate,
+							paymentAmount, paymentDate);
+					
+					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
+						logger.info("Sending mail for successful payment EN");
+						emailHelper.sendMail(email, "", BILL_PAY_CC_EN, templateProps, companyCode);
+					} else{
+						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
+						logger.info("Sending mail for successful payment ES");
+						emailHelper.sendMail(email,  "", BILL_PAY_CC_ES, templateProps, companyCode);
 					}
 				}
 			}
@@ -759,6 +769,36 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("BillingBO.submitCCPayment :: END");
 		return payByCCResponse;
 	
+	}
+
+	private HashMap<String, String> createCCPEmailrequest(String authType, String ccNumber, String expirationDate,
+			String paymentAmount, String paymentDate) {
+		HashMap<String, String> templateProps = new HashMap<String,String>();
+		
+		String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
+		
+		String cardType = "";
+		if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZVIS))
+			cardType = VISA;
+		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZMCD))
+			cardType = MASTERCARD;
+		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
+			cardType = DISCOVER;
+		
+		String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
+		
+		String splitPaymentAmount = "";
+		
+		if(!StringUtils.isEmpty(paymentAmount))
+			splitPaymentAmount = CommonUtil.splitPaymentAmountDecimal(paymentAmount);
+		
+		templateProps.put(TRANSACTION_DATE, transactionDate);
+		templateProps.put(PAYMENT_AMOUNT, splitPaymentAmount);
+		templateProps.put(SCHEDULED_PAYMENT_DATE, paymentDate);	
+		templateProps.put(CARD_TYPE, cardType);
+		templateProps.put(CARD_NUMBER, maskCCNumber);
+		templateProps.put(EXP_DATE, expirationDate);
+		return templateProps;
 	}
 	
 	/**
