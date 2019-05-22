@@ -7,7 +7,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -59,8 +58,6 @@ public class EmailResource {
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response sendEmail(EmailRequest request) {
 		
-		logger.info("request::::::::"+ReflectionToStringBuilder.toString(request));
-		logger.info("request::::::::"+ReflectionToStringBuilder.toString(request.getPropertyList()));
 		EmailResponse emailResult = emailService.sendEmail(request);
 		Response response = Response.status(Response.Status.OK).entity(emailResult).build();
 		return response;

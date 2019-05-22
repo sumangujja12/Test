@@ -287,7 +287,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			throw new OAMException(200, e.getMessage(), submitSwapResponse);
 		}
 		
-		if(submitSwapResponse.getResultCode()!=null && source!=null &&
+if(submitSwapResponse.getResultCode()!=null && source!=null &&
 				(submitSwapResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||submitSwapResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
 				GME_RES_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode())&&source.equalsIgnoreCase(MOBILE))
 		{
@@ -300,18 +300,21 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with name "+request.getCaName()+" and account number "+request.getAccountNumber()+" has submitted a plan swap request for Contract ID "+request.getContractId()+", ESIID "+request.getEsid()+"+ via the GME Mobile App on "+CommonUtil.getCurrentDateandTime()+". Offer details:"
-					+ "Offer Code: "+request.getOfferCode()+""
-					+ "Plan Name: "+request.getPlanName()+""
-					+ "Term Length: "+request.getContractTerm()+" months+"
-					+ "Average Price: "+request.getAvgPrice()+""
-					+ "Cancelation Fee: "+request.getCancelFee()+""
-					+ "iDoc No: "+submitSwapResponse.getIDOCNumber()+""
-					+ "EFL SmartCode: "+request.getEflSmartCode()+""
-					+ "TOS SmartCode: "+request.getTosSmartCode()+"");
+			cssUpdateLogRequest.setTextLines("User with name "+request.getCaName()+" and account number "+request.getAccountNumber()+" has submitted a plan swap request for Contract ID "+request.getContractId()+", ESIID "+request.getEsid()+" via the GME Mobile App on "+CommonUtil.getCurrentDateandTime()+". Offer details:"
+					+ ", Offer Code: "+request.getOfferCode()+""
+					+ ", Plan Name: "+request.getPlanName()+""
+					+ ", Term Length: "+request.getContractTerm()+" months"
+					+ ", Average Price: "+request.getAvgPrice()+""
+					+ ", Cancelation Fee: "+request.getCancelFee()+""
+					+ ", iDoc No: "+submitSwapResponse.getIDOCNumber()+""
+					+ ", EFL SmartCode: "+request.getEflSmartCode()+""
+					+ ", TOS SmartCode: "+request.getTosSmartCode()+""
+							+ ", Service Address: "+serviceAddress+""
+							+ ", Service City: "+serviceCity+""
+							+ ", Service State: "+serviceState+""
+							+ ", Service ZipCode: "+serviceZipCode+".");
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(request.getCompanyCode());
-			
 			logger.info("Start: call TOSService.updateContactLog(...)");
 			try {
 				tosService.updateContactLog(cssUpdateLogRequest);

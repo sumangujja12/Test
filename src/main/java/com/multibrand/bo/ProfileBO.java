@@ -1119,8 +1119,8 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 					&& manuPartNo.equalsIgnoreCase(SUN_CLUB)) {
 				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY);
 				cssUpdateLogRequest
-						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
-								+ " enrolled in Sun Club on +" + CommonUtil.getCurrentDateandTime() + ".");
+						.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)
+								+ " enrolled in Sun Club on " + CommonUtil.getCurrentDateandTime() + ".");
 			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_ENROLL_ACTION)
 					&& manuPartNo.equalsIgnoreCase(TX_DRIVER)) {
 				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY);

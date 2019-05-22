@@ -294,7 +294,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with last name "+lastName+" and account number "+CommonUtil.stripLeadingZeros(accountNumber)+" has registered for My Account via the GME Mobile App with username "+userName+" on +"+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setTextLines("User with last name "+lastName+" and account number "+CommonUtil.stripLeadingZeros(accountNumber)+" has registered for My Account via the GME Mobile App with username "+userName+" on "+CommonUtil.getCurrentDateandTime()+".");
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
 			logger.info("Start: call TOSService.updateContactLog(...)");

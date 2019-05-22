@@ -115,6 +115,7 @@ import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
+
 import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
@@ -249,9 +250,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}
 			else
 			{
-				
-				
-			    getBillingAddressResp.setResultCode(RESULT_CODE_THREE);
+				getBillingAddressResp.setResultCode(RESULT_CODE_THREE);
 			    getBillingAddressResp.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
 		} catch (RemoteException e) {
@@ -518,14 +517,14 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in Tree Free on +"+CommonUtil.getCurrentDateandTime()+".");
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in Tree Free on "+CommonUtil.getCurrentDateandTime()+".");
 			}else{
 				cssUpdateLogRequest.setContactClass(CONTACT_LOG_TREE_FREE_BILL_CONTACT_CLASS);
 				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_TREE_FREE_BILL_DEENROLL_CONTACT_ACTIVITY);
 				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" de-enrolled from Tree Free on +"+CommonUtil.getCurrentDateandTime()+".");
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" de-enrolled from Tree Free on "+CommonUtil.getCurrentDateandTime()+".");
 			}
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
@@ -638,10 +637,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			payByBankResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			payByBankResponse.setResultDescription("Exception Occured");
 			throw new OAMException(200, e.getMessage(), payByBankResponse);
-			
 		}
-	
-		
 		return payByBankResponse;
 		
 	}
@@ -1126,7 +1122,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			updatePaperFreeBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), updatePaperFreeBillingResponse);
 		}
-		
 		
 		// test if the result code to above process is success and companyCode is of Cirro, then send the mail for billing option update
 		if (RESULT_CODE_SUCCESS.equalsIgnoreCase(updatePaperFreeBillingResponse.getResultCode())&&
@@ -1692,14 +1687,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   scheduleOTCCPaymentResponse.seteTrackingId(response.getETrackingId());
 			   scheduleOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			   scheduleOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
-			   
 			   if (isMobileRequest ) {
 	               EmailRequest emailRequest= createSchedulePayEmailReq(emailId,expMonth, expYear, request, response); 
 	               emailService.sendEmail(emailRequest);
 			   }
-
-
-               
 			
 			} else{
 				
@@ -2692,7 +2683,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
  
 				if(autoPayResponse!=null&&autoPayResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE)&&autoPayResponse.getAutoPayDetailsList().length>0)
 				{
-					
 					adr =autoPayResponse.getAutoPayDetailsList();
 					
 						if(!(adr[0].getCardNumber().toString().isEmpty())){
@@ -2800,7 +2790,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 												
 				}else{
 					i++;
-				}
+					}
 			}
 			response.setPaymentMethodsList(paymentMethodsList);
 			response.setResultCode(RESULT_CODE_SUCCESS);
@@ -2808,7 +2798,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			response.setMessageCode("Successfully retrieved all Menthods of Payments");
 						
 			}else
-			{
+				{
 				 if(NoDataInAutoPay){
 						response.setResultCode(RESULT_CODE_NO_DATA);
 						response.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
@@ -2822,9 +2812,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}	
 			}else
 				{
-					response.setResultCode(RESULT_CODE_CCS_ERROR);
-					response.setResultDescription(accountDetailsResponse.getErrorCode());
-					response.setMessageCode("Could not find Account Details");
+							response.setResultCode(RESULT_CODE_CCS_ERROR);
+							response.setResultDescription(accountDetailsResponse.getErrorCode());
+							response.setMessageCode("Could not find Account Details");
 				}
 			}else
 				{
@@ -2833,7 +2823,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					response.setMessageCode("Invalid Input Parameters - Please check entered A/C number and Company Code");
 				
 				}
-	
+			
 		} catch (Exception e) {
 			logger.error(" Error in getPaymentMethods call "+e.getMessage());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -2842,6 +2832,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-getPaymentMethods]");
 		return response;
 	}
+	
 	/** This method Save pay accounts for customer.
 	 * @author cuppala
 	 * @param request
@@ -2905,7 +2896,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		return response;
 	}
 	
-
+	
 	/** This method update pay accounts in customer's wallet.
 	 * @author cuppala
 	 * @param request
@@ -3046,8 +3037,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				            { 
 				            	isProactive = true;
 				            	break;
-				            }
-				         }
+				            } 
+				        } 
 						
 						if(!isProactive)
 						{
@@ -3130,7 +3121,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			
 	}
 	
-	
 	/**
 	 * This method is responsible for getting eligibility 
 	 * @param ambEligRequest
@@ -3211,6 +3201,5 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return emailRequest;
 	}
-
 
 }
