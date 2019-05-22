@@ -16,7 +16,6 @@ import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.ProfileResponse;
 import com.multibrand.domain.ValidateCCRequest;
 import com.multibrand.exception.OAMException;
-import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.PaymentService;
@@ -49,9 +48,6 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	
 	@Autowired
 	private EmailHelper emailHelper;
-	
-	@Autowired
-	private AsyncHelper asyncHelper;
 	
 	@Autowired
 	private ProfileService profileService;
@@ -118,6 +114,8 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		request.setStrCANumber(accountNumber);
 		request.setStrCompanyCode(companyCode);
 		String maskBankAcctNumber = CommonUtil.maskBankAccountNo(bankAccountNumber);
+		String bankLastDigits = maskBankAcctNumber.substring(maskBankAcctNumber.length()-3, maskBankAcctNumber.length());
+		
 		try {
 			com.multibrand.domain.AutoPayBankResponse response = paymentService.submitBankAutoPay(request, companyCode, sessionId,brandName);
 			
@@ -239,7 +237,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a bank account with last 3 digits "+maskBankAcctNumber+" on +"+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a bank account with last 3 digits "+bankLastDigits+" on "+CommonUtil.getCurrentDateandTime()+".");
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
 						
@@ -336,6 +334,8 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 			cardType = DISCOVER;
 		
 		String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
+		String ccLastDigits = maskCCNumber.substring(maskCCNumber.length()-4, maskCCNumber.length());
+		
 		
 		try {
 			com.multibrand.domain.AutoPayCCResponse response = paymentService.submitCCAutoPay(request, companyCode, sessionId,brandName);
@@ -458,7 +458,7 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a "+cardType+" card with last four digits "+maskCCNumber+" on +"+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a "+cardType+" card with last four digits "+ccLastDigits+" on "+CommonUtil.getCurrentDateandTime()+".");
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
 			
@@ -503,8 +503,7 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 		{
 			AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
 			AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
-			String businessPartnerID = bpNumber;
-			autoPayRequest.setBusinessPartnerID(businessPartnerID);
+			autoPayRequest.setBusinessPartnerID(bpNumber);
 			autoPayRequest.setCompanyCode(companyCode);
 			autoPayRequest.setBrandName(brandName);
 			autoPayResponse =  billingBO.getAutopayInfo(autoPayRequest);
@@ -515,8 +514,13 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 				if(payMethodIndicator.equalsIgnoreCase(AUTOPAY_G_FLAG)){
 					authType = autoPayDetailsList[0].getCardType();
 					maskCCNumber = CommonUtil.maskCCNo(autoPayDetailsList[0].getCardNumber());
+					String temp = maskCCNumber.substring(maskCCNumber.length()-4, maskCCNumber.length());
+					maskCCNumber = temp;
 					}else{
 					maskBankAcctNumber = CommonUtil.maskBankAccountNo(autoPayDetailsList[0].getBankAccountNumber());
+					String temp = maskBankAcctNumber.substring(maskBankAcctNumber.length()-3, maskBankAcctNumber.length());
+					maskBankAcctNumber = temp;
+					
 					}
 					
 			}else
@@ -653,13 +657,12 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 					cardType = MASTERCARD;
 				else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
 					cardType = DISCOVER;
-				
 				cssUpdateLogRequest.setContactClass(CONTACT_LOG_CC_CONTACT_CLASS);
 				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_DEENROLL_CONTACT_ACTIVITY);
 				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a "+cardType+" card with last four digits "+maskCCNumber+" on +"+CommonUtil.getCurrentDateandTime()+".");
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" de-enrolled in autoPay using a "+cardType+" card with last four digits "+maskCCNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
 			}else{
 				
 				cssUpdateLogRequest.setContactClass(CONTACT_LOG_BANK_CONTACT_CLASS);
@@ -667,7 +670,7 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a bank account with last 3 digits "+maskBankAcctNumber+" on +"+CommonUtil.getCurrentDateandTime()+".");
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" de-enrolled in autoPay using a bank account with last 3 digits "+maskBankAcctNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
 			}
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
