@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.domain.ContractAccountDO;
+import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.ProfileResponse;
 import com.multibrand.exception.OAMException;
+import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.LDAPHelper;
 import com.multibrand.helper.RegistrationHelper;
@@ -48,6 +50,10 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 	
 	@Autowired
 	private EmailHelper emailHelper;
+	
+	@Autowired
+	private AsyncHelper asyncHelper;
+	
 	//@Autowired
 	//private ReloadableResourceBundleMessageSource appConstMessageSource;
 
@@ -275,6 +281,28 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		genricResp.setResultCode(RESULT_CODE_SUCCESS);
 		genricResp.setResultDescription(MSG_SUCCESS);
 		logger.info("END-[RegistrationBO-createUser]");
+		
+		if(genricResp.getResultCode()!=null && source!=null && businessPartner!=null &&
+				(genricResp.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||genricResp.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE)){
+			logger.info("Inside createUser:updateContactLog(...) block - in RegistrationBO");
+			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+			cssUpdateLogRequest.setBusinessPartnerNumber(businessPartner);
+			cssUpdateLogRequest.setContractAccountNumber(accountNumber);
+			cssUpdateLogRequest.setContactClass(CONTACT_LOG_CREATE_USER_CONTACT_CLASS);
+			cssUpdateLogRequest.setContactActivity(CONTACT_LOG_CREATE_USER_CONTACT_ACTIVITY);
+			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+			cssUpdateLogRequest.setTextLines("User with last name "+lastName+" and account number "+CommonUtil.stripLeadingZeros(accountNumber)+" has registered for My Account via the GME Mobile App with username "+userName+" on +"+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setFormatCol("");//Should be Blank
+			cssUpdateLogRequest.setCompanyCode(companyCode);
+			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
+			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
+			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("End createUser:updateContactLog(...) block - in RegistrationBO");
+		}
+		
 		return genricResp;
 
 	}

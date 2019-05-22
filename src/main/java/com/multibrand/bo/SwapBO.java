@@ -287,10 +287,11 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			throw new OAMException(200, e.getMessage(), submitSwapResponse);
 		}
 		
-		if(submitSwapResponse.getResultCode()!=null && 
-				(submitSwapResponse.getResultCode().equalsIgnoreCase("0")||submitSwapResponse.getResultCode().equalsIgnoreCase("00"))&& 
+		if(submitSwapResponse.getResultCode()!=null && source!=null &&
+				(submitSwapResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||submitSwapResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
 				GME_RES_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode())&&source.equalsIgnoreCase(MOBILE))
 		{
+			logger.info("Inside submitSwap:updateContactLog(...) block - in SwapBO");
 			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
 			cssUpdateLogRequest.setBusinessPartnerNumber(request.getBpNumber());
 			cssUpdateLogRequest.setContractAccountNumber(request.getAccountNumber());
@@ -314,7 +315,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
 			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
 			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
-			
+			logger.info("End submitSwap:updateContactLog(...) block - in SwapBO");
 		}
 		
 		

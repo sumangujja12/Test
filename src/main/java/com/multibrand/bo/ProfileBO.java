@@ -28,6 +28,7 @@ import com.multibrand.domain.ChangeUsrNameResponse;
 import com.multibrand.domain.CirroStructureCallRequest;
 import com.multibrand.domain.CirroStructureCallResponse;
 import com.multibrand.domain.ContractAccountDO;
+import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.EsidProfileResponse;
@@ -46,6 +47,7 @@ import com.multibrand.domain.WseEsenseEligibilityResponse;
 import com.multibrand.domain.WseServiceRequest;
 import com.multibrand.domain.WseServiceResponse;
 import com.multibrand.exception.OAMException;
+import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.BPAccountContractPayHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.LDAPHelper;
@@ -123,6 +125,9 @@ public class ProfileBO extends BaseBO {
 
 	@Autowired
 	private BillingBO billingBO;
+	
+	@Autowired
+	private AsyncHelper asyncHelper;
 	
 	@Autowired
 	protected EnvMessageReader envMessageReader;
@@ -1105,6 +1110,53 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			productResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(),productResponse);
 		}
+		
+		if(productResponse.getResultCode()!=null && bpNumber!=null && source!=null &&
+				(productResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||productResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode) && source.equalsIgnoreCase(MOBILE)){
+			logger.info("Inside productUpdate:updateContactLog(...) block - in ProfileBO");
+			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+			cssUpdateLogRequest.setBusinessPartnerNumber(bpNumber);
+			cssUpdateLogRequest.setContractAccountNumber(accountNumber);
+			cssUpdateLogRequest.setContactClass(CONTACT_LOG_SUN_CULB_TX_DRIVER_CONTACT_CLASS);
+			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+			
+			if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(SUN_CLUB)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " enrolled in Sun Club on +" + CommonUtil.getCurrentDateandTime() + ".");
+			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(TX_DRIVER)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_IN_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " enrolled in GME Driver on " + CommonUtil.getCurrentDateandTime() + ".");
+			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_DE_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(SUN_CLUB)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_OUT_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " de-enrolled from Sun Club on " + CommonUtil.getCurrentDateandTime() + ".");
+			} else if (action != null && manuPartNo != null && action.equalsIgnoreCase(SUN_CLUB_TX_DRIVER_DE_ENROLL_ACTION)
+					&& manuPartNo.equalsIgnoreCase(TX_DRIVER)) {
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_SUN_CULB_TX_DRIVER_OPT_OUT_CONTACT_ACTIVITY);
+				cssUpdateLogRequest
+						.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+								+ " de-enrolled from GME Driver on " + CommonUtil.getCurrentDateandTime() + ".");
+			}
+			cssUpdateLogRequest.setFormatCol("");//Should be Blank
+			cssUpdateLogRequest.setCompanyCode(companyCode);
+			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
+			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
+			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("End of productUpdate:updateContactLog(...) block - in ProfileBO");
+			
+		}		
+		
 		return productResponse;
 	}
 	

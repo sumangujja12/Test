@@ -36,6 +36,7 @@ import com.multibrand.domain.BankPaymentInstitutionResponse;
 import com.multibrand.domain.CancelOtccPaymentResp;
 import com.multibrand.domain.CancelSchdOtccPaymetReq;
 import com.multibrand.domain.ContractAccountDO;
+import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.DeActEbillRequest;
@@ -51,6 +52,7 @@ import com.multibrand.domain.UpdPaperBillResponse;
 import com.multibrand.domain.ZesAmbOutput;
 import com.multibrand.dto.request.EmailRequest;
 import com.multibrand.exception.OAMException;
+import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.BillHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -147,6 +149,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	@Autowired
 	private EmailService emailService;
 	
+	@Autowired
+	private AsyncHelper asyncHelper;
 	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
@@ -439,6 +443,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		ActEbillRequest actEbillRequest = null;
 		DeActEbillResponse deActEbillResponse = null;
 		DeActEbillRequest deActEbillRequest = null;
+		boolean enrolledFlag = false;
 		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = new UpdatePaperFreeBillingResponse();
 		try {
 			
@@ -455,6 +460,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				actEbillRequest.setStrSource(Constants.EBPP_SOURCE);
 				actEbillResponse = billingService.activateEbill(actEbillRequest, companyCode, sessionId);				
 				if (actEbillResponse.getStrRespCode()!=null && actEbillResponse.getStrRespCode().equals("0")){
+					enrolledFlag = true;
 					updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_SUCCESS);
 					updatePaperFreeBillingResponse.setResultDescription(MSG_SUCCESS);
 				}
@@ -471,6 +477,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				deActEbillRequest.setStrMessage("");
 				deActEbillResponse = billingService.deactivateEbill(deActEbillRequest, companyCode, sessionId);
 				if (deActEbillResponse.getStrResponseCode()!=null && deActEbillResponse.getStrResponseCode().equals("0")){
+					enrolledFlag = false;
 					updatePaperFreeBillingResponse.setResultCode(RESULT_CODE_SUCCESS);
 					updatePaperFreeBillingResponse.setResultDescription(MSG_SUCCESS);
 				}
@@ -497,6 +504,38 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			updatePaperFreeBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), updatePaperFreeBillingResponse);
 		}
+		
+		if(updatePaperFreeBillingResponse.getResultCode()!=null && bpNumber!=null && source!=null &&
+				(updatePaperFreeBillingResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||updatePaperFreeBillingResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE)){
+			logger.info("Inside updatePaperFreeBilling:updateContactLog(...) block - in BillingBO");
+			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+			cssUpdateLogRequest.setBusinessPartnerNumber(bpNumber);
+			cssUpdateLogRequest.setContractAccountNumber(accountNumber);
+			if(enrolledFlag){
+				cssUpdateLogRequest.setContactClass(CONTACT_LOG_TREE_FREE_BILL_CONTACT_CLASS);
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_TREE_FREE_BILL_ENROLL_CONTACT_ACTIVITY);
+				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in Tree Free on +"+CommonUtil.getCurrentDateandTime()+".");
+			}else{
+				cssUpdateLogRequest.setContactClass(CONTACT_LOG_TREE_FREE_BILL_CONTACT_CLASS);
+				cssUpdateLogRequest.setContactActivity(CONTACT_LOG_TREE_FREE_BILL_DEENROLL_CONTACT_ACTIVITY);
+				cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+				cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+				cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+				cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" de-enrolled from Tree Free on +"+CommonUtil.getCurrentDateandTime()+".");
+			}
+			cssUpdateLogRequest.setFormatCol("");//Should be Blank
+			cssUpdateLogRequest.setCompanyCode(companyCode);
+			
+			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
+			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
+			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("End updatePaperFreeBilling:updateContactLog(...) block - in BillingBO");
+		}
+		
 		return updatePaperFreeBillingResponse;
 	}
 	
