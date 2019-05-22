@@ -1,8 +1,6 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -12,8 +10,6 @@ import java.util.Map;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
-import javax.ws.rs.FormParam;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,7 +43,6 @@ import com.multibrand.domain.WseEsenseEligibilityResponse;
 import com.multibrand.domain.WseServiceRequest;
 import com.multibrand.domain.WseServiceResponse;
 import com.multibrand.exception.OAMException;
-import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.BPAccountContractPayHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.LDAPHelper;
@@ -55,6 +50,7 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.proxy.ProfileProxy;
 import com.multibrand.service.LDAPService;
 import com.multibrand.service.ProfileService;
+import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnvMessageReader;
@@ -72,7 +68,6 @@ import com.multibrand.vo.response.EnvironmentImpactsResponse;
 import com.multibrand.vo.response.ForgotPasswordResponse;
 import com.multibrand.vo.response.ForgotUserNameResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
-import com.multibrand.vo.response.PasswordValidityResponse;
 import com.multibrand.vo.response.SecondaryNameResponse;
 import com.multibrand.vo.response.SendMailForNewServiceAddressAddResponse;
 import com.multibrand.vo.response.SendMailForPasswordChangeResponse;
@@ -120,14 +115,10 @@ public class ProfileBO extends BaseBO {
 	private BPAccountContractPayHelper bpAccountPayHelper;
 		
 	@Autowired
-	private ProfileProxy profileProxy;
-	
-
-	@Autowired
 	private BillingBO billingBO;
 	
 	@Autowired
-	private AsyncHelper asyncHelper;
+	private TOSService tosService;
 	
 	@Autowired
 	protected EnvMessageReader envMessageReader;
@@ -1150,9 +1141,13 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			}
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
-			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
-			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
-			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
 			logger.info("End of productUpdate:updateContactLog(...) block - in ProfileBO");
 			
 		}		
@@ -2151,23 +2146,6 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		return response;
 	}
 	
-	public PasswordValidityResponse validatePassword(String userName, String password, String companyCode) {
-		PasswordValidityResponse passwordValidityResponse = new PasswordValidityResponse();
-		try {
-			if (ldapHelper.validateUser(userName, password)) {
-				passwordValidityResponse.setResultCode(RESULT_CODE_SUCCESS);
-				passwordValidityResponse.setResultDescription(MSG_SUCCESS);
-			} else {
-				passwordValidityResponse.setResultCode(RESULT_CODE_FOUR);
-				passwordValidityResponse.setResultDescription(RESULT_CODE_DESC_PWD_MISMATCH);
-			}
-		} catch (Exception e) {
-			passwordValidityResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			passwordValidityResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-		}
-		return passwordValidityResponse;
-	}
-
 
 	
 }

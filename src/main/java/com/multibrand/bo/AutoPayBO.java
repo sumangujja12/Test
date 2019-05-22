@@ -2,7 +2,6 @@ package com.multibrand.bo;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 import com.multibrand.domain.AutoPayBankRequest;
 import com.multibrand.domain.ContractAccountDO;
 import com.multibrand.domain.CreateContactLogRequest;
-import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.ProfileResponse;
 import com.multibrand.domain.ValidateCCRequest;
 import com.multibrand.exception.OAMException;
@@ -23,6 +21,7 @@ import com.multibrand.helper.EmailHelper;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.PaymentService;
 import com.multibrand.service.ProfileService;
+import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.AutoPayInfoRequest;
@@ -56,6 +55,9 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	
 	@Autowired
 	private ProfileService profileService;
+	
+	@Autowired
+	private TOSService tosService;
 	
 	@Autowired
 	private BillingBO billingBO;
@@ -241,9 +243,13 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
 						
-			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
-			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
-			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
 			logger.info("End submitBankAutoPay:updateContactLog(...) block - in AutoPayBO");
 		}	
 		
@@ -456,9 +462,13 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
 			
-			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
-			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
-			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
 			logger.info("End submitCCAutoPay:updateContactLog(...) block - in AutoPayBO");
 		}
 		
@@ -662,9 +672,13 @@ public DeEnrollResponse deEnroll(String accountNumber,String companyCode, String
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
 					
-			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
-			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
-			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
 			logger.info("End deEnroll:updateContactLog(...) block - in AutoPayBO");	
 	}	
 

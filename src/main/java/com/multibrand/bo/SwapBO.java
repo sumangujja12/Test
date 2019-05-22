@@ -20,10 +20,10 @@ import com.multibrand.domain.RolloverPlanDetailsResponse;
 import com.multibrand.domain.SwapRequest;
 import com.multibrand.domain.SwapResponse;
 import com.multibrand.exception.OAMException;
-import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.SwapService;
+import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
@@ -47,7 +47,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 	EmailHelper emailHelper;
 	
 	@Autowired
-	AsyncHelper asyncHelper;
+	TOSService tosService;
 	
 	
 
@@ -312,9 +312,13 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(request.getCompanyCode());
 			
-			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
-			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
-			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
 			logger.info("End submitSwap:updateContactLog(...) block - in SwapBO");
 		}
 		

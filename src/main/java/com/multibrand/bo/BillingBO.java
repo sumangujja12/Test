@@ -52,7 +52,6 @@ import com.multibrand.domain.UpdPaperBillResponse;
 import com.multibrand.domain.ZesAmbOutput;
 import com.multibrand.dto.request.EmailRequest;
 import com.multibrand.exception.OAMException;
-import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.BillHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -63,6 +62,7 @@ import com.multibrand.service.EmailService;
 import com.multibrand.service.OfferService;
 import com.multibrand.service.PaymentService;
 import com.multibrand.service.ProfileService;
+import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
@@ -150,7 +150,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	private EmailService emailService;
 	
 	@Autowired
-	private AsyncHelper asyncHelper;
+	private TOSService tosService;
 	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
@@ -530,9 +530,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(companyCode);
 			
-			logger.info("Start: Async call ContactLogHelper.updateContactLog(...)");
-			asyncHelper.asychUpdateContactLog(cssUpdateLogRequest);
-			logger.info("End: Async call ContactLogHelper.updateContactLog(...)");
+			logger.info("Start: call TOSService.updateContactLog(...)");
+			try {
+				tosService.updateContactLog(cssUpdateLogRequest);
+			} catch(Exception e) {
+				logger.error("Error in updateContactLog:"+e);
+			}
+			logger.info("End: call TOSService.updateContactLog(...)");
 			logger.info("End updatePaperFreeBilling:updateContactLog(...) block - in BillingBO");
 		}
 		

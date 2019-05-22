@@ -804,20 +804,18 @@ public class TOSService extends BaseAbstractService
 		private String buildTOSSubmitEligibleProductsURL() {
 			return getEndPointUrl(CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL);
 		}
-  
-	
+ 	
 	public CreateContactLogResponse updateContactLog(CreateContactLogRequest request) throws Exception {
 		TOSDomain proxy = getTOSDomainProxy();
 		long startTime = CommonUtil.getStartTime();
 		CreateContactLogResponse response = null;
-		String sessionId = httpRequest.getSession(true).getId();
 		String companyCode = COMPANY_CODE_GME;
 		try {
 			response = proxy.updateContactLog(request);
 		} catch (RemoteException ex) {
 			logger.error(": Exception while getting data from ccs:"+ex);
 			this.utilityloggerHelper.logTransaction("updateContactLog", false, request, ex, "",
-					CommonUtil.getElapsedTime(startTime), "", sessionId,companyCode);
+					CommonUtil.getElapsedTime(startTime), "", "",companyCode);
 		if (logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
 			throw ex;// it is required to throw exception back to BO layer for
@@ -825,14 +823,14 @@ public class TOSService extends BaseAbstractService
 		} catch (Exception ex) {
 			logger.error(": Exception while getting data from ccs:"+ex);
 			this.utilityloggerHelper.logTransaction("updateContactLog", false, request, ex, "",
-					CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+					CommonUtil.getElapsedTime(startTime), "", "", companyCode);
 			if (logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
 			throw ex;// it is required to throw exception back to BO layer for
 						// proper response generation
 		}
 		this.utilityloggerHelper.logTransaction("updateContactLog", false, request, response, response.getErrMessage(),
-				CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+				CommonUtil.getElapsedTime(startTime), "", "", companyCode);
 		if (logger.isDebugEnabled()) {
 			logger.debug(XmlUtil.pojoToXML(request));
 			logger.debug(XmlUtil.pojoToXML(response));
