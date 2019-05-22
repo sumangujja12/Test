@@ -2674,7 +2674,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			autoPayRequest.setCompanyCode(companyCode);
 			autoPayRequest.setBrandName(brandName);
 				try{
-				autoPayResponse = getAutopayInfo(autoPayRequest);
+					autoPayResponse = getAutopayInfo(autoPayRequest);
 				}
 				catch(Exception e)
 				{
