@@ -636,7 +636,8 @@ public class BillingResource {
 			@FormParam("companyCode") String companyCode, 
 			@FormParam("brandName") String brandName,
 			@FormParam("emailId")String emailId,
-			@FormParam("isMobileRequest")boolean isMobileRequest){
+			@FormParam("isMobileRequest")boolean isMobileRequest,
+			@FormParam("accountChkDigit")String checkdigit){
 		Response response = null;
 		ScheduleOTCCPaymentResponse scheduleOTCCPaymentResponse = billingBO
 				.scheduleOneTimeCCPayment(
@@ -650,7 +651,7 @@ public class BillingResource {
 						zipCode, 
 						companyCode,
 						brandName,
-						httpRequest.getSession(true).getId(),emailId,isMobileRequest);
+						httpRequest.getSession(true).getId(),emailId,isMobileRequest, checkdigit);
 		
 		response = Response.status(200).entity(scheduleOTCCPaymentResponse).build();
 				
