@@ -1652,7 +1652,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public ScheduleOTCCPaymentResponse scheduleOneTimeCCPayment(String bpid,String contractAccountNumber, String ccNumber, String expMonth, String expYear, String paymentAmount, String scheduledDate, String  zipCode, String companyCode, String brandName, String sessionId, String emailId, boolean isMobileRequest)
+	public ScheduleOTCCPaymentResponse scheduleOneTimeCCPayment(String bpid,String contractAccountNumber, String ccNumber, String expMonth, String expYear, String paymentAmount, String scheduledDate, String  zipCode, String companyCode, String brandName, String sessionId, String emailId, boolean isMobileRequest, String checkdigit)
 	{
 		logger.info("START-[BillingBO-scheduleOneTimeCCPayment]");
 		//padding the bpid with 0s
@@ -1688,7 +1688,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   scheduleOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			   scheduleOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
 			   if (isMobileRequest ) {
-	               EmailRequest emailRequest= createSchedulePayEmailReq(emailId,expMonth, expYear, request, response); 
+	               EmailRequest emailRequest= createSchedulePayEmailReq(emailId,expMonth, expYear, request, response, checkdigit); 
 	               emailService.sendEmail(emailRequest);
 			   }
 			
@@ -3163,7 +3163,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @return EmailRequest
 	 */
 	public EmailRequest createSchedulePayEmailReq(String emailid, String expMonth, String expYear,
-			ScheduleOtccPaymentRequest request, ScheduleOtccPaymentResponse response) {
+			ScheduleOtccPaymentRequest request, ScheduleOtccPaymentResponse response, String checkdigit) {
 
 		EmailRequest emailRequest = new EmailRequest();
 
@@ -3187,10 +3187,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			prop.add(E_PAYMENT_AMOUNT + ":$" + request.getPaymentAmount());
 
 			prop.add(E_CONTR_ACCT_ID + ":" + request.getContractAccount());
+			prop.add(E_CHECK_DIGIT + ":" + checkdigit);
 			prop.add(SCH_PAYMENT_DATE + ":"
 					+ CommonUtil.changeDateFormat(request.getScheduledDate(), yyyy_MM_dd, MM_dd_yyyy));
 
-			prop.add(E_CARD_NUMBER + ":" + request);
+			prop.add(E_CARD_NUMBER + ":" + request.getTokCCNumber());
 			prop.add(E_EXP_DATE + ":" + expMonth + "/" + expYear.substring(2));
 			prop.add(E_CONFIRM_NUM + ":" + response.getETrackingId());
 
