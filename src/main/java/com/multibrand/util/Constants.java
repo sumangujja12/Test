@@ -1239,7 +1239,8 @@ public interface Constants {
 	public static final String BASE64HTML = "BASE64HTML"; 
     public static final String TXN_DATE = "TXN_DATE"; 
     public static final String E_PAYMENT_AMOUNT = "PAYMENT_AMOUNT"; 
-    public static final String E_CONTR_ACCT_ID = "CONTR_ACCT_ID"; 
+    public static final String E_CONTR_ACCT_ID = "CONTR_ACCT_ID";
+    public static final String E_CHECK_DIGIT = "CHECK_DIGIT"; 
     public static final String SCH_PAYMENT_DATE = "SCH_PAYMENT_DATE"; 
     public static final String E_CARD_NUMBER = "CARD_NUMBER"; 
     public static final String E_EXP_DATE = "EXP_DATE"; 
