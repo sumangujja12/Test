@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
+import com.multibrand.domain.BankDetailsValidationRequest;
+import com.multibrand.domain.BankDetailsValidationResponse;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.OEDomain;
@@ -370,7 +372,99 @@ public class OEService extends BaseAbstractService {
 		private String buildUpdateETFFlafToCRMURL() {
 			return getEndPointUrl(CCS_UPDATE_ETF_FLAG_TO_CRM_URL);
 		}
+		// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+		/**
+		 * START : OE | Sprint 23 | US18891 | Nkatragadda
+		 * @param request
+		 * @return
+		 * @throws Exception
+		 */
+		public BankDetailsValidationResponse ValidateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) throws Exception {
+			logger.debug("START :: OEService.ValidateBankDetailsGiact(..)");
+			BankDetailsValidationResponse bankDetailsValidationResponse = new BankDetailsValidationResponse();
+				
+				String[] args = readBankDetailsArgs(bankDetailsValidationRequest,6);
+				
+				String url = buildBankGiactCallURL();
+				MessageFormat urlFormat = new MessageFormat(url);
+				url = urlFormat.format(args);
+				
+				org.springframework.http.HttpHeaders headers = getBasicAuthSpringHttpHeadersForCCS();
+				
+				RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC));
+				HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+				ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+				
+				
+				String responseAsString = responseEntity.getBody();
+				Gson gson = new Gson();
+				if(null != responseAsString) {
+					bankDetailsValidationResponse = gson.fromJson(responseAsString, BankDetailsValidationResponse.class);
+				}
+				
+			logger.debug("END :: oeService.ValidateBankDetailsGiact(..)");
+			return bankDetailsValidationResponse;
+		}
 		
-	  
-
+		private String buildBankGiactCallURL() {
+			return getEndPointUrl(CCS_BANK_GIACT_CALL_URL);
+		}
+		
+		private String[] readBankDetailsArgs(BankDetailsValidationRequest request, int totalArgs) {
+			
+			String[] inputArgs = new String[totalArgs];
+			StringBuilder strBuilder = null;
+			if(null == request) {
+				return inputArgs;
+			}
+			
+			/*
+			 * Important Note:
+			 * The order of building the String was made based on the CCS URL parameters input position.
+			 * It is advised to keep the order as-is.  If at at it is required to modify, carefully 
+			 * verify the CCS URL and change their position accordingly while building the String. 
+			 */
+			int iCount = 0;
+			//ContractAccountNumber
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getContractAccountNumber());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();
+			iCount++;
+			
+			//CompanyCode
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getCompanyCode());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();
+			iCount++;
+			
+			//BankAccountNumber
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getBankAccountNumber());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();
+			iCount++;
+			
+			//RoutingNumber
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getRoutingNumber());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();
+			iCount++;
+			
+			//TrackingNumber
+			strBuilder = new StringBuilder();
+			strBuilder.append(SINGLE_QUOTE);
+			strBuilder.append(request.getTrackingNumber());
+			strBuilder.append(SINGLE_QUOTE);
+			inputArgs[iCount] = strBuilder.toString();
+			
+			return inputArgs;
+		}
+		// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL: validate bank details  | Jyothi | 5/31/2019		
 }
