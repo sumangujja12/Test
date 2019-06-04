@@ -1257,5 +1257,8 @@ public interface Constants {
     public static final String AUTOPAY_G_FLAG = "G";
 	public static final String E_CHECK_DIGIT = "CHECK_DIGIT"; 
 
+	// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+	public static final String CCS_BANK_GIACT_CALL_URL="ws.rest.ccs.bank.giact.call.url";
+	// End | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
 	 
 }
