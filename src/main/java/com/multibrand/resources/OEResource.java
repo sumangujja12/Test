@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -23,9 +24,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
+import com.multibrand.domain.BankDetailsValidationRequest;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -60,6 +63,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
@@ -1170,4 +1174,20 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
+	/**
+	 * Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+	 * @author Nkatragadda
+	 * @param request
+	 * @return
+	 */
+	@POST
+	@Path("validateBankDetailsGiact")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public GiactBankValidationResponse validateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) {
+		logger.debug("Enetered OEResource:validateBankDetailsGiact()with bankDetailsValidationRequest()"
+				+ bankDetailsValidationRequest.getRoutingNumber());
+		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
+		return bankDetailsValidationResponse;
+	}
 }
