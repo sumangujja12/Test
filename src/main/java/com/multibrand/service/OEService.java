@@ -35,6 +35,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.AgentDetailsResponseOutData;
+import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.OfferDO;
 
 /**
@@ -372,16 +373,16 @@ public class OEService extends BaseAbstractService {
 		private String buildUpdateETFFlafToCRMURL() {
 			return getEndPointUrl(CCS_UPDATE_ETF_FLAG_TO_CRM_URL);
 		}
-		// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+		// Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
 		/**
-		 * START : OE | Sprint 23 | US18891 | Nkatragadda
+		 * START : OE | Sprint 23 | US19653 | Nkatragadda
 		 * @param request
 		 * @return
 		 * @throws Exception
 		 */
-		public BankDetailsValidationResponse ValidateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) throws Exception {
+		public GiactBankValidationResponse validateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) throws Exception {
 			logger.debug("START :: OEService.ValidateBankDetailsGiact(..)");
-			BankDetailsValidationResponse bankDetailsValidationResponse = new BankDetailsValidationResponse();
+			GiactBankValidationResponse bankDetailsValidationResponse = new GiactBankValidationResponse();
 				
 				String[] args = readBankDetailsArgs(bankDetailsValidationRequest,6);
 				
@@ -399,9 +400,9 @@ public class OEService extends BaseAbstractService {
 				String responseAsString = responseEntity.getBody();
 				Gson gson = new Gson();
 				if(null != responseAsString) {
-					bankDetailsValidationResponse = gson.fromJson(responseAsString, BankDetailsValidationResponse.class);
+					bankDetailsValidationResponse = gson.fromJson(responseAsString, GiactBankValidationResponse.class);
 				}
-				
+			logger.debug("oeService.ValidateBankDetailsGiact(..)::GiactBankValidationResponse::"+bankDetailsValidationResponse);
 			logger.debug("END :: oeService.ValidateBankDetailsGiact(..)");
 			return bankDetailsValidationResponse;
 		}
@@ -466,5 +467,5 @@ public class OEService extends BaseAbstractService {
 			
 			return inputArgs;
 		}
-		// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL: validate bank details  | Jyothi | 5/31/2019		
+		// Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL: validate bank details  | Jyothi | 5/31/2019		
 }
