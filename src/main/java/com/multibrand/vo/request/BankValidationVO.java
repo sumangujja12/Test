@@ -3,20 +3,20 @@ package com.multibrand.vo.request;
  * Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
  */
 public class BankValidationVO {
-	private String message;
+	private String Message;
 
     private GiactBankMetaDataVO __metadata;
 
-    private String code;
+    private String Code;
 
     public String getMessage()
     {
-        return message;
+        return Message;
     }
 
     public void setMessage(String message)
     {
-        this.message = message;
+        this.Message = message;
     }
 
     public GiactBankMetaDataVO get__metadata()
@@ -31,12 +31,12 @@ public class BankValidationVO {
 
     public String getCode()
     {
-        return code;
+        return Code;
     }
 
     public void setCode(String code)
     {
-        this.code = code;
+        this.Code = code;
     }
 
 }
