@@ -4,21 +4,16 @@ package com.multibrand.vo.request;
  */
 public class ExBankValidationVO {
 		
-	private BankValidationVO BankValidation;
+	private BankValidationVO bankValidation;
 
-    public BankValidationVO getBankValidation ()
+    public BankValidationVO getBankValidation()
     {
-        return BankValidation;
+        return bankValidation;
     }
 
-    public void setBankValidation (BankValidationVO BankValidation)
+    public void setBankValidation(BankValidationVO bankValidation)
     {
-        this.BankValidation = BankValidation;
+        this.bankValidation = bankValidation;
     }
-
-    @Override
-    public String toString()
-    {
-        return "BankValidationVO [BankValidation = "+BankValidation+"]";
-    }
+    
 }
