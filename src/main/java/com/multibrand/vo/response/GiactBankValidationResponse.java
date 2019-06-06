@@ -14,19 +14,14 @@ public class GiactBankValidationResponse implements Serializable{
 		
 		private ExBankValidationVO d;
 
-	    public ExBankValidationVO getD ()
+	    public ExBankValidationVO getD()
 	    {
 	        return d;
 	    }
 
-	    public void setD (ExBankValidationVO d)
+	    public void setD(ExBankValidationVO d)
 	    {
 	        this.d = d;
 	    }
-
-	    @Override
-	    public String toString()
-	    {
-	        return "ExBankValidationVO [d = "+d+"]";
-	    }		
+	
 }

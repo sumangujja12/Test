@@ -16,10 +16,4 @@ public class GiactBankMetaDataVO {
     {
         this.type = type;
     }
-
-    @Override
-    public String toString()
-    {
-        return "GiactBankMetaDataVO [type = "+type+"]";
-    }
 }
