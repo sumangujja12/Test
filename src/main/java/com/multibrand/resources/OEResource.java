@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -24,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
@@ -1184,10 +1182,10 @@ public class OEResource extends BaseResource {
 	@Path("validateBankDetailsGiact")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public GiactBankValidationResponse validateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) {
-		logger.debug("Enetered OEResource:validateBankDetailsGiact()with bankDetailsValidationRequest()"
-				+ bankDetailsValidationRequest.getRoutingNumber());
+	public Response validateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) {
+		Response response;
 		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
-		return bankDetailsValidationResponse;
+		response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();
+		return response;
 	}
 }
