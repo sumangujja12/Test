@@ -402,7 +402,6 @@ public class OEService extends BaseAbstractService {
 				if(null != responseAsString) {
 					bankDetailsValidationResponse = gson.fromJson(responseAsString, GiactBankValidationResponse.class);
 				}
-			logger.debug("oeService.ValidateBankDetailsGiact(..)::GiactBankValidationResponse::"+bankDetailsValidationResponse);
 			logger.debug("END :: oeService.ValidateBankDetailsGiact(..)");
 			return bankDetailsValidationResponse;
 		}
