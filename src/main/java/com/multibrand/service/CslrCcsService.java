@@ -47,7 +47,6 @@ public class CslrCcsService extends BaseAbstractService {
 		try {
 			logger.info("Building the input args for CSLR Update Billing Addr CCS call");
 			String[] args = getUpdateBillAddrArgs(request);
-			//logger.info("CSLR Update Billing Addr CCS input args["+Arrays.asList(args)+"]");
 			String url = buildCCSUrlForCslrUpdateBillingAddress();
 			MessageFormat urlFormat = new MessageFormat(url);
 			url = urlFormat.format(args);
@@ -56,7 +55,7 @@ public class CslrCcsService extends BaseAbstractService {
 			org.springframework.http.HttpHeaders headers = getBasicAuthSpringHttpHeadersForCCS();
 			
 			RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth());
-			HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+			HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 			ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
 			logger.info("Response received after CSLR Update Billing Addr in CCS");
 			
@@ -83,7 +82,7 @@ public class CslrCcsService extends BaseAbstractService {
 				}
 			}
 			
-			if(!isCcsResponseSuccess) {
+			if(!isCcsResponseSuccess && cslrUpdateBillinlgAddrResponse!=null) {
 				cslrUpdateBillinlgAddrResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				cslrUpdateBillinlgAddrResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
@@ -118,7 +117,7 @@ public class CslrCcsService extends BaseAbstractService {
 			org.springframework.http.HttpHeaders headers = getBasicAuthSpringHttpHeadersForCCS();
 			
 			RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth());
-			HttpEntity<String> request = new HttpEntity<String>(headers);
+			HttpEntity<String> request = new HttpEntity<>(headers);
 			ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, request, String.class);
 			logger.info("After invoking CSLR CCS Profile call");
 			
@@ -181,40 +180,7 @@ public class CslrCcsService extends BaseAbstractService {
 		return builder.setSSLSocketFactory(sslsf).build();
 	}
 
-	/**
-	 * @return
-	 * @throws Exception
-	 */
-	private ClientHttpRequestFactory clientHttpRequestFactory() throws Exception {
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-
-		int timeOut = getRestCallTimeOut(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC);
-		if (logger.isDebugEnabled()) {
-			logger.debug("TIME OUT FOR THE REST CALL::::::" + timeOut);
-		}
-		factory.setReadTimeout(timeOut);
-		factory.setConnectTimeout(timeOut);
-		factory.setHttpClient(getCloseableHttpClient());
-		return factory;
-	}
-
-/*	*//**
-	 * @return
-	 * @throws Exception
-	 *//*
-	private ClientHttpRequestFactory clientHttpRequestFactoryForBasicAuth() throws Exception {
-		HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-
-		int timeOut = getRestCallTimeOut();
-		if (logger.isDebugEnabled()) {
-			logger.debug("TIME OUT FOR THE REST CALL::::::" + timeOut);
-		}
-		factory.setReadTimeout(timeOut);
-		factory.setConnectTimeout(timeOut);
-		//factory.setHttpClient(getCloseableHttpClient());
-		return factory;
-	}*/
-
+	
 	/**
 	 * @return
 	 */
@@ -226,17 +192,6 @@ public class CslrCcsService extends BaseAbstractService {
 		return getEndPointUrl(CCS_UPDATE_CSLR_BILLING_ADDR_AT_BP_LEVEL);
 	}
 
-	/**
-	 * @return
-	 *//*
-	private int getRestCallTimeOut() {
-		String timeOutStr = getTimeOutForKey(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC);
-		if (org.apache.commons.lang.StringUtils.isNotBlank(timeOutStr)) {
-			return Integer.parseInt(timeOutStr) * 1000;
-		}
-		return 60 * 1000;
-	}*/
-	
 	/**
 	 * @param request
 	 * @return

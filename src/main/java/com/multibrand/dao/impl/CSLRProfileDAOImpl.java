@@ -38,28 +38,24 @@ public class CSLRProfileDAOImpl extends AbstractSpringDAO  implements Constants 
 	}
 	
 	
-	public Map<String, Object> UpdateUserDetails(String OldUserNmae, String newUserNmae) {
+	public Map<String, Object> UpdateUserDetails(String oldUserName, String newUserNmae) {
 	
 		BaseStoredProcedure storedProc = null;
 		Map<String, Object> storedProcResult = null;		
-		Map<String, Object> resultMap = null;
-		
+		Map<String, Object> resultMap = new HashMap<>();		
 		// procedure parameters map
-		Map<String, Object> inParams = new HashMap<String, Object>();
-		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<String, Integer>();
-		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<String, ResultObject>();
+		Map<String, Object> inParams = new HashMap<>();
+		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<>();
+		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<>();
 		
 		String dbErrCode ="0";
 		
 		
-		String method_name = "CSLRProfileDAOImpl: UpdateUserDetails()";
-		logger.debug("START:" + method_name);
+		String methodName = "CSLRProfileDAOImpl: UpdateUserDetails()";
+		logger.debug("START:" + methodName);
 		
 		try{
-			
-			// Result map for this method
-			resultMap = new HashMap<String, Object>();
-			
+				
 			String procName = getSqlMessage().getMessage(SP_CSLR_UPDATE_USER_DETAILS, null, null);
 
 
@@ -69,7 +65,7 @@ public class CSLRProfileDAOImpl extends AbstractSpringDAO  implements Constants 
 
 			// Set input values (parameters) to the procedure
 
-			inParams.put(CONST_IN_OLD_USER_LOGIN_ID, OldUserNmae);
+			inParams.put(CONST_IN_OLD_USER_LOGIN_ID, oldUserName);
 			inParams.put(CONST_IN_NEW_USER_LOGIN_ID, newUserNmae);
 			
 			
@@ -84,12 +80,6 @@ public class CSLRProfileDAOImpl extends AbstractSpringDAO  implements Constants 
 			outParamsTypeMap.put(CONST_OUT_OUT_ERROR_CODE, new ResultObject(Types.VARCHAR));
 			outParamsTypeMap.put(CONST_OUT_ERROR_MSG, new ResultObject(Types.VARCHAR));
 			
-
-			// START (TIME LOG)
-			long entryTime;
-			long elapsedTime;
-			entryTime = System.currentTimeMillis();
-
 			// Create the procedure, INPUT parameters as first argument(default)
 
 			storedProc = storedProcedure.createStoredProcedure(
@@ -105,11 +95,11 @@ public class CSLRProfileDAOImpl extends AbstractSpringDAO  implements Constants 
 				dbErrCode = (String) storedProcResult.get(CONST_OUT_OUT_ERROR_CODE);
 
 				if( null != dbErrCode) {
-					logger.error("OldUserNmae Id :[" + OldUserNmae +"] Error from SP["+procName+"]. Error Code[" + dbErrCode + "]");
+					logger.error("OldUserNmae Id :[" + oldUserName +"] Error from SP["+procName+"]. Error Code[" + dbErrCode + "]");
 					
 				} else {
 					
-					logger.info("user creation Successfully for OldUserId [" + OldUserNmae +"]  ");  
+					logger.info("user creation Successfully for OldUserId [" + oldUserName +"]  ");  
 				}
 			}
 			
@@ -119,11 +109,11 @@ public class CSLRProfileDAOImpl extends AbstractSpringDAO  implements Constants 
 			
 		} catch(DataAccessException ex){
 			dbErrCode= "-1";
-			logger.error("Error in :" + method_name + ":" + ex);
+			logger.error("Error in :" + methodName + ":" + ex);
 			resultMap.put(Constants.ERR_CODE_KEY, dbErrCode);
 		} catch(Exception e){
 			dbErrCode= "-1";
-			logger.error("Error in :" + method_name + ":" + e);
+			logger.error("Error in :" + methodName + ":" + e);
 			resultMap.put(Constants.ERR_CODE_KEY, dbErrCode);
 		}
 		
