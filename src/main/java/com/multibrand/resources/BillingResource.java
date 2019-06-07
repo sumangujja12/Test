@@ -823,15 +823,26 @@ public class BillingResource {
     /**
      * Operation for Average Monthly Billing Eligibility Check
      *@param ambEligRequest
+     *@param accountNumber
+     *@param bpNumber
+     *@param contractId
+     *@param companyCode
+     *@param brandName
      * @return javax.ws.rs.core.Response
      */
 	@POST
 	@Path("ambEligibilityCheck")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
-	public Response ambeligibilityCheck(AMBEligibilityCheckRequest ambEligRequest) {
+	public Response ambeligibilityCheck(@FormParam("accountNumber") String accountNumber, @FormParam("bpNumber") String bpNumber,
+			@FormParam("contractId") String contractId, @FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
 		
 		Response response = null;
+		AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
+		ambEligRequest.setAccountNumber(accountNumber);
+		ambEligRequest.setBpNumber(bpNumber);
+		ambEligRequest.setContractId(contractId);
+		ambEligRequest.setCompanyCode(companyCode);
 		AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = billingBO.ambeligibilityCheck(ambEligRequest, httpRequest.getSession(true).getId());
 		
 				
@@ -844,16 +855,94 @@ public class BillingResource {
 	/**
 	 * Operation for Average Monthly Billing Signup
 	 * @param saveAMBSignupRequest
+	 * @param AccountNumber
+		 * @param ContractId
+		 * @param BpNumber
+		 * @param CheckDigit
+		 * @param LanguageCode
+		 * @param Esid
+		 * @param ServStreetNum
+		 * @param ServStreetName
+		 * @param ServStreetAptNum
+		 * @param ServCity
+		 * @param ServState
+		 * @param ServZipCode
+		 * @param BillStreetNum
+		 * @param BillStreetName
+		 * @param BillStreetAptNum
+		 * @param BillAddrPOBox
+		 * @param BillCity
+		 * @param BillState
+		 * @param BillZipCode
+		 * @param AmbAmount
+		 * @param ToEmail
+		 * @param RetroFlag
+		 * @param AmtAdjust
+		 * @param AmtFinal
+		 * @param BbpBasis
+		 * @param BillAllocDate
+		 * @param EstSign
+		 * @param Invoice
+		 * @param ResStatus
+		 * @param CompanyCode
+		 * @param BrandName
 	 * @return javax.ws.rs.core.Response
 	 */
 	@POST
 	@Path("saveAMBSignUp")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
-	public Response saveAMBSignUp(SaveAMBSingupRequestVO saveAMBSignupRequest) {
+	public Response saveAMBSignUp(@FormParam("accountNumber") String accountNumber,
+			@FormParam("contractId") String contractId, @FormParam("bpNumber") String bpNumber,
+			@FormParam("checkDigit") String checkDigit, @FormParam("languageCode") String languageCode,
+			@FormParam("esid") String esid, @FormParam("servStreetNum") String servStreetNum,
+			@FormParam("servStreetName") String servStreetName, @FormParam("servStreetAptNum") String servStreetAptNum,
+			@FormParam("servCity") String servCity, @FormParam("servState") String servState,
+			@FormParam("servZipCode") String servZipCode, @FormParam("billStreetNum") String billStreetNum,
+			@FormParam("billStreetName") String billStreetName, @FormParam("billStreetAptNum") String billStreetAptNum,
+			@FormParam("billAddrPOBox") String billAddrPOBox, @FormParam("billCity") String billCity,
+			@FormParam("billState") String billState, @FormParam("billZipCode") String billZipCode,
+			@FormParam("ambAmount") String ambAmount, @FormParam("toEmail") String toEmail,
+			@FormParam("retroFlag") String retroFlag, @FormParam("amtAdjust") String amtAdjust,
+			@FormParam("amtFinal") String amtFinal, @FormParam("bbpBasis") String bbpBasis,
+			@FormParam("billAllocDate") String billAllocDate, @FormParam("estSign") String estSign,
+			@FormParam("invoice") String invoice, @FormParam("resStatus") String resStatus,
+			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
 		
 		Response response = null;
-			
+		SaveAMBSingupRequestVO saveAMBSignupRequest = new SaveAMBSingupRequestVO();
+		saveAMBSignupRequest.setAccountNumber(accountNumber);
+		saveAMBSignupRequest.setContractId(contractId);
+		saveAMBSignupRequest.setBpNumber(bpNumber);
+		saveAMBSignupRequest.setCheckDigit(checkDigit);
+		saveAMBSignupRequest.setLanguageCode(languageCode);
+		saveAMBSignupRequest.setEsid(esid);
+		saveAMBSignupRequest.setServStreetNum(servStreetNum);
+		saveAMBSignupRequest.setServStreetName(servStreetName);
+		saveAMBSignupRequest.setServStreetAptNum(servStreetAptNum);
+		saveAMBSignupRequest.setServCity(servCity);
+		saveAMBSignupRequest.setServState(servState);
+		saveAMBSignupRequest.setServZipCode(servZipCode);
+		saveAMBSignupRequest.setBillStreetNum(billStreetNum);
+		saveAMBSignupRequest.setBillStreetName(billStreetName);
+		saveAMBSignupRequest.setBillStreetAptNum(billStreetAptNum);
+		saveAMBSignupRequest.setBillAddrPOBox(billAddrPOBox);
+		saveAMBSignupRequest.setBillCity(billCity);
+		saveAMBSignupRequest.setBillState(billState);
+		saveAMBSignupRequest.setBillZipCode(billZipCode);
+		saveAMBSignupRequest.setAmbAmount(ambAmount);
+		saveAMBSignupRequest.setToEmail(toEmail);
+		saveAMBSignupRequest.setRetroFlag(retroFlag);
+		saveAMBSignupRequest.setAmtAdjust(amtAdjust);
+		saveAMBSignupRequest.setAmtFinal(amtFinal);
+		saveAMBSignupRequest.setBbpBasis(bbpBasis);
+		saveAMBSignupRequest.setBillAllocDate(billAllocDate);
+		saveAMBSignupRequest.setEstSign(estSign);
+		saveAMBSignupRequest.setInvoice(invoice);
+		saveAMBSignupRequest.setResStatus(resStatus);
+		saveAMBSignupRequest.setCompanyCode(companyCode);
+		saveAMBSignupRequest.setBrandName(brandName);
+		
 		AMBSignupResponseVO ambSignupResponseVO = billingBO.saveAMBSignUp(saveAMBSignupRequest, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(ambSignupResponseVO).build();
 			
