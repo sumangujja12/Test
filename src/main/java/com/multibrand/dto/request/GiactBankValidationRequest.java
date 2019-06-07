@@ -16,13 +16,8 @@ public class GiactBankValidationRequest implements FormEntityRequest, Serializab
 
 	private static final long serialVersionUID = 1L;
 	
-	
-	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
 	private String trackingId;
 	
-	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 12, groups = SizeConstraint.class)
 	private String caNumber;
 	
 	@NotBlank(groups = BasicConstraint.class)
