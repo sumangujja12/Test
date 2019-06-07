@@ -33,7 +33,6 @@ import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
-import com.multibrand.domain.BankDetailsValidationRequest;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.CampEnvironmentOutData;
@@ -70,6 +69,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
+import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
@@ -4725,7 +4725,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 	 * @param request
 	 * @return
 	 */
-	public GiactBankValidationResponse validateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) {
+	public GiactBankValidationResponse validateBankDetailsGiact(GiactBankValidationRequest bankDetailsValidationRequest) {
 		GiactBankValidationResponse bankDetailsValidationResponse=new GiactBankValidationResponse();
 		try{
 		bankDetailsValidationResponse = oeService.validateBankDetailsGiact(bankDetailsValidationRequest);

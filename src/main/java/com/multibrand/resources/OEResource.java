@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
-import com.multibrand.domain.BankDetailsValidationRequest;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -38,6 +37,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
+import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
@@ -1182,7 +1182,7 @@ public class OEResource extends BaseResource {
 	@Path("validateBankDetailsGiact")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) {
+	public Response validateBankDetailsGiact(@Valid GiactBankValidationRequest bankDetailsValidationRequest) {
 		Response response;
 		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
 		response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();

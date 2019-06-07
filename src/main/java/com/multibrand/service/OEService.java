@@ -14,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
-import com.multibrand.domain.BankDetailsValidationRequest;
-import com.multibrand.domain.BankDetailsValidationResponse;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.OEDomain;
@@ -30,13 +28,13 @@ import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 
 import com.multibrand.dto.request.AgentDetailsRequest;
+import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.response.AgentDetailsResponse;
-import com.multibrand.vo.response.AgentDetailsResponseOutData;
 import com.multibrand.vo.response.GiactBankValidationResponse;
-import com.multibrand.vo.response.OfferDO;
+
 
 /**
  * 
@@ -380,7 +378,7 @@ public class OEService extends BaseAbstractService {
 		 * @return
 		 * @throws Exception
 		 */
-		public GiactBankValidationResponse validateBankDetailsGiact(BankDetailsValidationRequest bankDetailsValidationRequest) throws Exception {
+		public GiactBankValidationResponse validateBankDetailsGiact(GiactBankValidationRequest bankDetailsValidationRequest) throws Exception {
 			logger.debug("START :: OEService.ValidateBankDetailsGiact(..)");
 			GiactBankValidationResponse bankDetailsValidationResponse = new GiactBankValidationResponse();
 				
@@ -410,7 +408,7 @@ public class OEService extends BaseAbstractService {
 			return getEndPointUrl(CCS_BANK_GIACT_CALL_URL);
 		}
 		
-		private String[] readBankDetailsArgs(BankDetailsValidationRequest request, int totalArgs) {
+		private String[] readBankDetailsArgs(GiactBankValidationRequest request, int totalArgs) {
 			
 			String[] inputArgs = new String[totalArgs];
 			StringBuilder strBuilder = null;
@@ -428,7 +426,7 @@ public class OEService extends BaseAbstractService {
 			//ContractAccountNumber
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
-			strBuilder.append(request.getContractAccountNumber());
+			strBuilder.append(request.getCaNumber());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			iCount++;
@@ -444,7 +442,7 @@ public class OEService extends BaseAbstractService {
 			//BankAccountNumber
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
-			strBuilder.append(request.getBankAccountNumber());
+			strBuilder.append(request.getTokenizedBankAccountNumber());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			iCount++;
@@ -452,7 +450,7 @@ public class OEService extends BaseAbstractService {
 			//RoutingNumber
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
-			strBuilder.append(request.getRoutingNumber());
+			strBuilder.append(request.getTokenizedBankRoutingNumber());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			iCount++;
@@ -460,7 +458,7 @@ public class OEService extends BaseAbstractService {
 			//TrackingNumber
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
-			strBuilder.append(request.getTrackingNumber());
+			strBuilder.append(request.getTrackingId());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			
