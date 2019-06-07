@@ -78,7 +78,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			String url = buildSalesforceTokenURL();
 			
 			// Create the request body as a MultiValueMap
-			MultiValueMap<String, String> body = new LinkedMultiValueMap<String, String>();
+			MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
 
 			body.add(GRANNT_TYPE, this.envMessageReader.getMessage(SALESFORCE_GRANT_TYPE));
 			body.add(CLIENT_ID, this.envMessageReader.getMessage(SALESFORCE_CLIENT_ID));
@@ -91,7 +91,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
 			
 			HttpEntity entity = new HttpEntity(body, headers);
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class, map);
 			restResponse = null != responseEntity.getBody() ? responseEntity.getBody() : "";
 
@@ -101,8 +101,10 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
-				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				if(response!=null){
+					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+					response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				}
 			}
 		} catch (HttpClientErrorException e) {
 			logger.error(" CSLRSalesforceService - createRestTokenTemplateAndCallService() ::: "+e.getMessage());
@@ -129,8 +131,6 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			builder.setPath(buildSalesforceGetAccountURL())
 			//builder.setScheme("https").setHost("cs13.salesforce.com").setPath("/services/apexrest/SharedSolar/Account/")
 			    .setParameter(SALESFORCE_LEASE_ID, leaseId);
-			URI uri = builder.build();
-
 			RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
 			
 			org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
@@ -138,7 +138,6 @@ public class CSLRSalesforceService extends BaseAbstractService {
 						
 			HttpEntity entity = new HttpEntity(headers);
 			
-			Map<String, String> map = new HashMap<String, String>();
 			HttpEntity<String> responseEntity = restTemplate.exchange(builder.build(), HttpMethod.GET, entity, String.class);
 			restResponse = null != responseEntity.getBody() ? responseEntity.getBody() : "";
 
@@ -149,8 +148,10 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
-				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				if(response!=null){
+					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+					response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				}
 			}
 			
 			
@@ -179,8 +180,6 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			builder.setPath(buildSalesforceAccountRegistrationURL())
 			    .setParameter(SALESFORCE_LEASE_ID, leaseId)
 				.setParameter(SALESFORCE_UTILITY_ACC_NO, utilityAccNo);
-			URI uri = builder.build();
-
 			RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
 			
 			org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
@@ -188,7 +187,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			
 			HttpEntity entity = new HttpEntity(headers);
 			
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			HttpEntity<String> responseEntity = restTemplate.exchange(builder.build(), HttpMethod.GET, entity, String.class);
 			restResponse = null != responseEntity.getBody() ? responseEntity.getBody() : "";
 
@@ -199,8 +198,10 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
-				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				if(response!=null){
+					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+					response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				}
 			}
 		} catch (HttpClientErrorException e) {
 			logger.error(" CSLRSalesforceService - createRestAccRegAndCallService() ::: "+e.getMessage());
@@ -240,7 +241,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			headers.set(SALESFORCE_AUTHORIZATION, SALESFORCE_OAUTH + request.getAccessToken());
 			
 			HttpEntity entity = new HttpEntity(gson.toJson(salesforceReq), headers);
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class, map);
 			restResponse = null != responseEntity.getBody() ? responseEntity.getBody() : "";
 
@@ -252,8 +253,10 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
-				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				if(response!=null){
+					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+					response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				}
 			}
 		} catch (HttpClientErrorException e) {
 			logger.error(" CSLRSalesforceService - createRestDashboardAndCallService() ::: "+e.getMessage()); 
@@ -302,7 +305,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			HttpEntity entity = new HttpEntity(gson.toJson(salesforceReq), headers);
 			logger.info("request:"+entity);
 			logger.info("gson.toJson(salesforceReq):"+gson.toJson(salesforceReq));
-			Map<String, String> map = new HashMap<String, String>();
+			Map<String, String> map = new HashMap<>();
 			ResponseEntity<String> responseEntity = restTemplate.postForEntity(url, entity, String.class, map);
 			restResponse = null != responseEntity.getBody() ? responseEntity.getBody() : "";
 
@@ -310,12 +313,12 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			response = gson.fromJson(restResponse, SalesforceUpdateAccountResponse.class);
 			
 			if(null != response  && response.getMessage().equalsIgnoreCase(SF_RESP_MSG_SUCCESS) ) {
-				
 				response.setResultCode(RESULT_CODE_SUCCESS);
-				
 			} else {
-				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				if(response!=null){
+					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+					response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				}
 			}
 			
 			
@@ -352,7 +355,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 		newvalidateUserReq.setStrLDAPOrg(LDAP_ORG_KEY_CSLR);
 		newvalidateUserReq.setStrUserName(request.getNewEmailAddress());
 		
-		Map<String, String> basicAttribute = new HashMap<String, String>();
+		Map<String, String> basicAttribute = new HashMap<>();
 		
 		try{
 						
@@ -430,8 +433,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			}
     		
 		} catch(Exception e) {
-				e.printStackTrace();
-				logger.error(e);
+				logger.error(e.getStackTrace());
 				response.setResultCode(SF_SYNC_ERROR_CODE05);
 				response.setResultDescription(SF_SYNC_ERROR_CODE05_DESC);
 			
@@ -455,10 +457,8 @@ public class CSLRSalesforceService extends BaseAbstractService {
 		byte[] responseAsByteArray = null;
 		try {
 			logger.info("Trying to get the Lease Agreement PDF for ["+contractDocumentId+"]");
-			//String docID = "00PA000000jCYN4MAO";
-			//accessToken = "00D5B0000000Nif!AQIAQJjrsAYdiUtDJuUHLbqQ.zxgCRNK17DtuI8HLJKUZMoj9_yVeT5XLPJu3Pq.4fyAfpzi2diteir9zYxJFCJDkfF35ONe";
 			String url = buildSalesforceAgreementPdfURL();
-			Map<String, String> uriParams = new HashMap<String, String>();
+			Map<String, String> uriParams = new HashMap<>();
 			uriParams.put(CONST_DOCID, contractDocumentId);
 			
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(url);
@@ -469,7 +469,6 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			headers.set(SALESFORCE_AUTHORIZATION, SALESFORCE_OAUTH + accessToken);
 			
 			HttpEntity entity = new HttpEntity(headers);
-			Map<String, String> map = new HashMap<String, String>();
 			HttpEntity<byte[]> responseEntity = restTemplate.exchange(builder.buildAndExpand(uriParams).toUri(), HttpMethod.GET, entity, byte[].class);
 			
 			if(responseEntity != null && null != responseEntity.getBody()) {
@@ -571,14 +570,5 @@ public class CSLRSalesforceService extends BaseAbstractService {
 		return getEndPointUrl(SALESFORCE_GET_AGREEMENT_PDF_SERVICE);
 	}
 
-	/*
-	private int getRestCallTimeOut() {
-		String timeOutStr = getTimeOutForKey(SALESFORCE_TIME_OUT_IN_SEC);
-		if (org.apache.commons.lang.StringUtils.isNotBlank(timeOutStr)) {
-			return Integer.parseInt(timeOutStr) * 1000;
-		}
-		return 60 * 1000;
-	}
-	*/
 	
 }
