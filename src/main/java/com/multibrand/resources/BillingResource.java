@@ -821,7 +821,28 @@ public class BillingResource {
 	}
 	
     /**
-     * Operation for Average Monthly Billing Eligibility Check
+     * Operation for Average Monthly Billing Eligibility Check 
+     *@param ambEligRequest
+     */
+	
+	@POST
+	@Path("ambEligibilityCheck")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	public Response ambeligibilityCheck(AMBEligibilityCheckRequest ambEligRequest) {
+		
+		Response response = null;
+		AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = billingBO.ambeligibilityCheck(ambEligRequest, httpRequest.getSession(true).getId());
+		
+				
+		response = Response.status(200).entity(ambEligibiltyCheckResponseVO).build();
+			
+	    return response;
+	}
+	
+	
+    /**
+     * Operation for Average Monthly Billing Eligibility Check for GME
      *@param ambEligRequest
      *@param accountNumber
      *@param bpNumber
@@ -831,7 +852,7 @@ public class BillingResource {
      * @return javax.ws.rs.core.Response
      */
 	@POST
-	@Path("ambEligibilityCheck")
+	@Path("ambEligibilityCheckForGME")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response ambeligibilityCheck(@FormParam("accountNumber") String accountNumber, @FormParam("bpNumber") String bpNumber,
@@ -851,12 +872,29 @@ public class BillingResource {
 	    return response;
 	}
 	
-	
 	/**
 	 * Operation for Average Monthly Billing Signup
 	 * @param saveAMBSignupRequest
-	 * @param AccountNumber
-		 * @param ContractId
+	 */
+	@POST
+	@Path("saveAMBSignUp")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	public Response saveAMBSignUp(SaveAMBSingupRequestVO saveAMBSignupRequest) {
+		
+		Response response = null;
+			
+		AMBSignupResponseVO ambSignupResponseVO = billingBO.saveAMBSignUp(saveAMBSignupRequest, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(ambSignupResponseVO).build();
+			
+	    return response;
+	}
+	
+	/**
+	 	* Operation for Average Monthly Billing Signup for GME
+	 	* @param saveAMBSignupRequest
+	 	* @param AccountNumber
+		* @param ContractId
 		 * @param BpNumber
 		 * @param CheckDigit
 		 * @param LanguageCode
@@ -889,7 +927,7 @@ public class BillingResource {
 	 * @return javax.ws.rs.core.Response
 	 */
 	@POST
-	@Path("saveAMBSignUp")
+	@Path("saveAMBSignUpForGME")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response saveAMBSignUp(@FormParam("accountNumber") String accountNumber,
