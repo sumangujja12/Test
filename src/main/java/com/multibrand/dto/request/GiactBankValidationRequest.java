@@ -25,7 +25,7 @@ public class GiactBankValidationRequest implements FormEntityRequest, Serializab
 	
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 9, groups = SizeConstraint.class)
-	private String tokenizedBankRoutingNumber; 
+	private String bankRoutingNumber; 
 	
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 4, groups = SizeConstraint.class)
@@ -55,12 +55,14 @@ public class GiactBankValidationRequest implements FormEntityRequest, Serializab
 		this.tokenizedBankAccountNumber = tokenizedBankAccountNumber;
 	}
 
-	public String getTokenizedBankRoutingNumber() {
-		return tokenizedBankRoutingNumber;
+	
+
+	public String getBankRoutingNumber() {
+		return bankRoutingNumber;
 	}
 
-	public void setTokenizedBankRoutingNumber(String tokenizedBankRoutingNumber) {
-		this.tokenizedBankRoutingNumber = tokenizedBankRoutingNumber;
+	public void setBankRoutingNumber(String bankRoutingNumber) {
+		this.bankRoutingNumber = bankRoutingNumber;
 	}
 
 	public String getCompanyCode() {

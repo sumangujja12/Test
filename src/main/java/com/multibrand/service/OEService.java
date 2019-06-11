@@ -450,7 +450,7 @@ public class OEService extends BaseAbstractService {
 			//RoutingNumber
 			strBuilder = new StringBuilder();
 			strBuilder.append(SINGLE_QUOTE);
-			strBuilder.append(request.getTokenizedBankRoutingNumber());
+			strBuilder.append(request.getBankRoutingNumber());
 			strBuilder.append(SINGLE_QUOTE);
 			inputArgs[iCount] = strBuilder.toString();
 			iCount++;
