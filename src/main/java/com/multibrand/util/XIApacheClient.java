@@ -27,7 +27,7 @@ public class XIApacheClient {
 	 * @throws Exception
 	 */
 	 public static String getResponseBody(String strURL, Object request, Integer timeout) throws Exception {
-	        PostMethod    post       =  new PostMethod(strURL);
+	        PostMethod    post       = null;
 	        RequestEntity entity     = null;
 	        String        responseString   = "";
 	        HttpClient    httpclient = null;
@@ -36,7 +36,7 @@ public class XIApacheClient {
 	            logger.debug("****************************************************");
 	            logger.debug("connecting to the URL: " + strURL);
 	            httpclient = new HttpClient();
-	           
+	            post       = new PostMethod(strURL);
 	            
 	            // marshalling request
 	            String reqString = JAXBUtil.marshal(request);
@@ -67,9 +67,10 @@ public class XIApacheClient {
 	        	e.printStackTrace();
 	        	throw new Exception("getResponseBody() Failed while connecting through Http: ", e);
 	        } finally {
-
-	            // Release current connection to the connection pool
-	            post.releaseConnection();
+	        	// Release current connection to the connection pool
+	        	if(post!=null){
+	        		post.releaseConnection();
+	        	}
 	        }
 
 	        return responseString;

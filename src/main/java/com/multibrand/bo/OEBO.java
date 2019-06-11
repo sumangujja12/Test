@@ -649,7 +649,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						oeSignupVO.setEsidDO(esidDO);
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
 					} else {
-						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED: esidResponse is null");
+						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED: esidResponse ::: "+addressResponse);
 					}
 				} catch (ServiceException localServiceException) {
 					logger.error("ServiceException in OEBO.getESIDInformation():"
@@ -1634,7 +1634,7 @@ public class OEBO extends OeBoHelper implements Constants{
 									throw new ServiceException();
 								}
 							}
-							if (null != dtPrevReqStartDate)
+							if (null != dtPrevReqStartDate && !dtPrevReqStartDate.equals(""))
 								dtStartDate = sdf.format(dtPrevReqStartDate);
 							pendingServiceRequestDTO
 									.setPreviousProviderName(previousProviderName);
