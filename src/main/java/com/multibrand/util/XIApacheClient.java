@@ -67,9 +67,10 @@ public class XIApacheClient {
 	        	e.printStackTrace();
 	        	throw new Exception("getResponseBody() Failed while connecting through Http: ", e);
 	        } finally {
-
-	            // Release current connection to the connection pool
-	            post.releaseConnection();
+	        	// Release current connection to the connection pool
+	        	if(post!=null){
+	        		post.releaseConnection();
+	        	}
 	        }
 
 	        return responseString;

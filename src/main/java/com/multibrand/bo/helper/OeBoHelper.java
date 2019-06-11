@@ -837,7 +837,7 @@ public class OeBoHelper extends BaseBO {
 			oeSignUpDTO.setRecentCallMade(CALL_NAME_CREATE_PREPAY_DOC);
 
 			// TODO 1
-			String createPrepayDocOUtput = null;
+			String createPrepayDocOUtput = "";
 			// String createPrepayDocOUtput=
 			// enrollmentService.createPrepayDocTxn(oeSignUpDTO);
 

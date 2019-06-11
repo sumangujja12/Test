@@ -119,7 +119,7 @@ public class LDAPHelper extends BaseAbstractService{
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception Occurred in createUser ::: " +e);
 		}
 
 		return "";
@@ -153,7 +153,8 @@ public class LDAPHelper extends BaseAbstractService{
 
 		} catch (NamingException e) {
 			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.error("Exception Occured in validateUsername ::: " +e);
+			
 		} catch (Exception e) {
 			logger.info(":::::::Service Exception Occured::::::::");
 		}
@@ -200,7 +201,7 @@ public class LDAPHelper extends BaseAbstractService{
 			response.setErrorCode(Constants.SUCCESS_CODE);
 		} catch (NamingException e) {
 			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.error("Exception Ocuured in changeUserName ::: " +e);
 			response.setErrorCode(Constants.MSG_ERR_UPDATE_USER);
 		} catch (Exception e) {
 			logger.info(":::::::Service Exception Occured::::::::");
@@ -300,7 +301,7 @@ public class LDAPHelper extends BaseAbstractService{
 	 		
 		} catch (NamingException e) {
 			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.error("Exception occured in deleteUser ::: "+e);
 			response.setErrorCode(Constants.MSG_ERR_DELETE_USER);
 		} catch (Exception e) {
 			logger.info(":::::::Service Exception Occured::::::::");

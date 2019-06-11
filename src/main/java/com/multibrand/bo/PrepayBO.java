@@ -220,11 +220,10 @@ public class PrepayBO implements Constants {
 			
 		}
 		catch(Exception e){
-			System.out.println("In exception");
-				logger.error("prepayDocRead() in PrepayBO "+e.getMessage()); 
-				response.setResultCode(RESULT_CODE_CCS_ERROR);
-				response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
-				throw new OAMException(200, e.getMessage(), response);
+			logger.error("prepayDocRead() in PrepayBO "+e.getMessage()); 
+			response.setResultCode(RESULT_CODE_CCS_ERROR);
+			response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), response);
 		}
 		try{
 			if(ppDresponse!= null)

@@ -1157,7 +1157,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 	}
 	
 	public EnvironmentImpactsResponse environmentalImpacts(String accountNumber, String companyCode, String sessionId){
-		EnvironmentImpactsResponse response = null;
+		EnvironmentImpactsResponse response = new EnvironmentImpactsResponse();
 				
 		try {
 			response =profileService.environmentImpacts(accountNumber, companyCode, sessionId);

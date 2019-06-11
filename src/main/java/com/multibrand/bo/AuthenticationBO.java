@@ -299,7 +299,6 @@ public class AuthenticationBO implements Constants{
 			ldapService.synchronizeLDAP(syncLDAPRequest, ldapOrg, req.getSession(true).getId());
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error("Error occured while updating 'invalidlogincount' attribute in LDAP. Exception is :" + ex.getLocalizedMessage());
 		}
 		

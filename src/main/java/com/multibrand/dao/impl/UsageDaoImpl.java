@@ -245,7 +245,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		// END (TIME LOG)
 		
 
-		MonthlyUsageResponseList responseList = null;
+		MonthlyUsageResponseList responseList = new MonthlyUsageResponseList();
 		
 		if (storedProcResult != null
 				&& (storedProcResult.get("RET_TYP_OUT_V") == null || storedProcResult
@@ -428,12 +428,11 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 
 		// END (TIME LOG)
 		
-		DailyWeeklyUsageResponseList dailyWeeklyUsageResponseList = null;
+		DailyWeeklyUsageResponseList dailyWeeklyUsageResponseList = new DailyWeeklyUsageResponseList();;
 		
 		if (storedProcResult != null
 				&& (storedProcResult.get("RET_TYP_OUT_V") == null || storedProcResult
 						.get("RET_TYP_OUT_V").equals(""))) {
-			dailyWeeklyUsageResponseList = new DailyWeeklyUsageResponseList();
 			List<DailyWeeklyUsageResponse> storeResponseList = (List<DailyWeeklyUsageResponse>) storedProcResult
 					.get(WK_OUT_REC);
 			

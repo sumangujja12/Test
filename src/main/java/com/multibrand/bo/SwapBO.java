@@ -414,7 +414,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception Occurred in setROEffectiveDate ::: " +e);
 		}
 		logger.info(" requestSubmittedDate is " + swapROEffectiveDate);
 		logger.info(" swap request date is " + strRequestDate);
