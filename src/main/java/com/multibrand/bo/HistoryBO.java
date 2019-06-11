@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1144,7 +1145,6 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 		} catch (Exception e) {
 			long startTime = CommonUtil.getStartTime();
 			logger.error("Exception getConsumptionUsage" + e);
-			System.out.println("getConsumptionUsage"+e.getStackTrace().toString());
 			utilityloggerHelper.logTransaction("getCirroStructureCall", false, request,
 					e, "",
 					CommonUtil.getElapsedTime(startTime), "", sessionId,

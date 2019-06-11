@@ -101,7 +101,6 @@ public class OfferDAOImpl implements OfferDAOIF,DBConstants,Constants{
 			resultMap.put(OUT_CUR_POW_OFFER,getpowofferdto);
 		}catch(Exception e){
 			logger.info("EXCEPTION from getPOWOffer() :: "+e.getMessage());
-			e.printStackTrace();
 		}
 		return resultMap;
 	}

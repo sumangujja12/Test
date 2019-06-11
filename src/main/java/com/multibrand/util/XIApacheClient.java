@@ -27,7 +27,7 @@ public class XIApacheClient {
 	 * @throws Exception
 	 */
 	 public static String getResponseBody(String strURL, Object request, Integer timeout) throws Exception {
-	        PostMethod    post       = null;
+	        PostMethod    post       =  new PostMethod(strURL);
 	        RequestEntity entity     = null;
 	        String        responseString   = "";
 	        HttpClient    httpclient = null;
@@ -36,7 +36,7 @@ public class XIApacheClient {
 	            logger.debug("****************************************************");
 	            logger.debug("connecting to the URL: " + strURL);
 	            httpclient = new HttpClient();
-	            post       = new PostMethod(strURL);
+	           
 	            
 	            // marshalling request
 	            String reqString = JAXBUtil.marshal(request);

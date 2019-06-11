@@ -649,8 +649,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						oeSignupVO.setEsidDO(esidDO);
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
 					} else {
-						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED:"
-								+ esidResponse.getStrErrCode());
+						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED: esidResponse is null");
 					}
 				} catch (ServiceException localServiceException) {
 					logger.error("ServiceException in OEBO.getESIDInformation():"
@@ -1213,7 +1212,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					}
 					offerCodeList.add(promoOfferOutData[i].getStrOfferCode());
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Exceprion Occurred in getOfferCodes ::: " +e);
 				}
 			}
 			if (logger.isDebugEnabled()) {
@@ -1562,7 +1561,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 		 }catch (Exception e) {
 			 logger.error("Exception in get Charity Details ::", e);
-			e.printStackTrace();
 		}
 		 
 		return removedCharityDetailsVO.toArray(new CharityDetailsVO[voCount]);	//ENTCR 13315 APPCR_104998 Promo Code by Thabitha Sethurman
@@ -1636,8 +1634,7 @@ public class OEBO extends OeBoHelper implements Constants{
 									throw new ServiceException();
 								}
 							}
-							if (null != dtPrevReqStartDate
-									&& !dtPrevReqStartDate.equals(""))
+							if (null != dtPrevReqStartDate)
 								dtStartDate = sdf.format(dtPrevReqStartDate);
 							pendingServiceRequestDTO
 									.setPreviousProviderName(previousProviderName);
@@ -1671,7 +1668,6 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			logger.error("error occured in OEBO:::", e);
 			throw new OEException();
 
@@ -2493,7 +2489,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					logger.debug("OEBO.getESIDInfo() ESID PROFILE SUCESSFUL");
 				}
 			} else {
-				logger.debug("OEBO.getESIDInfo() GETTING ESID FAILED:"+ esidResponse.getStrErrCode());
+				logger.debug("OEBO.getESIDInfo() GETTING ESID FAILED: esidResponse is null");
 			}
 		} catch (ServiceException localServiceException) {
 			logger.error("ServiceException in OEBO.getESIDInfo():"
@@ -2669,7 +2665,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj);
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
-			e.printStackTrace();
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION + ": " + e.getMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);

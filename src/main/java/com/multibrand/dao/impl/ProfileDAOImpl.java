@@ -1,24 +1,23 @@
 package com.multibrand.dao.impl;
 
+
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.sql.Types;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
-
 import javax.annotation.Resource;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DataAccessException;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
 import com.multibrand.dao.AbstractSpringDAO;
@@ -110,46 +109,37 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 	}
 	
 	public boolean validatePasswordLink(final String transactionId) {
-		
-		
 		logger.info("profileDAO-validatePasswordLink :: Start");
-	
-		boolean result=false;
-		try{
-			
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			
-			String query = "SELECT to_char(expiration_date,'YYYY-MM-DD hh24:mi:ss') FROM gme_res_main.OL_EXTERNAL_REQUEST WHERE TRANSACTION_ID ='"+transactionId+"' and STATUS_FLAG='O'";
-			String expDate = (String)gmeResJdbcTemplate.queryForObject(query, String.class);
-			
+		boolean result = false;
+		try {
+			SimpleDateFormat sdf = new SimpleDateFormat(DT_SQL_FMT_DB);
+			String query = sqlMessage.getMessage(DBConstants.QUERY_GME_VALIDATE_PASSWORD_LINK, null, null);
+			String expDate = gmeResJdbcTemplate.query(query, new Object[] { transactionId },
+					new ResultSetExtractor<String>() {
+						@Override
+						public String extractData(ResultSet rs) throws SQLException, DataAccessException {
+							String expirationDate = "";
+							while (rs.next()) {
+								expirationDate = rs.getString(1);
+							}
+							return expirationDate;
+						}
+
+					});
 			Date convertedExpDate = sdf.parse(expDate);
-			String sysDate = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
+			String sysDate = sdf.format(Calendar.getInstance().getTime());
 			Date convertedSysDate = sdf.parse(sysDate);
-			
-			if(convertedExpDate.before(convertedSysDate))
-			{
-				result = false;//expired
-				
+
+			if (convertedExpDate.before(convertedSysDate)) {
+				result = false;// expired
+			} else {
+				result = true;// valid
 			}
-			else
-			{
-				result = true;//valid
-			}
-			}
-			catch(EmptyResultDataAccessException dae)
-			{
-				logger.error("Duplicate hit - Link Expired");	
-			}
-			catch(Exception e)
-			{
-			logger.error("Inside DB call expection block"+e);
-			}
-				
-		
 			logger.info("profileDAO-validatePasswordLink :: End");
-			return result;
-		
-		
+		} catch (Exception e) {
+			logger.error("Exception Occured in validatePasswordLink ::: " + e);
+		}
+		return result;
 	}
 
 	@Override
