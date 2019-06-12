@@ -78,11 +78,12 @@ public class XmlUtil {
         } catch (Exception e) {
             throw new RuntimeException("Error while writing the document into String:" + e);
         } finally {
-            try {
-                is.close();
-            } catch (Exception e) {
-            	System.out.println("convertXMLFileToString() InputStream Close Exception" + e.getMessage());
-            }
+        	if(is!=null){
+        		try {is.close();} 
+        		catch (Exception e) {
+        			System.out.println("convertXMLFileToString() InputStream Close Exception" + e.getMessage());
+        		}
+        	}
         }
 
         return convertedString;

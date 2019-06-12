@@ -148,7 +148,7 @@ public class CommonUtil implements Constants {
 				try {
 					strDate = format2.format(format1.parse(strDate));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("Exception Occurred in changeDateFormat ::: " +e);
 				}
 			}
 		}
@@ -164,7 +164,7 @@ public class CommonUtil implements Constants {
 			try {
 				strDate = format2.format(format1.parse(strDate));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("Exception Occurred in changeDateFormat ::: " +e);
 			}
 		}
 
@@ -232,7 +232,7 @@ public class CommonUtil implements Constants {
 			confirmationNumber = currentHostAddress + "-" + obfuscate(36, ts);
 		} catch (Exception e) {
 			confirmationNumber = obfuscate(36, ts);
-			e.printStackTrace();
+			logger.error("Exception occurred in generateConfirmationNumber ::: " +e);
 		}
 		return confirmationNumber;
 	}
@@ -476,7 +476,7 @@ public class CommonUtil implements Constants {
 		try {
 			date = sdf.parse(strDate);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("Exception Occurred in getSqlDate ::: " +e);
 			return null;
 		}
 
@@ -534,14 +534,11 @@ public class CommonUtil implements Constants {
 		try {
 			json = ow.writeValueAsString(response.getEntity());
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		}
 
 		return json;
@@ -902,9 +899,9 @@ public class CommonUtil implements Constants {
 			}
 			valid = true;
 		} catch (JsonParseException jpe) {
-			jpe.printStackTrace();
+			logger.error("Exception occured in isValidJson :::" +jpe);
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.error("Exception occured in isValidJson :::" +ioe);
 		}
 		return valid;
 	}

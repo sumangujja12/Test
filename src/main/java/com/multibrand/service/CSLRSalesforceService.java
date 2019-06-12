@@ -84,7 +84,8 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			body.add(CLIENT_ID, this.envMessageReader.getMessage(SALESFORCE_CLIENT_ID));
 			body.add(CLIENT_SECRET, this.envMessageReader.getMessage(SALESFORCE_CLIENT_SECRET));
 			body.add(USER_NAME, this.envMessageReader.getMessage(SALESFORCE_USER_NAME));
-			body.add(PASSWORD, this.envMessageReader.getMessage(SALESFORCE_USER_PASSWORD));
+			//body.add(PASSWORD, this.envMessageReader.getMessage(SALESFORCE_USER_PASSWORD));
+			body.add(PWRD, this.envMessageReader.getMessage(SALESFORCE_USER_PASSWORD));
 
 			RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactory());
 			

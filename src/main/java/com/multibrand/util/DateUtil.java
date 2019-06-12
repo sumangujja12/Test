@@ -13,7 +13,6 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.aspectj.apache.bcel.classfile.Constant;
 import org.springframework.stereotype.Component;
 
 
@@ -29,7 +28,7 @@ public class DateUtil implements Constants{
 	/**
 	 * Field Log.
 	 */
-	private static Logger Log = LogManager.getLogger(DateUtil.class);
+	private static Logger logger = LogManager.getLogger(DateUtil.class);
 	private static final long ONE_HOUR = 60 * 60 * 1000L;
 	private static final String DATE_FORMAT_YYYY = "yyyy";
 
@@ -296,8 +295,6 @@ public class DateUtil implements Constants{
 
 		monthDiff = (cal2.get(Calendar.YEAR) - cal1.get(Calendar.YEAR)) * 12
 				+ (cal2.get(Calendar.MONTH) - cal1.get(Calendar.MONTH));
-
-		// logger.info("monthDiff :" + monthDiff );
 		return Math.abs(monthDiff);
 	}
 
@@ -498,14 +495,14 @@ public class DateUtil implements Constants{
 		Date d = null;
 		String newString = null;
 		try {
-			Log.info("inside getFormattedDate:: simpledateformating the date:: "+oldString);
+			logger.info("inside getFormattedDate:: simpledateformating the date:: "+oldString);
 			//setting leniency to false for proper pattern check @Jasveen
 			sdf.setLenient(false);
 			d = sdf.parse(oldString);
 			sdf.applyPattern(newFormat);
 			newString = sdf.format(d);
 		} catch (Exception e) {
-			Log.error("ParseException in DateUtil:getFormattedDate():"
+			logger.error("ParseException in DateUtil:getFormattedDate():"
 					+ e.getMessage());
 			return oldString;
 
@@ -532,7 +529,7 @@ public class DateUtil implements Constants{
 		try {
 			d = sdf.parse(oldString);
 		} catch (ParseException e) {
-			Log.error("ParseException in DateUtil:getFormattedDateWithLocale():"
+			logger.error("ParseException in DateUtil:getFormattedDateWithLocale():"
 					+ e.getMessage());
 			return oldString;
 
@@ -568,24 +565,7 @@ public class DateUtil implements Constants{
 		return ((endDate.getTime() - startDate.getTime() + ONE_HOUR) / (ONE_HOUR * 24));
 	}
 
-	/**
-	 * Method main.
-	 * 
-	 * @param args
-	 *            String[]
-	 */
-	public static void main(String[] args) {
-
-		/*
-		 * Log.info(getFormatedDate( getDate("2011/12/01" , "yyyy/MM/dd"),
-		 * "MM/dd/yyyy")); Log.info(getCurrentDateFormat("MM/dd/yyyy"));
-		 * logger.debug(getFormattedDate("MMMMMMMMMM yyyy",
-		 * "yyyy-MM-DD","2013-09-12"));
-		 */
-		// logger.debug("test"+ getFormattedDateWithLocale("MMMMMMMMMM yyyy",
-		// "yyyy-MM-dd","2013-09-12",new Locale("en", "EN" )));
-	}
-
+	
 	/**
 	 * Method to display Full date with Time stamp and Time zone
 	 * 
@@ -781,7 +761,7 @@ public class DateUtil implements Constants{
 		try {
 			d = formatter.parse(date);
 		} catch (ParseException e) {
-			Log.info(e);
+			logger.info(e);
 		}
 		return d;
 	}
