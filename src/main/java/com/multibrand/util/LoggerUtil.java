@@ -31,8 +31,6 @@ public class LoggerUtil {
 	private static final String SETTER = "set";
 	private static final String PASSWORD = "password";
 	private static final String PRIVACY_DATA = "strverificationdata";
-	
-	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
 	
     /**
@@ -438,11 +436,14 @@ public class LoggerUtil {
 				} 
 												
 			} catch (IllegalArgumentException e) {
-				logger.error("Exception Occured in getData ::: " +e);
+				//logInfo("Problem logging method="+method2.getName());
+				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				logger.error("Exception Occured in getData ::: " +e);
+				//logInfo("Problem logging method="+method2.getName());
+				e.printStackTrace();
 			} catch (InvocationTargetException e) {
-				logger.error("Exception Occured in getData ::: " +e);
+				//logInfo("Problem logging method="+method2.getName());
+				e.printStackTrace();
 				}
 			}
 		strRequestString = requestString.toString();
@@ -511,7 +512,7 @@ public class LoggerUtil {
 			//System.out.println("LoggerUtil = "+message+":"+className);
 			logInfo(className, message.toString());	
 		}catch(Exception e){
-			logger.error("Exception Occured in logTransaction ::: " +e);
+			e.printStackTrace();
 		}
 
 	}
