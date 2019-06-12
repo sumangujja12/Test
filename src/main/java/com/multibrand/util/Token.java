@@ -341,7 +341,7 @@ public class Token {
             		((CloseableHttpClient) httpclient).close();
             	}
             } catch (Exception ex) {
-            	ex.printStackTrace();
+            	logger.error("Exception Occurerred in connectTokenServer ::: " +ex);
             	//Don't worry about this exception as it is just trying to close the httpclient connection.
             	logger.error("Error in closing the HttpClient connection: " + ex.getMessage());
             }
