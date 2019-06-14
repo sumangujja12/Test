@@ -1,16 +1,18 @@
 package com.multibrand.web.context.request;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
-
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.context.i18n.LocaleContextHolder;
-
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.sun.jersey.api.representation.Form;
@@ -34,6 +36,22 @@ public class LocaleRequestFilter implements ContainerRequestFilter {
 	 */
 	@Override
 	public ContainerRequest filter(ContainerRequest request) {
+		if(request!=null){
+			LOGGER.info("METHOD RESOURCE INVOKED FOR THIS REQUEST IS "+request.getMethod());
+            LOGGER.info("PATH OF RESOURCE INVOKED FOR THIS REQUEST IS "+request.getPath());
+            if(request.getPath()!=null && request.getPath().equalsIgnoreCase("emails/send/billPreference") ){       
+            	StringWriter writer = new StringWriter();       
+            	try {
+            		IOUtils.copy(request.getEntityInputStream(), writer, "UTF-8");
+                    request.setEntityInputStream(new ByteArrayInputStream(writer.toString(). getBytes(StandardCharsets.UTF_8)));
+                 } catch (IOException e) {
+                	 LOGGER.error("LocaleRequestFilter error:"+e);
+                 } 
+            	LOGGER.info("#### Intercepted Entity ####");
+            	LOGGER.info(writer.toString());
+
+            }
+        }
 		setLocale(request);
 		return request;
 	}
