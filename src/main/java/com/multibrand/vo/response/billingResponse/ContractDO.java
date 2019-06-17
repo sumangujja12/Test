@@ -1,11 +1,10 @@
 package com.multibrand.vo.response.billingResponse;
 
 import com.multibrand.util.CommonUtil;
-import com.multibrand.util.Constants;
 
 
 
-public class ContractDO implements Constants {
+public class ContractDO {
 
 	private OfferDO currentPlan;
 	
@@ -130,7 +129,7 @@ public class ContractDO implements Constants {
 	}
 
 	public java.lang.String getStrContractEndDate() {
-		return CommonUtil.changeDateFormat(strContractEndDate, yyyyMMdd, yyyy_MM_dd);
+		return CommonUtil.changeDateFormat(strContractEndDate);
 	}
 
 	public void setStrContractEndDate(java.lang.String strContractEndDate) {
@@ -146,7 +145,7 @@ public class ContractDO implements Constants {
 	}
 
 	public java.lang.String getStrContractStartDate() {
-		return CommonUtil.changeDateFormat(strContractStartDate, yyyyMMdd, yyyy_MM_dd);
+		return CommonUtil.changeDateFormat(strContractStartDate);
 	}
 
 	public OfferDO getCurrentPlan() {
@@ -178,7 +177,7 @@ public class ContractDO implements Constants {
 	}
 
 	public java.lang.String getStrMoveInDate() {
-		return CommonUtil.changeDateFormat(strMoveInDate, yyyyMMdd, yyyy_MM_dd);
+		return CommonUtil.changeDateFormat(strMoveInDate);
 	}
 
 	public void setStrMoveInDate(java.lang.String strMoveInDate) {
@@ -186,7 +185,7 @@ public class ContractDO implements Constants {
 	}
 
 	public java.lang.String getStrMoveOutDate() {
-		return CommonUtil.changeDateFormat(strMoveOutDate, yyyyMMdd, yyyy_MM_dd);
+		return CommonUtil.changeDateFormat(strMoveOutDate);
 	}
 
 	public void setStrMoveOutDate(java.lang.String strMoveOutDate) {
