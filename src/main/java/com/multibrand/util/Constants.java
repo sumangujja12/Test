@@ -1070,8 +1070,10 @@ public interface Constants {
 	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
 	
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
-
-
+	
+	// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+	public static final String CCS_BANK_GIACT_CALL_URL="ws.rest.ccs.bank.giact.call.url";
+	// End | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
 	
 	public static final String CONSTANT_S ="S";
 
