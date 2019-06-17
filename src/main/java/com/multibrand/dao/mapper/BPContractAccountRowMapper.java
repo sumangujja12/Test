@@ -170,7 +170,7 @@ public class BPContractAccountRowMapper implements ResultSetExtractor<List<Bussi
 
 				if (rs.getString("ACCOUNT_CONVERSION_DATE") != null) {
 					bpContractAccountDO.setStrConversionDate(CommonUtil.changeDateFormat(
-							rs.getString("ACCOUNT_CONVERSION_DATE"), DT_SQL_FMT_DB, DT_FMT));
+							rs.getString("ACCOUNT_CONVERSION_DATE"), DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					bpContractAccountDO.setStrConversionDate("");
 				}
@@ -190,7 +190,7 @@ public class BPContractAccountRowMapper implements ResultSetExtractor<List<Bussi
 
 				if (rs.getString("DISCONNECT_DATE") != null) {
 					bpContractAccountDO.setStrDisconnectDate(CommonUtil.changeDateFormat(
-							rs.getString("DISCONNECT_DATE"), DT_SQL_FMT_DB, DT_FMT));
+							rs.getString("DISCONNECT_DATE"), DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					bpContractAccountDO.setStrDisconnectDate("");
 				}
@@ -214,28 +214,28 @@ public class BPContractAccountRowMapper implements ResultSetExtractor<List<Bussi
 
 				if (rs.getString("CONTRACT_START_DATE") != null) {
 					bpContractDO.setStrContractStartDate(CommonUtil.changeDateFormat(
-							rs.getString("CONTRACT_START_DATE"), DT_SQL_FMT_DB, DT_FMT));
+							rs.getString("CONTRACT_START_DATE"), DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					bpContractDO.setStrContractStartDate("");
 				}
 
 				if (rs.getString("CONTRACT_END_DATE") != null) {
 					bpContractDO.setStrContractEndDate(CommonUtil.changeDateFormat(rs.getString("CONTRACT_END_DATE"),
-							DT_SQL_FMT_DB, DT_FMT));
+							DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					bpContractDO.setStrContractEndDate("");
 				}
 
 				if (rs.getString("MOVE_IN_DATE") != null) {
 					bpContractDO.setStrMoveInDate(CommonUtil.changeDateFormat(rs.getString("MOVE_IN_DATE"),
-							DT_SQL_FMT_DB, DT_FMT));
+							DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					bpContractDO.setStrMoveInDate("");
 				}
 
 				if (rs.getString("MOVE_OUT_DATE") != null) {
 					bpContractDO.setStrMoveOutDate(CommonUtil.changeDateFormat(rs.getString("MOVE_OUT_DATE"),
-							DT_SQL_FMT_DB, DT_FMT));
+							DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					bpContractDO.setStrMoveOutDate("");
 				}
@@ -326,7 +326,7 @@ public class BPContractAccountRowMapper implements ResultSetExtractor<List<Bussi
 						|| (strPaymentStatus != null && strPaymentStatus.equalsIgnoreCase(REVERSE))) {
 					if (rs.getString("PAYMENT_REVERSE_DATE") != null) {
 						paymentDate = CommonUtil.changeDateFormat(rs.getString("PAYMENT_REVERSE_DATE"), DT_SQL_FMT_DB,
-								DT_FMT);
+								yyyy_MM_dd);
 						bpPaymentDO.setPaymentDate(paymentDate);
 					} else {
 						bpPaymentDO.setPaymentDate("");
@@ -335,7 +335,7 @@ public class BPContractAccountRowMapper implements ResultSetExtractor<List<Bussi
 				} else {
 					if (rs.getString("PAYMENT_SCHEDULE_DATE") != null) {
 						paymentDate = (CommonUtil.changeDateFormat(rs.getString("PAYMENT_SCHEDULE_DATE"),
-								DT_SQL_FMT_DB, DT_FMT));
+								DT_SQL_FMT_DB, yyyy_MM_dd));
 						bpPaymentDO.setPaymentDate(paymentDate);
 					} else {
 						bpPaymentDO.setPaymentDate("");
@@ -373,7 +373,7 @@ public class BPContractAccountRowMapper implements ResultSetExtractor<List<Bussi
 				}
 
 				if (rs.getString("DUE_DATE") != null) {
-					balanceD0.setStrCurrentDueDate(CommonUtil.changeDateFormat(rs.getString("DUE_DATE"), DT_SQL_FMT_DB, DT_FMT));
+					balanceD0.setStrCurrentDueDate(CommonUtil.changeDateFormat(rs.getString("DUE_DATE"), DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					balanceD0.setStrCurrentDueDate("");
 				}
@@ -383,7 +383,7 @@ public class BPContractAccountRowMapper implements ResultSetExtractor<List<Bussi
 
 				if (rs.getString("LAST_PAYMENT_DATE") != null) {
 					balanceD0.setStrLastPayDate(CommonUtil.changeDateFormat(rs.getString("LAST_PAYMENT_DATE"),
-							DT_SQL_FMT_DB, DT_FMT));
+							DT_SQL_FMT_DB, yyyy_MM_dd));
 				} else {
 					balanceD0.setStrLastPayDate("");
 				}

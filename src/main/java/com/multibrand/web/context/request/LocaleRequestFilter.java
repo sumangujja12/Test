@@ -36,19 +36,22 @@ public class LocaleRequestFilter implements ContainerRequestFilter {
 	 */
 	@Override
 	public ContainerRequest filter(ContainerRequest request) {
+	
 		if(request!=null){
 			LOGGER.info("METHOD RESOURCE INVOKED FOR THIS REQUEST IS "+request.getMethod());
             LOGGER.info("PATH OF RESOURCE INVOKED FOR THIS REQUEST IS "+request.getPath());
             if(request.getPath()!=null && request.getPath().equalsIgnoreCase("emails/send/billPreference") ){       
-            	StringWriter writer = new StringWriter();       
+            	StringWriter writer = new StringWriter(); 
+            	String payload="";
             	try {
             		IOUtils.copy(request.getEntityInputStream(), writer, "UTF-8");
-                    request.setEntityInputStream(new ByteArrayInputStream(writer.toString(). getBytes(StandardCharsets.UTF_8)));
+            		payload= writer.toString().replaceAll("\\\\", "");
+                    request.setEntityInputStream(new ByteArrayInputStream(payload.getBytes(StandardCharsets.UTF_8)));
                  } catch (IOException e) {
                 	 LOGGER.error("LocaleRequestFilter error:"+e);
                  } 
             	LOGGER.info("#### Intercepted Entity ####");
-            	LOGGER.info(writer.toString());
+            	LOGGER.info(payload);
 
             }
         }
