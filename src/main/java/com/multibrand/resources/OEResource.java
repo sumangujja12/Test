@@ -37,6 +37,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
+import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
@@ -60,6 +61,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
@@ -1170,4 +1172,20 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
+	/**
+	 * Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+	 * @author Nkatragadda
+	 * @param request
+	 * @return
+	 */
+	@POST
+	@Path("validateBankDetailsGiact")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateBankDetailsGiact(@Valid GiactBankValidationRequest bankDetailsValidationRequest) {
+		Response response;
+		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
+		response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();
+		return response;
+	}
 }

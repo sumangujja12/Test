@@ -355,5 +355,7 @@ public interface DBConstants {
 	public static final String QUERY_GME_INSERT_PASSWORD_TNX = "query.gme.insert.password.tnx";
 	public static final String QUERY_GME_INSERT_PASSWORD_STATUS_CODE = "query.gme.update.password.status.code";
 	
+	public static final String QUERY_GME_VALIDATE_PASSWORD_LINK = "query.gme.validate.password.link";
+	
 	
 }

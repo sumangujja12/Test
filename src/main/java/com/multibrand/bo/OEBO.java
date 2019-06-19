@@ -69,6 +69,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
+import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
@@ -113,6 +114,7 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.OfferPriceDO;
@@ -4717,8 +4719,21 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		}
 		return gMEEnviornmentalImpact;
 	}
-
-
+	/**
+	 * Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+	 * @author Nkatragadda
+	 * @param request
+	 * @return
+	 */
+	public GiactBankValidationResponse validateBankDetailsGiact(GiactBankValidationRequest bankDetailsValidationRequest) {
+		GiactBankValidationResponse bankDetailsValidationResponse=new GiactBankValidationResponse();
+		try{
+		bankDetailsValidationResponse = oeService.validateBankDetailsGiact(bankDetailsValidationRequest);
+		}catch(Exception e){
+			logger.debug("caught Exception in OEBO::validateBankDetailsGiact(..)"+e);
+		}
+		return bankDetailsValidationResponse;
+	}
 }
 
 	

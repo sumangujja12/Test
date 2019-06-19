@@ -1,27 +1,26 @@
 package com.multibrand.dao.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.AbstractMessageSource;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.BillDAO;
 import com.multibrand.dao.ResultObject;
 import com.multibrand.dao.mapper.BankCCInfoRowMapper;
@@ -822,45 +821,37 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 	 */
 	@Override
 	public Map<String, Object> getThirdPartyPaymentLog(String companyCode, String accountNumber) throws Exception {
-
 		logger.debug("START:- BillDAOImple.getThirdPartyPaymentLog() method :::");
-		String query =sqlMessage.getMessage(DBConstants.QUERY_PAYMENT_RECEIPT_LOG, null, null);
-		
-		Map<String, Object> paymentReceiptMap = new HashMap<String, Object>();
-		HashMap<String, Object> res = new HashMap<String, Object>();
-		try{
-		res = (HashMap<String, Object>) cpdbJdbcTemplate.queryForMap(query, new Object[] {accountNumber,companyCode});		
-		if (res.size() > 0) {
+		String query = sqlMessage.getMessage(DBConstants.QUERY_PAYMENT_RECEIPT_LOG, null, null);
 
-			paymentReceiptMap.put(DBConstants.PAYMENT_VALIDATION_ACTIVE_ID,
-					String.valueOf(res.get(COL_TPP_PAYMENT_VALIDATION_ACTIVE_ID)));
-			paymentReceiptMap.put(DBConstants.PAYMENT_AMOUNT, String.valueOf(res.get(COL_TPP_PAYMENT_AMOUNT)));
-			
-			paymentReceiptMap.put(DBConstants.PAYMENT_DATE,
-					DateUtil.getDateForString(String.valueOf(res.get(COL_TPP_PAYMENT_DATE)), DBConstants.RESPONSE_DATE_FORMAT, true));
-		
-			paymentReceiptMap.put(COL_TPP_RECEIPT_NUMBER, String.valueOf(res.get(COL_TPP_RECEIPT_NUMBER)));
-			paymentReceiptMap.put(COL_TPP_VENDOR_ID, String.valueOf(res.get(COL_TPP_VENDOR_ID)));
-			paymentReceiptMap.put(COL_TPP_SUCCESS_SHORT_MESSAGE,
-					String.valueOf(res.get(COL_TPP_SUCCESS_SHORT_MESSAGE)));
-			
-			paymentReceiptMap.put(DBConstants.CREATION_DATE,
-					DateUtil.getDateForString(String.valueOf(res.get(COL_TPP_CPDB_CREATION_DATE)), DBConstants.RESPONSE_DATE_FORMAT, true));
-			
-			paymentReceiptMap.put(DBConstants.UPDATE_DATE,
-					DateUtil.getDateForString(String.valueOf(res.get(COL_TPP_CPDB_UPDATE_DATE)), DBConstants.RESPONSE_DATE_FORMAT, true));
-		} else {
-			paymentReceiptMap = Collections.emptyMap();
-		}
-		
-		}
-		catch (EmptyResultDataAccessException empResDataAccException) {
-			paymentReceiptMap = Collections.emptyMap();
-			logger.error("BillDAOImple.getThirdPartyPaymentLog()  is returned ZERO results " + res);
-		}
-		logger.info("getThirdPartyPaymentLog = " + res);
-		logger.debug("START:- BillDAOImple.getThirdPartyPaymentLog() method :::");
-		return paymentReceiptMap;
+		return cpdbJdbcTemplate.query(query, new Object[] { accountNumber, companyCode },
+				new ResultSetExtractor<HashMap<String, Object>>() {
+					@Override
+					public HashMap<String, Object> extractData(ResultSet rs) throws SQLException, DataAccessException {
+						HashMap<String, Object> paymentReceiptMap = new HashMap<String, Object>();
+						while (rs.next()) {
+							paymentReceiptMap.put(DBConstants.PAYMENT_VALIDATION_ACTIVE_ID,
+									String.valueOf(rs.getLong(COL_TPP_PAYMENT_VALIDATION_ACTIVE_ID)));
+							paymentReceiptMap.put(DBConstants.PAYMENT_AMOUNT,
+									String.valueOf(rs.getDouble(COL_TPP_PAYMENT_AMOUNT)));
+							paymentReceiptMap.put(DBConstants.PAYMENT_DATE,
+									DateUtil.getDateForString(String.valueOf(rs.getDate(COL_TPP_PAYMENT_DATE)),
+											DBConstants.RESPONSE_DATE_FORMAT, true));
+							paymentReceiptMap.put(COL_TPP_RECEIPT_NUMBER,
+									String.valueOf(rs.getString(COL_TPP_RECEIPT_NUMBER)));
+							paymentReceiptMap.put(COL_TPP_VENDOR_ID, String.valueOf(rs.getString(COL_TPP_VENDOR_ID)));
+							paymentReceiptMap.put(COL_TPP_SUCCESS_SHORT_MESSAGE,
+									String.valueOf(rs.getString(COL_TPP_SUCCESS_SHORT_MESSAGE)));
+							paymentReceiptMap.put(DBConstants.CREATION_DATE,
+									DateUtil.getDateForString(String.valueOf(rs.getDate(COL_TPP_CPDB_CREATION_DATE)),
+											DBConstants.RESPONSE_DATE_FORMAT, true));
+							paymentReceiptMap.put(DBConstants.UPDATE_DATE,
+									DateUtil.getDateForString(String.valueOf(rs.getDate(COL_TPP_CPDB_UPDATE_DATE)),
+											DBConstants.RESPONSE_DATE_FORMAT, true));
+						}
+						return paymentReceiptMap;
+					}
+				});
 	}	
 	//US-F222-DK | 10312018
      public PayAccountDO savePayAccount(StoreUpdatePayAccountRequest request) throws Exception{
