@@ -13,6 +13,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -63,6 +65,7 @@ import com.multibrand.service.OfferService;
 import com.multibrand.service.PaymentService;
 import com.multibrand.service.ProfileService;
 import com.multibrand.service.TOSService;
+import com.multibrand.thread.AMBMailServiceWorker;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
@@ -87,6 +90,7 @@ import com.multibrand.vo.response.RetroEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyCheckResponseVO;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyStatusResponse;
 import com.multibrand.vo.response.billingResponse.AMBSignupResponseVO;
+import com.multibrand.vo.response.billingResponse.AccountDetailsProp;
 import com.multibrand.vo.response.billingResponse.ArMobileGMEResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
 import com.multibrand.vo.response.billingResponse.AutoPayInfoResponse;
@@ -2028,7 +2032,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param strSessionId HttpSession
 	 * @return
 	 */
-	public AMBSignupResponseVO saveAMBSignUp(SaveAMBSingupRequestVO requestVO,
+	/*public AMBSignupResponseVO saveAMBSignUp(SaveAMBSingupRequestVO requestVO,
 			String strSessionId)
 	{
 
@@ -2190,6 +2194,98 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return response;
 	}
+	
+*/	/**
+	 * 
+	 * @param requestVO SaveAMBSingupRequestVO
+	 * @param strSessionId HttpSession
+	 * @return
+	 */
+	public AMBSignupResponseVO saveAMBSignUp(SaveAMBSingupRequestVO requestVO, String strSessionId) {
+
+		AMBSignupResponseVO response = new AMBSignupResponseVO();
+		ZesAmbOutput zesAmbOutput = new ZesAmbOutput();
+		ExecutorService executorService = null;
+		try {
+			AmbSignupRequest request = new AmbSignupRequest();
+			if (!StringUtils.isBlank(requestVO.getAmbAmount())) {
+				request.setAmbAmount(new BigDecimal(requestVO.getAmbAmount()));
+			}
+
+			request.setBpNumber(requestVO.getBpNumber());
+			request.setCaNumber(requestVO.getAccountNumber());
+			request.setCoNumber(requestVO.getContractId());
+			// Added Retro flag and abm web tab data- Start
+			if (StringUtils.isNotBlank(requestVO.getRetroFlag())
+					&& StringUtils.equals(FLAG_TRUE, requestVO.getRetroFlag())) {
+				request.setRetroFlag(Constants.X_VALUE);
+			} else {
+				request.setRetroFlag("");
+			}
+
+			if (StringUtils.isNotBlank(requestVO.getAmtAdjust()))
+				zesAmbOutput.setAmtAdjust(new BigDecimal(requestVO.getAmtAdjust()));
+
+			if (StringUtils.isNotBlank(requestVO.getAmbAmount()))
+				zesAmbOutput.setAmtFinal(new BigDecimal(requestVO.getAmbAmount()));
+
+			if (StringUtils.isNotBlank(requestVO.getBbpBasis()))
+				zesAmbOutput.setBbpBasis(new BigDecimal(requestVO.getBbpBasis()));
+
+			if (StringUtils.isNotBlank(requestVO.getBillAllocDate())) {
+				zesAmbOutput.setBillAllocDate(requestVO.getBillAllocDate());
+			} else {
+				zesAmbOutput.setBillAllocDate(CommonUtil.getCurrentDateYYYYMMDD());
+			}
+			zesAmbOutput.setEstSign(requestVO.getEstSign());
+			zesAmbOutput.setInvoice(requestVO.getInvoice());
+			zesAmbOutput.setResStatus(requestVO.getResStatus());
+			request.setAbmWebTab(zesAmbOutput);
+			// Added Retro flag and abm web tab data- End
+
+			AmbSignupResponse responseService = billingService.saveAMBSignUp(request, requestVO.getCompanyCode(),
+					strSessionId);
+
+			if (responseService != null && StringUtils.isBlank(responseService.getErrCode())) {
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				response.setRespStatus(responseService.getRespStatus());
+
+				AccountDetailsProp accountDetails = new AccountDetailsProp();
+				accountDetails = getAccountDetailsInfoForAmbSignUpMail(requestVO, strSessionId);
+				sendConfirmationMailForAmbSignup(requestVO, accountDetails, strSessionId);
+				AMBMailServiceWorker aMBMailServiceWorker = new AMBMailServiceWorker(requestVO, accountDetails,
+						strSessionId);
+				executorService = Executors.newFixedThreadPool(5);
+				executorService.execute(aMBMailServiceWorker);
+				executorService.shutdown();
+			} else {
+				response.setResultCode(RESULT_CODE_CCS_ERROR);
+				response.setResultDescription(responseService.getErrCode());
+			}
+
+		} catch (RemoteException e) {
+			logger.error("Exception occured in saveAMBSignUp : " + e.getStackTrace());
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), response);
+		} catch (Exception e) {
+			logger.error("Exception occured in saveAMBSignUp : " + e.getStackTrace());
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			executorService.shutdown();
+			throw new OAMException(200, e.getMessage(), response);
+		} finally {
+			if (executorService != null) {
+				executorService.shutdown();
+			}
+		}
+		return response;
+	}
+
+	
+	
+	
 	
 	/**
 	 * This method is responsible for getting
@@ -3202,5 +3298,275 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		return emailRequest;
 	}
+	
+	public AccountDetailsProp getAccountDetailsInfoForAmbSignUpMail(SaveAMBSingupRequestVO request, String sessionId) {
+		AccountDetailsProp accountDetailsProp = new AccountDetailsProp();
+		AccountDetailsProp billingAddressDetails = new AccountDetailsProp();
+		AccountDetailsProp serviceAdderessDetails = new AccountDetailsProp();
+		String esiId = "";
+		String checkDigitVal = "";
+
+		GetAccountDetailsResponse accountDetails = getAccountDetails(request.getAccountNumber(),
+				request.getCompanyCode(), request.getBrandName(), sessionId);
+
+		// set billing address details
+		billingAddressDetails = getBillingAddressInfo(request, accountDetails);
+		accountDetailsProp.setBillingAddress(billingAddressDetails.getBillingAddress());
+		accountDetailsProp.setBillingCity(billingAddressDetails.getBillingCity());
+		accountDetailsProp.setBillingState(billingAddressDetails.getBillingState());
+		accountDetailsProp.setBillingZipCode(billingAddressDetails.getBillingZipCode());
+
+		// set service address details
+		serviceAdderessDetails = getServiceAddressInfo(request, accountDetails);
+		accountDetailsProp.setServiceAddress(serviceAdderessDetails.getServiceAddress());
+		accountDetailsProp.setServiceCity(serviceAdderessDetails.getServiceCity());
+		accountDetailsProp.setServiceState(serviceAdderessDetails.getServiceState());
+		accountDetailsProp.setServiceZipCode(serviceAdderessDetails.getServiceZipCode());
+
+		// set EsiID
+		esiId = getEsiIdVal(request, accountDetails);
+		accountDetailsProp.setEsiId(esiId);
+
+		// set check digit value
+		checkDigitVal = getCheckDigitVal(request, accountDetails);
+		accountDetailsProp.setChkDigit(checkDigitVal);
+		return accountDetailsProp;
+	}
+	
+	public AccountDetailsProp getBillingAddressInfo(SaveAMBSingupRequestVO request,
+			GetAccountDetailsResponse accountDetails) {
+		AccountDetailsProp billingAddressDetails = new AccountDetailsProp();
+		String billingAddress = "";
+		/*
+		 * If billing address details provide in the request will pick from the
+		 * request, otherwise need to call getAccountDetails method and populate
+		 * necessary billing details
+		 */
+		if ((StringUtils.isBlank(request.getBillStreetAptNum()))
+				&& (StringUtils.isBlank(request.getBillStreetName()))) {
+			if (StringUtils.isBlank(accountDetails.getContractAccountDO().getBillingAddressDO().getStrPOBox())) {
+				billingAddress = accountDetails.getContractAccountDO().getBillingAddressDO().getStrStreetNum() + " "
+						+ accountDetails.getContractAccountDO().getBillingAddressDO().getStrStreetName();
+
+				if (!(StringUtils
+						.isBlank(accountDetails.getContractAccountDO().getBillingAddressDO().getStrApartNum()))) {
+					billingAddress = billingAddress + ", APT# "
+							+ accountDetails.getContractAccountDO().getBillingAddressDO().getStrApartNum();
+				}
+			} else {
+				billingAddress = "P.O. Box "
+						+ accountDetails.getContractAccountDO().getBillingAddressDO().getStrPOBox();
+			}
+			// If Request contains required data pick it from request
+		} else {
+			if (StringUtils.isBlank(request.getBillAddrPOBox())) {
+				billingAddress = request.getBillStreetNum() + " " + request.getBillStreetName();
+				if (!request.getBillStreetAptNum().isEmpty()) {
+					billingAddress = billingAddress + ", APT# " + request.getBillStreetAptNum();
+				}
+			} else {
+				billingAddress = "P.O. Box " + request.getBillAddrPOBox();
+			}
+		}
+		// setting billing address
+		billingAddressDetails.setBillingAddress(billingAddress);
+		// setting billing address city
+		if (StringUtils.isBlank(request.getBillCity())) {
+			billingAddressDetails
+					.setBillingCity(accountDetails.getContractAccountDO().getBillingAddressDO().getStrCity());
+		} else {
+			billingAddressDetails.setBillingCity(request.getBillCity());
+		}
+
+		// setting billing address state
+		if (StringUtils.isBlank(request.getBillState())) {
+			billingAddressDetails
+					.setBillingState(accountDetails.getContractAccountDO().getBillingAddressDO().getStrState());
+		} else {
+			billingAddressDetails.setBillingState(request.getBillState());
+		}
+
+		// setting billing address zipcode
+		if (StringUtils.isBlank(request.getBillZipCode())) {
+			billingAddressDetails
+					.setBillingZipCode(accountDetails.getContractAccountDO().getBillingAddressDO().getStrZip());
+		} else {
+			billingAddressDetails.setBillingZipCode(request.getBillZipCode());
+		}
+
+		return billingAddressDetails;
+	}
+	
+	public AccountDetailsProp getServiceAddressInfo(SaveAMBSingupRequestVO request,
+			GetAccountDetailsResponse accountDetails) {
+		String serviceAddress = "";
+		AccountDetailsProp serviceAddressDetails = new AccountDetailsProp();
+		if ((StringUtils.isBlank(request.getServStreetNum()) && StringUtils.isEmpty(request.getServStreetName()))) {
+			ContractDO[] contracts = accountDetails.getContractAccountDO().getListOfContracts();
+			if (contracts.length > 0) {
+				for (ContractDO contract : contracts) {
+					if (contract.getStrContractID().equals(request.getContractId())) {
+						serviceAddress = contract.getServiceAddressDO().getStrStreetNum() + " "
+								+ contract.getServiceAddressDO().getStrStreetName();
+						if (!(contract.getServiceAddressDO().getStrApartNum() == null
+								|| contract.getServiceAddressDO().getStrApartNum().isEmpty())) {
+							serviceAddress = serviceAddress + ", APT# "
+									+ contract.getServiceAddressDO().getStrApartNum();
+						}
+
+						serviceAddressDetails.setServiceCity(contract.getServiceAddressDO().getStrCity());
+						serviceAddressDetails.setServiceState(contract.getServiceAddressDO().getStrState());
+						serviceAddressDetails.setServiceZipCode(contract.getServiceAddressDO().getStrZip());
+
+					}
+				}
+			}
+		} else {
+			serviceAddress = request.getServStreetNum() + " " + request.getServStreetName();
+
+			if (!(StringUtils.isBlank(request.getServStreetAptNum()))) {
+				serviceAddress = serviceAddress + ", APT# " + request.getServStreetAptNum();
+			}
+		}
+		// setting service address values
+		serviceAddressDetails.setServiceAddress(serviceAddress);
+
+		if (!(StringUtils.isBlank(request.getServCity()))) {
+			serviceAddressDetails.setServiceCity(request.getServCity());
+		}
+
+		if (!(StringUtils.isBlank(request.getServState()))) {
+			serviceAddressDetails.setServiceState(request.getServState());
+		}
+
+		if (!(StringUtils.isBlank(request.getServZipCode()))) {
+			serviceAddressDetails.setServiceZipCode(request.getServZipCode());
+		}
+
+		return serviceAddressDetails;
+	}
+	
+	public String getEsiIdVal(SaveAMBSingupRequestVO request, GetAccountDetailsResponse accountDetails) {
+		String esiId = "";
+		if (StringUtils.isEmpty(request.getEsid())) {
+			ContractDO[] contracts = accountDetails.getContractAccountDO().getListOfContracts();
+			if (contracts.length > 0) {
+				for (ContractDO contract : contracts) {
+					if (contract.getStrContractID().equals(request.getContractId())) {
+						esiId = contract.getStrESIID();
+					}
+				}
+			}
+		} else {
+			esiId = request.getEsid();
+
+		}
+		return esiId;
+	}
+	
+	public String getCheckDigitVal(SaveAMBSingupRequestVO request, GetAccountDetailsResponse accountDetails) {
+		String checkDigit = "";
+		if (StringUtils.isEmpty(request.getCheckDigit())) {
+			checkDigit = accountDetails.getContractAccountDO().getStrCheckDigit();
+		} else {
+			checkDigit = request.getCheckDigit();
+		}
+		return checkDigit;
+	}
+	
+
+	public void sendConfirmationMailForAmbSignup(SaveAMBSingupRequestVO requestVO, AccountDetailsProp accountDetails,
+			String sesseionId) throws Exception {
+
+		HashMap<String, String> templateProps = new HashMap<String, String>();
+		templateProps.put(ACCOUNT_NUMBER, requestVO.getAccountNumber());
+		templateProps.put(BP_NUMBER, requestVO.getBpNumber());
+		accountDetails = getAccountDetailsInfoForAmbSignUpMail(requestVO, sesseionId);
+		// setting service address
+		templateProps.put(SERVICE_ADDRESS, accountDetails.getServiceAddress());
+		templateProps.put(SERVICE_CITY, accountDetails.getServiceCity());
+		templateProps.put(SERVICE_STATE, accountDetails.getServiceState());
+		templateProps.put(SERVICE_ZIP, accountDetails.getServiceZipCode());
+		// setting billing address
+		templateProps.put(BILLING_ADDRESS, accountDetails.getBillingAddress());
+		templateProps.put(BILLING_CITY, accountDetails.getBillingCity());
+		templateProps.put(BILLING_STATE, accountDetails.getBillingState());
+		templateProps.put(BILLING_ZIP, accountDetails.getBillingZipCode());
+		// setting check digit value
+		templateProps.put(CHECK_DIGIT, accountDetails.getChkDigit());
+		// setting esiID value
+		templateProps.put(ESID, accountDetails.getEsiId());
+
+		String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
+		templateProps.put(DATE_SUBMITTED, transactionDate);
+		String ambAmount = CommonUtil.stringToDecimalFormat(requestVO.getAmbAmount());
+		logger.info("Email send to To requestVO.getLanguageCode(" + requestVO.getLanguageCode());
+		logger.info("Email send to To Address" + requestVO.getToEmail());
+		/** UNCOMMENT THIS *****************/
+		// String bccMailAddress =
+		// this.envMessageReader.getMessage(QC_BCC_MAIL)+","+this.envMessageReader.getMessage(SWAP_BCC_MAIL);
+		String bccMailAddress = "asha.perera@nrg.com";
+		// if(StringUtils.equals(requestVO.getCompanyCode(),Constants.COMPANY_CODE_GME)){
+		if (Constants.COMPANY_CODE_GME.equals(requestVO.getCompanyCode())) {
+			logger.info("Email send to GME as per company code");
+			if (StringUtils.isBlank(requestVO.getLanguageCode())
+					|| requestVO.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)) {
+				if (ambAmount.equals("0.00")) {
+					templateProps.put(AMB_AMOUNT, "");
+				} else {
+					String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Estimated Monthly Payment:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
+							+ ambAmount + "<![CDATA[</td></tr>]]>";
+					templateProps.put(AMB_AMOUNT, strAmbAmount);
+				}
+				logger.info("Email send To Address" + requestVO.getToEmail());
+				if (StringUtils.isNotBlank(requestVO.getRetroFlag())
+						&& StringUtils.equals("true", requestVO.getRetroFlag())) {
+					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_RETRO_AMB_EN_US,
+							templateProps, requestVO.getCompanyCode());
+				} else {
+					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_AMB_EN_US,
+							templateProps, requestVO.getCompanyCode());
+				}
+			} else {
+				if (ambAmount.equals("0.00")) {
+					templateProps.put(AMB_AMOUNT, "");
+				} else {
+					String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Pago mensual estimado:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
+							+ ambAmount + "<![CDATA[</td></tr>]]>";
+					templateProps.put(AMB_AMOUNT, strAmbAmount);
+				}
+				if (StringUtils.isNotBlank(requestVO.getRetroFlag())
+						&& StringUtils.equals("true", requestVO.getRetroFlag())) {
+					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_RETRO_AMB_ES_US,
+							templateProps, requestVO.getCompanyCode());
+				} else {
+					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_AMB_ES_US,
+							templateProps, requestVO.getCompanyCode());
+				}
+			}
+		} else if (StringUtils.equals(requestVO.getCompanyCode(), Constants.COMPANY_CODE_CIRRO)) {
+
+			logger.info("Email send to Cirro as per company code");
+
+			if (ambAmount.equals("0.00"))
+				templateProps.put(AMB_AMOUNT, "");
+			else {
+				String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Estimated Monthly Payment:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
+						+ ambAmount + "<![CDATA[</td></tr>]]>";
+				templateProps.put(AMB_AMOUNT, strAmbAmount);
+			}
+			logger.info("Email send To Address" + requestVO.getToEmail());
+			emailHelper.sendMail(requestVO.getToEmail(), "", CIRRO_AVG_BILLING_CONF_EXTERNAL_ID_EN, templateProps,
+					requestVO.getCompanyCode());
+
+		}
+
+	} 
+
+
+	
+	
+	
+	
 
 }
