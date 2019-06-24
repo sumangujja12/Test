@@ -10,9 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +21,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.BillDAO;
 import com.multibrand.dao.ResultObject;
 import com.multibrand.dao.mapper.BankCCInfoRowMapper;
@@ -824,7 +821,6 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 	 */
 	@Override
 	public Map<String, Object> getThirdPartyPaymentLog(String companyCode, String accountNumber) throws Exception {
-
 		logger.debug("START:- BillDAOImple.getThirdPartyPaymentLog() method :::");
 		String query = sqlMessage.getMessage(DBConstants.QUERY_PAYMENT_RECEIPT_LOG, null, null);
 
@@ -856,9 +852,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 						return paymentReceiptMap;
 					}
 				});
-
-	}
-
+	}	
 	//US-F222-DK | 10312018
      public PayAccountDO savePayAccount(StoreUpdatePayAccountRequest request) throws Exception{
 		logger.info("BillDAO-savePayAccount :: Start");	
