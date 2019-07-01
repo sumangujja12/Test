@@ -30,7 +30,7 @@ public class BillingBoTest implements TestConstants{
 	BillingBO billingBo;
 	
 	@Test
-	public void test(){
+	public void test_testCase(){
 		
 	}
 	
