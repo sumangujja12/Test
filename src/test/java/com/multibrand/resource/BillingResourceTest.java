@@ -29,7 +29,7 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		}
 	}
 	
-	@Test
+	/*@Test
 	public void test_getBalance_sucess() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -43,13 +43,13 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		assertTrue(dateValidator.isValidDate(response.getBody().path("dueDate").toString(), "yyyyDDmm"));
 
 	}
-	
+	*/
 	@Test
 	public void test_getBalance_invalidCANumber(){
 		//this scenario is not implemented in proper way
 	} 
 	
-	@Test
+/*	@Test
 	public void test_getBillingAddress_sucess() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -59,8 +59,8 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals("0", response.getBody().path("resultCode"));
 		Assert.assertEquals("00", response.getBody().path("statusCode"));
 	} 
-
-	@Test
+*/
+	/*@Test
 	public void test_getBillingAddress_noData(){
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "");
@@ -70,9 +70,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals("3",response.getBody().path("resultCode"));	
 		Assert.assertEquals("00",response.getBody().path("statusCode"));
 		Assert.assertEquals("No Data",response.getBody().path("resultDescription"));
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void test_getAccountDetails_success() throws JSONException {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -90,13 +90,13 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals("ResultCode Isn't matching", response.path("resultCode"), "0");
 		Assert.assertEquals("ESI Id Isn't matching", "10443720009849083", listOfContracts.get(0).get("strESIID"));
 	}
-	
-	@Test
+	*/
+	/*@Test
 	public void test_getAccountDetails_noData() {
 		//this scenario is not properly implemented
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void test_updatePaperFreeBilling_shouldUpdateAsTrue() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -106,9 +106,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals(200, response.statusCode());
 		Assert.assertEquals("0", response.getBody().path("resultCode"));
 		Assert.assertEquals("Success", response.getBody().path("resultDescription"));
-	}
+	}*/
 
-	@Test
+	/*@Test
 	public void test_updatePaperFreeBilling_shouldUpdateAsFalse() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -118,9 +118,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals(200, response.statusCode());
 		Assert.assertEquals("0", response.getBody().path("resultCode"));
 		Assert.assertEquals("Success", response.getBody().path("resultDescription"));
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void test_updatePaperFreeBilling_flagValueIsNull() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -130,9 +130,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals(200, response.statusCode());
 		Assert.assertEquals("3", response.getBody().path("resultCode"));
 		Assert.assertEquals("No Data", response.getBody().path("resultDescription"));
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void test_projectedBill_success() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -142,9 +142,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		assertNotNull("Projected Bill Data Should not be null", response.path("projectedBillResponse"));
 		Assert.assertEquals("Success", response.path("resultDescription"));
 		Assert.assertEquals("00", response.path("statusCode"));
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void test_projectedBill_noData() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "");
@@ -154,9 +154,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals("No Data", response.path("resultDescription"));
 		Assert.assertEquals("3", response.path("resultCode"));
 	}
-	
+	*/
 	/***** This scenario should properly address in Resource class  ***/
-	@Test
+	/*@Test
 	public void test_getBalanceForGMEMobile_sucess(){
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "000072938063");
@@ -166,10 +166,10 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Response response = given().spec(requestSpecification).post(EndPoint.GET_BALANCE_FOR_GME_MOBILE);
 		Assert.assertEquals("0", response.path("resultCode"));
 		Assert.assertEquals("00", response.path("statusCode"));
-	}
+	}*/
 	
 	/**** This scenario should properly address in Resource class **/
-	@Test
+	/*@Test
 	public void test_getBalanceForGMEMobile_noData() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("accountNumber", "");
@@ -180,9 +180,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals("1", response.path("resultCode"));
 		Assert.assertEquals("00", response.path("statusCode"));
 		Assert.assertEquals("Exception Occurred", response.path("resultDescription"));
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void test_getBankCCInfo_success() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("businessPartnerId", "6021838525");
@@ -193,9 +193,9 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals("00", response.path("statusCode"));
 		Assert.assertEquals("Success", response.path("resultDescription"));
 		assertNotNull(response.path("autoPayDetailsList"));
-	}
+	}*/
 	
-	@Test
+	/*@Test
 	public void test_getBankCCInfo_bPNumberIsNull() {
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("businessPartnerId", "");
@@ -206,6 +206,6 @@ public class BillingResourceTest implements TestConstants,EndPoint{
 		Assert.assertEquals("00", response.path("statusCode"));
 		Assert.assertEquals("INVALID_BUSINESS_PARTNER_ID", response.path("resultDescription"));
 	}
-	
+	*/
 
 }
