@@ -16,7 +16,7 @@ import io.restassured.specification.RequestSpecification;
 	BillingResourceTest.class,
 	BillingBoTest.class
 })
-public class RestAssuredConfiguration {
+public class RestAssuredConfiguration {/*
 	
 	@BeforeClass
 	public static void configure(){
@@ -31,4 +31,4 @@ public class RestAssuredConfiguration {
 		return spec;
 	}
 
-}
+*/}
