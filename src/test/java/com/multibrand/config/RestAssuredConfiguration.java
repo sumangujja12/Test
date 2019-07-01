@@ -20,8 +20,8 @@ public class RestAssuredConfiguration {
 	
 	@BeforeClass
 	public static void configure(){
-		RestAssured.baseURI="http://localhost";
-		RestAssured.port=8080;
+		RestAssured.baseURI="http://txaixsexbls04.retail.nrgenergy.com";
+		RestAssured.port=14087;
 		RestAssured.basePath="/NRGREST/rest/";
 	}
 	
