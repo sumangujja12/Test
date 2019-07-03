@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public enum EmailTemplate {
+public enum EmailTemplateEnum {
 	
 	 CIRRO_AUTO_PAY_UPDATE_EXTERNAL_ID_EN("CIRRO_AUTO_PAY_UPDATE_EXTERNAL_ID_EN"),
 	 CIRRO_AVG_BILLING_CONF_EXTERNAL_ID_EN("CIRRO_AVG_BILLING_CONF_EXTERNAL_ID_EN"),
@@ -45,7 +45,7 @@ public enum EmailTemplate {
 	 
 	public String templateName;
 
-	EmailTemplate(String templateName) {
+	EmailTemplateEnum(String templateName) {
 		this.templateName = templateName;
 	}
 
@@ -55,7 +55,7 @@ public enum EmailTemplate {
 
 	public static Map<String, Object> getEnumMap() {
 		Map<String, Object> enumValMap = new HashMap<>();
-		for (EmailTemplate template : EmailTemplate.values()) {
+		for (EmailTemplateEnum template : EmailTemplateEnum.values()) {
 			enumValMap.put(template.getTemplateName(), template);
 		}
 		return enumValMap;

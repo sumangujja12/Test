@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.service.UtilityService;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EmailConstants;
-import com.multibrand.util.EmailTemplate;
+import com.multibrand.util.EmailTemplateEnum;
 import com.multibrand.util.GuidGenerator;
 import com.multibrand.util.JAXBUtil;
 import com.nrg.utility.webservices.UtilityWebServices;
@@ -65,7 +65,7 @@ public class EmailHelper implements Constants {
 
 		boolean status = false;
 		
-		if(EmailTemplate.getEnumMap().containsKey(templateName)){
+		if(EmailTemplateEnum.getEnumMap().containsKey(templateName)){
 			status = processSendEmail(msgDtls, companyCode , templateName, AdapterTypes.HTML);
 		 }else{
 		        status = processSendEmail(msgDtls, companyCode , templateName, AdapterTypes.XSLT);
