@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.service.UtilityService;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EmailConstants;
+import com.multibrand.util.EmailTemplateEnum;
 import com.multibrand.util.GuidGenerator;
 import com.multibrand.util.JAXBUtil;
 import com.nrg.utility.webservices.UtilityWebServices;
@@ -64,20 +65,7 @@ public class EmailHelper implements Constants {
 
 		boolean status = false;
 		
-		if(templateName.equalsIgnoreCase(CIRRO_AUTO_PAY_UPDATE_EXTERNAL_ID_EN)|| 
-				templateName.equalsIgnoreCase(CIRRO_AVG_BILLING_CONF_EXTERNAL_ID_EN) || 
-				templateName.equalsIgnoreCase(GME_PASSWORD_CHANGE_EN_US) ||
-				templateName.equalsIgnoreCase(GME_PASSWORD_CHANGE_ES_US) ||
-				templateName.equalsIgnoreCase(GME_USERNAME_EN_US) ||
-				templateName.equalsIgnoreCase(GME_USERNAME_ES_US) ||
-				templateName.equalsIgnoreCase(CIRRO_EMAIL_CHANGE_EXTERNAL_ID_EN)||
-				templateName.equalsIgnoreCase(CIRRO_PAYMENT_OPTIONS_UPDATE_EN)||
-				templateName.equalsIgnoreCase(CIRRO_BILLING_OPTION_CHANGE_EN)||
-				templateName.equalsIgnoreCase(CIRRO_ADD_BANK_CONF_EXTERNAL_ID)||
-				templateName.equalsIgnoreCase(CIRRO_PASSWORD_CHANGE_EXTERNAL_ID)||
-				templateName.equalsIgnoreCase(CIRRO_NEW_SERVICE_ADDRESS_ADD_EXTERNAL_ID)||
-				templateName.equalsIgnoreCase(CIRRO_CREDIT_DEBIT_UPDATE_EN)){
-			
+		if(EmailTemplateEnum.getEnumMap().containsKey(templateName)){
 			status = processSendEmail(msgDtls, companyCode , templateName, AdapterTypes.HTML);
 		 }else{
 		        status = processSendEmail(msgDtls, companyCode , templateName, AdapterTypes.XSLT);
