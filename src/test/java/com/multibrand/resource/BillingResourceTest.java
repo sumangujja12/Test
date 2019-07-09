@@ -6,14 +6,13 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 import org.codehaus.jettison.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import com.multibrand.config.RestAssuredConfiguration;
 import com.multibrand.util.CommonUtilTest;
-import com.multibrand.util.DateUtilTest;
+import com.multibrand.util.DateUtilTestNew;
 import com.multibrand.util.DateValidator;
 import com.multibrand.util.EndPoint;
 import com.multibrand.util.TestConstants;
@@ -25,13 +24,13 @@ import io.restassured.specification.RequestSpecification;
 public class BillingResourceTest implements TestConstants{
 	
 	private DateValidator dateValidator;
-	private DateUtilTest dateUtil;
+	private DateUtilTestNew dateUtil;
 	private CommonUtilTest commonUtilTest;
 
 	@Before
 	public void init() {
 		dateValidator = new DateValidator();
-		dateUtil = new DateUtilTest();
+		dateUtil = new DateUtilTestNew();
 		commonUtilTest = new CommonUtilTest();
 		
 	}
