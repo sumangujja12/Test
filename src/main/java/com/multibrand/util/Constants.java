@@ -392,6 +392,10 @@ public interface Constants {
 	 public static final String SERVICE_CITY="serviceCity";
 	 public static final String SERVICE_STATE="serviceState";
 	 public static final String SERVICE_ZIP="serviceZipCode";
+	 public static final String SERVICE_ADDRESS_AMB="SERVICE_ADDRESS";
+	 public static final String SERVICE_CITY_AMB="SERV_CITY";
+	 public static final String SERVICE_STATE_AMB="SERV_STATE";
+	 public static final String SERVICE_ZIP_AMB="SERV_ZIP_CODE";
 	 public static final String BILLING_ADDRESS="billingAddress";
 	 public static final String BILLING_CITY="billingCity";
 	 public static final String BILLING_STATE="billingState";
