@@ -3314,10 +3314,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		templateProps.put(BP_NUMBER, requestVO.getBpNumber());
 		accountDetails = getAccountDetailsInfoForAmbSignUpMail(requestVO, sesseionId);
 		// setting service address
-		templateProps.put(SERVICE_ADDRESS, accountDetails.getServiceAddress());
-		templateProps.put(SERVICE_CITY, accountDetails.getServiceCity());
-		templateProps.put(SERVICE_STATE, accountDetails.getServiceState());
-		templateProps.put(SERVICE_ZIP, accountDetails.getServiceZipCode());
+		templateProps.put(SERVICE_ADDRESS_AMB, accountDetails.getServiceAddress());
+		templateProps.put(SERVICE_CITY_AMB, accountDetails.getServiceCity());
+		templateProps.put(SERVICE_STATE_AMB, accountDetails.getServiceState());
+		templateProps.put(SERVICE_ZIP_AMB, accountDetails.getServiceZipCode());
 		// setting billing address
 		templateProps.put(BILLING_ADDRESS, accountDetails.getBillingAddress());
 		templateProps.put(BILLING_CITY, accountDetails.getBillingCity());
