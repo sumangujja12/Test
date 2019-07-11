@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import javax.annotation.Resource;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,15 +125,18 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 						}
 
 					});
-			Date convertedExpDate = sdf.parse(expDate);
-			String sysDate = sdf.format(Calendar.getInstance().getTime());
-			Date convertedSysDate = sdf.parse(sysDate);
-
-			if (convertedExpDate.before(convertedSysDate)) {
-				result = false;// expired
-			} else {
-				result = true;// valid
+			if (StringUtils.isNotBlank(expDate)) {
+				Date convertedExpDate = sdf.parse(expDate);
+				String sysDate = sdf.format(Calendar.getInstance().getTime());
+				Date convertedSysDate = sdf.parse(sysDate);
+				if (convertedExpDate.before(convertedSysDate)) {
+					result = false;// expired
+				} else {
+					result = true;// valid
+				}
 			}
+				
+		
 			logger.info("profileDAO-validatePasswordLink :: End");
 		} catch (Exception e) {
 			logger.error("Exception Occured in validatePasswordLink ::: " + e);
@@ -145,8 +150,21 @@ public class ProfileDAOImpl extends AbstractSpringDAO implements ProfileDAO, Con
 		String userName=null;
 		
 		try{
-		String query = "select gme_res_main.Ol_ACCOUNT.USER_LOGIN_ID from gme_res_main.ol_external_request , gme_res_main.Ol_ACCOUNT where ol_external_request.user_unique_id = Ol_ACCOUNT.user_unique_id and ol_external_request.transaction_id = '"+transactionId+"'";
-		userName = (String)gmeResJdbcTemplate.queryForObject(query, String.class);
+		//String query = "select gme_res_main.Ol_ACCOUNT.USER_LOGIN_ID from gme_res_main.ol_external_request , gme_res_main.Ol_ACCOUNT where ol_external_request.user_unique_id = Ol_ACCOUNT.user_unique_id and ol_external_request.transaction_id = '"+transactionId+"'";
+		//userName = (String)gmeResJdbcTemplate.queryForObject(query, String.class);
+		String query = sqlMessage.getMessage(DBConstants.QUERY_GET_USER_LOGIN_ID, null, null);	
+		userName = gmeResJdbcTemplate.query(query, new Object[]{transactionId},
+				new ResultSetExtractor<String>() {
+			@Override
+			public String extractData(ResultSet rs) throws SQLException, DataAccessException {
+				String userLoginId = "";
+				while (rs.next()) {
+					userLoginId = rs.getString(1);
+				}
+				return userLoginId;
+			}
+
+		});
 		}catch(Exception e)
 		{
 		logger.error("Inside DB call expection block -  getUserNameforTxn"+e);
