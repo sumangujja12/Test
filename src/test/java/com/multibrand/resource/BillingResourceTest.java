@@ -16,12 +16,14 @@ import com.multibrand.util.DateUtilTestNew;
 import com.multibrand.util.DateValidator;
 import com.multibrand.util.EndPoint;
 import com.multibrand.util.TestConstants;
+
+import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
 
-public class BillingResourceTest implements TestConstants{
+public class BillingResourceTest implements TestConstants, EndPoint{
 	
 	private DateValidator dateValidator;
 	private DateUtilTestNew dateUtil;
@@ -625,6 +627,23 @@ public class BillingResourceTest implements TestConstants{
 		Assert.assertEquals("Invalid Input Parameters",response.path("resultDescription"));
 	}
 	
+	@Test
+	public void test_getBankPaymentInstitution_success(){
+		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
+		requestSpecification.formParam("routingNumber", "125000024");
+		Response response = given().spec(requestSpecification).post(EndPoint.GET_BANK_PAYMENT_INSTITUTION);
+		Assert.assertEquals("0", response.path("resultCode"));
+		Assert.assertEquals("Success",response.path("resultDescription"));
+	} 
+	
+	@Test
+	public void test_getBankPaymentInstitution_invalidRoutingNumber(){
+		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
+		requestSpecification.formParam("routingNumber", "");
+		Response response = given().spec(requestSpecification).post(EndPoint.GET_BANK_PAYMENT_INSTITUTION);
+		Assert.assertEquals("3", response.path("resultCode"));
+		Assert.assertEquals("Invalid Routing Number",response.path("resultDescription"));
+	}
 	
 	
 }

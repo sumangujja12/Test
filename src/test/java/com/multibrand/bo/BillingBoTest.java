@@ -34,7 +34,7 @@ public class BillingBoTest implements TestConstants{
 		
 	}
 	
-	/*
+	
 	@Test
 	public void test_getBillingAddress_success() throws Exception {
 		String profileResponseJson_success = getContent(GET_PROFILE_RESPONSE_SUCCESS);
@@ -44,9 +44,9 @@ public class BillingBoTest implements TestConstants{
 		when(profileService.getProfile(anyString(), anyString(), anyString())).thenReturn(profileMap);
 		Assert.assertEquals("ACCENT DR",
 				billingBo.getBillingAddress(anyString(), anyString(), anyString()).getStrStreetName());
-	}*/
+	}
 	
-	/*@Test
+	@Test
 	public void test_getBillingAddress_noData() throws Exception {
 		Map<String, Object> profileMap = null;
 		when(profileService.getProfile(anyString(), anyString(), anyString())).thenReturn(profileMap);
@@ -55,20 +55,20 @@ public class BillingBoTest implements TestConstants{
 		Assert.assertEquals(NO_DATA,
 				billingBo.getBillingAddress(anyString(), anyString(), anyString()).getResultDescription());
 	}
-	*/
-	/*@Before
+	
+	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
-	}*/
+	}
 	
-	/*private String getContent(String fileName) throws IOException {
+	private String getContent(String fileName) throws IOException {
 		InputStream fileStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
 		return IOUtils.toString(fileStream);
 	}
-*/
-	/*protected <T> T mapFromJson(String json, Class<T> clazz)
+
+	protected <T> T mapFromJson(String json, Class<T> clazz)
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 		return objectMapper.readValue(json, clazz);
-	}*/
+	}
 }

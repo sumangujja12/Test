@@ -16,6 +16,19 @@ public interface EndPoint {
 	public static final String GET_PAY_ACCOUNTS = "/billResource/getPayAccounts";
 	public static final String SCHEDULE_ONETIME_CC_PAYMENT = "/billResource/scheduleOneTimeCCPayment";
 	public static final String GET_PAYMENT_METHODS = "/billResource/getPaymentMethods";
-	public static final String GET_AUTOPAY_INFO = "/billResource/getAutoPayInfo";
+	public static final String GET_BANK_PAYMENT_INSTITUTION = "/billResource/getBankPaymentInstitution";
+	public static final String GET_AUTOPAY_INFO = "billResource/getAutoPayInfo";
+	
+	
+	/***** P R O F I L E     E N D P O I N T S   ******/
+	public static final String FORGOT_USERNAME = "/profile/forgotUserName";
+	public static final String FORGOT_PASSWORD = "/profile/forgotPassword";
+	public static final String VALIDATE_PASSWORD_LINK = "/profile/validatePasswordlink";
+	public static final String GET_USER_OR_ACCOUNT_NUMBER = "/profile/getUserOrAcctNumber";
+	public static final String GET_USER_ID = "/profile/getUserId";
+	public static final String GET_PROFILE_CHECK = "/profile/profileCheck";
+	public static final String SMART_METER_CHECK = "/profile/smartMeterCheck";
+	public static final String VALIDATE_ACCOUNT = "/profile/validateAccount";
+	public static final String GET_SVT_DATA = "/profile/getSVTData";
 
 }
