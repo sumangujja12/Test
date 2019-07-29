@@ -953,6 +953,10 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 						}
 			  		} 		
 				}	
+			} else {
+				// temporary fix for the Production issue- Need to workout the logic ASAP /smarimuthu
+				flagNewPayAccount = true;
+				payAccountDO.setNickNameExistsFlag(false);
 			}
 		
 		logger.info("Nickname Already exists :::: " + nName);
