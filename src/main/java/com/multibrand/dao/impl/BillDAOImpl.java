@@ -865,7 +865,9 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 		
 		PayAccountInfoResponse payAccountInfoResponse = getPayAccounts(request.getContractAccountNumber());
 		
-		if(payAccountInfoResponse != null){
+		if(payAccountInfoResponse != null 
+				&& (payAccountInfoResponse.getPayAccountList() != null 
+				&& payAccountInfoResponse.getPayAccountList().size() >0 )  ){
 			List<PayAccount> payAccounts = payAccountInfoResponse.getPayAccountList();
 			if(payAccounts.size() != 0){
 					for(int i=0;i<payAccounts.size();){
@@ -929,7 +931,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 					}
 					}
 					
-				}
+				} 
 			
 			if(!(payAccountDO.isNickNameExistsFlag())){
 				//to get active nicknames
@@ -957,11 +959,17 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 				// temporary fix for the Production issue- Need to workout the logic ASAP /smarimuthu
 				flagNewPayAccount = true;
 				payAccountDO.setNickNameExistsFlag(false);
+				logger.info("inside the else block two:::: "); 
 			}
 		
 		logger.info("Nickname Already exists :::: " + nName);
+		logger.info("flagNewPayAccount" + flagNewPayAccount);
+		
 		if(flagNewPayAccount){
+			logger.info("inside the flagNewPayAccount block :::: "); 
+			logger.info("inside the flagNewPayAccount block :::: "+payAccountDO.isNickNameExistsFlag());
 			if(!(payAccountDO.isNickNameExistsFlag())){	
+				logger.info("inside the payAccountDO.isNickNameExistsFlag() block :::: "+payAccountDO.isNickNameExistsFlag()); 
 			// new pay account addition
 	   		maxOnlinePayAccountId = maxOnlinePayAccountId + 1;
 	   		logger.info("maxOnlinePayAccountId :::: " + maxOnlinePayAccountId);
