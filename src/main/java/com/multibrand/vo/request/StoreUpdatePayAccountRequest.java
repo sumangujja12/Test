@@ -3,6 +3,7 @@ package com.multibrand.vo.request;
 import java.io.Serializable;
 import java.sql.Date;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -158,5 +159,13 @@ public class StoreUpdatePayAccountRequest implements FormEntityRequest, Constant
 	public void setPaymentInstitutionName(String paymentInstitutionName) {
 		this.paymentInstitutionName = paymentInstitutionName;
 	}
+	
+	/**
+	 * @return String representation of this request.
+	 */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	} 
 	
 }
