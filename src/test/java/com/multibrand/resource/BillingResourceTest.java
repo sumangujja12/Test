@@ -525,7 +525,7 @@ public class BillingResourceTest implements TestConstants, EndPoint{
 		Assert.assertEquals(0, payAccountList.size());
 	}
 	
-	@Test
+	/*@Test
 	public void test_scheduleOneTimeCCPayment_paymentDateExceedsMaxDays(){
 		RequestSpecification requestSpecification = new RestAssuredConfiguration().getRequestSpecification();
 		requestSpecification.formParam("businessPartnerId", "0006233102");
@@ -542,7 +542,7 @@ public class BillingResourceTest implements TestConstants, EndPoint{
 		Assert.assertEquals("2", response.path("resultCode"));
 		Assert.assertEquals("00", response.path("statusCode"));
 		Assert.assertEquals("Scheduled CC Payment date exceeds max. number of days allowed.", response.path("resultDescription"));
-	}
+	}*/
 	
 	@Test
 	public void test_scheduleOneTimeCCPayment_pastPaymentDate(){
