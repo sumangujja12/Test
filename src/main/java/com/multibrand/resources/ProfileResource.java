@@ -660,8 +660,10 @@ public class ProfileResource {
 	public Response validatePassword(@FormParam("userName") String userName, @FormParam("password") String password,
 			@FormParam("companyCode") String companyCode) {
 		Response response = null;
+		logger.info("Start-[ProfileResource-validatePassword]");
 		PasswordValidityResponse passwordValidityResponse = profileBO.validatePassword(userName, password, companyCode);
 		response = Response.status(200).entity(passwordValidityResponse).build();
+		logger.info("End-[ProfileResource-validatePassword]");
 		return response;
 	}
 	
