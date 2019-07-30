@@ -2148,19 +2148,24 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 	}
 	
 	public PasswordValidityResponse validatePassword(String userName, String password, String companyCode) {
+		logger.info("Start - [ProfileBO - validatePassword]");
 		PasswordValidityResponse passwordValidityResponse = new PasswordValidityResponse();
 		try {
 			if (ldapHelper.validateUser(userName, password)) {
 				passwordValidityResponse.setResultCode(RESULT_CODE_SUCCESS);
 				passwordValidityResponse.setResultDescription(MSG_SUCCESS);
+				logger.info("Password validation is success");
 			} else {
 				passwordValidityResponse.setResultCode(RESULT_CODE_FOUR);
 				passwordValidityResponse.setResultDescription(RESULT_CODE_DESC_PWD_MISMATCH);
+				logger.info("Old Password Mismatch");
 			}
 		} catch (Exception e) {
 			passwordValidityResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			passwordValidityResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured :::" +e);
 		}
+		logger.info("End - [ProfileBO - validatePassword]");
 		return passwordValidityResponse;
 	}
 	
