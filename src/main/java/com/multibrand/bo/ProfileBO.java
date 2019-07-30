@@ -2163,7 +2163,7 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		} catch (Exception e) {
 			passwordValidityResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			passwordValidityResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.error("Exception Occured :::" +e);
+			logger.error("Exception Occured in ProfileBO.validatePassword :::" +e);
 		}
 		logger.info("End - [ProfileBO - validatePassword]");
 		return passwordValidityResponse;
