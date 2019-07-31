@@ -260,6 +260,7 @@ public class LDAPHelper extends BaseAbstractService{
 		}
 		catch (Exception e) 
 		{
+			logger.error("Exception Occured in LDAPHelper.validateUser ::: "+e);
 			return false;
 		}
 		ctx.close();		
