@@ -510,7 +510,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		
 		if(updatePaperFreeBillingResponse.getResultCode()!=null && bpNumber!=null && source!=null &&
 				(updatePaperFreeBillingResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||updatePaperFreeBillingResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
-				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE)){
+				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)){
 			logger.info("Inside updatePaperFreeBilling:updateContactLog(...) block - in BillingBO");
 			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
 			cssUpdateLogRequest.setBusinessPartnerNumber(bpNumber);
