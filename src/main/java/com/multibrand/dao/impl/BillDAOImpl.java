@@ -286,7 +286,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 		
 		if(UPDATE_BANK_INFO_ADD.equalsIgnoreCase(updateFlag)){
 			String query = "select max(online_pay_account_id) from ol_pay_account where bp_number ="+ bpid;
-			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForInt(query))+1;
+			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForObject(query, Integer.class))+1;
 			logger.info("maxOnlinePayAccountId :::: " + maxOnlinePayAccountId);
 			Date creationDate = Calendar.getInstance().getTime();
 			query = "INSERT INTO ol_pay_account (BP_NUMBER, ONLINE_PAY_ACCOUNT_ID, PAY_ACCOUNT_NICKNAME, DEFAULT_FLAG,"+
@@ -363,7 +363,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 		
 		if(UPDATE_CC_INFO_ADD.equalsIgnoreCase(updateFlag)){
 			String query = "select max(online_pay_account_id) from ol_pay_account where bp_number ="+ bpid;
-			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForInt(query))+1;
+			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForObject(query, Integer.class))+1;
 			logger.info("maxOnlinePayAccountId :::: " + maxOnlinePayAccountId);
 			Date creationDate = Calendar.getInstance().getTime();
 			query = "INSERT INTO ol_pay_account (BP_NUMBER, ONLINE_PAY_ACCOUNT_ID, PAY_ACCOUNT_NICKNAME, DEFAULT_FLAG,"+

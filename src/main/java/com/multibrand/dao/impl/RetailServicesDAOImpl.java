@@ -10,8 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor;
-import org.springframework.jdbc.support.nativejdbc.WebSphereNativeJdbcExtractor;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dao.ResultObject;
@@ -34,11 +32,6 @@ public class RetailServicesDAOImpl implements RetailServicesDAO, DBConstants{
 	
 	@Autowired
 	public RetailServicesDAOImpl(@Qualifier("podJdbcTemplate") JdbcTemplate jdbcTemplate) {
-		try{
-			jdbcTemplate.setNativeJdbcExtractor(new WebSphereNativeJdbcExtractor()); 
-		}catch(Exception ex){
-			jdbcTemplate.setNativeJdbcExtractor(new CommonsDbcpNativeJdbcExtractor());
-		}
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
