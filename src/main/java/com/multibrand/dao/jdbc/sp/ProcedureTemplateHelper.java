@@ -23,7 +23,7 @@ import org.springframework.util.Assert;
  * @version Since JDK 1.6, Spring 3.0
  */
 @Component("procedureTemplateHelper")
-class ProcedureTemplateHelper {
+public class ProcedureTemplateHelper {
 
 	final static String KEY_SUFFIX_PROCEDURE_NAME = ".proc.";
 	final static String KEY_SUFFIX_PROCEDURE_MESSAGE_SOURCE_ID = KEY_SUFFIX_PROCEDURE_NAME
