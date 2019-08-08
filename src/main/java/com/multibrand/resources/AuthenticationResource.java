@@ -20,6 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.AuthenticationBO;
 import com.multibrand.helper.ErrorContentHelper;
@@ -41,8 +43,7 @@ import com.multibrand.vo.response.LoginResponse;
  *  This class is the Resource Class for all the Authentication APIs to be exposed as REST Service. 
  *
  */
-@Component("authenticationResource")
-@Path("authorization")
+@RestController(value="authorization")
 public class AuthenticationResource implements Constants  {
 	
 	
@@ -66,11 +67,8 @@ public class AuthenticationResource implements Constants  {
 	 *  @author Kdeshmu1
 	 *  @description  call after login success
 	 */
-	@POST
-	@Path("loginSuccessCall")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response loginSuccessCall(@FormParam("userId") String userId,@Context HttpHeaders hh, @Context HttpServletRequest request){
+	@PostMapping(path="loginSuccessCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response loginSuccessCall(@FormParam("userId")String userId,@Context HttpHeaders hh, @Context HttpServletRequest request){
 		logger.debug("Inside loginSuccessCall of AuthenticationResource");
 		Response response = null;
 		
@@ -87,10 +85,7 @@ public class AuthenticationResource implements Constants  {
 	 *  @author Kdeshmu1
 	 *  @description  call after login failure
 	 */
-	@POST
-	@Path("loginFailureCall")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(path="loginFailureCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response loginFailureCall(@FormParam("userId") String userId,@Context HttpHeaders hh, @Context HttpServletRequest request){
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
 		Response response = null;
@@ -102,10 +97,7 @@ public class AuthenticationResource implements Constants  {
 		return response;
 	}
 	
-	@POST
-	@Path("/refreshtoken")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@PostMapping(path="refreshtoken", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response refreshToken() {
 		AuthenticationResponse authResponse = new AuthenticationResponse();
 		try {
