@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.multibrand.bo.ContentBO;
 import com.multibrand.dto.request.ComponentByItemIdRequest;
@@ -42,11 +43,7 @@ public class ContentResource implements Constants{
 	@Context
 	private HttpServletRequest httpRequest;
 	
-	
-	@POST
-	@Path("offer")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(path="/personalize/offer", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response readPersonalizedOffer(ContentOfferRequest request) {
 		String offerResponse = "";
 		try{
@@ -59,11 +56,7 @@ public class ContentResource implements Constants{
 		return response;
 	} 
 	
-	
-	@POST
-	@Path("userprefernce/update")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(path="/personalize/userprefernce/update", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateUserPreference(ContentUserPrefRequest request) {
 		String Updresponse = "";
 		try{
@@ -78,11 +71,7 @@ public class ContentResource implements Constants{
 		return response;
 	}
 	
-	
-	@POST
-	@Path("component/itemid")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(path="/personalize/component/itemid", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response readComponentByItemId(ComponentByItemIdRequest request) {
 		String Updresponse = "";
 		try{
@@ -97,11 +86,7 @@ public class ContentResource implements Constants{
 		return response;
 	} 
 	
-	
-	@POST
-	@Path("component/itemids")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(path="/personalize/component/itemids", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response readComponentByItemIds(ComponentByItemIdsRequest request) {
 		String Updresponse = "";
 		try{
@@ -116,10 +101,8 @@ public class ContentResource implements Constants{
 		return response;
 	}
 	
-	@POST
-	@Path("gme/messagecontent")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	
+	@PostMapping(path="/personalize/gme/messagecontent", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response readMessageContent(MessageContentRequest request) {
 		String Updresponse = "";
 		try{
@@ -139,10 +122,7 @@ public class ContentResource implements Constants{
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("gme/getPlanOffers")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON})
+	@PostMapping(path="/personalize/gme/getPlanOffers", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getMultiBrandPlanOffers(ContractInfoRequest request){
 		
 		Response response = null;

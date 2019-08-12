@@ -2,6 +2,7 @@ package com.multibrand.config;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,11 +19,11 @@ import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.multibrand.ws.helper.JaxWsClientFactoryBean;
 import com.reliant.domain.AddressValidationDomainPortBindingStub;
 
-@Configuration
-@ComponentScan(basePackages = "com.multibrand")
-@PropertySource({ "classpath:properties/environment.properties", "classpath:properties/stubs.properties" })
-@Import({DatabaseConfig.class})
-@EnableAspectJAutoProxy
+//@Configuration
+//@ComponentScan(basePackages = "com.multibrand")
+//@PropertySource({ "classpath:properties/environment.properties", "classpath:properties/stubs.properties" })
+//@Import({DatabaseConfig.class})
+//@EnableAspectJAutoProxy
 public class AppConfig {
 
 	@Value("${NRGWS_BILLING_DOMAIN_NAMESPACE_URI}")
@@ -49,6 +50,8 @@ public class AppConfig {
 	private String oeDomainPortName;
 	@Value("${ws.endpointURL.oeDomain}")
 	private String oeDomainEndpont;
+	
+	public static ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
 
 	/**
 	 * Property placeholder configurer needed to process @Value annotations
@@ -61,8 +64,8 @@ public class AppConfig {
 	@Bean(name = "appConstMessageSource")
 	public ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasenames("/WEB-INF/classes/properties/appConstants.properties");
-		messageSource.setCacheSeconds(86400);
+		messageSource.setBasename("/WEB-INF/classes/properties/appConstants.properties");
+		messageSource.setCacheSeconds(0);
 		return messageSource;
 	}
 
@@ -70,16 +73,26 @@ public class AppConfig {
 	public ReloadableResourceBundleMessageSource reloadableResourceSQLBundleMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasenames("/WEB-INF/classes/properties/db/dbsql");
-		messageSource.setCacheSeconds(86400);
+		messageSource.setCacheSeconds(0);
 		return messageSource;
 	}
 
 	@Bean(name = "environmentMessageSource")
 	public ReloadableResourceBundleMessageSource reloadableResourceEnvBundleMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasenames("/WEB-INF/classes/properties/environment.properties");
-		messageSource.setCacheSeconds(86400);
+		messageSource.setBasename("/WEB-INF/classes/properties/environment.properties");
+		//System.out.println(messageSource.getMessage("OAM_MAX_INVALID_LOGIN_COUNT", null, null));
+		messageSource.setCacheSeconds(0);
 		return messageSource;
+	}
+	
+	
+	public static ReloadableResourceBundleMessageSource getReloadableResourceBundleMessageSource() {
+		if (reloadableResourceBundleMessageSource == null) {
+			reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
+		}
+		
+		return reloadableResourceBundleMessageSource;
 	}
 
 	@Bean(name = "addressvalidationDomainPortProxy")

@@ -36,6 +36,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.BillingBO;
 import com.multibrand.dto.request.BillCourtesyCreditActivityRequest;
@@ -84,8 +86,7 @@ import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
  * 
  * @author Kdeshmu1
  */
-@Component
-@Path("billResource")
+@RestController
 public class BillingResource {
 	
 	private static Logger logger = LogManager.getLogger(BillingResource.class);
@@ -112,10 +113,7 @@ public class BillingResource {
 	 * @param accountNumber		Customer Account Number
 	 * @return response			Provide JSON/XML balance data response
 	 */
-	@POST
-	@Path("getBalance")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/getBalance", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getBalance(@FormParam("accountNumber") String accountNumber, @FormParam("bpid") String bpNumber,
 			@FormParam("companyCode") String companyCode, @FormParam("brandName")String brandName){
 		
@@ -133,10 +131,7 @@ public class BillingResource {
 	 * @param accountNumber		Customer Account Number
 	 * @return response			Provide JSON/XML response containing billing address
 	 */
-	@POST
-	@Path("getBillingAddress")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/getBillingAddress", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getBillingAddress(@FormParam("accountNumber") String accountNumber, @FormParam("companyCode") String companyCode){
 		
 		Response response = null;
@@ -153,10 +148,7 @@ public class BillingResource {
 	 * @param accountNumber		Customer Account Number
 	 * @return response			Provide JSON/XML response containing all the account details
 	 */
-	@POST
-	@Path("getAccountDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/getAccountDetails", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getAccountDetails(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName){
 		logger.info(" START ******* getAccountDetails API**********");
 		Response response = null;
@@ -195,10 +187,7 @@ public class BillingResource {
 	 * @param companyCode
 	 * @return response			Provide JSON/XML response 
 	 */
-	@POST
-	@Path("updatePaperFreeBilling")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/updatePaperFreeBilling", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updatePaperFreeBilling(@FormParam("accountNumber") String accountNumber,@FormParam("flag") String flag,
 			@FormParam("companyCode") String companyCode,@FormParam("bpNumber")String bpNumber, @FormParam("source")String source){
 		
@@ -229,10 +218,7 @@ public class BillingResource {
 	 * @param email
 	 * @return
 	 */
-	@POST
-	@Path("submitBankPayment")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/submitBankPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response submitBankPayment(@FormParam("accountNumber") String accountNumber, @FormParam("bpid")String bpid,
 			@FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("bankRoutingNumber") String bankRoutingNumber, @FormParam("paymentAmount")String paymentAmount,
 			@FormParam("paymentDate")String paymentDate, @FormParam("companyCode") String companyCode, @FormParam("accountName") String accountName, 
@@ -268,10 +254,7 @@ public class BillingResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("submitCCPayment")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/submitCCPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response submitCCPayment(@FormParam("authType")String authType, @FormParam("accountNumber") String accountNumber, @FormParam("bpid")String bpid,
 			@FormParam("ccNumber") String ccNumber, @FormParam("cvvNumber") String cvvNumber, @FormParam("expirationDate")String expirationDate,
 			@FormParam("billingZip")String billingZip, @FormParam("paymentAmount") String paymentAmount, @FormParam("accountName") String accountName,
@@ -315,10 +298,7 @@ public class BillingResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Path("/projectedBill")
+	@PostMapping(path="/billResource/projectedBill", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getProjectedBill(
 			@FormParam("esid") String esiId,
 			@FormParam("accountNumber") String accountNumber,
@@ -352,10 +332,7 @@ public class BillingResource {
 	 * @return Response
 	 * 		response object hold the average temperatureValue
 	 */
-	@POST
-	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Path("/avgTemperatureBill")
+	@PostMapping(path="/billResource/avgTemperatureBill", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getAvgTempBill(
 			@FormParam("billStartDate") String billStartDate,
 			@FormParam("billEndDate") String billEndDate,
@@ -386,11 +363,7 @@ public class BillingResource {
 	 * @param companyCode
 	 * @return
 	 */
-	
-	@POST
-	@Path("billInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/billInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response billInfo(@FormParam("accountNumber") String accountNumber, 
 			@FormParam("bpNumber")String bpid, @FormParam("contractId") String contractNumber, 
 			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName){
@@ -414,10 +387,7 @@ public class BillingResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("doCancelPayment")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/doCancelPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response doCancelPayment(@FormParam("accountNumber") String accountNumber,
 			@FormParam("companyCode") String companyCode, @FormParam("paymentId") String paymentId,
 			@FormParam("brandName") String brandName, @FormParam("businessPartnerId") String bpid,
@@ -453,10 +423,7 @@ public class BillingResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("updateInvoiceDelivery")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/updateInvoiceDelivery", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateInvoiceDelivery(@FormParam("accountNumber") String accountNumber,@FormParam("eBillFlag") String ebillflag,
 			@FormParam("paperFlag") String paperFlag, @FormParam("companyCode") String companyCode, 
 			@FormParam("brandName") String brandName, @FormParam("email") String email){
@@ -490,10 +457,7 @@ public class BillingResource {
 	 * 
 	 * Added for Cirro to fetch Bank and cc info related to a bpid or ca
 	 */
-	@POST
-	@Path("getBankCCInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/getBankCCInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getBankCCInfo(@FormParam("businessPartnerId") String bpid, @FormParam("companyCode") String companyCode, 
 			@FormParam("brandName") String brandName){
 		Response response = null;
@@ -517,10 +481,7 @@ public class BillingResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("updateBankInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/updateBankInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateBankInfo(
 			@FormParam("businessPartnerId") String bpid,
 			@FormParam("bankAccountNumber") String bankAccountNumber, 
@@ -563,11 +524,7 @@ public class BillingResource {
 	 * @param onlinePayAccountId
 	 * @return
 	 */
-	
-	@POST
-	@Path("updateCCInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/updateCCInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updateCCInfo(
 			@FormParam("businessPartnerId") String bpid,
 			@FormParam("ccType")String ccType,
@@ -620,10 +577,7 @@ public class BillingResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("scheduleOneTimeCCPayment")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/scheduleOneTimeCCPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response scheduleOneTimeCCPayment(
 			@FormParam("businessPartnerId") String bpid,
 			@FormParam("contractAccountNumber")String contractAccountNumber,
@@ -670,11 +624,7 @@ public class BillingResource {
 	 * @param brandName
 	 * @return
 	 */
-	
-	@POST
-	@Path("editCancelOTCCPayment")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/editCancelOTCCPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response editCancelOTCCPayment(
 			@FormParam("businessPartnerId") String bpid,
 			@FormParam("contractAccountNumber")String contractAccountNumber,
@@ -697,10 +647,7 @@ public class BillingResource {
 		
 	}
 	
-	@POST
-	@Path("getPayAccounts")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/getPayAccounts", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getPayAccounts(
 			@FormParam("contractAccountNumber")String contractAccountNumber,
 			@FormParam("companyCode") String companyCode, 
@@ -716,10 +663,7 @@ public class BillingResource {
 		
 	}
 	
-	@POST
-	@Path("storePayAccount")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/storePayAccount", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response storePayAccount(StoreUpdatePayAccountRequest request){
 		Response response = null;
 		
@@ -730,11 +674,7 @@ public class BillingResource {
 		
 	}
 	
-
-	@POST
-	@Path("updatePayAccount")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/updatePayAccount", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response updatePayAccount(StoreUpdatePayAccountRequest request){
 		Response response = null;		
 		
@@ -747,10 +687,7 @@ public class BillingResource {
 		
 	}
 	
-	@POST
-	@Path("getEBill")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({"application/pdf"})
+	@PostMapping(path="/billResource/getEBill", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getEBill(
 			
 			@FormParam("invoiceId")String invoiceId,
@@ -824,11 +761,7 @@ public class BillingResource {
      * Operation for Average Monthly Billing Eligibility Check 
      *@param ambEligRequest
      */
-	
-	@POST
-	@Path("ambEligibilityCheck")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	@PostMapping(path="/billResource/ambEligibilityCheck", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response ambeligibilityCheck(AMBEligibilityCheckRequest ambEligRequest) {
 		
 		Response response = null;
@@ -851,10 +784,7 @@ public class BillingResource {
      *@param brandName
      * @return javax.ws.rs.core.Response
      */
-	@POST
-	@Path("ambEligibilityCheckForGME")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	@PostMapping(path="/billResource/ambEligibilityCheckForGME", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response ambeligibilityCheck(@FormParam("accountNumber") String accountNumber, @FormParam("bpNumber") String bpNumber,
 			@FormParam("contractId") String contractId, @FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
 		
@@ -876,10 +806,7 @@ public class BillingResource {
 	 * Operation for Average Monthly Billing Signup
 	 * @param saveAMBSignupRequest
 	 */
-	@POST
-	@Path("saveAMBSignUp")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	@PostMapping(path="/billResource/saveAMBSignUp", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response saveAMBSignUp(SaveAMBSingupRequestVO saveAMBSignupRequest) {
 		
 		Response response = null;
@@ -926,10 +853,7 @@ public class BillingResource {
 		 * @param BrandName
 	 * @return javax.ws.rs.core.Response
 	 */
-	@POST
-	@Path("saveAMBSignUpForGME")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	@PostMapping(path="/billResource/saveAMBSignUpForGME", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response saveAMBSignUp(@FormParam("accountNumber") String accountNumber,
 			@FormParam("contractId") String contractId, @FormParam("bpNumber") String bpNumber,
 			@FormParam("checkDigit") String checkDigit, @FormParam("languageCode") String languageCode,
@@ -992,10 +916,7 @@ public class BillingResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("getAutoPayInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	@PostMapping(path="/billResource/getAutoPayInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getAutoPayInfo(AutoPayInfoRequest request){
 		Response response=null;
 		AutoPayInfoResponse autoPayInfoRes = billingBO.getAutopayInfo(request);
@@ -1012,10 +933,7 @@ public class BillingResource {
 	 * @param routingNumber
 	 * @return
 	 */
-	@POST
-	@Path("getBankPaymentInstitution")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/getBankPaymentInstitution", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getBankPaymentInstitution(@FormParam("routingNumber")String routingNumber){
 		Response response = null;
         GetPaymentInstitutionResponse getPayInstResp = billingBO.getPaymentInstitutionName(routingNumber);
@@ -1023,10 +941,7 @@ public class BillingResource {
         return response;
 	}
 	
-	@POST
-	@Path("insertRetroPopup")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/insertRetroPopup", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response insertRetroPopup(RetroPopupRequestVO request){
 		Response response = null;		
 		
@@ -1043,10 +958,7 @@ public class BillingResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	@Path("checkRetroEligibility")
+	@PostMapping(path="/billResource/checkRetroEligibility", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response checkRetroEligibility(
 			@FormParam("contractAccountNumber") String contractAccountNumber,
 			@FormParam("invoiceNo") String invoiceNo,
@@ -1072,10 +984,7 @@ public class BillingResource {
 	 * @return
 	 * @throws Exception 
 	 */
-	@POST
-	@Path("billCourtesyCreditActivity")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@PostMapping(path="/billResource/billCourtesyCreditActivity", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response courtesyCreditActivity (@Valid BillCourtesyCreditActivityRequest request) throws Exception{
 		
 		logger.debug("Start CourtesyCreditResource.courtesyCreditActivity :: START");
@@ -1103,10 +1012,7 @@ public class BillingResource {
 	 * @param brandName
 	 * 
 	 */
-	@POST
-	@Path("scheduleAndLastPaymentetails")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@PostMapping(path="/billResource/scheduleAndLastPaymentetails", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getPendingPayments(@FormParam("accountNumber") String accountNumber,
 			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
 		Response response = null;
@@ -1125,10 +1031,7 @@ public class BillingResource {
 	 * @param companyCode
 	 * @param brandName
 	 */
-	@POST
-	@Path("getBalanceForGMEMobile")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@PostMapping(path="/billResource/getBalanceForGMEMobile", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getBalanceForGMEMobile(@FormParam("accountNumber") String accountNumber,
 			@FormParam("bpid") String bpNumber, @FormParam("companyCode") String companyCode,
 			@FormParam("brandName") String brandName) {
@@ -1147,10 +1050,7 @@ public class BillingResource {
 	 * @param companyCode
 	 * @param brandName
 	 */
-	@POST
-	@Path("getPaymentMethods")
-	@Consumes({  MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@PostMapping(path="/billResource/getPaymentMethods", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getPaymentMethods(@FormParam("contractAccountNumber") String contractAccountNumber , @FormParam("companyCode") String companyCode,
 			@FormParam("brandName") String brandName, @FormParam("bpnumber") String bpnumber) {
 		Response response = null;
@@ -1167,11 +1067,7 @@ public class BillingResource {
 	 * activeFlag,activationDate,verifyCard,routingNumber,ccExpMonth,ccExpYear,onlinePayAccountId,ccType,
 	 * autoPay,paymentInstitutionName,companyCode,brandName;
 	 */
-	
-	@POST
-	@Path("savePayAccount")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/savePayAccount", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response savePayAccount(StoreUpdatePayAccountRequest request){
 		Response response = null;
 		
@@ -1189,11 +1085,7 @@ public class BillingResource {
 	 * activeFlag,activationDate,verifyCard,routingNumber,ccExpMonth,ccExpYear,onlinePayAccountId,ccType,
 	 * autoPay,paymentInstitutionName,companyCode,brandName;
 	 */
-
-	@POST
-	@Path("modifyPayAccount")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/modifyPayAccount", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response modifyPayAccount(StoreUpdatePayAccountRequest request){
 		Response response = null;		
 		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.modifyPayAccount(request, httpRequest.getSession(true).getId());
@@ -1205,11 +1097,7 @@ public class BillingResource {
 	 * @author Cuppala
 	 * @param accountNumber,companyCode,brandName;
 	 */
-
-	@POST
-	@Path("checkSwapEligibility")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(path="/billResource/checkSwapEligibility", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response checkSwapEligibility(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName){
 		Response response = null;		
 		

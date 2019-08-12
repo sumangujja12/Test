@@ -16,7 +16,7 @@ import com.multibrand.dao.jdbc.sp.ProcedureConfigPackageScanner;
 import com.multibrand.dao.jdbc.sp.ProcedureTemplate;
 import com.multibrand.dao.jdbc.sp.ProcedureTemplateHelper;
 
-@Configuration
+//@Configuration
 public class DatabaseConfig {
 
 
