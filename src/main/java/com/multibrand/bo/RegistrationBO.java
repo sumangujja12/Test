@@ -121,7 +121,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 			else
 			{
 				validateAccountResponse.setResultCode(RESULT_CODE_THREE);
-				validateAccountResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+				validateAccountResponse.setResultDescription(response.getErrorCode());
 			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -163,7 +163,8 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		UserRegistrationRequest register = new UserRegistrationRequest();
 		logger.info("START-[RegistrationBO-createUser]");
 		String uniqueId = "";
-		register.setAccountNumber(CommonUtil.paddedCa(accountNumber.trim()));
+		accountNumber = CommonUtil.paddedCa(accountNumber.trim());
+		register.setAccountNumber(accountNumber);
 		register.setEmail(email.trim());
 		register.setCompanyCode(companyCode.trim());
 		register.setFirstName(firstName);
