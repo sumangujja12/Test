@@ -6,14 +6,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -47,7 +45,7 @@ public class AuthenticationResource implements Constants  {
 	@Autowired
 	ErrorContentHelper errorContentHelper;
 	
-	@Context 
+	@Autowired 
 	private HttpServletRequest httpRequest;
 	
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
@@ -59,8 +57,8 @@ public class AuthenticationResource implements Constants  {
 	 *  @author Kdeshmu1
 	 *  @description  call after login success
 	 */
-	@PostMapping(path="/authorization/loginSuccessCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response loginSuccessCall(@FormParam("userId")String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	@PostMapping(value="/authorization/loginSuccessCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public Response loginSuccessCall(String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginSuccessCall of AuthenticationResource");
 		Response response = null;
 		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
@@ -74,8 +72,8 @@ public class AuthenticationResource implements Constants  {
 	 *  @author Kdeshmu1
 	 *  @description  call after login failure
 	 */
-	@PostMapping(path="/authorization/loginFailureCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public Response loginFailureCall(@FormParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	@PostMapping(value="/authorization/loginFailureCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public Response loginFailureCall(String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
 		Response response = null;
 		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(userId,hh, request);
@@ -84,7 +82,7 @@ public class AuthenticationResource implements Constants  {
 		return response;
 	}
 	
-	@PostMapping(path="/authorization/refreshtoken", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value="/authorization/refreshtoken", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response refreshToken() {
 		AuthenticationResponse authResponse = new AuthenticationResponse();
 		try {
