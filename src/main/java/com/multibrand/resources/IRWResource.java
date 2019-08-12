@@ -1,15 +1,12 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.dto.request.OAMMessageRequest;
 import com.multibrand.dto.response.OAMMessageResponse;
@@ -19,8 +16,7 @@ import com.multibrand.service.IRWService;
  * @Author bbachin1
  */
 
-@Component
-@Path("irw")
+@RestController
 public class IRWResource {
 	
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
@@ -28,11 +24,8 @@ public class IRWResource {
 	@Autowired
 	private IRWService irwService;
 	
-	
-	@POST
-	@Path("oammessage/read")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/irw/oammessage/read", consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response readOAMMessage(OAMMessageRequest request) {
 		OAMMessageResponse oamMessageRes = new OAMMessageResponse();
 		try{
@@ -45,11 +38,8 @@ public class IRWResource {
 		return response;
 	} 
 	
-	
-	@POST
-	@Path("oammessage/write")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/irw/oammessage/write", consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response writeOAMMessage(OAMMessageRequest request) {
 		OAMMessageResponse oamMessageRes = new OAMMessageResponse();
 		try{
@@ -62,11 +52,8 @@ public class IRWResource {
 		return response;
 	} 
 	
-	
-	@POST
-	@Path("oammessage/check")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/irw/oammessage/check", consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response checkOAMMessage(OAMMessageRequest request) {
 		OAMMessageResponse oamMessageRes = new OAMMessageResponse();
 		try{

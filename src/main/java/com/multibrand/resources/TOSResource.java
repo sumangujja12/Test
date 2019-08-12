@@ -2,19 +2,16 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.TOSBO;
 import com.multibrand.domain.CheckPendingMVORequest;
@@ -48,8 +45,7 @@ import com.multibrand.vo.response.TdspByZipResponse;
 import com.multibrand.vo.response.TosAmbWebResponse;
 import com.multibrand.vo.response.TransferServiceResponse;
 
-@Component
-@Path("tos")
+@RestController
 public class TOSResource {
 	
 	@Autowired
@@ -69,10 +65,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("checkPendingMVO")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/checkPendingMVO", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response checkPendingMVO(@FormParam("contractNumber")String contractNumber, @FormParam("companyCode") String companyCode){
 		logger.debug("TOSResource.checkPendingMVO ::: START");
 		CheckPendingMVORequest request = tosRequestHandler.createRequestCheckPendingMVO(contractNumber, companyCode);	
@@ -97,10 +90,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("checkPendingMVI")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/checkPendingMVI", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response checkPendingMVI(@FormParam("accountNumber")String accountNumber, @FormParam("bpid")String bpid, @FormParam("pointofDeliveryID") String pointofDeliveryID, @FormParam("companyCode") String companyCode){
 		logger.debug("TOSResource.checkPendingMVI ::: START");
 		
@@ -118,11 +108,7 @@ public class TOSResource {
 		
 	}
 	
-	
-	@POST
-	@Path("ESIDForAddress")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/ESIDForAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getESIDForAddress(
 			@FormParam("apartmentNumber")String apartmentNumber, 
 			@FormParam("city")String city, 
@@ -185,10 +171,7 @@ public class TOSResource {
 	 * @param language
 	 * @return
 	 */
-	@POST
-	@Path("getOfferOfContract")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getOfferOfContract", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getOfferOfContract(
 			@FormParam("contractNumber")String contractNumber,
 			@FormParam("companyCode") String companyCode,
@@ -222,10 +205,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("getProgramAccountInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getProgramAccountInfo", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response getProgramAccountInfo(
 			@FormParam("businessPartnerId")String bpid,
 			@FormParam("contractAccountNumber")String contractAccountNumber,
@@ -257,10 +237,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("updateContactLog")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/updateContactLog", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response updateContactLog(
 			@FormParam("businessPartnerId")String bpid,
 			@FormParam("contractAccountNumber")String contractAccountNumber,
@@ -291,10 +268,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("getTdspByZip")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getTdspByZip", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response getTdspByZip(
 			@FormParam("zip")String zip,
 			@FormParam("companyCode") String companyCode){
@@ -310,11 +284,7 @@ public class TOSResource {
 		return response;
 	}
 	
-	
-	@POST
-	@Path("getTDSPFromESID")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getTDSPFromESID", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response getTDSPFromESID(
 			@FormParam("esid")String esid,
 			@FormParam("companyCode") String companyCode){
@@ -337,11 +307,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	
-	@POST
-	@Path("getContractData")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getContractData", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response getContractData(
 			@FormParam("businessPartnerId")String bpid,
 			@FormParam("contractAccountNumber")String ca,
@@ -397,10 +363,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("saveTransferServiceDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/saveTransferServiceDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response saveTransferServiceDetails(
 			@FormParam("businessPartnerId") String BusinessPartnerNumber, 
 			@FormParam("contractAccountNumber") String ContractAccountNumber,
@@ -520,10 +483,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("getTDSPSpecificCalendarDates")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getTDSPSpecificCalendarDates", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response getTDSPSpecificCalendarDates(
 			@FormParam("startDate")String startDate,
 			@FormParam("endDate")String endDate,
@@ -544,11 +504,7 @@ public class TOSResource {
 	}	
 	
 	
-
-	@POST
-	@Path("checkPermitRequirment")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/checkPermitRequirment", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response checkPermitRequirment(
 			@FormParam("streetName")String streetName,
 			@FormParam("streetNum")String streetNum,
@@ -578,10 +534,7 @@ public class TOSResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("getESIDProfile")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getESIDProfile", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response getESIDProfile(
 			@FormParam("esid")String esid,
 			@FormParam("companyCode") String companyCode){
@@ -630,11 +583,7 @@ public class TOSResource {
 	 * @param TosAmbWebRequest
 	 * @return TosAmbWebResponse
 	 */
-	
-	@POST
-	@Path("getTosAMBDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/getTosAMBDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response getTosAMBDetails(@FormParam("campaignCode") String campaignCode,
 			@FormParam("esid") String esid,
 			@FormParam("contractAccountNumber") String contractAccountNumber,
@@ -659,10 +608,7 @@ public class TOSResource {
 	 * @param request TOSEligibleNonEligibleProductsRequest
 	 * @return
 	 */
-	@POST
-	@Path("tosEligibleNonEligibleProducts")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/tosEligibleNonEligibleProducts", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE  }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response tosEligibleNonEligibleProducts(@Valid TOSEligibleNonEligibleProductsRequest request){
 		logger.debug("TOSResource.tosEligibleNonEligibleProducts ::: START");
 		
@@ -680,10 +626,7 @@ public class TOSResource {
 	 * @param request TOSSubmitEligibleProductsRequest
 	 * @return
 	 */
-	@POST
-	@Path("tosSubmitEligibleProducts")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/tos/tosSubmitEligibleProducts", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE  }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
 	public Response tosSubmitEligibleProducts(@Valid TOSSubmitEligibleProductsRequest request){
 		logger.debug("TOSResource.tosSubmitEligibleProducts ::: START");
 		
