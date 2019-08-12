@@ -163,7 +163,8 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		UserRegistrationRequest register = new UserRegistrationRequest();
 		logger.info("START-[RegistrationBO-createUser]");
 		String uniqueId = "";
-		register.setAccountNumber(CommonUtil.paddedCa(accountNumber.trim()));
+		accountNumber = CommonUtil.paddedCa(accountNumber.trim());
+		register.setAccountNumber(accountNumber);
 		register.setEmail(email.trim());
 		register.setCompanyCode(companyCode.trim());
 		register.setFirstName(firstName);

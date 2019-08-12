@@ -102,6 +102,7 @@ public class LoggerAspect {
 			 */
 			GenericResponse genericResponse = new GenericResponse();
 			genericResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+			genericResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
 			output = Response.status(Response.Status.OK).entity(genericResponse).build();
 		}
 		long endTime = System.currentTimeMillis();
