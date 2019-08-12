@@ -1,32 +1,27 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.BillingBO;
 import com.multibrand.bo.WebAgentBO;
 import com.multibrand.vo.response.UpdateContactInfoResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
 
-@Component
-@Path("webAgent")
+@RestController
 public class WebAgentResource {
 
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
 	
-	@Context 
+	@Autowired 
 	private HttpServletRequest httpRequest;
 	
 	@Autowired
@@ -36,10 +31,7 @@ public class WebAgentResource {
 	@Autowired
 	private BillingBO billingBO;
 	
-	@POST
-	@Path("updateEmailID")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/webAgent/updateEmailID", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response updateContactInfo(@FormParam("userName")String userName,@FormParam("email")String email){
 		
 		Response response = null;
@@ -56,10 +48,7 @@ public class WebAgentResource {
 	 * @param companyCode
 	 * @return response			Provide JSON/XML response 
 	 */
-	@POST
-	@Path("updatePaperFreeBilling")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/webAgent/updatePaperFreeBilling", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response updatePaperFreeBilling(@FormParam("accountNumber") String accountNumber,@FormParam("flag") String flag,
 			@FormParam("companyCode") String companyCode, @FormParam("bpNumber")String bpNumber, @FormParam("source")String source){
 		

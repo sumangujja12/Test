@@ -2,18 +2,15 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.PreferenceBO;
 import com.multibrand.dto.request.ActivationRequest;
@@ -44,8 +41,7 @@ import com.multibrand.vo.response.UpdationResponse;
  *         calls
  */
 
-@Component
-@Path("/preferences")
+@RestController
 public class PreferencesResource {
 
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -64,10 +60,9 @@ public class PreferencesResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/activatePhone")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/preferences/protected/activatePhone", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response activatePhone(@Valid ActivationRequest request) {
 
 		Response response = null;
@@ -82,10 +77,9 @@ public class PreferencesResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/sendActivate")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/preferences/protected/sendActivate", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response sendActivate(@Valid SendActivateRequest request) {
 
 		Response response = null;
@@ -100,10 +94,9 @@ public class PreferencesResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/sendNewActivate")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/preferences/protected/sendNewActivate", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response sendNewActivate(@Valid SendNewActivateRequest request) {
 
 		Response response = null;
@@ -119,10 +112,9 @@ public class PreferencesResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/getContactInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/preferences/protected/getContactInfo", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getContactInformation(@Valid GetContactInfoRequest request) {
 		Response response = null;
 
@@ -140,10 +132,9 @@ public class PreferencesResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/getAllBPs")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/preferences/protected/getAllBPs", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getAllBP(@Valid GetAllBPRequest request) {
 		Response response = null;
 		GetAllBPsResponse getAllBpResp = preferenceBO.getAllBP(request, httpRequest.getSession(true).getId());
@@ -158,10 +149,9 @@ public class PreferencesResource {
 	 *  @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/deactivatePhone")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/preferences/protected/deactivatePhone", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response deactivatePhone(@Valid DeactivateRequest request) {
 		Response response = null;
 		DeactivationResponse deactivationResponse = preferenceBO
@@ -176,10 +166,9 @@ public class PreferencesResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/readContactAlertPref")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/preferences/protected/readContactAlertPref", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response readContactAlertPrefs(@Valid ReadContactAlertRequest request){
 		
 		Response response = null;
@@ -195,10 +184,9 @@ public class PreferencesResource {
 	 *  @param request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/saveUpdateContactAlertPrefs")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/preferences/protected/saveUpdateContactAlertPrefs", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response saveUpdateContactAlertPrefs(@Valid SaveUpdateAlertPrefRequest request){
 		
 		Response response = null;
@@ -211,11 +199,9 @@ public class PreferencesResource {
 		
 	}
 	
-	
-	@POST
-	@Path("savePrivacyPreference")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/preferences/savePrivacyPreference", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response savePrivacyPreference(PrivacyPreferencesRequest request){
 		
 		Response response = null;
@@ -233,10 +219,9 @@ public class PreferencesResource {
 	 * @param request The SMSOptInOutEligibilityRequest Object
 	 * @return The SMSOptInOutEligibilityResponse Object
 	 */
-	@POST
-	@Path("checkOptInOutEligibility")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/preferences/checkOptInOutEligibility", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response checkOptInOutEligibility(@Valid SMSOptInOutEligibilityRequest request){
 		
 		Response response = null;		
@@ -255,10 +240,9 @@ public class PreferencesResource {
 	 * @param request The SMSOptInOutEligibilityRequest Object
 	 * @return The SMSOptInOutEligibilityResponse Object
 	 */
-	@POST
-	@Path("OptInOptOut")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/preferences/OptInOptOut", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response OptInOptOut(@Valid OptInOptOutRequest request){		
 		Response response = null;				
 		OptInOptOutResponse resp = preferenceBO.OptInOptOutToSMS(request, httpRequest.getSession(true).getId());

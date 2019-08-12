@@ -2,19 +2,15 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.ValidationBO;
 import com.multibrand.domain.ValidateCustReferralIdResponse;
@@ -30,15 +26,14 @@ import com.multibrand.vo.response.AddressValidateResponse;
  * 
  * @author rbansal30
  */
-@Component
-@Path("validateResource")
+@RestController
 public class ValidationResource extends ValidationAddressResource {
 	
 	/** Object of ValidationBO class. */
 	@Autowired
 	private ValidationBO validationBO;
 	
-	@Context 
+	@Autowired
 	private HttpServletRequest httpRequest;
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -56,10 +51,7 @@ public class ValidationResource extends ValidationAddressResource {
 	 * @param companyCode		Company Code
 	 * @return response			Provide JSON/XML balance data response
 	 */
-	@POST
-	@Path("validateBillingAddress")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/validateResource/validateBillingAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response validateBillingAddress(@FormParam("aptNumber") String aptNumber, @FormParam("city") String city,
 			@FormParam("country") String country, @FormParam("state") String state, @FormParam("streetName") String streetName, @FormParam("streetNum") String streetNum, 
 			@FormParam("zipCode") String zipCode, @FormParam("companyCode") String companyCode,@FormParam("poBox") String poBox, @FormParam("brandName")String brandName){
@@ -105,10 +97,7 @@ public class ValidationResource extends ValidationAddressResource {
 	 * 
 	 * @author Jenith (jyogapa1)
 	 */
-	@POST
-	@Path("cleanupAddress")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/validateResource/cleanupAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response cleanupAddress(
 			@Valid ValidateAddressRequest validateAddressRequest)
 			throws OEException {
@@ -133,10 +122,7 @@ public class ValidationResource extends ValidationAddressResource {
 		return response;
 	}
 	
-	@POST
-	@Path("validateReferralId")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/validateResource/validateReferralId", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response validateReferralId(@FormParam("referralId") String referralId, @FormParam("companyCode") String companyCode, @FormParam("brandId") String brandId){
 		logger.info(" START ******* validateReferralId API**********");
 		Response response = null;

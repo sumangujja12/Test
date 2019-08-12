@@ -1,18 +1,17 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.multibrand.bo.HistoryBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
@@ -35,8 +34,7 @@ import com.multibrand.vo.response.historyResponse.WeeklyUsageResponse;
  * 
  */
 
-@Component
-@Path("/history")
+@RestController
 public class HistoryResource
 {
 
@@ -64,10 +62,8 @@ public class HistoryResource
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("/getDailyHourlyUsage")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getDailyHourlyUsage", consumes = {
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getUsage(
 			@FormParam("accountNumber") String accountNumber,
 			@FormParam("contractId") String contractId,
@@ -104,10 +100,8 @@ public class HistoryResource
 	 * @return This service is used to fetch the Payment Data in the specified Range.
 	 * 
 	 */
-	@POST
-	@Path("/getPaymentHistory")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getPaymentHistory", consumes = {
+				MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getPaymentHistory(
 			@FormParam("accountNumber") String accountNumber,
 			@FormParam("legacyAccountNumber") String legacyAccountNumber,
@@ -138,10 +132,8 @@ public class HistoryResource
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("/getPlanHistory")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getPlanHistory", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getPlanHistory(
 			                       @FormParam("accountNumber")String accountNumber,
 			                       @FormParam("legacyAccountNumber")String legacyAccountNumber,
@@ -161,10 +153,8 @@ public class HistoryResource
 		return response;
 	}
 	
-	@POST
-	@Path("/getBillHistory")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getBillHistory", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getBillPaymentHistory(
 			                       @FormParam("accountNumber")String accountNumber,
 			                       @FormParam("legacyAccountNumber")String legacyAccountNumber,
@@ -194,10 +184,8 @@ public class HistoryResource
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("/getWeeklyCompareUsage")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getWeeklyCompareUsage", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getWeeklyUsage(
 			@FormParam("accountNumber") String accountNumber,
 			@FormParam("contractId") String contractId,
@@ -231,10 +219,8 @@ public class HistoryResource
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("/getMonthlyUsage")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getMonthlyUsage", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getMonthlyUsage(
 			@FormParam("accountNumber") String accountNumber,
 			@FormParam("contractId") String contractId,
@@ -268,10 +254,8 @@ public class HistoryResource
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("/getDailyWeeklyCompareUsage")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getDailyWeeklyCompareUsage", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getDailyWeeklyUsage(
 			@FormParam("accountNumber") String accountNumber,
 			@FormParam("contractId") String contractId,
@@ -303,10 +287,8 @@ public class HistoryResource
 	 * @param endDate
 	 * @return
 	 */
-	@POST
-	@Path("/getSmartMeterUsageHistory")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getSmartMeterUsageHistory", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getSmartMeterUsageHistory(
 			@FormParam("esid") String esid,
 			@FormParam("accountNumber") String accountNumber,
@@ -331,10 +313,8 @@ public class HistoryResource
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("getIntervalData")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getIntervalData", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getIntervalData(
 			@FormParam("esid") String esid,
 			@FormParam("startDate")String startDate,
@@ -361,10 +341,8 @@ public class HistoryResource
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("/fetchPaymentHistory")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/fetchPaymentHistory", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response fetchPaymentHistory(
 			@FormParam("accountNumber") String accountNumber,
 			@FormParam("startDate") String startDate,
@@ -395,10 +373,8 @@ public class HistoryResource
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("/getInvoiceUsageHistory")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getInvoiceUsageHistory", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getInvoiceUsageHistory(
 			                       @FormParam("accountNumber")String accountNumber,			                       
 			                       @FormParam("startDate")String startDate,
@@ -424,10 +400,8 @@ public class HistoryResource
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("/getConsumptionUsageHistory")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/history/getConsumptionUsageHistory", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getConsumptionUsage(
 			@FormParam("contractId") String contractId,
 			@FormParam("noOfMonths") String noOfMonths,
@@ -446,11 +420,9 @@ public class HistoryResource
 		
 		
 	}
-
-	@POST
-	@Path("/getWeeklyUsage")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	
+	@PostMapping(value = "/history/getWeeklyUsage", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getWeeklyUsage(@FormParam("accountNumber") String accountNumber,
 			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
 			@FormParam("zoneId") String zoneId, @FormParam("companyCode") String companyCode,

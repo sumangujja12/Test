@@ -1,19 +1,16 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.ProfileBO;
 import com.multibrand.helper.ErrorContentHelper;
@@ -51,15 +48,14 @@ import com.multibrand.vo.response.profileResponse.UpdateLanguageResponse;
  * 
  * @author rbansal30	
  */
-@Component
-@Path("profile")
+@RestController
 public class ProfileResource {
 	
 	/** Object of ProfileBO class. */
 	@Autowired
 	private ProfileBO profileBO;
 	
-	@Context 
+	@Autowired 
 	private HttpServletRequest httpRequest;
 	
 	@Autowired
@@ -80,10 +76,7 @@ public class ProfileResource {
 	 * @param brandName			Company Brand name
 	 * @return response			Provide JSON/XML customer  data response
 	 */
-	@POST
-	@Path("forgotUserName")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/forgotUserName", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response forgotUserName(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("zip") String zip,@FormParam("languageCode") String languageCode,@FormParam("brandName") String brandName){
 		
 		logger.info("accountNumber :"+accountNumber+"companyCode :"+companyCode+"zip :"+zip);
@@ -107,10 +100,7 @@ public class ProfileResource {
 	 * @param brandName			Company Brand name
 	 * @return response			Provide JSON/XML customer  data response
 	 */
-	@POST
-	@Path("forgotPassword")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/forgotPassword", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response forgotPassword(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName,@FormParam("zip") String zip,@FormParam("languageCode") String languageCode){
 		
 		Response response = null;
@@ -130,10 +120,7 @@ public class ProfileResource {
 	 * @param brandName			Company Brand name
 	 * @return response			Provide JSON/XML customer  data response
 	 */
-	@POST
-	@Path("validatePasswordlink")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+	@PostMapping(value = "profile/validatePasswordlink", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response validateForgotPasswordLink(@FormParam("transactionId") String transactionId,@FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName){
 		Response response = null;
 		String sessionId = httpRequest.getSession(true).getId();
@@ -150,10 +137,7 @@ public class ProfileResource {
 	 * @param userID		Customer User Identification no
 	 * @return response			Provide JSON/XML customer  data response
 	 */
-	@POST
-	@Path("getUserOrAcctNumber")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/getUserOrAcctNumber", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getUserOrAcctNumber(@FormParam("userId") String userID,@FormParam("companyCode") String companyCode){
 		
 		Response response = null;
@@ -170,10 +154,7 @@ public class ProfileResource {
 	 * @param newPassword		Customer  New Password
 	 * @return response			Provide JSON/XML customer  data response
 	 */
-	@POST
-	@Path("updatePassword")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/updatePassword", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response updatePassword(@FormParam("userName") String userName,@FormParam("newPassword") String newPassword,
 			@FormParam("companyCode") String companyCode){
 		
@@ -191,10 +172,7 @@ public class ProfileResource {
 	 * @param newPassword		Customer  New Password
 	 * @return response			Provide JSON/XML customer  data response
 	 */
-	@POST
-	@Path("updatePasswordBehindLogin")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/updatePasswordBehindLogin", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response updatePasswordBehindLogin(@FormParam("userName") String userName,@FormParam("newPassword") String newPassword,
 			@FormParam("oldPassword") String oldPassword,@FormParam("companyCode") String companyCode){
 		
@@ -221,10 +199,7 @@ public class ProfileResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("updateBillingAddress")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/updateBillingAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response updateBillingAddress(@FormParam("accountNumber") String accountNumber,@FormParam("streetName") String streetName,
 			@FormParam("streetNum") String streetNum,@FormParam("city") String city,@FormParam("state") String state
 			,@FormParam("aptNum") String aptNum,@FormParam("country") String country,@FormParam("zip") String zip,
@@ -250,10 +225,7 @@ public class ProfileResource {
 	 * * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("changeUsername")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/changeUsername", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response changeUsername(@FormParam("userName") String userName,
 			@FormParam("oldUserName") String oldUserName,@FormParam("companyCode") String companyCode){
 		
@@ -281,10 +253,7 @@ public class ProfileResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("updateContactInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/updateContactInfo", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response updateContactInfo(@FormParam("accountNumber") String accountNumber,@FormParam("homePhone") String homePhone ,
 			@FormParam("email") String email,@FormParam("bpNumber") String bpNumber,@FormParam("uniqueID") String uniqueID ,
 			@FormParam("userName") String userName ,@FormParam("companyCode") String companyCode,@FormParam("workPhone") String workPhone,
@@ -303,11 +272,7 @@ public class ProfileResource {
 		
 	}
 	
-
-	@POST
-	@Path("getContractInfo")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/getContractInfo", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getContractInfo(@FormParam("accountNumber") String accountNumber, 
 			                        @FormParam("bpNumber") String bpNumber,
 			                        @FormParam("languageCode") String languageCode, 
@@ -327,10 +292,7 @@ public class ProfileResource {
 		
 	}
 
-	@POST
-	@Path("smartMeterCheck")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/smartMeterCheck", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response smartMeterCheck(@FormParam("accountNumber") String accountNumber,@FormParam("esid") String esid ,
 			@FormParam("companyCode") String companyCode){
 		
@@ -359,10 +321,7 @@ public class ProfileResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("productUpdate")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/productUpdate", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response productUpdate(@FormParam("accountNumber") String accountNumber,@FormParam("action") String action ,
 			@FormParam("objectId") String objectId,@FormParam("extUi") String extUi,@FormParam("enrollType") String enrollType ,
 			@FormParam("requestDate") String requestDate ,@FormParam("manuPartNo") String manuPartNo,@FormParam("companyCode") String companyCode,@FormParam("bpNumber")String bpNumber,@FormParam("source")String source){
@@ -378,10 +337,7 @@ public class ProfileResource {
 	/**
 	 * 
 	 */
-	@POST
-	@Path("environmentalImpacts")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/environmentalImpacts", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response environmentalImpacts(@FormParam("accountNumber")String accountNumber,@FormParam("companyCode") String companyCode){
 		
 		Response response = null;
@@ -398,10 +354,7 @@ public class ProfileResource {
 	 * @author mshukla1
 	 * SecondaryName CURD call
 	 */
-	@POST
-	@Path("secondaryNameUpdate")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/secondaryNameUpdate", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response secondaryNameUpdate(@FormParam("accountNumber")String accountNumber,
 										@FormParam("bpid")String bpid,
 										@FormParam("action")String action,
@@ -422,10 +375,7 @@ public class ProfileResource {
 		return response;
 	}
 	
-	@POST
-	@Path("wseDeEnrollService")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/wseDeEnrollService", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response wseDeEnrollService(@FormParam("accountNumber")String accountNumber,
 											 @FormParam("contractNumber")String contractNumber,
 											  @FormParam("companyCode")String companyCode) {
@@ -441,11 +391,7 @@ public class ProfileResource {
 			
   }
 	
-	
-	@POST
-	@Path("wseEnrollService")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/wseEnrollService", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response wseEnrollService(@FormParam("contractNumber")String contractNumber,
 									  @FormParam("companyCode")String companyCode) {
 		logger.info("Start-[ProfileResource-wseEnrollDeEnrollService]");	
@@ -458,10 +404,7 @@ public class ProfileResource {
 			
   }
 	
-	@POST
-	@Path("WseEligiblityStatusCall")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/WseEligiblityStatusCall", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response wseEligibilityStatus(@FormParam("contractNumber")String contractNumber,
 										 @FormParam("esid") String esid,
 									     @FormParam("companyCode")String companyCode) {
@@ -484,10 +427,7 @@ public class ProfileResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("getCirroStructure")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/getCirroStructure", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getCirroStructureCall(@FormParam("bpId")String bpId,
 									  @FormParam("companyCode")String companyCode,
 									  @FormParam("brandName")String brandName,
@@ -507,10 +447,7 @@ public class ProfileResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("validateAccount")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/validateAccount", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response validateAccount(@FormParam("accountNumber")String caNumber,
 									  @FormParam("companyCode")String companyCode,
 									  @FormParam("brandName")String brandName) {
@@ -522,11 +459,7 @@ public class ProfileResource {
 		return response;	
   }
   
-
-	@POST
-	@Path("updateLanguage")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/updateLanguage", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response updateLanguage(@FormParam("businessPartnerId") String bpid, @FormParam("contractAccountNumber") String ca, @FormParam("languageCode")String languageCode, @FormParam("companyCode") String companyCode, 
 			@FormParam("brandName") String brandName){
 		Response response = null;
@@ -546,10 +479,7 @@ public class ProfileResource {
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("getSVTData")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/getSVTData", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getSVTData(@FormParam("bpNumber")String bpNumber,
 									  @FormParam("companyCode")String companyCode,
 									  @FormParam("brandName")String brandName) {
@@ -570,10 +500,7 @@ public class ProfileResource {
 	 * @param checkDigit
 	 * @return
 	 */	
-	@POST
-	@Path("profileCheck")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/profileCheck", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response profileCheck (
 			  @FormParam("companyCode")String companyCode,
 			  @FormParam("brandName")String brandName,
@@ -594,10 +521,7 @@ public class ProfileResource {
 	 * @param userIdRequest UserIdRequest
 	 * @return
 	 */
-	@POST
-	@Path("getUserId")
-	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/getUserId", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getUserId(UserIdRequest userIdRequest){
 				
 		Response response=null;
@@ -608,11 +532,7 @@ public class ProfileResource {
 		return response;
 	}
 	
-	
-	@POST
-	@Path("sendMailForPasswordChange")
-	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/sendMailForPasswordChange", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response sendMailForPasswordChange(
 			 @FormParam("companyCode")String companyCode,
 			  @FormParam("brandName")String brandName,
@@ -631,10 +551,7 @@ public class ProfileResource {
 		return response;
 	}
 	
-	@POST
-	@Path("sendMailForNewServiceAddressAddition")
-	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "profile/sendMailForNewServiceAddressAddition", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response sendMailForNewServiceAddressAddition(
 			 @FormParam("companyCode")String companyCode,
 			  @FormParam("brandName")String brandName,
@@ -653,10 +570,7 @@ public class ProfileResource {
 		return response;
 	}
 	
-	@POST
-	@Path("validatePassword")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	@PostMapping(value = "profile/validatePassword", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response validatePassword(@FormParam("userName") String userName, @FormParam("password") String password,
 			@FormParam("companyCode") String companyCode) {
 		Response response = null;

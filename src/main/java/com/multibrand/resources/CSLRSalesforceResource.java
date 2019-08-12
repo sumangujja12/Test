@@ -2,14 +2,9 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
@@ -17,7 +12,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.dto.request.CommunitySolarWebDashboardRequest;
 import com.multibrand.dto.request.CommunitySolarWebUpdateRequest;
@@ -37,8 +34,7 @@ import com.multibrand.vo.response.SalesforceUpdateAccountResponse;
  * @author rpendur1
  * This resource is used to handle all Community Solar Salesforce related API calls.
  */
-@Component
-@Path("cslrSalesforceResource")
+@RestController
 public class CSLRSalesforceResource implements Constants {
 private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class);
 	
@@ -53,10 +49,9 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 * @author rpendur1
 	 * 
 	 */
-	@POST
-	@Path("getAccessToken")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/cslrSalesforceResource/getAccessToken", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getAccessToken(@Context HttpHeaders hh, @Context HttpServletRequest request){
 		
 		logger.debug("Start CSSalesforceResource.getAccessToken :: START");
@@ -74,10 +69,8 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 * @author rpendur1
 	 * 
 	 */
-	@POST
-	@Path("getAccount")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/cslrSalesforceResource/getAccount", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getAccount(
 			@FormParam("access_token") String accessToken,
 			@FormParam("lease_Id") String leaseId,
@@ -99,10 +92,9 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 * @author rpendur1
 	 * 
 	 */
-	@POST
-	@Path("accountRegistration")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/cslrSalesforceResource/accountRegistration", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response accountRegistration(
 			@FormParam("access_token") String accessToken,
 			@FormParam("lease_Id") String leaseId,
@@ -125,10 +117,9 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 * @author rpendur1
 	 * 
 	 */
-	@POST
-	@Path("dashboardPortalService")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/cslrSalesforceResource/dashboardPortalService", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response dashboardService(@Valid CommunitySolarWebDashboardRequest request){
 		
 		logger.debug("Start CSSalesforceResource.dashboardService :: START");
@@ -147,10 +138,9 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 * @author rpendur1
 	 * @return
 	 */
-	@POST
-	@Path("updateAccount")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/cslrSalesforceResource/updateAccount", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response updateAccount( @Valid CommunitySolarWebUpdateRequest request){
 		
 		logger.debug("Start CSSalesforceResource.updateAccount :: START");
@@ -169,10 +159,9 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 * @param SFUserProfileUpdateSyncRequest request
 	 * @return
 	 */
-	@POST
-	@Path("/protected/updateSFUserProfile")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,})
+	@PostMapping(value = "/cslrSalesforceResource/protected/updateSFUserProfile", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+					MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
 	public Response UpdateUserProfileSync( @Valid SFUserProfileUpdateSyncRequest request){
 		
 		Response response = null;
@@ -189,10 +178,9 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 * @param SFUserProfileUpdateSyncRequest request
 	 * @return
 	 */
-	@POST
-	@Path("deleteUser")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/cslrSalesforceResource/deleteUser", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
+				MediaType.APPLICATION_XML_VALUE })
 	public Response DeleteUserProfileResponse( @Valid DeleteUsrNameRequest request){
 		
 		Response response = null;
@@ -206,10 +194,9 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		
 	}
 	
-	@POST
-	@Path("getSignedAgreementPDF")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_OCTET_STREAM})
+	@PostMapping(value = "/cslrSalesforceResource/getSignedAgreementPDF", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_OCTET_STREAM_VALUE })
 	public Response getAgreementPDF(
 			@FormParam("accessToken") String accessToken,
 			@FormParam("contractDocumentId") String contractDocumentId,
@@ -228,7 +215,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 			fileContent = IOUtils.toByteArray(fis);
 			*/
 			ResponseBuilder  responseBuilder = Response.ok(fileContent);
-			responseBuilder.type(MediaType.APPLICATION_OCTET_STREAM);
+			responseBuilder.type(MediaType.APPLICATION_OCTET_STREAM_VALUE);
 			responseBuilder.header(META_CONTENT_DISPOSITION, META_FILENAME + 
 					StringUtils.defaultIfEmpty(contractDocumentId, CONST_AGREEMENT_PDF_DEFAULT_NAME) + CONST_DOT_PDF);
 			response = responseBuilder.build();

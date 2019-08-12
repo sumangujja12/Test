@@ -1,19 +1,15 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.SwapBO;
 import com.multibrand.vo.request.SubmitSwapRequest;
@@ -26,15 +22,14 @@ import com.multibrand.vo.response.swapResponse.RolloverPlanResponse;
  * 
  * @author Kdeshmu1
  */
-@Component
-@Path("swapResource")
+@RestController
 public class SwapResource {
 	
 	/** Object of SwapBO class. */
 	@Autowired
 	private SwapBO swapBO;
 	
-	@Context 
+	@Autowired 
 	private HttpServletRequest httpRequest;
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -95,10 +90,7 @@ public class SwapResource {
 	 * @param clientSource
 	 * @return
 	 */
-	@POST
-	@Path("submitSwap")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/swapResource/submitSwap", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response submitSwap(@FormParam("campaignCode") String campaignCode, @FormParam("offerCode") String offerCode,
 			@FormParam("contractId") String contractId,@FormParam("esid") String esid,
 			@FormParam("currentContractEndDate") String currentContractEndDate,@FormParam("languageCode") String languageCode,@FormParam("companyCode") String companyCode,
@@ -181,10 +173,7 @@ public class SwapResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("getRolloverPlanDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/swapResource/getRolloverPlanDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getRolloverPlanDetails(@FormParam("contractId")String contractId,@FormParam("companyCode")String companyCode){
 		Response response =null;
 		RolloverPlanResponse rollOverPlanResponse = swapBO.getRollovePlanDetails(contractId, companyCode, httpRequest.getSession(true).getId());
@@ -203,10 +192,7 @@ public class SwapResource {
 	 * @param language
 	 * @return
 	 */
-	@POST
-	@Path("pendingSwapDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/swapResource/pendingSwapDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response pendingSwapDetails(@FormParam("bpid")String bpid,@FormParam("accountNumber")String accountNumber,@FormParam("companyCode")String companyCode,
 			@FormParam("brandName")String brandName,@FormParam("contractID")String contractID,@FormParam("esid")String esid,@FormParam("language")String language){
 	

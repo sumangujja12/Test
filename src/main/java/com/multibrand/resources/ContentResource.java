@@ -1,18 +1,14 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.ContentBO;
 import com.multibrand.dto.request.ComponentByItemIdRequest;
@@ -28,8 +24,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.vo.request.ContractInfoRequest;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 
-@Component
-@Path("personalize")
+@RestController
 public class ContentResource implements Constants{
 	
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
@@ -43,7 +38,7 @@ public class ContentResource implements Constants{
 	@Context
 	private HttpServletRequest httpRequest;
 	
-	@PostMapping(path="/personalize/offer", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value="/personalize/offer", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
 	public Response readPersonalizedOffer(ContentOfferRequest request) {
 		String offerResponse = "";
 		try{
@@ -56,7 +51,7 @@ public class ContentResource implements Constants{
 		return response;
 	} 
 	
-	@PostMapping(path="/personalize/userprefernce/update", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value="/personalize/userprefernce/update", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
 	public Response updateUserPreference(ContentUserPrefRequest request) {
 		String Updresponse = "";
 		try{
@@ -71,7 +66,7 @@ public class ContentResource implements Constants{
 		return response;
 	}
 	
-	@PostMapping(path="/personalize/component/itemid", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value="/personalize/component/itemid", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
 	public Response readComponentByItemId(ComponentByItemIdRequest request) {
 		String Updresponse = "";
 		try{
@@ -86,7 +81,7 @@ public class ContentResource implements Constants{
 		return response;
 	} 
 	
-	@PostMapping(path="/personalize/component/itemids", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value="/personalize/component/itemids", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
 	public Response readComponentByItemIds(ComponentByItemIdsRequest request) {
 		String Updresponse = "";
 		try{
@@ -102,7 +97,7 @@ public class ContentResource implements Constants{
 	}
 	
 	
-	@PostMapping(path="/personalize/gme/messagecontent", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value="/personalize/gme/messagecontent", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
 	public Response readMessageContent(MessageContentRequest request) {
 		String Updresponse = "";
 		try{
@@ -122,7 +117,7 @@ public class ContentResource implements Constants{
 	 * @param request
 	 * @return
 	 */
-	@PostMapping(path="/personalize/gme/getPlanOffers", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value="/personalize/gme/getPlanOffers", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_JSON })
 	public Response getMultiBrandPlanOffers(ContractInfoRequest request){
 		
 		Response response = null;
