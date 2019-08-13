@@ -205,11 +205,13 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 						profileRes= (ProfileResponse)responseMap.get("profileResponse");
 					}
 				    ContractAccountDO ctrdo = profileRes.getContractAccountDO();
-				      if (ctrdo != null)
-				      {
-				        this.logger.info("bp number " + ctrdo.getStrBPNumber());
-				        businessPartner = ctrdo.getStrBPNumber();
-				      }
+				    if(ctrdo==null) {
+				    	throw new OAMException(200, "Profile is not available", genricResp);
+				    }
+				   
+				    this.logger.info("bp number " + ctrdo.getStrBPNumber());
+				    businessPartner = ctrdo.getStrBPNumber();
+				      
 					isUdated = registrationHelper.createUserName(register);
 					logger.info("RegistrationBO- after create user DB Call]"+isUdated);
 					profileService.activateCRM(register,businessPartner, companyCode, sessionId);
