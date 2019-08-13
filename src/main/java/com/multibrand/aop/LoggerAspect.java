@@ -100,6 +100,7 @@ public class LoggerAspect {
 			/**
 			 * Handling General/unknown/Runtime Exception which is thrown from Resource
 			 */
+			
 			GenericResponse genericResponse = new GenericResponse();
 			genericResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
 			return new ResponseEntity<GenericResponse>(genericResponse,HttpStatus.OK);
