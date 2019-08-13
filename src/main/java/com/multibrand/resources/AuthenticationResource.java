@@ -57,7 +57,7 @@ public class AuthenticationResource implements Constants  {
 	@PostMapping(value="/authorization/loginSuccessCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public GenericResponse loginSuccessCall(String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginSuccessCall of AuthenticationResource");
-		//Response response = //null;
+		//Response response = null;
 		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
 		//response = Response.status(200).entity(loginSuccessCallResponse).build();
 		logger.debug("Exiting loginSuccessCall of AuthenticationResource");
