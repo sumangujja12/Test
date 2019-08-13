@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.AuthenticationBO;
@@ -55,7 +56,7 @@ public class AuthenticationResource implements Constants  {
 	 *  @description  call after login success
 	 */
 	@PostMapping(value="/authorization/loginSuccessCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse loginSuccessCall(String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	public GenericResponse loginSuccessCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginSuccessCall of AuthenticationResource");
 		//Response response = //null;
 		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
@@ -70,7 +71,7 @@ public class AuthenticationResource implements Constants  {
 	 *  @description  call after login failure
 	 */
 	@PostMapping(value="/authorization/loginFailureCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse loginFailureCall(String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	public GenericResponse loginFailureCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
 		//Response response = null;
 		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(userId,hh, request);

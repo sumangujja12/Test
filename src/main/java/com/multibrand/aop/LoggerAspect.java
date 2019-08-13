@@ -76,7 +76,7 @@ public class LoggerAspect {
 	 */
 	public Object logRequestDetails(ProceedingJoinPoint methodPoint, METHOD_TYPE methodType) throws Throwable {
 
-		GenericResponse output = null;
+		Object output = null;
 
 		// Build log message prefix
 		String logPrefix = getLogPrefix(methodType);
@@ -92,7 +92,7 @@ public class LoggerAspect {
 
 		long startTime = System.currentTimeMillis();
 		try {
-			output = (GenericResponse) methodPoint.proceed();
+			output = (Object) methodPoint.proceed();
 			getErrorDisplay(output,methodName);
 		} catch (Exception ex) {
 			logger.info("System Exception: " + ex.getMessage());
@@ -196,7 +196,7 @@ public class LoggerAspect {
 		return logPrefix;
 	}
 
-	private void getErrorDisplay(GenericResponse output, String methodName) {
+	private void getErrorDisplay(Object output, String methodName) {
 		logger.info("###########START- getErrorDisplay -###########");
 
 		Object obj = output;

@@ -54,7 +54,7 @@ public class TOSResource {
 	@Autowired
 	TOSBO tosBO;
 	
-	@Context 
+	@Autowired 
 	private HttpServletRequest httpRequest;
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -66,19 +66,19 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/checkPendingMVO", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response checkPendingMVO(@FormParam("contractNumber")String contractNumber, @FormParam("companyCode") String companyCode){
+	public CheckPendingMVOResponse checkPendingMVO(@FormParam("contractNumber")String contractNumber, @FormParam("companyCode") String companyCode){
 		logger.debug("TOSResource.checkPendingMVO ::: START");
 		CheckPendingMVORequest request = tosRequestHandler.createRequestCheckPendingMVO(contractNumber, companyCode);	
 		
 		
 		CheckPendingMVOResponse checkPendingMVOResp = tosBO.checkPendingMVO(request, companyCode, httpRequest.getSession(true).getId());
 		
-		Response response = null;
+		//Response response = null;
 		
-		response = Response.status(200).entity(checkPendingMVOResp).build();
+		//response = Response.status(200).entity(checkPendingMVOResp).build();
 		
 		logger.debug("TOSResource.checkPendingMVO ::: END");
-		return response;		
+		return checkPendingMVOResp;		
 		
 	}
 	
@@ -91,7 +91,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/checkPendingMVI", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response checkPendingMVI(@FormParam("accountNumber")String accountNumber, @FormParam("bpid")String bpid, @FormParam("pointofDeliveryID") String pointofDeliveryID, @FormParam("companyCode") String companyCode){
+	public CheckPendingMoveInResponse checkPendingMVI(@FormParam("accountNumber")String accountNumber, @FormParam("bpid")String bpid, @FormParam("pointofDeliveryID") String pointofDeliveryID, @FormParam("companyCode") String companyCode){
 		logger.debug("TOSResource.checkPendingMVI ::: START");
 		
 		CheckPendingMoveInRequest request = tosRequestHandler.createRequestCheckPendingMVI(accountNumber, bpid, pointofDeliveryID, companyCode);	
@@ -99,17 +99,17 @@ public class TOSResource {
 		
 		CheckPendingMoveInResponse checkPendingMVIResp = tosBO.checkPendingMVI(request, companyCode,  httpRequest.getSession(true).getId());
 		
-		Response response = null;
+		//Response response = null;
 		
-		response = Response.status(200).entity(checkPendingMVIResp).build();
+		//response = Response.status(200).entity(checkPendingMVIResp).build();
 		
 		logger.debug("TOSResource.checkPendingMVI ::: END");
-		return response;		
+		return checkPendingMVIResp;		
 		
 	}
 	
 	@PostMapping(value = "/tos/ESIDForAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response getESIDForAddress(
+	public ESIDForAddressResponse getESIDForAddress(
 			@FormParam("apartmentNumber")String apartmentNumber, 
 			@FormParam("city")String city, 
 			@FormParam("country")String country,
@@ -126,12 +126,12 @@ public class TOSResource {
 				
 		ESIDForAddressResponse esidForAddResp = tosBO.getESIDForAddress(request, companyCode, httpRequest.getSession(true).getId());
 		
-		Response response = null;
+		//Response response = null;
 		
-		response = Response.status(200).entity(esidForAddResp).build();
+		//response = Response.status(200).entity(esidForAddResp).build();
 		
 		logger.debug("TOSResource.getESIDForAddress ::: END");
-		return response;		
+		return esidForAddResp;		
 		
 	}
 	
