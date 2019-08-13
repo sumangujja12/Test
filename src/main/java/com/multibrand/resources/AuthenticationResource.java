@@ -6,7 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.AuthenticationBO;
@@ -22,6 +22,7 @@ import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AuthenticationResponse;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.LoginFailureResponse;
 import com.multibrand.vo.response.LoginResponse;
 
@@ -35,9 +36,6 @@ import com.multibrand.vo.response.LoginResponse;
 public class AuthenticationResource implements Constants  {
 	
 	
-	public AuthenticationResource() {
-		System.out.println("hahhahahahahahhahha");
-	}
 	
 	@Autowired 
 	AuthenticationBO authenticationBO;
@@ -58,13 +56,13 @@ public class AuthenticationResource implements Constants  {
 	 *  @description  call after login success
 	 */
 	@PostMapping(value="/authorization/loginSuccessCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response loginSuccessCall(String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	public GenericResponse loginSuccessCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginSuccessCall of AuthenticationResource");
-		Response response = null;
+		//Response response = //null;
 		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
-		response = Response.status(200).entity(loginSuccessCallResponse).build();
+		//response = Response.status(200).entity(loginSuccessCallResponse).build();
 		logger.debug("Exiting loginSuccessCall of AuthenticationResource");
-		return response;
+		return loginSuccessCallResponse;
 	}
 	
 	/***
@@ -73,17 +71,17 @@ public class AuthenticationResource implements Constants  {
 	 *  @description  call after login failure
 	 */
 	@PostMapping(value="/authorization/loginFailureCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response loginFailureCall(String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	public GenericResponse loginFailureCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
-		Response response = null;
+		//Response response = null;
 		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(userId,hh, request);
-		response = Response.status(200).entity(loginFailureCallResponse).build();
+		//response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
-		return response;
+		return loginFailureCallResponse;
 	}
 	
 	@PostMapping(value="/authorization/refreshtoken", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response refreshToken() {
+	public GenericResponse refreshToken() {
 		AuthenticationResponse authResponse = new AuthenticationResponse();
 		try {
 			logger.debug("Refreshing authentication token... ");
@@ -101,8 +99,8 @@ public class AuthenticationResource implements Constants  {
 			authResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
 			
 		}
-		Response response = Response.status(200).entity(authResponse).build();
-		return response;
+		//Response response = Response.status(200).entity(authResponse).build();
+		return authResponse;
 
 	}
 	

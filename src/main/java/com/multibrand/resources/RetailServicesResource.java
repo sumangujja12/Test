@@ -1,12 +1,10 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.Response;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.RetailServicesBO;
@@ -28,7 +26,7 @@ public class RetailServicesResource {
 	RetailServicesBO retailServicesBO;
 	
 	@PostMapping(value = "/retailServices/readHouseAgeAndHHIncome", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response readHouseAgeAndHHIncome(@FormParam("esidOrAddressId") String esidOrAddressId) {
+	public RetailServicesResponse readHouseAgeAndHHIncome(@RequestParam("esidOrAddressId") String esidOrAddressId) {
 		logger.info(" START ******* readHouseAgeAndHHIncome API**********");
 		RetailServicesResponse retailServicesResponse = new RetailServicesResponse();
 		try{
@@ -36,15 +34,15 @@ public class RetailServicesResource {
 		}catch(Exception ex){
 			logger.error("ERROR OCCURED WHILE calling readHouseAgeAndHHIncome REST Service:", ex);
 		}
-		Response response = Response.status(Response.Status.OK).entity(retailServicesResponse).build();
+		//Response response = Response.status(Response.Status.OK).entity(retailServicesResponse).build();
 		logger.info(" END ******* readHouseAgeAndHHIncome API**********");
-		return response;
+		return retailServicesResponse;
 	} 
 	
 	@PostMapping(value = "/retailServices/readReliantCustomerStatus", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response readReliantCustomerStatus(@FormParam("email") String email,@FormParam("fName") String fName,@FormParam("lName") String lName,
-			@FormParam("street") String street,@FormParam("houseNo") String houseNo,@FormParam("apartmentNo") String apartmentNo,
-			@FormParam("city") String city,@FormParam("state") String state,@FormParam("zipCode") String zipCode) {
+	public CheckReliantCustomerStatusResponse readReliantCustomerStatus(@RequestParam("email") String email,@RequestParam("fName") String fName,@RequestParam("lName") String lName,
+			@RequestParam("street") String street,@RequestParam("houseNo") String houseNo,@RequestParam("apartmentNo") String apartmentNo,
+			@RequestParam("city") String city,@RequestParam("state") String state,@RequestParam("zipCode") String zipCode) {
 		logger.info(" START ******* readReliantCustomerStatus API**********");
 		CheckReliantCustomerStatusRequest request =new CheckReliantCustomerStatusRequest();
 		request.setEmail(email);
@@ -63,13 +61,13 @@ public class RetailServicesResource {
 		}catch(Exception ex){
 			logger.error("ERROR OCCURED WHILE calling readReliantCustomerStatus REST Service:", ex);
 		}
-		Response response = Response.status(Response.Status.OK).entity(checkReliantCustomerStatusResponse).build();
+		//Response response = Response.status(Response.Status.OK).entity(checkReliantCustomerStatusResponse).build();
 		logger.info(" END ******* readReliantCustomerStatus API**********");
-		return response;
+		return checkReliantCustomerStatusResponse;
 	} 
 	
 	@PostMapping(value = "/retailServices/checkZipForSecurityEligibility", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response checkZipForSecurityEligibility(@FormParam("zipCode") String zipCode) {
+	public 	CheckZipSecurityEligibilityResponse checkZipForSecurityEligibility(@RequestParam("zipCode") String zipCode) {
 		logger.info(" START ******* checkZipForSecurityEligibility API**********");
 		CheckZipSecurityEligibilityResponse checkZipSecurityEligibilityResponse = new CheckZipSecurityEligibilityResponse();
 		try{
@@ -77,9 +75,9 @@ public class RetailServicesResource {
 		}catch(Exception ex){
 			logger.error("ERROR OCCURED WHILE calling checkZipForSecurityEligibility REST Service:", ex);
 		}
-		Response response = Response.status(Response.Status.OK).entity(checkZipSecurityEligibilityResponse).build();
+		//Response response = Response.status(Response.Status.OK).entity(checkZipSecurityEligibilityResponse).build();
 		logger.info(" END ******* checkZipForSecurityEligibility API**********");
-		return response;
+		return checkZipSecurityEligibilityResponse;
 	} 
 	
 	
