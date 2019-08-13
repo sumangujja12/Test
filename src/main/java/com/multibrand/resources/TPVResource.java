@@ -8,23 +8,20 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.multibrand.dto.request.TPVRequest;
 import com.multibrand.service.TPVService;
 import com.multibrand.vo.response.tpv.TransUpdResponseVO;
-import com.multibrand.dto.request.TPVRequest;
 
 
 
@@ -34,8 +31,7 @@ import com.multibrand.dto.request.TPVRequest;
  * @author kbhulla1
  * @version 1.0
  */
-@Component("tpvResource")
-@Path("tpvApi")
+@RestController("tpvResource")
 public class TPVResource {
 
 	/**
@@ -58,10 +54,7 @@ public class TPVResource {
 	 * @throws RemoteException 
 	 * @throws ServiceException 
 	 */
-	@POST
-	@Path("tpvApiTransUpd")
-	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/tpvApi/tpvApiTransUpd", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response tpvApiTransUpd(@Context HttpServletRequest request){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");
@@ -109,10 +102,7 @@ public class TPVResource {
 	 * @throws RemoteException 
 	 * @throws ServiceException 
 	 */
-	@POST
-	@Path("tpvApiTransUpdate")
-	@Consumes({MediaType.APPLICATION_JSON})
-	@Produces({MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/tpvApi/tpvApiTransUpdate", consumes = {	MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response tpvApiTransUpdate(@Valid TPVRequest tpvReq){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");

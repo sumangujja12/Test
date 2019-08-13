@@ -1,16 +1,13 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.RetailServicesBO;
 import com.multibrand.dto.response.RetailServicesResponse;
@@ -19,8 +16,7 @@ import com.multibrand.vo.request.CheckReliantCustomerStatusRequest;
 import com.multibrand.vo.response.CheckReliantCustomerStatusResponse;
 import com.multibrand.vo.response.CheckZipSecurityEligibilityResponse;
 
-@Component
-@Path("retailServices")
+@RestController
 public class RetailServicesResource {
 	
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
@@ -31,10 +27,7 @@ public class RetailServicesResource {
 	@Autowired
 	RetailServicesBO retailServicesBO;
 	
-	@POST
-	@Path("readHouseAgeAndHHIncome")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/retailServices/readHouseAgeAndHHIncome", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response readHouseAgeAndHHIncome(@FormParam("esidOrAddressId") String esidOrAddressId) {
 		logger.info(" START ******* readHouseAgeAndHHIncome API**********");
 		RetailServicesResponse retailServicesResponse = new RetailServicesResponse();
@@ -48,10 +41,7 @@ public class RetailServicesResource {
 		return response;
 	} 
 	
-	@POST
-	@Path("readReliantCustomerStatus")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	@PostMapping(value = "/retailServices/readReliantCustomerStatus", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response readReliantCustomerStatus(@FormParam("email") String email,@FormParam("fName") String fName,@FormParam("lName") String lName,
 			@FormParam("street") String street,@FormParam("houseNo") String houseNo,@FormParam("apartmentNo") String apartmentNo,
 			@FormParam("city") String city,@FormParam("state") String state,@FormParam("zipCode") String zipCode) {
@@ -78,10 +68,7 @@ public class RetailServicesResource {
 		return response;
 	} 
 	
-	@POST
-	@Path("checkZipForSecurityEligibility")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/retailServices/checkZipForSecurityEligibility", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response checkZipForSecurityEligibility(@FormParam("zipCode") String zipCode) {
 		logger.info(" START ******* checkZipForSecurityEligibility API**********");
 		CheckZipSecurityEligibilityResponse checkZipSecurityEligibilityResponse = new CheckZipSecurityEligibilityResponse();

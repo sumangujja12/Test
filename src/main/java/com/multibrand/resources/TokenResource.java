@@ -1,23 +1,21 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.multibrand.bo.TokenBO;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.request.TokenRequestVO;
 
 
-@Component
-@Path("tokenResource")
+@RestController
 public class TokenResource {
 	
 	@Autowired
@@ -30,10 +28,7 @@ public class TokenResource {
 	 * @param strNum
 	 * @return Response
 	 * */
-	@POST
-	@Path("getToken")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/tokenResource/getToken", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getToken(@FormParam("functionCode") String functionCode, @FormParam("strNum") String strNum) {
 
 		long startTime = CommonUtil.getStartTime();

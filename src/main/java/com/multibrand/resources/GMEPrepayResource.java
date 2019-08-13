@@ -2,42 +2,37 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.BillingBO;
 import com.multibrand.bo.PrepayBO;
+import com.multibrand.dto.request.TemperatureRequest;
 import com.multibrand.vo.request.CheckIfPrepayOfferRequest;
 import com.multibrand.vo.response.CheckIfPrepayOfferResponse;
 import com.multibrand.vo.response.SSBalanceAndUsageResponse;
 import com.multibrand.vo.response.StartTollTagResponse;
+import com.multibrand.vo.response.TemperaturedataResponse;
 import com.multibrand.vo.response.billingResponse.PrepayDocReadResponse;
 import com.multibrand.vo.response.billingResponse.PrepayDocUpdateResponse;
-import com.multibrand.dto.request.TemperatureRequest;
-import com.multibrand.vo.response.TemperaturedataResponse;
 
 /**
  * 
  * @author dkrishn1
  * This resource is used to handle all GME prepay related API calls.
  */
-@Component
-@Path("/gmePrepay")
+@RestController
 public class GMEPrepayResource {
 private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	
-	@Context 
+	@Autowired 
 	private HttpServletRequest httpRequest;
 	
 	@Autowired
@@ -52,10 +47,9 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @author dkrishn1
 	 * 
 	 */
-	@POST
-	@Path("/protected/checkPrepayOffer")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/gmePrepay/protected/checkPrepayOffer", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response checkPrepayOffer(@FormParam("offerCode") String offerCode,@FormParam("companyCode") String companyCode, @FormParam("brandName")String brandName){
 		
 		Response retResponse= null;
@@ -86,10 +80,9 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param brandName
 	 * @return
 	 */
-	@POST
-	@Path("/protected/getAcctBalanceAndUsageData")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/gmePrepay/protected/getAcctBalanceAndUsageData", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public Response getBalance(@FormParam("contractAccountNumber") String contractAccountNumber, 
 			                   @FormParam("fromDate") String fromDate,
 			                   @FormParam("toDate") String toDate,
@@ -117,11 +110,9 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param companyCode
 	 * @return
 	 */
-	
-	@POST
-	@Path("/protected/prepayDocRead")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/gmePrepay/protected/prepayDocRead", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
+					MediaType.APPLICATION_JSON_VALUE })
 	public Response prepayDocRead(@FormParam("contractAccountNumber") String contractAccountNumber,
 			                      @FormParam("companyCode") String companyCode
 			                      ,@FormParam("brandName")String brandName){
@@ -150,10 +141,9 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
      * @param brandName
      * @return
      */
-	@POST
-	@Path("/protected/prepayDocUpdate")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/gmePrepay/protected/prepayDocUpdate", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
+					MediaType.APPLICATION_JSON_VALUE })
 	public Response prepayDocUpdate(@FormParam("contractAccountNumber") String contractAccountNumber,
 			                        @FormParam("ppdId") String ppdId,
 			                        @FormParam("reloadAmount") String reloadAmount,
@@ -184,10 +174,9 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param companyCode
 	 * @return
 	 */
-	@POST
-	@Path("/protected/startTollTagMonitor")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/gmePrepay/protected/startTollTagMonitor", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
+					MediaType.APPLICATION_JSON_VALUE })
 	public Response startTollTagMonitor(@FormParam("paymentMode")String paymentMode, @FormParam("contractAccountNumber")String contractAccount, 
 			                            @FormParam("brandName")String brandName, @FormParam("companyCode")String companyCode){
 		Response response = null;
@@ -208,10 +197,9 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param toDate
 	 * @return
 	 */
-	@POST
-	@Path("/protected/getTemperatureData")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@PostMapping(value = "/gmePrepay/protected/getTemperatureData", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
+					MediaType.APPLICATION_JSON_VALUE })
 	public Response getTemperatureData( @Valid TemperatureRequest request){
 		
 		Response response = null;

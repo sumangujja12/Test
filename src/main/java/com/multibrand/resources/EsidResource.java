@@ -2,18 +2,14 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.dto.request.EsidDetailsRequest;
@@ -24,8 +20,7 @@ import com.multibrand.dto.response.EsidDetailsResponse;
  * 
  * @author NRG Energy
  */
-@Component
-@Path("esidResource")
+@RestController
 public class EsidResource extends BaseResource {
 
 	@SuppressWarnings("unused")
@@ -34,7 +29,7 @@ public class EsidResource extends BaseResource {
 	@Autowired
 	private OEBO oeBo;
 	
-	@Context
+	@Autowired
 	private HttpServletRequest httpRequest;
 	
 	/**
@@ -44,10 +39,8 @@ public class EsidResource extends BaseResource {
 	 *            Request message of type {@link EsidDetailsRequest} .
 	 * @return JSON response message of type {@link EsidDetailsResponse}
 	 */
-	@POST
-	@Path("getEsidDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/esidResource/getEsidDetails", consumes = {
+			MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getEsidDetails(@Valid EsidDetailsRequest request) {
 		EsidDetailsResponse serviceResponse = oeBo.getEsidDetails(request,httpRequest.getSession(true).getId());
 		Response response = Response.status(Response.Status.OK)

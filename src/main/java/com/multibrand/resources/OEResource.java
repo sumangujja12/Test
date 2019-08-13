@@ -8,21 +8,18 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
@@ -39,9 +36,9 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
-import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -51,9 +48,9 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
-import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
@@ -74,8 +71,7 @@ import com.multibrand.web.i18n.WebI18nMessageSource;
  * 
  * @author NRG Energy
  */
-@Component
-@Path("oeResource")
+@RestController
 public class OEResource extends BaseResource {
 	
 	/**
@@ -114,10 +110,8 @@ public class OEResource extends BaseResource {
 	 * @param esid
 	 * @return Response
 	 */
-	@POST
-	@Path("getOffers")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getOffers", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getOffers(@FormParam("languageCode") String locale,
 			@FormParam("companyCode") String companyCode,
 			@FormParam("brandId") String brandId,
@@ -164,10 +158,8 @@ public class OEResource extends BaseResource {
 	 * @param servZipCode
 	 * @return Response
 	 */
-	@POST
-	@Path("getTDSPDetails")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getTDSPDetails", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getTDSPDetails(
 			@FormParam("companyCode") String companyCode,
 			@FormParam("brandId") String brandId,
@@ -196,9 +188,7 @@ public class OEResource extends BaseResource {
 	 * @param numToBeTokenized
 	 * @return Response
 	 */
-	@POST
-	@Path(value = "/getToken/{actionCode}/{numToBeTokenized}")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getToken/{actionCode}/{numToBeTokenized}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response getToken(
 			@PathParam(value = "actionCode") String actionCode,
@@ -257,11 +247,8 @@ public class OEResource extends BaseResource {
 	 *         NewCreditScoreResponse}
 	 * 
 	 */
-
-	@POST
-	@Path("performCreditCheck")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/performCreditCheck", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response performCreditCheck(
 			@Valid CreditCheckRequest creditCheckRequest) throws OEException {
 		/* author Mayank Mishra */
@@ -351,10 +338,8 @@ public class OEResource extends BaseResource {
 	 * @return {@link com.multibrand.vo.response.EsidInfoTdspCalendarResponse
 	 *         EsidInfoTdspCalendarResponse}
 	 */
-	@POST
-	@Path("getESIDAndCalendarDates")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getESIDAndCalendarDates", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getESIDAndCalendarDates(
 			@Valid EsidCalendarRequest esidCalendarRequest) {
 		/* author Mayank Mishra */
@@ -384,11 +369,8 @@ public class OEResource extends BaseResource {
 
 		return response;
 	}
-
-	@POST
-	@Path("get/person/affiliate/id/{trackingNo}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	
+	@PostMapping(value = "/oeResource/get/person/affiliate/id/{trackingNo}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response getPersonIdByTrackingNo(
 			@PathParam("trackingNo") String trackingNo) {
@@ -398,10 +380,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	@POST
-	@Path("get/person/affiliate/idretrycount/{trackingNo}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/get/person/affiliate/idretrycount/{trackingNo}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response getPersonIdAndRetryCountByTrackingNo(
 			@PathParam("trackingNo") String trackingNo) {
@@ -412,10 +391,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	@POST
-	@Path("add/person/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/add/person/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response addPerson(@PathParam("affiliateId") String affiliateId,
 			AddPersonRequest request) {
@@ -425,10 +401,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	@POST
-	@Path("update/person/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/update/person/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response updatePerson(@PathParam("affiliateId") String affiliateId,
 			UpdatePersonRequest request) {
@@ -438,10 +411,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	@POST
-	@Path("get/person/affiliate/{personId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/get/person/affiliate/{personId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response getPerson(@PathParam("personId") String personId) {
 		PersonResponse personResponse = oeBO.getPerson(personId);
@@ -450,10 +420,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	@POST
-	@Path("add/serviceLocation/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/add/serviceLocation/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response addServiceLocation(
 			@PathParam("affiliateId") String affiliateId,
@@ -465,10 +432,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	@POST
-	@Path("update/serviceLocation/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/update/serviceLocation/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response updateServiceLocation(
 			@PathParam("affiliateId") String affiliateId,
@@ -556,10 +520,7 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Jenith
 	 */
-	@POST
-	@Path("submitEnrollment")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/submitEnrollment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,  MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response submitEnrollment(@Valid EnrollmentRequest enrollmentRequest)
 			throws OEException {
 		Response response = null;
@@ -585,10 +546,7 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Jenith
 	 */
-	@POST
-	@Path("checkPendingRequest")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/checkPendingRequest", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response checkPendingRequest(
 			CheckPendingServiceRequest checkPendingServiceRequest)
@@ -617,10 +575,7 @@ public class OEResource extends BaseResource {
 	 * @author Jenith
 	 * 
 	 */
-	@POST
-	@Path("checkPermitRequirement")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/checkPermitRequirement", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
 	private Response checkPermitRequirement(
 			CheckPermitRequest checkPermitRequest) throws OEException {
@@ -679,10 +634,7 @@ public class OEResource extends BaseResource {
 	 *         {@link com.multibrand.vo.response.PerformPosIdandBpMatchResponse
 	 *         PerformPosIdandBpMatchResponse}
 	 */
-	@POST
-	@Path("performPosidAndBpMatch")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/performPosidAndBpMatch", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response performPosidAndBpMatch(
 			@Valid PerformPosIdAndBpMatchRequest performPosIdBpRequest) {
 		
@@ -927,11 +879,8 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Arumugam
 	 */
-
-	@POST
-	@Path("submitBankDepositPayment")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	
+	@PostMapping(value = "/oeResource/submitBankDepositPayment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response submitBankPayment(@Valid BankDepositPaymentRequest request) {
 
 		Response response = null;
@@ -975,11 +924,7 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Arumugam
 	 */
-
-	@POST
-	@Path("submitCCDepositPayment")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/submitCCDepositPayment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response submitCCDepositPayment(
 			@Valid CCDepositPaymentRequest request) {
 
@@ -990,10 +935,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
-	@POST
-	@Path("getAffiliateOffers")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getAffiliateOffers", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getAffiliateOffers(
 			@Valid AffiliateOfferRequest request) {
 		Response response = null;
@@ -1009,10 +951,7 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("offer-data-for-TLP")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/offer-data-for-TLP", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getOfferDataForTLP(
 			@Valid TLPOfferRequest request) {
 		Response response = null;
@@ -1027,10 +966,7 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("updateETFFlagToCRM")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/updateETFFlagToCRM", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response updateETFFlagToCRM(
 			@Valid UpdateETFFlagToCRMRequest request) {
 		Response response = null;
@@ -1047,10 +983,7 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("getAgentDetails")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getAgentDetails", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getAgentDetails(
 			@Valid AgentDetailsRequest request) {
 		Response response = null;
@@ -1061,11 +994,7 @@ public class OEResource extends BaseResource {
 	}
 	
 
-	
-	@POST
-	@Path("submitUCCData")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/submitUCCData", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response submitUCCData(@Valid UCCDataRequest request) {
 
 		Response response = null;
@@ -1161,10 +1090,7 @@ public class OEResource extends BaseResource {
 	 * @author NGASPerera 
 	 * @return
 	 */
-	@POST
-	@Path("/getEnviornmentalImpactForAllGMECommunity")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getEnviornmentalImpactForAllGMECommunity", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response getEnviornmentalImpactForAllGMECommunity(){
 		Response response;
 		GMEEnviornmentalImpact impact = oeBO.getEnviornmentalImpactForAllGMECommunity();
@@ -1178,10 +1104,7 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("validateBankDetailsGiact")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/validateBankDetailsGiact", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	public Response validateBankDetailsGiact(@Valid GiactBankValidationRequest bankDetailsValidationRequest) {
 		Response response;
 		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
