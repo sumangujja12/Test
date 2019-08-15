@@ -2,7 +2,6 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,10 +40,12 @@ public class EsidResource extends BaseResource {
 	 */
 	@PostMapping(value = "/esidResource/getEsidDetails", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public Response getEsidDetails(@Valid EsidDetailsRequest request) {
+	public EsidDetailsResponse getEsidDetails(@Valid EsidDetailsRequest request) {
 		EsidDetailsResponse serviceResponse = oeBo.getEsidDetails(request,httpRequest.getSession(true).getId());
-		Response response = Response.status(Response.Status.OK)
-				.entity(serviceResponse).build();
-		return response;
+		/*
+		 * Response response = Response.status(Response.Status.OK)
+		 * .entity(serviceResponse).build();
+		 */
+		return serviceResponse;
 	}
 }

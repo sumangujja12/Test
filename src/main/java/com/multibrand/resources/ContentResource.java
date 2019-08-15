@@ -1,12 +1,11 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -35,11 +34,11 @@ public class ContentResource implements Constants{
 	@Autowired
 	private ContentBO contentServiceBO;
 	
-	@Context
+	@Autowired
 	private HttpServletRequest httpRequest;
 	
-	@PostMapping(value="/personalize/offer", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
-	public Response readPersonalizedOffer(ContentOfferRequest request) {
+	@PostMapping(value="/personalize/offer", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public String readPersonalizedOffer(ContentOfferRequest request) {
 		String offerResponse = "";
 		try{
 			request.validateRequest();
@@ -47,12 +46,12 @@ public class ContentResource implements Constants{
 		}catch(Exception ex){
 			logger.error("ERROR OCCURED WHILE GETTING THE OFFER:::", ex);
 		}
-		Response response = Response.status(Response.Status.OK).entity(offerResponse).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(offerResponse).build();
+		return offerResponse;
 	} 
 	
-	@PostMapping(value="/personalize/userprefernce/update", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
-	public Response updateUserPreference(ContentUserPrefRequest request) {
+	@PostMapping(value="/personalize/userprefernce/update", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public String updateUserPreference(ContentUserPrefRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -62,12 +61,12 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorMessage(NRGRestUtil.getMessageFromException(ex));
 			//Updresponse.setErrorCode("3");
 		}
-		Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
+		return Updresponse;
 	}
 	
-	@PostMapping(value="/personalize/component/itemid", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
-	public Response readComponentByItemId(ComponentByItemIdRequest request) {
+	@PostMapping(value="/personalize/component/itemid", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public String readComponentByItemId(ComponentByItemIdRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -77,12 +76,12 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorMessage(NRGRestUtil.getMessageFromException(ex));
 			//Updresponse.setErrorCode("3");
 		}
-		Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
+		return Updresponse;
 	} 
 	
-	@PostMapping(value="/personalize/component/itemids", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
-	public Response readComponentByItemIds(ComponentByItemIdsRequest request) {
+	@PostMapping(value="/personalize/component/itemids", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public String readComponentByItemIds(ComponentByItemIdsRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -92,13 +91,13 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorMessage(NRGRestUtil.getMessageFromException(ex));
 			//Updresponse.setErrorCode("3");
 		}
-		Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
+		return Updresponse;
 	}
 	
 	
-	@PostMapping(value="/personalize/gme/messagecontent", consumes =  MediaType.APPLICATION_JSON, produces = { MediaType.APPLICATION_JSON })
-	public Response readMessageContent(MessageContentRequest request) {
+	@PostMapping(value="/personalize/gme/messagecontent", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public String readMessageContent(MessageContentRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -108,8 +107,8 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorMessage(NRGRestUtil.getMessageFromException(ex));
 			//Updresponse.setErrorCode("3");
 		}
-		Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
+		return Updresponse;
 	}
 	
 	/**
@@ -117,15 +116,15 @@ public class ContentResource implements Constants{
 	 * @param request
 	 * @return
 	 */
-	@PostMapping(value="/personalize/gme/getPlanOffers", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_JSON })
-	public Response getMultiBrandPlanOffers(ContractInfoRequest request){
+	@PostMapping(value="/personalize/gme/getPlanOffers", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE })
+	public ContractOfferPlanContentResponse getMultiBrandPlanOffers(ContractInfoRequest request){
 		
-		Response response = null;
+		//Response response = null;
 		logger.info("Start-[ContentResource-getMultiBrandPlanOffers]");
 		ContractOfferPlanContentResponse getContractInfoResponse = contentServiceBO.getMultiBrandPlanOffers(request, httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(getContractInfoResponse).build();
+		//response = Response.status(200).entity(getContractInfoResponse).build();
 		logger.info("END-[ContentResource-getMultiBrandPlanOffers]");
-		return response;
+		return getContractInfoResponse;
 	}
 	
 }

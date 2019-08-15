@@ -1,6 +1,6 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.core.Response;
+
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class EmailResource {
 	private EmailService emailService;
 	@PostMapping(value = "/emails/send/billPreference", consumes = {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public Response sendEBillEmail(CCSEmailRequest request) {
+	public EmailResponse sendEBillEmail(CCSEmailRequest request) {
 		EmailResponse emailResult = new EmailResponse();
 		try{
 			request.validateRequest();
@@ -39,16 +39,16 @@ public class EmailResource {
 			emailResult.setResultdescription(NRGRestUtil.getMessageFromException(ex));
 			emailResult.setResultcode("3");
 		}
-		Response response = Response.status(Response.Status.OK).entity(emailResult).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(emailResult).build();
+		return emailResult;
 	} 
 	
 	@PostMapping(value = "/emails/send", consumes = {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public Response sendEmail(EmailRequest request) {
+	public EmailResponse sendEmail(EmailRequest request) {
 		EmailResponse emailResult = emailService.sendEmail(request);
-		Response response = Response.status(Response.Status.OK).entity(emailResult).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(emailResult).build();
+		return emailResult;
 	}
 	
 }

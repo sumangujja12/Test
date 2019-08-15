@@ -2,14 +2,14 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.Response;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.BillingBO;
@@ -50,9 +50,9 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	@PostMapping(value = "/gmePrepay/protected/checkPrepayOffer", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response checkPrepayOffer(@FormParam("offerCode") String offerCode,@FormParam("companyCode") String companyCode, @FormParam("brandName")String brandName){
+	public CheckIfPrepayOfferResponse checkPrepayOffer(@RequestParam("offerCode") String offerCode,@RequestParam("companyCode") String companyCode, @RequestParam("brandName")String brandName){
 		
-		Response retResponse= null;
+		//Response retResponse= null;
 		CheckIfPrepayOfferRequest checkIfPrepayOfferRequest = new CheckIfPrepayOfferRequest();
 		checkIfPrepayOfferRequest.setBrandId(brandName);
 		checkIfPrepayOfferRequest.setCompanyCode(companyCode);
@@ -61,10 +61,10 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 		CheckIfPrepayOfferResponse checkPrepayOfferResponse = prepayBO.checkPrepayOffer(checkIfPrepayOfferRequest, httpRequest.getSession(true).getId());
 		
 		
-		retResponse = Response.status(200).entity(checkPrepayOfferResponse).build();
-		logger.info(" END ******* checkPrepayOffer API********** and JSON Response is:::"+retResponse);
+		//retResponse = Response.status(200).entity(checkPrepayOfferResponse).build();
+		logger.info(" END ******* checkPrepayOffer API********** and JSON Response is:::"+checkPrepayOfferResponse);
 	
-		return retResponse;
+		return checkPrepayOfferResponse;
 	}
 	
 	/**
@@ -83,23 +83,23 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	@PostMapping(value = "/gmePrepay/protected/getAcctBalanceAndUsageData", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response getBalance(@FormParam("contractAccountNumber") String contractAccountNumber, 
-			                   @FormParam("fromDate") String fromDate,
-			                   @FormParam("toDate") String toDate,
-			                   @FormParam("billToDate") String billToDate,
-			                   @FormParam("esid") String esid,
-			                   @FormParam("language") String language,
-			                   @FormParam("noOfMonths") String noOfMonths,
-			                   @FormParam("companyCode") String companyCode, 
-			                   @FormParam("brandName")String brandName){
+	public SSBalanceAndUsageResponse getBalance(@RequestParam("contractAccountNumber") String contractAccountNumber, 
+			                   @RequestParam("fromDate") String fromDate,
+			                   @RequestParam("toDate") String toDate,
+			                   @RequestParam("billToDate") String billToDate,
+			                   @RequestParam("esid") String esid,
+			                   @RequestParam("language") String language,
+			                   @RequestParam("noOfMonths") String noOfMonths,
+			                   @RequestParam("companyCode") String companyCode, 
+			                   @RequestParam("brandName")String brandName){
 		
-		Response response = null;
+		//Response response = null;
 		
 		SSBalanceAndUsageResponse ssBalAndUsageRes = prepayBO.getBalanceAndUsageData(contractAccountNumber, fromDate, 
 				                                         toDate, billToDate, esid, language, noOfMonths,companyCode,brandName);
-		response = Response.status(200).entity(ssBalAndUsageRes).build();
+		//response = Response.status(200).entity(ssBalAndUsageRes).build();
 				
-		return response;
+		return ssBalAndUsageRes;
 		
 	}
 	
@@ -113,15 +113,15 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	@PostMapping(value = "/gmePrepay/protected/prepayDocRead", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE })
-	public Response prepayDocRead(@FormParam("contractAccountNumber") String contractAccountNumber,
-			                      @FormParam("companyCode") String companyCode
-			                      ,@FormParam("brandName")String brandName){
-		Response response = null;
+	public PrepayDocReadResponse prepayDocRead(@RequestParam("contractAccountNumber") String contractAccountNumber,
+			                      @RequestParam("companyCode") String companyCode
+			                      ,@RequestParam("brandName")String brandName){
+		//Response response = null;
 		
 		PrepayDocReadResponse ppdocReadresponse = prepayBO.prepayDocRead(contractAccountNumber,companyCode,brandName);
-		response = Response.status(200).entity(ppdocReadresponse).build();
+		//response = Response.status(200).entity(ppdocReadresponse).build();
 		
-		return response;
+		return ppdocReadresponse;
 	}
 	
 	 /**
@@ -144,26 +144,26 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	@PostMapping(value = "/gmePrepay/protected/prepayDocUpdate", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE })
-	public Response prepayDocUpdate(@FormParam("contractAccountNumber") String contractAccountNumber,
-			                        @FormParam("ppdId") String ppdId,
-			                        @FormParam("reloadAmount") String reloadAmount,
-			                        @FormParam("serviceEndDate")String serviceEndDate,
-			                        @FormParam("serviceStartDate")String serviceStartDate,
-			                        @FormParam("status")String status,
-			                        @FormParam("thresholdAmt")String thresHoldAmt,
-			                        @FormParam("tollTagEndDate")String tollTagEndDate,
-			                        @FormParam("tollTagStartDate")String tollTagStartDate,
-			                        @FormParam("uuid")String uuid,
-			                        @FormParam("companyCode") String companyCode,
-			                        @FormParam("brandName")String brandName){
-		Response response = null;
+	public PrepayDocUpdateResponse prepayDocUpdate(@RequestParam("contractAccountNumber") String contractAccountNumber,
+			                        @RequestParam("ppdId") String ppdId,
+			                        @RequestParam("reloadAmount") String reloadAmount,
+			                        @RequestParam("serviceEndDate")String serviceEndDate,
+			                        @RequestParam("serviceStartDate")String serviceStartDate,
+			                        @RequestParam("status")String status,
+			                        @RequestParam("thresholdAmt")String thresHoldAmt,
+			                        @RequestParam("tollTagEndDate")String tollTagEndDate,
+			                        @RequestParam("tollTagStartDate")String tollTagStartDate,
+			                        @RequestParam("uuid")String uuid,
+			                        @RequestParam("companyCode") String companyCode,
+			                        @RequestParam("brandName")String brandName){
+		//Response response = null;
 		PrepayDocUpdateResponse ppdUpdateResponse  =  prepayBO.prepayDocUpdate(contractAccountNumber
 				                                         ,ppdId,reloadAmount,serviceEndDate,serviceStartDate
 				                                         ,status,thresHoldAmt,tollTagEndDate,tollTagStartDate
 				                                         ,uuid,companyCode,brandName);
-		response = Response.status(200).entity(ppdUpdateResponse).build();
+		//response = Response.status(200).entity(ppdUpdateResponse).build();
 				
-		return response;
+		return ppdUpdateResponse;
 	}
 	
 	/**
@@ -177,14 +177,14 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	@PostMapping(value = "/gmePrepay/protected/startTollTagMonitor", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE })
-	public Response startTollTagMonitor(@FormParam("paymentMode")String paymentMode, @FormParam("contractAccountNumber")String contractAccount, 
-			                            @FormParam("brandName")String brandName, @FormParam("companyCode")String companyCode){
-		Response response = null;
+	public StartTollTagResponse startTollTagMonitor(@RequestParam("paymentMode")String paymentMode, @RequestParam("contractAccountNumber")String contractAccount, 
+			                            @RequestParam("brandName")String brandName, @RequestParam("companyCode")String companyCode){
+		//Response response = null;
 		
 		StartTollTagResponse tolltagResponse = prepayBO.startTollTagMonitor(paymentMode, contractAccount, brandName, companyCode, httpRequest.getSession(true).getId());
 		
-		response = Response.status(200).entity(tolltagResponse).build();
-		return response;
+		//response = Response.status(200).entity(tolltagResponse).build();
+		return tolltagResponse;
 	}
 	
 	/**
@@ -200,15 +200,15 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	@PostMapping(value = "/gmePrepay/protected/getTemperatureData", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
 					MediaType.APPLICATION_JSON_VALUE })
-	public Response getTemperatureData( @Valid TemperatureRequest request){
+	public TemperaturedataResponse getTemperatureData( @Valid TemperatureRequest request){
 		
-		Response response = null;
+		//Response response = null;
 		
 		TemperaturedataResponse tempResponse = prepayBO.getTemperatureData(request);
 		
-		response = Response.status(200).entity(tempResponse).build();
+		//response = Response.status(200).entity(tempResponse).build();
 				
-		return response;
+		return tempResponse;
 		
 	}
 }

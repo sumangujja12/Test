@@ -8,8 +8,6 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.logging.log4j.LogManager;
@@ -55,10 +53,10 @@ public class TPVResource {
 	 * @throws ServiceException 
 	 */
 	@PostMapping(value = "/tpvApi/tpvApiTransUpd", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response tpvApiTransUpd(@Context HttpServletRequest request){
+	public TransUpdResponseVO tpvApiTransUpd(HttpServletRequest request){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");
-		Response response = null;
+		//Response response = null;
 		TransUpdResponseVO responseVO = null;
 		try{
 			
@@ -76,17 +74,17 @@ public class TPVResource {
 					request.getParameter("IvResult"),
 					request.getParameter("IvTransactionid"));
 					
-			response = Response.status(200).entity(responseVO).build();
+			//response = Response.status(200).entity(responseVO).build();
 			logger.info("END-tpvApiTransUpd");
 			
 		}catch(Exception e){
 			responseVO = new TransUpdResponseVO();
 			responseVO.setType(e.getMessage());
 			responseVO.setMessage(e.getMessage());
-			response = Response.status(200).entity(responseVO).build();
+			//response = Response.status(200).entity(responseVO).build();
 		}
 				
-		return response;
+		return responseVO;
 		
 	}
 	
@@ -103,10 +101,10 @@ public class TPVResource {
 	 * @throws ServiceException 
 	 */
 	@PostMapping(value = "/tpvApi/tpvApiTransUpdate", consumes = {	MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public Response tpvApiTransUpdate(@Valid TPVRequest tpvReq){
+	public TransUpdResponseVO tpvApiTransUpdate(@Valid TPVRequest tpvReq){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");
-		Response response = null;
+		//Response response = null;
 		TransUpdResponseVO responseVO = null;
 		try{
 			
@@ -126,17 +124,17 @@ public class TPVResource {
 					tpvReq.getIvResult(),
 					tpvReq.getIvTransactionid());
 					
-			response = Response.status(200).entity(responseVO).build();
+			//response = Response.status(200).entity(responseVO).build();
 			logger.info("END-tpvApiTransUpd");
 			
 		}catch(Exception e){
 			responseVO = new TransUpdResponseVO();
 			responseVO.setType(e.getMessage());
 			responseVO.setMessage(e.getMessage());
-			response = Response.status(200).entity(responseVO).build();
+			//response = Response.status(200).entity(responseVO).build();
 		}
 				
-		return response;
+		return responseVO;
 		
 	}
 	

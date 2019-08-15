@@ -1,13 +1,13 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.AutoPayBO;
@@ -45,8 +45,8 @@ public class AutoPayResource {
 	 * @param companyCode
 	 * @return
 	 */
-	@PostMapping(value="/autoPay/validateBankDetails", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public GenericResponse validateBankDetails(@FormParam("accountNumber") String accountNumber, @FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("bankRoutingNumber") String bankRountingNumber, @FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName){
+	@PostMapping(value="/autoPay/validateBankDetails", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public GenericResponse validateBankDetails(@RequestParam("accountNumber") String accountNumber, @RequestParam("bankAccountNumber") String bankAccountNumber, @RequestParam("bankRoutingNumber") String bankRountingNumber, @RequestParam("companyCode") String companyCode,@RequestParam("brandName") String brandName){
 		logger.debug("Start AutoPayResource.validateBankDetails :: START");
 		//Response response = null;
 		ValidateBankResponse validateBankResp = autoPayBO.validateBankDetails(accountNumber, bankAccountNumber, bankRountingNumber, companyCode, httpRequest.getSession(true).getId(),brandName);
@@ -78,8 +78,8 @@ public class AutoPayResource {
 	 * @param email
 	 * @return
 	 */
-	@PostMapping(value="/autoPay/submitBankAutoPay", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public GenericResponse submitBankAutoPay(@FormParam("accountNumber") String accountNumber, @FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("bankRoutingNumber") String bankRountingNumber, @FormParam("companyCode") String companyCode, @FormParam("accountName") String accountName, @FormParam("accountChkDigit") String accountChkDigit, @FormParam("languageCode")String locale, @FormParam("email") String email,@FormParam("emailTypeId")String emailTypeId ,@FormParam("brandName") String brandName, @FormParam("bpNumber") String bpNumber, @FormParam("source") String source){
+	@PostMapping(value="/autoPay/submitBankAutoPay", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public GenericResponse submitBankAutoPay(@RequestParam("accountNumber") String accountNumber, @RequestParam("bankAccountNumber") String bankAccountNumber, @RequestParam("bankRoutingNumber") String bankRountingNumber, @RequestParam("companyCode") String companyCode, @RequestParam("accountName") String accountName, @RequestParam("accountChkDigit") String accountChkDigit, @RequestParam("languageCode")String locale, @RequestParam("email") String email,@RequestParam("emailTypeId")String emailTypeId ,@RequestParam("brandName") String brandName, @RequestParam("bpNumber") String bpNumber, @RequestParam("source") String source){
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
 		//Response response = null;
 		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(accountNumber, bankAccountNumber, bankRountingNumber, companyCode, accountName, accountChkDigit, locale, email, httpRequest.getSession(true).getId(),emailTypeId,brandName,bpNumber,source);
@@ -103,8 +103,8 @@ public class AutoPayResource {
 	 * @param billingZip
 	 * @return
 	 */
-	@PostMapping(value="/autoPay/validateCCDetails", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public GenericResponse validateCCDetails(@FormParam("authType") String authType, @FormParam("accountNumber") String accountNumber, @FormParam("bpid") String bpid, @FormParam("ccNumber") String ccNumber, @FormParam("cvvNumber") String cvvNumber, @FormParam("expirationDate") String expirationDate, @FormParam("billingZip") String billingZip, @FormParam("companyCode") String companyCode, @FormParam("brandName,") String brandName){
+	@PostMapping(value="/autoPay/validateCCDetails", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public GenericResponse validateCCDetails(@RequestParam("authType") String authType, @RequestParam("accountNumber") String accountNumber, @RequestParam("bpid") String bpid, @RequestParam("ccNumber") String ccNumber, @RequestParam("cvvNumber") String cvvNumber, @RequestParam("expirationDate") String expirationDate, @RequestParam("billingZip") String billingZip, @RequestParam("companyCode") String companyCode, @RequestParam("brandName,") String brandName){
 		logger.debug("Start AutoPayResource.validateCCDetails :: START");
 		//Response response = null;
 		
@@ -130,8 +130,8 @@ public class AutoPayResource {
 	 * @param email
 	 * @return
 	 */
-	@PostMapping(value="/autoPay/submitCCAutoPay", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public GenericResponse submitCCAutoPay(@FormParam("authType") String authType, @FormParam("accountName")String accountName, @FormParam("accountNumber") String accountNumber, @FormParam("bpid") String bpid, @FormParam("ccNumber") String ccNumber, @FormParam("expirationDate") String expirationDate, @FormParam("billingZip") String billingZip, @FormParam("companyCode") String companyCode, @FormParam("email") String email, @FormParam("languageCode")String languageCode,@FormParam("emailTypeId")String emailTypeId, @FormParam("brandName")String brandName, @FormParam("source")String source){
+	@PostMapping(value="/autoPay/submitCCAutoPay", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public GenericResponse submitCCAutoPay(@RequestParam("authType") String authType, @RequestParam("accountName")String accountName, @RequestParam("accountNumber") String accountNumber, @RequestParam("bpid") String bpid, @RequestParam("ccNumber") String ccNumber, @RequestParam("expirationDate") String expirationDate, @RequestParam("billingZip") String billingZip, @RequestParam("companyCode") String companyCode, @RequestParam("email") String email, @RequestParam("languageCode")String languageCode,@RequestParam("emailTypeId")String emailTypeId, @RequestParam("brandName")String brandName, @RequestParam("source")String source){
 		logger.debug("Start AutoPayResource.submitCCAutoPay :: START");
 		//Response response = null;
 		
@@ -150,8 +150,8 @@ public class AutoPayResource {
 	 * @param email
 	 * @return
 	 */
-	@PostMapping(value="/autoPay/deEnroll", consumes =  MediaType.APPLICATION_FORM_URLENCODED, produces = {MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
-	public GenericResponse deEnroll(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("email") String email, @FormParam("languageCode")String languageCode,@FormParam("brandName") String brandName,@FormParam("bpNumber") String bpNumber,@FormParam("source") String source){
+	@PostMapping(value="/autoPay/deEnroll", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public GenericResponse deEnroll(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode, @RequestParam("email") String email, @RequestParam("languageCode")String languageCode,@RequestParam("brandName") String brandName,@RequestParam("bpNumber") String bpNumber,@RequestParam("source") String source){
 		
 		logger.debug("Start AutoPayResource.deEnroll :: START");
 		//Response response = null;

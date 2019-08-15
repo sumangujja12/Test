@@ -2,11 +2,11 @@ package com.multibrand.resources;
 
 import java.util.logging.Logger;
 
-import javax.ws.rs.PathParam;
-import javax.ws.rs.core.Response;
+
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 /*
@@ -23,12 +23,12 @@ public class SmokeTestResource extends BaseResource{
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
 
 	@GetMapping(value="/smoketest/verifystatus/{param}" ,consumes = {MediaType.TEXT_PLAIN_VALUE }, produces = {MediaType.TEXT_PLAIN_VALUE})
-	public Response getMsg(@PathParam("param") String servername) {
+	public String getMsg(@PathVariable("param") String servername) {
 
 		String output = "Application Server up on : " + servername + "\n";
 		logger.info(output);
 
-		return Response.status(200).entity(output).build();
+		return output;
 
 	}
 	

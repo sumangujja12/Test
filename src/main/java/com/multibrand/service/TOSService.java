@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.text.MessageFormat;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,7 +54,7 @@ public class TOSService extends BaseAbstractService
 
   @Autowired
   private UtilityLoggerHelper utilityloggerHelper;
-  @Context 
+  @Autowired 
 	private HttpServletRequest httpRequest;
 
   protected TOSDomain getTOSDomainProxy()

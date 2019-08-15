@@ -198,8 +198,14 @@ public class LoggerAspect {
 
 	private void getErrorDisplay(Object output, String methodName) {
 		logger.info("###########START- getErrorDisplay -###########");
-
-		Object obj = output;
+		Object obj = null;
+		if(output != null && output instanceof  ResponseEntity ) {
+			ResponseEntity<GenericResponse> objResp = (ResponseEntity<GenericResponse>) output;
+			obj = objResp.getBody();
+		} else {
+			 obj = output;
+		}
+		
 		if (obj != null && obj.getClass().getSuperclass().isAssignableFrom(GenericResponse.class)) {
 			String resultCode;
 			try {				
