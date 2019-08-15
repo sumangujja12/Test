@@ -1,6 +1,7 @@
 package com.multibrand.resources;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ import com.multibrand.vo.response.CheckZipSecurityEligibilityResponse;
 @RestController
 public class RetailServicesResource {
 	
-	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
+	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
 	@Autowired
 	private RetailServicesService retailServicesService;

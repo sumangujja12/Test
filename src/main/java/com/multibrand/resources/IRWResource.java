@@ -1,6 +1,6 @@
 package com.multibrand.resources;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,7 @@ import com.multibrand.service.IRWService;
 @RestController
 public class IRWResource {
 	
-	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
+	private static org.apache.logging.log4j.Logger logger = LogManager.getLogger(IRWResource.class);
 	
 	@Autowired
 	private IRWService irwService;

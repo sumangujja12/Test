@@ -2,8 +2,8 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +26,7 @@ import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 @RestController
 public class ContentResource implements Constants{
 	
-	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
+	private static Logger logger = LogManager.getLogger(ContentResource.class);
 	
 	@Autowired
 	private ContentService contentService;

@@ -46,8 +46,7 @@ public class Registration {
 	 * @return response			Provide JSON/XML customer profile data response
 	 */
 	@PostMapping(value = "/registration/validateAccount", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ValidateAccountResponse validateAccount(@RequestParam("accountNumber") String accountNumber, @RequestParam("lastName") String lastName,@RequestParam("companyCode")String companyCode,@RequestParam("languageCode") String languageCode){
-		System.out.println("Reguest Locale" + httpRequest.getLocale().getDisplayName()+languageCode);
+	public ValidateAccountResponse validateAccount(@RequestParam("accountNumber") String accountNumber, @RequestParam("lastName") String lastName,@RequestParam("companyCode")String companyCode){
 		//Response response = null;
 		ValidateAccountResponse validateAccountResponse = registrationBO.validateAccount(accountNumber, lastName,companyCode,httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(validateAccountResponse).build();
