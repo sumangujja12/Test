@@ -539,44 +539,44 @@
 			<artifactId>commons-beanutils-core</artifactId>
 			<version>1.8.0</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-core</artifactId>
 			<version>1.17.1</version>
-		</dependency>
-		<dependency>
+		</dependency> -->
+		<!-- <dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-server</artifactId>
 			<version>1.17.1</version>
-		</dependency>
+		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-servlet -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-servlet</artifactId>
 			<version>1.17.1</version>
-			<scope>runtime</scope> <!-- Not needed from compilation -->
-		</dependency>
+			<scope>runtime</scope> --> <!-- Not needed from compilation -->
+		<!--</dependency>-->
 		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-json -->
-		<dependency>
+		<!--<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-json</artifactId>
 			<version>1.17.1</version>
 			<scope>runtime</scope>
-		</dependency>
+		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-client -->
-		<dependency>
+		<!--<dependency>
 			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
 			<version>1.17.1</version>
-		</dependency>
+		</dependency>-->
 
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey.contribs/jersey-spring -->
+		<!-- https://mvnrepository.com/artifact/com.sun.jersey.contribs/jersey-spring 
 		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-spring</artifactId>
 			<version>1.17.1</version>
-			<scope>runtime</scope> <!-- Not needed from compilation -->
-			<exclusions>
+			<scope>runtime</scope> --> <!-- Not needed from compilation -->
+				<!--<exclusions>
 				<exclusion>
 					<groupId>org.springframework</groupId>
 					<artifactId>spring</artifactId>
@@ -602,7 +602,7 @@
 					<artifactId>spring-aop</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 
 		<!-- Internal NRG Jars -->
 		<dependency>
@@ -719,7 +719,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring-version}</version>
-			<scope>runtime</scope> <!-- Not needed from compilation -->
+			 <!-- Not needed from compilation -->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context-support -->
@@ -727,7 +727,7 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring-version}</version>
-			<scope>runtime</scope> <!-- Not needed from compilation -->
+			 <!-- Not needed from compilation -->
 		</dependency>
 
 		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-dao</artifactId> 
@@ -893,10 +893,6 @@
 			<version>2.0.1.Final</version>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring-version}</version>
-		</dependency>
+		
 	</dependencies>
 </project>

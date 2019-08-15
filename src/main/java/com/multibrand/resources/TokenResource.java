@@ -1,13 +1,11 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.TokenBO;
@@ -29,7 +27,7 @@ public class TokenResource {
 	 * @return Response
 	 * */
 	@PostMapping(value = "/tokenResource/getToken", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response getToken(@FormParam("functionCode") String functionCode, @FormParam("strNum") String strNum) {
+	public String getToken(@RequestParam("functionCode") String functionCode, @RequestParam("strNum") String strNum) {
 
 		long startTime = CommonUtil.getStartTime();
 		logger.info("::::::::::::::::::::::::::::::::::::::Start TokenResource getToken::::::::::::::::::::::::::::::::::::::::::::::"
@@ -37,15 +35,15 @@ public class TokenResource {
 
 		
 
-		Response response = null;
+		//Response response = null;
 		TokenRequestVO tokenRequestVO = tokenBO.createTokenRequest(functionCode , strNum);
 		String tokenizedResponse = tokenBO.getTokenResponse(tokenRequestVO);
 
-		response = Response.status(Response.Status.OK).entity(tokenizedResponse).build();
+		//response = Response.status(Response.Status.OK).entity(tokenizedResponse).build();
 		logger.info(
 				"::::::::::::::::::::::::::::::::::::::End TokenResource getToken Service::::::::::::::::::::::::::::::::::::::::::::::"
 						+ CommonUtil.getElapsedTime(startTime));
-		return response;
+		return tokenizedResponse;
 	}
 	
   

@@ -10,14 +10,19 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
   
-  
+  <filter>
+    <filter-name>LocaleRequestFilter</filter-name>
+    <filter-class>
+        com.multibrand.web.context.request.LocaleRequestFilter
+    </filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>LocaleRequestFilter</filter-name>
+    <url-pattern>/rest/*</url-pattern>
+</filter-mapping>
 
   
-  <listener>
-	<listener-class>
-		org.springframework.web.context.request.RequestContextListener
-	</listener-class>
-  </listener>
+ 
   <servlet>
     <servlet-name>NRGRESTService</servlet-name>
     <servlet-class>

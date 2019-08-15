@@ -1,6 +1,6 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.core.Response;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -27,10 +27,11 @@ public class ECommerceResource extends BaseResource{
 	 * @return response
 	 */
 	@PostMapping(value="/public/ecommerceResource/googleProductSet", produces = {MediaType.APPLICATION_JSON_VALUE })
-	public Response getGoogleProductSet(){Response response = null;
+	public GoogleProductSetResponse getGoogleProductSet(){
+		//Response response = null;
 		GoogleProductSetResponse googleProductSetResponse = ecommerceBO.getGoogleProductSet();
-		response = Response.status(Response.Status.OK).entity(googleProductSetResponse).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(googleProductSetResponse).build();
+		return googleProductSetResponse;
 		
 	}
 

@@ -1,14 +1,13 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.SwapBO;
@@ -91,22 +90,22 @@ public class SwapResource {
 	 * @return
 	 */
 	@PostMapping(value = "/swapResource/submitSwap", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response submitSwap(@FormParam("campaignCode") String campaignCode, @FormParam("offerCode") String offerCode,
-			@FormParam("contractId") String contractId,@FormParam("esid") String esid,
-			@FormParam("currentContractEndDate") String currentContractEndDate,@FormParam("languageCode") String languageCode,@FormParam("companyCode") String companyCode,
-			@FormParam("accountNumber") String accountNumber,@FormParam("checkDigit") String checkDigit, @FormParam("bpNumber") String bpNumber, @FormParam("caName") String caName, @FormParam("servStreetNum") String servStreetNum,@FormParam("servStreetName") String servStreetName,@FormParam("servStreetAptNum") String servStreetAptNum,
-			@FormParam("servCity") String servCity,@FormParam("servState") String servState,@FormParam("servZipCode") String servZipCode,
-			@FormParam("billStreetNum") String billStreetNum,@FormParam("billStreetName") String billStreetName,@FormParam("billStreetAptNum") String billStreetAptNum,
-			@FormParam("billAddrPOBox") String billAddrPOBox,@FormParam("billCity") String billCity,@FormParam("billState") String billState,
-			@FormParam("billZipCode") String billZipCode,@FormParam("newContractBegins") String newContractBegins, @FormParam("newContractEnds") String newContractEnds, @FormParam("planName") String planName,
-			@FormParam("marketingText") String marketingText, @FormParam("incentives") String incentives, @FormParam("avgPrice") String avgPrice,
-			@FormParam("energyCharge") String energyCharge, @FormParam("baseCharge") String baseCharge, @FormParam("tdspCharge") String tdspCharge, @FormParam("planType") String planType,
-			@FormParam("contractTerm") String contractTerm,@FormParam("cancelFee") String cancelFee,
-			@FormParam("eflURL") String eflURL, @FormParam("eflSmartCode") String eflSmartCode, @FormParam("tosURL") String tosURL, @FormParam("tosSmartCode") String tosSmartCode,
-			@FormParam("yraacURL") String yraacURL, @FormParam("yraacSmartCode") String yraacSmartCode, @FormParam("disclaimer") String disclaimer, @FormParam("toEmail") String toEmail, @FormParam("productContent") String productContent, @FormParam("promoCode") String promoCode,@FormParam("brandName") String brandName, @FormParam("offerDate") String offerDate, @FormParam("offerTime") String offerTime,
-			@FormParam("clientSource") String clientSource,@FormParam("source") String source){
+	public SubmitSwapResponse submitSwap(@RequestParam("campaignCode") String campaignCode, @RequestParam("offerCode") String offerCode,
+			@RequestParam("contractId") String contractId,@RequestParam("esid") String esid,
+			@RequestParam("currentContractEndDate") String currentContractEndDate,@RequestParam("languageCode") String languageCode,@RequestParam("companyCode") String companyCode,
+			@RequestParam("accountNumber") String accountNumber,@RequestParam("checkDigit") String checkDigit, @RequestParam("bpNumber") String bpNumber, @RequestParam("caName") String caName, @RequestParam("servStreetNum") String servStreetNum,@RequestParam("servStreetName") String servStreetName,@RequestParam("servStreetAptNum") String servStreetAptNum,
+			@RequestParam("servCity") String servCity,@RequestParam("servState") String servState,@RequestParam("servZipCode") String servZipCode,
+			@RequestParam("billStreetNum") String billStreetNum,@RequestParam("billStreetName") String billStreetName,@RequestParam("billStreetAptNum") String billStreetAptNum,
+			@RequestParam("billAddrPOBox") String billAddrPOBox,@RequestParam("billCity") String billCity,@RequestParam("billState") String billState,
+			@RequestParam("billZipCode") String billZipCode,@RequestParam("newContractBegins") String newContractBegins, @RequestParam("newContractEnds") String newContractEnds, @RequestParam("planName") String planName,
+			@RequestParam("marketingText") String marketingText, @RequestParam("incentives") String incentives, @RequestParam("avgPrice") String avgPrice,
+			@RequestParam("energyCharge") String energyCharge, @RequestParam("baseCharge") String baseCharge, @RequestParam("tdspCharge") String tdspCharge, @RequestParam("planType") String planType,
+			@RequestParam("contractTerm") String contractTerm,@RequestParam("cancelFee") String cancelFee,
+			@RequestParam("eflURL") String eflURL, @RequestParam("eflSmartCode") String eflSmartCode, @RequestParam("tosURL") String tosURL, @RequestParam("tosSmartCode") String tosSmartCode,
+			@RequestParam("yraacURL") String yraacURL, @RequestParam("yraacSmartCode") String yraacSmartCode, @RequestParam("disclaimer") String disclaimer, @RequestParam("toEmail") String toEmail, @RequestParam("productContent") String productContent, @RequestParam("promoCode") String promoCode,@RequestParam("brandName") String brandName, @RequestParam("offerDate") String offerDate, @RequestParam("offerTime") String offerTime,
+			@RequestParam("clientSource") String clientSource,@RequestParam("source") String source){
 		logger.debug("START SwapResource.submitSwap :: START");
-		Response response = null;
+		//Response response = null;
 		SubmitSwapRequest swapRequest = new SubmitSwapRequest();
 		swapRequest.setCampaignCode(campaignCode);
 		swapRequest.setOfferCode(offerCode);
@@ -159,9 +158,9 @@ public class SwapResource {
 		swapRequest.setOfferTime(offerTime);
 		swapRequest.setClientSource(clientSource);//CHG0020873
 		SubmitSwapResponse submitSwapResponse = swapBO.submitSwap(swapRequest,httpRequest.getSession(true).getId(), source);
-		response = Response.status(200).entity(submitSwapResponse).build();
+		//response = Response.status(200).entity(submitSwapResponse).build();
 		logger.debug("End SwapResource.submitSwap :: END");	
-		return response;
+		return submitSwapResponse;
 		
 	}
 	
@@ -174,11 +173,11 @@ public class SwapResource {
 	 * @return
 	 */
 	@PostMapping(value = "/swapResource/getRolloverPlanDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response getRolloverPlanDetails(@FormParam("contractId")String contractId,@FormParam("companyCode")String companyCode){
-		Response response =null;
+	public RolloverPlanResponse getRolloverPlanDetails(@RequestParam("contractId")String contractId,@RequestParam("companyCode")String companyCode){
+		//Response response =null;
 		RolloverPlanResponse rollOverPlanResponse = swapBO.getRollovePlanDetails(contractId, companyCode, httpRequest.getSession(true).getId());
-		response =Response.status(200).entity(rollOverPlanResponse).build();
-		return response;
+		//response =Response.status(200).entity(rollOverPlanResponse).build();
+		return rollOverPlanResponse;
 	}
 	
 	/**
@@ -193,14 +192,14 @@ public class SwapResource {
 	 * @return
 	 */
 	@PostMapping(value = "/swapResource/pendingSwapDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response pendingSwapDetails(@FormParam("bpid")String bpid,@FormParam("accountNumber")String accountNumber,@FormParam("companyCode")String companyCode,
-			@FormParam("brandName")String brandName,@FormParam("contractID")String contractID,@FormParam("esid")String esid,@FormParam("language")String language){
+	public PendingSwapResponse pendingSwapDetails(@RequestParam("bpid")String bpid,@RequestParam("accountNumber")String accountNumber,@RequestParam("companyCode")String companyCode,
+			@RequestParam("brandName")String brandName,@RequestParam("contractID")String contractID,@RequestParam("esid")String esid,@RequestParam("language")String language){
 	
-		Response response =null;
+		//Response response =null;
 		PendingSwapResponse pendingSwapResponse = swapBO.pendingSwapDetails(bpid, accountNumber, companyCode,
 				 brandName, contractID, esid,language, httpRequest.getSession(true).getId());
-		response =Response.status(200).entity(pendingSwapResponse).build();
-		return response;
+		//response =Response.status(200).entity(pendingSwapResponse).build();
+		return pendingSwapResponse;
 	}
 	
 	

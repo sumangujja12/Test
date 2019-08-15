@@ -1,8 +1,6 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.multibrand.bo.RegistrationBO;
 import com.multibrand.helper.ErrorContentHelper;
@@ -47,12 +46,12 @@ public class Registration {
 	 * @return response			Provide JSON/XML customer profile data response
 	 */
 	@PostMapping(value = "/registration/validateAccount", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response validateAccount(@FormParam("accountNumber") String accountNumber, @FormParam("lastName") String lastName,@FormParam("companyCode")String companyCode){
-		
-		Response response = null;
+	public ValidateAccountResponse validateAccount(@RequestParam("accountNumber") String accountNumber, @RequestParam("lastName") String lastName,@RequestParam("companyCode")String companyCode,@RequestParam("languageCode") String languageCode){
+		System.out.println("Reguest Locale" + httpRequest.getLocale().getDisplayName()+languageCode);
+		//Response response = null;
 		ValidateAccountResponse validateAccountResponse = registrationBO.validateAccount(accountNumber, lastName,companyCode,httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(validateAccountResponse).build();
-		return response;
+		//response = Response.status(200).entity(validateAccountResponse).build();
+		return validateAccountResponse;
 		
 	}
 	
@@ -73,28 +72,28 @@ public class Registration {
 	 * @return
 	 */
 	@PostMapping(value = "/registration/createUser", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response createUser(
-			@FormParam("accountNumber") String accountNumber,
-			@FormParam("lastName") String lastName,
-			@FormParam("email") String email,
-			@FormParam("firstName") String firstName,
-			@FormParam("userName") String userName,
-			@FormParam("password") String password,
-			@FormParam("companyCode") String companyCode,
-			@FormParam("languageCode")String languageCode,
-			@FormParam("applicationArea")String applicationArea,
-			@FormParam("checkDigit")String checkDigit,
-			@FormParam("source")String source)
+	public GenericResponse createUser(
+			@RequestParam("accountNumber") String accountNumber,
+			@RequestParam("lastName") String lastName,
+			@RequestParam("email") String email,
+			@RequestParam("firstName") String firstName,
+			@RequestParam("userName") String userName,
+			@RequestParam("password") String password,
+			@RequestParam("companyCode") String companyCode,
+			@RequestParam("languageCode")String languageCode,
+			@RequestParam("applicationArea")String applicationArea,
+			@RequestParam("checkDigit")String checkDigit,
+			@RequestParam("source")String source)
 	{
 		
 		logger.debug("Inside createUser in Registration Resource");
-		Response response = null;
+		//Response response = null;
 		logger.info("START-[Registration-createUser]");
 		GenericResponse responseVo = registrationBO.createUser(accountNumber,
 				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit,source);
-		response = Response.status(200).entity(responseVo).build();
+		//response = Response.status(200).entity(responseVo).build();
 		logger.info("END-[Registration-createUser]");
-		return response;
+		return responseVo;
 		
 	}
 	
@@ -116,24 +115,24 @@ public class Registration {
 	 * @return
 	 */
 	@PostMapping(value = "/registration/validateAccountForMobile", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response validateAccountForMobile(
-			@FormParam("accountNumber") String accountNumber,
-			@FormParam("lastName") String lastName,
-			@FormParam("userName") String userName,
-			@FormParam("companyCode") String companyCode,
-			 @FormParam("brandName")String brandName)
+	public ValidateAccountForMobileResponse validateAccountForMobile(
+			@RequestParam("accountNumber") String accountNumber,
+			@RequestParam("lastName") String lastName,
+			@RequestParam("userName") String userName,
+			@RequestParam("companyCode") String companyCode,
+			 @RequestParam("brandName")String brandName)
 	{
 		
 		logger.info("START-[Registration-validateAccountForMobile]");
-		Response response = null;
+		//Response response = null;
 		ValidateAccountForMobileResponse validateAccountForMobileResponse = null;
 		
 		String sessionId = httpRequest.getSession(true).getId();
 		validateAccountForMobileResponse= registrationBO.validateAccountForMobile(accountNumber,
 				lastName, userName, companyCode,brandName,sessionId);
-		response = Response.status(200).entity(validateAccountForMobileResponse).build();
+		//response = Response.status(200).entity(validateAccountForMobileResponse).build();
 		logger.info("END-[Registration-validateAccountForMobile]");
-		return response;
+		return validateAccountForMobileResponse;
 		
 	}
 	

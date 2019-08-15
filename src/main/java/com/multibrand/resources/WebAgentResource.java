@@ -1,14 +1,13 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.BillingBO;
@@ -32,12 +31,12 @@ public class WebAgentResource {
 	private BillingBO billingBO;
 	
 	@PostMapping(value = "/webAgent/updateEmailID", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response updateContactInfo(@FormParam("userName")String userName,@FormParam("email")String email){
+	public UpdateContactInfoResponse updateContactInfo(@RequestParam("userName")String userName,@RequestParam("email")String email){
 		
-		Response response = null;
+		//Response response = null;
 		UpdateContactInfoResponse updateContactInfoResponse=webAgentBO.updateEmail(userName, email, "0271", httpRequest.getSession().getId());
-		response = Response.status(200).entity(updateContactInfoResponse).build();
-		return response;
+		//response = Response.status(200).entity(updateContactInfoResponse).build();
+		return updateContactInfoResponse;
 		
 	} 
 	
@@ -49,13 +48,13 @@ public class WebAgentResource {
 	 * @return response			Provide JSON/XML response 
 	 */
 	@PostMapping(value = "/webAgent/updatePaperFreeBilling", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public Response updatePaperFreeBilling(@FormParam("accountNumber") String accountNumber,@FormParam("flag") String flag,
-			@FormParam("companyCode") String companyCode, @FormParam("bpNumber")String bpNumber, @FormParam("source")String source){
+	public UpdatePaperFreeBillingResponse updatePaperFreeBilling(@RequestParam("accountNumber") String accountNumber,@RequestParam("flag") String flag,
+			@RequestParam("companyCode") String companyCode, @RequestParam("bpNumber")String bpNumber, @RequestParam("source")String source){
 		
-		Response response = null;
+		//Response response = null;
 		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = billingBO.updatePaperFreeBilling(accountNumber,flag,companyCode, httpRequest.getSession(true).getId(),bpNumber,source);
-		response = Response.status(200).entity(updatePaperFreeBillingResponse).build();
-		return response;
+		//response = Response.status(200).entity(updatePaperFreeBillingResponse).build();
+		return updatePaperFreeBillingResponse;
 		
 	}
 	
