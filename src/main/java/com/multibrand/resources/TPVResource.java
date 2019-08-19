@@ -13,12 +13,15 @@ import javax.xml.rpc.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.dto.request.TPVRequest;
 import com.multibrand.service.TPVService;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.tpv.TransUpdResponseVO;
 
 
@@ -53,7 +56,7 @@ public class TPVResource {
 	 * @throws ServiceException 
 	 */
 	@PostMapping(value = "/tpvApi/tpvApiTransUpd", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public TransUpdResponseVO tpvApiTransUpd(HttpServletRequest request){
+	public ResponseEntity<GenericResponse> tpvApiTransUpd(HttpServletRequest request){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");
 		//Response response = null;
@@ -84,7 +87,7 @@ public class TPVResource {
 			//response = Response.status(200).entity(responseVO).build();
 		}
 				
-		return responseVO;
+		return new ResponseEntity<GenericResponse>(responseVO, HttpStatus.OK);
 		
 	}
 	
@@ -101,7 +104,7 @@ public class TPVResource {
 	 * @throws ServiceException 
 	 */
 	@PostMapping(value = "/tpvApi/tpvApiTransUpdate", consumes = {	MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public TransUpdResponseVO tpvApiTransUpdate(@Valid TPVRequest tpvReq){
+	public ResponseEntity<GenericResponse> tpvApiTransUpdate(@Valid TPVRequest tpvReq){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");
 		//Response response = null;
@@ -134,7 +137,7 @@ public class TPVResource {
 			//response = Response.status(200).entity(responseVO).build();
 		}
 				
-		return responseVO;
+		return new ResponseEntity<GenericResponse>(responseVO, HttpStatus.OK);
 		
 	}
 	

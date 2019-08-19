@@ -3,7 +3,9 @@ package com.multibrand.resources;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.multibrand.bo.TokenBO;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.request.TokenRequestVO;
+import com.multibrand.vo.response.GenericResponse;
 
 
 @RestController
@@ -27,7 +30,7 @@ public class TokenResource {
 	 * @return Response
 	 * */
 	@PostMapping(value = "/tokenResource/getToken", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public String getToken(@RequestParam("functionCode") String functionCode, @RequestParam("strNum") String strNum) {
+	public ResponseEntity<String>  getToken(@RequestParam("functionCode") String functionCode, @RequestParam("strNum") String strNum) {
 
 		long startTime = CommonUtil.getStartTime();
 		logger.info("::::::::::::::::::::::::::::::::::::::Start TokenResource getToken::::::::::::::::::::::::::::::::::::::::::::::"
@@ -43,7 +46,7 @@ public class TokenResource {
 		logger.info(
 				"::::::::::::::::::::::::::::::::::::::End TokenResource getToken Service::::::::::::::::::::::::::::::::::::::::::::::"
 						+ CommonUtil.getElapsedTime(startTime));
-		return tokenizedResponse;
+		return new ResponseEntity<String>(tokenizedResponse, HttpStatus.OK);
 	}
 	
   

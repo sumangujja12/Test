@@ -114,7 +114,7 @@ public class OEResource extends BaseResource {
 	 */
 	@PostMapping(value = "/oeResource/getOffers", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public OfferResponse getOffers(@RequestParam("languageCode") String locale,
+	public ResponseEntity<GenericResponse> getOffers(@RequestParam("languageCode") String locale,
 			@RequestParam("companyCode") String companyCode,
 			@RequestParam("brandId") String brandId,
 			@RequestParam("servStreetNum") String servStreetNum,
@@ -144,7 +144,7 @@ public class OEResource extends BaseResource {
 				servZipCode, promoCode, tdspCode, esid,
 				httpRequest.getSession(true).getId(), transactionType);
 		//response = Response.status(200).entity(offerResponse).build();
-		return offerResponse;
+		return new ResponseEntity<GenericResponse>(offerResponse, HttpStatus.OK);
 	}
 
 	/*
@@ -162,7 +162,7 @@ public class OEResource extends BaseResource {
 	 */
 	@PostMapping(value = "/oeResource/getTDSPDetails", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public TdspResponse getTDSPDetails(
+	public ResponseEntity<GenericResponse> getTDSPDetails(
 			@RequestParam("companyCode") String companyCode,
 			@RequestParam("brandId") String brandId,
 			@RequestParam("servStreetNum") String servStreetNum,
@@ -175,7 +175,7 @@ public class OEResource extends BaseResource {
 				servStreetNum, servStreetName, servStreetAptNum, servZipCode,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(tdspResponse).build();
-		return tdspResponse;
+		return new ResponseEntity<GenericResponse>(tdspResponse, HttpStatus.OK);
 	}
 
 	/*
@@ -192,7 +192,7 @@ public class OEResource extends BaseResource {
 	 */
 	@PostMapping(value = "/oeResource/getToken/{actionCode}/{numToBeTokenized}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private TokenizedResponse getToken(
+	private ResponseEntity<GenericResponse> getToken(
 			@PathVariable(value = "actionCode") String actionCode,
 			@PathVariable(value = "numToBeTokenized") String numToBeTokenized) {
 		/* author Mayank Mishra */
@@ -208,7 +208,7 @@ public class OEResource extends BaseResource {
 		//response = Response.status(Response.Status.OK)
 		//		.entity(tokenizedResponse).build();
 
-		return tokenizedResponse;
+		return new ResponseEntity<GenericResponse>(tokenizedResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -341,7 +341,7 @@ public class OEResource extends BaseResource {
 	 */
 	@PostMapping(value = "/oeResource/getESIDAndCalendarDates", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EsidInfoTdspCalendarResponse getESIDAndCalendarDates(
+	public ResponseEntity<GenericResponse> getESIDAndCalendarDates(
 			@Valid EsidCalendarRequest esidCalendarRequest) {
 		/* author Mayank Mishra */
 		//Response response = null;
@@ -368,68 +368,68 @@ public class OEResource extends BaseResource {
 		//response = Response.status(Response.Status.OK)
 		//		.entity(esidInfoTdspResponse).build();
 
-		return esidInfoTdspResponse;
+		return new ResponseEntity<GenericResponse>(esidInfoTdspResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/oeResource/get/person/affiliate/id/{trackingNo}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private String getPersonIdByTrackingNo(
+	private ResponseEntity<String> getPersonIdByTrackingNo(
 			@PathVariable("trackingNo") String trackingNo) {
 		String personId = oeBO.getPersonIdByTrackingNo(trackingNo);
-		return personId;
+		return new ResponseEntity<String>(personId, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/oeResource/get/person/affiliate/idretrycount/{trackingNo}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private List<Map<String, String>> getPersonIdAndRetryCountByTrackingNo(
+	private ResponseEntity<List<Map<String, String>>> getPersonIdAndRetryCountByTrackingNo(
 			@PathVariable("trackingNo") String trackingNo) {
 		List<Map<String, String>> dataList = oeBO
 				.getPersonIdAndRetryCountByTrackingNo(trackingNo);
-		return dataList;
+		return new ResponseEntity<List<Map<String, String>>>(dataList, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/oeResource/add/person/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private String addPerson(@PathVariable("affiliateId") String affiliateId,
+	private ResponseEntity<String> addPerson(@PathVariable("affiliateId") String affiliateId,
 			AddPersonRequest request) {
 		String personId = oeBO.addPerson(request);
 		
-		return personId;
+		return new ResponseEntity<String>(personId, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/oeResource/update/person/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private String updatePerson(@PathVariable("affiliateId") String affiliateId,
+	private ResponseEntity<String>  updatePerson(@PathVariable("affiliateId") String affiliateId,
 			UpdatePersonRequest request) {
 		String errorCode = oeBO.updatePerson(request);
-		return errorCode;
+		return new ResponseEntity<String>(errorCode, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/oeResource/get/person/affiliate/{personId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private PersonResponse getPerson(@PathVariable("personId") String personId) {
+	private ResponseEntity<Object>  getPerson(@PathVariable("personId") String personId) {
 		PersonResponse personResponse = oeBO.getPerson(personId);
-		return personResponse;
+		return new ResponseEntity<Object>(personResponse, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/oeResource/add/serviceLocation/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private String addServiceLocation(
+	private ResponseEntity<String>  addServiceLocation(
 			@PathVariable("affiliateId") String affiliateId,
 			AddServiceLocationRequest request) {
 		request.setAffiliateId(affiliateId);
 		String trackingNo = oeBO.addServiceLocation(request);
-		return trackingNo;
+		return new ResponseEntity<String>(trackingNo, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/oeResource/update/serviceLocation/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private String updateServiceLocation(
+	private ResponseEntity<String>  updateServiceLocation(
 			@PathVariable("affiliateId") String affiliateId,
 			UpdateServiceLocationRequest request) {
 		request.setAffiliateId(affiliateId);
 		String errorCode = oeBO.updateServiceLocation(request);
-		return errorCode;
+		return new ResponseEntity<String>(errorCode, HttpStatus.OK);
 	}
 
 	/**
@@ -509,7 +509,7 @@ public class OEResource extends BaseResource {
 	 * @author Jenith
 	 */
 	@PostMapping(value = "/oeResource/submitEnrollment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,  MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EnrollmentResponse submitEnrollment(@Valid EnrollmentRequest enrollmentRequest)
+	public ResponseEntity<GenericResponse> submitEnrollment(@Valid EnrollmentRequest enrollmentRequest)
 			throws OEException {
 		//Response response = null;
 
@@ -521,7 +521,7 @@ public class OEResource extends BaseResource {
 		//response = Response.status(Response.Status.OK)
 		//		.entity(enrollmentResponse).build();
 
-		return enrollmentResponse;
+		return new ResponseEntity<GenericResponse>(enrollmentResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -536,7 +536,7 @@ public class OEResource extends BaseResource {
 	 */
 	@PostMapping(value = "/oeResource/checkPendingRequest", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private CheckPendingServiceResponse checkPendingRequest(
+	private ResponseEntity<GenericResponse> checkPendingRequest(
 			CheckPendingServiceRequest checkPendingServiceRequest)
 			throws OEException {
 
@@ -548,7 +548,7 @@ public class OEResource extends BaseResource {
 		//response = Response.status(Response.Status.OK)
 		//		.entity(finalPendingServiceResponse).build();
 
-		return finalPendingServiceResponse;
+		return new ResponseEntity<GenericResponse>(finalPendingServiceResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -565,7 +565,7 @@ public class OEResource extends BaseResource {
 	 */
 	@PostMapping(value = "/oeResource/checkPermitRequirement", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private CheckPermitResponse checkPermitRequirement(
+	private ResponseEntity<GenericResponse> checkPermitRequirement(
 			CheckPermitRequest checkPermitRequest) throws OEException {
 
 		//Response response = null;
@@ -576,7 +576,7 @@ public class OEResource extends BaseResource {
 		//response = Response.status(Response.Status.OK)
 		//		.entity(permitCheckResponse).build();
 
-		return permitCheckResponse;
+		return new ResponseEntity<GenericResponse>(permitCheckResponse, HttpStatus.OK);
 	}
 
 	// START ONLINE AFFILIATES PROJECT - JSINGH1
@@ -865,13 +865,13 @@ public class OEResource extends BaseResource {
 	 */
 	
 	@PostMapping(value = "/oeResource/submitBankDepositPayment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public BankDepositPaymentResponse submitBankPayment(@Valid BankDepositPaymentRequest request) {
+	public ResponseEntity<GenericResponse> submitBankPayment(@Valid BankDepositPaymentRequest request) {
 
 		//Response response = null;
 		BankDepositPaymentResponse bankResp = oeBO.submitBankPayment(request,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(Response.Status.OK).entity(bankResp).build();
-		return bankResp;
+		return new ResponseEntity<GenericResponse>(bankResp, HttpStatus.OK);
 	}
 
 	/**
@@ -909,24 +909,24 @@ public class OEResource extends BaseResource {
 	 * @author Arumugam
 	 */
 	@PostMapping(value = "/oeResource/submitCCDepositPayment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public CCDepositPaymentResponse submitCCDepositPayment(
+	public ResponseEntity<GenericResponse> submitCCDepositPayment(
 			@Valid CCDepositPaymentRequest request) {
 
 		//Response response = null;
 		CCDepositPaymentResponse CCResp = oeBO.submitCCPayment(request,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(Response.Status.OK).entity(CCResp).build();
-		return CCResp;
+		return new ResponseEntity<GenericResponse>(CCResp, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/oeResource/getAffiliateOffers", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public AffiliateOfferResponse getAffiliateOffers(
+	public ResponseEntity<GenericResponse> getAffiliateOffers(
 			@Valid AffiliateOfferRequest request) {
 		//Response response = null;
 		AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(Response.Status.OK).entity(offerResponse).build();
-		return offerResponse;
+		return new ResponseEntity<GenericResponse>(offerResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -936,13 +936,13 @@ public class OEResource extends BaseResource {
 	 * @return
 	 */
 	@PostMapping(value = "/oeResource/offer-data-for-TLP", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public TLPOfferResponse getOfferDataForTLP(
+	public ResponseEntity<GenericResponse> getOfferDataForTLP(
 			@Valid TLPOfferRequest request) {
 		//Response response = null;
 		TLPOfferResponse offerResponse = oeBO.getOfferForTLP(request,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(Response.Status.OK).entity(offerResponse).build();
-		return offerResponse;
+		return new ResponseEntity<GenericResponse>(offerResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -951,13 +951,13 @@ public class OEResource extends BaseResource {
 	 * @return
 	 */
 	@PostMapping(value = "/oeResource/updateETFFlagToCRM", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public UpdateETFFlagToCRMResponse updateETFFlagToCRM(
+	public ResponseEntity<GenericResponse> updateETFFlagToCRM(
 			@Valid UpdateETFFlagToCRMRequest request) {
 		//Response response = null;
 		UpdateETFFlagToCRMResponse updateETFFlagToCRMResponse = oeBO.updateETFFlagToCRM(request,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(Response.Status.OK).entity(updateETFFlagToCRMResponse).build();
-		return updateETFFlagToCRMResponse;
+		return new ResponseEntity<GenericResponse>(updateETFFlagToCRMResponse, HttpStatus.OK);
 	}
 	
 
@@ -968,13 +968,13 @@ public class OEResource extends BaseResource {
 	 * @return
 	 */
 	@PostMapping(value = "/oeResource/getAgentDetails", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public AgentDetailsResponse getAgentDetails(
+	public ResponseEntity<GenericResponse> getAgentDetails(
 			@Valid AgentDetailsRequest request) {
 		//Response response = null;
 		AgentDetailsResponse agentDetailsResponse = oeBO.getAgentDetails(request,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(Response.Status.OK).entity(agentDetailsResponse).build();
-		return agentDetailsResponse;
+		return new ResponseEntity<GenericResponse>(agentDetailsResponse, HttpStatus.OK);
 	}
 	
 
@@ -1075,11 +1075,11 @@ public class OEResource extends BaseResource {
 	 * @return
 	 */
 	@PostMapping(value = "/oeResource/getEnviornmentalImpactForAllGMECommunity", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public GMEEnviornmentalImpact getEnviornmentalImpactForAllGMECommunity(){
+	public ResponseEntity<Object> getEnviornmentalImpactForAllGMECommunity(){
 		//Response response;
 		GMEEnviornmentalImpact impact = oeBO.getEnviornmentalImpactForAllGMECommunity();
 		//response = Response.status(Response.Status.OK).entity(impact).build();
-		return impact;
+		return new ResponseEntity<Object>(impact, HttpStatus.OK);
 	}
 	
 	/**
@@ -1089,10 +1089,10 @@ public class OEResource extends BaseResource {
 	 * @return
 	 */
 	@PostMapping(value = "/oeResource/validateBankDetailsGiact", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public GiactBankValidationResponse validateBankDetailsGiact(@Valid GiactBankValidationRequest bankDetailsValidationRequest) {
+	public ResponseEntity<Object> validateBankDetailsGiact(@Valid GiactBankValidationRequest bankDetailsValidationRequest) {
 		//Response response;
 		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
 		//response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();
-		return bankDetailsValidationResponse;
+		return new ResponseEntity<Object>(bankDetailsValidationResponse, HttpStatus.OK);
 	}
 }

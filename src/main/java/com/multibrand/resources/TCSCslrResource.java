@@ -6,7 +6,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.multibrand.dto.response.TCSBPDetailsDTO;
 import com.multibrand.service.TCSCslrService;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.TCSBPDetailsResponse;
 
 /**
@@ -32,7 +35,7 @@ private static Logger logger = LogManager.getLogger(TCSCslrResource.class);
 	 * @return
 	 */
 	@PostMapping(value = "/tcsCslrResource/getBPDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public TCSBPDetailsResponse getBPDetails(@RequestParam("agreementId") String agreementId){
+	public ResponseEntity<GenericResponse>  getBPDetails(@RequestParam("agreementId") String agreementId){
 		
 		//Response response = null;
 
@@ -45,7 +48,7 @@ private static Logger logger = LogManager.getLogger(TCSCslrResource.class);
 
 		//response = Response.status(200).entity(tcsBPDetailsResponse).build();
 				
-		return tcsBPDetailsResponse;
+		return new ResponseEntity<GenericResponse>(tcsBPDetailsResponse, HttpStatus.OK);
 		
 	}	
 }

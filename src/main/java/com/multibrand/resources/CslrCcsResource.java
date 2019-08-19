@@ -8,7 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import com.multibrand.dto.request.CslrUpdateBillinlgAddrRequest;
 import com.multibrand.service.CslrCcsService;
 import com.multibrand.vo.response.CslrCcsProfileResponse;
 import com.multibrand.vo.response.CslrUpdateBillinlgAddrResponse;
+import com.multibrand.vo.response.GenericResponse;
 
 /**
  * 
@@ -44,7 +47,7 @@ private static Logger logger = LogManager.getLogger(CslrCcsResource.class);
 	 * @return
 	 */
 	@PostMapping(value="/cslrCcsResource/getCslrProfile", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE}, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public CslrCcsProfileResponse getCslrProfile(
+	public ResponseEntity<GenericResponse> getCslrProfile(
 			@RequestParam("caNumber") String caNumber,
 			@RequestParam("bpNumber") String bpNumber,
 			@RequestParam("lease_Id") String leaseId,
@@ -59,11 +62,11 @@ private static Logger logger = LogManager.getLogger(CslrCcsResource.class);
 		//logger.info(gson.toJson(cslrCcsProfileResponse, CslrCcsProfileResponse.class));
 		//response = Response.status(200).entity(cslrCcsProfileResponse).build();
 		logger.debug("END CslrCcsResource.getCslrProfile :: START");
-		return cslrCcsProfileResponse;
+		return new ResponseEntity<GenericResponse>(cslrCcsProfileResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/cslrCcsResource/cslrUpdateBillingAddress", consumes =  { MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_JSON_VALUE })
-	public CslrUpdateBillinlgAddrResponse updateBillingAddr(@Valid CslrUpdateBillinlgAddrRequest request) {
+	public ResponseEntity<GenericResponse>  updateBillingAddr(@Valid CslrUpdateBillinlgAddrRequest request) {
 		
 		logger.debug("Start CslrCcsService.updateBillingAddr :: START");
 		
@@ -74,7 +77,7 @@ private static Logger logger = LogManager.getLogger(CslrCcsResource.class);
 
 		logger.debug("End CslrCcsService.updateBillingAddr :: END");
 		
-		return cslrUpdateBillinlgAddrResponse;
+		return new ResponseEntity<GenericResponse>(cslrUpdateBillinlgAddrResponse, HttpStatus.OK);
 	}
 	
 }

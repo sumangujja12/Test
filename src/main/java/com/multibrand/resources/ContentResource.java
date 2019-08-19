@@ -5,7 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +24,7 @@ import com.multibrand.util.Constants;
  */
 import com.multibrand.vo.request.ContractInfoRequest;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
+import com.multibrand.vo.response.GenericResponse;
 
 @RestController
 public class ContentResource implements Constants{
@@ -38,7 +41,7 @@ public class ContentResource implements Constants{
 	private HttpServletRequest httpRequest;
 	
 	@PostMapping(value="/personalize/offer", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public String readPersonalizedOffer(ContentOfferRequest request) {
+	public ResponseEntity<String> readPersonalizedOffer(ContentOfferRequest request) {
 		String offerResponse = "";
 		try{
 			request.validateRequest();
@@ -47,11 +50,11 @@ public class ContentResource implements Constants{
 			logger.error("ERROR OCCURED WHILE GETTING THE OFFER:::", ex);
 		}
 		//Response response = Response.status(Response.Status.OK).entity(offerResponse).build();
-		return offerResponse;
+		return new ResponseEntity<String>(offerResponse, HttpStatus.OK);
 	} 
 	
 	@PostMapping(value="/personalize/userprefernce/update", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public String updateUserPreference(ContentUserPrefRequest request) {
+	public ResponseEntity<String> updateUserPreference(ContentUserPrefRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -62,11 +65,11 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorCode("3");
 		}
 		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return Updresponse;
+		return new ResponseEntity<String>(Updresponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/personalize/component/itemid", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public String readComponentByItemId(ComponentByItemIdRequest request) {
+	public ResponseEntity<String> readComponentByItemId(ComponentByItemIdRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -77,11 +80,11 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorCode("3");
 		}
 		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return Updresponse;
+		return new ResponseEntity<String>(Updresponse, HttpStatus.OK);
 	} 
 	
 	@PostMapping(value="/personalize/component/itemids", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public String readComponentByItemIds(ComponentByItemIdsRequest request) {
+	public ResponseEntity<String> readComponentByItemIds(ComponentByItemIdsRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -92,12 +95,12 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorCode("3");
 		}
 		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return Updresponse;
+		return new ResponseEntity<String>(Updresponse, HttpStatus.OK);
 	}
 	
 	
 	@PostMapping(value="/personalize/gme/messagecontent", consumes =  MediaType.APPLICATION_JSON_VALUE, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public String readMessageContent(MessageContentRequest request) {
+	public ResponseEntity<String> readMessageContent(MessageContentRequest request) {
 		String Updresponse = "";
 		try{
 			request.validateRequest();
@@ -108,7 +111,7 @@ public class ContentResource implements Constants{
 			//Updresponse.setErrorCode("3");
 		}
 		//Response response = Response.status(Response.Status.OK).entity(Updresponse).build();
-		return Updresponse;
+		return new ResponseEntity<String>(Updresponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -117,14 +120,14 @@ public class ContentResource implements Constants{
 	 * @return
 	 */
 	@PostMapping(value="/personalize/gme/getPlanOffers", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_JSON_VALUE })
-	public ContractOfferPlanContentResponse getMultiBrandPlanOffers(ContractInfoRequest request){
+	public ResponseEntity<GenericResponse>  getMultiBrandPlanOffers(ContractInfoRequest request){
 		
 		//Response response = null;
 		logger.info("Start-[ContentResource-getMultiBrandPlanOffers]");
 		ContractOfferPlanContentResponse getContractInfoResponse = contentServiceBO.getMultiBrandPlanOffers(request, httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(getContractInfoResponse).build();
 		logger.info("END-[ContentResource-getMultiBrandPlanOffers]");
-		return getContractInfoResponse;
+		return new ResponseEntity<GenericResponse>(getContractInfoResponse, HttpStatus.OK);
 	}
 	
 }

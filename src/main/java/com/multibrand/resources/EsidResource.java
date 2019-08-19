@@ -6,13 +6,16 @@ import javax.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.dto.request.EsidDetailsRequest;
 import com.multibrand.dto.response.EsidDetailsResponse;
+import com.multibrand.vo.response.GenericResponse;
 
 /**
  * The resource will offer ESID service functionalities.
@@ -40,12 +43,12 @@ public class EsidResource extends BaseResource {
 	 */
 	@PostMapping(value = "/esidResource/getEsidDetails", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EsidDetailsResponse getEsidDetails(@Valid EsidDetailsRequest request) {
+	public  ResponseEntity<GenericResponse> getEsidDetails(@Valid EsidDetailsRequest request) {
 		EsidDetailsResponse serviceResponse = oeBo.getEsidDetails(request,httpRequest.getSession(true).getId());
 		/*
 		 * Response response = Response.status(Response.Status.OK)
 		 * .entity(serviceResponse).build();
 		 */
-		return serviceResponse;
+		return new ResponseEntity<GenericResponse>(serviceResponse, HttpStatus.OK);
 	}
 }

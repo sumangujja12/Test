@@ -54,7 +54,7 @@ public class ValidationResource extends ValidationAddressResource {
 	 * @return response			Provide JSON/XML balance data response
 	 */
 	@PostMapping(value = "/validateResource/validateBillingAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public AddressValidateResponse validateBillingAddress(@RequestParam("aptNumber") String aptNumber, @RequestParam("city") String city,
+	public ResponseEntity<GenericResponse> validateBillingAddress(@RequestParam("aptNumber") String aptNumber, @RequestParam("city") String city,
 			@RequestParam("country") String country, @RequestParam("state") String state, @RequestParam("streetName") String streetName, @RequestParam("streetNum") String streetNum, 
 			@RequestParam("zipCode") String zipCode, @RequestParam("companyCode") String companyCode,@RequestParam("poBox") String poBox, @RequestParam("brandName")String brandName){
 		logger.info(" START ******* validateBillingAddress API**********");
@@ -62,7 +62,7 @@ public class ValidationResource extends ValidationAddressResource {
 		AddressValidateResponse addressValidationResponse = validationBO.validateBillingAddress(aptNumber,city,country,state,streetName,streetNum,zipCode,companyCode,poBox,httpRequest.getSession(true).getId(),brandName);
 		//response = Response.status(200).entity(addressValidationResponse).build();
 		logger.info(" END ******* validateBillingAddress API**********");
-		return addressValidationResponse;		
+		return new ResponseEntity<GenericResponse>(addressValidationResponse, HttpStatus.OK);		
 	}
 	
 	/**
@@ -125,13 +125,13 @@ public class ValidationResource extends ValidationAddressResource {
 	}
 	
 	@PostMapping(value = "/validateResource/validateReferralId", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ValidateCustReferralIdResponse validateReferralId(@RequestParam("referralId") String referralId, @RequestParam("companyCode") String companyCode, @RequestParam("brandId") String brandId){
+	public ResponseEntity<Object> validateReferralId(@RequestParam("referralId") String referralId, @RequestParam("companyCode") String companyCode, @RequestParam("brandId") String brandId){
 		logger.info(" START ******* validateReferralId API**********");
 		//Response response = null;
 		ValidateCustReferralIdResponse validateCustReferralIdResponse = validationBO.validateReferralId(referralId,companyCode,brandId);
 		//response = Response.status(200).entity(validateCustReferralIdResponse).build();
 		logger.info(" END ******* validateReferralId API**********");
-		return validateCustReferralIdResponse;		
+		return new ResponseEntity<Object>(validateCustReferralIdResponse, HttpStatus.OK);		
 	}
 
 }

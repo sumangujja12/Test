@@ -5,13 +5,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.BillingBO;
 import com.multibrand.bo.WebAgentBO;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.UpdateContactInfoResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
 
@@ -31,12 +34,12 @@ public class WebAgentResource {
 	private BillingBO billingBO;
 	
 	@PostMapping(value = "/webAgent/updateEmailID", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public UpdateContactInfoResponse updateContactInfo(@RequestParam("userName")String userName,@RequestParam("email")String email){
+	public ResponseEntity<GenericResponse> updateContactInfo(@RequestParam("userName")String userName,@RequestParam("email")String email){
 		
 		//Response response = null;
 		UpdateContactInfoResponse updateContactInfoResponse=webAgentBO.updateEmail(userName, email, "0271", httpRequest.getSession().getId());
 		//response = Response.status(200).entity(updateContactInfoResponse).build();
-		return updateContactInfoResponse;
+		return new ResponseEntity<GenericResponse>(updateContactInfoResponse, HttpStatus.OK);
 		
 	} 
 	
@@ -48,13 +51,13 @@ public class WebAgentResource {
 	 * @return response			Provide JSON/XML response 
 	 */
 	@PostMapping(value = "/webAgent/updatePaperFreeBilling", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public UpdatePaperFreeBillingResponse updatePaperFreeBilling(@RequestParam("accountNumber") String accountNumber,@RequestParam("flag") String flag,
+	public ResponseEntity<GenericResponse> updatePaperFreeBilling(@RequestParam("accountNumber") String accountNumber,@RequestParam("flag") String flag,
 			@RequestParam("companyCode") String companyCode, @RequestParam("bpNumber")String bpNumber, @RequestParam("source")String source){
 		
 		//Response response = null;
 		UpdatePaperFreeBillingResponse updatePaperFreeBillingResponse = billingBO.updatePaperFreeBilling(accountNumber,flag,companyCode, httpRequest.getSession(true).getId(),bpNumber,source);
 		//response = Response.status(200).entity(updatePaperFreeBillingResponse).build();
-		return updatePaperFreeBillingResponse;
+		return new ResponseEntity<GenericResponse>(updatePaperFreeBillingResponse, HttpStatus.OK);
 		
 	}
 	

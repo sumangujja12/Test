@@ -6,7 +6,9 @@ import javax.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +33,7 @@ import com.multibrand.vo.response.ContractDataResponse;
 import com.multibrand.vo.response.CreateContactLogResponse;
 import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.EsidProfileResponse;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.OetdspResponse;
 import com.multibrand.vo.response.OfferOfContractResponse;
 import com.multibrand.vo.response.PermitCheckResponse;
@@ -63,7 +66,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/checkPendingMVO", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public CheckPendingMVOResponse checkPendingMVO(@RequestParam("contractNumber")String contractNumber, @RequestParam("companyCode") String companyCode){
+	public ResponseEntity<GenericResponse> checkPendingMVO(@RequestParam("contractNumber")String contractNumber, @RequestParam("companyCode") String companyCode){
 		logger.debug("TOSResource.checkPendingMVO ::: START");
 		CheckPendingMVORequest request = tosRequestHandler.createRequestCheckPendingMVO(contractNumber, companyCode);	
 		
@@ -75,7 +78,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(checkPendingMVOResp).build();
 		
 		logger.debug("TOSResource.checkPendingMVO ::: END");
-		return checkPendingMVOResp;		
+		return new ResponseEntity<GenericResponse>(checkPendingMVOResp, HttpStatus.OK);		
 		
 	}
 	
@@ -88,7 +91,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/checkPendingMVI", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public CheckPendingMoveInResponse checkPendingMVI(@RequestParam("accountNumber")String accountNumber, @RequestParam("bpid")String bpid, @RequestParam("pointofDeliveryID") String pointofDeliveryID, @RequestParam("companyCode") String companyCode){
+	public ResponseEntity<GenericResponse> checkPendingMVI(@RequestParam("accountNumber")String accountNumber, @RequestParam("bpid")String bpid, @RequestParam("pointofDeliveryID") String pointofDeliveryID, @RequestParam("companyCode") String companyCode){
 		logger.debug("TOSResource.checkPendingMVI ::: START");
 		
 		CheckPendingMoveInRequest request = tosRequestHandler.createRequestCheckPendingMVI(accountNumber, bpid, pointofDeliveryID, companyCode);	
@@ -101,12 +104,12 @@ public class TOSResource {
 		//response = Response.status(200).entity(checkPendingMVIResp).build();
 		
 		logger.debug("TOSResource.checkPendingMVI ::: END");
-		return checkPendingMVIResp;		
+		return new ResponseEntity<GenericResponse>(checkPendingMVIResp, HttpStatus.OK);		
 		
 	}
 	
 	@PostMapping(value = "/tos/ESIDForAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ESIDForAddressResponse getESIDForAddress(
+	public ResponseEntity<GenericResponse> getESIDForAddress(
 			@RequestParam("apartmentNumber")String apartmentNumber, 
 			@RequestParam("city")String city, 
 			@RequestParam("country")String country,
@@ -128,7 +131,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(esidForAddResp).build();
 		
 		logger.debug("TOSResource.getESIDForAddress ::: END");
-		return esidForAddResp;		
+		return new ResponseEntity<GenericResponse>(esidForAddResp, HttpStatus.OK);		
 		
 	}
 	
@@ -169,7 +172,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/getOfferOfContract", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public OfferOfContractResponse getOfferOfContract(
+	public ResponseEntity<GenericResponse> getOfferOfContract(
 			@RequestParam("contractNumber")String contractNumber,
 			@RequestParam("companyCode") String companyCode,
 			@RequestParam("language")String language){
@@ -192,7 +195,7 @@ public class TOSResource {
 		
 		
 		logger.info("TOSResource.getOfferOfContract ::: END");
-		return tospor;
+		return new ResponseEntity<GenericResponse>(tospor, HttpStatus.OK);
 	}
 	/**
 	 * @author ahanda1
@@ -203,7 +206,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/getProgramAccountInfo", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public ProgramAccountInfoResponse getProgramAccountInfo(
+	public ResponseEntity<GenericResponse> getProgramAccountInfo(
 			@RequestParam("businessPartnerId")String bpid,
 			@RequestParam("contractAccountNumber")String contractAccountNumber,
 			@RequestParam("contractNumber")String contractNumber,
@@ -217,7 +220,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(tospor).build();
 		
 		logger.info("TOSResource.getProgramAccountInfo ::: END");
-		return tospor;
+		return new ResponseEntity<GenericResponse>(tospor, HttpStatus.OK);
 	}
 	
 	/**
@@ -235,7 +238,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/updateContactLog", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public CreateContactLogResponse updateContactLog(
+	public ResponseEntity<GenericResponse> updateContactLog(
 			@RequestParam("businessPartnerId")String bpid,
 			@RequestParam("contractAccountNumber")String contractAccountNumber,
 			@RequestParam("contactClass")String contactClass,
@@ -255,7 +258,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.updateContactLog ::: END");
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	
@@ -266,7 +269,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/getTdspByZip", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public TdspByZipResponse getTdspByZip(
+	public ResponseEntity<GenericResponse> getTdspByZip(
 			@RequestParam("zip")String zip,
 			@RequestParam("companyCode") String companyCode){
 		
@@ -278,11 +281,11 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.getTdspByZip ::: END");
-		return resp;
+		return  new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/tos/getTDSPFromESID", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public TdspByESIDResponse getTDSPFromESID(
+	public ResponseEntity<GenericResponse>  getTDSPFromESID(
 			@RequestParam("esid")String esid,
 			@RequestParam("companyCode") String companyCode){
 		
@@ -293,7 +296,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.getTDSPFromESID ::: END");
-		return resp;
+		return  new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	
@@ -305,7 +308,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/getContractData", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public ContractDataResponse getContractData(
+	public ResponseEntity<GenericResponse> getContractData(
 			@RequestParam("businessPartnerId")String bpid,
 			@RequestParam("contractAccountNumber")String ca,
 			@RequestParam("companyCode") String companyCode){
@@ -318,7 +321,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.getContractData ::: END");
-		return resp;
+		return  new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	/**
@@ -361,7 +364,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/saveTransferServiceDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public TransferServiceResponse saveTransferServiceDetails(
+	public ResponseEntity<GenericResponse> saveTransferServiceDetails(
 			@RequestParam("businessPartnerId") String BusinessPartnerNumber, 
 			@RequestParam("contractAccountNumber") String ContractAccountNumber,
 			@RequestParam("checkDigit")String checkDigit,
@@ -468,7 +471,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.saveTransferServiceDetails ::: END");
-		return resp;
+		return  new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	/**
@@ -481,7 +484,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/getTDSPSpecificCalendarDates", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public OetdspResponse getTDSPSpecificCalendarDates(
+	public ResponseEntity<GenericResponse> getTDSPSpecificCalendarDates(
 			@RequestParam("startDate")String startDate,
 			@RequestParam("endDate")String endDate,
 			@RequestParam("tdsp")String tdsp,
@@ -497,12 +500,12 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.getTDSPSpecificCalendarDates ::: END");
-		return resp;
+		return  new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}	
 	
 	
 	@PostMapping(value = "/tos/checkPermitRequirment", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public PermitCheckResponse checkPermitRequirment(
+	public ResponseEntity<GenericResponse> checkPermitRequirment(
 			@RequestParam("streetName")String streetName,
 			@RequestParam("streetNum")String streetNum,
 			@RequestParam("poBox")String poBox,
@@ -522,7 +525,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.checkPermitRequirment ::: END");
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	/**
@@ -532,7 +535,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/getESIDProfile", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public EsidProfileResponse getESIDProfile(
+	public ResponseEntity<GenericResponse> getESIDProfile(
 			@RequestParam("esid")String esid,
 			@RequestParam("companyCode") String companyCode){
 		
@@ -544,7 +547,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(resp).build();
 		
 		logger.info("TOSResource.getESIDProfile ::: END");
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	
@@ -581,7 +584,7 @@ public class TOSResource {
 	 * @return TosAmbWebResponse
 	 */
 	@PostMapping(value = "/tos/getTosAMBDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public TosAmbWebResponse getTosAMBDetails(@RequestParam("campaignCode") String campaignCode,
+	public ResponseEntity<GenericResponse> getTosAMBDetails(@RequestParam("campaignCode") String campaignCode,
 			@RequestParam("esid") String esid,
 			@RequestParam("contractAccountNumber") String contractAccountNumber,
 			@RequestParam("contractID") String contractID,
@@ -597,7 +600,7 @@ public class TOSResource {
 		//response = Response.status(200).entity(tosAmbResponse).build();
 		
 		logger.info("TOSResource.getESIDProfile ::: END");
-		return tosAmbResponse;
+		return new ResponseEntity<GenericResponse>(tosAmbResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -606,7 +609,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/tosEligibleNonEligibleProducts", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE  }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public TOSEligibleNonEligibleProductsResponse tosEligibleNonEligibleProducts(@Valid TOSEligibleNonEligibleProductsRequest request){
+	public ResponseEntity<GenericResponse> tosEligibleNonEligibleProducts(@Valid TOSEligibleNonEligibleProductsRequest request){
 		logger.debug("TOSResource.tosEligibleNonEligibleProducts ::: START");
 		
 		TOSEligibleNonEligibleProductsResponse tosEligibleNonEligibleProductsResponse = tosBO.tosEligibleNonEligibleProducts(request);
@@ -614,7 +617,7 @@ public class TOSResource {
 		//Response response = Response.status(200).entity(tosEligibleNonEligibleProductsResponse).build();
 		
 		logger.debug("TOSResource.tosEligibleNonEligibleProducts ::: END");
-		return tosEligibleNonEligibleProductsResponse;		
+		return new ResponseEntity<GenericResponse>(tosEligibleNonEligibleProductsResponse, HttpStatus.OK);		
 		
 	}
 	
@@ -624,7 +627,7 @@ public class TOSResource {
 	 * @return
 	 */
 	@PostMapping(value = "/tos/tosSubmitEligibleProducts", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE  }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })	
-	public TOSSubmitEligibleProductsResponse tosSubmitEligibleProducts(@Valid TOSSubmitEligibleProductsRequest request){
+	public ResponseEntity<GenericResponse> tosSubmitEligibleProducts(@Valid TOSSubmitEligibleProductsRequest request){
 		logger.debug("TOSResource.tosSubmitEligibleProducts ::: START");
 		
 		TOSSubmitEligibleProductsResponse tosSubmitEligibleProductsResponse = tosBO.tosSubmitEligibleProducts(request);
@@ -632,7 +635,7 @@ public class TOSResource {
 		//Response response = Response.status(200).entity(tosSubmitEligibleProductsResponse).build();
 		
 		logger.debug("TOSResource.tosSubmitEligibleProducts ::: END");
-		return tosSubmitEligibleProductsResponse;		
+		return new ResponseEntity<GenericResponse>(tosSubmitEligibleProductsResponse, HttpStatus.OK);		
 		
 	}
 	

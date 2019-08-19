@@ -5,7 +5,9 @@ package com.multibrand.resources;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,7 +30,7 @@ public class EmailResource {
 	private EmailService emailService;
 	@PostMapping(value = "/emails/send/billPreference", consumes = {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EmailResponse sendEBillEmail(CCSEmailRequest request) {
+	public ResponseEntity<Object> sendEBillEmail(CCSEmailRequest request) {
 		EmailResponse emailResult = new EmailResponse();
 		try{
 			request.validateRequest();
@@ -41,15 +43,15 @@ public class EmailResource {
 			emailResult.setResultcode("3");
 		}
 		//Response response = Response.status(Response.Status.OK).entity(emailResult).build();
-		return emailResult;
+		return new ResponseEntity<Object>(emailResult, HttpStatus.OK);
 	} 
 	
 	@PostMapping(value = "/emails/send", consumes = {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public EmailResponse sendEmail(EmailRequest request) {
+	public ResponseEntity<Object> sendEmail(EmailRequest request) {
 		EmailResponse emailResult = emailService.sendEmail(request);
 		//Response response = Response.status(Response.Status.OK).entity(emailResult).build();
-		return emailResult;
+		return new ResponseEntity<Object>(emailResult, HttpStatus.OK);
 	}
 	
 }

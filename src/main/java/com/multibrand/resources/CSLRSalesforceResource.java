@@ -27,6 +27,7 @@ import com.multibrand.service.CSLRSalesforceService;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.DeleteUsrNameRequest;
 import com.multibrand.vo.response.DeleteUserProfileResponse;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.SFUserProfileUpdateResponse;
 import com.multibrand.vo.response.SalesforceAccountResponse;
 import com.multibrand.vo.response.SalesforceDashboardResponse;
@@ -54,7 +55,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	@PostMapping(value = "/cslrSalesforceResource/getAccessToken", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SalesforceTokenResponse getAccessToken(HttpHeaders hh, HttpServletRequest request){
+	public ResponseEntity<GenericResponse> getAccessToken(HttpHeaders hh, HttpServletRequest request){
 		
 		logger.debug("Start CSSalesforceResource.getAccessToken :: START");
 		//Response response = null;
@@ -63,7 +64,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		
 		//response = Response.status(200).entity(salesforceTokenResponse).build();
 		logger.debug("End CSSalesforceResource.getAccessToken :: END");
-		return salesforceTokenResponse;
+		return new ResponseEntity<GenericResponse>(salesforceTokenResponse, HttpStatus.OK);
 	}
 	
 	/** This service provides the account profile details from Salesforce system.
@@ -73,7 +74,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	 */
 	@PostMapping(value = "/cslrSalesforceResource/getAccount", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SalesforceAccountResponse getAccount(
+	public ResponseEntity<GenericResponse> getAccount(
 			@RequestParam("access_token") String accessToken,
 			@RequestParam("lease_Id") String leaseId,
 			HttpHeaders hh,
@@ -86,7 +87,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		
 		//response = Response.status(200).entity(salesforceAccountResponse).build();
 		logger.debug("End CSSalesforceResource.getAccount :: END");
-		return salesforceAccountResponse;
+		return new ResponseEntity<GenericResponse>(salesforceAccountResponse, HttpStatus.OK);
 	}
 	
 	/** This service provides the account profile details from Salesforce system.
@@ -97,7 +98,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	@PostMapping(value = "/cslrSalesforceResource/accountRegistration", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SalesforceAccountResponse accountRegistration(
+	public ResponseEntity<GenericResponse> accountRegistration(
 			@RequestParam("access_token") String accessToken,
 			@RequestParam("lease_Id") String leaseId,
 			@RequestParam("utility_Account_Number") String utilityAccountNumber,
@@ -111,7 +112,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		
 		//response = Response.status(200).entity(salesforceAccountResponse).build();
 		logger.debug("End CSSalesforceResource.accountRegistration :: END");
-		return salesforceAccountResponse;
+		return new ResponseEntity<GenericResponse>(salesforceAccountResponse, HttpStatus.OK);
 	}
 	
 	/** This service provides the user production and community Solar production details from Salesforce system.
@@ -122,7 +123,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	@PostMapping(value = "/cslrSalesforceResource/dashboardPortalService", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SalesforceDashboardResponse dashboardService(@Valid CommunitySolarWebDashboardRequest request){
+	public ResponseEntity<GenericResponse> dashboardService(@Valid CommunitySolarWebDashboardRequest request){
 		
 		logger.debug("Start CSSalesforceResource.dashboardService :: START");
 				
@@ -133,7 +134,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		
 		//response = Response.status(200).entity(salesforceDashboardResponse).build();
 		logger.debug("End CSSalesforceResource.accountRegistration :: END");
-		return salesforceDashboardResponse;
+		return new ResponseEntity<GenericResponse>(salesforceDashboardResponse, HttpStatus.OK);
 	}		
 	/**
 	 * This service provides the account profile details from Salesforce system
@@ -143,7 +144,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	@PostMapping(value = "/cslrSalesforceResource/updateAccount", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public SalesforceUpdateAccountResponse updateAccount( @Valid CommunitySolarWebUpdateRequest request){
+	public ResponseEntity<GenericResponse> updateAccount( @Valid CommunitySolarWebUpdateRequest request){
 		
 		logger.debug("Start CSSalesforceResource.updateAccount :: START");
 		//Response response = null;
@@ -154,7 +155,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 			
 		logger.debug("End CSSalesforceResource.updateAccount :: END");
 		
-		return tempResponse;
+		return new ResponseEntity<GenericResponse>(tempResponse, HttpStatus.OK);
 		
 	}
 	/**
@@ -164,7 +165,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	@PostMapping(value = "/cslrSalesforceResource/protected/updateSFUserProfile", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
-	public SFUserProfileUpdateResponse UpdateUserProfileSync( @Valid SFUserProfileUpdateSyncRequest request){
+	public ResponseEntity<GenericResponse> UpdateUserProfileSync( @Valid SFUserProfileUpdateSyncRequest request){
 		
 		//Response response = null;
 		
@@ -173,7 +174,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		tempResponse = cslrSalesforceService.updateUserProfileSync(request);
 		//response = Response.status(200).entity(tempResponse).build();
 				
-		return tempResponse;
+		return new ResponseEntity<GenericResponse>(tempResponse, HttpStatus.OK);
 		
 	}
 	/**
@@ -183,7 +184,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 	@PostMapping(value = "/cslrSalesforceResource/deleteUser", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE,
 				MediaType.APPLICATION_XML_VALUE })
-	public DeleteUserProfileResponse DeleteUserProfileResponse( @Valid DeleteUsrNameRequest request){
+	public ResponseEntity<GenericResponse> DeleteUserProfileResponse( @Valid DeleteUsrNameRequest request){
 		
 		//Response response = null;
 		
@@ -192,7 +193,7 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		tempResponse = cslrSalesforceService.deleteUserProfile(request);
 		//response = Response.status(200).entity(tempResponse).build();
 				
-		return tempResponse;
+		return new ResponseEntity<GenericResponse>(tempResponse, HttpStatus.OK); 
 		
 	}
 	

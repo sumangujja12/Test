@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -56,13 +58,13 @@ public class AuthenticationResource implements Constants  {
 	 *  @description  call after login success
 	 */
 	@PostMapping(value="/authorization/loginSuccessCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse loginSuccessCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	public ResponseEntity<GenericResponse> loginSuccessCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginSuccessCall of AuthenticationResource");
 		//Response response = //null;
 		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
 		//response = Response.status(200).entity(loginSuccessCallResponse).build();
 		logger.debug("Exiting loginSuccessCall of AuthenticationResource");
-		return loginSuccessCallResponse;
+		return new ResponseEntity<>(loginSuccessCallResponse, HttpStatus.OK);
 	}
 	
 	/***
@@ -71,17 +73,17 @@ public class AuthenticationResource implements Constants  {
 	 *  @description  call after login failure
 	 */
 	@PostMapping(value="/authorization/loginFailureCall", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse loginFailureCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
+	public  ResponseEntity<GenericResponse> loginFailureCall(@RequestParam("userId") String userId,@RequestHeader MultiValueMap<String, String> hh, HttpServletRequest request){
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
 		//Response response = null;
 		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(userId,hh, request);
 		//response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
-		return loginFailureCallResponse;
+		return new ResponseEntity<>(loginFailureCallResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/authorization/refreshtoken", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse refreshToken() {
+	public  ResponseEntity<GenericResponse> refreshToken() {
 		AuthenticationResponse authResponse = new AuthenticationResponse();
 		try {
 			logger.debug("Refreshing authentication token... ");
@@ -100,7 +102,7 @@ public class AuthenticationResource implements Constants  {
 			
 		}
 		//Response response = Response.status(200).entity(authResponse).build();
-		return authResponse;
+		return new ResponseEntity<GenericResponse>(authResponse, HttpStatus.OK);
 
 	}
 	

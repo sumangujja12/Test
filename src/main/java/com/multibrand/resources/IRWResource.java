@@ -2,7 +2,9 @@ package com.multibrand.resources;
 
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +26,7 @@ public class IRWResource {
 	
 	@PostMapping(value = "/irw/oammessage/read", consumes = {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public OAMMessageResponse readOAMMessage(OAMMessageRequest request) {
+	public ResponseEntity<Object> readOAMMessage(OAMMessageRequest request) {
 		OAMMessageResponse oamMessageRes = new OAMMessageResponse();
 		try{
 			request.validateRequest();
@@ -33,12 +35,12 @@ public class IRWResource {
 			logger.error("ERROR OCCURED WHILE GETTING THE OAM MESSAGES:::", ex);
 		}
 		//Response response = Response.status(Response.Status.OK).entity(oamMessageRes).build();
-		return oamMessageRes;
+		return new ResponseEntity<Object>(oamMessageRes, HttpStatus.OK);
 	} 
 	
 	@PostMapping(value = "/irw/oammessage/write", consumes = {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public OAMMessageResponse writeOAMMessage(OAMMessageRequest request) {
+	public ResponseEntity<Object> writeOAMMessage(OAMMessageRequest request) {
 		OAMMessageResponse oamMessageRes = new OAMMessageResponse();
 		try{
 			request.validateRequest();
@@ -47,12 +49,12 @@ public class IRWResource {
 			logger.error("ERROR OCCURED WHILE WRITING THE OAM MESSAGES:::", ex);
 		}
 		//Response response = Response.status(Response.Status.OK).entity(oamMessageRes).build();
-		return oamMessageRes;
+		return new ResponseEntity<Object>(oamMessageRes, HttpStatus.OK);
 	} 
 	
 	@PostMapping(value = "/irw/oammessage/check", consumes = {
 			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public OAMMessageResponse checkOAMMessage(OAMMessageRequest request) {
+	public ResponseEntity<Object> checkOAMMessage(OAMMessageRequest request) {
 		OAMMessageResponse oamMessageRes = new OAMMessageResponse();
 		try{
 			request.validateRequest();
@@ -61,7 +63,7 @@ public class IRWResource {
 			logger.error("ERROR OCCURED WHILE CHECKING THE OAM MESSAGES:::", ex);
 		}
 		//Response response = Response.status(Response.Status.OK).entity(oamMessageRes).build();
-		return oamMessageRes;
+		return new ResponseEntity<Object>(oamMessageRes, HttpStatus.OK);
 	} 
 	
 

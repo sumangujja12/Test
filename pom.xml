@@ -33,6 +33,7 @@
 		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
 		<junit.version>4.11</junit.version>
 		<spring-version>5.1.5.RELEASE</spring-version>
+		<spring-boot-version>2.1.5.RELEASE</spring-boot-version>
 		<dependency.scope>compile</dependency.scope>
 		<snapshot-version>-SNAPSHOT</snapshot-version>
 		<snapshot-enabled>true</snapshot-enabled>
@@ -512,97 +513,19 @@
 		</plugins>
 	</build>
 	<dependencies>
+	    <dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<version>${spring-boot-version}</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.nrg.util</groupId>
 			<artifactId>nrg-utility-svc-email-jaxb-stubs</artifactId>
 			<version>2.0</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.sun.xml.bind/jaxb-impl -->
-		<dependency>
-			<groupId>com.sun.xml.bind</groupId>
-			<artifactId>jaxb-impl</artifactId>
-			<version>2.2.7</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
-		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>jsr311-api</artifactId>
-			<version>1.1.1</version>
-			<scope>runtime</scope>
-		</dependency>
-
-
-
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils-core</artifactId>
-			<version>1.8.0</version>
-		</dependency>
-		<!-- <dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-core</artifactId>
-			<version>1.17.1</version>
-		</dependency> -->
-		<!-- <dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-server</artifactId>
-			<version>1.17.1</version>
-		</dependency> -->
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-servlet -->
-		<!-- <dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-servlet</artifactId>
-			<version>1.17.1</version>
-			<scope>runtime</scope> --> <!-- Not needed from compilation -->
-		<!--</dependency>-->
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-json -->
-		<!--<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-json</artifactId>
-			<version>1.17.1</version>
-			<scope>runtime</scope>
-		</dependency> -->
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-client -->
-		<!--<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-client</artifactId>
-			<version>1.17.1</version>
-		</dependency>-->
-
-		<!-- https://mvnrepository.com/artifact/com.sun.jersey.contribs/jersey-spring 
-		<dependency>
-			<groupId>com.sun.jersey.contribs</groupId>
-			<artifactId>jersey-spring</artifactId>
-			<version>1.17.1</version>
-			<scope>runtime</scope> --> <!-- Not needed from compilation -->
-				<!--<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-core</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-web</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-beans</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-context</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-aop</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>-->
+		
 
 		<!-- Internal NRG Jars -->
 		<dependency>
@@ -616,11 +539,146 @@
 			<version>4.0.0</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.2</version>
+			<version>1.9.13</version>
 		</dependency>
+		
+		<dependency>
+    		<groupId>com.google.code.gson</groupId>
+    		<artifactId>gson</artifactId>
+    		<version>2.8.5</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.sun.xml.bind</groupId>
+		    <artifactId>jaxb-impl</artifactId>
+		    <version>2.2.7</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>commons-beanutils</groupId>
+    		<artifactId>commons-beanutils</artifactId>
+    		<version>1.9.3</version>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-jdbc</artifactId>
+    		<version>${spring-version}</version>
+    		 <exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-retry</artifactId>
+			</exclusion>
+		</exclusions>
+		</dependency>
+		
+		<dependency>
+    		<groupId>org.springframework.data</groupId>
+    		<artifactId>spring-data-oracle</artifactId>
+    		<version>1.2.1.RELEASE</version>
+    		<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-retry</artifactId>
+			</exclusion>
+			
+		</exclusions>
+		</dependency>
+		
+		
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-dao</artifactId>
+			<version>2.0.8</version>
+			<exclusions>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+			</exclusion>
+			<exclusion>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-retry</artifactId>
+			</exclusion>
+		</exclusions>
+		</dependency>
+		
+					
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
@@ -632,13 +690,7 @@
 			<artifactId>aspectjrt</artifactId>
 			<version>1.7.2</version> <!-- prev 1.7.2 -->
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>5.4.1.Final</version>
-		</dependency>
-
+	
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
@@ -684,47 +736,8 @@
 			<artifactId>log4j-api</artifactId>
 			<version>2.3</version>
 			<scope>${dependency.scope}</scope>
-		</dependency>
-		        	    
-		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-web</artifactId>
-			<version>${spring-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-jdbc</artifactId>
-			<version>${spring-version}</version>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-webmvc</artifactId>
-			<version>${spring-version}</version>
-			 <!-- Not needed from compilation -->
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.springframework/spring-context-support -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context-support</artifactId>
-			<version>${spring-version}</version>
-			 <!-- Not needed from compilation -->
-		</dependency>
-
-		<!-- <dependency> <groupId>org.springframework</groupId> <artifactId>spring-dao</artifactId> 
-			<version>2.0.8</version> </dependency> -->
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-oracle</artifactId>
-			<version>1.0.0.RELEASE</version>
-		</dependency>
+		</dependency>      	    
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

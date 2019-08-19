@@ -5,7 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -76,7 +78,7 @@ public class ProfileResource {
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@PostMapping(value = "profile/forgotUserName", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse forgotUserName(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode,@RequestParam("zip") String zip,@RequestParam("languageCode") String languageCode,@RequestParam("brandName") String brandName){
+	public ResponseEntity<GenericResponse> forgotUserName(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode,@RequestParam("zip") String zip,@RequestParam("languageCode") String languageCode,@RequestParam("brandName") String brandName){
 		
 		logger.info("accountNumber :"+accountNumber+"companyCode :"+companyCode+"zip :"+zip);
 		
@@ -84,7 +86,7 @@ public class ProfileResource {
 		String sessionId = httpRequest.getSession(true).getId();
 		ForgotUserNameResponse forgotUserNameResponse  = profileBO.forgotUserName(accountNumber,companyCode,zip,languageCode,sessionId,brandName);
 		
-		return forgotUserNameResponse;
+		return new ResponseEntity<GenericResponse>(forgotUserNameResponse, HttpStatus.OK);
 		
 	}
 	
@@ -98,12 +100,12 @@ public class ProfileResource {
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@PostMapping(value = "profile/forgotPassword", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse forgotPassword(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode,@RequestParam("brandName") String brandName,@RequestParam("zip") String zip,@RequestParam("languageCode") String languageCode){
+	public ResponseEntity<GenericResponse> forgotPassword(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode,@RequestParam("brandName") String brandName,@RequestParam("zip") String zip,@RequestParam("languageCode") String languageCode){
 		
 		String sessionId = httpRequest.getSession(true).getId();
 		ForgotPasswordResponse forgotPasswordResponse = profileBO.forgotPassword(accountNumber,companyCode,brandName,languageCode,zip,sessionId);
 				
-		return forgotPasswordResponse;
+		return new ResponseEntity<GenericResponse>(forgotPasswordResponse, HttpStatus.OK);
 		
 	}
 	
@@ -115,10 +117,10 @@ public class ProfileResource {
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@PostMapping(value = "profile/validatePasswordlink", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse validateForgotPasswordLink(@RequestParam("transactionId") String transactionId,@RequestParam("companyCode") String companyCode,@RequestParam("brandName") String brandName){
+	public ResponseEntity<GenericResponse> validateForgotPasswordLink(@RequestParam("transactionId") String transactionId,@RequestParam("companyCode") String companyCode,@RequestParam("brandName") String brandName){
 		String sessionId = httpRequest.getSession(true).getId();
 		ValidatePasswordLinkResponse validatePasswordLinkResp = profileBO.validateForgotPasswordLink(transactionId,companyCode,brandName,sessionId);
-		return validatePasswordLinkResp;
+		return new ResponseEntity<GenericResponse>(validatePasswordLinkResp, HttpStatus.OK);
 	}
 
 	
@@ -129,9 +131,9 @@ public class ProfileResource {
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@PostMapping(value = "profile/getUserOrAcctNumber", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getUserOrAcctNumber(@RequestParam("userId") String userID,@RequestParam("companyCode") String companyCode){
+	public ResponseEntity<GenericResponse> getUserOrAcctNumber(@RequestParam("userId") String userID,@RequestParam("companyCode") String companyCode){
 		UserInfoResponse userInfoResponse = profileBO.getUserOrAcctNumber(userID,companyCode,httpRequest.getSession(true).getId());
-		return userInfoResponse;
+		return new ResponseEntity<GenericResponse>(userInfoResponse, HttpStatus.OK);
 		
 	}
 	
@@ -142,14 +144,14 @@ public class ProfileResource {
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@PostMapping(value = "profile/updatePassword", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse updatePassword(@RequestParam("userName") String userName,@RequestParam("newPassword") String newPassword,
+	public ResponseEntity<GenericResponse> updatePassword(@RequestParam("userName") String userName,@RequestParam("newPassword") String newPassword,
 			@RequestParam("companyCode") String companyCode){
 		
 		
 		
 		UpdatePasswordResponse updatePasswordResponse = profileBO.updatePassword(userName,newPassword,companyCode, httpRequest.getSession(true).getId());
 		
-		return updatePasswordResponse;
+		return new ResponseEntity<GenericResponse>(updatePasswordResponse, HttpStatus.OK);
 		
 	}
 	
@@ -160,14 +162,14 @@ public class ProfileResource {
 	 * @return response			Provide JSON/XML customer  data response
 	 */
 	@PostMapping(value = "profile/updatePasswordBehindLogin", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse updatePasswordBehindLogin(@RequestParam("userName") String userName,@RequestParam("newPassword") String newPassword,
+	public ResponseEntity<GenericResponse> updatePasswordBehindLogin(@RequestParam("userName") String userName,@RequestParam("newPassword") String newPassword,
 			@RequestParam("oldPassword") String oldPassword,@RequestParam("companyCode") String companyCode){
 		
 		
 		UpdatePasswordResponse updatePasswordResponse = profileBO.updatePasswordBehindLogin(userName,newPassword,oldPassword,companyCode, httpRequest.getSession(true).getId());
 		
 		
-		return updatePasswordResponse;
+		return new ResponseEntity<GenericResponse>(updatePasswordResponse, HttpStatus.OK);
 		
 	}
 	/**
@@ -187,7 +189,7 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/updateBillingAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse updateBillingAddress(@RequestParam("accountNumber") String accountNumber,@RequestParam("streetName") String streetName,
+	public ResponseEntity<GenericResponse> updateBillingAddress(@RequestParam("accountNumber") String accountNumber,@RequestParam("streetName") String streetName,
 			@RequestParam("streetNum") String streetNum,@RequestParam("city") String city,@RequestParam("state") String state
 			,@RequestParam("aptNum") String aptNum,@RequestParam("country") String country,@RequestParam("zip") String zip,
 			@RequestParam("companyCode") String companyCode,@RequestParam("bpNumber") String bpNumber,@RequestParam("poBox") String poBox, @RequestParam("brandName")String brandName){
@@ -197,7 +199,7 @@ public class ProfileResource {
 		UpdateBillingAddressResponse updateBillingAddressResponse = profileBO.updateBillingAddress(accountNumber,streetName,streetNum,city,state,
 				aptNum,country,zip,companyCode,bpNumber,poBox,httpRequest.getSession(true).getId(), brandName);
 		
-		return updateBillingAddressResponse;
+		return new ResponseEntity<GenericResponse>(updateBillingAddressResponse, HttpStatus.OK);
 		
 	}
 	
@@ -210,7 +212,7 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/changeUsername", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse changeUsername(@RequestParam("userName") String userName,
+	public ResponseEntity<GenericResponse> changeUsername(@RequestParam("userName") String userName,
 			@RequestParam("oldUserName") String oldUserName,@RequestParam("companyCode") String companyCode){
 		
 		
@@ -219,7 +221,7 @@ public class ProfileResource {
 		ChangeUsernameResponse changeUsernameResponse = profileBO.changeUsername(userName,oldUserName,companyCode,httpRequest.getSession(true).getId());
 		
 		
-		return changeUsernameResponse;
+		return new ResponseEntity<GenericResponse>(changeUsernameResponse, HttpStatus.OK);
 		
 	}
 	/**
@@ -238,7 +240,7 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/updateContactInfo", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse updateContactInfo(@RequestParam("accountNumber") String accountNumber,@RequestParam("homePhone") String homePhone ,
+	public ResponseEntity<GenericResponse> updateContactInfo(@RequestParam("accountNumber") String accountNumber,@RequestParam("homePhone") String homePhone ,
 			@RequestParam("email") String email,@RequestParam("bpNumber") String bpNumber,@RequestParam("uniqueID") String uniqueID ,
 			@RequestParam("userName") String userName ,@RequestParam("companyCode") String companyCode,@RequestParam("workPhone") String workPhone,
 			@RequestParam("cellPhone") String cellPhone, @RequestParam("brandName")String brandName,@RequestParam("marketingPref")String marketingPref, 
@@ -252,12 +254,12 @@ public class ProfileResource {
 		
 			
 		logger.info(" END ******* Input for the updateContactInfo API**********");
-		return updateContactInfoResponse;
+		return new ResponseEntity<GenericResponse>(updateContactInfoResponse, HttpStatus.OK);
 		
 	}
 	
 	@PostMapping(value = "profile/getContractInfo", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getContractInfo(@RequestParam("accountNumber") String accountNumber, 
+	public ResponseEntity<GenericResponse> getContractInfo(@RequestParam("accountNumber") String accountNumber, 
 			                        @RequestParam("bpNumber") String bpNumber,
 			                        @RequestParam("languageCode") String languageCode, 
 			                        @RequestParam("companyCode") String companyCode,
@@ -272,12 +274,12 @@ public class ProfileResource {
 
 		
 		logger.info("Start-[ProfileResource-getContractInfo]");
-		return getContractInfoResponse;
+		return new ResponseEntity<GenericResponse>(getContractInfoResponse, HttpStatus.OK);
 		
 	}
 
 	@PostMapping(value = "profile/smartMeterCheck", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse smartMeterCheck(@RequestParam("accountNumber") String accountNumber,@RequestParam("esid") String esid ,
+	public ResponseEntity<GenericResponse> smartMeterCheck(@RequestParam("accountNumber") String accountNumber,@RequestParam("esid") String esid ,
 			@RequestParam("companyCode") String companyCode){
 		
 		
@@ -289,7 +291,7 @@ public class ProfileResource {
 		logger.info("::::::::::::::::::::::::::::::::::::12");
 		
 		logger.info("END-[ProfileResource-smartMeterCheck]");
-		return smeterCheckRep;
+		return new ResponseEntity<GenericResponse>(smeterCheckRep, HttpStatus.OK);
 		
 	}
 
@@ -306,7 +308,7 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/productUpdate", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse productUpdate(@RequestParam("accountNumber") String accountNumber,@RequestParam("action") String action ,
+	public ResponseEntity<GenericResponse> productUpdate(@RequestParam("accountNumber") String accountNumber,@RequestParam("action") String action ,
 			@RequestParam("objectId") String objectId,@RequestParam("extUi") String extUi,@RequestParam("enrollType") String enrollType ,
 			@RequestParam("requestDate") String requestDate ,@RequestParam("manuPartNo") String manuPartNo,@RequestParam("companyCode") String companyCode,@RequestParam("bpNumber")String bpNumber,@RequestParam("source")String source){
 		
@@ -315,20 +317,20 @@ public class ProfileResource {
 		productResponse = profileBO.productUpdate(accountNumber, action , objectId, extUi, enrollType , requestDate , manuPartNo, companyCode,httpRequest.getSession(true).getId(),bpNumber,source);
 		
 		
-		return productResponse;
+		return new ResponseEntity<GenericResponse>(productResponse, HttpStatus.OK);
 		
 	}
 	/**
 	 * 
 	 */
 	@PostMapping(value = "profile/environmentalImpacts", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse environmentalImpacts(@RequestParam("accountNumber")String accountNumber,@RequestParam("companyCode") String companyCode){
+	public ResponseEntity<GenericResponse> environmentalImpacts(@RequestParam("accountNumber")String accountNumber,@RequestParam("companyCode") String companyCode){
 		
 		
 		EnvironmentImpactsResponse environmentImpactsResponse = new EnvironmentImpactsResponse();
 		environmentImpactsResponse = profileBO.environmentalImpacts(accountNumber,companyCode, httpRequest.getSession(true).getId());
 		
-		return environmentImpactsResponse;
+		return new ResponseEntity<GenericResponse>(environmentImpactsResponse, HttpStatus.OK);
 		
 	}
 	
@@ -338,7 +340,7 @@ public class ProfileResource {
 	 * SecondaryName CURD call
 	 */
 	@PostMapping(value = "profile/secondaryNameUpdate", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse secondaryNameUpdate(@RequestParam("accountNumber")String accountNumber,
+	public ResponseEntity<GenericResponse> secondaryNameUpdate(@RequestParam("accountNumber")String accountNumber,
 										@RequestParam("bpid")String bpid,
 										@RequestParam("action")String action,
 										@RequestParam("bpid2")String bpid2,
@@ -355,11 +357,11 @@ public class ProfileResource {
 		secNameResponse = profileBO.secondaryNameUpdate(accountNumber,bpid,action,bpid2,firstName,lastName,middleName,validFrom,validUntil,companyCode, httpRequest.getSession(true).getId());
 		
 		logger.info("End-[ProfileResource-secondaryNameUpdate]");
-		return secNameResponse;
+		return new ResponseEntity<GenericResponse>(secNameResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "profile/wseDeEnrollService", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse wseDeEnrollService(@RequestParam("accountNumber")String accountNumber,
+	public ResponseEntity<GenericResponse> wseDeEnrollService(@RequestParam("accountNumber")String accountNumber,
 											 @RequestParam("contractNumber")String contractNumber,
 											  @RequestParam("companyCode")String companyCode) {
 		logger.info("Start-[ProfileResource-wseEnrollDeEnrollService]");	
@@ -369,26 +371,26 @@ public class ProfileResource {
 				httpRequest.getSession(true).getId());
 		
 		logger.info("END-[ProfileResource-wseEnrollDeEnrollService]");	
-		return wsResponse;
+		return new ResponseEntity<GenericResponse>(wsResponse, HttpStatus.OK);
 			
 			
   }
 	
 	@PostMapping(value = "profile/wseEnrollService", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse wseEnrollService(@RequestParam("contractNumber")String contractNumber,
+	public ResponseEntity<GenericResponse> wseEnrollService(@RequestParam("contractNumber")String contractNumber,
 									  @RequestParam("companyCode")String companyCode) {
 		logger.info("Start-[ProfileResource-wseEnrollDeEnrollService]");	
 		
 		WsEnrollmentResponse wsResponse = profileBO.wsEnrollService(contractNumber, companyCode, httpRequest.getSession(true).getId());
 		
 		logger.info("END-[ProfileResource-wseEnrollDeEnrollService]");	
-		return wsResponse;
+		return new ResponseEntity<GenericResponse>(wsResponse, HttpStatus.OK);
 			
 			
   }
 	
 	@PostMapping(value = "profile/WseEligiblityStatusCall", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse wseEligibilityStatus(@RequestParam("contractNumber")String contractNumber,
+	public ResponseEntity<GenericResponse> wseEligibilityStatus(@RequestParam("contractNumber")String contractNumber,
 										 @RequestParam("esid") String esid,
 									     @RequestParam("companyCode")String companyCode) {
 		logger.info("Start-[ProfileResource-wseEligibilityStatus]");	
@@ -398,7 +400,7 @@ public class ProfileResource {
 						httpRequest.getSession(true).getId());
 		
 		logger.info("END-[ProfileResource-wseEligibilityStatus]");	
-		return wsResponse;
+		return new ResponseEntity<GenericResponse>(wsResponse, HttpStatus.OK);
 			
 			
   }
@@ -411,7 +413,7 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/getCirroStructure", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getCirroStructureCall(@RequestParam("bpId")String bpId,
+	public ResponseEntity<GenericResponse> getCirroStructureCall(@RequestParam("bpId")String bpId,
 									  @RequestParam("companyCode")String companyCode,
 									  @RequestParam("brandName")String brandName,
 									  @RequestParam("noOfDayBack")String noOfDayBack) {
@@ -420,7 +422,7 @@ public class ProfileResource {
 		CirroStructureResponse wsResponse = profileBO.getCirroStructureCall(bpId, companyCode, brandName,noOfDayBack,httpRequest.getSession(true).getId());
 		
 		logger.info("END-[ProfileResource-getCirroStructureCall]");	
-		return wsResponse;	
+		return new ResponseEntity<GenericResponse>(wsResponse, HttpStatus.OK);	
   }
 	
 	/**
@@ -431,7 +433,7 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/validateAccount", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse validateAccount(@RequestParam("accountNumber")String caNumber,
+	public ResponseEntity<GenericResponse> validateAccount(@RequestParam("accountNumber")String caNumber,
 									  @RequestParam("companyCode")String companyCode,
 									  @RequestParam("brandName")String brandName) {
 		logger.info("Start-[ProfileResource-validateAccount]");	
@@ -439,17 +441,17 @@ public class ProfileResource {
 		AcctValidationResponse wsResponse = profileBO.validateAccount(caNumber, companyCode, brandName, httpRequest.getSession(true).getId());
 		
 		logger.info("END-[ProfileResource-validateAccount]");	
-		return wsResponse;	
+		return new ResponseEntity<GenericResponse>(wsResponse, HttpStatus.OK);	
   }
   
 	@PostMapping(value = "profile/updateLanguage", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse updateLanguage(@RequestParam("businessPartnerId") String bpid, @RequestParam("contractAccountNumber") String ca, @RequestParam("languageCode")String languageCode, @RequestParam("companyCode") String companyCode, 
+	public ResponseEntity<GenericResponse> updateLanguage(@RequestParam("businessPartnerId") String bpid, @RequestParam("contractAccountNumber") String ca, @RequestParam("languageCode")String languageCode, @RequestParam("companyCode") String companyCode, 
 			@RequestParam("brandName") String brandName){
 		
 		UpdateLanguageResponse updateLanguageResponse = profileBO
 				.updateLanguage(bpid, ca, languageCode, companyCode, brandName,httpRequest.getSession(true).getId());
 		
-		return updateLanguageResponse;
+		return new ResponseEntity<GenericResponse>(updateLanguageResponse, HttpStatus.OK);
 		
 	}
 	
@@ -462,7 +464,7 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/getSVTData", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getSVTData(@RequestParam("bpNumber")String bpNumber,
+	public ResponseEntity<GenericResponse> getSVTData(@RequestParam("bpNumber")String bpNumber,
 									  @RequestParam("companyCode")String companyCode,
 									  @RequestParam("brandName")String brandName) {
 		logger.info("Start-[ProfileResource-getSVTData]");	
@@ -470,7 +472,7 @@ public class ProfileResource {
 		GetBPInfoResponse svtResponse = profileBO.getSVTData(bpNumber, companyCode, brandName, httpRequest.getSession(true).getId());
 		
 		logger.info("END-[ProfileResource-getSVTData]");	
-		return svtResponse;	
+		return new ResponseEntity<GenericResponse>(svtResponse, HttpStatus.OK);	
   }
 	
 	/**
@@ -483,7 +485,7 @@ public class ProfileResource {
 	 * @return
 	 */	
 	@PostMapping(value = "profile/profileCheck", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse profileCheck (
+	public ResponseEntity<GenericResponse> profileCheck (
 			  @RequestParam("companyCode")String companyCode,
 			  @RequestParam("brandName")String brandName,
 			  @RequestParam("contractAccountNumber") String contractAccountNumber,
@@ -494,7 +496,7 @@ public class ProfileResource {
 		ProfileCheckResponse profileCheckResponse = profileBO.profileCheck(companyCode,brandName,contractAccountNumber,email,checkDigit,httpRequest.getSession(true).getId());
 		
 		logger.info("END-[ProfileResource-profileCheck]");	
-		return profileCheckResponse;
+		return new ResponseEntity<GenericResponse>(profileCheckResponse, HttpStatus.OK);
 	
 	
 }
@@ -504,18 +506,18 @@ public class ProfileResource {
 	 * @return
 	 */
 	@PostMapping(value = "profile/getUserId", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public UserIdResponse getUserId(UserIdRequest userIdRequest){
+	public ResponseEntity<Object> getUserId(UserIdRequest userIdRequest){
 				
 		
 		logger.info("Start-[ProfileResource-getUserId]");
 		UserIdResponse userIdResponse = profileHelper.getuserId(userIdRequest);
 		
 		logger.info("End-[ProfileResource-getUserId]");
-		return userIdResponse;
+		return new ResponseEntity<Object>(userIdResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "profile/sendMailForPasswordChange", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public SendMailForPasswordChangeResponse sendMailForPasswordChange(
+	public ResponseEntity<GenericResponse> sendMailForPasswordChange(
 			 @RequestParam("companyCode")String companyCode,
 			  @RequestParam("brandName")String brandName,
 			  @RequestParam("contractAccountNumber") String contractAccountNumber,
@@ -530,11 +532,11 @@ public class ProfileResource {
 		
 		
 		logger.info("End-[ProfileResource-sendMailForPasswordChange]");
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "profile/sendMailForNewServiceAddressAddition", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public SendMailForNewServiceAddressAddResponse sendMailForNewServiceAddressAddition(
+	public ResponseEntity<GenericResponse> sendMailForNewServiceAddressAddition(
 			 @RequestParam("companyCode")String companyCode,
 			  @RequestParam("brandName")String brandName,
 			  @RequestParam("contractAccountNumber") String contractAccountNumber,
@@ -549,16 +551,16 @@ public class ProfileResource {
 		
 		
 		logger.info("End-[ProfileResource-sendMailForNewServiceAddressAddition]");
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "profile/validatePassword", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PasswordValidityResponse validatePassword(@RequestParam("userName") String userName, @RequestParam("password") String password,
+	public ResponseEntity<GenericResponse> validatePassword(@RequestParam("userName") String userName, @RequestParam("password") String password,
 			@RequestParam("companyCode") String companyCode) {
 		logger.info("Start-[ProfileResource-validatePassword]");
 		PasswordValidityResponse passwordValidityResponse = profileBO.validatePassword(userName, password, companyCode);
 		logger.info("End-[ProfileResource-validatePassword]");
-		return passwordValidityResponse;
+		return new ResponseEntity<GenericResponse>(passwordValidityResponse, HttpStatus.OK);
 	}
 	
 }	

@@ -2,12 +2,14 @@ package com.multibrand.resources;
 
 import java.util.logging.Logger;
 
-
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.multibrand.vo.response.GenericResponse;
 
 /*
  * <h1>Smoke Test API URL</h1>
@@ -23,12 +25,12 @@ public class SmokeTestResource extends BaseResource{
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
 
 	@GetMapping(value="/smoketest/verifystatus/{param}" ,consumes = {MediaType.TEXT_PLAIN_VALUE }, produces = {MediaType.TEXT_PLAIN_VALUE})
-	public String getMsg(@PathVariable("param") String servername) {
+	public ResponseEntity<String> getMsg(@PathVariable("param") String servername) {
 
 		String output = "Application Server up on : " + servername + "\n";
 		logger.info(output);
 
-		return output;
+		return new ResponseEntity<String>(output, HttpStatus.OK);
 
 	}
 	

@@ -5,7 +5,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,11 +49,11 @@ public class Registration {
 	 * @return response			Provide JSON/XML customer profile data response
 	 */
 	@PostMapping(value = "/registration/validateAccount", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ValidateAccountResponse validateAccount(@RequestParam("accountNumber") String accountNumber, @RequestParam("lastName") String lastName,@RequestParam("companyCode")String companyCode){
+	public ResponseEntity<GenericResponse> validateAccount(@RequestParam("accountNumber") String accountNumber, @RequestParam("lastName") String lastName,@RequestParam("companyCode")String companyCode){
 		//Response response = null;
 		ValidateAccountResponse validateAccountResponse = registrationBO.validateAccount(accountNumber, lastName,companyCode,httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(validateAccountResponse).build();
-		return validateAccountResponse;
+		return new ResponseEntity<GenericResponse>(validateAccountResponse, HttpStatus.OK);
 		
 	}
 	
@@ -71,7 +74,7 @@ public class Registration {
 	 * @return
 	 */
 	@PostMapping(value = "/registration/createUser", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse createUser(
+	public ResponseEntity<GenericResponse> createUser(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("lastName") String lastName,
 			@RequestParam("email") String email,
@@ -92,7 +95,7 @@ public class Registration {
 				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit,source);
 		//response = Response.status(200).entity(responseVo).build();
 		logger.info("END-[Registration-createUser]");
-		return responseVo;
+		return new ResponseEntity<GenericResponse>(responseVo, HttpStatus.OK);
 		
 	}
 	
@@ -114,7 +117,7 @@ public class Registration {
 	 * @return
 	 */
 	@PostMapping(value = "/registration/validateAccountForMobile", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ValidateAccountForMobileResponse validateAccountForMobile(
+	public ResponseEntity<GenericResponse> validateAccountForMobile(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("lastName") String lastName,
 			@RequestParam("userName") String userName,
@@ -131,7 +134,7 @@ public class Registration {
 				lastName, userName, companyCode,brandName,sessionId);
 		//response = Response.status(200).entity(validateAccountForMobileResponse).build();
 		logger.info("END-[Registration-validateAccountForMobile]");
-		return validateAccountForMobileResponse;
+		return new ResponseEntity<GenericResponse>(validateAccountForMobileResponse, HttpStatus.OK);
 		
 	}
 	

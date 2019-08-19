@@ -6,7 +6,9 @@ import javax.validation.Valid;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +27,7 @@ import com.multibrand.vo.request.PrivacyPreferencesRequest;
 import com.multibrand.vo.request.SMSOptInOutEligibilityRequest;
 import com.multibrand.vo.response.ActivationResponse;
 import com.multibrand.vo.response.DeactivationResponse;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GetAllBPsResponse;
 import com.multibrand.vo.response.GetContactAlertPrefsResponse;
 import com.multibrand.vo.response.GetContactInfoResponse;
@@ -61,13 +64,13 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/activatePhone", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ActivationResponse activatePhone(@Valid ActivationRequest request) {
+	public  ResponseEntity<GenericResponse> activatePhone(@Valid ActivationRequest request) {
 
 		//Response response = null;
 		ActivationResponse actResponse = preferenceBO.activatePhone(
 				request, httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(actResponse).build();
-		return actResponse;
+		return new ResponseEntity<GenericResponse>(actResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -78,12 +81,12 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/sendActivate", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ActivationResponse sendActivate(@Valid SendActivateRequest request) {
+	public  ResponseEntity<GenericResponse> sendActivate(@Valid SendActivateRequest request) {
 
 		//Response response = null;
 		ActivationResponse actResponse = preferenceBO.sendActivate(request,httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(actResponse).build();
-		return actResponse;
+		return new ResponseEntity<GenericResponse>(actResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -95,13 +98,13 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/sendNewActivate", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ActivationResponse sendNewActivate(@Valid SendNewActivateRequest request) {
+	public  ResponseEntity<GenericResponse> sendNewActivate(@Valid SendNewActivateRequest request) {
 
 		//Response response = null;
 		ActivationResponse actResponse = preferenceBO.sendNewActivate(request,
 				httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(actResponse).build();
-		return actResponse;
+		return new ResponseEntity<GenericResponse>(actResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -113,7 +116,7 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/getContactInfo", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GetContactInfoResponse getContactInformation(@Valid GetContactInfoRequest request) {
+	public  ResponseEntity<GenericResponse> getContactInformation(@Valid GetContactInfoRequest request) {
 		//Response response = null;
 
 		GetContactInfoResponse contactInfoResp = preferenceBO
@@ -121,7 +124,7 @@ public class PreferencesResource {
 						httpRequest.getSession(true).getId());
 		
 		//response = Response.status(200).entity(contactInfoResp).build();
-		return contactInfoResp;
+		return new ResponseEntity<GenericResponse>(contactInfoResp, HttpStatus.OK);
 	}
 
 	/**
@@ -133,12 +136,12 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/getAllBPs", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GetAllBPsResponse getAllBP(@Valid GetAllBPRequest request) {
+	public  ResponseEntity<GenericResponse> getAllBP(@Valid GetAllBPRequest request) {
 		//Response response = null;
 		GetAllBPsResponse getAllBpResp = preferenceBO.getAllBP(request, httpRequest.getSession(true).getId());
 
 		//response = Response.status(200).entity(getAllBpResp).build();
-		return getAllBpResp;
+		return new ResponseEntity<GenericResponse>(getAllBpResp, HttpStatus.OK);
 	}
 
 	/**
@@ -150,13 +153,13 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/deactivatePhone", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public DeactivationResponse deactivatePhone(@Valid DeactivateRequest request) {
+	public  ResponseEntity<GenericResponse> deactivatePhone(@Valid DeactivateRequest request) {
 		//Response response = null;
 		DeactivationResponse deactivationResponse = preferenceBO
 				.deactivatePhone(request, httpRequest.getSession(true)
 								.getId());
 		//response = Response.status(200).entity(deactivationResponse).build();
-		return deactivationResponse;
+		return new ResponseEntity<GenericResponse>(deactivationResponse, HttpStatus.OK);
 	}
 	
 	
@@ -167,14 +170,14 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/readContactAlertPref", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GetContactAlertPrefsResponse readContactAlertPrefs(@Valid ReadContactAlertRequest request){
+	public  ResponseEntity<GenericResponse> readContactAlertPrefs(@Valid ReadContactAlertRequest request){
 		
 		//Response response = null;
 		GetContactAlertPrefsResponse getContAlertPref = preferenceBO
 				.readContactPrefs(request,httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(getContAlertPref).build();
 		
-		return getContAlertPref;
+		return new ResponseEntity<GenericResponse>(getContAlertPref, HttpStatus.OK);
 	}
 	
 	/**
@@ -185,7 +188,7 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/protected/saveUpdateContactAlertPrefs", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public UpdationResponse saveUpdateContactAlertPrefs(@Valid SaveUpdateAlertPrefRequest request){
+	public  ResponseEntity<GenericResponse> saveUpdateContactAlertPrefs(@Valid SaveUpdateAlertPrefRequest request){
 		
 		//Response response = null;
 		
@@ -193,20 +196,20 @@ public class PreferencesResource {
 				.saveUpdateContactAlertPref(request, httpRequest.getSession(true)
 								.getId());
 		//response = Response.status(200).entity(updationResponse).build();
-		return updationResponse;
+		return new ResponseEntity<GenericResponse>(updationResponse, HttpStatus.OK);
 		
 	}
 	
 	@PostMapping(value = "/preferences/savePrivacyPreference", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PrivacyPreferenceResponse savePrivacyPreference(PrivacyPreferencesRequest request){
+	public  ResponseEntity<GenericResponse> savePrivacyPreference(PrivacyPreferencesRequest request){
 		
 		//Response response = null;
 		
 		PrivacyPreferenceResponse resp = preferenceBO.savePrivacyPreference(request);
 		//response = Response.status(200).entity(resp).build();
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 		
 	}
 	/** US12887 - DK | SMS ALERTS | 10/15/2018 **/
@@ -220,12 +223,12 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/checkOptInOutEligibility", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public SMSOptInOutEligibilityResponse checkOptInOutEligibility(@Valid SMSOptInOutEligibilityRequest request){
+	public  ResponseEntity<GenericResponse> checkOptInOutEligibility(@Valid SMSOptInOutEligibilityRequest request){
 		
 		//Response response = null;		
 		SMSOptInOutEligibilityResponse resp = preferenceBO.checkOptInOutEligibility(request, httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(resp).build();
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK) ;
 		
 	}
 	/** END | US12887 - DK | SMS ALERTS | 10/15/2018 **/
@@ -241,11 +244,11 @@ public class PreferencesResource {
 	@PostMapping(value = "/preferences/OptInOptOut", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
 					MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public OptInOptOutResponse OptInOptOut(@Valid OptInOptOutRequest request){		
+	public  ResponseEntity<GenericResponse> OptInOptOut(@Valid OptInOptOutRequest request){		
 		//Response response = null;				
 		OptInOptOutResponse resp = preferenceBO.OptInOptOutToSMS(request, httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(resp).build();
-		return resp;
+		return new ResponseEntity<GenericResponse>(resp, HttpStatus.OK);
 		
 	}
 	/** END | US12884 - DK | SMS ALERTS | 10/16/2018 **/

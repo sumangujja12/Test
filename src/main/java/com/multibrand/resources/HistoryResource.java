@@ -5,7 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -62,7 +64,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getDailyHourlyUsage", consumes = {
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getUsage(
+	public ResponseEntity<GenericResponse> getUsage(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("contractId") String contractId,
 			@RequestParam("esid") String esid,
@@ -84,7 +86,7 @@ public class HistoryResource
 		//response = Response.status(200).entity(usageResponse).build();
 		logger.info("END-[HistoryResourse-getUsage]");
 		logger.debug("Exiting getUsage in History Resource");
-		return usageResponse;
+		return new ResponseEntity<GenericResponse>(usageResponse, HttpStatus.OK);
 	}
 	
 	 /**
@@ -100,7 +102,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getPaymentHistory", consumes = {
 				MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PaymentHistoryResponse getPaymentHistory(
+	public ResponseEntity<GenericResponse> getPaymentHistory(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("legacyAccountNumber") String legacyAccountNumber,
 			@RequestParam("conversionDate") String conversionDate,
@@ -115,7 +117,7 @@ public class HistoryResource
 		//response = Response.status(200).entity(historyResponse).build();
 		logger.info("END-[HistoryResourse-getPaymentHistory]");
 		logger.debug("Exiting getPaymentHistory in History Resource");
-		return historyResponse;
+		return new ResponseEntity<GenericResponse>(historyResponse, HttpStatus.OK);
 	}
 	
 	
@@ -132,7 +134,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getPlanHistory", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PlanHistoryResponse getPlanHistory(
+	public ResponseEntity<GenericResponse> getPlanHistory(
 			                       @RequestParam("accountNumber")String accountNumber,
 			                       @RequestParam("legacyAccountNumber")String legacyAccountNumber,
 			                       @RequestParam("conversionDate")String conversionDate,
@@ -148,12 +150,12 @@ public class HistoryResource
 		//response = Response.status(200).entity(planHistoryResponse).build();
 		logger.info("END-[UsageHistoryResourse-getUsage]");
 		logger.debug("Exiting getUsage in Usage Resource");
-		return planHistoryResponse;
+		return new ResponseEntity<GenericResponse>(planHistoryResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "/history/getBillHistory", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public BillPaymentHistoryResponse getBillPaymentHistory(
+	public ResponseEntity<GenericResponse> getBillPaymentHistory(
 			                       @RequestParam("accountNumber")String accountNumber,
 			                       @RequestParam("legacyAccountNumber")String legacyAccountNumber,
 			                       @RequestParam("conversionDate")String conversionDate,
@@ -169,7 +171,7 @@ public class HistoryResource
 		
 		//response = Response.status(200).entity(billPaymentHistoryResponse).build();
 		logger.info("END-[getBillPaymentHistory]"); 
-		return billPaymentHistoryResponse;
+		return new ResponseEntity<GenericResponse>(billPaymentHistoryResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -184,7 +186,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getWeeklyCompareUsage", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public WeeklyUsageResponseList getWeeklyUsage(
+	public ResponseEntity<GenericResponse> getWeeklyUsage(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("contractId") String contractId,
 			@RequestParam("esid") String esid,
@@ -201,7 +203,7 @@ public class HistoryResource
 		//response = Response.status(200).entity(weeklyUsageResp).build();
 		
 		logger.info("END-[HistoryResourse-getWeeklyUsage]"); 
-		return weeklyUsageResp;
+		return new ResponseEntity<GenericResponse>(weeklyUsageResp, HttpStatus.OK);
 		
 		
 	}
@@ -219,7 +221,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getMonthlyUsage", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public MonthlyUsageResponseList getMonthlyUsage(
+	public ResponseEntity<GenericResponse> getMonthlyUsage(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("contractId") String contractId,
 			@RequestParam("esid") String esid,
@@ -236,7 +238,7 @@ public class HistoryResource
 		//response = Response.status(200).entity(monthlyUsageResp).build();
 		
 		logger.info("END-[getMonthlyUsage]"); 
-		return monthlyUsageResp;
+		return new ResponseEntity<GenericResponse>(monthlyUsageResp, HttpStatus.OK);
 		
 		
 	}
@@ -254,7 +256,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getDailyWeeklyCompareUsage", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public DailyWeeklyUsageResponseList getDailyWeeklyUsage(
+	public ResponseEntity<GenericResponse> getDailyWeeklyUsage(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("contractId") String contractId,
 			@RequestParam("esid") String esid,
@@ -272,7 +274,7 @@ public class HistoryResource
 		//response = Response.status(200).entity(dailyWeeklyUsageResp).build();
 		
 		logger.info("END-[HistoryResourse-getDailyWeeklyUsage]"); 
-		return dailyWeeklyUsageResp;
+		return new ResponseEntity<GenericResponse>(dailyWeeklyUsageResp, HttpStatus.OK);
 		
 		
 	}
@@ -287,7 +289,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getSmartMeterUsageHistory", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public SmartMeterUsageResponseList getSmartMeterUsageHistory(
+	public ResponseEntity<GenericResponse> getSmartMeterUsageHistory(
 			@RequestParam("esid") String esid,
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("startDate") String startDate,
@@ -299,7 +301,7 @@ public class HistoryResource
 					startDate, endDate, companyCode, httpRequest.getSession(true).getId());
 			//response = Response.status(200).entity(smartMeterUsageResp).build();
 			logger.info("END-[HistoryResourse-getSmartMeterUsageHistory]"); 
-			return smartMeterUsageResp;
+			return new ResponseEntity<GenericResponse>(smartMeterUsageResp, HttpStatus.OK);
 			
     }
 	
@@ -313,7 +315,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getIntervalData", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public IntervalDataResponse getIntervalData(
+	public ResponseEntity<GenericResponse> getIntervalData(
 			@RequestParam("esid") String esid,
 			@RequestParam("startDate")String startDate,
 			@RequestParam("endDate")String endDate,
@@ -328,7 +330,7 @@ public class HistoryResource
 		//response = Response.status(200).entity(intervalDataResp).build();
 		
 		logger.info("END-[HistoryResourse-getIntervalData]"); 
-		return intervalDataResp;
+		return new ResponseEntity<GenericResponse>(intervalDataResp, HttpStatus.OK);
 		
 		
 	}
@@ -341,7 +343,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/fetchPaymentHistory", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PaymentHistoryResponse fetchPaymentHistory(
+	public ResponseEntity<GenericResponse> fetchPaymentHistory(
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate,
@@ -358,7 +360,7 @@ public class HistoryResource
 			
 		logger.info("END-[HistoryResourse-fetchPaymentHistory]");
 		logger.debug("Exiting fetchPaymentHistory in History Resource");
-		return historyResponse;
+		return new ResponseEntity<GenericResponse>(historyResponse, HttpStatus.OK);
 	}
 	
 	
@@ -373,7 +375,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getInvoiceUsageHistory", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public InvoiceUsageHistoryResponse getInvoiceUsageHistory(
+	public ResponseEntity<GenericResponse> getInvoiceUsageHistory(
 			                       @RequestParam("accountNumber")String accountNumber,			                       
 			                       @RequestParam("startDate")String startDate,
 			                       @RequestParam("endDate")String endDate,
@@ -387,7 +389,7 @@ public class HistoryResource
 		//response = Response.status(200).entity(invoiceUsageHistoryResponse).build();
 			
 		logger.info("END-[getInvoiceUsageHistory]"); 
-		return invoiceUsageHistoryResponse;
+		return new ResponseEntity<GenericResponse>(invoiceUsageHistoryResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -400,7 +402,7 @@ public class HistoryResource
 	 */
 	@PostMapping(value = "/history/getConsumptionUsageHistory", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GetConsumptionHistoryResponse getConsumptionUsage(
+	public ResponseEntity<GenericResponse> getConsumptionUsage(
 			@RequestParam("contractId") String contractId,
 			@RequestParam("noOfMonths") String noOfMonths,
 			@RequestParam("brandName") String brandName,
@@ -414,14 +416,14 @@ public class HistoryResource
 		//response = Response.status(200).entity(consumptionResponse).build();
 		
 		logger.info("END-[HistoryResourse-getConsumptionUsage]"); 
-		return consumptionResponse;
+		return new ResponseEntity<GenericResponse>(consumptionResponse, HttpStatus.OK);
 		
 		
 	}
 	
 	@PostMapping(value = "/history/getWeeklyUsage", consumes = {
 			MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public WeeklyUsageResponse getWeeklyUsage(@RequestParam("accountNumber") String accountNumber,
+	public ResponseEntity<GenericResponse> getWeeklyUsage(@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("contractId") String contractId, @RequestParam("esid") String esid,
 			@RequestParam("zoneId") String zoneId, @RequestParam("companyCode") String companyCode,
 			@RequestParam("brandName") String brandName, @RequestParam("weekNumber") int weekNumber,
@@ -430,7 +432,7 @@ public class HistoryResource
 		WeeklyUsageResponse weeklyUsageSummary = historyBO.getWeeklyUsageData(accountNumber, contractId, esid, zoneId,
 				companyCode, brandName, weekNumber, year, httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(weeklyUsageSummary).build();
-		return weeklyUsageSummary;
+		return new ResponseEntity<GenericResponse>(weeklyUsageSummary, HttpStatus.OK);
 	}
 
 }

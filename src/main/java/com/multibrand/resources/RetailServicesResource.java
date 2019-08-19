@@ -3,7 +3,9 @@ package com.multibrand.resources;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,7 @@ import com.multibrand.service.RetailServicesService;
 import com.multibrand.vo.request.CheckReliantCustomerStatusRequest;
 import com.multibrand.vo.response.CheckReliantCustomerStatusResponse;
 import com.multibrand.vo.response.CheckZipSecurityEligibilityResponse;
+import com.multibrand.vo.response.GenericResponse;
 
 @RestController
 public class RetailServicesResource {
@@ -27,7 +30,7 @@ public class RetailServicesResource {
 	RetailServicesBO retailServicesBO;
 	
 	@PostMapping(value = "/retailServices/readHouseAgeAndHHIncome", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public RetailServicesResponse readHouseAgeAndHHIncome(@RequestParam("esidOrAddressId") String esidOrAddressId) {
+	public ResponseEntity<Object> readHouseAgeAndHHIncome(@RequestParam("esidOrAddressId") String esidOrAddressId) {
 		logger.info(" START ******* readHouseAgeAndHHIncome API**********");
 		RetailServicesResponse retailServicesResponse = new RetailServicesResponse();
 		try{
@@ -37,11 +40,11 @@ public class RetailServicesResource {
 		}
 		//Response response = Response.status(Response.Status.OK).entity(retailServicesResponse).build();
 		logger.info(" END ******* readHouseAgeAndHHIncome API**********");
-		return retailServicesResponse;
+		return new ResponseEntity<Object>(retailServicesResponse, HttpStatus.OK);
 	} 
 	
 	@PostMapping(value = "/retailServices/readReliantCustomerStatus", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public CheckReliantCustomerStatusResponse readReliantCustomerStatus(@RequestParam("email") String email,@RequestParam("fName") String fName,@RequestParam("lName") String lName,
+	public ResponseEntity<GenericResponse> readReliantCustomerStatus(@RequestParam("email") String email,@RequestParam("fName") String fName,@RequestParam("lName") String lName,
 			@RequestParam("street") String street,@RequestParam("houseNo") String houseNo,@RequestParam("apartmentNo") String apartmentNo,
 			@RequestParam("city") String city,@RequestParam("state") String state,@RequestParam("zipCode") String zipCode) {
 		logger.info(" START ******* readReliantCustomerStatus API**********");
@@ -64,11 +67,11 @@ public class RetailServicesResource {
 		}
 		//Response response = Response.status(Response.Status.OK).entity(checkReliantCustomerStatusResponse).build();
 		logger.info(" END ******* readReliantCustomerStatus API**********");
-		return checkReliantCustomerStatusResponse;
+		return new ResponseEntity<GenericResponse>(checkReliantCustomerStatusResponse, HttpStatus.OK);
 	} 
 	
 	@PostMapping(value = "/retailServices/checkZipForSecurityEligibility", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public 	CheckZipSecurityEligibilityResponse checkZipForSecurityEligibility(@RequestParam("zipCode") String zipCode) {
+	public 	ResponseEntity<GenericResponse> checkZipForSecurityEligibility(@RequestParam("zipCode") String zipCode) {
 		logger.info(" START ******* checkZipForSecurityEligibility API**********");
 		CheckZipSecurityEligibilityResponse checkZipSecurityEligibilityResponse = new CheckZipSecurityEligibilityResponse();
 		try{
@@ -78,7 +81,7 @@ public class RetailServicesResource {
 		}
 		//Response response = Response.status(Response.Status.OK).entity(checkZipSecurityEligibilityResponse).build();
 		logger.info(" END ******* checkZipForSecurityEligibility API**********");
-		return checkZipSecurityEligibilityResponse;
+		return new ResponseEntity<GenericResponse>(checkZipSecurityEligibilityResponse, HttpStatus.OK);
 	} 
 	
 	

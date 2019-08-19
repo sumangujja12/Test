@@ -77,7 +77,7 @@ public class LoggerAspect {
 	public Object logRequestDetails(ProceedingJoinPoint methodPoint, METHOD_TYPE methodType) throws Throwable {
 
 		Object output = null;
-
+		request.setAttribute("suppress_response_codes", true);
 		// Build log message prefix
 		String logPrefix = getLogPrefix(methodType);
 		String className = methodPoint.getTarget().getClass().getName();
@@ -119,7 +119,7 @@ public class LoggerAspect {
 			}
 		}
 		logger.info("###########END-" + logMessagePrefix + "-###########");
-
+		
 		return output;
 	}
 
@@ -200,7 +200,7 @@ public class LoggerAspect {
 		logger.info("###########START- getErrorDisplay -###########");
 		Object obj = null;
 		if(output != null && output instanceof  ResponseEntity ) {
-			ResponseEntity<GenericResponse> objResp = (ResponseEntity<GenericResponse>) output;
+			ResponseEntity<Object> objResp = (ResponseEntity<Object>) output;
 			obj = objResp.getBody();
 		} else {
 			 obj = output;

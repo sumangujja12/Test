@@ -100,9 +100,6 @@ public class BillingResource {
 	@Autowired
 	ErrorContentHelper errorContentHelper;
 	
-	@Autowired
-	private BillingRequestHandler billingRequestHandler;
-	
 	/** This service is to provide the balance information from CCS system.
 	 * 
 	 * @author Kdeshmu1
@@ -110,10 +107,10 @@ public class BillingResource {
 	 * @return response			Provide JSON/XML balance data response
 	 */
 	@PostMapping(value="/billResource/getBalance", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GetArResponse getBalance(@RequestParam("accountNumber") String accountNumber, @RequestParam("bpid") String bpNumber,
+	public ResponseEntity<GenericResponse> getBalance(@RequestParam("accountNumber") String accountNumber, @RequestParam("bpid") String bpNumber,
 			@RequestParam("companyCode") String companyCode, @RequestParam("brandName")String brandName){
 		GetArResponse getArResponse = billingBO.getBalance(accountNumber,bpNumber,companyCode, httpRequest.getSession(true).getId(),brandName);
-		return getArResponse;
+		return new ResponseEntity<GenericResponse>(getArResponse, HttpStatus.OK);
 		
 	}
 	
@@ -125,9 +122,9 @@ public class BillingResource {
 	 * @return response			Provide JSON/XML response containing billing address
 	 */
 	@PostMapping(value="/billResource/getBillingAddress", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GetBillingAddressResponse getBillingAddress(@RequestParam("accountNumber") String accountNumber, @RequestParam("companyCode") String companyCode){
+	public ResponseEntity<GenericResponse> getBillingAddress(@RequestParam("accountNumber") String accountNumber, @RequestParam("companyCode") String companyCode){
 		GetBillingAddressResponse billingAddressResp = billingBO.getBillingAddress(accountNumber, companyCode, httpRequest.getSession(true).getId());
-		return billingAddressResp;
+		return new ResponseEntity<GenericResponse>(billingAddressResp, HttpStatus.OK) ;
 	}
 	
 	
@@ -138,11 +135,11 @@ public class BillingResource {
 	 * @return response			Provide JSON/XML response containing all the account details
 	 */
 	@PostMapping(value="/billResource/getAccountDetails", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GetAccountDetailsResponse getAccountDetails(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode, @RequestParam("brandName") String brandName){
+	public ResponseEntity<GenericResponse> getAccountDetails(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode, @RequestParam("brandName") String brandName){
 		logger.info(" START ******* getAccountDetails API**********");
 		GetAccountDetailsResponse getAccountDetailsResp = billingBO.getAccountDetails(accountNumber, companyCode,brandName, httpRequest.getSession(true).getId());
 		logger.info("END of the getAccountDetails API*************");
-		return getAccountDetailsResp;
+		return new ResponseEntity<GenericResponse>(getAccountDetailsResp, HttpStatus.OK);
 		
 	}
 	
@@ -173,7 +170,7 @@ public class BillingResource {
 	 * @return response			Provide JSON/XML response 
 	 */
 	@PostMapping(value="/billResource/updatePaperFreeBilling", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public UpdatePaperFreeBillingResponse updatePaperFreeBilling(@RequestParam("accountNumber") String accountNumber,@RequestParam("flag") String flag,
+	public ResponseEntity<GenericResponse> updatePaperFreeBilling(@RequestParam("accountNumber") String accountNumber,@RequestParam("flag") String flag,
 			@RequestParam("companyCode") String companyCode,@RequestParam("bpNumber")String bpNumber, @RequestParam("source")String source){
 		
 		//Response response = null;
@@ -181,7 +178,7 @@ public class BillingResource {
 		
 		
 		//response = Response.status(200).entity(updatePaperFreeBillingResponse).build();
-		return updatePaperFreeBillingResponse;
+		return new ResponseEntity<GenericResponse>(updatePaperFreeBillingResponse, HttpStatus.OK);
 		
 	}
 	
@@ -204,7 +201,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/submitBankPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PayByBankResponse submitBankPayment(@RequestParam("accountNumber") String accountNumber, @RequestParam("bpid")String bpid,
+	public ResponseEntity<GenericResponse> submitBankPayment(@RequestParam("accountNumber") String accountNumber, @RequestParam("bpid")String bpid,
 			@RequestParam("bankAccountNumber") String bankAccountNumber, @RequestParam("bankRoutingNumber") String bankRoutingNumber, @RequestParam("paymentAmount")String paymentAmount,
 			@RequestParam("paymentDate")String paymentDate, @RequestParam("companyCode") String companyCode, @RequestParam("accountName") String accountName, 
 			@RequestParam("accountChkDigit") String accountChkDigit, @RequestParam("languageCode")String locale, @RequestParam("email") String email,
@@ -219,7 +216,7 @@ public class BillingResource {
 		
 		//response = Response.status(200).entity(payByBankResp).build();
 		logger.debug("END BillingResource.submitBankPayment :: END");
-		return payByBankResp;
+		return new ResponseEntity<GenericResponse>(payByBankResp, HttpStatus.OK);
 	}
 	
 	/**
@@ -240,7 +237,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/submitCCPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PayByCCResponse submitCCPayment(@RequestParam("authType")String authType, @RequestParam("accountNumber") String accountNumber, @RequestParam("bpid")String bpid,
+	public ResponseEntity<GenericResponse> submitCCPayment(@RequestParam("authType")String authType, @RequestParam("accountNumber") String accountNumber, @RequestParam("bpid")String bpid,
 			@RequestParam("ccNumber") String ccNumber, @RequestParam("cvvNumber") String cvvNumber, @RequestParam("expirationDate")String expirationDate,
 			@RequestParam("billingZip")String billingZip, @RequestParam("paymentAmount") String paymentAmount, @RequestParam("accountName") String accountName,
 			@RequestParam("accountChkDigit") String accountChkDigit, @RequestParam("languageCode")String locale, @RequestParam("email") String email, 
@@ -272,7 +269,7 @@ public class BillingResource {
 		//response = Response.status(200).entity(payByCCResp).build();
 				
 		logger.debug("END BillingResource.submitCCPayment :: END");
-		return payByCCResp;
+		return new ResponseEntity<GenericResponse>(payByCCResp, HttpStatus.OK);
 	}
 	
 	
@@ -284,7 +281,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/projectedBill", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ProjectedBillResponseList getProjectedBill(
+	public ResponseEntity<GenericResponse> getProjectedBill(
 			@RequestParam("esid") String esiId,
 			@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("companyCode") String companyCode)
@@ -301,7 +298,7 @@ public class BillingResource {
 
 		logger.debug("Start BillingResource.getProjectedeBill :: END");
 
-		return projectedResp;
+		return new ResponseEntity<GenericResponse>(projectedResp, HttpStatus.OK);
 
 	}
 	
@@ -318,7 +315,7 @@ public class BillingResource {
 	 * 		response object hold the average temperatureValue
 	 */
 	@PostMapping(value="/billResource/avgTemperatureBill", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public AvgTempResponse getAvgTempBill(
+	public ResponseEntity<GenericResponse> getAvgTempBill(
 			@RequestParam("billStartDate") String billStartDate,
 			@RequestParam("billEndDate") String billEndDate,
 			@RequestParam("zoneId") String zoneId,
@@ -336,7 +333,7 @@ public class BillingResource {
 
 		logger.debug("Start BillingResource.getProjectedeBill :: END");
 
-		return avgTempResponse;
+		return new ResponseEntity<GenericResponse>(avgTempResponse, HttpStatus.OK);
 
 	}
 	
@@ -349,7 +346,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/billInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public BillInfoResponse billInfo(@RequestParam("accountNumber") String accountNumber, 
+	public ResponseEntity<GenericResponse> billInfo(@RequestParam("accountNumber") String accountNumber, 
 			@RequestParam("bpNumber")String bpid, @RequestParam("contractId") String contractNumber, 
 			@RequestParam("companyCode") String companyCode, @RequestParam("brandName") String brandName){
 		logger.info("Start BillingResource.BillInfo :: START");
@@ -360,7 +357,7 @@ public class BillingResource {
 		
 		//response = Response.status(200).entity(billInfoResponse).build();
 		logger.info("END BillingResource.BillInfo :: END");
-		return billInfoResponse;
+		return new ResponseEntity<GenericResponse>(billInfoResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -372,7 +369,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/doCancelPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public CancelPaymentResponse doCancelPayment(@RequestParam("accountNumber") String accountNumber,
+	public ResponseEntity<GenericResponse> doCancelPayment(@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("companyCode") String companyCode, @RequestParam("paymentId") String paymentId,
 			@RequestParam("brandName") String brandName, @RequestParam("businessPartnerId") String bpid,
 			@RequestParam("action") String action) {
@@ -394,7 +391,7 @@ public class BillingResource {
 		//response = Response.status(200).entity(cancelPaymentResponse).build();
 		
 		logger.debug("END BillingResource.doCancelPayment :: END");
-		return cancelPaymentResponse;
+		return new ResponseEntity<GenericResponse>(cancelPaymentResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -408,7 +405,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/updateInvoiceDelivery", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public UpdateInvoiceDeliveryResponse updateInvoiceDelivery(@RequestParam("accountNumber") String accountNumber,@RequestParam("eBillFlag") String ebillflag,
+	public ResponseEntity<GenericResponse> updateInvoiceDelivery(@RequestParam("accountNumber") String accountNumber,@RequestParam("eBillFlag") String ebillflag,
 			@RequestParam("paperFlag") String paperFlag, @RequestParam("companyCode") String companyCode, 
 			@RequestParam("brandName") String brandName, @RequestParam("email") String email){
 		//Response response = null;
@@ -428,7 +425,7 @@ public class BillingResource {
 		//System.out.println(" Response  json- "+CommonUtil.wirteObjectToJson(response));
 		logger.info("END of the updateInvoiceDelivery API*************");
 		
-		return updateInvoiceDeliveryResponse;
+		return new ResponseEntity<GenericResponse>(updateInvoiceDeliveryResponse, HttpStatus.OK);
 		
 	}
 	
@@ -442,14 +439,14 @@ public class BillingResource {
 	 * Added for Cirro to fetch Bank and cc info related to a bpid or ca
 	 */
 	@PostMapping(value="/billResource/getBankCCInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public BankCCInfoResponse getBankCCInfo(@RequestParam("businessPartnerId") String bpid, @RequestParam("companyCode") String companyCode, 
+	public ResponseEntity<GenericResponse> getBankCCInfo(@RequestParam("businessPartnerId") String bpid, @RequestParam("companyCode") String companyCode, 
 			@RequestParam("brandName") String brandName){
 		//Response response = null;
 		BankCCInfoResponse bankCCInfoResp = billingBO
 				.getBankCCInfo(bpid, companyCode, brandName,httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(bankCCInfoResp).build();
 				
-		return bankCCInfoResp;
+		return new ResponseEntity<GenericResponse>(bankCCInfoResp, HttpStatus.OK);
 		
 	}
 	
@@ -466,7 +463,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/updateBankInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public BankInfoUpdateResponse updateBankInfo(
+	public ResponseEntity<GenericResponse> updateBankInfo(
 			@RequestParam("businessPartnerId") String bpid,
 			@RequestParam("bankAccountNumber") String bankAccountNumber, 
 			@RequestParam("bankRoutingNumber")String bankRoutingNumber, 
@@ -487,7 +484,7 @@ public class BillingResource {
 						bankAccountHolderType,nameOnAccount,onlinePayAccountId, companyCode, brandName,httpRequest.getSession(true).getId(),emailId);
 		//response = Response.status(200).entity(bankInfoUpdateResp).build();
 				
-		return bankInfoUpdateResp;
+		return new ResponseEntity<GenericResponse>(bankInfoUpdateResp, HttpStatus.OK);
 		
 	}
 	
@@ -509,7 +506,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/updateCCInfo", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public CcInfoUpdateResponse updateCCInfo(
+	public ResponseEntity<GenericResponse> updateCCInfo(
 			@RequestParam("businessPartnerId") String bpid,
 			@RequestParam("ccType")String ccType,
 			@RequestParam("ccNumber") String ccNumber, 
@@ -543,7 +540,7 @@ public class BillingResource {
 						httpRequest.getSession(true).getId(),emailId);
 		//response = Response.status(200).entity(ccInfoUpdateResponse).build();
 				
-		return ccInfoUpdateResponse;
+		return new ResponseEntity<GenericResponse>(ccInfoUpdateResponse, HttpStatus.OK);
 		
 	}
 	
@@ -562,7 +559,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/scheduleOneTimeCCPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ScheduleOTCCPaymentResponse scheduleOneTimeCCPayment(
+	public ResponseEntity<GenericResponse> scheduleOneTimeCCPayment(
 			@RequestParam("businessPartnerId") String bpid,
 			@RequestParam("contractAccountNumber")String contractAccountNumber,
 			@RequestParam("ccNumber") String ccNumber, 
@@ -593,7 +590,7 @@ public class BillingResource {
 		
 		//response = Response.status(200).entity(scheduleOTCCPaymentResponse).build();
 				
-		return scheduleOTCCPaymentResponse;
+		return new ResponseEntity<GenericResponse>(scheduleOTCCPaymentResponse, HttpStatus.OK);
 		
 	}
 	
@@ -609,7 +606,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/editCancelOTCCPayment", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public EditCancelOTCCPaymentResponse editCancelOTCCPayment(
+	public ResponseEntity<GenericResponse> editCancelOTCCPayment(
 			@RequestParam("businessPartnerId") String bpid,
 			@RequestParam("contractAccountNumber")String contractAccountNumber,
 			@RequestParam("trackingId") String trackingId, 
@@ -627,12 +624,12 @@ public class BillingResource {
 						httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(editCancelOTCCPaymentResponse).build();
 				
-		return editCancelOTCCPaymentResponse;
+		return new ResponseEntity<GenericResponse>(editCancelOTCCPaymentResponse, HttpStatus.OK);
 		
 	}
 	
 	@PostMapping(value="/billResource/getPayAccounts", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PayAccountInfoResponse getPayAccounts(
+	public ResponseEntity<GenericResponse> getPayAccounts(
 			@RequestParam("contractAccountNumber")String contractAccountNumber,
 			@RequestParam("companyCode") String companyCode, 
 			@RequestParam("brandName") String brandName){
@@ -643,23 +640,23 @@ public class BillingResource {
 		
 		//response = Response.status(200).entity(payAccountResponse).build();
 				
-		return payAccountResponse;
+		return new ResponseEntity<GenericResponse>(payAccountResponse, HttpStatus.OK);
 		
 	}
 	
 	@PostMapping(value="/billResource/storePayAccount", consumes = {  MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE} , produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public StoreUpdatePayAccountResponse storePayAccount(StoreUpdatePayAccountRequest request){
+	public ResponseEntity<GenericResponse> storePayAccount(StoreUpdatePayAccountRequest request){
 		//Response response = null;
 		
 		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.storePayAccount(request, httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(storeUpdatePayAccountResponse).build();
 				
-		return storeUpdatePayAccountResponse;
+		return new ResponseEntity<GenericResponse>(storeUpdatePayAccountResponse, HttpStatus.OK);
 		
 	}
 	
 	@PostMapping(value="/billResource/updatePayAccount", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public StoreUpdatePayAccountResponse updatePayAccount(StoreUpdatePayAccountRequest request){
+	public ResponseEntity<GenericResponse> updatePayAccount(StoreUpdatePayAccountRequest request){
 		//Response response = null;		
 		
 		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.updatePayAccount(request, httpRequest.getSession(true).getId());
@@ -667,7 +664,7 @@ public class BillingResource {
 		
 		//response = Response.status(200).entity(storeUpdatePayAccountResponse).build();
 				
-		return storeUpdatePayAccountResponse;
+		return new ResponseEntity<GenericResponse>(storeUpdatePayAccountResponse, HttpStatus.OK);
 		
 	}
 	
@@ -746,11 +743,11 @@ public class BillingResource {
      *@param ambEligRequest
      */
 	@PostMapping(value="/billResource/ambEligibilityCheck", consumes =  {MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse ambeligibilityCheck(AMBEligibilityCheckRequest ambEligRequest) {
+	public ResponseEntity<GenericResponse> ambeligibilityCheck(AMBEligibilityCheckRequest ambEligRequest) {
 		
 		AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = billingBO.ambeligibilityCheck(ambEligRequest, httpRequest.getSession(true).getId());
 			
-	    return ambEligibiltyCheckResponseVO;
+		return new ResponseEntity<GenericResponse>(ambEligibiltyCheckResponseVO, HttpStatus.OK);
 	}
 	
 	
@@ -765,7 +762,7 @@ public class BillingResource {
      * @return javax.ws.rs.core.Response
      */
 	@PostMapping(value="/billResource/ambEligibilityCheckForGME", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse ambeligibilityCheck(@RequestParam("accountNumber") String accountNumber, @RequestParam("bpNumber") String bpNumber,
+	public ResponseEntity<GenericResponse> ambeligibilityCheck(@RequestParam("accountNumber") String accountNumber, @RequestParam("bpNumber") String bpNumber,
 			@RequestParam("contractId") String contractId, @RequestParam("companyCode") String companyCode, @RequestParam("brandName") String brandName) {
 		
 		AMBEligibilityCheckRequest ambEligRequest = new AMBEligibilityCheckRequest();
@@ -774,7 +771,7 @@ public class BillingResource {
 		ambEligRequest.setContractId(contractId);
 		ambEligRequest.setCompanyCode(companyCode);
 		AMBEligibiltyCheckResponseVO ambEligibiltyCheckResponseVO = billingBO.ambeligibilityCheck(ambEligRequest, httpRequest.getSession(true).getId());
-	    return ambEligibiltyCheckResponseVO;
+		return new ResponseEntity<GenericResponse>(ambEligibiltyCheckResponseVO, HttpStatus.OK);
 	}
 	
 	/**
@@ -782,9 +779,9 @@ public class BillingResource {
 	 * @param saveAMBSignupRequest
 	 */
 	@PostMapping(value="/billResource/saveAMBSignUp", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse saveAMBSignUp(SaveAMBSingupRequestVO saveAMBSignupRequest) {
+	public ResponseEntity<GenericResponse> saveAMBSignUp(SaveAMBSingupRequestVO saveAMBSignupRequest) {
 		AMBSignupResponseVO ambSignupResponseVO = billingBO.saveAMBSignUp(saveAMBSignupRequest, httpRequest.getSession(true).getId());
-		return ambSignupResponseVO;
+		return new ResponseEntity<GenericResponse>(ambSignupResponseVO, HttpStatus.OK);
 	}
 	
 	/**
@@ -824,7 +821,7 @@ public class BillingResource {
 	 * @return javax.ws.rs.core.Response
 	 */
 	@PostMapping(value="/billResource/saveAMBSignUpForGME", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse saveAMBSignUp(@RequestParam("accountNumber") String accountNumber,
+	public ResponseEntity<GenericResponse> saveAMBSignUp(@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("contractId") String contractId, @RequestParam("bpNumber") String bpNumber,
 			@RequestParam("checkDigit") String checkDigit, @RequestParam("languageCode") String languageCode,
 			@RequestParam("esid") String esid, @RequestParam("servStreetNum") String servStreetNum,
@@ -877,7 +874,7 @@ public class BillingResource {
 		
 		AMBSignupResponseVO ambSignupResponseVO = billingBO.saveAMBSignUp(saveAMBSignupRequest, httpRequest.getSession(true).getId());
 			
-	    return ambSignupResponseVO;
+		return new ResponseEntity<GenericResponse>(ambSignupResponseVO, HttpStatus.OK);
 	}
 	
 	/**This API is responsible for returning
@@ -886,9 +883,9 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/getAutoPayInfo", consumes =  {MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getAutoPayInfo(AutoPayInfoRequest request){
+	public ResponseEntity<GenericResponse> getAutoPayInfo(AutoPayInfoRequest request){
 		AutoPayInfoResponse autoPayInfoRes = billingBO.getAutopayInfo(request);
-		return autoPayInfoRes;
+		return new ResponseEntity<GenericResponse>(autoPayInfoRes, HttpStatus.OK);
 	}
 	
 	/**
@@ -899,17 +896,17 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/getBankPaymentInstitution", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getBankPaymentInstitution(@RequestParam("routingNumber")String routingNumber){
+	public ResponseEntity<GenericResponse> getBankPaymentInstitution(@RequestParam("routingNumber")String routingNumber){
         GetPaymentInstitutionResponse getPayInstResp = billingBO.getPaymentInstitutionName(routingNumber);
-        return getPayInstResp;
+        return new ResponseEntity<GenericResponse>(getPayInstResp, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/billResource/insertRetroPopup", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse insertRetroPopup(RetroPopupRequestVO request){
+	public ResponseEntity<GenericResponse> insertRetroPopup(RetroPopupRequestVO request){
 			
 		RetroEligibilityResponse retroEligibilityResponse = billingBO.insertRetroPopup(request, httpRequest.getSession(true).getId());
 					
-		return retroEligibilityResponse;
+		return new ResponseEntity<GenericResponse>(retroEligibilityResponse, HttpStatus.OK);
 		
 	}
 	
@@ -920,7 +917,7 @@ public class BillingResource {
 	 * @return
 	 */
 	@PostMapping(value="/billResource/checkRetroEligibility", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse checkRetroEligibility(
+	public ResponseEntity<GenericResponse> checkRetroEligibility(
 			@RequestParam("contractAccountNumber") String contractAccountNumber,
 			@RequestParam("invoiceNo") String invoiceNo,
 			@RequestParam("contractId") String contractId,
@@ -937,7 +934,7 @@ public class BillingResource {
 
 		logger.debug("Start BillingResource.checkRetroEligibility :: END");
 
-		return retroEligResp;
+		return new ResponseEntity<GenericResponse>(retroEligResp, HttpStatus.OK);
 
 	}
 	/**
@@ -946,7 +943,7 @@ public class BillingResource {
 	 * @throws Exception 
 	 */
 	@PostMapping(value="/billResource/billCourtesyCreditActivity", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public BillCourtesyCreditActivityResponse courtesyCreditActivity (@Valid BillCourtesyCreditActivityRequest request) throws Exception{
+	public ResponseEntity<Object> courtesyCreditActivity (@Valid BillCourtesyCreditActivityRequest request) throws Exception{
 		
 		logger.debug("Start CourtesyCreditResource.courtesyCreditActivity :: START");
 		
@@ -959,7 +956,7 @@ public class BillingResource {
 
 			
 		logger.debug("END CourtesyCreditResource.courtesyCreditActivity :: END");
-		return tempResponse;
+		return new ResponseEntity<Object>(tempResponse, HttpStatus.OK);
 
 
 }	
@@ -974,11 +971,11 @@ public class BillingResource {
 	 * 
 	 */
 	@PostMapping(value="/billResource/scheduleAndLastPaymentetails", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getPendingPayments(@RequestParam("accountNumber") String accountNumber,
+	public ResponseEntity<GenericResponse> getPendingPayments(@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("companyCode") String companyCode, @RequestParam("brandName") String brandName) {
 		SchedulePaymentResponse schedulePayments = billingBO.getSchedulePayments(accountNumber, companyCode, brandName,
 				httpRequest.getSession(true).getId());
-		return schedulePayments;
+		return new ResponseEntity<GenericResponse>(schedulePayments, HttpStatus.OK);
 
 	}
 	
@@ -991,12 +988,12 @@ public class BillingResource {
 	 * @param brandName
 	 */
 	@PostMapping(value="/billResource/getBalanceForGMEMobile", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getBalanceForGMEMobile(@RequestParam("accountNumber") String accountNumber,
+	public ResponseEntity<GenericResponse> getBalanceForGMEMobile(@RequestParam("accountNumber") String accountNumber,
 			@RequestParam("bpid") String bpNumber, @RequestParam("companyCode") String companyCode,
 			@RequestParam("brandName") String brandName) {
 		ArMobileGMEResponse mobileArResponse = billingBO.getBalanceForGMEMobile(accountNumber, bpNumber, companyCode,
 				httpRequest.getSession(true).getId(), brandName);
-		return mobileArResponse;
+		return new ResponseEntity<GenericResponse>(mobileArResponse, HttpStatus.OK); 
 	}
 	
 	/**
@@ -1007,11 +1004,11 @@ public class BillingResource {
 	 * @param brandName
 	 */
 	@PostMapping(value="/billResource/getPaymentMethods", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse getPaymentMethods(@RequestParam("contractAccountNumber") String contractAccountNumber , @RequestParam("companyCode") String companyCode,
+	public ResponseEntity<GenericResponse> getPaymentMethods(@RequestParam("contractAccountNumber") String contractAccountNumber , @RequestParam("companyCode") String companyCode,
 			@RequestParam("brandName") String brandName, @RequestParam("bpnumber") String bpnumber) {
 		PaymentMethodsResponse paymentMethodsResponse = billingBO.getPaymentMethods(contractAccountNumber, companyCode,
 				httpRequest.getSession(true).getId(), brandName, bpnumber);
-		return paymentMethodsResponse;
+		return new ResponseEntity<GenericResponse>(paymentMethodsResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -1022,9 +1019,9 @@ public class BillingResource {
 	 * autoPay,paymentInstitutionName,companyCode,brandName;
 	 */
 	@PostMapping(value="/billResource/savePayAccount", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse savePayAccount(StoreUpdatePayAccountRequest request){
+	public ResponseEntity<GenericResponse> savePayAccount(StoreUpdatePayAccountRequest request){
 		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.savePayAccount(request, httpRequest.getSession(true).getId());		
-		return storeUpdatePayAccountResponse;
+		return new ResponseEntity<GenericResponse>(storeUpdatePayAccountResponse, HttpStatus.OK);
 		
 	}
 	
@@ -1036,9 +1033,9 @@ public class BillingResource {
 	 * autoPay,paymentInstitutionName,companyCode,brandName;
 	 */
 	@PostMapping(value="/billResource/modifyPayAccount", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse modifyPayAccount(StoreUpdatePayAccountRequest request){	
+	public ResponseEntity<GenericResponse> modifyPayAccount(StoreUpdatePayAccountRequest request){	
 		StoreUpdatePayAccountResponse storeUpdatePayAccountResponse = billingBO.modifyPayAccount(request, httpRequest.getSession(true).getId());
-		return storeUpdatePayAccountResponse;
+		return new ResponseEntity<GenericResponse>(storeUpdatePayAccountResponse, HttpStatus.OK);
 	}	
 	/**
 	 * This API is responsible to notify users if they have any pending SWAP offers.
@@ -1046,9 +1043,9 @@ public class BillingResource {
 	 * @param accountNumber,companyCode,brandName;
 	 */
 	@PostMapping(value="/billResource/checkSwapEligibility", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public GenericResponse checkSwapEligibility(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode, @RequestParam("brandName") String brandName){	
+	public ResponseEntity<GenericResponse> checkSwapEligibility(@RequestParam("accountNumber") String accountNumber,@RequestParam("companyCode") String companyCode, @RequestParam("brandName") String brandName){	
 		CheckSwapEligibilityResponse checkSwapEligibilityResponse = billingBO.checkSwapEligibility(accountNumber,companyCode,brandName, httpRequest.getSession(true).getId());
-		return checkSwapEligibilityResponse;
+		return new ResponseEntity<GenericResponse>(checkSwapEligibilityResponse, HttpStatus.OK);
 		
 	}
 

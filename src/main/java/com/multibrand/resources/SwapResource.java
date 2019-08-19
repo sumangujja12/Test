@@ -5,13 +5,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.SwapBO;
 import com.multibrand.vo.request.SubmitSwapRequest;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.SubmitSwapResponse;
 import com.multibrand.vo.response.swapResponse.PendingSwapResponse;
 import com.multibrand.vo.response.swapResponse.RolloverPlanResponse;
@@ -90,7 +93,7 @@ public class SwapResource {
 	 * @return
 	 */
 	@PostMapping(value = "/swapResource/submitSwap", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public SubmitSwapResponse submitSwap(@RequestParam("campaignCode") String campaignCode, @RequestParam("offerCode") String offerCode,
+	public ResponseEntity<GenericResponse> submitSwap(@RequestParam("campaignCode") String campaignCode, @RequestParam("offerCode") String offerCode,
 			@RequestParam("contractId") String contractId,@RequestParam("esid") String esid,
 			@RequestParam("currentContractEndDate") String currentContractEndDate,@RequestParam("languageCode") String languageCode,@RequestParam("companyCode") String companyCode,
 			@RequestParam("accountNumber") String accountNumber,@RequestParam("checkDigit") String checkDigit, @RequestParam("bpNumber") String bpNumber, @RequestParam("caName") String caName, @RequestParam("servStreetNum") String servStreetNum,@RequestParam("servStreetName") String servStreetName,@RequestParam("servStreetAptNum") String servStreetAptNum,
@@ -160,7 +163,7 @@ public class SwapResource {
 		SubmitSwapResponse submitSwapResponse = swapBO.submitSwap(swapRequest,httpRequest.getSession(true).getId(), source);
 		//response = Response.status(200).entity(submitSwapResponse).build();
 		logger.debug("End SwapResource.submitSwap :: END");	
-		return submitSwapResponse;
+		return new ResponseEntity<GenericResponse>(submitSwapResponse, HttpStatus.OK);
 		
 	}
 	
@@ -173,11 +176,11 @@ public class SwapResource {
 	 * @return
 	 */
 	@PostMapping(value = "/swapResource/getRolloverPlanDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public RolloverPlanResponse getRolloverPlanDetails(@RequestParam("contractId")String contractId,@RequestParam("companyCode")String companyCode){
+	public ResponseEntity<GenericResponse> getRolloverPlanDetails(@RequestParam("contractId")String contractId,@RequestParam("companyCode")String companyCode){
 		//Response response =null;
 		RolloverPlanResponse rollOverPlanResponse = swapBO.getRollovePlanDetails(contractId, companyCode, httpRequest.getSession(true).getId());
 		//response =Response.status(200).entity(rollOverPlanResponse).build();
-		return rollOverPlanResponse;
+		return new ResponseEntity<GenericResponse>(rollOverPlanResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -192,14 +195,14 @@ public class SwapResource {
 	 * @return
 	 */
 	@PostMapping(value = "/swapResource/pendingSwapDetails", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public PendingSwapResponse pendingSwapDetails(@RequestParam("bpid")String bpid,@RequestParam("accountNumber")String accountNumber,@RequestParam("companyCode")String companyCode,
+	public ResponseEntity<GenericResponse> pendingSwapDetails(@RequestParam("bpid")String bpid,@RequestParam("accountNumber")String accountNumber,@RequestParam("companyCode")String companyCode,
 			@RequestParam("brandName")String brandName,@RequestParam("contractID")String contractID,@RequestParam("esid")String esid,@RequestParam("language")String language){
 	
 		//Response response =null;
 		PendingSwapResponse pendingSwapResponse = swapBO.pendingSwapDetails(bpid, accountNumber, companyCode,
 				 brandName, contractID, esid,language, httpRequest.getSession(true).getId());
 		//response =Response.status(200).entity(pendingSwapResponse).build();
-		return pendingSwapResponse;
+		return new ResponseEntity<GenericResponse>(pendingSwapResponse, HttpStatus.OK);
 	}
 	
 	
