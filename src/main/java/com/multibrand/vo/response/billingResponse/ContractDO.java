@@ -1,6 +1,9 @@
 package com.multibrand.vo.response.billingResponse;
 
+import java.util.Date;
+
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.DateUtil;
 
 
 
@@ -46,7 +49,9 @@ public class ContractDO {
     
     private java.lang.String yraacSmartCode="";
     
-    private String strTouFlag;    
+    private String strTouFlag;
+    
+    private String strSourceMoveOutDate; 
     
  	public String getStrTouFlag() {
 		return strTouFlag;
@@ -188,8 +193,10 @@ public class ContractDO {
 		return CommonUtil.changeDateFormat(strMoveOutDate);
 	}
 
+
 	public void setStrMoveOutDate(java.lang.String strMoveOutDate) {
 		this.strMoveOutDate = strMoveOutDate;
+		setStrSourceMoveOutDate(strMoveOutDate);
 	}
 
 	/**
@@ -237,6 +244,20 @@ public class ContractDO {
 	public void setStrContractLegacyAccount(
 			java.lang.String strContractLegacyAccount) {
 		this.strContractLegacyAccount = strContractLegacyAccount;
+	}
+
+	/**
+	 * @return the strSourceMoveOutDate
+	 */
+	public Date getStrSourceMoveOutDate() {
+		return DateUtil.getDate(strSourceMoveOutDate,"yyyy-MM-dd");
+	}
+
+	/**
+	 * @param strSourceMoveOutDate the strSourceMoveOutDate to set
+	 */
+	public void setStrSourceMoveOutDate(String strSourceMoveOutDate) {
+		this.strSourceMoveOutDate = strSourceMoveOutDate;
 	}
 
 	
