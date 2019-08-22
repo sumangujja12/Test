@@ -1871,4 +1871,16 @@ public class CommonUtil implements Constants {
 		return dateFormat.format(date); //05/07/2019 06:53:11 PM
 	}
 	
+	public static Date getStrToDateObj(String strToDateObj, String strFormat) {
+		if (StringUtils.isNotBlank(strToDateObj)) {
+			SimpleDateFormat sDateFormat = new SimpleDateFormat(strFormat);
+			try {
+				return sDateFormat.parse(strToDateObj);
+			} catch (ParseException e) {
+				return null;
+			}
+		}
+		return null;
+	}
+	
 }
