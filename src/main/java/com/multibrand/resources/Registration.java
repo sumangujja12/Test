@@ -55,7 +55,6 @@ public class Registration {
 	@PostMapping(value = "/registration/validateAccount", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<GenericResponse> validateAccount(@RequestParam("accountNumber") String accountNumber, @RequestParam("lastName") String lastName,@RequestParam("companyCode")String companyCode){
 		//Response response = null;
-		System.out.println(msgSource.getMessage("CREDIT_CHECK_EMPTY_MVI_DATE", null, "en_US"));
 		ValidateAccountResponse validateAccountResponse = registrationBO.validateAccount(accountNumber, lastName,companyCode,httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(validateAccountResponse).build();
 		return new ResponseEntity<GenericResponse>(validateAccountResponse, HttpStatus.OK);
