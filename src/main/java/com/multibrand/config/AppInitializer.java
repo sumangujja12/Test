@@ -7,9 +7,8 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-import com.multibrand.web.i18n.WebI18nMessageSource;
 
-public class AppInitializer {/*implements WebApplicationInitializer {
+public class AppInitializer  implements WebApplicationInitializer { 
 
 		
 	@Override
@@ -20,9 +19,9 @@ public class AppInitializer {/*implements WebApplicationInitializer {
         container.addListener(new ContextLoaderListener(ctx));
         
       
-        ServletRegistration.Dynamic servlet = container.addServlet("restDispatcher", new DispatcherServlet(ctx));
+        ServletRegistration.Dynamic servlet = container.addServlet("NRGRESTService", new DispatcherServlet(ctx));
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/rest/*");
     }
-*/
+
 }

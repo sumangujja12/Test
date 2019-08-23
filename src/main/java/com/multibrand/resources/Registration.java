@@ -1,23 +1,24 @@
 package com.multibrand.resources;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.RegistrationBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.ValidateAccountForMobileResponse;
 import com.multibrand.vo.response.ValidateAccountResponse;
+import com.multibrand.web.i18n.WebI18nMessageSource;
 
 
 /**
@@ -26,7 +27,7 @@ import com.multibrand.vo.response.ValidateAccountResponse;
  *
  */
 
-@Controller
+@RestController
 public class Registration {
 	
 	@Autowired 
@@ -37,6 +38,9 @@ public class Registration {
 	
 	@Autowired
 	ErrorContentHelper errorContentHelper;
+	
+	@Resource(name = "webI18nMessageSource")
+	protected WebI18nMessageSource msgSource;
 	
 	
 	
@@ -51,6 +55,7 @@ public class Registration {
 	@PostMapping(value = "/registration/validateAccount", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	public ResponseEntity<GenericResponse> validateAccount(@RequestParam("accountNumber") String accountNumber, @RequestParam("lastName") String lastName,@RequestParam("companyCode")String companyCode){
 		//Response response = null;
+		System.out.println(msgSource.getMessage("CREDIT_CHECK_EMPTY_MVI_DATE", null, "en_US"));
 		ValidateAccountResponse validateAccountResponse = registrationBO.validateAccount(accountNumber, lastName,companyCode,httpRequest.getSession(true).getId());
 		//response = Response.status(200).entity(validateAccountResponse).build();
 		return new ResponseEntity<GenericResponse>(validateAccountResponse, HttpStatus.OK);

@@ -1,9 +1,14 @@
 package com.multibrand.config;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,16 +19,18 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.multibrand.ws.helper.JaxWsClientFactoryBean;
 import com.reliant.domain.AddressValidationDomainPortBindingStub;
 
-//@Configuration
-//@ComponentScan(basePackages = "com.multibrand")
-//@PropertySource({ "classpath:properties/environment.properties", "classpath:properties/stubs.properties" })
-//@Import({DatabaseConfig.class})
-//@EnableAspectJAutoProxy
+@Configuration
+@ComponentScan(basePackages = {"com.multibrand.resources","com.multibrand"})
+@PropertySource({ "classpath:properties/environment.properties", "classpath:properties/stubs.properties" })
+@Import({DatabaseConfig.class})
+@EnableAspectJAutoProxy
+@EnableWebMvc
 public class AppConfig {
 
 	@Value("${NRGWS_BILLING_DOMAIN_NAMESPACE_URI}")
@@ -51,7 +58,7 @@ public class AppConfig {
 	@Value("${ws.endpointURL.oeDomain}")
 	private String oeDomainEndpont;
 	
-	public static ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
+	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
 	/**
 	 * Property placeholder configurer needed to process @Value annotations
@@ -64,15 +71,41 @@ public class AppConfig {
 	@Bean(name = "appConstMessageSource")
 	public ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasename("/WEB-INF/classes/properties/appConstants.properties");
+		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+		String envPath = rootPath + "/properties/appConstants.properties";
+		messageSource.setBasenames(envPath);
+		InputStream input;
+		try {
+			input = new FileInputStream(envPath);
+		
+        Properties prop = new Properties();
+        prop.load(input);
+		messageSource.setCommonMessages(prop);
+		} catch (Exception e) {
+			logger.error("appConstants.properties file not found or exception in loading");
+		}
 		messageSource.setCacheSeconds(0);
+		messageSource.setBasenames(envPath);
 		return messageSource;
 	}
 
 	@Bean(name = "sqlQuerySource")
 	public ReloadableResourceBundleMessageSource reloadableResourceSQLBundleMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasenames("/WEB-INF/classes/properties/db/dbsql");
+		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+		String envPath = rootPath + "/properties/db/dbsql";
+		messageSource.setBasenames(envPath);
+		InputStream input;
+		try {
+			input = new FileInputStream(envPath);
+		
+        Properties prop = new Properties();
+        prop.load(input);
+		messageSource.setCommonMessages(prop);
+		} catch (Exception e) {
+			logger.error("dbsql.properties file not found or exception in loading");
+		}
+		messageSource.setBasenames(envPath);
 		messageSource.setCacheSeconds(0);
 		return messageSource;
 	}
@@ -80,20 +113,24 @@ public class AppConfig {
 	@Bean(name = "environmentMessageSource")
 	public ReloadableResourceBundleMessageSource reloadableResourceEnvBundleMessageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		messageSource.setBasename("/WEB-INF/classes/properties/environment.properties");
+		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+		String envPath = rootPath + "/properties/environment.properties";
+		InputStream input;
+		try {
+			input = new FileInputStream(envPath);
+		
+        Properties prop = new Properties();
+        prop.load(input);
+		messageSource.setCommonMessages(prop);
+		} catch (Exception e) {
+			logger.error("environment.properties file not found or exception in loading");
+		}
+		messageSource.setBasenames(envPath);
 		//System.out.println(messageSource.getMessage("OAM_MAX_INVALID_LOGIN_COUNT", null, null));
 		messageSource.setCacheSeconds(0);
 		return messageSource;
 	}
 	
-	
-	public static ReloadableResourceBundleMessageSource getReloadableResourceBundleMessageSource() {
-		if (reloadableResourceBundleMessageSource == null) {
-			reloadableResourceBundleMessageSource = new ReloadableResourceBundleMessageSource();
-		}
-		
-		return reloadableResourceBundleMessageSource;
-	}
 
 	@Bean(name = "addressvalidationDomainPortProxy")
 	public JaxWsClientFactoryBean addressValidationDomainJaxWsClientFactoryBean() throws MalformedURLException {
