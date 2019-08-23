@@ -22,6 +22,7 @@ import com.multibrand.domain.ValidateReferralIdRequest;
 import com.multibrand.dto.BPMatchDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
+import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
@@ -37,6 +38,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.JavaBeanUtil;
+import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
 import com.reliant.domain.AddressValidateRequest;
 import com.reliant.domain.AddressValidateResponse;
@@ -702,6 +704,17 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setMessageCode(messageCode);
 		logger.debug("inside validatePosId:: inside addservicelocation :: messagecode is :: "+messageCode);
 		addServiceLocation.setErrorCode(errorCd);
+		//START : OE :Sprint61 :US21009 :Kdeshmu1
+		addServiceLocation.setAgentID(performPosIdBpRequest.getAgentID());
+		addServiceLocation.setAgentFirstName(performPosIdBpRequest.getAgentFirstName());
+		addServiceLocation.setAgentLastName(performPosIdBpRequest.getAgentLastName());
+		addServiceLocation.setAgentType(performPosIdBpRequest.getAgentType());
+		addServiceLocation.setVendorCode(performPosIdBpRequest.getVendorCode());
+		addServiceLocation.setVendorName(performPosIdBpRequest.getVendorName());
+		addServiceLocation.setTlpReportApiStatus("");
+		addServiceLocation.setErrorCdList("");
+		addServiceLocation.setSystemNotes("");
+		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
 
@@ -755,7 +768,17 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setBpMatchNoCcsResponse(bpMatchDTO.getBpMatchNoCCSResponse());
 		updateServiceLocation.setActiveCustomerFlag(bpMatchDTO.getActiveCustomerFlag());
 		updateServiceLocation.setMatchedPartnerId(bpMatchDTO.getMatchedPartnerID());
-
+		//START : OE :Sprint61 :US21009 :Kdeshmu1
+		updateServiceLocation.setAgentID(performPosIdBpRequest.getAgentID());
+		updateServiceLocation.setAgentFirstName(performPosIdBpRequest.getAgentFirstName());
+		updateServiceLocation.setAgentLastName(performPosIdBpRequest.getAgentLastName());
+		updateServiceLocation.setAgentType(performPosIdBpRequest.getAgentType());
+		updateServiceLocation.setVendorCode(performPosIdBpRequest.getVendorCode());
+		updateServiceLocation.setVendorName(performPosIdBpRequest.getVendorName());
+		updateServiceLocation.setTlpReportApiStatus("");
+		updateServiceLocation.setErrorCdList("");
+		updateServiceLocation.setSystemNotes("");
+		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
 
@@ -851,5 +874,35 @@ public class ValidationBO extends BaseBO {
 			throw new OAMException(200, e.getMessage(), response);
 		}
 		return response;		
+	}
+	
+	public AgentDetailsResponse validateAgentID(String agentID) {
+
+		AgentDetailsResponse response = new AgentDetailsResponse();
+		AgentDetailsRequest request = new AgentDetailsRequest();
+		request.setAgentID(agentID);
+		try {
+			response = oeService.getAgentDetails(request);
+		} catch (Exception e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			logger.error("Exception in getting Agent Details: ", e);
+		}
+		logger.info("getAgentDetailsResponse : ResultCode : "+response.getResultCode());
+		return response;
+	}
+	
+	public PerformPosIdandBpMatchResponse getInvalidAgentIDResponse(String agentID,String trackingId)
+	{
+		PerformPosIdandBpMatchResponse validatePosIdResponse= new PerformPosIdandBpMatchResponse();
+		validatePosIdResponse.setStatusCode(STATUS_CODE_STOP);	
+		validatePosIdResponse.setMessageCode(MESSAGE_CODE_INVALID_AGENT_ID);
+		validatePosIdResponse.setMessageText(getMessage(MESSAGE_CODE_INVALID_AGENT_ID));
+		validatePosIdResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+		validatePosIdResponse.setResultDescription(MESSAGE_CODE_INVALID_AGENT_ID);
+		logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+""
+				+ ":: agentID ::"+agentID+" "
+						+ "Agent ID is not valid");
+		
+		return validatePosIdResponse;
 	}
 }

@@ -696,6 +696,7 @@ public class OEResource extends BaseResource {
 		String resultCode = null;
 		String errorDesc = null;
 		boolean isValidAge = false;
+		AgentDetailsResponse agentDetailsResponse;
 		OEBO oeBo = null;
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
@@ -723,7 +724,10 @@ public class OEResource extends BaseResource {
 				mandatoryParamList.put("billStreetName",
 						performPosIdBpRequest.getBillStreetName());
 			}
-
+			if(Constants.DSI_AGENT_ID.equalsIgnoreCase(performPosIdBpRequest.getAffiliateId())){
+				mandatoryParamList.put("agentId",
+						performPosIdBpRequest.getAgentID());
+			}
 			mandatoryParamCheckResponse = CommonUtil
 			.checkMandatoryParam(mandatoryParamList);
 			resultCode = (String) mandatoryParamCheckResponse
@@ -759,6 +763,27 @@ public class OEResource extends BaseResource {
 						.build();
 				return response;
 			}
+			//START : OE :Sprint61 :US21009 :Kdeshmu1
+			if(StringUtils.isNotBlank(performPosIdBpRequest.getAgentID())){
+				agentDetailsResponse=validationBO.validateAgentID(performPosIdBpRequest.getAgentID());
+				if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
+				{
+					logger.info("Agent Id is not valid");
+					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(performPosIdBpRequest.getAgentID(),
+							performPosIdBpRequest.getTrackingId());				
+					
+					response = Response.status(200).entity(validPosIdResponse)
+							.build();
+					return response;
+				}else{
+					performPosIdBpRequest.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
+					performPosIdBpRequest.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
+					performPosIdBpRequest.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
+					performPosIdBpRequest.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
+					performPosIdBpRequest.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
+				}
+			}//END : OE :Sprint61 :US21009 :Kdeshmu1
+			
 		}
 		catch(Exception e)
 		{
