@@ -20,8 +20,10 @@ import com.multibrand.domain.ValidatePosIdRequest;
 import com.multibrand.domain.ValidatePosIdResponse;
 import com.multibrand.domain.ValidateReferralIdRequest;
 import com.multibrand.dto.BPMatchDTO;
+import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
+import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
@@ -37,6 +39,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.JavaBeanUtil;
+import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
 import com.reliant.domain.AddressValidateRequest;
 import com.reliant.domain.AddressValidateResponse;
@@ -145,7 +148,7 @@ public class ValidationBO extends BaseBO {
 	 * @return {@link com.multibrand.vo.response.PerformPosIdandBpMatchResponse PerformPosIdandBpMatchResponse}
 	 */
 	public com.multibrand.vo.response.PerformPosIdandBpMatchResponse validatePosId(
-			PerformPosIdAndBpMatchRequest performPosIdBpRequest)
+			PerformPosIdAndBpMatchRequest performPosIdBpRequest,OESignupDTO oESignupDTO)
 	{
 		logger.debug(" START *******ValidationBO:: validatePosID API**********");
 		logger.debug("inside validatePosId:: tracking id from Form Parameters is :: "+performPosIdBpRequest.getTrackingId());
@@ -380,7 +383,7 @@ public class ValidationBO extends BaseBO {
 					{
 						logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making addservicelocation call now");
 						AddServiceLocationRequest addServiceLocation =new AddServiceLocationRequest();
-						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade);
+						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade,oESignupDTO);
 						performPosIdBpRequest.setTrackingId(oeBO.addServiceLocation(addServiceLocation));
 						//checking if addServiceLocation call was successful
 						if(StringUtils.isNotBlank(performPosIdBpRequest.getTrackingId()))
@@ -445,7 +448,7 @@ public class ValidationBO extends BaseBO {
 			//Making Update Servicelocation call now
 			UpdateServiceLocationRequest updateServiceLocation= new UpdateServiceLocationRequest();
 			createUpdateServiceLocationRequest(updateServiceLocation, performPosIdBpRequest, personId,
-					messageCode, errorCd,bpMatchDTO,recentCallMade);
+					messageCode, errorCd,bpMatchDTO,recentCallMade,oESignupDTO);
 			String updateSrvLocationErrorCode=oeBO.updateServiceLocation(updateServiceLocation);
 			logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
 					+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
@@ -664,7 +667,7 @@ public class ValidationBO extends BaseBO {
 	 */
 	private void createAddServiceLocationRequest(AddServiceLocationRequest addServiceLocation,
 			PerformPosIdAndBpMatchRequest performPosIdBpRequest, String personId,
-			String messageCode,String errorCd,String recentCallMade)
+			String messageCode,String errorCd,String recentCallMade,OESignupDTO oESignupDTO)
 	{
 		/*if(StringUtils.isNotBlank(performPosIdBpRequest.getTransactionType()) && 
 				performPosIdBpRequest.getTransactionType().equalsIgnoreCase(MVI))
@@ -702,13 +705,24 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setMessageCode(messageCode);
 		logger.debug("inside validatePosId:: inside addservicelocation :: messagecode is :: "+messageCode);
 		addServiceLocation.setErrorCode(errorCd);
+		//START : OE :Sprint61 :US21009 :Kdeshmu1
+		addServiceLocation.setAgentID(performPosIdBpRequest.getAgentID());
+		addServiceLocation.setAgentFirstName(oESignupDTO.getAgentFirstName());
+		addServiceLocation.setAgentLastName(oESignupDTO.getAgentLastName());
+		addServiceLocation.setAgentType(oESignupDTO.getAgentType());
+		addServiceLocation.setVendorCode(oESignupDTO.getVendorCode());
+		addServiceLocation.setVendorName(oESignupDTO.getVendorName());
+		addServiceLocation.setTlpReportApiStatus("");
+		addServiceLocation.setErrorCdList("");
+		addServiceLocation.setSystemNotes("");
+		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
 
 
 	private void createUpdateServiceLocationRequest (UpdateServiceLocationRequest updateServiceLocation,
 			PerformPosIdAndBpMatchRequest performPosIdBpRequest, String personId,String messageCode,
-			String errorCd,BPMatchDTO bpMatchDTO,String recentCallMade)
+			String errorCd,BPMatchDTO bpMatchDTO,String recentCallMade,OESignupDTO oESignupDTO)
 	{
 		/*if(StringUtils.isNotBlank(performPosIdBpRequest.getTransactionType()) && 
 				performPosIdBpRequest.getTransactionType().equalsIgnoreCase(MVI))
@@ -755,7 +769,17 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setBpMatchNoCcsResponse(bpMatchDTO.getBpMatchNoCCSResponse());
 		updateServiceLocation.setActiveCustomerFlag(bpMatchDTO.getActiveCustomerFlag());
 		updateServiceLocation.setMatchedPartnerId(bpMatchDTO.getMatchedPartnerID());
-
+		//START : OE :Sprint61 :US21009 :Kdeshmu1
+		updateServiceLocation.setAgentID(performPosIdBpRequest.getAgentID());
+		updateServiceLocation.setAgentFirstName(oESignupDTO.getAgentFirstName());
+		updateServiceLocation.setAgentLastName(oESignupDTO.getAgentLastName());
+		updateServiceLocation.setAgentType(oESignupDTO.getAgentType());
+		updateServiceLocation.setVendorCode(oESignupDTO.getVendorCode());
+		updateServiceLocation.setVendorName(oESignupDTO.getVendorName());
+		updateServiceLocation.setTlpReportApiStatus("");
+		updateServiceLocation.setErrorCdList("");
+		updateServiceLocation.setSystemNotes("");
+		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
 
@@ -851,5 +875,35 @@ public class ValidationBO extends BaseBO {
 			throw new OAMException(200, e.getMessage(), response);
 		}
 		return response;		
+	}
+	
+	public AgentDetailsResponse validateAgentID(String agentID) {
+
+		AgentDetailsResponse response = new AgentDetailsResponse();
+		AgentDetailsRequest request = new AgentDetailsRequest();
+		request.setAgentID(agentID);
+		try {
+			response = oeService.getAgentDetails(request);
+		} catch (Exception e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			logger.error("Exception in getting Agent Details: ", e);
+		}
+		logger.info("getAgentDetailsResponse : ResultCode : "+response.getResultCode());
+		return response;
+	}
+	
+	public PerformPosIdandBpMatchResponse getInvalidAgentIDResponse(String agentID,String trackingId)
+	{
+		PerformPosIdandBpMatchResponse validatePosIdResponse= new PerformPosIdandBpMatchResponse();
+		validatePosIdResponse.setStatusCode(STATUS_CODE_STOP);	
+		validatePosIdResponse.setMessageCode(MESSAGE_CODE_INVALID_AGENT_ID);
+		validatePosIdResponse.setMessageText(getMessage(MESSAGE_CODE_INVALID_AGENT_ID));
+		validatePosIdResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+		validatePosIdResponse.setResultDescription(MESSAGE_CODE_INVALID_AGENT_ID);
+		logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+""
+				+ ":: agentID ::"+agentID+" "
+						+ "Agent ID is not valid");
+		
+		return validatePosIdResponse;
 	}
 }
