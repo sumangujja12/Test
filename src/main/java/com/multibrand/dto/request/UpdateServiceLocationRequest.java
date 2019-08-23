@@ -399,6 +399,92 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 	private String offerCategory;
 	private String frequentFlyerNumber;
 	private String realtorId;
+	
+	//START : OE :Sprint61 :US21009 :Kdeshmu1
+			String agentID;
+			String agentType;
+			String agentFirstName;
+			String agentLastName;
+			String vendorCode;
+			String vendorName;
+			String tlpReportApiStatus;
+			String errorCdList;
+			String systemNotes;
+			
+			public String getAgentID() {
+				return agentID;
+			}
+
+			public void setAgentID(String agentID) {
+				this.agentID = agentID;
+			}
+			
+			public String getAgentType() {
+				return agentType;
+			}
+
+			public void setAgentType(String agentType) {
+				this.agentType = agentType;
+			}
+
+			public String getAgentFirstName() {
+				return agentFirstName;
+			}
+
+			public void setAgentFirstName(String agentFirstName) {
+				this.agentFirstName = agentFirstName;
+			}
+
+			public String getAgentLastName() {
+				return agentLastName;
+			}
+
+			public void setAgentLastName(String agentLastName) {
+				this.agentLastName = agentLastName;
+			}
+
+			public String getVendorCode() {
+				return vendorCode;
+			}
+
+			public void setVendorCode(String vendorCode) {
+				this.vendorCode = vendorCode;
+			}
+
+			public String getVendorName() {
+				return vendorName;
+			}
+
+			public void setVendorName(String vendorName) {
+				this.vendorName = vendorName;
+			}
+
+			public String getTlpReportApiStatus() {
+				return tlpReportApiStatus;
+			}
+
+			public void setTlpReportApiStatus(String tlpReportApiStatus) {
+				this.tlpReportApiStatus = tlpReportApiStatus;
+			}
+
+			public String getErrorCdList() {
+				return errorCdList;
+			}
+
+			public void setErrorCdList(String errorCdList) {
+				this.errorCdList = errorCdList;
+			}
+
+			public String getSystemNotes() {
+				return systemNotes;
+			}
+
+			public void setSystemNotes(String systemNotes) {
+				this.systemNotes = systemNotes;
+			}
+
+			//END : OE :Sprint61 :US21009 :Kdeshmu1
+
 
 	public UpdateServiceLocationRequest() {
 
