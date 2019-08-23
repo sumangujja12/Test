@@ -184,6 +184,7 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 			request.setServZipCode(trimServZipCode);
 			request.setBillZipCode(trimBillZipCode);
 			
+			
 			// Set ESID blank for NESID, NRESID & MESID cases:
 			if (NESID.equalsIgnoreCase(request.getEsid())
 					|| MESID.equalsIgnoreCase(request.getEsid())
