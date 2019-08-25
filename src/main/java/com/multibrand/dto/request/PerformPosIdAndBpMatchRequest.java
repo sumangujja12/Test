@@ -109,6 +109,20 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String tokenSSN;
 	String dobForPosId;
 	
+	//START : OE :Sprint61 :US21009 :Kdeshmu1
+	String agentID;
+	
+	
+	public String getAgentID() {
+		return agentID;
+	}
+
+	public void setAgentID(String agentID) {
+		this.agentID = agentID;
+	}
+	
+
+	//END : OE :Sprint61 :US21009 :Kdeshmu1
 	public String getDobForPosId() {
 		return dobForPosId;
 	}
