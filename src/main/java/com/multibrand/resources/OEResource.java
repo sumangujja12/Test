@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
+import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -700,6 +701,7 @@ public class OEResource extends BaseResource {
 		OEBO oeBo = null;
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
+		OESignupDTO oESignupDTO = new OESignupDTO();
 		
 		// Start Validating DOB- Jsingh1
 		//Checking if DOB lies in Valid age Range (18-100)
@@ -724,7 +726,7 @@ public class OEResource extends BaseResource {
 				mandatoryParamList.put("billStreetName",
 						performPosIdBpRequest.getBillStreetName());
 			}
-			if(Constants.DSI_AGENT_ID.equalsIgnoreCase(performPosIdBpRequest.getAffiliateId())){
+			if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,performPosIdBpRequest.getAffiliateId())){
 				mandatoryParamList.put("agentId",
 						performPosIdBpRequest.getAgentID());
 			}
@@ -776,11 +778,12 @@ public class OEResource extends BaseResource {
 							.build();
 					return response;
 				}else{
-					performPosIdBpRequest.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
-					performPosIdBpRequest.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
-					performPosIdBpRequest.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
-					performPosIdBpRequest.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
-					performPosIdBpRequest.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
+					oESignupDTO.setAgentID(performPosIdBpRequest.getAgentID());
+					oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
+					oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
+					oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
+					oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
+					oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
 				}
 			}//END : OE :Sprint61 :US21009 :Kdeshmu1
 			
@@ -822,7 +825,7 @@ public class OEResource extends BaseResource {
 				if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 					
 					PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-							.validatePosId(performPosIdBpRequest );
+							.validatePosId(performPosIdBpRequest,oESignupDTO );
 					response = Response.status(200).entity(validPosIdResponse)
 							.build();
 					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
