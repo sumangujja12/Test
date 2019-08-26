@@ -64,7 +64,7 @@ public class AuthenticationResource implements Constants  {
 		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
 		//response = Response.status(200).entity(loginSuccessCallResponse).build();
 		logger.debug("Exiting loginSuccessCall of AuthenticationResource");
-		return new ResponseEntity<>(loginSuccessCallResponse, HttpStatus.OK);
+		return new ResponseEntity<GenericResponse>(loginSuccessCallResponse, HttpStatus.OK);
 	}
 	
 	/***
@@ -79,7 +79,7 @@ public class AuthenticationResource implements Constants  {
 		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(userId,hh, request);
 		//response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
-		return new ResponseEntity<>(loginFailureCallResponse, HttpStatus.OK);
+		return new ResponseEntity<GenericResponse>(loginFailureCallResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping(value="/authorization/refreshtoken", consumes =  MediaType.APPLICATION_FORM_URLENCODED_VALUE, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })

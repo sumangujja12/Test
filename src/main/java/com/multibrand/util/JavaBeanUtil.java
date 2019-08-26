@@ -106,6 +106,7 @@ public class JavaBeanUtil {
 		// 4) List 
 		
 		for(Field field : fields){
+			if(!field.isSynthetic()) {
 			
 			// if field is of Type1 
 			if(TYPE1.contains(field.getType().getCanonicalName())){
@@ -391,5 +392,5 @@ public class JavaBeanUtil {
 		}
 		
 	}
-
+    }
 }

@@ -31,7 +31,7 @@
 	<properties>
 		<jdk.version>1.8</jdk.version>
 		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
-		<junit.version>4.11</junit.version>
+		<!-- <junit.version>4.11</junit.version> -->
 		<spring-version>5.1.5.RELEASE</spring-version>
 		<spring-boot-version>2.1.5.RELEASE</spring-boot-version>
 		<dependency.scope>compile</dependency.scope>
@@ -121,7 +121,7 @@
 				</executions>
 			</plugin>
 			<!-- For running Unit Tests -->
-			<plugin>
+			<!-- <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.0</version>
@@ -135,6 +135,19 @@
 					<includes>
 						<include>**/*Test.class</include>
 					</includes>
+				</configuration>
+			</plugin> -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.0</version>
+				<configuration>
+					<argLine>${argLine} -XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
+					<reportsDirectory>${basedir}/target/test-output/</reportsDirectory>
+					<includes>
+						<include>**/*Test.java</include>
+					</includes>
+					<!-- <forkCount>3</forkCount> <reuseForks>true</reuseForks> -->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -509,7 +522,43 @@
 
 			</plugin>
 			<!-- END OF GIT COMMIT ID PLUGIN CONFIGURATION -->
+			<!-- Jacoco Plugin -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.3</version>
+				<executions>
+					<!-- Prepares the property pointing to the JaCoCo runtime agent which 
+						is passed as VM argument when Maven the Surefire plugin is executed. -->
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<destFile>${basedir}/target/coverage-reports/jacoco-ut.exec</destFile>
 
+							<!-- Sets the output directory for the code coverage report. -->
+						</configuration>
+					</execution>
+					<execution>
+						<!-- Ensures that the code coverage report for unit tests is created 
+							after unit tests have been run. -->
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<!-- Sets the path to the file which contains the execution data. -->
+							<dataFile>${basedir}/target/coverage-reports/jacoco-ut.exec</dataFile>
+							<!-- Sets the output directory for the code coverage report. -->
+							<outputDirectory>${project.reporting.outputDirectory}/jacoco-ut</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<dependencies>
@@ -517,6 +566,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<version>${spring-boot-version}</version>
+		</dependency>
+		
+		<dependency>
+  			<groupId>org.springframework.boot</groupId>
+  			<artifactId>spring-boot-starter-test</artifactId>
+  			<version>${spring-boot-version}</version>
 		</dependency>
 		
 		<dependency>
@@ -724,26 +779,26 @@
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core -->
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>2.3</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api -->
+		https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-api
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 			<version>2.3</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>      	    
-		
-		<dependency>
+		 -->
+		<!-- <dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>

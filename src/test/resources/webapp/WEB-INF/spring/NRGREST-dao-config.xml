@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	  
+	 <!-- Jndi lookups -->
+	<jee:jndi-lookup	id="cpdbDataSource" 
+	 				   	jndi-name="jdbc/cpdb1_main_user" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource" />
+       					
+    <jee:jndi-lookup	id="pennywiseDataSource" 
+	 				   	jndi-name="jdbc/mb_cpdb1_user" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource" />
+       					
+    <jee:jndi-lookup	id="cirroDataSource" 
+	 				   	jndi-name="jdbc/cirro_ro" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource" />
+       					
+	<!-- Starts - POD POW Changes -Arumugam -->       					
+	<jee:jndi-lookup	id="podDataSource" 
+	 				   	jndi-name="jdbc/web_read" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource" />     
+       					  	
+	<!-- Ends - POD POW Changes -Arumugam -->     				
+	 <jee:jndi-lookup	id="choiceDataSource" 
+	 					jndi-name="jdbc/wb_user" cache="true" 
+	 					resource-ref="true" lookup-on-startup="false"
+        				proxy-interface="javax.sql.DataSource" />
+	
+	<jee:jndi-lookup id="gmeResDataSource" jndi-name="jdbc/gme_res_user" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource"/>
+
+	<jee:jndi-lookup id="smartMainDataSource" jndi-name="jdbc/smart_user" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource"/>
+
+
+	<jee:jndi-lookup id="smartMeterDataSource" jndi-name="jdbc/meter_acct" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource"/>
+       					
+	 <jee:jndi-lookup	id="cslrDataSource" 
+	 				   	jndi-name="jdbc/cslr_user" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource" /> 
+       					
+      <jee:jndi-lookup	id="solprefUser" 
+	 				   	jndi-name="jdbc/solpref_user" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource" /> 
+       					
+       					
+	<jee:jndi-lookup id="tcsReadDataSource"
+			jndi-name="jdbc/tcs_read"
+			cache="true"
+			resource-ref="true"
+			lookup-on-startup="false"
+			proxy-interface="javax.sql.DataSource"/>            					      					
+       					
+    <!--   To run on Local
+    
+    <bean id="cpdbDataSource"
+                     class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+                     <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+                     <property name="url" value="jdbc:oracle:thin:@txaixebndbd02.retail.nrgenergy.com:1536:ecpd2x" />
+                     <property name="username" value="CPDB1_MAIN_USER" />
+                     <property name="password" value="CPDBMUDEV!" />
+     </bean>    
+     
+     <bean id="pennywiseDataSource"
+                     class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+                     <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+                     <property name="url" value="jdbc:oracle:thin:@txaixebndbd02.retail.nrgenergy.com:1536:ecpd2x" />
+                     <property name="username" value="MB_CPDB1_User"/>
+                     <property name="password" value="Reliant123" />
+     </bean>  
+     
+     <bean id="cirroDataSource"
+                     class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+
+                     <property name="driverClassName" value="com.microsoft.sqlserver.jdbc.SQLServerDriver" />
+                     <property name="url" value="jdbc:sqlserver://WNTSQLCIRROD1:1440;DatabaseName=CIRROCSS" />
+                     <property name="username" value="CirroRO"/>
+                     <property name="password" value="Cann0tEd!t" />
+     </bean>     
+	-->
+
+	 <!-- Jdbc Template -->
+	<bean id="cpdbJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="cpdbDataSource"/>
+		<qualifier value="cpdbJdbcTemplate"/>
+	</bean>
+	
+	<bean id="pennywiseJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="pennywiseDataSource"/>
+		<qualifier value="pennywiseJdbcTemplate"/>
+	</bean>
+	
+    <bean id="cirroJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="cirroDataSource"/>
+		<qualifier value="cirroJdbcTemplate"/>
+	</bean> 
+	
+	
+	<!-- Starts - POD POW Changes -Arumugam -->
+	<bean id="podJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="podDataSource"/>
+		<qualifier value="podJdbcTemplate"/>
+	</bean>
+	<!-- Ends - POD POW Changes -Arumugam -->
+	<bean id="choiceJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="choiceDataSource"/>
+		<qualifier value="choiceJdbcTemplate"/>
+	</bean>
+	
+	<bean id="gmeResJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="gmeResDataSource"/>
+		<qualifier value="gmeResJdbcTemplate"/>
+	</bean>
+	
+	<bean id="smartMainJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="smartMainDataSource"/>
+		<qualifier value="smartMainJdbcTemplate"/>
+	</bean>
+	
+	<bean id="smartMeterJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="smartMeterDataSource"/>
+		<qualifier value="smartMeterJdbcTemplate"/>
+	</bean>
+	
+	 	 
+ 	 <jee:jndi-lookup id="SVTDATADataSource" jndi-name="jdbc/cirsvt_user" cache="true" 
+	 				  	resource-ref="true" lookup-on-startup="false"
+       					proxy-interface="javax.sql.DataSource"/>
+ 	 
+
+	<bean id="svtJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="SVTDATADataSource"/>
+		<qualifier value="svtJdbcTemplate"/>
+	</bean>
+	
+	<!-- START: Mapping for Procedure Template -->
+	<bean id="dbProcedureMappingMsgSourceId"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename"
+			value="/WEB-INF/classes/properties/db/dbProcedureMapping" />
+		<property name="cacheSeconds" value="0" />
+	</bean>
+
+	<bean id="procedureConfigPackageScanner"
+		class="com.multibrand.dao.jdbc.sp.ProcedureConfigPackageScanner"
+		depends-on="procedureTemplateHelper">
+		<constructor-arg name="packageNames">
+			<list>
+				<value>com.multibrand.dto.request</value>
+			</list>
+		</constructor-arg>
+		<constructor-arg name="helper" ref="procedureTemplateHelper" />
+	</bean>
+
+	<bean id="choiceDataSourceProcedureTemplate" class="com.multibrand.dao.jdbc.sp.ProcedureTemplate"
+		depends-on="procedureTemplateHelper">
+		<constructor-arg name="dataSource" ref="choiceDataSource" />
+		<constructor-arg name="helper" ref="procedureTemplateHelper" />
+	</bean>
+	
+	<bean id="cslrJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="cslrDataSource"/>
+		<qualifier value="cslrJdbcTemplate"/>
+	</bean>
+
+	<bean id="cslrNamedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">	  
+		<constructor-arg ref="cslrJdbcTemplate" />  
+		<qualifier value="cslNamedParameterJdbcTemplate"/>
+	</bean>	
+	
+	<bean id="tcsReadJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="tcsReadDataSource"/>
+		<qualifier value="tcsReadJdbcTemplate"/>
+	</bean>
+
+	<bean name="tcsReadSimpleJdbcCall" class="org.springframework.jdbc.core.simple.SimpleJdbcCall" scope="prototype">
+       		<constructor-arg><ref bean="tcsReadDataSource"/></constructor-arg>
+    	</bean>	
+	<!-- END: Mapping for Procedure Template -->
+	
+	<bean id="solprefUserTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="solprefUser"/>
+		<qualifier value="solprefUserTemplate"/>
+	</bean>
+	
+</beans>

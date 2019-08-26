@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" default-lazy-init="true">
+
+	<!-- ALL THE NRGWS STUBS UNDER THIS DOMAIN WILL BE MENTIONED HERE -->
+	
+	<!--  
+	NOTES: 
+		THIS CONFIG FILE HAS THE NRGWS STUBS CONFIGURATION FOR MAKING SERVICE CALLS TO NRGWS.
+		THE STUBS FOR NRGWS CALLS ARE WIRED AS SPRING BEANS FROM HERE 			
+		THE FOLLOWING ARE THE PROPERTIES TO BE SET FOR EACH OF THE STUB BEAN FOR INDIVIDUAL CALL.
+			properties serviceInterface, wsdlDocumentUrl and serviceName: value are from the keys in oeDomainNrgWsStubsConfig.properties
+			properties endpointAddress, username, password are from Keys in environment_nrgrs.properties
+	-->
+	
+	<!-- NRGWS STUB CONFIGURED FOR WEBMETHOD: profileDomainPort()  -->
+	<bean id="profileDomainPortProxy" class="com.multibrand.ws.helper.JaxWsClientFactoryBean">
+       	<property name="wsdlDocumentLocation" value="http://dev1-ws.nrgenergy.com/NRGWS02//ProfileDomain?wsdl" />
+       	<property name="serviceEndpointInterface" value="com.multibrand.domain.ProfileDomainPortBindingStub" />
+        <property name="namespaceURI" value="http://domain.multibrand.com/" />
+        <property name="portName" value="ProfileDomainPort" />
+        <property name="endpointAddress" value="http://dev1-ws.nrgenergy.com/NRGWS02//ProfileDomain" />
+	 </bean>
+ 	
+ 	
+</beans>
