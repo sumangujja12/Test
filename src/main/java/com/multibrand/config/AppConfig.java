@@ -2,6 +2,7 @@ package com.multibrand.config;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -21,9 +22,11 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import com.multibrand.util.Constants;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.multibrand.ws.helper.JaxWsClientFactoryBean;
 import com.reliant.domain.AddressValidationDomainPortBindingStub;
+
 
 @Configuration
 @ComponentScan(basePackages = {"com.multibrand.resources","com.multibrand"})
@@ -31,7 +34,7 @@ import com.reliant.domain.AddressValidationDomainPortBindingStub;
 @Import({DatabaseConfig.class})
 @EnableAspectJAutoProxy
 @EnableWebMvc
-public class AppConfig {
+public class AppConfig implements Constants{
 
 	@Value("${NRGWS_BILLING_DOMAIN_NAMESPACE_URI}")
 	private String billingDomainSpaceURI;
@@ -69,64 +72,31 @@ public class AppConfig {
 	}
 
 	@Bean(name = "appConstMessageSource")
-	public ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource() {
+	public ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource() throws Exception {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-		String envPath = rootPath + "/properties/appConstants.properties";
-		messageSource.setBasenames(envPath);
-		InputStream input;
-		try {
-			input = new FileInputStream(envPath);
-		
-        Properties prop = new Properties();
-        prop.load(input);
-		messageSource.setCommonMessages(prop);
-		} catch (Exception e) {
-			logger.error("appConstants.properties file not found or exception in loading");
-		}
+		String classPath = "/properties/db/dbsql";
+		messageSource.setCommonMessages(loadProperties("/properties","appConstants.properties"));
 		messageSource.setCacheSeconds(0);
-		messageSource.setBasenames(envPath);
+		messageSource.setBasenames(classPath);
 		return messageSource;
 	}
 
 	@Bean(name = "sqlQuerySource")
-	public ReloadableResourceBundleMessageSource reloadableResourceSQLBundleMessageSource() {
+	public ReloadableResourceBundleMessageSource reloadableResourceSQLBundleMessageSource() throws Exception {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-		String envPath = rootPath + "/properties/db/dbsql";
-		messageSource.setBasenames(envPath);
-		InputStream input;
-		try {
-			input = new FileInputStream(envPath);
-		
-        Properties prop = new Properties();
-        prop.load(input);
-		messageSource.setCommonMessages(prop);
-		} catch (Exception e) {
-			logger.error("dbsql.properties file not found or exception in loading");
-		}
-		messageSource.setBasenames(envPath);
+		String classPath = "/properties/db/dbsql";
+		messageSource.setCommonMessages(loadProperties("/properties/db","dbsql.properties"));
+		messageSource.setBasenames(classPath);
 		messageSource.setCacheSeconds(0);
 		return messageSource;
 	}
 
 	@Bean(name = "environmentMessageSource")
-	public ReloadableResourceBundleMessageSource reloadableResourceEnvBundleMessageSource() {
+	public ReloadableResourceBundleMessageSource reloadableResourceEnvBundleMessageSource() throws Exception {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-		String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-		String envPath = rootPath + "/properties/environment.properties";
-		InputStream input;
-		try {
-			input = new FileInputStream(envPath);
-		
-        Properties prop = new Properties();
-        prop.load(input);
-		messageSource.setCommonMessages(prop);
-		} catch (Exception e) {
-			logger.error("environment.properties file not found or exception in loading");
-		}
-		messageSource.setBasenames(envPath);
-		//System.out.println(messageSource.getMessage("OAM_MAX_INVALID_LOGIN_COUNT", null, null));
+		String classPath = "properties/environment.properties";
+		messageSource.setCommonMessages(loadProperties("properties","environment.properties"));
+		messageSource.setBasenames(classPath);
 		messageSource.setCacheSeconds(0);
 		return messageSource;
 	}
@@ -211,6 +181,31 @@ public class AppConfig {
 		LocalValidatorFactoryBean localValidatorFactoryBean = new LocalValidatorFactoryBean();
 		localValidatorFactoryBean.setValidationMessageSource(getMessageBundle());
 		return localValidatorFactoryBean;
+	}
+	
+	
+	private Properties loadProperties(String filepath, String fileNmae) throws Exception {
+		String classPath = filepath +Constants.FWD_SLASH +fileNmae;
+		InputStream input = null;
+		try {
+			input = new FileInputStream(this.getClass().getClassLoader().getResource(classPath).getFile());
+		} catch (Exception e) {
+			logger.error(fileNmae+
+					" file not found or exception in loading trying to load through environment context loader");
+			try {
+				String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+				String envPath = rootPath + filepath + fileNmae;
+				input = new FileInputStream(envPath);
+			} catch (Exception er) {
+				throw er;
+			}
+		}
+
+		Properties prop = new Properties();
+		prop.load(input);
+
+		return prop;
+
 	}
 
 }
