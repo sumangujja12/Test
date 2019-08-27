@@ -251,7 +251,8 @@ public class OEService extends BaseAbstractService {
 					logger.info("Read Reliant Agent Details Response is NOT empty and converted into required respose object");
 					
 					if(null != response && null != response.getAgentDetailsResponseOutData() && null!= response.getAgentDetailsResponseOutData().getResult()
-							&& StringUtils.isBlank(response.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode())){
+							&& (response.getAgentDetailsResponseOutData().getResult().size()==0
+							|| StringUtils.isBlank(response.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode()))){
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 					} else {
