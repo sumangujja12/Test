@@ -897,7 +897,7 @@ public class ValidationBO extends BaseBO {
 		PerformPosIdandBpMatchResponse validatePosIdResponse= new PerformPosIdandBpMatchResponse();
 		validatePosIdResponse.setStatusCode(STATUS_CODE_STOP);	
 		validatePosIdResponse.setMessageCode(MESSAGE_CODE_INVALID_AGENT_ID);
-		validatePosIdResponse.setMessageText(getMessage(MESSAGE_CODE_INVALID_AGENT_ID));
+		validatePosIdResponse.setMessageText(MESSAGE_CODE_INVALID_AGENT_ID);
 		validatePosIdResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		validatePosIdResponse.setResultDescription(MESSAGE_CODE_INVALID_AGENT_ID);
 		logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+""

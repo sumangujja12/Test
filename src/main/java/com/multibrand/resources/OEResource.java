@@ -790,7 +790,7 @@ public class OEResource extends BaseResource {
 		}
 		catch(Exception e)
 		{
-			logger.info("inside performPosidAndBpMatch :: unable to validate age for the prospect.", e);
+			logger.info("inside performPosidAndBpMatch :: unable to validate age or Agent ID for the prospect.", e);
 		}				
 		//End Validating DOB- Jsingh1
 		
