@@ -904,7 +904,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -950,7 +950,6 @@ public interface Constants {
 	public static final String CLIENT_ID = "client_id";
 	public static final String CLIENT_SECRET = "client_secret";
 	public static final String PASSWORD = "password";
-	public static final String PWRD = "password"; //change this to check
 	public static final String USER_NAME = "username";
 	public static final String SALESFORCE_LEASE_ID = "LeaseId";
 	public static final String SALESFORCE_UTILITY_ACC_NO = "UtilityAccountNumber";
@@ -1068,11 +1067,13 @@ public interface Constants {
 	public static final String MESSAGE_TEXT_PERSON_NOT_UPDATED = "Person details are not updated";
 	public static final String MESSAGE_TEXT_PERSON_NOT_FOUND = "Person details are not found";
 	public static final String MESSAGE_CODE_INFO_MISMATCH = "INFO_MISMATCH";
-	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
+	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information�previously�used for�this enrollment.";
 	
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
-
-
+	
+	// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
+	public static final String CCS_BANK_GIACT_CALL_URL="ws.rest.ccs.bank.giact.call.url";
+	// End | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
 	
 	public static final String CONSTANT_S ="S";
 
@@ -1215,16 +1216,13 @@ public interface Constants {
 	 public static final String PROACTIVE_FLAG = "P";
 	 public static final String CUMTREES = "CUMTREES";
 	 public static final String NO_CONTRACT = "No Contracts found for the Given Account";
-
 	public static final String METHOD_SYNCHRONIZE_CSS_CONTACT_LOG = "updateContactLog";
-
 	public static final String CONTACT_LOG_CC_CONTACT_CLASS = "1400";
 	public static final String CONTACT_LOG_BANK_CONTACT_CLASS = "0400";
 	public static final String CONTACT_LOG_SWAP_CONTACT_CLASS = "2000";
 	public static final String CONTACT_LOG_SUN_CULB_TX_DRIVER_CONTACT_CLASS = "3550";
 	public static final String CONTACT_LOG_TREE_FREE_BILL_CONTACT_CLASS = "2400";
 	public static final String CONTACT_LOG_CREATE_USER_CONTACT_CLASS = "2400";
-	
 	public static final String CONTACT_LOG_ENROLL_CONTACT_ACTIVITY = "0700";
 	public static final String CONTACT_LOG_DEENROLL_CONTACT_ACTIVITY = "0750";
 	public static final String CONTACT_LOG_SWAP_CONTACT_ACTIVITY = "0092";
@@ -1233,39 +1231,29 @@ public interface Constants {
 	public static final String CONTACT_LOG_TREE_FREE_BILL_ENROLL_CONTACT_ACTIVITY = "1260";
 	public static final String CONTACT_LOG_TREE_FREE_BILL_DEENROLL_CONTACT_ACTIVITY = "1560";
 	public static final String CONTACT_LOG_CREATE_USER_CONTACT_ACTIVITY = "1800";
-	
 	public static final String SUN_CLUB = "S001";
 	public static final String TX_DRIVER = "G001";
 	public static final String SUN_CLUB_TX_DRIVER_ENROLL_ACTION = "2";
 	public static final String SUN_CLUB_TX_DRIVER_DE_ENROLL_ACTION = "3";
-	
 	public static final String CONTACT_LOG_COMMIT_FLAG = "X";
 	public static final String CONTACT_LOG_CONTACT_TYPE = "018";
 	public static final String CONTACT_LOG_DIVISION = "10";
-	
 	public static final String BASE64HTML = "BASE64HTML"; 
     public static final String TXN_DATE = "TXN_DATE"; 
     public static final String E_PAYMENT_AMOUNT = "PAYMENT_AMOUNT"; 
-    public static final String E_CONTR_ACCT_ID = "CONTR_ACCT_ID"; 
+    public static final String E_CONTR_ACCT_ID = "CONTR_ACCT_ID";
+    public static final String E_CHECK_DIGIT = "CHECK_DIGIT"; 
     public static final String SCH_PAYMENT_DATE = "SCH_PAYMENT_DATE"; 
     public static final String E_CARD_NUMBER = "CARD_NUMBER"; 
     public static final String E_EXP_DATE = "EXP_DATE"; 
     public static final String E_CONFIRM_NUM = "CONFIRM_NUM";
     public static final String SCHEDULE_CC_PAYMENT_GME = "SCHEDULE_CC_PAYMENT_GME"; 
     public static final String SCHEDULE_CC_PAYMENT_GME_SUB = "Scheduled Payment Acknowledgment";
-
     public static final String MOBILE = "Mobile";
     public static final String AUTOPAY_G_FLAG = "G";
-
-	public static final String E_CHECK_DIGIT = "CHECK_DIGIT"; 
-
-	// Start | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
-	public static final String CCS_BANK_GIACT_CALL_URL="ws.rest.ccs.bank.giact.call.url";
-	// End | US18891 | MBAR: Sprint 23 -GIACT REST IMPL : validate bank details  | Jyothi | 5/31/2019
-	 
-
     
     public static final String DSI_AGENT_ID = "270519";
     public static final String MESSAGE_CODE_INVALID_AGENT_ID = "INVALID_AGENT_ID";
 
+    public static final String DOLLAR_SIGN = "$";
 }
