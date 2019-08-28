@@ -691,7 +691,7 @@ public class OEResource extends BaseResource {
 				logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
 			
 				//return response;
-				return new ResponseEntity<GenericResponse>(genericResponse, HttpStatus.OK); 
+				return response; 
 			}
 			
 			isValidAge=validationBO.getValidAge(dobForPosId);
