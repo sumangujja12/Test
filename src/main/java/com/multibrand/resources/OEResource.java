@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
+import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -636,10 +637,12 @@ public class OEResource extends BaseResource {
 		String resultCode = null;
 		String errorDesc = null;
 		boolean isValidAge = false;
+		AgentDetailsResponse agentDetailsResponse;
 		OEBO oeBo = null;
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
-		
+		OESignupDTO oESignupDTO = new OESignupDTO();
+		GenericResponse genericResponse;
 		// Start Validating DOB- Jsingh1
 		//Checking if DOB lies in Valid age Range (18-100)
 		try{
@@ -663,7 +666,10 @@ public class OEResource extends BaseResource {
 				mandatoryParamList.put("billStreetName",
 						performPosIdBpRequest.getBillStreetName());
 			}
-
+			if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,performPosIdBpRequest.getAffiliateId())){
+				mandatoryParamList.put("agentId",
+						performPosIdBpRequest.getAgentID());
+			}
 			mandatoryParamCheckResponse = CommonUtil
 			.checkMandatoryParam(mandatoryParamList);
 			resultCode = (String) mandatoryParamCheckResponse
@@ -679,12 +685,13 @@ public class OEResource extends BaseResource {
 					response = CommonUtil.buildNotValidResponse(resultCode,
 					errorDesc);
 				} else {
-					response = CommonUtil.buildNotValidResponse(errorDesc,
+					response  = CommonUtil.buildNotValidResponse(errorDesc,
 					Constants.STATUS_CODE_ASK);
 				}
 				logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
 			
-				return response;
+				//return response;
+				return new ResponseEntity<GenericResponse>(genericResponse, HttpStatus.OK); 
 			}
 			
 			isValidAge=validationBO.getValidAge(dobForPosId);
@@ -694,13 +701,35 @@ public class OEResource extends BaseResource {
 						+ "over 100 years old or invalid date format");
 				PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(performPosIdBpRequest.getAffiliateId(),
 						performPosIdBpRequest.getTrackingId());				
+				
 				response = new ResponseEntity<GenericResponse>(validPosIdResponse, HttpStatus.OK);
 				return response;
 			}
+			//START : OE :Sprint61 :US21009 :Kdeshmu1
+			if(StringUtils.isNotBlank(performPosIdBpRequest.getAgentID())){
+				agentDetailsResponse=validationBO.validateAgentID(performPosIdBpRequest.getAgentID());
+				if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
+				{
+					logger.info("Agent Id is not valid");
+					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(performPosIdBpRequest.getAgentID(),
+							performPosIdBpRequest.getTrackingId());				
+					
+					response = new ResponseEntity<GenericResponse>(validPosIdResponse, HttpStatus.OK); 
+					return response;
+				}else{
+					oESignupDTO.setAgentID(performPosIdBpRequest.getAgentID());
+					oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
+					oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
+					oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
+					oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
+					oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
+				}
+			}//END : OE :Sprint61 :US21009 :Kdeshmu1
+			
 		}
 		catch(Exception e)
 		{
-			logger.info("inside performPosidAndBpMatch :: unable to validate age for the prospect.", e);
+			logger.info("inside performPosidAndBpMatch :: unable to validate age or Agent ID for the prospect.", e);
 		}				
 		//End Validating DOB- Jsingh1
 		
@@ -735,7 +764,7 @@ public class OEResource extends BaseResource {
 				if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 					
 					PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-							.validatePosId(performPosIdBpRequest );
+							.validatePosId(performPosIdBpRequest,oESignupDTO );
 					response = new ResponseEntity<GenericResponse>(validPosIdResponse, HttpStatus.OK);
 					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
 							+ performPosIdBpRequest.getAffiliateId()
@@ -813,7 +842,7 @@ public class OEResource extends BaseResource {
 						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 				tokenResponse
 						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-				response = new ResponseEntity<GenericResponse>(tokenResponse, HttpStatus.OK); 
+				response = new ResponseEntity<GenericResponse>(tokenResponse, HttpStatus.OK);
 				return response;
 			}
 		} else {

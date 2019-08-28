@@ -21,7 +21,7 @@ public class SwaggerConfiguration extends WebMvcConfigurationSupport {
 	
 	@Bean
     public Docket apiDocket() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.SWAGGER_2).groupName("All")
                 .select()
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
