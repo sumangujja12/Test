@@ -393,7 +393,7 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_recent_msg_cd", parameterIndex = 120)
 	private String messageCode;
 
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 121)
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 130)
 	private String outErrorCode;
 
 	private String offerCategory;
@@ -401,89 +401,98 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 	private String realtorId;
 	
 	//START : OE :Sprint61 :US21009 :Kdeshmu1
-			String agentID;
-			String agentType;
-			String agentFirstName;
-			String agentLastName;
-			String vendorCode;
-			String vendorName;
-			String tlpReportApiStatus;
-			String errorCdList;
-			String systemNotes;
-			
-			public String getAgentID() {
-				return agentID;
-			}
+	@ProcedureInParameter(name = "in_agent_id", parameterIndex = 121)
+	String agentID;
+	@ProcedureInParameter(name = "in_agent_first_name", parameterIndex = 122)
+	String agentType;
+	@ProcedureInParameter(name = "in_agent_last_name", parameterIndex = 123)
+	String agentFirstName;
+	@ProcedureInParameter(name = "in_agent_type", parameterIndex = 124)
+	String agentLastName;
+	@ProcedureInParameter(name = "in_vendor_code", parameterIndex = 125)
+	String vendorCode;
+	@ProcedureInParameter(name = "in_vendor_name", parameterIndex = 126)
+	String vendorName;
+	@ProcedureInParameter(name = "in_tlp_report_api_status", parameterIndex = 127)
+	String tlpReportApiStatus;
+	@ProcedureInParameter(name = "in_error_cd_list", parameterIndex = 128)
+	String errorCdList;
+	@ProcedureInParameter(name = "in_system_notes", parameterIndex = 129)
+	String systemNotes;
+	
+	public String getAgentID() {
+		return agentID;
+	}
 
-			public void setAgentID(String agentID) {
-				this.agentID = agentID;
-			}
-			
-			public String getAgentType() {
-				return agentType;
-			}
+	public void setAgentID(String agentID) {
+		this.agentID = agentID;
+	}
+	
+	public String getAgentType() {
+		return agentType;
+	}
 
-			public void setAgentType(String agentType) {
-				this.agentType = agentType;
-			}
+	public void setAgentType(String agentType) {
+		this.agentType = agentType;
+	}
 
-			public String getAgentFirstName() {
-				return agentFirstName;
-			}
+	public String getAgentFirstName() {
+		return agentFirstName;
+	}
 
-			public void setAgentFirstName(String agentFirstName) {
-				this.agentFirstName = agentFirstName;
-			}
+	public void setAgentFirstName(String agentFirstName) {
+		this.agentFirstName = agentFirstName;
+	}
 
-			public String getAgentLastName() {
-				return agentLastName;
-			}
+	public String getAgentLastName() {
+		return agentLastName;
+	}
 
-			public void setAgentLastName(String agentLastName) {
-				this.agentLastName = agentLastName;
-			}
+	public void setAgentLastName(String agentLastName) {
+		this.agentLastName = agentLastName;
+	}
 
-			public String getVendorCode() {
-				return vendorCode;
-			}
+	public String getVendorCode() {
+		return vendorCode;
+	}
 
-			public void setVendorCode(String vendorCode) {
-				this.vendorCode = vendorCode;
-			}
+	public void setVendorCode(String vendorCode) {
+		this.vendorCode = vendorCode;
+	}
 
-			public String getVendorName() {
-				return vendorName;
-			}
+	public String getVendorName() {
+		return vendorName;
+	}
 
-			public void setVendorName(String vendorName) {
-				this.vendorName = vendorName;
-			}
+	public void setVendorName(String vendorName) {
+		this.vendorName = vendorName;
+	}
 
-			public String getTlpReportApiStatus() {
-				return tlpReportApiStatus;
-			}
+	public String getTlpReportApiStatus() {
+		return tlpReportApiStatus;
+	}
 
-			public void setTlpReportApiStatus(String tlpReportApiStatus) {
-				this.tlpReportApiStatus = tlpReportApiStatus;
-			}
+	public void setTlpReportApiStatus(String tlpReportApiStatus) {
+		this.tlpReportApiStatus = tlpReportApiStatus;
+	}
 
-			public String getErrorCdList() {
-				return errorCdList;
-			}
+	public String getErrorCdList() {
+		return errorCdList;
+	}
 
-			public void setErrorCdList(String errorCdList) {
-				this.errorCdList = errorCdList;
-			}
+	public void setErrorCdList(String errorCdList) {
+		this.errorCdList = errorCdList;
+	}
 
-			public String getSystemNotes() {
-				return systemNotes;
-			}
+	public String getSystemNotes() {
+		return systemNotes;
+	}
 
-			public void setSystemNotes(String systemNotes) {
-				this.systemNotes = systemNotes;
-			}
+	public void setSystemNotes(String systemNotes) {
+		this.systemNotes = systemNotes;
+	}
 
-			//END : OE :Sprint61 :US21009 :Kdeshmu1
+	//END : OE :Sprint61 :US21009 :Kdeshmu1
 
 
 	public UpdateServiceLocationRequest() {
