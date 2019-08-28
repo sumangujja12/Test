@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -101,6 +102,7 @@ import com.multibrand.vo.response.billingResponse.BillInfoResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.ContractDO;
+import com.multibrand.vo.response.billingResponse.ContractDOSort;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
@@ -300,6 +302,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				}
 				//Changes Start for adding EFL, TOS & YRAAC codes
 			   ContractDO[] contractDO = accountDetailsResp.getContractAccountDO().getListOfContracts();
+			   Arrays.sort(contractDO, new ContractDOSort());
 				for(ContractDO contract:contractDO)
 				{
 					
