@@ -404,11 +404,11 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_agent_id", parameterIndex = 121)
 	String agentID;
 	@ProcedureInParameter(name = "in_agent_first_name", parameterIndex = 122)
-	String agentType;
-	@ProcedureInParameter(name = "in_agent_last_name", parameterIndex = 123)
 	String agentFirstName;
-	@ProcedureInParameter(name = "in_agent_type", parameterIndex = 124)
+	@ProcedureInParameter(name = "in_agent_last_name", parameterIndex = 123)
 	String agentLastName;
+	@ProcedureInParameter(name = "in_agent_type", parameterIndex = 124)
+	String agentType;
 	@ProcedureInParameter(name = "in_vendor_code", parameterIndex = 125)
 	String vendorCode;
 	@ProcedureInParameter(name = "in_vendor_name", parameterIndex = 126)

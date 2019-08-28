@@ -62,6 +62,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
@@ -267,6 +268,7 @@ public class OEResource extends BaseResource {
 			@Valid CreditCheckRequest creditCheckRequest) throws OEException {
 		/* author Mayank Mishra */
 		Response response = null;
+		GenericResponse genericResponse = null;
 		HashMap<String, Object> mandatoryParamList = new HashMap<String, Object>();
 
 		if (StringUtils.isBlank(creditCheckRequest.getBillStreetNum())
@@ -310,17 +312,19 @@ public class OEResource extends BaseResource {
 			String errorDesc = (String) mandatoryParamCheckResponse
 					.get("errorDesc");
 			if (StringUtils.isNotBlank(errorDesc)) {
-				response = CommonUtil.buildNotValidResponse(resultCode,
+				genericResponse = CommonUtil.buildNotValidResponse(resultCode,
 						errorDesc);
 			} else {
-				response = CommonUtil.buildNotValidResponse(errorDesc,
+				genericResponse = CommonUtil.buildNotValidResponse(errorDesc,
 						Constants.STATUS_CODE_ASK);
 			}
 			logger.debug("Inside performCreditCheck:: errorDesc is " + errorDesc);
 		}
 		logger.debug("END ******* performCreditCheck API**********");
 
-		return response;
+		//return response;
+		return Response.status(200).entity(genericResponse)
+				.build();
 	}
 
 	/**
@@ -702,7 +706,7 @@ public class OEResource extends BaseResource {
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
 		OESignupDTO oESignupDTO = new OESignupDTO();
-		
+		GenericResponse genericResponse;
 		// Start Validating DOB- Jsingh1
 		//Checking if DOB lies in Valid age Range (18-100)
 		try{
@@ -742,15 +746,17 @@ public class OEResource extends BaseResource {
 				.get("errorDesc");
 				
 				if (StringUtils.isNotBlank(errorDesc)) {
-					response = CommonUtil.buildNotValidResponse(resultCode,
+					genericResponse = CommonUtil.buildNotValidResponse(resultCode,
 					errorDesc);
 				} else {
-					response = CommonUtil.buildNotValidResponse(errorDesc,
+					genericResponse  = CommonUtil.buildNotValidResponse(errorDesc,
 					Constants.STATUS_CODE_ASK);
 				}
 				logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
 			
-				return response;
+				//return response;
+				return Response.status(200).entity(genericResponse)
+						.build();
 			}
 			
 			isValidAge=validationBO.getValidAge(dobForPosId);
@@ -1100,6 +1106,7 @@ public class OEResource extends BaseResource {
 		String errorDesc = null;
 		HashMap<String, Object> mandatoryParamList = null;
 		HashMap<String, Object> mandatoryParamCheckResponse = null;
+		GenericResponse genericResponse= null;
 		
 		mandatoryParamList = new HashMap<String, Object>();
 
@@ -1125,15 +1132,17 @@ public class OEResource extends BaseResource {
 					.get("errorDesc");
 					
 					if (StringUtils.isNotBlank(errorDesc)) {
-						response = CommonUtil.buildNotValidResponse(resultCode,
+						genericResponse = CommonUtil.buildNotValidResponse(resultCode,
 						errorDesc);
 					} else {
-						response = CommonUtil.buildNotValidResponse(errorDesc,
+						genericResponse = CommonUtil.buildNotValidResponse(errorDesc,
 						Constants.STATUS_CODE_ASK);
 					}
 					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
 				
-					return response;
+					//return response;
+					return Response.status(200).entity(genericResponse)
+							.build();
 				}
 		
 		
@@ -1166,15 +1175,17 @@ public class OEResource extends BaseResource {
 					.get("errorDesc");
 					
 					if (StringUtils.isNotBlank(errorDesc)) {
-						response = CommonUtil.buildNotValidResponse(resultCode,
+						genericResponse = CommonUtil.buildNotValidResponse(resultCode,
 						errorDesc);
 					} else {
-						response = CommonUtil.buildNotValidResponse(errorDesc,
+						genericResponse = CommonUtil.buildNotValidResponse(errorDesc,
 						Constants.STATUS_CODE_ASK);
 					}
 					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
 				
-					return response;
+					//return response;
+					return Response.status(200).entity(genericResponse)
+							.build();
 				}
 		
 		
