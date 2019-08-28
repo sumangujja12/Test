@@ -1,6 +1,5 @@
 package com.multibrand.vo.response.billingResponse;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -32,28 +31,6 @@ public class ContractDOSort implements Comparator<ContractDO> {
 			return 0;
 		}
 
-	}
-
-	public static void main(String[] argz) {
-		ContractDO[] contractDO = new ContractDO[5];
-		ContractDO temDo = new ContractDO();
-		temDo.setStrMoveOutDate("2019-01-01");
-		contractDO[0] = temDo;
-		temDo = new ContractDO();
-		temDo.setStrMoveOutDate("2019-02-02");
-		contractDO[1] = temDo;
-		temDo = new ContractDO();
-		temDo.setStrMoveOutDate("2019-03-03");
-		contractDO[2] = temDo;
-		temDo = new ContractDO();
-		temDo.setStrMoveOutDate("2019-04-04");
-		contractDO[3] = temDo;
-
-		Arrays.sort(contractDO, new ContractDOSort());
-		System.out.println(contractDO[0].getStrMoveOutDate());
-		System.out.println(contractDO[1].getStrMoveOutDate());
-		System.out.println(contractDO[2].getStrMoveOutDate());
-		System.out.println(contractDO[3].getStrMoveOutDate());
 	}
 
 }
