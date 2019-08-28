@@ -1,15 +1,15 @@
 package com.multibrand.resources;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.dto.request.CCSEmailRequest;
 import com.multibrand.dto.request.EmailRequest;
@@ -21,21 +21,16 @@ import com.multibrand.util.NRGRestUtil;
  * @Author bbachin1
  *
  */
-
-@Component
-@Path("emails")
+@RestController
 public class EmailResource {
 	
-	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
+	private static Logger logger = LogManager.getLogger(EmailResource.class); 
 	
 	@Autowired
 	private EmailService emailService;
-	
-	@POST
-	@Path("send/billPreference")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response sendEBillEmail(CCSEmailRequest request) {
+	@PostMapping(value = "/emails/send/billPreference", consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<Object> sendEBillEmail(CCSEmailRequest request) {
 		EmailResponse emailResult = new EmailResponse();
 		try{
 			request.validateRequest();
@@ -47,20 +42,16 @@ public class EmailResource {
 			emailResult.setResultdescription(NRGRestUtil.getMessageFromException(ex));
 			emailResult.setResultcode("3");
 		}
-		Response response = Response.status(Response.Status.OK).entity(emailResult).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(emailResult).build();
+		return new ResponseEntity<Object>(emailResult, HttpStatus.OK);
 	} 
 	
-	
-	@POST
-	@Path("send")
-	@Consumes({ MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response sendEmail(EmailRequest request) {
-		
+	@PostMapping(value = "/emails/send", consumes = {
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<Object> sendEmail(EmailRequest request) {
 		EmailResponse emailResult = emailService.sendEmail(request);
-		Response response = Response.status(Response.Status.OK).entity(emailResult).build();
-		return response;
+		//Response response = Response.status(Response.Status.OK).entity(emailResult).build();
+		return new ResponseEntity<Object>(emailResult, HttpStatus.OK);
 	}
 	
 }

@@ -8,25 +8,22 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
-import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -40,9 +37,9 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
-import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -52,9 +49,9 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
-import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
@@ -76,8 +73,7 @@ import com.multibrand.web.i18n.WebI18nMessageSource;
  * 
  * @author NRG Energy
  */
-@Component
-@Path("oeResource")
+@RestController
 public class OEResource extends BaseResource {
 	
 	/**
@@ -97,7 +93,7 @@ public class OEResource extends BaseResource {
 	@Autowired
 	private ValidationBO validationBO;
 
-	@Context
+	@Autowired
 	private HttpServletRequest httpRequest;
 
 	@Resource(name = "webI18nMessageSource")
@@ -116,21 +112,19 @@ public class OEResource extends BaseResource {
 	 * @param esid
 	 * @return Response
 	 */
-	@POST
-	@Path("getOffers")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getOffers(@FormParam("languageCode") String locale,
-			@FormParam("companyCode") String companyCode,
-			@FormParam("brandId") String brandId,
-			@FormParam("servStreetNum") String servStreetNum,
-			@FormParam("servStreetName") String servStreetName,
-			@FormParam("servStreetAptNum") String servStreetAptNum,
-			@FormParam("servZipCode") String servZipCode,
-			@FormParam("promoCode") String promoCode,
-			@FormParam("tdspCode") String tdspCode,
-			@FormParam("esid") String esid,
-			@FormParam("transactionType") String transactionType) {
+	@PostMapping(value = "/oeResource/getOffers", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> getOffers(@RequestParam("languageCode") String locale,
+			@RequestParam("companyCode") String companyCode,
+			@RequestParam("brandId") String brandId,
+			@RequestParam("servStreetNum") String servStreetNum,
+			@RequestParam("servStreetName") String servStreetName,
+			@RequestParam("servStreetAptNum") String servStreetAptNum,
+			@RequestParam("servZipCode") String servZipCode,
+			@RequestParam("promoCode") String promoCode,
+			@RequestParam("tdspCode") String tdspCode,
+			@RequestParam("esid") String esid,
+			@RequestParam("transactionType") String transactionType) {
 		StringBuffer logBuffer = new StringBuffer("OEResource.getOffers()::");
 		logBuffer.append("locale=" + locale);
 		logBuffer.append("~companyCode=" + companyCode);
@@ -144,13 +138,13 @@ public class OEResource extends BaseResource {
 		logBuffer.append("~esid=" + esid);
 		logBuffer.append("~transactionType=" + transactionType);
 		logger.debug(logBuffer.toString());
-		Response response = null;
+		//Response response = null;
 		OfferResponse offerResponse = oeBO.getOffers(locale, companyCode,
 				brandId, servStreetNum, servStreetName, servStreetAptNum,
 				servZipCode, promoCode, tdspCode, esid,
 				httpRequest.getSession(true).getId(), transactionType);
-		response = Response.status(200).entity(offerResponse).build();
-		return response;
+		//response = Response.status(200).entity(offerResponse).build();
+		return new ResponseEntity<GenericResponse>(offerResponse, HttpStatus.OK);
 	}
 
 	/*
@@ -166,24 +160,22 @@ public class OEResource extends BaseResource {
 	 * @param servZipCode
 	 * @return Response
 	 */
-	@POST
-	@Path("getTDSPDetails")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getTDSPDetails(
-			@FormParam("companyCode") String companyCode,
-			@FormParam("brandId") String brandId,
-			@FormParam("servStreetNum") String servStreetNum,
-			@FormParam("servStreetName") String servStreetName,
-			@FormParam("servStreetAptNum") String servStreetAptNum,
-			@FormParam("servZipCode") String servZipCode) {
+	@PostMapping(value = "/oeResource/getTDSPDetails", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> getTDSPDetails(
+			@RequestParam("companyCode") String companyCode,
+			@RequestParam("brandId") String brandId,
+			@RequestParam("servStreetNum") String servStreetNum,
+			@RequestParam("servStreetName") String servStreetName,
+			@RequestParam("servStreetAptNum") String servStreetAptNum,
+			@RequestParam("servZipCode") String servZipCode) {
 
-		Response response = null;
+		//Response response = null;
 		TdspResponse tdspResponse = oeBO.getTDSPDetails(companyCode, brandId,
 				servStreetNum, servStreetName, servStreetAptNum, servZipCode,
 				httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(tdspResponse).build();
-		return response;
+		//response = Response.status(200).entity(tdspResponse).build();
+		return new ResponseEntity<GenericResponse>(tdspResponse, HttpStatus.OK);
 	}
 
 	/*
@@ -198,27 +190,25 @@ public class OEResource extends BaseResource {
 	 * @param numToBeTokenized
 	 * @return Response
 	 */
-	@POST
-	@Path(value = "/getToken/{actionCode}/{numToBeTokenized}")
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/getToken/{actionCode}/{numToBeTokenized}", produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response getToken(
-			@PathParam(value = "actionCode") String actionCode,
-			@PathParam(value = "numToBeTokenized") String numToBeTokenized) {
+	private ResponseEntity<GenericResponse> getToken(
+			@PathVariable(value = "actionCode") String actionCode,
+			@PathVariable(value = "numToBeTokenized") String numToBeTokenized) {
 		/* author Mayank Mishra */
 		StringBuffer logBuffer = new StringBuffer("OEResource.getToken()::");
 		logBuffer.append("actionCode=" + actionCode);
 		logBuffer.append("~numToBeTokenized=" + numToBeTokenized);
 		logger.debug(logBuffer.toString());
-		Response response = null;
+		//Response response = null;
 		TokenizedResponse tokenizedResponse = oeBO
 				.getTokenResponse(oeRequestHandler.createTokenRequest(
 						actionCode, numToBeTokenized));
 
-		response = Response.status(Response.Status.OK)
-				.entity(tokenizedResponse).build();
+		//response = Response.status(Response.Status.OK)
+		//		.entity(tokenizedResponse).build();
 
-		return response;
+		return new ResponseEntity<GenericResponse>(tokenizedResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -259,16 +249,12 @@ public class OEResource extends BaseResource {
 	 *         NewCreditScoreResponse}
 	 * 
 	 */
-
-	@POST
-	@Path("performCreditCheck")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(
+	@PostMapping(value = "/oeResource/performCreditCheck", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> performCreditCheck(
 			@Valid CreditCheckRequest creditCheckRequest) throws OEException {
 		/* author Mayank Mishra */
-		Response response = null;
-		GenericResponse genericResponse = null;
+		ResponseEntity<GenericResponse> response = null;
 		HashMap<String, Object> mandatoryParamList = new HashMap<String, Object>();
 
 		if (StringUtils.isBlank(creditCheckRequest.getBillStreetNum())
@@ -306,25 +292,22 @@ public class OEResource extends BaseResource {
 					.performCreditCheck(oeRequestHandler
 							.createNewCreditScoreRequest(creditCheckRequest),
 							creditCheckRequest);
-			response = Response.status(Response.Status.OK)
-					.entity(newCreditScoreResponse).build();
+			response = new ResponseEntity<GenericResponse>(newCreditScoreResponse, HttpStatus.OK);
 		} else {
 			String errorDesc = (String) mandatoryParamCheckResponse
 					.get("errorDesc");
 			if (StringUtils.isNotBlank(errorDesc)) {
-				genericResponse = CommonUtil.buildNotValidResponse(resultCode,
+				response = CommonUtil.buildNotValidResponse(resultCode,
 						errorDesc);
 			} else {
-				genericResponse = CommonUtil.buildNotValidResponse(errorDesc,
+				response = CommonUtil.buildNotValidResponse(errorDesc,
 						Constants.STATUS_CODE_ASK);
 			}
 			logger.debug("Inside performCreditCheck:: errorDesc is " + errorDesc);
 		}
 		logger.debug("END ******* performCreditCheck API**********");
 
-		//return response;
-		return Response.status(200).entity(genericResponse)
-				.build();
+		return response;
 	}
 
 	/**
@@ -356,14 +339,12 @@ public class OEResource extends BaseResource {
 	 * @return {@link com.multibrand.vo.response.EsidInfoTdspCalendarResponse
 	 *         EsidInfoTdspCalendarResponse}
 	 */
-	@POST
-	@Path("getESIDAndCalendarDates")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDAndCalendarDates(
+	@PostMapping(value = "/oeResource/getESIDAndCalendarDates", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> getESIDAndCalendarDates(
 			@Valid EsidCalendarRequest esidCalendarRequest) {
 		/* author Mayank Mishra */
-		Response response = null;
+		//Response response = null;
 
 		if (StringUtils.isBlank(esidCalendarRequest.getLanguageCode()))
 			esidCalendarRequest
@@ -384,105 +365,71 @@ public class OEResource extends BaseResource {
 						esidCalendarRequest.getLanguageCode(),
 						esidCalendarRequest.getEsid(),
 						httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK)
-				.entity(esidInfoTdspResponse).build();
+		//response = Response.status(Response.Status.OK)
+		//		.entity(esidInfoTdspResponse).build();
 
-		return response;
+		return new ResponseEntity<GenericResponse>(esidInfoTdspResponse, HttpStatus.OK);
 	}
-
-	@POST
-	@Path("get/person/affiliate/id/{trackingNo}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	
+	@PostMapping(value = "/oeResource/get/person/affiliate/id/{trackingNo}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response getPersonIdByTrackingNo(
-			@PathParam("trackingNo") String trackingNo) {
+	private ResponseEntity<String> getPersonIdByTrackingNo(
+			@PathVariable("trackingNo") String trackingNo) {
 		String personId = oeBO.getPersonIdByTrackingNo(trackingNo);
-		Response response = Response.status(Response.Status.OK)
-				.entity(personId).build();
-		return response;
+		return new ResponseEntity<String>(personId, HttpStatus.OK);
 	}
 
-	@POST
-	@Path("get/person/affiliate/idretrycount/{trackingNo}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/get/person/affiliate/idretrycount/{trackingNo}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response getPersonIdAndRetryCountByTrackingNo(
-			@PathParam("trackingNo") String trackingNo) {
+	private ResponseEntity<List<Map<String, String>>> getPersonIdAndRetryCountByTrackingNo(
+			@PathVariable("trackingNo") String trackingNo) {
 		List<Map<String, String>> dataList = oeBO
 				.getPersonIdAndRetryCountByTrackingNo(trackingNo);
-		Response response = Response.status(Response.Status.OK)
-				.entity(dataList).build();
-		return response;
+		return new ResponseEntity<List<Map<String, String>>>(dataList, HttpStatus.OK);
 	}
 
-	@POST
-	@Path("add/person/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/add/person/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response addPerson(@PathParam("affiliateId") String affiliateId,
+	private ResponseEntity<String> addPerson(@PathVariable("affiliateId") String affiliateId,
 			AddPersonRequest request) {
 		String personId = oeBO.addPerson(request);
-		Response response = Response.status(Response.Status.OK)
-				.entity(personId).build();
-		return response;
+		
+		return new ResponseEntity<String>(personId, HttpStatus.OK);
 	}
 
-	@POST
-	@Path("update/person/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/update/person/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response updatePerson(@PathParam("affiliateId") String affiliateId,
+	private ResponseEntity<String>  updatePerson(@PathVariable("affiliateId") String affiliateId,
 			UpdatePersonRequest request) {
 		String errorCode = oeBO.updatePerson(request);
-		Response response = Response.status(Response.Status.OK)
-				.entity(errorCode).build();
-		return response;
+		return new ResponseEntity<String>(errorCode, HttpStatus.OK);
 	}
 
-	@POST
-	@Path("get/person/affiliate/{personId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/get/person/affiliate/{personId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response getPerson(@PathParam("personId") String personId) {
+	private ResponseEntity<Object>  getPerson(@PathVariable("personId") String personId) {
 		PersonResponse personResponse = oeBO.getPerson(personId);
-		Response response = Response.status(Response.Status.OK)
-				.entity(personResponse).build();
-		return response;
+		return new ResponseEntity<Object>(personResponse, HttpStatus.OK);
 	}
 
-	@POST
-	@Path("add/serviceLocation/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/add/serviceLocation/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response addServiceLocation(
-			@PathParam("affiliateId") String affiliateId,
+	private ResponseEntity<String>  addServiceLocation(
+			@PathVariable("affiliateId") String affiliateId,
 			AddServiceLocationRequest request) {
 		request.setAffiliateId(affiliateId);
 		String trackingNo = oeBO.addServiceLocation(request);
-		Response response = Response.status(Response.Status.OK)
-				.entity(trackingNo).build();
-		return response;
+		return new ResponseEntity<String>(trackingNo, HttpStatus.OK);
 	}
 
-	@POST
-	@Path("update/serviceLocation/affiliate/{affiliateId}")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/update/serviceLocation/affiliate/{affiliateId}", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response updateServiceLocation(
-			@PathParam("affiliateId") String affiliateId,
+	private ResponseEntity<String>  updateServiceLocation(
+			@PathVariable("affiliateId") String affiliateId,
 			UpdateServiceLocationRequest request) {
 		request.setAffiliateId(affiliateId);
 		String errorCode = oeBO.updateServiceLocation(request);
-		Response response = Response.status(Response.Status.OK)
-				.entity(errorCode).build();
-		return response;
+		return new ResponseEntity<String>(errorCode, HttpStatus.OK);
 	}
 
 	/**
@@ -561,23 +508,20 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Jenith
 	 */
-	@POST
-	@Path("submitEnrollment")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(@Valid EnrollmentRequest enrollmentRequest)
+	@PostMapping(value = "/oeResource/submitEnrollment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,  MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> submitEnrollment(@Valid EnrollmentRequest enrollmentRequest)
 			throws OEException {
-		Response response = null;
+		//Response response = null;
 
 		// Start Submit enrollment call
 		EnrollmentResponse enrollmentResponse = oeBO
 				.submitEnrollment(enrollmentRequest);
 
 		// Build Submit enrollment response
-		response = Response.status(Response.Status.OK)
-				.entity(enrollmentResponse).build();
+		//response = Response.status(Response.Status.OK)
+		//		.entity(enrollmentResponse).build();
 
-		return response;
+		return new ResponseEntity<GenericResponse>(enrollmentResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -590,24 +534,21 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Jenith
 	 */
-	@POST
-	@Path("checkPendingRequest")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/checkPendingRequest", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response checkPendingRequest(
+	private ResponseEntity<GenericResponse> checkPendingRequest(
 			CheckPendingServiceRequest checkPendingServiceRequest)
 			throws OEException {
 
-		Response response = null;
+		//Response response = null;
 
 		CheckPendingServiceResponse finalPendingServiceResponse = oeBO
 				.checkPendingRequest(checkPendingServiceRequest);
 
-		response = Response.status(Response.Status.OK)
-				.entity(finalPendingServiceResponse).build();
+		//response = Response.status(Response.Status.OK)
+		//		.entity(finalPendingServiceResponse).build();
 
-		return response;
+		return new ResponseEntity<GenericResponse>(finalPendingServiceResponse, HttpStatus.OK);
 	}
 
 	/**
@@ -622,23 +563,20 @@ public class OEResource extends BaseResource {
 	 * @author Jenith
 	 * 
 	 */
-	@POST
-	@Path("checkPermitRequirement")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
+	@PostMapping(value = "/oeResource/checkPermitRequirement", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Deprecated
-	private Response checkPermitRequirement(
+	private ResponseEntity<GenericResponse> checkPermitRequirement(
 			CheckPermitRequest checkPermitRequest) throws OEException {
 
-		Response response = null;
+		//Response response = null;
 
 		CheckPermitResponse permitCheckResponse = oeBO.checkPermitRequirement(
 				checkPermitRequest, httpRequest.getSession(true).getId());
 
-		response = Response.status(Response.Status.OK)
-				.entity(permitCheckResponse).build();
+		//response = Response.status(Response.Status.OK)
+		//		.entity(permitCheckResponse).build();
 
-		return response;
+		return new ResponseEntity<GenericResponse>(permitCheckResponse, HttpStatus.OK);
 	}
 
 	// START ONLINE AFFILIATES PROJECT - JSINGH1
@@ -684,29 +622,24 @@ public class OEResource extends BaseResource {
 	 *         {@link com.multibrand.vo.response.PerformPosIdandBpMatchResponse
 	 *         PerformPosIdandBpMatchResponse}
 	 */
-	@POST
-	@Path("performPosidAndBpMatch")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performPosidAndBpMatch(
+	@PostMapping(value = "/oeResource/performPosidAndBpMatch", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> performPosidAndBpMatch(
 			@Valid PerformPosIdAndBpMatchRequest performPosIdBpRequest) {
 		
 		/* author Jasveen Singh */
 		logger.info(" START ******* performPosidAndBpMatch API**********");
 
-		Response response = null;
+		ResponseEntity<GenericResponse> response = null;
 		String dobForPosId=null;
 		HashMap<String, Object> mandatoryParamList = null;
 		HashMap<String, Object> mandatoryParamCheckResponse = null;
 		String resultCode = null;
 		String errorDesc = null;
 		boolean isValidAge = false;
-		AgentDetailsResponse agentDetailsResponse;
 		OEBO oeBo = null;
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
-		OESignupDTO oESignupDTO = new OESignupDTO();
-		GenericResponse genericResponse;
+		
 		// Start Validating DOB- Jsingh1
 		//Checking if DOB lies in Valid age Range (18-100)
 		try{
@@ -730,10 +663,7 @@ public class OEResource extends BaseResource {
 				mandatoryParamList.put("billStreetName",
 						performPosIdBpRequest.getBillStreetName());
 			}
-			if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,performPosIdBpRequest.getAffiliateId())){
-				mandatoryParamList.put("agentId",
-						performPosIdBpRequest.getAgentID());
-			}
+
 			mandatoryParamCheckResponse = CommonUtil
 			.checkMandatoryParam(mandatoryParamList);
 			resultCode = (String) mandatoryParamCheckResponse
@@ -746,17 +676,15 @@ public class OEResource extends BaseResource {
 				.get("errorDesc");
 				
 				if (StringUtils.isNotBlank(errorDesc)) {
-					genericResponse = CommonUtil.buildNotValidResponse(resultCode,
+					response = CommonUtil.buildNotValidResponse(resultCode,
 					errorDesc);
 				} else {
-					genericResponse  = CommonUtil.buildNotValidResponse(errorDesc,
+					response = CommonUtil.buildNotValidResponse(errorDesc,
 					Constants.STATUS_CODE_ASK);
 				}
 				logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
 			
-				//return response;
-				return Response.status(200).entity(genericResponse)
-						.build();
+				return response;
 			}
 			
 			isValidAge=validationBO.getValidAge(dobForPosId);
@@ -766,37 +694,13 @@ public class OEResource extends BaseResource {
 						+ "over 100 years old or invalid date format");
 				PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(performPosIdBpRequest.getAffiliateId(),
 						performPosIdBpRequest.getTrackingId());				
-				
-				response = Response.status(200).entity(validPosIdResponse)
-						.build();
+				response = new ResponseEntity<GenericResponse>(validPosIdResponse, HttpStatus.OK);
 				return response;
 			}
-			//START : OE :Sprint61 :US21009 :Kdeshmu1
-			if(StringUtils.isNotBlank(performPosIdBpRequest.getAgentID())){
-				agentDetailsResponse=validationBO.validateAgentID(performPosIdBpRequest.getAgentID());
-				if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
-				{
-					logger.info("Agent Id is not valid");
-					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(performPosIdBpRequest.getAgentID(),
-							performPosIdBpRequest.getTrackingId());				
-					
-					response = Response.status(200).entity(validPosIdResponse)
-							.build();
-					return response;
-				}else{
-					oESignupDTO.setAgentID(performPosIdBpRequest.getAgentID());
-					oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
-					oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
-					oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
-					oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
-					oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
-				}
-			}//END : OE :Sprint61 :US21009 :Kdeshmu1
-			
 		}
 		catch(Exception e)
 		{
-			logger.info("inside performPosidAndBpMatch :: unable to validate age or Agent ID for the prospect.", e);
+			logger.info("inside performPosidAndBpMatch :: unable to validate age for the prospect.", e);
 		}				
 		//End Validating DOB- Jsingh1
 		
@@ -831,9 +735,8 @@ public class OEResource extends BaseResource {
 				if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 					
 					PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-							.validatePosId(performPosIdBpRequest,oESignupDTO );
-					response = Response.status(200).entity(validPosIdResponse)
-							.build();
+							.validatePosId(performPosIdBpRequest );
+					response = new ResponseEntity<GenericResponse>(validPosIdResponse, HttpStatus.OK);
 					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
 							+ performPosIdBpRequest.getAffiliateId()
 							+ "::rendering response pojo :: " + response);
@@ -895,14 +798,13 @@ public class OEResource extends BaseResource {
 							.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 					tokenResponse
 							.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-					response = Response.status(200).entity(tokenResponse)
-							.build();
+					response = new ResponseEntity<GenericResponse>(tokenResponse, HttpStatus.OK);
 					return response;
 				}
 			} else if (tokenResponse.getResultCode().equals(
 			Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
 
-				response = Response.status(200).entity(tokenResponse).build();
+				response = new ResponseEntity<GenericResponse>(tokenResponse, HttpStatus.OK);
 				return response;
 			} else {
 				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -911,7 +813,7 @@ public class OEResource extends BaseResource {
 						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 				tokenResponse
 						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-				response = Response.status(200).entity(tokenResponse).build();
+				response = new ResponseEntity<GenericResponse>(tokenResponse, HttpStatus.OK); 
 				return response;
 			}
 		} else {
@@ -921,7 +823,7 @@ public class OEResource extends BaseResource {
 					.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 			tokenResponse
 					.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			response = Response.status(200).entity(tokenResponse).build();
+			response = new ResponseEntity<GenericResponse>(tokenResponse, HttpStatus.OK);
 			return response;
 		}
 		return response;
@@ -961,18 +863,15 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Arumugam
 	 */
+	
+	@PostMapping(value = "/oeResource/submitBankDepositPayment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> submitBankPayment(@Valid BankDepositPaymentRequest request) {
 
-	@POST
-	@Path("submitBankDepositPayment")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitBankPayment(@Valid BankDepositPaymentRequest request) {
-
-		Response response = null;
+		//Response response = null;
 		BankDepositPaymentResponse bankResp = oeBO.submitBankPayment(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(bankResp).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(bankResp).build();
+		return new ResponseEntity<GenericResponse>(bankResp, HttpStatus.OK);
 	}
 
 	/**
@@ -1009,32 +908,25 @@ public class OEResource extends BaseResource {
 	 * 
 	 * @author Arumugam
 	 */
-
-	@POST
-	@Path("submitCCDepositPayment")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitCCDepositPayment(
+	@PostMapping(value = "/oeResource/submitCCDepositPayment", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> submitCCDepositPayment(
 			@Valid CCDepositPaymentRequest request) {
 
-		Response response = null;
+		//Response response = null;
 		CCDepositPaymentResponse CCResp = oeBO.submitCCPayment(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(CCResp).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(CCResp).build();
+		return new ResponseEntity<GenericResponse>(CCResp, HttpStatus.OK);
 	}
 	
-	@POST
-	@Path("getAffiliateOffers")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAffiliateOffers(
+	@PostMapping(value = "/oeResource/getAffiliateOffers", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> getAffiliateOffers(
 			@Valid AffiliateOfferRequest request) {
-		Response response = null;
+		//Response response = null;
 		AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(offerResponse).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(offerResponse).build();
+		return new ResponseEntity<GenericResponse>(offerResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -1043,17 +935,14 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("offer-data-for-TLP")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getOfferDataForTLP(
+	@PostMapping(value = "/oeResource/offer-data-for-TLP", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> getOfferDataForTLP(
 			@Valid TLPOfferRequest request) {
-		Response response = null;
+		//Response response = null;
 		TLPOfferResponse offerResponse = oeBO.getOfferForTLP(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(offerResponse).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(offerResponse).build();
+		return new ResponseEntity<GenericResponse>(offerResponse, HttpStatus.OK);
 	}
 	
 	/**
@@ -1061,17 +950,14 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("updateETFFlagToCRM")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response updateETFFlagToCRM(
+	@PostMapping(value = "/oeResource/updateETFFlagToCRM", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> updateETFFlagToCRM(
 			@Valid UpdateETFFlagToCRMRequest request) {
-		Response response = null;
+		//Response response = null;
 		UpdateETFFlagToCRMResponse updateETFFlagToCRMResponse = oeBO.updateETFFlagToCRM(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(updateETFFlagToCRMResponse).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(updateETFFlagToCRMResponse).build();
+		return new ResponseEntity<GenericResponse>(updateETFFlagToCRMResponse, HttpStatus.OK);
 	}
 	
 
@@ -1081,32 +967,24 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("getAgentDetails")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAgentDetails(
+	@PostMapping(value = "/oeResource/getAgentDetails", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> getAgentDetails(
 			@Valid AgentDetailsRequest request) {
-		Response response = null;
+		//Response response = null;
 		AgentDetailsResponse agentDetailsResponse = oeBO.getAgentDetails(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(agentDetailsResponse).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(agentDetailsResponse).build();
+		return new ResponseEntity<GenericResponse>(agentDetailsResponse, HttpStatus.OK);
 	}
 	
 
-	
-	@POST
-	@Path("submitUCCData")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitUCCData(@Valid UCCDataRequest request) {
+	@PostMapping(value = "/oeResource/submitUCCData", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<GenericResponse> submitUCCData(@Valid UCCDataRequest request) {
 
-		Response response = null;
+		ResponseEntity<GenericResponse> response = null;
 		String errorDesc = null;
 		HashMap<String, Object> mandatoryParamList = null;
 		HashMap<String, Object> mandatoryParamCheckResponse = null;
-		GenericResponse genericResponse= null;
 		
 		mandatoryParamList = new HashMap<String, Object>();
 
@@ -1132,17 +1010,15 @@ public class OEResource extends BaseResource {
 					.get("errorDesc");
 					
 					if (StringUtils.isNotBlank(errorDesc)) {
-						genericResponse = CommonUtil.buildNotValidResponse(resultCode,
+						response = CommonUtil.buildNotValidResponse(resultCode,
 						errorDesc);
 					} else {
-						genericResponse = CommonUtil.buildNotValidResponse(errorDesc,
+						response = CommonUtil.buildNotValidResponse(errorDesc,
 						Constants.STATUS_CODE_ASK);
 					}
 					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
 				
-					//return response;
-					return Response.status(200).entity(genericResponse)
-							.build();
+					return response;
 				}
 		
 		
@@ -1175,23 +1051,21 @@ public class OEResource extends BaseResource {
 					.get("errorDesc");
 					
 					if (StringUtils.isNotBlank(errorDesc)) {
-						genericResponse = CommonUtil.buildNotValidResponse(resultCode,
+						response = CommonUtil.buildNotValidResponse(resultCode,
 						errorDesc);
 					} else {
-						genericResponse = CommonUtil.buildNotValidResponse(errorDesc,
+						response = CommonUtil.buildNotValidResponse(errorDesc,
 						Constants.STATUS_CODE_ASK);
 					}
 					logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
 				
-					//return response;
-					return Response.status(200).entity(genericResponse)
-							.build();
+					return response;
 				}
 		
 		
 		UCCDataResponse uccResp = oeBO.submitUCCData(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(uccResp).build();
+		response = new ResponseEntity<GenericResponse>(uccResp, HttpStatus.OK);
 		return response;
 	}
 	
@@ -1200,15 +1074,12 @@ public class OEResource extends BaseResource {
 	 * @author NGASPerera 
 	 * @return
 	 */
-	@POST
-	@Path("/getEnviornmentalImpactForAllGMECommunity")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getEnviornmentalImpactForAllGMECommunity(){
-		Response response;
+	@PostMapping(value = "/oeResource/getEnviornmentalImpactForAllGMECommunity", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<Object> getEnviornmentalImpactForAllGMECommunity(){
+		//Response response;
 		GMEEnviornmentalImpact impact = oeBO.getEnviornmentalImpactForAllGMECommunity();
-		response = Response.status(Response.Status.OK).entity(impact).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(impact).build();
+		return new ResponseEntity<Object>(impact, HttpStatus.OK);
 	}
 	
 	/**
@@ -1217,14 +1088,11 @@ public class OEResource extends BaseResource {
 	 * @param request
 	 * @return
 	 */
-	@POST
-	@Path("validateBankDetailsGiact")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validateBankDetailsGiact(@Valid GiactBankValidationRequest bankDetailsValidationRequest) {
-		Response response;
+	@PostMapping(value = "/oeResource/validateBankDetailsGiact", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE  }, produces = { MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<Object> validateBankDetailsGiact(@Valid GiactBankValidationRequest bankDetailsValidationRequest) {
+		//Response response;
 		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
-		response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();
-		return response;
+		//response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();
+		return new ResponseEntity<Object>(bankDetailsValidationResponse, HttpStatus.OK);
 	}
 }

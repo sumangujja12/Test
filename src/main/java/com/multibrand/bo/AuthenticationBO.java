@@ -2,16 +2,16 @@ package com.multibrand.bo;
 
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.MultiValueMap;
 
 import com.multibrand.domain.SyncLDAPRequest;
 import com.multibrand.helper.LDAPHelper;
@@ -21,8 +21,6 @@ import com.multibrand.util.EnvMessageReader;
 import com.multibrand.vo.response.LoginFailureResponse;
 import com.multibrand.vo.response.LoginResponse;
 
-
-
 /***
  * 
  * @author Kdeshmu1 This class is to contain all the business logic for all the
@@ -31,76 +29,73 @@ import com.multibrand.vo.response.LoginResponse;
  */
 
 @Configuration("authenticationBO")
-public class AuthenticationBO implements Constants{
-	
-	
+public class AuthenticationBO implements Constants {
+
 	@Autowired
 	private LDAPService ldapService;
-	
+
 	@Autowired
 	private LDAPHelper ldapHelper;
-	
+
 	@Autowired
 	protected EnvMessageReader envMessageReader;
-	
-	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
-	public static final String UID_HEADER="SSO_UID";
-	public static final String UNIQUEID_HEADER="SSO_UNIQUEID";
-	public static final String ACCOUNTNUMBER_HEADER ="accountnumber";
 
-	
+	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	public static final String UID_HEADER = "SSO_UID";
+	public static final String UNIQUEID_HEADER = "SSO_UNIQUEID";
+	public static final String ACCOUNTNUMBER_HEADER = "accountnumber";
+
 	/**
 	 * This function used for success login call
+	 * 
 	 * @author Kdeshmu1
 	 * @param userId
 	 * @param hh
 	 * @return
 	 */
-	public LoginResponse loginSuccessCall(String userId, HttpHeaders httpHeaders, HttpServletRequest req) {
+	public LoginResponse loginSuccessCall(String userId, MultiValueMap<String, String> requestHeadersMap,
+			HttpServletRequest req) {
 
 		logger.info("AuthenticationBO.loginSuccessCall::::::::Start");
 		String uid = null;
 		String uuid = null;
-		String accountNumber=null;
+		String accountNumber = null;
 		String ldapInvalidLoginCount = null;
 		int failureCount = 0;
-		//Cookie c = null;
+		// Cookie c = null;
 		LoginResponse loginResponse = new LoginResponse();
 
-		MultivaluedMap<String, String> requestHeadersMap = httpHeaders.getRequestHeaders();
-		
 		logger.info("loginSuccessCall(...) >>>>>>>>>>>>>>> Headers <<<<<<<<<<<<<<");
-		if(null != requestHeadersMap && requestHeadersMap.size() > 0) {
-			for(String headerName : requestHeadersMap.keySet()) {
-				logger.info("loginSuccessCall(...) >> Header Name [" + headerName + "] Header Value[" + requestHeadersMap.getFirst(headerName) + "]");
+		if (null != requestHeadersMap && requestHeadersMap.size() > 0) {
+			for (String headerName : requestHeadersMap.keySet()) {
+				logger.info("loginSuccessCall(...) >> Header Name [" + headerName + "] Header Value["
+						+ requestHeadersMap.getFirst(headerName) + "]");
 			}
 		} else {
 			logger.info("loginSuccessCall(...) >> No headers received.");
 		}
 		logger.info("loginSuccessCall(...) >>>>>>>>>>>>>>> Cookies <<<<<<<<<<<<<<");
-		Map<String, Cookie> cookies = httpHeaders.getCookies();
-		if(null != cookies && cookies.size() > 0) {
-			for(String cookieName : cookies.keySet()) {
-				logger.info("loginSuccessCall(...) >> Cookie Name ["+cookieName+"] Cookie Value["+cookies.get(cookieName).getValue()+"]");
+		Cookie[] cookies = req.getCookies();
+		if (null != cookies && cookies.length > 0) {
+			for (Cookie cookieName : cookies) {
+				logger.info("loginSuccessCall(...) >> Cookie Name [" + cookieName + "] Cookie Value"
+						+ cookieName.getValue() + "]");
 			}
 		}
-				
-		uid = readValueFromHeaderOrCookie(httpHeaders, UID_HEADER);
-		uuid = readValueFromHeaderOrCookie(httpHeaders, UNIQUEID_HEADER);
-		accountNumber = readValueFromHeaderOrCookie(httpHeaders, ACCOUNTNUMBER_HEADER);
-		ldapInvalidLoginCount = readValueFromHeaderOrCookie(httpHeaders, SM_SSO_FAILURECOUNT);
+
+		uid = readValueFromHeaderOrCookie(requestHeadersMap, UID_HEADER, cookies);
+		uuid = readValueFromHeaderOrCookie(requestHeadersMap, UNIQUEID_HEADER,cookies);
+		accountNumber = readValueFromHeaderOrCookie(requestHeadersMap, ACCOUNTNUMBER_HEADER,cookies);
+		ldapInvalidLoginCount = readValueFromHeaderOrCookie(requestHeadersMap, SM_SSO_FAILURECOUNT,cookies);
 		failureCount = getValueAsInteger(ldapInvalidLoginCount);
-		
-		if(failureCount > 0) {
+
+		if (failureCount > 0) {
 			synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, ZERO, req);
 		}
-		logger.info("loginSuccessCall(...) "
-				+ "uid["+uid+"] "
-				+ "uuid["+uuid+"]"
-				+ "accountNumber["+accountNumber+"]"
-				+ "Unique ID["+uuid+"]"
-				+ "SSO_FAILURECOUNT["+ldapInvalidLoginCount+"] failureCount :[" + failureCount + "]");
-		
+		logger.info("loginSuccessCall(...) " + "uid[" + uid + "] " + "uuid[" + uuid + "]" + "accountNumber["
+				+ accountNumber + "]" + "Unique ID[" + uuid + "]" + "SSO_FAILURECOUNT[" + ldapInvalidLoginCount
+				+ "] failureCount :[" + failureCount + "]");
+
 		loginResponse.setUserID(uid);
 		loginResponse.setUserUniqueID(uuid);
 		loginResponse.setAccountNumber(accountNumber);
@@ -110,15 +105,15 @@ public class AuthenticationBO implements Constants{
 		return loginResponse;
 	}
 
-	
 	/**
 	 * This function used for failure login call
+	 * 
 	 * @author Kdeshmu1
 	 * @param userId
 	 * @param httpHeaders
 	 * @return
 	 */
-	public LoginFailureResponse loginFailureCall(String userId, HttpHeaders httpHeaders, HttpServletRequest req) {
+	public LoginFailureResponse loginFailureCall(String userId, MultiValueMap<String, String> requestHeadersMap, HttpServletRequest req) {
 		
 		logger.info("AuthenticationBO.loginFailureCall::::::::Start");
 		LoginFailureResponse loginFailureResponse = new LoginFailureResponse();
@@ -148,7 +143,7 @@ public class AuthenticationBO implements Constants{
 		try {
 			
 			
-			MultivaluedMap<String, String> requestHeadersMap = httpHeaders.getRequestHeaders();
+			
 			
 			logger.info("loginFailureCall(...) >>>>>>>>>>>>>>> Headers <<<<<<<<<<<<<<");
 			if(null != requestHeadersMap && requestHeadersMap.size() > 0) {
@@ -159,20 +154,21 @@ public class AuthenticationBO implements Constants{
 				logger.info("No headers received.");
 			}
 			logger.info("loginFailureCall(...) >>>>>>>>>>>>>>> Cookies <<<<<<<<<<<<<<");
-			Map<String, Cookie> cookies = httpHeaders.getCookies();
-			if(null != cookies && cookies.size() > 0) {
-				for(String cookieName : cookies.keySet()) {
-					logger.info("loginFailureCall(...) >> Cookie Name ["+cookieName+"] Cookie Value["+cookies.get(cookieName).getValue()+"]");
+			Cookie[] cookies = req.getCookies();
+			if (null != cookies && cookies.length > 0) {
+				for (Cookie cookieName : cookies) {
+					logger.info("loginSuccessCall(...) >> Cookie Name [" + cookieName + "] Cookie Value"
+							+ cookieName.getValue() + "]");
 				}
 			}
 			
 			//Reading required Header (or Cookie) from SiteMinder for Login Failure 
-			uid = readValueFromHeaderOrCookie(httpHeaders, UID_HEADER);
-			uuid = readValueFromHeaderOrCookie(httpHeaders, UNIQUEID_HEADER);
-			ldapNoUserInLDAP = readValueFromHeaderOrCookie(httpHeaders, NOUSERLDAP_HEADER);
-			ldapCustomLockOutFlag = readValueFromHeaderOrCookie(httpHeaders, SM_SSO_LOCKEDFLAG);
+			uid = readValueFromHeaderOrCookie(requestHeadersMap, UID_HEADER,cookies);
+			uuid = readValueFromHeaderOrCookie(requestHeadersMap, UNIQUEID_HEADER,cookies);
+			ldapNoUserInLDAP = readValueFromHeaderOrCookie(requestHeadersMap, NOUSERLDAP_HEADER,cookies);
+			ldapCustomLockOutFlag = readValueFromHeaderOrCookie(requestHeadersMap, SM_SSO_LOCKEDFLAG,cookies);
 			customLockOutValue = getValueAsInteger(ldapCustomLockOutFlag);
-			ldapInvalidLoginCount = readValueFromHeaderOrCookie(httpHeaders, SM_SSO_FAILURECOUNT);
+			ldapInvalidLoginCount = readValueFromHeaderOrCookie(requestHeadersMap, SM_SSO_FAILURECOUNT,cookies);
 			failureCount = getValueAsInteger(ldapInvalidLoginCount);
 			logger.info("loginFailureCall(...) "
 					+ "uid["+uid+"] "
@@ -230,55 +226,62 @@ public class AuthenticationBO implements Constants{
 	}
 	
 	
+
+		  
+		 
 	/**
-	 * Get a value from HTTP Header if exists else continues to verify in Cookie and gives its value if available.
-	 * If no value found either in HTTP Header or in Cookie, it returns empty.   
+	 * Get a value from HTTP Header if exists else continues to verify in Cookie and
+	 * gives its value if available. If no value found either in HTTP Header or in
+	 * Cookie, it returns empty.
+	 * 
 	 * @param httpHeaders
 	 * @param lookupItem
 	 * @return
 	 */
-	private String readValueFromHeaderOrCookie(HttpHeaders httpHeaders, String lookupItem) {
-		
+	private String readValueFromHeaderOrCookie(MultiValueMap<String, String> requestHeadersMap, String lookupItem,
+			Cookie[] cookies) {
+
 		String resultValue = null;
 		
-		if(null != httpHeaders && StringUtils.isNotBlank(lookupItem)) {
-			if(httpHeaders.getRequestHeaders().containsKey(lookupItem) 
-					&& StringUtils.isNotBlank(httpHeaders.getRequestHeaders().getFirst(lookupItem))) {
-				
-				resultValue = httpHeaders.getRequestHeaders().getFirst(lookupItem);
-				
-			} else if (httpHeaders.getCookies().containsKey(lookupItem)
-					&& null != httpHeaders.getCookies().get(lookupItem)
-					&& StringUtils.isNotBlank(httpHeaders.getCookies().get(lookupItem).getValue())) {
-				
-				resultValue = httpHeaders.getCookies().get(lookupItem).getValue();
+
+		if (null != requestHeadersMap && StringUtils.isNotBlank(lookupItem)) {
+			if (requestHeadersMap.containsKey(lookupItem)
+					&& StringUtils.isNotBlank(requestHeadersMap.getFirst(lookupItem))) {
+
+				resultValue = requestHeadersMap.getFirst(lookupItem);
+
+			} else if (StringUtils.isNotBlank(lookupItem)
+					&& (null != cookies && cookies.length > 0) 
+					&& StringUtils.isNotBlank(getCookValue(lookupItem, cookies))) {
+				resultValue = getCookValue(lookupItem, cookies);
 				logger.info("Cookie value for - " + lookupItem + " is : " + resultValue);
 			}
 		}
-		
+
 		return StringUtils.defaultIfEmpty(resultValue, "");
 	}
-	
+
 	/**
-	 * Converts a String value to an integer value 
+	 * Converts a String value to an integer value
+	 * 
 	 * @param valueToBeReturnAsInteger
 	 * @return
 	 */
 	private int getValueAsInteger(String valueToBeReturnAsInteger) {
-		
+
 		int defaultValue = 0;
-		
+
 		try {
-			if(null != valueToBeReturnAsInteger && StringUtils.isNotBlank(valueToBeReturnAsInteger)) {
+			if (null != valueToBeReturnAsInteger && StringUtils.isNotBlank(valueToBeReturnAsInteger)) {
 				defaultValue = Integer.parseInt(valueToBeReturnAsInteger);
 			}
 		} catch (Exception ex) {
 			logger.error("Error in parsing the String value to Integer for[" + valueToBeReturnAsInteger + "]");
 		}
-		
+
 		return defaultValue;
 	}
-	
+
 	/**
 	 * 
 	 * Update Invalid Login Count in LDAP
@@ -288,8 +291,9 @@ public class AuthenticationBO implements Constants{
 	 * @param ldapOrg
 	 * @param failureCount
 	 */
-	private void synchronizeLDAP(String companyCode, String userName, String ldapOrg, String failureCount, HttpServletRequest req) {
-		
+	private void synchronizeLDAP(String companyCode, String userName, String ldapOrg, String failureCount,
+			HttpServletRequest req) {
+
 		try {
 			SyncLDAPRequest syncLDAPRequest = new SyncLDAPRequest();
 			syncLDAPRequest.setStrComapnyCode(companyCode);
@@ -297,12 +301,25 @@ public class AuthenticationBO implements Constants{
 			syncLDAPRequest.setStrLDAPOrg(ldapOrg);
 			syncLDAPRequest.setStrInvalidLoginCnt(failureCount);
 			ldapService.synchronizeLDAP(syncLDAPRequest, ldapOrg, req.getSession(true).getId());
-			
+
 		} catch (Exception ex) {
-			logger.error("Error occured while updating 'invalidlogincount' attribute in LDAP. Exception is :" + ex.getLocalizedMessage());
+			ex.printStackTrace();
+			logger.error("Error occured while updating 'invalidlogincount' attribute in LDAP. Exception is :"
+					+ ex.getLocalizedMessage());
 		}
-		
+
 	}
 
+	private String getCookValue(String lookupItem, Cookie[] cookies) {
+
+		for (Cookie cookieName : cookies) {
+			if (cookieName.getName().equalsIgnoreCase(lookupItem)) {
+				logger.info("Cookie Name [" + cookieName.getName() + "] Cookie Value" + cookieName.getValue() + "]");
+				return cookieName.getValue();
+			}
+		}
+
+		return "";
+	}
 
 }
