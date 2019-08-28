@@ -706,7 +706,7 @@ public class CommonUtil implements Constants {
 	 * @return Response
 	 * @author Jasveen Singh
 	 */
-	public static Response buildNotValidResponse(String resultCode, String resultDesc)
+	public static GenericResponse buildNotValidResponse(String resultCode, String resultDesc)
 	{
 		logger.info("inside generic exception builder");
 		ResponseBuilder builder= new ResponseBuilderImpl();
@@ -716,9 +716,10 @@ public class CommonUtil implements Constants {
 		notAllowedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);//pass other constant
 		notAllowedResponse.setResultDescription(resultDesc);
 		notAllowedResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-		builder.entity(notAllowedResponse);
-		builder.status(Response.Status.OK);// pass 200 always*
-		return builder.build();
+		//builder.entity(notAllowedResponse);
+		//builder.status(Response.Status.OK);// pass 200 always*
+		//return builder.build();
+		return notAllowedResponse;
 		
 	}
 	
