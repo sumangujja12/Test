@@ -187,7 +187,7 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_recent_msg_cd", parameterIndex = 53)
 	private String messageCode;
 
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 54)
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 63)
 	private String outErrorCode;
 
 	private String offerCategory;
@@ -195,14 +195,24 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	private String realtorId;
 	
 	//START : OE :Sprint61 :US21009 :Kdeshmu1
+		
+		@ProcedureInParameter(name = "in_agent_id", parameterIndex = 54)
 		String agentID;
+		@ProcedureInParameter(name = "in_agent_first_name", parameterIndex = 55)
 		String agentType;
+		@ProcedureInParameter(name = "in_agent_last_name", parameterIndex = 56)
 		String agentFirstName;
+		@ProcedureInParameter(name = "in_agent_type", parameterIndex = 57)
 		String agentLastName;
+		@ProcedureInParameter(name = "in_vendor_code", parameterIndex = 58)
 		String vendorCode;
+		@ProcedureInParameter(name = "in_vendor_name", parameterIndex = 59)
 		String vendorName;
+		@ProcedureInParameter(name = "in_tlp_report_api_status", parameterIndex = 60)
 		String tlpReportApiStatus;
+		@ProcedureInParameter(name = "in_error_cd_list", parameterIndex = 61)
 		String errorCdList;
+		@ProcedureInParameter(name = "in_system_notes", parameterIndex = 62)
 		String systemNotes;
 		
 		public String getAgentID() {
