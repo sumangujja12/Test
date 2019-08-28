@@ -1,12 +1,9 @@
 package com.multibrand.vo.response.billingResponse;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.DateUtil;
 
 
 
@@ -253,7 +250,7 @@ public class ContractDO {
 	 * @return the strSourceMoveOutDate
 	 */
 	public Date getStrSourceMoveOutDate() {
-		return CommonUtil.getStrToDateObj(strSourceMoveOutDate,"yyyy-MM-dd");
+		return DateUtil.getDate(strSourceMoveOutDate,"yyyy-MM-dd");
 	}
 
 	/**

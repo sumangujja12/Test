@@ -4,8 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +14,8 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.helper.ErrorContentHelper;
@@ -76,8 +76,8 @@ public class LoggerAspect {
 	 */
 	public Object logRequestDetails(ProceedingJoinPoint methodPoint, METHOD_TYPE methodType) throws Throwable {
 
-		Response output = null;
-
+		Object output = null;
+		request.setAttribute("suppress_response_codes", true);
 		// Build log message prefix
 		String logPrefix = getLogPrefix(methodType);
 		String className = methodPoint.getTarget().getClass().getName();
@@ -92,7 +92,7 @@ public class LoggerAspect {
 
 		long startTime = System.currentTimeMillis();
 		try {
-			output = (Response) methodPoint.proceed();
+			output = (Object) methodPoint.proceed();
 			getErrorDisplay(output,methodName);
 		} catch (Exception ex) {
 			logger.info("System Exception: " + ex.getMessage());
@@ -100,10 +100,10 @@ public class LoggerAspect {
 			/**
 			 * Handling General/unknown/Runtime Exception which is thrown from Resource
 			 */
+			
 			GenericResponse genericResponse = new GenericResponse();
 			genericResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			genericResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
-			output = Response.status(Response.Status.OK).entity(genericResponse).build();
+			return new ResponseEntity<GenericResponse>(genericResponse,HttpStatus.OK);
 		}
 		long endTime = System.currentTimeMillis();
 		long elapsedTime = endTime - startTime;
@@ -113,13 +113,13 @@ public class LoggerAspect {
 		logger.info("Request: " + buildParameterMap(methodPoint));
 		if (output != null) {
 			// logger.info(output);
-			logger.info("Response status code: " + output.getStatus());
+			logger.info("Response status code: "+HttpStatus.OK);
 			if (!CommonUtil.shouldExcludeResponseLog(methodName)) {
-				logger.info("Response: " + mapper.writeValueAsString(output.getEntity()));
+				logger.info("Response: " + mapper.writeValueAsString(output));
 			}
 		}
 		logger.info("###########END-" + logMessagePrefix + "-###########");
-
+		
 		return output;
 	}
 
@@ -196,10 +196,16 @@ public class LoggerAspect {
 		return logPrefix;
 	}
 
-	private void getErrorDisplay(Response output, String methodName) {
+	private void getErrorDisplay(Object output, String methodName) {
 		logger.info("###########START- getErrorDisplay -###########");
-
-		Object obj = output.getEntity();
+		Object obj = null;
+		if(output != null && output instanceof  ResponseEntity ) {
+			ResponseEntity<Object> objResp = (ResponseEntity<Object>) output;
+			obj = objResp.getBody();
+		} else {
+			 obj = output;
+		}
+		
 		if (obj != null && obj.getClass().getSuperclass().isAssignableFrom(GenericResponse.class)) {
 			String resultCode;
 			try {				

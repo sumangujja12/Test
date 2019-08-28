@@ -58,8 +58,8 @@ public class PersonDaoImpl extends AbstractSpringDAO implements PersonDao,
 				String sqlQuery = sqlMessage.getMessage(
 						QUERY_GET_PERSON_AFFILIATE_ID_BY_TRACKING_NO, null,
 						null);
-				long personIdLong = getJdbcTemplate().queryForLong(sqlQuery,
-						new Object[] { Long.valueOf(trackingNo) });
+				long personIdLong = getJdbcTemplate().queryForObject(sqlQuery,
+						new Object[] { Long.valueOf(trackingNo) }, Long.class);
 				personId = Long.toString(personIdLong);
 			} catch (Exception e) {
 				logger.error("Problem occurred while getting a "

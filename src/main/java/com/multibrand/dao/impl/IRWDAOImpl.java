@@ -14,8 +14,6 @@ import org.springframework.data.jdbc.support.oracle.SqlArrayValue;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
-import org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor;
-import org.springframework.jdbc.support.nativejdbc.WebSphereNativeJdbcExtractor;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dao.IRWDAO;
@@ -43,11 +41,6 @@ public class IRWDAOImpl implements IRWDAO, DBConstants{
 	
 	@Autowired
 	public IRWDAOImpl(@Qualifier("gmeResJdbcTemplate") JdbcTemplate jdbcTemplate) {
-		try{
-			jdbcTemplate.setNativeJdbcExtractor(new WebSphereNativeJdbcExtractor()); 
-		}catch(Exception ex){
-			jdbcTemplate.setNativeJdbcExtractor(new CommonsDbcpNativeJdbcExtractor());
-		}
 		this.jdbcTemplate = jdbcTemplate;
 	}
 
