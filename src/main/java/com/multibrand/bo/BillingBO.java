@@ -3347,8 +3347,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if (ambAmount.equals("0.00")) {
 					templateProps.put(AMB_AMOUNT, "");
 				} else {
-					String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Estimated Monthly Payment:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
-							+ ambAmount + "<![CDATA[</td></tr>]]>";
+					String strAmbAmount = DOLLAR_SIGN+ambAmount;
 					templateProps.put(AMB_AMOUNT, strAmbAmount);
 				}
 				logger.info("Email send To Address" + requestVO.getToEmail());
@@ -3364,8 +3363,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if (ambAmount.equals("0.00")) {
 					templateProps.put(AMB_AMOUNT, "");
 				} else {
-					String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Pago mensual estimado:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
-							+ ambAmount + "<![CDATA[</td></tr>]]>";
+					String strAmbAmount = DOLLAR_SIGN+ambAmount;
 					templateProps.put(AMB_AMOUNT, strAmbAmount);
 				}
 				if (StringUtils.isNotBlank(requestVO.getRetroFlag())
@@ -3384,8 +3382,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			if (ambAmount.equals("0.00"))
 				templateProps.put(AMB_AMOUNT, "");
 			else {
-				String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Estimated Monthly Payment:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
-						+ ambAmount + "<![CDATA[</td></tr>]]>";
+				String strAmbAmount = DOLLAR_SIGN+ambAmount;
 				templateProps.put(AMB_AMOUNT, strAmbAmount);
 			}
 			logger.info("Email send To Address" + requestVO.getToEmail());
