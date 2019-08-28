@@ -1251,4 +1251,6 @@ public interface Constants {
     public static final String SCHEDULE_CC_PAYMENT_GME_SUB = "Scheduled Payment Acknowledgment";
     public static final String MOBILE = "Mobile";
     public static final String AUTOPAY_G_FLAG = "G";
+    
+    public static final String DOLLAR_SIGN = "$";
 }
