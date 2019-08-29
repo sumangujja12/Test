@@ -2,40 +2,42 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.BillingBO;
 import com.multibrand.bo.PrepayBO;
-import com.multibrand.dto.request.TemperatureRequest;
 import com.multibrand.vo.request.CheckIfPrepayOfferRequest;
 import com.multibrand.vo.response.CheckIfPrepayOfferResponse;
-import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.SSBalanceAndUsageResponse;
 import com.multibrand.vo.response.StartTollTagResponse;
-import com.multibrand.vo.response.TemperaturedataResponse;
 import com.multibrand.vo.response.billingResponse.PrepayDocReadResponse;
 import com.multibrand.vo.response.billingResponse.PrepayDocUpdateResponse;
+import com.multibrand.dto.request.TemperatureRequest;
+import com.multibrand.vo.response.TemperaturedataResponse;
 
 /**
  * 
  * @author dkrishn1
  * This resource is used to handle all GME prepay related API calls.
  */
-@RestController
+@Component
+@Path("/gmePrepay")
 public class GMEPrepayResource {
 private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	
-	@Autowired 
+	@Context 
 	private HttpServletRequest httpRequest;
 	
 	@Autowired
@@ -50,12 +52,13 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @author dkrishn1
 	 * 
 	 */
-	@PostMapping(value = "/gmePrepay/protected/checkPrepayOffer", consumes = {
-			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> checkPrepayOffer(@RequestParam("offerCode") String offerCode,@RequestParam("companyCode") String companyCode, @RequestParam("brandName")String brandName){
+	@POST
+	@Path("/protected/checkPrepayOffer")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response checkPrepayOffer(@FormParam("offerCode") String offerCode,@FormParam("companyCode") String companyCode, @FormParam("brandName")String brandName){
 		
-		//Response retResponse= null;
+		Response retResponse= null;
 		CheckIfPrepayOfferRequest checkIfPrepayOfferRequest = new CheckIfPrepayOfferRequest();
 		checkIfPrepayOfferRequest.setBrandId(brandName);
 		checkIfPrepayOfferRequest.setCompanyCode(companyCode);
@@ -64,10 +67,10 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 		CheckIfPrepayOfferResponse checkPrepayOfferResponse = prepayBO.checkPrepayOffer(checkIfPrepayOfferRequest, httpRequest.getSession(true).getId());
 		
 		
-		//retResponse = Response.status(200).entity(checkPrepayOfferResponse).build();
-		logger.info(" END ******* checkPrepayOffer API********** and JSON Response is:::"+checkPrepayOfferResponse);
+		retResponse = Response.status(200).entity(checkPrepayOfferResponse).build();
+		logger.info(" END ******* checkPrepayOffer API********** and JSON Response is:::"+retResponse);
 	
-		return new ResponseEntity<GenericResponse>(checkPrepayOfferResponse, HttpStatus.OK);
+		return retResponse;
 	}
 	
 	/**
@@ -83,26 +86,27 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param brandName
 	 * @return
 	 */
-	@PostMapping(value = "/gmePrepay/protected/getAcctBalanceAndUsageData", consumes = {
-			MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> getBalance(@RequestParam("contractAccountNumber") String contractAccountNumber, 
-			                   @RequestParam("fromDate") String fromDate,
-			                   @RequestParam("toDate") String toDate,
-			                   @RequestParam("billToDate") String billToDate,
-			                   @RequestParam("esid") String esid,
-			                   @RequestParam("language") String language,
-			                   @RequestParam("noOfMonths") String noOfMonths,
-			                   @RequestParam("companyCode") String companyCode, 
-			                   @RequestParam("brandName")String brandName){
+	@POST
+	@Path("/protected/getAcctBalanceAndUsageData")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response getBalance(@FormParam("contractAccountNumber") String contractAccountNumber, 
+			                   @FormParam("fromDate") String fromDate,
+			                   @FormParam("toDate") String toDate,
+			                   @FormParam("billToDate") String billToDate,
+			                   @FormParam("esid") String esid,
+			                   @FormParam("language") String language,
+			                   @FormParam("noOfMonths") String noOfMonths,
+			                   @FormParam("companyCode") String companyCode, 
+			                   @FormParam("brandName")String brandName){
 		
-		//Response response = null;
+		Response response = null;
 		
 		SSBalanceAndUsageResponse ssBalAndUsageRes = prepayBO.getBalanceAndUsageData(contractAccountNumber, fromDate, 
 				                                         toDate, billToDate, esid, language, noOfMonths,companyCode,brandName);
-		//response = Response.status(200).entity(ssBalAndUsageRes).build();
+		response = Response.status(200).entity(ssBalAndUsageRes).build();
 				
-		return new ResponseEntity<GenericResponse>(ssBalAndUsageRes, HttpStatus.OK);
+		return response;
 		
 	}
 	
@@ -113,18 +117,20 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param companyCode
 	 * @return
 	 */
-	@PostMapping(value = "/gmePrepay/protected/prepayDocRead", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
-					MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> prepayDocRead(@RequestParam("contractAccountNumber") String contractAccountNumber,
-			                      @RequestParam("companyCode") String companyCode
-			                      ,@RequestParam("brandName")String brandName){
-		//Response response = null;
+	
+	@POST
+	@Path("/protected/prepayDocRead")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response prepayDocRead(@FormParam("contractAccountNumber") String contractAccountNumber,
+			                      @FormParam("companyCode") String companyCode
+			                      ,@FormParam("brandName")String brandName){
+		Response response = null;
 		
 		PrepayDocReadResponse ppdocReadresponse = prepayBO.prepayDocRead(contractAccountNumber,companyCode,brandName);
-		//response = Response.status(200).entity(ppdocReadresponse).build();
+		response = Response.status(200).entity(ppdocReadresponse).build();
 		
-		return new ResponseEntity<GenericResponse>(ppdocReadresponse, HttpStatus.OK);
+		return response;
 	}
 	
 	 /**
@@ -144,29 +150,30 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
      * @param brandName
      * @return
      */
-	@PostMapping(value = "/gmePrepay/protected/prepayDocUpdate", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
-					MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> prepayDocUpdate(@RequestParam("contractAccountNumber") String contractAccountNumber,
-			                        @RequestParam("ppdId") String ppdId,
-			                        @RequestParam("reloadAmount") String reloadAmount,
-			                        @RequestParam("serviceEndDate")String serviceEndDate,
-			                        @RequestParam("serviceStartDate")String serviceStartDate,
-			                        @RequestParam("status")String status,
-			                        @RequestParam("thresholdAmt")String thresHoldAmt,
-			                        @RequestParam("tollTagEndDate")String tollTagEndDate,
-			                        @RequestParam("tollTagStartDate")String tollTagStartDate,
-			                        @RequestParam("uuid")String uuid,
-			                        @RequestParam("companyCode") String companyCode,
-			                        @RequestParam("brandName")String brandName){
-		//Response response = null;
+	@POST
+	@Path("/protected/prepayDocUpdate")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response prepayDocUpdate(@FormParam("contractAccountNumber") String contractAccountNumber,
+			                        @FormParam("ppdId") String ppdId,
+			                        @FormParam("reloadAmount") String reloadAmount,
+			                        @FormParam("serviceEndDate")String serviceEndDate,
+			                        @FormParam("serviceStartDate")String serviceStartDate,
+			                        @FormParam("status")String status,
+			                        @FormParam("thresholdAmt")String thresHoldAmt,
+			                        @FormParam("tollTagEndDate")String tollTagEndDate,
+			                        @FormParam("tollTagStartDate")String tollTagStartDate,
+			                        @FormParam("uuid")String uuid,
+			                        @FormParam("companyCode") String companyCode,
+			                        @FormParam("brandName")String brandName){
+		Response response = null;
 		PrepayDocUpdateResponse ppdUpdateResponse  =  prepayBO.prepayDocUpdate(contractAccountNumber
 				                                         ,ppdId,reloadAmount,serviceEndDate,serviceStartDate
 				                                         ,status,thresHoldAmt,tollTagEndDate,tollTagStartDate
 				                                         ,uuid,companyCode,brandName);
-		//response = Response.status(200).entity(ppdUpdateResponse).build();
+		response = Response.status(200).entity(ppdUpdateResponse).build();
 				
-		return new ResponseEntity<GenericResponse>(ppdUpdateResponse, HttpStatus.OK);
+		return response;
 	}
 	
 	/**
@@ -177,17 +184,18 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param companyCode
 	 * @return
 	 */
-	@PostMapping(value = "/gmePrepay/protected/startTollTagMonitor", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
-					MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> startTollTagMonitor(@RequestParam("paymentMode")String paymentMode, @RequestParam("contractAccountNumber")String contractAccount, 
-			                            @RequestParam("brandName")String brandName, @RequestParam("companyCode")String companyCode){
-		//Response response = null;
+	@POST
+	@Path("/protected/startTollTagMonitor")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response startTollTagMonitor(@FormParam("paymentMode")String paymentMode, @FormParam("contractAccountNumber")String contractAccount, 
+			                            @FormParam("brandName")String brandName, @FormParam("companyCode")String companyCode){
+		Response response = null;
 		
 		StartTollTagResponse tolltagResponse = prepayBO.startTollTagMonitor(paymentMode, contractAccount, brandName, companyCode, httpRequest.getSession(true).getId());
 		
-		//response = Response.status(200).entity(tolltagResponse).build();
-		return new ResponseEntity<GenericResponse>(tolltagResponse, HttpStatus.OK);
+		response = Response.status(200).entity(tolltagResponse).build();
+		return response;
 	}
 	
 	/**
@@ -200,18 +208,19 @@ private static Logger logger = LogManager.getLogger(GMEPrepayResource.class);
 	 * @param toDate
 	 * @return
 	 */
-	@PostMapping(value = "/gmePrepay/protected/getTemperatureData", consumes = { MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-			MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_XML_VALUE,
-					MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> getTemperatureData( @Valid TemperatureRequest request){
+	@POST
+	@Path("/protected/getTemperatureData")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response getTemperatureData( @Valid TemperatureRequest request){
 		
-		//Response response = null;
+		Response response = null;
 		
 		TemperaturedataResponse tempResponse = prepayBO.getTemperatureData(request);
 		
-		//response = Response.status(200).entity(tempResponse).build();
+		response = Response.status(200).entity(tempResponse).build();
 				
-		return new ResponseEntity<GenericResponse>(tempResponse, HttpStatus.OK);
+		return response;
 		
 	}
 }

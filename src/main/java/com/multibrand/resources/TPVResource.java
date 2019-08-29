@@ -8,21 +8,23 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
-import com.multibrand.dto.request.TPVRequest;
 import com.multibrand.service.TPVService;
-import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.tpv.TransUpdResponseVO;
+import com.multibrand.dto.request.TPVRequest;
 
 
 
@@ -32,7 +34,8 @@ import com.multibrand.vo.response.tpv.TransUpdResponseVO;
  * @author kbhulla1
  * @version 1.0
  */
-@RestController("tpvResource")
+@Component("tpvResource")
+@Path("tpvApi")
 public class TPVResource {
 
 	/**
@@ -55,11 +58,14 @@ public class TPVResource {
 	 * @throws RemoteException 
 	 * @throws ServiceException 
 	 */
-	@PostMapping(value = "/tpvApi/tpvApiTransUpd", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE,MediaType.APPLICATION_JSON_VALUE }, produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> tpvApiTransUpd(HttpServletRequest request){
+	@POST
+	@Path("tpvApiTransUpd")
+	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response tpvApiTransUpd(@Context HttpServletRequest request){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");
-		//Response response = null;
+		Response response = null;
 		TransUpdResponseVO responseVO = null;
 		try{
 			
@@ -77,17 +83,17 @@ public class TPVResource {
 					request.getParameter("IvResult"),
 					request.getParameter("IvTransactionid"));
 					
-			//response = Response.status(200).entity(responseVO).build();
+			response = Response.status(200).entity(responseVO).build();
 			logger.info("END-tpvApiTransUpd");
 			
 		}catch(Exception e){
 			responseVO = new TransUpdResponseVO();
 			responseVO.setType(e.getMessage());
 			responseVO.setMessage(e.getMessage());
-			//response = Response.status(200).entity(responseVO).build();
+			response = Response.status(200).entity(responseVO).build();
 		}
 				
-		return new ResponseEntity<GenericResponse>(responseVO, HttpStatus.OK);
+		return response;
 		
 	}
 	
@@ -103,11 +109,14 @@ public class TPVResource {
 	 * @throws RemoteException 
 	 * @throws ServiceException 
 	 */
-	@PostMapping(value = "/tpvApi/tpvApiTransUpdate", consumes = {	MediaType.APPLICATION_JSON_VALUE }, produces = { MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> tpvApiTransUpdate(@Valid TPVRequest tpvReq){
+	@POST
+	@Path("tpvApiTransUpdate")
+	@Consumes({MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON})
+	public Response tpvApiTransUpdate(@Valid TPVRequest tpvReq){
 		
 		logger.debug("Inside tpvApiTransUpd in TPV Resource");
-		//Response response = null;
+		Response response = null;
 		TransUpdResponseVO responseVO = null;
 		try{
 			
@@ -127,17 +136,17 @@ public class TPVResource {
 					tpvReq.getIvResult(),
 					tpvReq.getIvTransactionid());
 					
-			//response = Response.status(200).entity(responseVO).build();
+			response = Response.status(200).entity(responseVO).build();
 			logger.info("END-tpvApiTransUpd");
 			
 		}catch(Exception e){
 			responseVO = new TransUpdResponseVO();
 			responseVO.setType(e.getMessage());
 			responseVO.setMessage(e.getMessage());
-			//response = Response.status(200).entity(responseVO).build();
+			response = Response.status(200).entity(responseVO).build();
 		}
 				
-		return new ResponseEntity<GenericResponse>(responseVO, HttpStatus.OK);
+		return response;
 		
 	}
 	

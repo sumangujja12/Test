@@ -2,6 +2,7 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.ws.rs.FormParam;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;

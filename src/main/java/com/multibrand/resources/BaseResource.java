@@ -3,10 +3,11 @@ package com.multibrand.resources;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.http.ResponseEntity;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.exception.OEException;
@@ -45,13 +46,13 @@ public class BaseResource implements Constants {
 	 * @author jyogapa1 (Jenith)
 	 */
 	@Deprecated
-	protected ResponseEntity<GenericResponse> validateParameters(Map<String, Object> mandatoryParamMap)
+	protected Response validateParameters(Map<String, Object> mandatoryParamMap)
 			throws OEException {
 
 		String METHOD_NAME = "BaseResource: validateParameters(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
-		ResponseEntity<GenericResponse> errors = null;
+		Response errors = null;
 
 		errors = this.validateParameters(mandatoryParamMap, null, null, null);
 
@@ -79,14 +80,14 @@ public class BaseResource implements Constants {
 	 * @author jyogapa1 (Jenith)
 	 */
 	@Deprecated
-	protected ResponseEntity<GenericResponse> validateParameters(
+	protected Response validateParameters(
 			Map<String, Object> mandatoryParamMap,
 			Map<String, Object> sizeParamMap, Integer size) throws OEException {
 
 		String METHOD_NAME = "BaseResource: validateParameters(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
-		ResponseEntity<GenericResponse> errors = null;
+		Response errors = null;
 
 		errors = this.validateParameters(mandatoryParamMap, sizeParamMap, size,
 				size);
@@ -117,7 +118,7 @@ public class BaseResource implements Constants {
 	 */
 	@SuppressWarnings("unused")
 	@Deprecated
-	protected ResponseEntity<GenericResponse> validateParameters(
+	protected Response validateParameters(
 			Map<String, Object> mandatoryParamMap,
 			Map<String, Object> sizeParamMap, Integer min, Integer max)
 			throws OEException {
@@ -125,7 +126,7 @@ public class BaseResource implements Constants {
 		String METHOD_NAME = "BaseResource: validateParameters(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
-		ResponseEntity<GenericResponse> errors = null;
+		Response errors = null;
 		Boolean isRequestValid = null;
 
 		errors = this.validateParametersEmptyConstraint(mandatoryParamMap);
@@ -160,13 +161,13 @@ public class BaseResource implements Constants {
 	 */
 	@SuppressWarnings("unused")
 	@Deprecated
-	private ResponseEntity<GenericResponse> validateParametersEmptyConstraint(
+	private Response validateParametersEmptyConstraint(
 			Map<String, Object> mandatoryParamMap) throws OEException {
 
 		String METHOD_NAME = "BaseResource: validateParametersEmptyConstraint(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
-		ResponseEntity<GenericResponse> errors = null;
+		Response errors = null;
 		Boolean isRequestValid = null;
 		GenericResponse genericResponse=null;
 
@@ -201,7 +202,8 @@ public class BaseResource implements Constants {
 		logger.debug("End:" + METHOD_NAME);
 
 		//return errors;
-		return errors;
+		return Response.status(200).entity(genericResponse)
+				.build();
 	}
 
 	/**
@@ -224,14 +226,14 @@ public class BaseResource implements Constants {
 	 * @author jyogapa1 (Jenith)
 	 */
 	@Deprecated
-	private ResponseEntity<GenericResponse> validateParametersCustomConstraint(String constraintType,
+	private Response validateParametersCustomConstraint(String constraintType,
 			Integer min, Integer max, Map<String, Object> paramMap)
 			throws OEException {
 
 		String METHOD_NAME = "BaseResource: validateParametersCustomConstraint(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
-		ResponseEntity<GenericResponse> errors = null;
+		Response errors = null;
 
 		switch (VALIDATION_CONSTRAINTS.valueOf(constraintType)) {
 
@@ -267,14 +269,14 @@ public class BaseResource implements Constants {
 	 */
 	@SuppressWarnings("unused")
 	@Deprecated
-	private ResponseEntity<GenericResponse> validateParametersSizeConstraint(
+	private Response validateParametersSizeConstraint(
 			Map<String, Object> sizeParamMap, Integer min, Integer max)
 			throws OEException {
 
 		String METHOD_NAME = "BaseResource: validateParametersSizeConstraint(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
-		ResponseEntity<GenericResponse> errors = null;
+		Response errors = null;
 		Boolean isRequestValid = null;
 		GenericResponse genericResponse = null;
 
@@ -309,7 +311,8 @@ public class BaseResource implements Constants {
 		logger.debug("End:" + METHOD_NAME);
 
 		//return errors;
-		return errors;
+		return Response.status(200).entity(genericResponse)
+				.build();
 	}
 
 }

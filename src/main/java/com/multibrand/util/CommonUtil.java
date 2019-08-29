@@ -31,6 +31,9 @@ import java.util.UUID;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.binary.Base64;
@@ -46,11 +49,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -60,7 +59,8 @@ import com.multibrand.dto.OESignupDTO;
 import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.UserIdResponse;
-
+import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 @Component
 public class CommonUtil implements Constants {
@@ -148,7 +148,7 @@ public class CommonUtil implements Constants {
 				try {
 					strDate = format2.format(format1.parse(strDate));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("Exception Occurred in changeDateFormat ::: " +e);
 				}
 			}
 		}
@@ -164,7 +164,7 @@ public class CommonUtil implements Constants {
 			try {
 				strDate = format2.format(format1.parse(strDate));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("Exception Occurred in changeDateFormat ::: " +e);
 			}
 		}
 
@@ -232,7 +232,7 @@ public class CommonUtil implements Constants {
 			confirmationNumber = currentHostAddress + "-" + obfuscate(36, ts);
 		} catch (Exception e) {
 			confirmationNumber = obfuscate(36, ts);
-			e.printStackTrace();
+			logger.error("Exception occurred in generateConfirmationNumber ::: " +e);
 		}
 		return confirmationNumber;
 	}
@@ -476,7 +476,7 @@ public class CommonUtil implements Constants {
 		try {
 			date = sdf.parse(strDate);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("Exception Occurred in getSqlDate ::: " +e);
 			return null;
 		}
 
@@ -526,22 +526,19 @@ public class CommonUtil implements Constants {
 		return df.format(number).toString();
 	}
 
-	public static String wirteObjectToJson(ResponseEntity<Object> response) {
+	public static String wirteObjectToJson(Response response) {
 
 		ObjectWriter ow = new ObjectMapper().writer()
 				.withDefaultPrettyPrinter();
 		String json = "";
 		try {
-			json = ow.writeValueAsString(response.getBody());
+			json = ow.writeValueAsString(response.getEntity());
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		}
 
 		return json;
@@ -709,16 +706,19 @@ public class CommonUtil implements Constants {
 	 * @return Response
 	 * @author Jasveen Singh
 	 */
-	public static ResponseEntity<GenericResponse> buildNotValidResponse(String resultCode, String resultDesc)
+	public static Response buildNotValidResponse(String resultCode, String resultDesc)
 	{
 		logger.info("inside generic exception builder");
+		ResponseBuilder builder= new ResponseBuilderImpl();
 		GenericResponse notAllowedResponse= new GenericResponse();
 		//notAllowedResponse.setErrorCode(statusCode);
 		//notAllowedResponse.setStatusCode(statusCode);
 		notAllowedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);//pass other constant
 		notAllowedResponse.setResultDescription(resultDesc);
 		notAllowedResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-		return new ResponseEntity<GenericResponse>(notAllowedResponse, HttpStatus.OK);
+		builder.entity(notAllowedResponse);
+		builder.status(Response.Status.OK);// pass 200 always*
+		return builder.build();
 		
 	}
 	
@@ -734,12 +734,12 @@ public class CommonUtil implements Constants {
 	 * @return Response
 	 * @author Jenith (jyogapa1)
 	 */
-	public static ResponseEntity<GenericResponse> buildErrorsResponse(String resultDescription, String messageCode, String messageText,
+	public static Response buildErrorsResponse(String resultDescription, String messageCode, String messageText,
 			String statusCode) {
 		
 		logger.info("INSIDE GENERIC ERRORS RESPONSE BUILDER");
 		
-		
+		ResponseBuilder builder = new ResponseBuilderImpl();
 
 		GenericResponse errors = new GenericResponse();
 
@@ -754,9 +754,10 @@ public class CommonUtil implements Constants {
 		// status if any
 		errors.setStatusCode(statusCode);
 
-		// pass 200 always*
+		builder.entity(errors);
+		builder.status(Response.Status.OK);// pass 200 always*
 
-		return new ResponseEntity<GenericResponse>(errors,HttpStatus.OK);
+		return builder.build();
 	}
 	
 	/**
@@ -768,9 +769,9 @@ public class CommonUtil implements Constants {
 	 * @return Response
 	 * @author Jenith (jyogapa1)
 	 */
-	public static ResponseEntity<GenericResponse> buildErrorsResponse(String resultDescription) {
+	public static Response buildErrorsResponse(String resultDescription) {
 		
-		ResponseEntity<GenericResponse> response = buildErrorsResponse(resultDescription,
+		Response response = buildErrorsResponse(resultDescription,
 				null, null, null);
 
 		return response;
@@ -786,9 +787,9 @@ public class CommonUtil implements Constants {
 	 * @return Response
 	 * @author Jenith (jyogapa1)
 	 */
-	public static ResponseEntity<GenericResponse> buildErrorsResponse(String resultDescription, String statusCode) {
+	public static Response buildErrorsResponse(String resultDescription, String statusCode) {
 		
-		ResponseEntity<GenericResponse> response = buildErrorsResponse(resultDescription,
+		Response response = buildErrorsResponse(resultDescription,
 				null, null, statusCode);
 
 		return response;
@@ -898,9 +899,9 @@ public class CommonUtil implements Constants {
 			}
 			valid = true;
 		} catch (JsonParseException jpe) {
-			jpe.printStackTrace();
+			logger.error("Exception occured in isValidJson :::" +jpe);
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.error("Exception occured in isValidJson :::" +ioe);
 		}
 		return valid;
 	}
@@ -937,9 +938,9 @@ public class CommonUtil implements Constants {
 	 * @return POJO conversion to <code>MultivaluedMap</code>.
 	 */
 	@SuppressWarnings({ "unchecked" })
-	public static MultiValueMap<String, String> convertPojoToMultivaluedMap(
+	public static MultivaluedMap<String, String> convertPojoToMultivaluedMap(
 			Object pojo) {
-		MultiValueMap<String, String> map = null;
+		MultivaluedMap<String, String> map = null;
 		if (pojo != null) {
 			try {
 				ObjectMapper mapper = new ObjectMapper();
@@ -947,7 +948,7 @@ public class CommonUtil implements Constants {
 						Map.class);
 				logger.debug("pojoMap = " + pojoMap);
 				if (pojoMap != null) {
-					map = new LinkedMultiValueMap<String, String>();
+					map = new MultivaluedMapImpl();
 					extractPojoMap(StringUtils.EMPTY, pojoMap, map);
 				}
 			} catch (Exception e) {
@@ -960,7 +961,7 @@ public class CommonUtil implements Constants {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static void extractPojoMap(String mapKeyPrifix,
-			Map<String, Object> pojoMap, MultiValueMap resultMap)
+			Map<String, Object> pojoMap, MultivaluedMap resultMap)
 			throws ParseException {
 		if (pojoMap != null && resultMap != null) {
 			String attributeSeparater = ".";
@@ -988,7 +989,7 @@ public class CommonUtil implements Constants {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static void extractPojoList(String mapKeyPrifix,
-			List<Object> pojoList, MultiValueMap resultMap)
+			List<Object> pojoList, MultivaluedMap resultMap)
 			throws ParseException {
 		if (pojoList != null && pojoList.size() > 0 && resultMap != null) {
 			int count = 0;
@@ -1868,6 +1869,18 @@ public class CommonUtil implements Constants {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 		Date date = new Date();
 		return dateFormat.format(date); //05/07/2019 06:53:11 PM
+	}
+	
+	public static Date getStrToDateObj(String strToDateObj, String strFormat) {
+		if (StringUtils.isNotBlank(strToDateObj)) {
+			SimpleDateFormat sDateFormat = new SimpleDateFormat(strFormat);
+			try {
+				return sDateFormat.parse(strToDateObj);
+			} catch (ParseException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 	
 }

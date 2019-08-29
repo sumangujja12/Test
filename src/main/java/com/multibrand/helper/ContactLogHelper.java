@@ -1,6 +1,7 @@
 package com.multibrand.helper;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,7 @@ Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 	
-	@Autowired
+	@Context 
 	private HttpServletRequest httpRequest;
 	
 	/**

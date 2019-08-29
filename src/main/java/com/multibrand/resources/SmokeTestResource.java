@@ -2,14 +2,15 @@ package com.multibrand.resources;
 
 import java.util.logging.Logger;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import com.multibrand.vo.response.GenericResponse;
+import org.springframework.stereotype.Component;
 
 /*
  * <h1>Smoke Test API URL</h1>
@@ -20,17 +21,21 @@ import com.multibrand.vo.response.GenericResponse;
  * @since   02/02/2018
  */
 
-@RestController
+@Component
+@Path("smoketest")
 public class SmokeTestResource extends BaseResource{
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
 
-	@GetMapping(value="/smoketest/verifystatus/{param}" ,consumes = {MediaType.TEXT_PLAIN_VALUE }, produces = {MediaType.TEXT_PLAIN_VALUE})
-	public ResponseEntity<String> getMsg(@PathVariable("param") String servername) {
+	@GET
+	@Path("verifystatus/{param}")
+	@Consumes({ MediaType.TEXT_PLAIN })
+	@Produces({ MediaType.TEXT_PLAIN })
+	public Response getMsg(@PathParam("param") String servername) {
 
 		String output = "Application Server up on : " + servername + "\n";
 		logger.info(output);
 
-		return new ResponseEntity<String>(output, HttpStatus.OK);
+		return Response.status(200).entity(output).build();
 
 	}
 	

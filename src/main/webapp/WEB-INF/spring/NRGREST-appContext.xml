@@ -77,8 +77,4 @@
    	<import resource="/domain/billingDomainNrgWsStubsConfig.xml" />
    	<import resource="/domain/addressvalidationDomainNrgWsStubsConfig.xml" />
    	
-   	<bean name="viewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
-    <bean name="jsonTemplate" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"/>
-
-   	
 </beans>

@@ -4,6 +4,8 @@ import java.rmi.RemoteException;
 import java.text.MessageFormat;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +56,8 @@ public class TOSService extends BaseAbstractService
 
   @Autowired
   private UtilityLoggerHelper utilityloggerHelper;
-  @Autowired 
+  
+  @Context 
 	private HttpServletRequest httpRequest;
 
   protected TOSDomain getTOSDomainProxy()
@@ -801,7 +804,7 @@ public class TOSService extends BaseAbstractService
 		private String buildTOSSubmitEligibleProductsURL() {
 			return getEndPointUrl(CCS_TOS_SUBMIT_ELIGIBLE_PRODUCTS_URL);
 		}
-  
+ 	
 	public CreateContactLogResponse updateContactLog(CreateContactLogRequest request) throws Exception {
 		TOSDomain proxy = getTOSDomainProxy();
 		long startTime = CommonUtil.getStartTime();
@@ -816,6 +819,7 @@ public class TOSService extends BaseAbstractService
 		if (logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
 			throw ex;// it is required to throw exception back to BO layer for
+						// proper response generation
 		} catch (Exception ex) {
 			logger.error(": Exception while getting data from ccs:"+ex);
 			this.utilityloggerHelper.logTransaction("updateContactLog", false, request, ex, "",
@@ -823,6 +827,7 @@ public class TOSService extends BaseAbstractService
 			if (logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
 			throw ex;// it is required to throw exception back to BO layer for
+						// proper response generation
 		}
 		this.utilityloggerHelper.logTransaction("updateContactLog", false, request, response, response.getErrMessage(),
 				CommonUtil.getElapsedTime(startTime), "", "", companyCode);
