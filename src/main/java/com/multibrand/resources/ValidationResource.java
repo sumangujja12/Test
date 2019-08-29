@@ -2,16 +2,19 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.ValidationBO;
 import com.multibrand.domain.ValidateCustReferralIdResponse;
@@ -19,7 +22,6 @@ import com.multibrand.dto.request.ValidateAddressRequest;
 import com.multibrand.dto.response.ValidateAddressResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.vo.response.AddressValidateResponse;
-import com.multibrand.vo.response.GenericResponse;
 
 
 
@@ -28,14 +30,15 @@ import com.multibrand.vo.response.GenericResponse;
  * 
  * @author rbansal30
  */
-@RestController
+@Component
+@Path("validateResource")
 public class ValidationResource extends ValidationAddressResource {
 	
 	/** Object of ValidationBO class. */
 	@Autowired
 	private ValidationBO validationBO;
 	
-	@Autowired
+	@Context 
 	private HttpServletRequest httpRequest;
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -53,16 +56,19 @@ public class ValidationResource extends ValidationAddressResource {
 	 * @param companyCode		Company Code
 	 * @return response			Provide JSON/XML balance data response
 	 */
-	@PostMapping(value = "/validateResource/validateBillingAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> validateBillingAddress(@RequestParam("aptNumber") String aptNumber, @RequestParam("city") String city,
-			@RequestParam("country") String country, @RequestParam("state") String state, @RequestParam("streetName") String streetName, @RequestParam("streetNum") String streetNum, 
-			@RequestParam("zipCode") String zipCode, @RequestParam("companyCode") String companyCode,@RequestParam("poBox") String poBox, @RequestParam("brandName")String brandName){
+	@POST
+	@Path("validateBillingAddress")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response validateBillingAddress(@FormParam("aptNumber") String aptNumber, @FormParam("city") String city,
+			@FormParam("country") String country, @FormParam("state") String state, @FormParam("streetName") String streetName, @FormParam("streetNum") String streetNum, 
+			@FormParam("zipCode") String zipCode, @FormParam("companyCode") String companyCode,@FormParam("poBox") String poBox, @FormParam("brandName")String brandName){
 		logger.info(" START ******* validateBillingAddress API**********");
-		//Response response = null;
+		Response response = null;
 		AddressValidateResponse addressValidationResponse = validationBO.validateBillingAddress(aptNumber,city,country,state,streetName,streetNum,zipCode,companyCode,poBox,httpRequest.getSession(true).getId(),brandName);
-		//response = Response.status(200).entity(addressValidationResponse).build();
+		response = Response.status(200).entity(addressValidationResponse).build();
 		logger.info(" END ******* validateBillingAddress API**********");
-		return new ResponseEntity<GenericResponse>(addressValidationResponse, HttpStatus.OK);		
+		return response;		
 	}
 	
 	/**
@@ -99,15 +105,18 @@ public class ValidationResource extends ValidationAddressResource {
 	 * 
 	 * @author Jenith (jyogapa1)
 	 */
-	@PostMapping(value = "/validateResource/cleanupAddress", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<GenericResponse> cleanupAddress(
+	@POST
+	@Path("cleanupAddress")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response cleanupAddress(
 			@Valid ValidateAddressRequest validateAddressRequest)
 			throws OEException {
 
-		//Response response = null;
+		Response response = null;
 
 		// Do cleanup address input parameters extra validation errors check
-		ResponseEntity<GenericResponse> errors = this.validateBillingAddressParameters(
+		Response errors = this.validateBillingAddressParameters(
 				validateAddressRequest.getStreetAddress(),
 				validateAddressRequest.getPoBox());
 
@@ -118,20 +127,23 @@ public class ValidationResource extends ValidationAddressResource {
 				.validateAddress(validateAddressRequest);
 
 		// Build cleanup address response
-		//response = Response.status(Response.Status.OK)
-		//		.entity(validateAddressResponse).build();
+		response = Response.status(Response.Status.OK)
+				.entity(validateAddressResponse).build();
 
-		return new ResponseEntity<GenericResponse>(validateAddressResponse, HttpStatus.OK);
+		return response;
 	}
 	
-	@PostMapping(value = "/validateResource/validateReferralId", consumes = {	MediaType.APPLICATION_FORM_URLENCODED_VALUE }, produces = {	MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
-	public ResponseEntity<Object> validateReferralId(@RequestParam("referralId") String referralId, @RequestParam("companyCode") String companyCode, @RequestParam("brandId") String brandId){
+	@POST
+	@Path("validateReferralId")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public Response validateReferralId(@FormParam("referralId") String referralId, @FormParam("companyCode") String companyCode, @FormParam("brandId") String brandId){
 		logger.info(" START ******* validateReferralId API**********");
-		//Response response = null;
+		Response response = null;
 		ValidateCustReferralIdResponse validateCustReferralIdResponse = validationBO.validateReferralId(referralId,companyCode,brandId);
-		//response = Response.status(200).entity(validateCustReferralIdResponse).build();
+		response = Response.status(200).entity(validateCustReferralIdResponse).build();
 		logger.info(" END ******* validateReferralId API**********");
-		return new ResponseEntity<Object>(validateCustReferralIdResponse, HttpStatus.OK);		
+		return response;		
 	}
 
 }

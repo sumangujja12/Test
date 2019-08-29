@@ -39,7 +39,7 @@
 	</Appenders>
 
 	<Loggers>
-	   <Logger name="NRGREST_LOGGER" level="${log-level-debug}" additivity="false">
+	   <Logger name="NRGREST_LOGGER" level="${log-level-info}" additivity="false">
 	      <AppenderRef ref="consoleApp"/>
 		  <AppenderRef ref="outputApp"/>
 	   </Logger>
