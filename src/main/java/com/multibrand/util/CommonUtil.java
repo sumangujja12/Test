@@ -722,7 +722,7 @@ public class CommonUtil implements Constants {
 		//builder.entity(notAllowedResponse);
 		//builder.status(Response.Status.OK);// pass 200 always*
 		//return builder.build();
-		return notAllowedResponse;
+		return notAllowedResponse;  
 		
 	}
 	

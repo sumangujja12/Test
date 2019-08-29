@@ -900,7 +900,7 @@ public class ValidationBO extends BaseBO {
 		validatePosIdResponse.setMessageText(MESSAGE_CODE_INVALID_AGENT_ID);
 		validatePosIdResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		validatePosIdResponse.setResultDescription(MESSAGE_CODE_INVALID_AGENT_ID);
-		logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+""
+		logger.info("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+""
 				+ ":: agentID ::"+agentID+" "
 						+ "Agent ID is not valid");
 		

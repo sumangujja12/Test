@@ -791,7 +791,7 @@ public class OEResource extends BaseResource {
 					oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
 					oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
 				}
-			}//END : OE :Sprint61 :US21009 :Kdeshmu1
+			}//END : OE :Sprint61 :US21009 :Kdeshmu1  
 			
 		}
 		catch(Exception e)
