@@ -875,6 +875,10 @@ public class OERequestHandler implements Constants {
 		logger.debug(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: value of WebTSDP is ::"
 				+ oeSignUpDTO.getTdspCode());}
 		submitEnrollRequest.setStrWebTsdp(oeSignUpDTO.getTdspCode());
+		//START : OE :Sprint62 :US21019 :Kdeshmu1
+		submitEnrollRequest.setStrAgentId(oeSignUpDTO.getAgentID());
+		//END : OE :Sprint62 :US21019 :Kdeshmu1
+		
 		if (logger.isDebugEnabled()) {
 		logger.debug(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest);}
 		return submitEnrollRequest;
@@ -1176,7 +1180,15 @@ public class OERequestHandler implements Constants {
 
 			// set bp match
 			oeSignupDTO.setBpMatch(bpMatch);
-			
+			//START : OE :Sprint62 :US21019 :Kdeshmu1
+			oeSignupDTO.setAgentID(servLocResponse.getAgentID());
+			oeSignupDTO.setAgentType(servLocResponse.getAgentType());
+			oeSignupDTO.setAgentFirstName(servLocResponse.getAgentFirstName());
+			oeSignupDTO.setAgentLastName(servLocResponse.getAgentLastName());
+			oeSignupDTO.setVendorCode(servLocResponse.getVendorCode());
+			oeSignupDTO.setVendorName(servLocResponse.getVendorName());
+			oeSignupDTO.setTlpReportApiStatus(servLocResponse.getTlpReportApiStatus());
+			//END : OE :Sprint62 :US21019 :Kdeshmu1
 			// read person_affiliate table response
 			PersonResponse personResponse = servLocResponse.getPersonResponse();
 
