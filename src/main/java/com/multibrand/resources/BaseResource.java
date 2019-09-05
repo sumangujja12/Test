@@ -169,7 +169,6 @@ public class BaseResource implements Constants {
 
 		Response errors = null;
 		Boolean isRequestValid = null;
-		GenericResponse genericResponse=null;
 
 		HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil
 				.checkMandatoryParam(mandatoryParamMap);
@@ -186,10 +185,10 @@ public class BaseResource implements Constants {
 			String errorDesc = (String) mandatoryParamCheckResponse
 					.get("errorDesc");
 			if (StringUtils.isNotBlank(errorDesc)) {
-				genericResponse = CommonUtil
+				errors = CommonUtil
 						.buildNotValidResponse(resultCode, errorDesc);
 			} else {
-				genericResponse = CommonUtil.buildNotValidResponse(resultCode,
+				errors = CommonUtil.buildNotValidResponse(resultCode,
 						Constants.STATUS_CODE_ASK);
 			}
 			logger.info("Inside validateParametersBasicConstraint:: errorDesc is "
@@ -201,9 +200,7 @@ public class BaseResource implements Constants {
 
 		logger.debug("End:" + METHOD_NAME);
 
-		//return errors;
-		return Response.status(200).entity(genericResponse)
-				.build();
+		return errors;
 	}
 
 	/**
@@ -278,7 +275,6 @@ public class BaseResource implements Constants {
 
 		Response errors = null;
 		Boolean isRequestValid = null;
-		GenericResponse genericResponse = null;
 
 		HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil
 				.checkSizeParam(sizeParamMap, min, max);
@@ -295,10 +291,10 @@ public class BaseResource implements Constants {
 			String errorDesc = (String) mandatoryParamCheckResponse
 					.get("errorDesc");
 			if (StringUtils.isNotBlank(errorDesc)) {
-				genericResponse = CommonUtil
+				errors = CommonUtil
 						.buildNotValidResponse(resultCode, errorDesc);
 			} else {
-				genericResponse = CommonUtil.buildNotValidResponse(resultCode,
+				errors = CommonUtil.buildNotValidResponse(resultCode,
 						Constants.STATUS_CODE_ASK);
 			}
 			logger.info("Inside validateParametersSizeConstraint:: errorDesc is "
@@ -310,9 +306,7 @@ public class BaseResource implements Constants {
 
 		logger.debug("End:" + METHOD_NAME);
 
-		//return errors;
-		return Response.status(200).entity(genericResponse)
-				.build();
+		return errors;
 	}
 
 }
