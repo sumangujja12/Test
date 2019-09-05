@@ -805,6 +805,21 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 												.getString("residential_solar"));
 										dataRow.setMessageCode(rs
 												.getString("recent_msg_cd"));
+										dataRow.setAgentID(rs
+												.getString("agent_id"));
+										dataRow.setAgentType(rs
+												.getString("agent_type"));
+										dataRow.setAgentFirstName(rs
+												.getString("agent_first_name"));
+										dataRow.setAgentLastName(rs
+												.getString("agent_last_name"));
+										dataRow.setVendorCode(rs
+												.getString("vendor_code"));
+										dataRow.setVendorName(rs
+												.getString("vendor_name"));
+										dataRow.setTlpReportApiStatus(rs
+												.getString("tlp_report_api_status"));
+										
 										return dataRow;
 									}
 								});
