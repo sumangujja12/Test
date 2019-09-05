@@ -169,7 +169,6 @@ public class BaseResource implements Constants {
 
 		Response errors = null;
 		Boolean isRequestValid = null;
-		GenericResponse genericResponse=null;
 
 		HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil
 				.checkMandatoryParam(mandatoryParamMap);
@@ -201,9 +200,7 @@ public class BaseResource implements Constants {
 
 		logger.debug("End:" + METHOD_NAME);
 
-		//return errors;
-		return Response.status(200).entity(genericResponse)
-				.build();
+		return errors;
 	}
 
 	/**
@@ -278,7 +275,6 @@ public class BaseResource implements Constants {
 
 		Response errors = null;
 		Boolean isRequestValid = null;
-		GenericResponse genericResponse = null;
 
 		HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil
 				.checkSizeParam(sizeParamMap, min, max);
@@ -310,9 +306,7 @@ public class BaseResource implements Constants {
 
 		logger.debug("End:" + METHOD_NAME);
 
-		//return errors;
-		return Response.status(200).entity(genericResponse)
-				.build();
+		return errors;
 	}
 
 }

@@ -703,7 +703,6 @@ public class OEResource extends BaseResource {
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
 		OESignupDTO oESignupDTO = new OESignupDTO();
-		GenericResponse genericResponse;
 		// Start Validating DOB- Jsingh1
 		//Checking if DOB lies in Valid age Range (18-100)
 		try{
@@ -751,8 +750,10 @@ public class OEResource extends BaseResource {
 				}
 				logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
 			
-				//return response;
-				return response; 
+
+				return response;
+
+				
 			}
 			
 			isValidAge=validationBO.getValidAge(dobForPosId);
