@@ -750,7 +750,9 @@ public class OEResource extends BaseResource {
 				}
 				logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
 			
+
 				return response;
+
 				
 			}
 			
@@ -774,9 +776,8 @@ public class OEResource extends BaseResource {
 					logger.info("Agent Id is not valid");
 					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(performPosIdBpRequest.getAgentID(),
 							performPosIdBpRequest.getTrackingId());				
-					
 					response = Response.status(200).entity(validPosIdResponse)
-							.build();
+							.build(); 
 					return response;
 				}else{
 					oESignupDTO.setAgentID(performPosIdBpRequest.getAgentID());

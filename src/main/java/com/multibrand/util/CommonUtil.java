@@ -148,7 +148,7 @@ public class CommonUtil implements Constants {
 				try {
 					strDate = format2.format(format1.parse(strDate));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error("Exception Occurred in changeDateFormat ::: " +e);
 				}
 			}
 		}
@@ -164,7 +164,7 @@ public class CommonUtil implements Constants {
 			try {
 				strDate = format2.format(format1.parse(strDate));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error("Exception Occurred in changeDateFormat ::: " +e);
 			}
 		}
 
@@ -232,7 +232,7 @@ public class CommonUtil implements Constants {
 			confirmationNumber = currentHostAddress + "-" + obfuscate(36, ts);
 		} catch (Exception e) {
 			confirmationNumber = obfuscate(36, ts);
-			e.printStackTrace();
+			logger.error("Exception occurred in generateConfirmationNumber ::: " +e);
 		}
 		return confirmationNumber;
 	}
@@ -476,7 +476,7 @@ public class CommonUtil implements Constants {
 		try {
 			date = sdf.parse(strDate);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error("Exception Occurred in getSqlDate ::: " +e);
 			return null;
 		}
 
@@ -534,14 +534,11 @@ public class CommonUtil implements Constants {
 		try {
 			json = ow.writeValueAsString(response.getEntity());
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception Occurred in wirteObjectToJson " +e);
 		}
 
 		return json;
@@ -719,9 +716,11 @@ public class CommonUtil implements Constants {
 		notAllowedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);//pass other constant
 		notAllowedResponse.setResultDescription(resultDesc);
 		notAllowedResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+
 		builder.entity(notAllowedResponse);
 		builder.status(Response.Status.OK);// pass 200 always*
 		return builder.build();
+
 		
 	}
 	
@@ -902,9 +901,9 @@ public class CommonUtil implements Constants {
 			}
 			valid = true;
 		} catch (JsonParseException jpe) {
-			jpe.printStackTrace();
+			logger.error("Exception occured in isValidJson :::" +jpe);
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.error("Exception occured in isValidJson :::" +ioe);
 		}
 		return valid;
 	}
@@ -1872,6 +1871,18 @@ public class CommonUtil implements Constants {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 		Date date = new Date();
 		return dateFormat.format(date); //05/07/2019 06:53:11 PM
+	}
+	
+	public static Date getStrToDateObj(String strToDateObj, String strFormat) {
+		if (StringUtils.isNotBlank(strToDateObj)) {
+			SimpleDateFormat sDateFormat = new SimpleDateFormat(strFormat);
+			try {
+				return sDateFormat.parse(strToDateObj);
+			} catch (ParseException e) {
+				return null;
+			}
+		}
+		return null;
 	}
 	
 }
