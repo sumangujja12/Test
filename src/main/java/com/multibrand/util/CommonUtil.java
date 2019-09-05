@@ -716,9 +716,12 @@ public class CommonUtil implements Constants {
 		notAllowedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);//pass other constant
 		notAllowedResponse.setResultDescription(resultDesc);
 		notAllowedResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-		builder.entity(notAllowedResponse);
-		builder.status(Response.Status.OK);// pass 200 always*
-		return builder.build();
+
+		//builder.entity(notAllowedResponse);
+		//builder.status(Response.Status.OK);// pass 200 always*
+		//return builder.build();
+		return notAllowedResponse;  
+
 		
 	}
 	
