@@ -4,13 +4,20 @@ import java.rmi.RemoteException;
 import java.text.MessageFormat;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
@@ -465,5 +472,9 @@ public class OEService extends BaseAbstractService {
 			
 			return inputArgs;
 		}
-		// Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL: validate bank details  | Jyothi | 5/31/2019		
+		// Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL: validate bank details  | Jyothi | 5/31/2019	
+		
+		
+		
+		
 }
