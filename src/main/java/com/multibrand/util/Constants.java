@@ -950,6 +950,7 @@ public interface Constants {
 	public static final String CLIENT_ID = "client_id";
 	public static final String CLIENT_SECRET = "client_secret";
 	public static final String PASSWORD = "password";
+	public static final String PWRD = "password"; //change this to check
 	public static final String USER_NAME = "username";
 	public static final String SALESFORCE_LEASE_ID = "LeaseId";
 	public static final String SALESFORCE_UTILITY_ACC_NO = "UtilityAccountNumber";
@@ -1254,6 +1255,10 @@ public interface Constants {
     
     public static final String DSI_AGENT_ID = "270519";
     public static final String MESSAGE_CODE_INVALID_AGENT_ID = "INVALID_AGENT_ID";
+
+
+    public static final String DOLLAR_SIGN = "$";
+
     
     public static final String REST_API_USER_NAME="rest.api.user.name";
 	public static final String REST_API_PASSWORD="rest.api.password";
@@ -1262,4 +1267,5 @@ public interface Constants {
 	public static final String IOT_ENROLLMENT_REPORT_DATA_SUBMIT_REST_TIME_OUT_IN_SEC = "iot.enrollment.report.data.submit.rest.timeout.in.sec";
 	public static final String SPACE = " ";
 	
+
 }
