@@ -836,8 +836,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 				data = null;
 			}
 		}
-		logger.debug("data = " + data);
-		logger.debug("Exiting << getServiceLocation");
+		logger.info("data = " + data);
+		logger.info("Exiting << getServiceLocation");
 		return data;
 	}
 
