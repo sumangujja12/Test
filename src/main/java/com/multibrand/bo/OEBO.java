@@ -3043,11 +3043,11 @@ public class OEBO extends OeBoHelper implements Constants{
 	}
 	
 	public ServiceLocationResponse getEnrollmentData(String trackingId) {
-		logger.debug("Entering >> getEnrollmentData");
-		logger.debug("trackingId = " + trackingId);
+		logger.info("Entering >> getEnrollmentData");
+		logger.info("trackingId = " + trackingId);
 		ServiceLocationResponse serviceLocationResponse = serviceLocationDAO
 				.getServiceLocation(trackingId);
-		logger.debug("Exiting << getEnrollmentData");
+		logger.info("Exiting << getEnrollmentData");
 		return serviceLocationResponse;
 	}
 
