@@ -1851,22 +1851,21 @@ public class OEBO extends OeBoHelper implements Constants{
 					// TODO 6. - Out of scope of Phase I. Leave as TBD in code
 					// sendConfirmationEmail();
 					
-					//Send date to TLP
-					if(!StringUtils.equalsIgnoreCase(I_VALUE,oeSignUpDTO.getReqStatusCd()) && 
-							StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId()))
-					{
-
-						String tlpReportApiStatus = sendReliantEnrollmentDataToTLP (oeSignUpDTO);
-						oeSignUpDTO.setTlpReportApiStatus(tlpReportApiStatus);
-
-					//END - OE Alternate Channel Sprint 18 | US14439 | Kdeshmu1
-
-					}
+					
 				}
 			}
 			
 			// Update errorCode, reqStatusCD
 			this.updateEnrollmentStatus(oeSignUpDTO);
+			//Send date to TLP
+			//START : OE :Sprint62 :US21019 :Kdeshmu1
+			if(!StringUtils.equalsIgnoreCase(I_VALUE,oeSignUpDTO.getReqStatusCd()) && 
+					StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId()))
+			{
+				String tlpReportApiStatus = sendReliantEnrollmentDataToTLP (oeSignUpDTO);
+				oeSignUpDTO.setTlpReportApiStatus(tlpReportApiStatus);
+			}
+			//END : OE :Sprint62 :US21019 :Kdeshmu1
 			
 		} catch (RemoteException e) {
 			logger.error(e);
