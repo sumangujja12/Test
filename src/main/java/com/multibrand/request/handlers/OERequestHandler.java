@@ -163,7 +163,7 @@ public class OERequestHandler implements Constants {
 			request.setDepositCode(DEPOSIT_NONE);
 			request.setDepositAmount(ZERO);
 		}
-		
+		request.setTlpReportApiStatus(oeSignupDTO.getTlpReportApiStatus());
 		return request;
 	}
 	
@@ -879,8 +879,8 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest.setStrAgentId(oeSignUpDTO.getAgentID());
 		//END : OE :Sprint62 :US21019 :Kdeshmu1
 		
-		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest);}
+		//if (logger.isDebugEnabled()) {
+		logger.info(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest);//}
 		return submitEnrollRequest;
 	}
 	
@@ -1172,6 +1172,7 @@ public class OERequestHandler implements Constants {
 				.getEnrollmentData(enrollmentRequest.getTrackingId());
 
 		if (servLocResponse != null) {
+			logger.info("##############fetching data from SL data"+servLocResponse.getAgentID());
 			// Bp match
 			BPMatchDTO bpMatch = new BPMatchDTO();
 			
@@ -1188,6 +1189,8 @@ public class OERequestHandler implements Constants {
 			oeSignupDTO.setVendorCode(servLocResponse.getVendorCode());
 			oeSignupDTO.setVendorName(servLocResponse.getVendorName());
 			oeSignupDTO.setTlpReportApiStatus(servLocResponse.getTlpReportApiStatus());
+			oeSignupDTO.getSelectedOffer().setOfferTeaser(servLocResponse.getOfferCodeTitle());
+			oeSignupDTO.getSelectedOffer().setPlanName(servLocResponse.getPlanName());
 			//END : OE :Sprint62 :US21019 :Kdeshmu1
 			// read person_affiliate table response
 			PersonResponse personResponse = servLocResponse.getPersonResponse();
