@@ -544,8 +544,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 	}
 
 	public ServiceLocationResponse getServiceLocation(String trackingId) {
-		logger.debug("Entering >> getServiceLocation");
-		logger.debug("trackingId = " + trackingId);
+		logger.info("Entering >> getServiceLocation");
+		logger.info("trackingId = " + trackingId);
 		ServiceLocationResponse data = null;
 		if (StringUtils.isNotEmpty(trackingId)) {
 			try {
@@ -836,8 +836,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 				data = null;
 			}
 		}
-		logger.debug("data = " + data);
-		logger.debug("Exiting << getServiceLocation");
+		logger.info("data = " + data);
+		logger.info("Exiting << getServiceLocation");
 		return data;
 	}
 

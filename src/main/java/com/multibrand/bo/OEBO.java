@@ -107,6 +107,7 @@ import com.multibrand.util.LoggerUtil;
 import com.multibrand.util.Token;
 import com.multibrand.vo.request.CharityDetailsVO;
 import com.multibrand.vo.request.ESIDDO;
+import com.multibrand.vo.request.EnrollmentReportDataRequest;
 import com.multibrand.vo.request.OESignupVO;
 import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.AffiliateOfferDO;
@@ -1828,7 +1829,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			// Do the input normalization/sanitization
 			this.initNormalization(oeSignUpDTO);
-	
+	logger.info("oeSignUpDTO$$$$$$$$$$$$$$$$$$$$$$$$$ : "+oeSignUpDTO);
 			if (allowSubmitEnrollment(oeSignUpDTO, response)) {
 	
 				// Populate all Pre-requisite input for enrollment
@@ -1853,11 +1854,22 @@ public class OEBO extends OeBoHelper implements Constants{
 
 					// TODO 6. - Out of scope of Phase I. Leave as TBD in code
 					// sendConfirmationEmail();
+					
+					
 				}
 			}
 			
 			// Update errorCode, reqStatusCD
 			this.updateEnrollmentStatus(oeSignUpDTO);
+			//Send date to TLP
+			//START : OE :Sprint62 :US21019 :Kdeshmu1
+			if(!StringUtils.equalsIgnoreCase(I_VALUE,oeSignUpDTO.getReqStatusCd()) && 
+					StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId()))
+			{
+				String tlpReportApiStatus = sendReliantEnrollmentDataToTLP (oeSignUpDTO);
+				oeSignUpDTO.setTlpReportApiStatus(tlpReportApiStatus);
+			}
+			//END : OE :Sprint62 :US21019 :Kdeshmu1
 			
 		} catch (RemoteException e) {
 			logger.error(e);
@@ -3030,11 +3042,11 @@ public class OEBO extends OeBoHelper implements Constants{
 	}
 	
 	public ServiceLocationResponse getEnrollmentData(String trackingId) {
-		logger.debug("Entering >> getEnrollmentData");
-		logger.debug("trackingId = " + trackingId);
+		logger.info("Entering >> getEnrollmentData");
+		logger.info("trackingId = " + trackingId);
 		ServiceLocationResponse serviceLocationResponse = serviceLocationDAO
 				.getServiceLocation(trackingId);
-		logger.debug("Exiting << getEnrollmentData");
+		logger.info("Exiting << getEnrollmentData");
 		return serviceLocationResponse;
 	}
 
@@ -4734,6 +4746,136 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		}
 		return bankDetailsValidationResponse;
 	}
+	/**
+	 * 
+	 * @param oeSignUpDTO
+	 * @return
+	 */
+	public String sendReliantEnrollmentDataToTLP (OESignupDTO oeSignUpDTO){
+		
+		EnrollmentReportDataRequest request=setEnrollmentReportDataRequest(oeSignUpDTO);
+		
+		//Invoke IOT Service call
+		String restJsonResponse = oeService.createAndCallServiceReturnStatus(request, REST_IOT_ENROLLMENT_REPORT_DATA_SUBMIT_URL, IOT_ENROLLMENT_REPORT_DATA_SUBMIT_REST_TIME_OUT_IN_SEC);
+		
+		logger.info("Enrollment Rest Data restResponse from IOT=={}"+restJsonResponse);
+		
+		return restJsonResponse;
+	}
+	
+private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO oeSignUpDTO) {
+		
+		EnrollmentReportDataRequest request = new EnrollmentReportDataRequest();
+			        
+		request.setTrackingId(oeSignUpDTO.getTrackingNumber());
+
+		String guid = CommonUtil.generateUUID();
+		request.setGuid(guid);
+		
+		/*if(null!=oeSignUpDTO.getProspectDTO())
+		{
+			request.setProspectId(oeSignUpDTO.getProspectDTO().getProspectId());
+		}*/
+		request.setProspectId("");
+		
+		request.setTdspCode(oeSignUpDTO.getTdspCodeCCS());
+		
+		
+			request.setVendorCode(oeSignUpDTO.getVendorCode());
+			request.setVendorName(oeSignUpDTO.getVendorName());
+			if(null!=oeSignUpDTO.getAgentID())
+			{
+				request.setAgentId(oeSignUpDTO.getAgentID());
+					
+			}
+			/*if(null!=oeSignUpDTO.getAgentTypeDescription())
+			{
+				//request.setAgentTypeDescription(oeSignUpDTO.getSelectedAgentDTO().getAgentTypeDescription());
+			}*/
+			request.setAgentTypeDescription("");
+		
+			request.setPartnerId("");
+			
+			request.setLocationId("");
+		
+		if(null!=oeSignUpDTO.getPerson())
+		{
+				request.setAccountFirstName(oeSignUpDTO.getPerson().getFirstName());
+				request.setAccountLastName(oeSignUpDTO.getPerson().getLastName());
+		}
+		/*if(null!=oeSignUpDTO.getCreditCheckDTO())
+		{
+				request.setDepositHold(oeSignUpDTO.getCreditCheckDTO().getDepositHold());
+		}*/
+		request.setDepositHold("");
+		request.setEsid(oeSignUpDTO.getEsidNumber());	
+		
+		
+			
+			request.setContractTerm("");
+			request.setCancelFee("");	
+		
+		
+		if(null!=oeSignUpDTO.getServiceAddress())
+		{
+				request.setServiceAddressStreet(oeSignUpDTO.getServiceAddress().getStreetNum()+ SPACE + oeSignUpDTO.getServiceAddress().getStreetName());
+				request.setServiceAddressUnit(oeSignUpDTO.getServiceAddress().getUnitNum());
+				request.setServiceAddressState(oeSignUpDTO.getServiceAddress().getState());
+				request.setServicAddresseCity(oeSignUpDTO.getServiceAddress().getCity());
+				request.setServiceAddressZip(oeSignUpDTO.getServiceAddress().getZipcode());
+				
+		}
+		if(null!=oeSignUpDTO.getBillingAddress())
+		{	
+			if(null!=oeSignUpDTO.getBillingAddress().getStreetAddress()){
+				request.setBillingAddressStreet(oeSignUpDTO.getBillingAddress().getStreetNum()+ SPACE + oeSignUpDTO.getBillingAddress().getStreetName());
+			}
+			else
+			{
+				request.setBillingAddressStreet("PO BOX "+oeSignUpDTO.getBillingAddress().getPoBox());
+			}
+				request.setBillingAddressUnit(oeSignUpDTO.getBillingAddress().getUnitNum());
+				request.setBillingAddressCity(oeSignUpDTO.getBillingAddress().getCity());
+				request.setBillingAddressState(oeSignUpDTO.getBillingAddress().getState());
+				request.setBillingAddressZip(oeSignUpDTO.getBillingAddress().getZipcode());
+		}
+		 
+		request.setSameServiceBillAddressFlag(oeSignUpDTO.getSameBillingServiceAddressFlag());
+	
+		request.setServiceStartDate(oeSignUpDTO.getServiceStartDate());
+		String timeStamp = new SimpleDateFormat("dd-MMM-YYYY hh:mm:ss aa").format(new Date());
+		request.setCreationDateTimestamp(timeStamp);
+		
+		if(null!=oeSignUpDTO.getSelectedOffer())
+		{
+		request.setOfferCode(oeSignUpDTO.getSelectedOffer().getOfferCode());
+		request.setPromoCode(oeSignUpDTO.getSelectedOffer().getOfferCellTrackCodeSelected());
+		request.setPlanName(oeSignUpDTO.getSelectedOffer().getPlanName());
+		request.setOfferTeaser(oeSignUpDTO.getSelectedOffer().getOfferTeaser());
+		}
+		
+		//request.setOfferTeaser(CommonUtil.getAlphaNumeric(oeSignUpDTO.getSelectedOfferDTO().getStrOfferCodeTitle()));
+		
+		
+		request.setContractAccountNumber(oeSignUpDTO.getContractAccountNum());
+		request.setDeviceLatitude("");
+		request.setDeviceLongitude("");
+		request.setDeviceLocationAccuracy("");
+		request.setEnrollmentStatus(oeSignUpDTO.getReqStatusCd());
+		
+		request.setPhoneNumber(oeSignUpDTO.getPerson().getPhoneNumber());
+		request.setEmailAddress(oeSignUpDTO.getPerson().getEmailAddress());
+		
+		request.setTabletID("");
+		request.setKbaDecision("");
+		request.setKbaReasonCodes("");
+		
+		request.setDateOfBirth(oeSignUpDTO.getPerson().getDateOfBirth());
+		request.setEnrollmentType(oeSignUpDTO.getServiceReqTypeCd());
+		request.setDeviceType("");
+		return request;
+	}
+
 }
 
 	

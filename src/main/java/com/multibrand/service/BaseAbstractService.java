@@ -12,11 +12,19 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnvMessageReader;
@@ -300,6 +308,62 @@ public class BaseAbstractService implements Constants{
 				return Integer.parseInt(timeOutStr) * 1000;
 			}
 			return (defaultTimeoutInSec > 0 ? (defaultTimeoutInSec * 1000) : (45 * 1000));
+		}
+
+		/**
+		 * //START : OE :Sprint62 :US21019 :Kdeshmu1
+		 * @param requestObject
+		 * @param restURL
+		 * @param timeOutSec
+		 * @return
+		 */
+public <T> String createAndCallServiceReturnStatus(T requestObject, String restURL, String timeOutSec){
+			
+			Gson gson = new Gson();
+			String restResponse = null;
+			HttpStatus status = null;
+			String url = getEndPointUrl(restURL);
+			logger.info("Other Services URL:"+url);
+			try{
+				String request = gson.toJson(requestObject);
+
+				logger.info("Other Services URL request param:"+request);
+				//if(logger.isDebugEnabled()){logger.debug("REQUEST JSON::::::"+request);}
+				RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(timeOutSec));
+				HttpHeaders headers = new HttpHeaders();
+				headers.add("Authorization", getBasicAuthHeader());
+				headers.setContentType(MediaType.APPLICATION_JSON);
+				HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+				//Map<String, String> map = new HashMap<String, String>();
+				ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+				//restResponse = null != responseEntity.getBody()?responseEntity.getBody():"";
+				status = responseEntity.getStatusCode();
+				restResponse = status.toString();
+				
+			}catch(HttpServerErrorException httpEx){
+				logger.error("HttpServerErrorException OCCURED CALLING THE REST CALL FOR THE URL:::::"+url+"::"+httpEx.getMessage());			
+				return "500";
+			} catch(Exception ex){
+				logger.error("ERROR OCCURED CALLING THE REST CALL FOR THE URL:::::"+url+"::",ex);			
+				return "400";
+			}
+			logger.info("Other Services URL restResponse :"+restResponse);
+			
+			return restResponse;
+		}
+//END : OE :Sprint62 :US21019 :Kdeshmu1
+		/**
+		 * Get encoded string representing HTTP Basic authorization credentials for
+		 * the request.
+		 */
+		protected String getBasicAuthHeader() {
+			String user = getEnvMessageReader().getMessage(REST_API_USER_NAME);
+			String password = getEnvMessageReader().getMessage(REST_API_PASSWORD);
+			String token = user + ":" + password;
+
+			byte[] encodedToken = Base64.encodeBase64(token.getBytes());
+
+			return "Basic " + new String(encodedToken);
 		}
 	 
 }

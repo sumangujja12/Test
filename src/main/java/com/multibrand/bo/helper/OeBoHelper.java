@@ -310,7 +310,7 @@ public class OeBoHelper extends BaseBO {
 			if (submitEnrollResponse.getStrErrCode() == null) {
 				isEnrollmentSuccess = true;
 
-				logger.debug(oeSignUpDTO.printOETrackingID()
+				logger.info(oeSignUpDTO.printOETrackingID()
 						+ "Enrollment Happened Successfully");
 
 				isEnrollmentSuccess = BOOLEAN_TRUE;
@@ -327,8 +327,8 @@ public class OeBoHelper extends BaseBO {
 					oeSignUpDTO.setCheckDigit(submitEnrollResponse
 							.getStrCheckDigit());
 				}
-				if (logger.isDebugEnabled()) {
-					logger.debug(oeSignUpDTO.printOETrackingID()
+				//if (logger.isDebugEnabled()) {
+					logger.info(oeSignUpDTO.printOETrackingID()
 							+ "BPnumber is"
 							+ submitEnrollResponse.getStrBPNumber());
 					logger.debug(oeSignUpDTO.printOETrackingID()
@@ -342,17 +342,17 @@ public class OeBoHelper extends BaseBO {
 								+ "bp numbr is null");
 					}
 
-				}
+				//}
 			}
 
 			else if (submitEnrollResponse.getStrErrCode() != null) {
 				isEnrollmentSuccess = BOOLEAN_FALSE;
 
-				if (logger.isDebugEnabled()) {
+				//if (logger.isDebugEnabled()) {
 					logger.info(oeSignUpDTO.printOETrackingID()
 							+ "Enrollment Error Message:"
 							+ submitEnrollResponse.getStrErrMessage());
-				}
+				//}
 
 				errorCode = submitEnrollResponse.getStrErrCode();
 				oeSignUpDTO.setErrorCode(errorCode);
