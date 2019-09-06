@@ -159,6 +159,14 @@ gm.prodoffer.schema.id = 11791
 gm.prodbonus.schema.id=TODO
 gm.base.url=https://signup.greenmountain.com 
 
+
 ##START : OE | Sprint 23 | US18891 |GIACT IMPL For Bank | Nkatragadda
 ws.rest.ccs.bank.giact.call.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_DT_REQUEST_SRV/BankValidation?CA={0}&COCODE={1}&BANKACCOUNT={2}&ROUTING={3}&TRACKING={4}&$format=json
 ##END : OE | Sprint 23 | US18891 |GIACT IMPL For Bank | Nkatragadda
+
+rest.api.user.name=nrgapi
+rest.api.password=tester
+rest.ws.endpointURL.iot.enrollment.report.data.submit=http://txaixsexbls05/iotproxy/enrollment/sendReliantEnrollmentDataToTLP
+iot.enrollment.report.data.submit.rest.timeout.in.sec=60
+
+
