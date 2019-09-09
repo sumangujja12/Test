@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -101,6 +102,7 @@ import com.multibrand.vo.response.billingResponse.BillInfoResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.ContractDO;
+import com.multibrand.vo.response.billingResponse.ContractDOSort;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
@@ -300,6 +302,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				}
 				//Changes Start for adding EFL, TOS & YRAAC codes
 			   ContractDO[] contractDO = accountDetailsResp.getContractAccountDO().getListOfContracts();
+			   Arrays.sort(contractDO, new ContractDOSort());
 				for(ContractDO contract:contractDO)
 				{
 					
@@ -3344,8 +3347,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if (ambAmount.equals("0.00")) {
 					templateProps.put(AMB_AMOUNT, "");
 				} else {
-					String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Estimated Monthly Payment:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
-							+ ambAmount + "<![CDATA[</td></tr>]]>";
+					String strAmbAmount = DOLLAR_SIGN+ambAmount;
 					templateProps.put(AMB_AMOUNT, strAmbAmount);
 				}
 				logger.info("Email send To Address" + requestVO.getToEmail());
@@ -3361,8 +3363,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if (ambAmount.equals("0.00")) {
 					templateProps.put(AMB_AMOUNT, "");
 				} else {
-					String strAmbAmount = "<![CDATA[<tr><td class=\"float_1_trans\">]]>Pago mensual estimado:<![CDATA[</td><td class=\"float_2_trans\" align=\"right\">]]>$"
-							+ ambAmount + "<![CDATA[</td></tr>]]>";
+					String strAmbAmount = DOLLAR_SIGN+ambAmount;
 					templateProps.put(AMB_AMOUNT, strAmbAmount);
 				}
 				if (StringUtils.isNotBlank(requestVO.getRetroFlag())
