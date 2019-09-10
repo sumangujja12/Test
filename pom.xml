@@ -843,7 +843,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-profile-domain</artifactId>
-			<version>3</version>
+			<version>12-SNAPSHOT</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
