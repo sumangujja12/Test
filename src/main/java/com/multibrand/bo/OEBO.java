@@ -3,6 +3,7 @@ package com.multibrand.bo;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1825,7 +1826,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			// Do the input normalization/sanitization
 			this.initNormalization(oeSignUpDTO);
-	logger.info("oeSignUpDTO$$$$$$$$$$$$$$$$$$$$$$$$$ : "+oeSignUpDTO);
+			logger.info("oeSignUpDTO : "+oeSignUpDTO);
 			if (allowSubmitEnrollment(oeSignUpDTO, response)) {
 	
 				// Populate all Pre-requisite input for enrollment
@@ -4745,8 +4746,9 @@ private TLPOfferDO[] constructTLPOfferDOList(
 	 * 
 	 * @param oeSignUpDTO
 	 * @return
+	 * @throws ParseException 
 	 */
-	public String sendReliantEnrollmentDataToTLP (OESignupDTO oeSignUpDTO){
+	public String sendReliantEnrollmentDataToTLP (OESignupDTO oeSignUpDTO) throws ParseException{
 		
 		EnrollmentReportDataRequest request=setEnrollmentReportDataRequest(oeSignUpDTO);
 		
@@ -4758,7 +4760,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		return restJsonResponse;
 	}
 	
-private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO oeSignUpDTO) {
+private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO oeSignUpDTO) throws ParseException {
 		
 		EnrollmentReportDataRequest request = new EnrollmentReportDataRequest();
 			        
@@ -4807,8 +4809,8 @@ private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO o
 		
 		
 			
-			request.setContractTerm("");
-			request.setCancelFee("");	
+			request.setContractTerm("NA");
+			request.setCancelFee("NA");	
 		
 		
 		if(null!=oeSignUpDTO.getServiceAddress())
@@ -4837,7 +4839,8 @@ private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO o
 		 
 		request.setSameServiceBillAddressFlag(oeSignUpDTO.getSameBillingServiceAddressFlag());
 	
-		request.setServiceStartDate(oeSignUpDTO.getServiceStartDate());
+		Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(oeSignUpDTO.getServiceStartDate());
+		request.setServiceStartDate(date1.toString());
 		String timeStamp = new SimpleDateFormat("dd-MMM-YYYY hh:mm:ss aa").format(new Date());
 		request.setCreationDateTimestamp(timeStamp);
 		
