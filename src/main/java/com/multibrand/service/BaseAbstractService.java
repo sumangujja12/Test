@@ -323,11 +323,11 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 			String restResponse = null;
 			HttpStatus status = null;
 			String url = getEndPointUrl(restURL);
-			logger.info("Other Services URL:"+url);
+			logger.info("Services URL:"+url);
 			try{
 				String request = gson.toJson(requestObject);
 
-				logger.info("Other Services URL request param:"+request);
+				logger.info("Services URL request param:"+request);
 				//if(logger.isDebugEnabled()){logger.debug("REQUEST JSON::::::"+request);}
 				RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(timeOutSec));
 				HttpHeaders headers = new HttpHeaders();
