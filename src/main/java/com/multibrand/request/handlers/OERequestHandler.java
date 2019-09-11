@@ -880,7 +880,7 @@ public class OERequestHandler implements Constants {
 		//END : OE :Sprint62 :US21019 :Kdeshmu1
 		
 		//if (logger.isDebugEnabled()) {
-		logger.info(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest);//}
+		logger.info(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest.toString());//}
 		return submitEnrollRequest;
 	}
 	
@@ -1172,7 +1172,6 @@ public class OERequestHandler implements Constants {
 				.getEnrollmentData(enrollmentRequest.getTrackingId());
 
 		if (servLocResponse != null) {
-			logger.info("##############fetching data from SL data"+servLocResponse.getAgentID());
 			// Bp match
 			BPMatchDTO bpMatch = new BPMatchDTO();
 			
