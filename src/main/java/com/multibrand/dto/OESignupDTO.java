@@ -174,6 +174,14 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		String tlpReportApiStatus;
 		String errorCdList;
 		String systemNotes;
+		private String ccsAgentUpdateStatus;
+		public String getCcsAgentUpdateStatus() {
+			return ccsAgentUpdateStatus;
+		}
+
+		public void setCcsAgentUpdateStatus(String ccsAgentUpdateStatus) {
+			this.ccsAgentUpdateStatus = ccsAgentUpdateStatus;
+		}
 		
 		public String getAgentID() {
 			return agentID;
