@@ -850,7 +850,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-			<version>9</version>
+			<version>12</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
@@ -862,7 +862,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-profile-domain</artifactId>
-			<version>12-SNAPSHOT</version>
+			<version>15</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
@@ -899,7 +899,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-validation-domain</artifactId>
-			<version>1</version>
+			<version>4</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 
