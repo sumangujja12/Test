@@ -58,6 +58,7 @@ import com.multibrand.domain.SubmitEnrollResponse;
 import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
+import com.multibrand.domain.UpdateCRMAgentInfoResponse;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
@@ -1851,7 +1852,26 @@ public class OEBO extends OeBoHelper implements Constants{
 
 					// TODO 6. - Out of scope of Phase I. Leave as TBD in code
 					// sendConfirmationEmail();
-					
+					if (StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId())) {
+						
+						if((StringUtils.isNotBlank(oeSignUpDTO.getContractAccountNum()))
+								&& (StringUtils.isNotBlank(oeSignUpDTO.getBusinessPartnerID()))) {
+							UpdateCRMAgentInfoResponse updateResponse = oeService.updateCRMAgentInfo(oeSignUpDTO);
+							logger.info(oeSignUpDTO.printOETrackingID()+" Agent CRM Update Status for CA : "+oeSignUpDTO.getContractAccountNum()+" Response Code : "+updateResponse.getResponseCode()+ " Msg : "+updateResponse.getResponseMsg());
+							if(StringUtils.equalsIgnoreCase(updateResponse.getResponseCode(), S_VALUE)){
+								oeSignUpDTO.setCcsAgentUpdateStatus(UPDATE_AGENT_SUCCESS_FLAG);
+							} else{
+								oeSignUpDTO.setCcsAgentUpdateStatus(UPDATE_AGENT_ERROR_FLAG);
+							}
+						} else {
+							logger.info(oeSignUpDTO.printOETrackingID() + " Agent  :"
+									+ oeSignUpDTO.getAgentID()
+									+ " is not updated in CRM because CA :" + oeSignUpDTO.getContractAccountNum()
+									+ " BPNumber :" + oeSignUpDTO.getBusinessPartnerID());
+						}
+				} else {
+					logger.debug(oeSignUpDTO.printOETrackingID()+" There is no agent information to Update ");
+				}
 					
 				}
 			}
