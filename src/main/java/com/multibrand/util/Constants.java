@@ -1267,6 +1267,10 @@ public interface Constants {
 	public static final String REST_IOT_ENROLLMENT_REPORT_DATA_SUBMIT_URL = "rest.ws.endpointURL.iot.enrollment.report.data.submit";
 	public static final String IOT_ENROLLMENT_REPORT_DATA_SUBMIT_REST_TIME_OUT_IN_SEC = "iot.enrollment.report.data.submit.rest.timeout.in.sec";
 	public static final String SPACE = " ";
+	public static final String FLAG_E = "E";
+	public static final String S_VALUE = "S";
+	public static final String UPDATE_AGENT_SUCCESS_FLAG = "Success";
+	public static final String UPDATE_AGENT_ERROR_FLAG = "CCSError";
 	//END : OE :Sprint62 :US21019 :Kdeshmu1
 	
 
