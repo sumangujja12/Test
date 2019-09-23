@@ -2,6 +2,8 @@ package com.multibrand.vo.response.billingResponse;
 
 import java.util.Date;
 
+import org.apache.axis.utils.StringUtils;
+
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.DateUtil;
 
@@ -250,7 +252,10 @@ public class ContractDO {
 	 * @return the strSourceMoveOutDate
 	 */
 	public Date getStrSourceMoveOutDate() {
-		return DateUtil.getDate(strSourceMoveOutDate,"yyyy-MM-dd");
+		if(!StringUtils.isEmpty(strSourceMoveOutDate)){
+			return DateUtil.getDate(strSourceMoveOutDate,"yyyy-MM-dd");
+		}
+		return null;
 	}
 
 	/**
