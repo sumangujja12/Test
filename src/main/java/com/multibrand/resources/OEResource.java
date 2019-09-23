@@ -1086,7 +1086,7 @@ public class OEResource extends BaseResource {
 		Response response = null;
 		AgentDetailsResponse agentDetailsResponse = oeBO.getAgentDetails(request,
 				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(agentDetailsResponse).build();
+		response = Response.status(Response.Status.OK).entity(agentDetailsResponse).header("Access-Control-Allow-Origin", "*").build();
 		return response;
 	}
 	
