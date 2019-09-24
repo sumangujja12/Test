@@ -205,6 +205,14 @@ public class CommonUtil implements Constants {
 		}
 		return inputString;
 	}
+	
+	public static String getDefaultTemperature(String temp) {
+		if (StringUtils.isBlank(temp)) {
+			return "0";
+		} else {
+			return temp;
+		}
+	}
 
 	public static long getStartTime() {
 		return System.currentTimeMillis();
