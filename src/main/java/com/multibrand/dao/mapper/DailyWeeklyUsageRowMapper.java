@@ -35,8 +35,8 @@ public class DailyWeeklyUsageRowMapper implements RowMapper<DailyWeeklyUsageResp
 		
 		response.setTotDayUsg(CommonUtil.getBlankString(rs.getString("tot_day_usg")));
 		response.setTotDayCst(CommonUtil.getBlankString(rs.getString("tot_day_cst")));
-		response.setDayTempHigh(CommonUtil.getBlankString(rs.getString("day_temp_high")));
-		response.setDayTempLow(CommonUtil.getBlankString(rs.getString("day_temp_low")));
+		response.setDayTempHigh(CommonUtil.getDefaultTemperature(rs.getString("day_temp_high")));
+		response.setDayTempLow(CommonUtil.getDefaultTemperature(rs.getString("day_temp_low")));
 		response.setTotWkUsg(CommonUtil.getBlankString(rs.getString("tot_wk_usg")));
 		response.setTotWkCst(CommonUtil.getBlankString(rs.getString("tot_wk_cst")));
 		response.setWkAveTempHigh(CommonUtil.getBlankString(rs.getString("wk_ave_temp_high")));

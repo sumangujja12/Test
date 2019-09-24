@@ -89,8 +89,8 @@ public class HourlyUsageRowMapper implements RowMapper<HourlyUsage>, Constants
 		hourlyUsage.setCostHr24(CommonUtil.getBlankString(rs.getString("COST_HR24")));
 		hourlyUsage.setDayUsg(CommonUtil.getBlankString(rs.getString("DAY_USG")));
 		hourlyUsage.setDayCst(CommonUtil.getBlankString(rs.getString("DAY_CST")));
-		hourlyUsage.setDayTempHigh(CommonUtil.getBlankString(rs.getString("DAY_TEMP_HIGH")));
-		hourlyUsage.setDayTempLow(CommonUtil.getBlankString(rs.getString("DAY_TEMP_LOW")));
+		hourlyUsage.setDayTempHigh(CommonUtil.getDefaultTemperature(rs.getString("DAY_TEMP_HIGH")));
+		hourlyUsage.setDayTempLow(CommonUtil.getDefaultTemperature(rs.getString("DAY_TEMP_LOW")));
 
 
 		return hourlyUsage;
