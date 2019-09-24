@@ -17,8 +17,8 @@ public class DailyResponseVO implements UsageInterface
 	private String actualDay;
 	private String dayUsg;
 	private String dayCst;
-	private String dayTempHigh;
-	private String dayTempLow;
+	private String dayTempHigh="0";
+	private String dayTempLow="0";
 
 	/**
 	 * @return the esiId
