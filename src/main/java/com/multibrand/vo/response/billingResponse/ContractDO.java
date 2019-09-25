@@ -252,7 +252,7 @@ public class ContractDO {
 	 * @return the strSourceMoveOutDate
 	 */
 	public Date getStrSourceMoveOutDate() {
-		if(!StringUtils.isEmpty(strSourceMoveOutDate)){
+		if(!StringUtils.isEmpty(strSourceMoveOutDate) && strSourceMoveOutDate.indexOf("-")>-1){
 			return DateUtil.getDate(strSourceMoveOutDate,"yyyy-MM-dd");
 		}
 		return null;
