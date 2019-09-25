@@ -43,9 +43,9 @@ public class DailyUsageRowMapper implements RowMapper<DailyResponseVO>, Constant
 		
 		dailyResponseVO.setDayUsg(CommonUtil.getBlankString(rs.getString("day_usg")));
 		dailyResponseVO.setDayCst(CommonUtil.getBlankString(rs.getString("day_cst")));
-		dailyResponseVO.setDayTempHigh(CommonUtil.getBlankString(rs.getString("DAY_TEMP_HIGH")));
-		dailyResponseVO.setDayTempLow(CommonUtil.getBlankString(rs.getString("DAY_TEMP_LOW")));
-
+		dailyResponseVO.setDayTempHigh(CommonUtil.getDefaultTemperature(rs.getString("DAY_TEMP_HIGH")));
+		dailyResponseVO.setDayTempLow(CommonUtil.getDefaultTemperature(rs.getString("DAY_TEMP_LOW")));
+		
 		return dailyResponseVO;
 	}
 
