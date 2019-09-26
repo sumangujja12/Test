@@ -163,7 +163,7 @@ public class OERequestHandler implements Constants {
 			request.setDepositCode(DEPOSIT_NONE);
 			request.setDepositAmount(ZERO);
 		}
-		
+		request.setTlpReportApiStatus(oeSignupDTO.getTlpReportApiStatus());
 		return request;
 	}
 	
@@ -875,8 +875,12 @@ public class OERequestHandler implements Constants {
 		logger.debug(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: value of WebTSDP is ::"
 				+ oeSignUpDTO.getTdspCode());}
 		submitEnrollRequest.setStrWebTsdp(oeSignUpDTO.getTdspCode());
-		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest);}
+		//START : OE :Sprint62 :US21019 :Kdeshmu1
+		submitEnrollRequest.setStrAgentId(oeSignUpDTO.getAgentID());
+		//END : OE :Sprint62 :US21019 :Kdeshmu1
+		
+		//if (logger.isDebugEnabled()) {
+		logger.info(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest.toString());//}
 		return submitEnrollRequest;
 	}
 	
@@ -1176,7 +1180,17 @@ public class OERequestHandler implements Constants {
 
 			// set bp match
 			oeSignupDTO.setBpMatch(bpMatch);
-			
+			//START : OE :Sprint62 :US21019 :Kdeshmu1
+			oeSignupDTO.setAgentID(servLocResponse.getAgentID());
+			oeSignupDTO.setAgentType(servLocResponse.getAgentType());
+			oeSignupDTO.setAgentFirstName(servLocResponse.getAgentFirstName());
+			oeSignupDTO.setAgentLastName(servLocResponse.getAgentLastName());
+			oeSignupDTO.setVendorCode(servLocResponse.getVendorCode());
+			oeSignupDTO.setVendorName(servLocResponse.getVendorName());
+			oeSignupDTO.setTlpReportApiStatus(servLocResponse.getTlpReportApiStatus());
+			oeSignupDTO.getSelectedOffer().setOfferTeaser(servLocResponse.getOfferCodeTitle());
+			oeSignupDTO.getSelectedOffer().setPlanName(servLocResponse.getPlanName());
+			//END : OE :Sprint62 :US21019 :Kdeshmu1
 			// read person_affiliate table response
 			PersonResponse personResponse = servLocResponse.getPersonResponse();
 
