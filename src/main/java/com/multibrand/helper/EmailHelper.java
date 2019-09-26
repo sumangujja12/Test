@@ -121,7 +121,7 @@ public class EmailHelper implements Constants {
 				|| templateName.equalsIgnoreCase(GME_SUBMIT_AMB_EN_US) || templateName.equalsIgnoreCase(GME_SUBMIT_AMB_ES_US))*/
 			if(templateName.equalsIgnoreCase(CIRRO_SUBMIT_SWAP_CONF_EN) || templateName.equalsIgnoreCase(CIRRO_SUBMIT_SWAP_CONF_ES) || templateName.equalsIgnoreCase(SUBMIT_SWAP_CONF_EN)|| templateName.equalsIgnoreCase(SUBMIT_SWAP_CONF_ES) ||
 				 templateName.equalsIgnoreCase(GME_SUBMIT_AMB_EN_US) || templateName.equalsIgnoreCase(GME_SUBMIT_RETRO_AMB_ES_US) || templateName.equalsIgnoreCase(GME_SUBMIT_RETRO_AMB_EN_US) || templateName.equalsIgnoreCase(GME_SUBMIT_AMB_ES_US) ||
-				 templateName.equalsIgnoreCase(CIRRO_EMAIL_CHANGE_EXTERNAL_ID_EN) || templateName.equalsIgnoreCase(POWER_GENIUS_ENROLL_CONF_EN) || templateName.equalsIgnoreCase(CREATE_USER_EN) || templateName.equalsIgnoreCase(CREATE_USER_ES) )
+				 templateName.equalsIgnoreCase(CIRRO_EMAIL_CHANGE_EXTERNAL_ID_EN) || templateName.equalsIgnoreCase(POWER_GENIUS_ENROLL_CONF_EN) || templateName.equalsIgnoreCase(CREATE_USER_EN) || templateName.equalsIgnoreCase(CREATE_USER_ES) || EmailTemplateEnum.getEnumMap().containsKey(templateName))
 		{				
 			status = processSendEmail(msgDtls, companyCode , templateName, AdapterTypes.HTML);
 			
