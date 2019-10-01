@@ -4,13 +4,22 @@ import java.rmi.RemoteException;
 import java.text.MessageFormat;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
@@ -24,9 +33,11 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.domain.UpdateCRMAgentInfoRequest;
+import com.multibrand.domain.UpdateCRMAgentInfoResponse;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
-
+import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -251,7 +262,8 @@ public class OEService extends BaseAbstractService {
 					logger.info("Read Reliant Agent Details Response is NOT empty and converted into required respose object");
 					
 					if(null != response && null != response.getAgentDetailsResponseOutData() && null!= response.getAgentDetailsResponseOutData().getResult()
-							&& StringUtils.isBlank(response.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode())){
+							&& (response.getAgentDetailsResponseOutData().getResult().size()==0
+							|| StringUtils.isBlank(response.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode()))){
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 					} else {
@@ -464,5 +476,55 @@ public class OEService extends BaseAbstractService {
 			
 			return inputArgs;
 		}
-		// Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL: validate bank details  | Jyothi | 5/31/2019		
+		// Start | US19653 | MBAR: Sprint 23 -GIACT REST IMPL: validate bank details  | Jyothi | 5/31/2019	
+		
+		
+		public UpdateCRMAgentInfoResponse updateCRMAgentInfo(OESignupDTO oeSignUpDTO) {
+			UpdateCRMAgentInfoResponse updateResponse =new UpdateCRMAgentInfoResponse(); 
+			try{
+			
+				logger.debug("{} updateCRMAgentInfo :: inside function in enrollmentService"+oeSignUpDTO.printOETrackingID());
+				
+				OEDomain proxyClient = getOEServiceProxy();
+				
+				UpdateCRMAgentInfoRequest updateRequest = createUpdateCRMAgentInfo(oeSignUpDTO);
+				
+				logger.info("UpdateCRMAgentInfoRequest  is {}"+ ReflectionToStringBuilder.toString(updateRequest,
+						ToStringStyle.MULTI_LINE_STYLE));
+				 
+				updateResponse =  proxyClient.updateOEAgentInfo(updateRequest);
+				logger.info(oeSignUpDTO.printOETrackingID()+"updateCRMAgentInfo:: "+ReflectionToStringBuilder.toString(updateResponse,
+						ToStringStyle.MULTI_LINE_STYLE));
+				logger.info("responseStatus ="+ updateResponse.getResponseCode());		
+			}
+			catch(Exception e)
+			{			
+				updateResponse.setResponseCode(FLAG_E);
+				updateResponse.setResponseMsg("Exception while executing the service");
+				logger.error("{} inside OEService:: in updateCRMAgentInfo() ::SubmitupdateCRMAgentInfoEnrollment Call Failed with error ::{}" + e);
+				
+			}
+			
+			return updateResponse;
+		}
+		/**
+		 * OE :Sprint 62 : US210019  : Tppo pass agent data to CCS
+		 * @param oeSignUpDTO
+		 * @return
+		 */
+		private UpdateCRMAgentInfoRequest createUpdateCRMAgentInfo(OESignupDTO oeSignUpDTO) {
+			UpdateCRMAgentInfoRequest updateRequest = new UpdateCRMAgentInfoRequest();
+			updateRequest.setCompanyCode(oeSignUpDTO.getCompanyCode());
+			updateRequest.setCaNumber(CommonUtil.addLeadingZeroes(oeSignUpDTO.getContractAccountNum(), 12));
+			updateRequest.setBpNumber(CommonUtil.addLeadingZeroes(oeSignUpDTO.getBusinessPartnerID(), 10));
+			updateRequest.setWebTrackingID(oeSignUpDTO.getTrackingNumber());
+			//START - OE Alternate Channel Sprint15| US12758 | Kdeshmu1 :Code cleanup
+			if (StringUtils.isNotBlank(oeSignUpDTO.getAgentID())) {
+				updateRequest.setAgentID(oeSignUpDTO.getAgentID());
+				updateRequest.setVendorID(oeSignUpDTO.getVendorCode());
+			}
+			//END - OE Alternate Channel Sprint15| US12758 | Kdeshmu1 :Code cleanup
+			return updateRequest;
+
+		}
 }

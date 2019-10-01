@@ -184,6 +184,7 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 			request.setServZipCode(trimServZipCode);
 			request.setBillZipCode(trimBillZipCode);
 			
+			
 			// Set ESID blank for NESID, NRESID & MESID cases:
 			if (NESID.equalsIgnoreCase(request.getEsid())
 					|| MESID.equalsIgnoreCase(request.getEsid())
@@ -543,8 +544,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 	}
 
 	public ServiceLocationResponse getServiceLocation(String trackingId) {
-		logger.debug("Entering >> getServiceLocation");
-		logger.debug("trackingId = " + trackingId);
+		logger.info("Entering >> getServiceLocation");
+		logger.info("trackingId = " + trackingId);
 		ServiceLocationResponse data = null;
 		if (StringUtils.isNotEmpty(trackingId)) {
 			try {
@@ -804,6 +805,21 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 												.getString("residential_solar"));
 										dataRow.setMessageCode(rs
 												.getString("recent_msg_cd"));
+										dataRow.setAgentID(rs
+												.getString("agent_id"));
+										dataRow.setAgentType(rs
+												.getString("agent_type"));
+										dataRow.setAgentFirstName(rs
+												.getString("agent_first_name"));
+										dataRow.setAgentLastName(rs
+												.getString("agent_last_name"));
+										dataRow.setVendorCode(rs
+												.getString("vendor_code"));
+										dataRow.setVendorName(rs
+												.getString("vendor_name"));
+										dataRow.setTlpReportApiStatus(rs
+												.getString("tlp_report_api_status"));
+										
 										return dataRow;
 									}
 								});
@@ -820,8 +836,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 				data = null;
 			}
 		}
-		logger.debug("data = " + data);
-		logger.debug("Exiting << getServiceLocation");
+		logger.info("data = " + data);
+		logger.info("Exiting << getServiceLocation");
 		return data;
 	}
 

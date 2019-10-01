@@ -149,6 +149,73 @@ public class ServiceLocationResponse implements Serializable {
 	private String frequentFlyerNumber;
 	private String realtorId;
 	private PersonResponse personResponse;
+	//START : OE :Sprint62 :US21019 :Kdeshmu1
+			String agentID;
+			String agentType;
+			String agentFirstName;
+			String agentLastName;
+			String vendorCode;
+			String vendorName;
+			String tlpReportApiStatus;
+			
+			
+			public String getAgentID() {
+				return agentID;
+			}
+
+			public void setAgentID(String agentID) {
+				this.agentID = agentID;
+			}
+			
+			public String getAgentType() {
+				return agentType;
+			}
+
+			public void setAgentType(String agentType) {
+				this.agentType = agentType;
+			}
+
+			public String getAgentFirstName() {
+				return agentFirstName;
+			}
+
+			public void setAgentFirstName(String agentFirstName) {
+				this.agentFirstName = agentFirstName;
+			}
+
+			public String getAgentLastName() {
+				return agentLastName;
+			}
+
+			public void setAgentLastName(String agentLastName) {
+				this.agentLastName = agentLastName;
+			}
+
+			public String getVendorCode() {
+				return vendorCode;
+			}
+
+			public void setVendorCode(String vendorCode) {
+				this.vendorCode = vendorCode;
+			}
+
+			public String getVendorName() {
+				return vendorName;
+			}
+
+			public void setVendorName(String vendorName) {
+				this.vendorName = vendorName;
+			}
+
+			public String getTlpReportApiStatus() {
+				return tlpReportApiStatus;
+			}
+
+			public void setTlpReportApiStatus(String tlpReportApiStatus) {
+				this.tlpReportApiStatus = tlpReportApiStatus;
+			}
+
+			//end : OE :Sprint62 :US21019 :Kdeshmu1
 
 	public ServiceLocationResponse() {
 

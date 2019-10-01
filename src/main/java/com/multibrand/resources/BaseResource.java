@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.exception.OEException;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.response.GenericResponse;
 
 /**
  * 
