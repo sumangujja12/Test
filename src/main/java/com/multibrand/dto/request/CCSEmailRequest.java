@@ -1,6 +1,7 @@
 package com.multibrand.dto.request;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import com.multibrand.exception.ValidateRequestException;
 /**
@@ -98,6 +99,12 @@ public class CCSEmailRequest extends NRGServicesRequest implements BaseEmailRequ
 		
 	}
 	
-	
+	/**
+	 * @return String representation of this request.
+	 */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	}
 
 }
