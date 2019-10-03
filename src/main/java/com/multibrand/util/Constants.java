@@ -1252,12 +1252,14 @@ public interface Constants {
     public static final String SCHEDULE_CC_PAYMENT_GME_SUB = "Scheduled Payment Acknowledgment";
     public static final String MOBILE = "Mobile";
     public static final String AUTOPAY_G_FLAG = "G";
-
-    public static final String DOLLAR_SIGN = "$";
-
+    
    //START : OE :Sprint62 :US21019 :Kdeshmu1
     public static final String DSI_AGENT_ID = "270519";
     public static final String MESSAGE_CODE_INVALID_AGENT_ID = "INVALID_AGENT_ID";
+
+
+    public static final String DOLLAR_SIGN = "$";
+
     
     public static final String REST_API_USER_NAME="rest.api.user.name";
 	public static final String REST_API_PASSWORD="rest.api.password";
@@ -1270,4 +1272,6 @@ public interface Constants {
 	public static final String UPDATE_AGENT_SUCCESS_FLAG = "Success";
 	public static final String UPDATE_AGENT_ERROR_FLAG = "CCSError";
 	//END : OE :Sprint62 :US21019 :Kdeshmu1
+	
+
 }
