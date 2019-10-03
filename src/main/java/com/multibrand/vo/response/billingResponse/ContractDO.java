@@ -136,7 +136,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrContractEndDate() {
-		return CommonUtil.changeDateFormat(strContractEndDate);
+		if(DateUtil.matches(strContractEndDate)){
+			return strContractEndDate;
+		} else{
+			return CommonUtil.changeDateFormat(strContractEndDate);
+		}
 	}
 
 	public void setStrContractEndDate(java.lang.String strContractEndDate) {
@@ -152,7 +156,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrContractStartDate() {
-		return CommonUtil.changeDateFormat(strContractStartDate);
+		if(DateUtil.matches(strContractStartDate)){
+			return strContractStartDate;
+		} else {
+			return CommonUtil.changeDateFormat(strContractStartDate);
+		}
 	}
 
 	public OfferDO getCurrentPlan() {
@@ -184,7 +192,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrMoveInDate() {
-		return CommonUtil.changeDateFormat(strMoveInDate);
+		if(DateUtil.matches(strMoveInDate)){
+			return strMoveInDate;
+		} else {
+			return CommonUtil.changeDateFormat(strMoveInDate);
+		}
 	}
 
 	public void setStrMoveInDate(java.lang.String strMoveInDate) {
@@ -192,7 +204,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrMoveOutDate() {
-		return CommonUtil.changeDateFormat(strMoveOutDate);
+		if(DateUtil.matches(strMoveOutDate)){
+			return strMoveOutDate;
+		} else {
+			return CommonUtil.changeDateFormat(strMoveOutDate);
+		}
 	}
 
 

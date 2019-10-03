@@ -3,6 +3,7 @@ package com.multibrand.vo.response.billingResponse;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.DateUtil;
 
 
 
@@ -91,7 +92,11 @@ public class ContractAccountDO {
   	
   	@XmlElement(name="accountConversionDate")
   	public String getStrConversionDate() {
-  		return CommonUtil.changeDateFormat(strConversionDate);
+  		if(DateUtil.matches(strConversionDate)){
+  			return strConversionDate;
+  		} else {
+  			return CommonUtil.changeDateFormat(strConversionDate);
+  		}
   	}
   	public void setStrConversionDate(String strConversionDate) {
   		this.strConversionDate = strConversionDate;
@@ -141,7 +146,11 @@ public class ContractAccountDO {
 	}
 
 	public java.lang.String getStrAPCCExpDate() {
-		return CommonUtil.changeDateFormat(strAPCCExpDate);
+		if(DateUtil.matches(strAPCCExpDate)){
+			return strAPCCExpDate;
+		} else {
+			return CommonUtil.changeDateFormat(strAPCCExpDate);
+		}
 	}
 
 	public void setStrAPCCExpDate(java.lang.String strAPCCExpDate) {
@@ -301,7 +310,11 @@ public class ContractAccountDO {
 	}
 
 	public java.lang.String getStrDisconnectDate() {
-		return CommonUtil.changeDateFormat(strDisconnectDate);
+		if(DateUtil.matches(strDisconnectDate)){
+			return strDisconnectDate;
+		} else {
+			return CommonUtil.changeDateFormat(strDisconnectDate);
+		}
 	}
 
 	public void setStrDisconnectDate(java.lang.String strDisconnectDate) {

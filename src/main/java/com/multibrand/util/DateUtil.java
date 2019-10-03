@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -31,7 +32,8 @@ public class DateUtil implements Constants{
 	private static Logger logger = LogManager.getLogger(DateUtil.class);
 	private static final long ONE_HOUR = 60 * 60 * 1000L;
 	private static final String DATE_FORMAT_YYYY = "yyyy";
-
+	private static Pattern DATE_PATTERN_YYYYMMDD = Pattern.compile("([1-9]\\d{3}(0[0-9]|1[0-9])(0[1-9]|[12]\\d|3[01]))");
+																
 	/**
 	 * Method getMonDD.
 	 * 
@@ -804,5 +806,12 @@ public class DateUtil implements Constants{
 		return  (startDate.getTime() - endDate.getTime()) / 1000;
 	}
 
+	public static boolean matches(String date) {
+		if(StringUtils.isEmpty(date)){
+			return false;
+		} else {
+			return DATE_PATTERN_YYYYMMDD.matcher(date).matches();
+		}
+    }
 	
 }
