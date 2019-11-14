@@ -724,6 +724,11 @@ public class OEBO extends OeBoHelper implements Constants{
 						.getRecentDisconnectFlag());
 				esidDO.setSwitchHoldStatus(esidProfileResponse
 						.getSwitchHoldStatus());
+				if(StringUtils.equalsIgnoreCase(esidProfileResponse.getBlockStatus(), FLAG_X )) {
+					esidDO.setEsidBlocked(true);
+				}else{
+					esidDO.setEsidBlocked(false);
+				}
 				
 			}
 			logger.debug("OEBO.setESIDDTO() esidDTO:: " + esidDO);
@@ -2601,6 +2606,14 @@ public class OEBO extends OeBoHelper implements Constants{
 				}else {
 					EsidProfileResponse esidProfileResponse = this.addressService.getESIDProfile(esid,companyCode);
 					esidDo = setESIDDTO(esidProfileResponse);
+					//atiwari
+					if(esidDo.isEsidBlocked()){
+						response.setMessageCode("ESID Blocked");
+						//response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
+						response.setMessageText("ESID is Blocked");
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						return response;
+					}
 					TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(esid,companyCode,sessionId);
 					if ((tdspByESIDResponse != null) && (StringUtils.isNotBlank(tdspByESIDResponse.getServiceId()))) {
 						String tdspCodeCCSForEsid = tdspByESIDResponse.getServiceId();
@@ -3189,8 +3202,19 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setBpMatchFlag(StringUtils.EMPTY);
 			}
 
+			/**** CASE 0: CCS returns the restricted flag as X show hard stop[ page enrollment and proceed further with the OE flow. 
+			 *****/
+			//atiwari
+			if(StringUtils.equalsIgnoreCase(bpmatchResponse.getBpMatchRestrictedFlag(), X_VALUE)){
+				errorCd = "RESTRICT";
+				response.setBpMatchFlag(errorCd);
+				response.setMessageCode("RESTRICT");
+				response.setStatusCode(STATUS_CODE_STOP);
+				//response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_BALANCE_MSG_TXT));
+				response.setMessageText("RESTRICT");
+			}
 			//NO BPMATCH FLAG
-			if(null!=bpmatchResponse.getBpNoMatchFlag() && bpmatchResponse.getBpNoMatchFlag().equals(X_VALUE)) {
+			else if(null!=bpmatchResponse.getBpNoMatchFlag() && bpmatchResponse.getBpNoMatchFlag().equals(X_VALUE)) {
 				logger.debug(" CCS returns the flag NO_BPMATCH as true");
 				errorCd = EMPTY;
 				response.setBpMatchFlag(EMPTY);
