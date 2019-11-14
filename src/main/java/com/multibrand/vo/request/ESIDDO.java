@@ -29,6 +29,7 @@ public class ESIDDO implements Serializable{
 	private String esidDeposit;
 	private String esidTDSP;
 	private boolean esidCheckFlag;
+	private boolean esidBlocked;
 	
 	public String getEsidNumber() {
 		return esidNumber;
@@ -165,6 +166,14 @@ public class ESIDDO implements Serializable{
 
 	public void setEsidCheckFlag(boolean esidCheckFlag) {
 		this.esidCheckFlag = esidCheckFlag;
+	}
+
+	public boolean isEsidBlocked() {
+		return esidBlocked;
+	}
+
+	public void setEsidBlocked(boolean esidBlocked) {
+		this.esidBlocked = esidBlocked;
 	}
 
 	/**
