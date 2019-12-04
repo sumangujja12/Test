@@ -4456,7 +4456,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		if(StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) && StringUtils.equals(brandId, CIRRO_BRAND_NAME) ) {
 			responseMessage = msgSource.getMessage(CIRRO_COMPANY_CODE+"."+CIRRO_BRAND_NAME+"."+textMessageCode,null,CommonUtil.localeCode(locale));		
-		}else if(StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) && (StringUtils.isBlank(BRAND_ID_PENNYWISE) || StringUtils.equals(brandId, BRAND_ID_PENNYWISE))){
+		}else if(StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) && (StringUtils.isBlank(brandId) || StringUtils.equals(brandId, BRAND_ID_PENNYWISE))){
 			responseMessage = msgSource.getMessage(CIRRO_COMPANY_CODE+"."+textMessageCode,null,CommonUtil.localeCode(locale));
 		}
 		else{
@@ -4464,7 +4464,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		}
 		return responseMessage;
 	}
-	//END || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
+//END || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
 
 	private boolean isServicedTDSPCode(String tdspCode){
 		boolean isServiceFlag = false;
