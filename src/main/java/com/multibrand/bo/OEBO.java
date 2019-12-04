@@ -4469,7 +4469,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		}
 		return responseMessage;
 	}
-	//END || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
+//END || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
 
 	private boolean isServicedTDSPCode(String tdspCode){
 		boolean isServiceFlag = false;
