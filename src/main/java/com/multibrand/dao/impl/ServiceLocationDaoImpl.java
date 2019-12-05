@@ -145,7 +145,7 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 			}
 
 			if (StringUtils.isNotBlank(request.getErrorCode())
-					&& request.getErrorCode().length() > 9) {
+					&& request.getErrorCode().length() > 10) {
 				request.setErrorCode(TIBCOSD);
 			}
 

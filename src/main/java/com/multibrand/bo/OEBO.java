@@ -3208,7 +3208,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			 *****/
 			//Start US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
 			if(StringUtils.equalsIgnoreCase(bpmatchResponse.getBpMatchRestrictedFlag(), X_VALUE)){
-				errorCd = BP_RESTRICTION;
+				errorCd = BP_RESTRICT;
 				response.setBpMatchFlag(errorCd);
 				response.setMessageCode(BP_RESTRICTION);
 				response.setStatusCode(STATUS_CODE_STOP);
