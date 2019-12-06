@@ -1277,6 +1277,7 @@ public interface Constants {
 	public static final String BP_RESTRICTION_TEXT_MESSAGE = "bp.restriction.text.message";
 	public static final String ESID_RESTRICTION = "ESID_RESTRICTION";
 	public static final String BP_RESTRICTION = "BP_RESTRICTION";
+	public static final String BP_RESTRICT = "BPRESTRICT";
 	//End || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 
 }
