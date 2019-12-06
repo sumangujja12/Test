@@ -303,7 +303,7 @@ public class ValidationBO extends BaseBO {
 						performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenTDL(), performPosIdBpRequest.getMaidenName(),
 						performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getServStreetAptNum(), performPosIdBpRequest.getServCity(),
 						performPosIdBpRequest.getServState(), performPosIdBpRequest.getServStreetName(), performPosIdBpRequest.getServStreetNum(),
-						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenSSN());	
+						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenSSN(),performPosIdBpRequest.getBrandId());	
 
 				response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 				messageCode=(String)performBpMatchResponse.get("messageCode");
