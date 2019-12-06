@@ -94,21 +94,25 @@ public class ContentBO extends BaseBO implements Constants {
 				contractInfo.getCompanyCode(), sessionId);
 		List<MonthlyUsageResponse> monthlyUsageList = monthlyUsage.getMonthlyUsageResponse();
 		if (!monthlyUsageList.isEmpty() && monthlyUsageList.size() > 0) {
-			double totMontlyUsageAmt = 0;
+			double totMontlyUsageKwh = 0;
 			int numberOfMonths = 0;
 			for (MonthlyUsageResponse usage : monthlyUsageList) {
-				Double monthlyUsageAmt = Double.parseDouble(usage.getTotalMonthCost());
-				if (monthlyUsageAmt > 0.00) {
-					totMontlyUsageAmt += monthlyUsageAmt;
+				Double monthlyUsageKwh = Double.parseDouble(usage.getTotalUsageMonth());
+				logger.info("ContractId="+contractInfo.getContractId()+"monthlyUsageKwh"+String.valueOf(monthlyUsageKwh));
+				logger.info("ContractId="+contractInfo.getContractId()+"yearlyUsageKwh"+String.valueOf(usage.getTotalUsageYear()));
+				if (monthlyUsageKwh > 0.00) {
+					totMontlyUsageKwh += monthlyUsageKwh;
 					numberOfMonths++;
 				}
 			}
-			if(totMontlyUsageAmt==0 || numberOfMonths==0){
+			if(totMontlyUsageKwh==0 || numberOfMonths==0){
 				avgUsage = 0;
 			} else {
-				avgUsage = totMontlyUsageAmt / numberOfMonths;
+				avgUsage = totMontlyUsageKwh / numberOfMonths;
 			}
+			logger.info("ContractId="+contractInfo.getContractId()+"totalMonthlyUsageKwh-"+String.valueOf(totMontlyUsageKwh));
 		}
+		
 		return avgUsage;
 	}
 	
