@@ -316,7 +316,7 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 				request.setEsidMatchFlag(esidMatchFlag);
 
 				if (StringUtils.isNotEmpty(request.getErrorCode())
-						&& request.getErrorCode().length() > 9) {
+						&& request.getErrorCode().length() > 10) {
 					request.setErrorCode(TIBCOSD);
 				}
 				request.setCompletionStatusCode(StringUtils.EMPTY);
