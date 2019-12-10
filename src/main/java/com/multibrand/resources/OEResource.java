@@ -17,12 +17,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
@@ -40,9 +42,10 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
-import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+import com.multibrand.dto.request.ProductOfferRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -52,9 +55,9 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
-import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
@@ -62,11 +65,12 @@ import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
-import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
+import com.multibrand.vo.response.ResidentialProductOfferResponse;
+import com.multibrand.vo.response.SmallBusinessProductOfferResponse;
 import com.multibrand.vo.response.TdspResponse;
 import com.multibrand.vo.response.TokenizedResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
@@ -103,6 +107,35 @@ public class OEResource extends BaseResource {
 	@Resource(name = "webI18nMessageSource")
 	private WebI18nMessageSource msgSource;
 
+	
+	
+	
+	
+	/**
+	 * get product offer informations plus sdl content
+	 * @param productOfferRequest
+	 * @return response
+	 */
+	@POST
+	@Path("getProductOffers")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getProductOffer(@RequestBody ProductOfferRequest productOfferRequest) {
+		logger.info("Get Product Offer Method: " + "zipCode " + productOfferRequest.getZipCode() + "TDPSCODE " + productOfferRequest.getTdspCode() + "ChannelPartnet " + productOfferRequest.getChannelPartnerCode());
+		if (productOfferRequest.getCustomerType().equalsIgnoreCase("smb")) {
+			SmallBusinessProductOfferResponse smbOfferResponse = oeBO.getSmallBusinessOfferData(productOfferRequest);
+			return StringUtils.isEmpty(smbOfferResponse.getErrorMessage()) ?  Response.status(Status.ACCEPTED).entity(smbOfferResponse).build()
+																		:  Response.status(Status.BAD_REQUEST).entity(smbOfferResponse).build();
+		}
+		
+		if (productOfferRequest.getCustomerType().equalsIgnoreCase("res")) {
+			ResidentialProductOfferResponse residentialProductOfferResponse = oeBO.getResidentialOfferData(productOfferRequest);
+			return StringUtils.isEmpty(residentialProductOfferResponse.getErrorMessage()) ?  Response.status(Status.ACCEPTED).entity(residentialProductOfferResponse).build()
+					:  Response.status(Status.BAD_REQUEST).entity(residentialProductOfferResponse).build();
+		}
+		return Response.status(Status.BAD_REQUEST).build();
+		
+	}
 	/**
 	 * @param locale
 	 * @param companyCode

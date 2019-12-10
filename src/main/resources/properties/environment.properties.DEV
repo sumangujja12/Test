@@ -144,6 +144,8 @@ ce.pub.id_en=143
 ce.pub.id_es=144
 gm.pub.id_en=123
 gm.pub.id_es=124
+xoom.pub.id_en=366
+xoom.pub.id_es=367
 
 re.taxonomy.id = 301
 pw.taxonomy.id = TODO
@@ -173,3 +175,7 @@ iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 #END : OE :Sprint62 :US21019 :Kdeshmu1
 
 
+#Content Service 
+content.server.endpoint.url=http://txaixebnbld01.retail.nrgenergy.com:18081/client/v2/content.svc/
+#File
+documentum.endpoint=http://dev-texas.xoomenergy.com/files/{0}.pdf
