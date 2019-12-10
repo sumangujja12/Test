@@ -1279,5 +1279,22 @@ public interface Constants {
 	public static final String BP_RESTRICTION = "BP_RESTRICTION";
 	public static final String BP_RESTRICT = "BPRESTRICT";
 	//End || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
+	
+	
+
+	//Content Service metadata
+	public static final String CUSTOM_METADATA= "CustomMetas%28%29?&$filter=(PublicationId%20eq%20";
+	
+	public static final String KEY_NAME = "%20and%20keyName%20eq%20%27offerCodesLookup%27%20and%20";
+	
+	public static final String STRING_VALUE = "StringValue%20eq%20%27";
+	
+	public static final String JSON_FORMAT_COMPONENT_PRESENTATION = ")&$expand=Component/ComponentPresentations&$format=json";
+	
+	public static final String OR = "%20OR%20";
+	public static final String ERROR = "error";
+	
+	 public static final String TEFLF = "TEFLF";
+	 public static final String DISC = "DISC";
 
 }

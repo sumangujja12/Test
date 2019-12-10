@@ -850,7 +850,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-			<version>13</version>
+			<version>14-SNAPSHOT</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>

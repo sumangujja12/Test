@@ -42,6 +42,7 @@ import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.GetEsiidResponse;
 import com.multibrand.domain.NewCreditScoreRequest;
 import com.multibrand.domain.OetdspRequest;
+import com.multibrand.domain.OfferOutPut;
 import com.multibrand.domain.OfferPricingRequest;
 import com.multibrand.domain.OfferRequestDTO;
 import com.multibrand.domain.PayByBankRequest;
@@ -54,6 +55,7 @@ import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.domain.PromoOfferTDSPCharge;
 import com.multibrand.domain.SegmentedFlagsOutData;
+import com.multibrand.domain.SmallBusinessOfferResponse;
 import com.multibrand.domain.SubmitEnrollResponse;
 import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
@@ -72,9 +74,10 @@ import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
-import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+import com.multibrand.dto.request.ProductOfferRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -86,11 +89,9 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
-
-
-import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
@@ -125,8 +126,10 @@ import com.multibrand.vo.response.OfferPriceWraperDO;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.POWOfferDO;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
+import com.multibrand.vo.response.ResidentialProductOfferResponse;
 import com.multibrand.vo.response.SegmentedFlagDO;
 import com.multibrand.vo.response.ServiceAddressDO;
+import com.multibrand.vo.response.SmallBusinessProductOfferResponse;
 import com.multibrand.vo.response.TDSPChargeDO;
 import com.multibrand.vo.response.TDSPDO;
 import com.multibrand.vo.response.TLPOfferDO;
@@ -4937,6 +4940,64 @@ private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO o
 		request.setDeviceType("");
 		return request;
 	}
+
+
+	public SmallBusinessProductOfferResponse getSmallBusinessOfferData(ProductOfferRequest productOfferRequest) {
+		SmallBusinessProductOfferResponse smallBusinessProductOfferResponse = new SmallBusinessProductOfferResponse();
+		SmallBusinessOfferResponse smallBusinessOfferResponse = offerService.getSMBOfferFromNRGWS(productOfferRequest);
+		if (StringUtils.isEmpty(smallBusinessOfferResponse.getErrorCode())) {
+			Map<String, Object> offerMap = offerService.getOfferInfoFromSDL(getSMBOfferCodeList(smallBusinessOfferResponse), productOfferRequest.getLangCode());
+			if (offerMap.get(ERROR) != null) {
+				smallBusinessProductOfferResponse.setErrorMessage((String)offerMap.get(ERROR));
+				return smallBusinessProductOfferResponse;
+			} else {
+				smallBusinessProductOfferResponse.setPlans(offerService.constructSmallBusinessOffer(smallBusinessOfferResponse, offerMap, productOfferRequest));	
+			}
+		} else {
+			logger.error("Error: getSmallBusinessOfferData:" + smallBusinessOfferResponse.getErrorCode());
+			smallBusinessProductOfferResponse.setErrorMessage(smallBusinessOfferResponse.getErrorCode());
+		}
+		return smallBusinessProductOfferResponse;
+	}
+	
+	private List<String> getSMBOfferCodeList(SmallBusinessOfferResponse smallBusinessOfferResponse) {
+		List<String> offerCodes = new ArrayList<>();
+		OfferOutPut[] offerOutPuts = smallBusinessOfferResponse.getOfferOutPutLists();
+		for (OfferOutPut offerDO : offerOutPuts) {
+			offerCodes.add(offerDO.getOfferInput().getOfferCode());
+		}
+		return offerCodes;
+	}
+	public ResidentialProductOfferResponse getResidentialOfferData(ProductOfferRequest productOfferRequest) {
+		
+		ResidentialProductOfferResponse residentialProductOfferResponse = new ResidentialProductOfferResponse();
+		PromoOfferResponse promoOfferResponse = offerService.getOfferFromNRGWS(productOfferRequest);
+		if (StringUtils.isEmpty(promoOfferResponse.getStrErrCode())) {
+			Map<String, Object> offerMap = offerService.getOfferInfoFromSDL(getResidentialOfferCodeList(promoOfferResponse), productOfferRequest.getLangCode());
+			if (offerMap.get(ERROR) != null) {
+				residentialProductOfferResponse.setErrorMessage((String)offerMap.get(ERROR));
+				return residentialProductOfferResponse;
+			} else {
+				residentialProductOfferResponse.setPlans(offerService.constructResidentalOfferPlan(promoOfferResponse, offerMap , productOfferRequest));
+			}
+		} else {
+			logger.error("Error: getResidentialOfferData:" + promoOfferResponse.getStrErrCode());
+			residentialProductOfferResponse.setErrorMessage(promoOfferResponse.getStrErrCode());
+		}
+		return residentialProductOfferResponse;
+	
+	}
+	
+	private List<String> getResidentialOfferCodeList(PromoOfferResponse promoOfferResponse) {
+		List<String> offerCodes = new ArrayList<>();
+		PromoOfferOutData[] offerOutPuts = promoOfferResponse.getOfferOuts();
+		for (PromoOfferOutData offerDO : offerOutPuts) {
+			offerCodes.add(offerDO.getStrOfferCode());
+		}
+		return offerCodes;
+	}
+
+
 
 }
 
