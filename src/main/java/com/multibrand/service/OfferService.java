@@ -222,6 +222,7 @@ public class OfferService extends BaseAbstractService {
 			OEDomain oeDomain = getOEServiceProxy();
 			promoOfferResponse = oeDomain.getPromoOffers(createPromoOfferRequest(productOfferRequest));
 		} catch (Exception e) {
+			
 			promoOfferResponse = new PromoOfferResponse();
 			promoOfferResponse.setStrErrCode(e.getMessage());
 		}
@@ -299,8 +300,8 @@ public class OfferService extends BaseAbstractService {
 			offerMap = offerHelper.getOfferPlanMapFromJsonString(jsonResponseFromContentServiceAPI);
 			logger.debug("Content Service API response {}", jsonResponseFromContentServiceAPI);
 		} catch (Exception ex) {
-			logger.error("Error in getOfferInfoFromSDL while call GET request to Content Service API");
-			offerMap.put("Error", ex.getMessage());
+			logger.error("Error in getOfferInfoFromSDL while call GET request to Content Service API" + ex.getMessage());
+			offerMap.put(ERROR, ex.getMessage());
 		}
 		return offerMap;
 	}
