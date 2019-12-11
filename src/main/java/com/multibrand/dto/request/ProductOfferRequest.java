@@ -66,5 +66,12 @@ public class ProductOfferRequest {
 		this.langCode = langCode;
 	}
 
+	@Override
+	public String toString() {
+		return "ProductOfferRequest [zipCode=" + zipCode + ", tdspCode=" + tdspCode + ", channelPartnerCode="
+				+ channelPartnerCode + ", customerType=" + customerType + ", langCode=" + langCode + ", companyCode="
+				+ companyCode + "]";
+	}
 
+	
 }
