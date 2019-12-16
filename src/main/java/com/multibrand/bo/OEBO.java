@@ -724,6 +724,13 @@ public class OEBO extends OeBoHelper implements Constants{
 						.getRecentDisconnectFlag());
 				esidDO.setSwitchHoldStatus(esidProfileResponse
 						.getSwitchHoldStatus());
+				//Start || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
+				if(StringUtils.equalsIgnoreCase(esidProfileResponse.getBlockStatus(), FLAG_X )) {
+					esidDO.setEsidBlocked(true);
+				}else{
+					esidDO.setEsidBlocked(false);
+				}
+				//END || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 				
 			}
 			logger.debug("OEBO.setESIDDTO() esidDTO:: " + esidDO);
@@ -2601,6 +2608,14 @@ public class OEBO extends OeBoHelper implements Constants{
 				}else {
 					EsidProfileResponse esidProfileResponse = this.addressService.getESIDProfile(esid,companyCode);
 					esidDo = setESIDDTO(esidProfileResponse);
+					//Start || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
+					if(esidDo.isEsidBlocked()){
+						response.setMessageCode(ESID_RESTRICTION);
+						response.setMessageText(getAllBrandResponseMessage(companyCode, brandId, ESID_RESTRICTION_TEXT_MESSAGE, locale));
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						return response;
+					}
+					//END || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 					TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(esid,companyCode,sessionId);
 					if ((tdspByESIDResponse != null) && (StringUtils.isNotBlank(tdspByESIDResponse.getServiceId()))) {
 						String tdspCodeCCSForEsid = tdspByESIDResponse.getServiceId();
@@ -3163,7 +3178,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	public Map<String,Object> performBpMatch(PerformPosIdandBpMatchResponse response,String errorCd,String messageCode,
 			String firstName,String lastName,String tdl,String maidenName,
 			String companyCode,String servStreetAptNum,String servCity,String servState,String servStreetName,
-			String servStreetNum,String servZipCode,String ssn)
+			String servStreetNum,String servZipCode,String ssn, String brandID)
 	{
 		Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
 		com.multibrand.dto.BPMatchDTO bpMatchDto=new com.multibrand.dto.BPMatchDTO();
@@ -3189,8 +3204,19 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setBpMatchFlag(StringUtils.EMPTY);
 			}
 
+			/**** CASE 0: CCS returns the restricted flag as X show hard stop[ page enrollment and proceed further with the OE flow. 
+			 *****/
+			//Start US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
+			if(StringUtils.equalsIgnoreCase(bpmatchResponse.getBpMatchRestrictedFlag(), X_VALUE)){
+				errorCd = BP_RESTRICT;
+				response.setBpMatchFlag(errorCd);
+				response.setMessageCode(BP_RESTRICTION);
+				response.setStatusCode(STATUS_CODE_STOP);
+				response.setMessageText(getAllBrandResponseMessage(companyCode, brandID, BP_RESTRICTION_TEXT_MESSAGE, ""));
+			}
+			//END US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
 			//NO BPMATCH FLAG
-			if(null!=bpmatchResponse.getBpNoMatchFlag() && bpmatchResponse.getBpNoMatchFlag().equals(X_VALUE)) {
+			else if(null!=bpmatchResponse.getBpNoMatchFlag() && bpmatchResponse.getBpNoMatchFlag().equals(X_VALUE)) {
 				logger.debug(" CCS returns the flag NO_BPMATCH as true");
 				errorCd = EMPTY;
 				response.setBpMatchFlag(EMPTY);
@@ -4428,6 +4454,23 @@ public class OEBO extends OeBoHelper implements Constants{
 		return url;		
 	}
 	
+//Start || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
+	private String getAllBrandResponseMessage(String companyCode, String brandId, String textMessageCode, String locale){
+		
+		String responseMessage=StringUtils.EMPTY;
+		
+		if(StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) && StringUtils.equals(brandId, CIRRO_BRAND_NAME) ) {
+			responseMessage = msgSource.getMessage(CIRRO_COMPANY_CODE+"."+CIRRO_BRAND_NAME+"."+textMessageCode,null,CommonUtil.localeCode(locale));		
+		}else if(StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) && (StringUtils.isBlank(brandId) || StringUtils.equals(brandId, BRAND_ID_PENNYWISE))){
+			responseMessage = msgSource.getMessage(CIRRO_COMPANY_CODE+"."+textMessageCode,null,CommonUtil.localeCode(locale));
+		}
+		else{
+			responseMessage = msgSource.getMessage(companyCode+"."+textMessageCode,null,CommonUtil.localeCode(locale));
+		}
+		return responseMessage;
+	}
+//END || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
+
 	private boolean isServicedTDSPCode(String tdspCode){
 		boolean isServiceFlag = false;
 		String strtdspCodeList = appConstMessageSource.getMessage(SERVICED_TDSP_CODES, null,null);

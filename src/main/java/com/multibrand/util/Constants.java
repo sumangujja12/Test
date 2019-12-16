@@ -1270,4 +1270,12 @@ public interface Constants {
 	public static final String UPDATE_AGENT_SUCCESS_FLAG = "Success";
 	public static final String UPDATE_AGENT_ERROR_FLAG = "CCSError";
 	//END : OE :Sprint62 :US21019 :Kdeshmu1
+	
+	//Start || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
+	public static final String ESID_RESTRICTION_TEXT_MESSAGE = "esid.restriction.text.message";
+	public static final String BP_RESTRICTION_TEXT_MESSAGE = "bp.restriction.text.message";
+	public static final String ESID_RESTRICTION = "ESID_RESTRICTION";
+	public static final String BP_RESTRICTION = "BP_RESTRICTION";
+	public static final String BP_RESTRICT = "BPRESTRICT";
+	//End || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 }
