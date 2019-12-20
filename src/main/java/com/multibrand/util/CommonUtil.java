@@ -56,9 +56,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.multibrand.dto.ErrorDTO;
 import com.multibrand.dto.OESignupDTO;
+import com.multibrand.dto.request.WebHookRequest;
 import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.UserIdResponse;
+import com.multibrand.vo.response.WebHookResponse;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -1713,6 +1715,61 @@ public class CommonUtil implements Constants {
 		return response;
 	}
 	
+	/**
+	 * This method validates WebHookRequest
+	 * paymentId not blank
+	 * accountNumber not blank
+	 * accountId not blank
+	 * CA not blank and size not greater than 12
+	 * @param request
+	 * @return
+	 */
+	
+	public static WebHookResponse validateWebHookRequest(WebHookRequest request){
+		
+		WebHookResponse response = new WebHookResponse();
+		boolean isValidRequest = true;
+		String contractAccountNumber = request.getWebHookMetadata().getExternalAccountId();
+		StringBuffer strBuffer = new StringBuffer("Request Entity has following errors: ");
+		List<String> errorMsgList = new ArrayList<>();
+		
+		if(StringUtils.isBlank(request.getPaymentId())){
+		    errorMsgList.add("payment id may not be empty,");
+		}
+		
+		if(StringUtils.isBlank(request.getAccountNumber())){
+			errorMsgList.add("bar code number may not be empty,");
+		}
+		
+		if(StringUtils.isBlank(contractAccountNumber)){
+			errorMsgList.add("contractaccountnumber may not be empty,");
+		}
+		
+		if(StringUtils.isNotBlank(contractAccountNumber) && contractAccountNumber.length()>12){
+			errorMsgList.add("contractaccountnumber may not be more than 12 digits,");
+		}
+		
+		if(StringUtils.isNotBlank(request.getAccountId())){
+			errorMsgList.add("VD account id may not be empty,");
+		}
+		
+		if(!errorMsgList.isEmpty()) {
+			isValidRequest=false;
+		}
+	    
+		if(!isValidRequest){
+			response.setResultcode(Constants.ONE);
+			
+			for(String errorMsg:errorMsgList){
+				strBuffer.append(errorMsg);
+			}
+			
+			strBuffer.deleteCharAt(strBuffer.length()-1);
+			response.setResultdescription(strBuffer.toString());
+		}
+		
+		return response;
+	}
 	
 	/**
 	 * This method takes an input string and capitalize first character of every word and rest of each word in lowercase
