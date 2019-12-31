@@ -320,6 +320,7 @@ public interface DBConstants {
 
     public static String RETROPOPUP_PROC = "CPDB1_MAIN.PKG_ONLINE_USER_MANAGE_GME_MB.SP_GET_RETRO_ELIG_STATUS_GME";
     public static final String SQL_SAVE_PRIVACY_PREFERENCE = "sqlQuery.savePrivacyPreferenceSignUp";
+    public static final String SQL_ADD_WEB_HOOK = "sqlQuery.addWebHook";
     
     public static final String PROC_GET_HOUSE_AGE_HH_INCOME = "pod_pow.svcs_bus_prspct_dtls.sp_get_prspct_attr";
     public static final String CUR_OUT_ROWSET = "out_rowset";
