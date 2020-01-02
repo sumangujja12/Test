@@ -3404,7 +3404,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		prop.add(CANCEL_PAYMENT_TXN_DATE + ":"
 				+ CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(), yyyy_MM_dd, MM_dd_yyyy));
 		prop.add(CANCEL_PAYMENT_PAYMENT_DATE + ":" + scheduledPaymentDate);
-		prop.add(CANCEL_PAYMENT_PAYMENT_AMOUNT + DOLLAR_SIGN + paymentAmount);
+		prop.add(CANCEL_PAYMENT_PAYMENT_AMOUNT +":" +DOLLAR_SIGN + paymentAmount);
 		prop.add(CANCEL_PAYMENT_CONFIRM_NUM + ":" + paymentId);
 		prop.add(CANCEL_PAYMENT_CONTR_ACCT_ID + ":" + accountNumber);
 		prop.add(CANCEL_PAYMENT_CHECK_DIGIT + ":" + checkDigit);
