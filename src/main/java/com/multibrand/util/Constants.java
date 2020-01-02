@@ -1252,12 +1252,14 @@ public interface Constants {
     public static final String SCHEDULE_CC_PAYMENT_GME_SUB = "Scheduled Payment Acknowledgment";
     public static final String MOBILE = "Mobile";
     public static final String AUTOPAY_G_FLAG = "G";
-
-    public static final String DOLLAR_SIGN = "$";
-
+    
    //START : OE :Sprint62 :US21019 :Kdeshmu1
     public static final String DSI_AGENT_ID = "270519";
     public static final String MESSAGE_CODE_INVALID_AGENT_ID = "INVALID_AGENT_ID";
+
+
+    public static final String DOLLAR_SIGN = "$";
+
     
     public static final String REST_API_USER_NAME="rest.api.user.name";
 	public static final String REST_API_PASSWORD="rest.api.password";
@@ -1270,7 +1272,6 @@ public interface Constants {
 	public static final String UPDATE_AGENT_SUCCESS_FLAG = "Success";
 	public static final String UPDATE_AGENT_ERROR_FLAG = "CCSError";
 	//END : OE :Sprint62 :US21019 :Kdeshmu1
-	
 	//Start || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 	public static final String ESID_RESTRICTION_TEXT_MESSAGE = "esid.restriction.text.message";
 	public static final String BP_RESTRICTION_TEXT_MESSAGE = "bp.restriction.text.message";
@@ -1279,6 +1280,23 @@ public interface Constants {
 	public static final String BP_RESTRICT = "BPRESTRICT";
 	//End || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 	
+	
+
+	//Content Service metadata
+	public static final String CUSTOM_METADATA= "CustomMetas%28%29?&$filter=(PublicationId%20eq%20";
+	
+	public static final String KEY_NAME = "%20and%20keyName%20eq%20%27offerCodesLookup%27%20and%20";
+	
+	public static final String STRING_VALUE = "StringValue%20eq%20%27";
+	
+	public static final String JSON_FORMAT_COMPONENT_PRESENTATION = ")&$expand=Component/ComponentPresentations&$format=json";
+	
+	public static final String OR = "%20OR%20";
+	public static final String ERROR = "error";
+	
+	 public static final String TEFLF = "TEFLF";
+	 public static final String DISC = "DISC";
+	 
 	//Cancel Payment Email
 	public static final String CANCEL_PAYMENT_GME_TEMPLATE = "CANCEL_PAYMENT_GME.EN_US";
 	public static final String CANCEL_PAYMENT_TXN_DATE = "TXN_DATE";
@@ -1287,4 +1305,5 @@ public interface Constants {
 	public static final String CANCEL_PAYMENT_CONFIRM_NUM = "CONFIRM_NUM";
 	public static final String CANCEL_PAYMENT_CONTR_ACCT_ID = "CONTR_ACCT_ID";
 	public static final String CANCEL_PAYMENT_CHECK_DIGIT = "CHECK_DIGIT";
+
 }

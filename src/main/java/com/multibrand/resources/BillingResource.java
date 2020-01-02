@@ -443,6 +443,7 @@ public class BillingResource {
 		return response;
 	}
 	
+	
 	/**
 	 * smurga1 
 	 * This method is for activate & de-activate the ebill for cirro project.
@@ -768,7 +769,7 @@ public class BillingResource {
 			@Context HttpServletResponse response
 			){
 		
-		
+		BufferedInputStream bis = null;
 		try {
 		ServletOutputStream out = response.getOutputStream(); 
 		response.setHeader("Content-Disposition","attachment; filename=ebill.pdf");
@@ -792,7 +793,7 @@ public class BillingResource {
 			br = new BufferedReader(new InputStreamReader((billResponse.getEntity().getContent())));
 			System.out.println("Output from Server 1st time is .... \n");
 		    InputStream inputStream = billResponse.getEntity().getContent();
-			BufferedInputStream bis = new BufferedInputStream(inputStream); 
+			bis = new BufferedInputStream(inputStream); 
 			byte bytes[] = new byte[4096];
 			int bytesRead;
 			while ((bytesRead = bis.read(bytes)) != -1) {
@@ -807,22 +808,20 @@ public class BillingResource {
         } catch (UnsupportedEncodingException e) {
 			logger.error("UnsupportedException -- Printing an Error PDF");
 			logger.error(e);
-			//e.printStackTrace();
-			//callExceptionPDFWriter(out, txtInvoiceID);
 		} catch (ClientProtocolException e) {
 			logger.error("ClientProtocolException -- Printing an Error PDF");
 			logger.error(e);;
-			//e.printStackTrace();
-			//callExceptionPDFWriter(out, txtInvoiceID);
 		} catch (IOException e) {
 			logger.error("IOException -- Printing an Error PDF");
 			logger.error(e);
-			//e.printStackTrace();
-			//callExceptionPDFWriter(out, txtInvoiceID);
+		}finally{
+			if(bis!=null){
+				try {bis.close();} 
+				catch (IOException e) {
+					logger.error("Exception occured while closing BufferReader ::: " +e);
+				}
+			}
 		}
-		
-		
-		
 		return Response.ok().build();
 		
 	}
