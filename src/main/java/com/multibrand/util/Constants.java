@@ -1278,4 +1278,13 @@ public interface Constants {
 	public static final String BP_RESTRICTION = "BP_RESTRICTION";
 	public static final String BP_RESTRICT = "BPRESTRICT";
 	//End || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
+	
+	//Cancel Payment Email
+	public static final String CANCEL_PAYMENT_GME_TEMPLATE = "CANCEL_PAYMENT_GME.EN_US";
+	public static final String CANCEL_PAYMENT_TXN_DATE = "TXN_DATE";
+	public static final String CANCEL_PAYMENT_PAYMENT_DATE = "PAYMENT_DATE";
+	public static final String CANCEL_PAYMENT_PAYMENT_AMOUNT = "PAYMENT_AMOUNT";
+	public static final String CANCEL_PAYMENT_CONFIRM_NUM = "CONFIRM_NUM";
+	public static final String CANCEL_PAYMENT_CONTR_ACCT_ID = "CONTR_ACCT_ID";
+	public static final String CANCEL_PAYMENT_CHECK_DIGIT = "CHECK_DIGIT";
 }
