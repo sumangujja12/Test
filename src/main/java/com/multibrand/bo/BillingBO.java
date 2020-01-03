@@ -966,7 +966,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 */
 	public CancelPaymentResponse doCancelPayment(String accountNumber, String companyCode, String paymentId,
 			String brandName, String sessionId, String source, String email, String paymentAmount,
-			String scheduledPaymentDate, String checkDigit) {
+			String scheduledPaymentDate, String checkDigit, String langCode) {
 		logger.info("START-[BillingBO-doCancelPayment]");
 		CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
 		com.multibrand.domain.CancelPaymentResponse response = null;
@@ -990,7 +990,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				cancelPaymentResponse.setResultDescription(MSG_SUCCESS);
 				if (!StringUtils.isEmpty(source) && source.equalsIgnoreCase(MOBILE)) {
 					sendCancelPaymentEmail(paymentId, email, paymentAmount, scheduledPaymentDate, accountNumber,
-							checkDigit);
+							checkDigit,langCode);
 				}
 
 			}
@@ -1745,7 +1745,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public EditCancelOTCCPaymentResponse editCancelOTCCPayment(String bpid,String contractAccountNumber, String trackingId, String action,String companyCode, String brandName, String sessionId,String source,String email,String paymentAmount,String scheduledPaymentDate,String checkDigit)
+	public EditCancelOTCCPaymentResponse editCancelOTCCPayment(String bpid,String contractAccountNumber, String trackingId, String action,String companyCode, String brandName, String sessionId,String source,String email,String paymentAmount,String scheduledPaymentDate,String checkDigit, String langCode)
 	{
 		logger.info("START-[BillingBO-editCancelOTCCPayment]");
 		//padding the bpid with 0s
@@ -1768,7 +1768,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   editCancelOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			   editCancelOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
 			   if(!StringUtils.isEmpty(source) && source.equalsIgnoreCase(MOBILE)) {
-					sendCancelPaymentEmail(trackingId,email,paymentAmount,scheduledPaymentDate,contractAccountNumber,checkDigit);
+					sendCancelPaymentEmail(trackingId,email,paymentAmount,scheduledPaymentDate,contractAccountNumber,checkDigit,langCode);
 				}
 			
 			} else{
@@ -3388,10 +3388,14 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 	}
 	
-	public void sendCancelPaymentEmail(String paymentId,
-			String email, String paymentAmount, String scheduledPaymentDate, String accountNumber, String checkDigit) {
+	public void sendCancelPaymentEmail(String paymentId, String email, String paymentAmount,
+			String scheduledPaymentDate, String accountNumber, String checkDigit, String langCode) {
 		EmailRequest emailRequest = new EmailRequest();
-		emailRequest.setExternalId(CANCEL_PAYMENT_GME_TEMPLATE); // lang preferenc
+		if (StringUtils.isNotBlank(langCode) && langCode.equalsIgnoreCase(LANGUAGE_CODE_ES)) {
+			emailRequest.setExternalId(CANCEL_PAYMENT_GME_TEMPLATE_ES_US);
+		} else {
+			emailRequest.setExternalId(CANCEL_PAYMENT_GME_TEMPLATE_EN_US);
+		}
 		emailRequest.setSubject(SCHEDULE_CC_PAYMENT_GME_SUB);
 		emailRequest.setCompanyCode(COMPANY_CODE_GME);
 		emailRequest.setLanguageCode(EN);
@@ -3404,7 +3408,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		prop.add(CANCEL_PAYMENT_TXN_DATE + ":"
 				+ CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(), yyyy_MM_dd, MM_dd_yyyy));
 		prop.add(CANCEL_PAYMENT_PAYMENT_DATE + ":" + scheduledPaymentDate);
-		prop.add(CANCEL_PAYMENT_PAYMENT_AMOUNT +":" +DOLLAR_SIGN + paymentAmount);
+		prop.add(CANCEL_PAYMENT_PAYMENT_AMOUNT + ":" + DOLLAR_SIGN + paymentAmount);
 		prop.add(CANCEL_PAYMENT_CONFIRM_NUM + ":" + paymentId);
 		prop.add(CANCEL_PAYMENT_CONTR_ACCT_ID + ":" + accountNumber);
 		prop.add(CANCEL_PAYMENT_CHECK_DIGIT + ":" + checkDigit);
