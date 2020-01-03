@@ -1298,7 +1298,8 @@ public interface Constants {
 	 public static final String DISC = "DISC";
 	 
 	//Cancel Payment Email
-	public static final String CANCEL_PAYMENT_GME_TEMPLATE = "CANCEL_PAYMENT_GME.EN_US";
+	public static final String CANCEL_PAYMENT_GME_TEMPLATE_EN_US = "CANCEL_PAYMENT_GME.EN_US";
+	public static final String CANCEL_PAYMENT_GME_TEMPLATE_ES_US = "CANCEL_PAYMENT_GME.ES_US";
 	public static final String CANCEL_PAYMENT_TXN_DATE = "TXN_DATE";
 	public static final String CANCEL_PAYMENT_PAYMENT_DATE = "PAYMENT_DATE";
 	public static final String CANCEL_PAYMENT_PAYMENT_AMOUNT = "PAYMENT_AMOUNT";
