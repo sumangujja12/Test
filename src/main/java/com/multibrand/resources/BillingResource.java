@@ -73,6 +73,7 @@ import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
+import com.multibrand.vo.response.billingResponse.RetroAvgBillingResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
@@ -1229,9 +1230,9 @@ public class BillingResource {
 			@FormParam("dueAmt") String dueAmt, @FormParam("invoiceId") String invoiceId,
 			@FormParam("bpNumber") String bpNumber, @FormParam("companyCode") String companyCode) {
 		Response response = null;
-		boolean status = billingBO.checkRetroAvgBillEligibility(userId, accountNumber, contractId, dueAmt, invoiceId,
-				bpNumber, companyCode, httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(status).build();
+		RetroAvgBillingResponse retroAvgBillingResponse = billingBO.checkRetroAvgBillEligibility(userId, accountNumber,
+				contractId, dueAmt, invoiceId, bpNumber, companyCode, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(retroAvgBillingResponse).build();
 		return response;
 	}
 

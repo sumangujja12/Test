@@ -117,6 +117,7 @@ import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 import com.multibrand.vo.response.billingResponse.PaymentMethodB;
 import com.multibrand.vo.response.billingResponse.PaymentMethodCC;
 import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
+import com.multibrand.vo.response.billingResponse.RetroAvgBillingResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
@@ -3394,30 +3395,34 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 	} 
 	
-	public boolean checkRetroAvgBillEligibility(String userId, String accountNumber, String contractId,  String dueAmt, String invoiceId,String bpNumber, String companyCode, String sessionId) {
-		boolean retroEligibilityStatus=false;
+	public RetroAvgBillingResponse checkRetroAvgBillEligibility(String userId, String accountNumber, String contractId,
+			String dueAmt, String invoiceId, String bpNumber, String companyCode, String sessionId) {
+
+		RetroAvgBillingResponse retroAvgBillingResponse = new RetroAvgBillingResponse();
 		try {
 			AMBEligibilityCheckRequest request = new AMBEligibilityCheckRequest();
 			request.setAccountNumber(accountNumber);
 			request.setBpNumber(bpNumber);
 			request.setContractId(contractId);
 			request.setCompanyCode(companyCode);
-			AMBEligibiltyCheckResponseVO response = ambeligibilityCheck(request,sessionId);
+			AMBEligibiltyCheckResponseVO response = ambeligibilityCheck(request, sessionId);
 			Double currentBillAmount = response.getAmbWebTab()[0].getAmtFinal();
 			Double ambAmt = response.getAmbAmt();
-			Double calculatedAmbAmt = currentBillAmount -( (currentBillAmount*.3)/100); //change this value
-			if(ambAmt>0 && ambAmt<=calculatedAmbAmt) {
-				retroEligibilityStatus=true;
-			} 
-			
+			Double calculatedAmbAmt = currentBillAmount - ((currentBillAmount * 10) / 100); // change this value
+			if (ambAmt > 0 && ambAmt <= calculatedAmbAmt) {
+				retroAvgBillingResponse.setRetroAvgBillEligibilityStatus(true);
+			}
+
+			retroAvgBillingResponse.setResultCode(RESULT_CODE_SUCCESS);
+			retroAvgBillingResponse.setResultDescription(MSG_SUCCESS);
+
 		} catch (Exception e) {
-			logger.error("Error Occured ::: checkRetroAvgBillEligibility " +e);
+			logger.error("Error Occured ::: checkRetroAvgBillEligibility " + e);
+			retroAvgBillingResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			retroAvgBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
-		return retroEligibilityStatus;
+		return retroAvgBillingResponse;
 	}
-
-
-	
 	
 	
 	
