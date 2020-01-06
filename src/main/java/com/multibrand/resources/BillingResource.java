@@ -73,6 +73,7 @@ import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
+import com.multibrand.vo.response.billingResponse.RetroAvgBillingResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
@@ -421,19 +422,20 @@ public class BillingResource {
 	public Response doCancelPayment(@FormParam("accountNumber") String accountNumber,
 			@FormParam("companyCode") String companyCode, @FormParam("paymentId") String paymentId,
 			@FormParam("brandName") String brandName, @FormParam("businessPartnerId") String bpid,
-			@FormParam("action") String action) {
+			@FormParam("action") String action, @FormParam("source") String source, @FormParam("email") String email, @FormParam("paymentAmount") String paymentAmount, @FormParam("scheduledPaymentDate") String scheduledPaymentDate, @FormParam("checkDigit") String checkDigit, @FormParam("langCode") String langCode) {
 		logger.debug("Start BillingResource.doCancelPayment :: START");
 		Response response = null;
 		CancelPaymentResponse cancelPaymentResponse  = null;
 		
 		if (StringUtils.isNotBlank(action) && action.equalsIgnoreCase(Constants.ONLINE_ACCOUNT_TYPE_CC)) {
-			EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(bpid, accountNumber, paymentId, action,
-					companyCode, brandName, httpRequest.getSession(true).getId());
-			cancelPaymentResponse  = new CancelPaymentResponse();	
-			BeanUtils.copyProperties(editCancelOTCCPaymentResponse, cancelPaymentResponse);
+			EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(bpid, accountNumber, paymentId, action,companyCode, brandName,
+			httpRequest.getSession(true).getId(),source,email,paymentAmount,scheduledPaymentDate,checkDigit,langCode); 
+			cancelPaymentResponse = new CancelPaymentResponse();
+			BeanUtils.copyProperties(editCancelOTCCPaymentResponse,cancelPaymentResponse);
+			 
 		} else {
 			 cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode,
-					paymentId, brandName, httpRequest.getSession(true).getId());
+					paymentId, brandName, httpRequest.getSession(true).getId(),source,email,paymentAmount,scheduledPaymentDate,checkDigit,langCode);
 		}		
 		
 		
@@ -681,7 +683,14 @@ public class BillingResource {
 			@FormParam("trackingId") String trackingId, 
 			@FormParam("action")String action,
 			@FormParam("companyCode") String companyCode, 
-			@FormParam("brandName") String brandName){
+			@FormParam("brandName") String brandName,
+			@FormParam("source") String source,
+			@FormParam("email") String email,
+			@FormParam("paymentAmount") String paymentAmount,
+			@FormParam("scheduledPaymentDate") String scheduledPaymentDate,
+			@FormParam("checkDigit") String checkDigit,
+			@FormParam("langCode") String langCode
+			){
 		Response response = null;
 		EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(
 						bpid, 
@@ -690,7 +699,8 @@ public class BillingResource {
 						action,
 						companyCode,
 						brandName,
-						httpRequest.getSession(true).getId());
+						httpRequest.getSession(true).getId(),
+						source,email,paymentAmount,scheduledPaymentDate,checkDigit,langCode);
 		response = Response.status(200).entity(editCancelOTCCPaymentResponse).build();
 				
 		return response;
@@ -761,7 +771,7 @@ public class BillingResource {
 			@Context HttpServletResponse response
 			){
 		
-		
+		BufferedInputStream bis = null;
 		try {
 		ServletOutputStream out = response.getOutputStream(); 
 		response.setHeader("Content-Disposition","attachment; filename=ebill.pdf");
@@ -785,7 +795,7 @@ public class BillingResource {
 			br = new BufferedReader(new InputStreamReader((billResponse.getEntity().getContent())));
 			System.out.println("Output from Server 1st time is .... \n");
 		    InputStream inputStream = billResponse.getEntity().getContent();
-			BufferedInputStream bis = new BufferedInputStream(inputStream); 
+			bis = new BufferedInputStream(inputStream); 
 			byte bytes[] = new byte[4096];
 			int bytesRead;
 			while ((bytesRead = bis.read(bytes)) != -1) {
@@ -800,22 +810,20 @@ public class BillingResource {
         } catch (UnsupportedEncodingException e) {
 			logger.error("UnsupportedException -- Printing an Error PDF");
 			logger.error(e);
-			//e.printStackTrace();
-			//callExceptionPDFWriter(out, txtInvoiceID);
 		} catch (ClientProtocolException e) {
 			logger.error("ClientProtocolException -- Printing an Error PDF");
 			logger.error(e);;
-			//e.printStackTrace();
-			//callExceptionPDFWriter(out, txtInvoiceID);
 		} catch (IOException e) {
 			logger.error("IOException -- Printing an Error PDF");
 			logger.error(e);
-			//e.printStackTrace();
-			//callExceptionPDFWriter(out, txtInvoiceID);
+		}finally{
+			if(bis!=null){
+				try {bis.close();} 
+				catch (IOException e) {
+					logger.error("Exception occured while closing BufferReader ::: " +e);
+				}
+			}
 		}
-		
-		
-		
 		return Response.ok().build();
 		
 	}
@@ -1231,7 +1239,9 @@ public class BillingResource {
 		Response response = null;
 		boolean status = billingBO.checkRetroAvgBillEligibility(userId, accountNumber, contractId, dueAmt, invoiceId,
 				bpNumber, companyCode, httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(status).build();
+		RetroAvgBillingResponse retroAvgBillingResponse = new RetroAvgBillingResponse();
+		retroAvgBillingResponse.setRetroAvgBillEligibilityStatus(status);
+		response = Response.status(200).entity(retroAvgBillingResponse).build();
 		return response;
 	}
 
