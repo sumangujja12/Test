@@ -3416,6 +3416,28 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		emailService.sendEmail(emailRequest);
 	}
 
+	public boolean checkRetroAvgBillEligibility(String userId, String accountNumber, String contractId,  String dueAmt, String invoiceId,String bpNumber, String companyCode, String sessionId) {
+	boolean retroEligibilityStatus=false;
+	try {
+		AMBEligibilityCheckRequest request = new AMBEligibilityCheckRequest();
+		request.setAccountNumber(accountNumber);
+		request.setBpNumber(bpNumber);
+		request.setContractId(contractId);
+		request.setCompanyCode(companyCode);
+		AMBEligibiltyCheckResponseVO response = ambeligibilityCheck(request,sessionId);
+		Double currentBillAmount = response.getAmbWebTab()[0].getAmtFinal();
+		Double ambAmt = response.getAmbAmt();
+		Double calculatedAmbAmt = currentBillAmount -( (currentBillAmount*.3)/100); //change this value
+		if(ambAmt>0 && ambAmt<=calculatedAmbAmt) {
+			retroEligibilityStatus=true;
+		} 
+		
+	} catch (Exception e) {
+		logger.error("Error Occured ::: checkRetroAvgBillEligibility " +e);
+	}
+	return retroEligibilityStatus;
+}
+
 
 	
 	

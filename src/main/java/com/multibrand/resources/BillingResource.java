@@ -73,6 +73,7 @@ import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.billingResponse.GetPaymentInstitutionResponse;
 import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
+import com.multibrand.vo.response.billingResponse.RetroAvgBillingResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
@@ -1225,6 +1226,23 @@ public class BillingResource {
 				
 		return response;
 		
+	}
+	
+	@POST
+	@Path("checkRetroAvgBillEligibility")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response checkRetroAvgBillEligibility(@FormParam("userId") String userId,
+			@FormParam("accountNumber") String accountNumber, @FormParam("contractId") String contractId,
+			@FormParam("dueAmt") String dueAmt, @FormParam("invoiceId") String invoiceId,
+			@FormParam("bpNumber") String bpNumber, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		boolean status = billingBO.checkRetroAvgBillEligibility(userId, accountNumber, contractId, dueAmt, invoiceId,
+				bpNumber, companyCode, httpRequest.getSession(true).getId());
+		RetroAvgBillingResponse retroAvgBillingResponse = new RetroAvgBillingResponse();
+		retroAvgBillingResponse.setRetroAvgBillEligibilityStatus(status);
+		response = Response.status(200).entity(retroAvgBillingResponse).build();
+		return response;
 	}
 
 }	
