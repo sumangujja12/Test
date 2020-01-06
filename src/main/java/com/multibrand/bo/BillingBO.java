@@ -117,6 +117,7 @@ import com.multibrand.vo.response.billingResponse.PayAccountInfoResponse;
 import com.multibrand.vo.response.billingResponse.PaymentMethodB;
 import com.multibrand.vo.response.billingResponse.PaymentMethodCC;
 import com.multibrand.vo.response.billingResponse.PaymentMethodsResponse;
+import com.multibrand.vo.response.billingResponse.RetroAvgBillingResponse;
 import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
@@ -964,42 +965,37 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public CancelPaymentResponse doCancelPayment(String accountNumber, String companyCode, String paymentId,
-			String brandName, String sessionId, String source, String email, String paymentAmount,
-			String scheduledPaymentDate, String checkDigit, String langCode) {
+	public CancelPaymentResponse doCancelPayment(String accountNumber,
+			String companyCode,String paymentId,String brandName,String sessionId)
+	{
 		logger.info("START-[BillingBO-doCancelPayment]");
-		CancelPaymentResponse cancelPaymentResponse = new CancelPaymentResponse();
+		CancelPaymentResponse cancelPaymentResponse =  new CancelPaymentResponse();
 		com.multibrand.domain.CancelPaymentResponse response = null;
-
+		
 		try {
-			response = paymentService.doCancelPayment(accountNumber, companyCode, paymentId, brandName, sessionId);
-
-			if (response.getErrorCode() != null && !response.getErrorCode().equals("")) {
-
+			response = paymentService.doCancelPayment(accountNumber, companyCode, paymentId,brandName, sessionId);
+			
+			if (response.getErrorCode()!= null && !response.getErrorCode().equals("")) {
+			
 				cancelPaymentResponse.setResultCode(RESULT_CODE_CCS_ERROR);
-				if (response.getErrorMessage() != null)
-					cancelPaymentResponse.setResultDescription(response.getErrorMessage());
+				if(response.getErrorMessage()!=null)cancelPaymentResponse.setResultDescription(response.getErrorMessage());
 				cancelPaymentResponse.setErrorCode(response.getErrorCode());
-				if (response.getErrorMessage() != null)
-					cancelPaymentResponse.setErrorMessage(response.getErrorMessage());
+				if(response.getErrorMessage()!=null)cancelPaymentResponse.setErrorMessage(response.getErrorMessage());
 
 			} else {
-
+				
 				cancelPaymentResponse.setSuccessCode(response.getStrStatus());
 				cancelPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 				cancelPaymentResponse.setResultDescription(MSG_SUCCESS);
-				if (!StringUtils.isEmpty(source) && source.equalsIgnoreCase(MOBILE)) {
-					sendCancelPaymentEmail(paymentId, email, paymentAmount, scheduledPaymentDate, accountNumber,
-							checkDigit,langCode);
-				}
-
+				
 			}
-
+			
 		} catch (Exception e) {
-			logger.info(" Exeception Occured in the doCancelPayment" + e.getMessage());
+			logger.info(" Exeception Occured in the doCancelPayment"
+					+ e.getMessage());
 			logger.info(e.getMessage());
 			logger.info(e.getCause());
-			logger.error(" Error " + e.getMessage());
+			logger.error(" Error "+e.getMessage());
 			cancelPaymentResponse = new CancelPaymentResponse();
 			cancelPaymentResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			cancelPaymentResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
@@ -1745,7 +1741,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public EditCancelOTCCPaymentResponse editCancelOTCCPayment(String bpid,String contractAccountNumber, String trackingId, String action,String companyCode, String brandName, String sessionId,String source,String email,String paymentAmount,String scheduledPaymentDate,String checkDigit, String langCode)
+	public EditCancelOTCCPaymentResponse editCancelOTCCPayment(String bpid,String contractAccountNumber, String trackingId, String action,String companyCode, String brandName, String sessionId)
 	{
 		logger.info("START-[BillingBO-editCancelOTCCPayment]");
 		//padding the bpid with 0s
@@ -1761,25 +1757,35 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setContractAccount(contractAccountNumber);
 		request.setAction(action);
 		
+		
+		
+	
 		try{
+			
+			
 			CancelOtccPaymentResp response = paymentService.editCancelOTCCPayment(request, sessionId);
+			
 			if(StringUtils.isEmpty(response.getErrorCode())){
+			
 				// successful call
 			   editCancelOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			   editCancelOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
-			   if(!StringUtils.isEmpty(source) && source.equalsIgnoreCase(MOBILE)) {
-					sendCancelPaymentEmail(trackingId,email,paymentAmount,scheduledPaymentDate,contractAccountNumber,checkDigit,langCode);
-				}
 			
 			} else{
+				
 				// ccs error
+				
 				editCancelOTCCPaymentResponse.setResultCode(RESULT_CODE_CCS_ERROR);
 				if(StringUtils.isNotEmpty(response.getErrorMessage())){
 					editCancelOTCCPaymentResponse.setResultDescription(response.getErrorMessage());
 				}
 				// setting the ccs error code
 				editCancelOTCCPaymentResponse.setErrorCode(response.getErrorCode());
+				
 			}
+		
+		
+			
 		} catch (Exception e) {
 			if(logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
@@ -1792,6 +1798,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END-[BillingBO-editCancelOTCCPayment]");
 		return editCancelOTCCPaymentResponse;
 	}
+	
 
 	/**
 	 * Method writes to CCS for paperless billing subscribption
@@ -3386,60 +3393,36 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 		}
 
-	}
+	} 
 	
-	public void sendCancelPaymentEmail(String paymentId, String email, String paymentAmount,
-			String scheduledPaymentDate, String accountNumber, String checkDigit, String langCode) {
-		EmailRequest emailRequest = new EmailRequest();
-		if (StringUtils.isNotBlank(langCode) && langCode.equalsIgnoreCase(LANGUAGE_CODE_ES)) {
-			emailRequest.setExternalId(CANCEL_PAYMENT_GME_TEMPLATE_ES_US);
-		} else {
-			emailRequest.setExternalId(CANCEL_PAYMENT_GME_TEMPLATE_EN_US);
+	public RetroAvgBillingResponse checkRetroAvgBillEligibility(String userId, String accountNumber, String contractId,
+			String dueAmt, String invoiceId, String bpNumber, String companyCode, String sessionId) {
+
+		RetroAvgBillingResponse retroAvgBillingResponse = new RetroAvgBillingResponse();
+		try {
+			AMBEligibilityCheckRequest request = new AMBEligibilityCheckRequest();
+			request.setAccountNumber(accountNumber);
+			request.setBpNumber(bpNumber);
+			request.setContractId(contractId);
+			request.setCompanyCode(companyCode);
+			AMBEligibiltyCheckResponseVO response = ambeligibilityCheck(request, sessionId);
+			Double currentBillAmount = response.getAmbWebTab()[0].getAmtFinal();
+			Double ambAmt = response.getAmbAmt();
+			Double calculatedAmbAmt = currentBillAmount - ((currentBillAmount * 10) / 100); // change this value
+			if (ambAmt > 0 && ambAmt <= calculatedAmbAmt) {
+				retroAvgBillingResponse.setRetroAvgBillEligibilityStatus(true);
+			}
+
+			retroAvgBillingResponse.setResultCode(RESULT_CODE_SUCCESS);
+			retroAvgBillingResponse.setResultDescription(MSG_SUCCESS);
+
+		} catch (Exception e) {
+			logger.error("Error Occured ::: checkRetroAvgBillEligibility " + e);
+			retroAvgBillingResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			retroAvgBillingResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
-		emailRequest.setSubject(SCHEDULE_CC_PAYMENT_GME_SUB);
-		emailRequest.setCompanyCode(COMPANY_CODE_GME);
-		emailRequest.setLanguageCode(EN);
-		emailRequest.setBrandName(GME_BRAND_NAME);
-		emailRequest.setTemplateType(BASE64HTML);
-		List<String> emailList = new ArrayList<String>();
-		emailList.add(email);
-		emailRequest.setToEmailList(emailList);
-		List<String> prop = new ArrayList<String>();
-		prop.add(CANCEL_PAYMENT_TXN_DATE + ":"
-				+ CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(), yyyy_MM_dd, MM_dd_yyyy));
-		prop.add(CANCEL_PAYMENT_PAYMENT_DATE + ":" + scheduledPaymentDate);
-		prop.add(CANCEL_PAYMENT_PAYMENT_AMOUNT + ":" + DOLLAR_SIGN + paymentAmount);
-		prop.add(CANCEL_PAYMENT_CONFIRM_NUM + ":" + paymentId);
-		prop.add(CANCEL_PAYMENT_CONTR_ACCT_ID + ":" + accountNumber);
-		prop.add(CANCEL_PAYMENT_CHECK_DIGIT + ":" + checkDigit);
-		emailRequest.setPropertyList(prop);
-		emailService.sendEmail(emailRequest);
+		return retroAvgBillingResponse;
 	}
-
-	public boolean checkRetroAvgBillEligibility(String userId, String accountNumber, String contractId,  String dueAmt, String invoiceId,String bpNumber, String companyCode, String sessionId) {
-	boolean retroEligibilityStatus=false;
-	try {
-		AMBEligibilityCheckRequest request = new AMBEligibilityCheckRequest();
-		request.setAccountNumber(accountNumber);
-		request.setBpNumber(bpNumber);
-		request.setContractId(contractId);
-		request.setCompanyCode(companyCode);
-		AMBEligibiltyCheckResponseVO response = ambeligibilityCheck(request,sessionId);
-		Double currentBillAmount = response.getAmbWebTab()[0].getAmtFinal();
-		Double ambAmt = response.getAmbAmt();
-		Double calculatedAmbAmt = currentBillAmount -( (currentBillAmount*.3)/100); //change this value
-		if(ambAmt>0 && ambAmt<=calculatedAmbAmt) {
-			retroEligibilityStatus=true;
-		} 
-		
-	} catch (Exception e) {
-		logger.error("Error Occured ::: checkRetroAvgBillEligibility " +e);
-	}
-	return retroEligibilityStatus;
-}
-
-
-	
 	
 	
 	
