@@ -29,7 +29,7 @@ public class WebHookDAOImpl extends AbstractSpringDAO implements WebHookDAOIF, C
 		int update = 0;
 		logger.info("WebHookDAOImpl.addWebHookData()");
 		try {
-			Object[] params = new Object[] {request.getPaymentId(), request.getAccountNumber(), request.getAccountId(), request.getWebHookMetadata().getExternalAccountId()};  
+			Object[] params = new Object[] {request.getPaymentId(), request.getAccountNumber(), request.getAccountId(), request.getWebHookMetadata().getExternalAccountId(),"NEW"};  
 
 			String sqlQuery = sqlMessage.getMessage(SQL_ADD_WEB_HOOK, null, null);
 			update = getJdbcTemplate().update(sqlQuery, params);
