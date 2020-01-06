@@ -1219,5 +1219,20 @@ public class BillingResource {
 		return response;
 		
 	}
+	
+	@POST
+	@Path("checkRetroAvgBillEligibility")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response checkRetroAvgBillEligibility(@FormParam("userId") String userId,
+			@FormParam("accountNumber") String accountNumber, @FormParam("contractId") String contractId,
+			@FormParam("dueAmt") String dueAmt, @FormParam("invoiceId") String invoiceId,
+			@FormParam("bpNumber") String bpNumber, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		boolean status = billingBO.checkRetroAvgBillEligibility(userId, accountNumber, contractId, dueAmt, invoiceId,
+				bpNumber, companyCode, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(status).build();
+		return response;
+	}
 
 }	
