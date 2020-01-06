@@ -25,7 +25,7 @@ import com.multibrand.vo.response.WebHookResponse;
  * This resource is used to handle all vanilla direct related API calls.
  */
 @Component
-@Path("webHookResource")
+@Path("public/webHookResource")
 public class WebHookResource implements Constants {
 private static Logger logger = LogManager.getLogger(WebHookResource.class);
 	
