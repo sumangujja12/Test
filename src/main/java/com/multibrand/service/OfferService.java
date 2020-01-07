@@ -222,7 +222,7 @@ public class OfferService extends BaseAbstractService {
 			OEDomain oeDomain = getOEServiceProxy();
 			promoOfferResponse = oeDomain.getPromoOffers(createPromoOfferRequest(productOfferRequest));
 		} catch (Exception e) {
-			
+			logger.debug("Error in getOfferFromNRGWS : " + e.getMessage());
 			promoOfferResponse = new PromoOfferResponse();
 			promoOfferResponse.setStrErrCode(e.getMessage());
 		}
@@ -316,7 +316,7 @@ public class OfferService extends BaseAbstractService {
 			}
 			return EntityUtils.toString(response.getEntity());
 		} catch (Exception ex) {
-			throw new ServiceException("Faild to excute the get call from content service api");
+			throw new ServiceException("Faild to excute the get call from content service api" + ex.getMessage());
 		} 
 
 	}
@@ -364,14 +364,13 @@ public class OfferService extends BaseAbstractService {
 					smallBusinessOfferDO.setStrCustomerSegment(campaignData.getCustSegment());
 					smallBusinessOfferDO.setStrMarketSegment(campaignData.getMarket());
 					smallBusinessOfferDO.setStrProductCode(campaignData.getProdStrucid());
-					smallBusinessOfferDO.setStrContractTerm(campaignData.getContractTerms());
+					smallBusinessOfferDO.setStrContractTerm(campaignData.getContractLength());
 					smallBusinessOfferDO.setStrProductPriceCode(campaignData.getPricecd());
 					smallBusinessOfferDO.setStrIncentiveCode(campaignData.getIncentivecd());
 		
 					smallBusinessOfferDO.setStrPlanType(campaignData.getPlanType());
 
 					smallBusinessOfferDO.setStrPenaltyValue(campaignData.getPenaltyValue());
-					smallBusinessOfferDO.setStrContractLength(campaignData.getContractLength());
 					smallBusinessOfferDO.setStrPaymentTerm(campaignData.getPaymentTerms());
 					offerHelper.setSmallBusinessDocumentID(smallBusinessOfferDO, offerDO);
 					smallBusinessOfferDO.setStrLateFee(campaignData.getLateFees());
@@ -387,7 +386,7 @@ public class OfferService extends BaseAbstractService {
 					
 				}
 			}
-			
+			logger.info("Finish construction of Business offer plan");
 			return smallBusinessOfferDOList;
 	}
 
@@ -441,7 +440,7 @@ public class OfferService extends BaseAbstractService {
 			    offerPlanList.add(offerPlan);
 			}
 		}
-		
+		logger.info("Finish construct the ResidentalOfferPlan");
 		
 		return offerPlanList;
 	}
