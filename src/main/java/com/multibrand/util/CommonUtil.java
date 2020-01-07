@@ -1749,7 +1749,7 @@ public class CommonUtil implements Constants {
 			errorMsgList.add("contractaccountnumber may not be more than 12 digits,");
 		}
 		
-		if(StringUtils.isNotBlank(request.getAccountId())){
+		if(StringUtils.isBlank(request.getAccountId())){
 			errorMsgList.add("VD account id may not be empty,");
 		}
 		
