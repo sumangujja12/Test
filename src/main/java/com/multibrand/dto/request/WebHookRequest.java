@@ -2,25 +2,22 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-import com.multibrand.util.Constants;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
+import com.multibrand.util.Constants;
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WebHookRequest implements Constants, Serializable {
 	
 	private static final long serialVersionUID = -2750231679908551082L;
 
-	@SerializedName("account_id")
-	@Expose
+	@JsonProperty("account_id")
 	private String accountId;
-	@SerializedName("account_number")
-	@Expose
+	@JsonProperty("account_number")
 	private String accountNumber;
-	@SerializedName("metadata")
-	@Expose
+	@JsonProperty("metadata")
 	private WebHookMetadata webHookMetadata;
-	@SerializedName("payment_id")
-	@Expose
+	@JsonProperty("payment_id")
 	private String paymentId;
 
 	public String getAccountId() {

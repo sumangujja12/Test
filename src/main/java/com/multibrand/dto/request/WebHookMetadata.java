@@ -1,17 +1,14 @@
 package com.multibrand.dto.request;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WebHookMetadata {
-	@SerializedName("key1")
-	@Expose
+	@JsonProperty("key1")
 	private String key1;
-	@SerializedName("key2")
-	@Expose
+	@JsonProperty("key2")
 	private String key2;
-	@SerializedName("external_account_id")
-	@Expose
+	@JsonProperty("external_account_id")
 	private String externalAccountId;
 
 	public String getKey1() {
