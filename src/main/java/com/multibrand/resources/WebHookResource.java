@@ -36,8 +36,8 @@ private static Logger logger = LogManager.getLogger(WebHookResource.class);
 	 * @return
 	 */
 	@POST
-	@Path("addWebHook")
-	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Path("acceptPayment")
+	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response addWebHookData(WebHookRequest request){
 				
