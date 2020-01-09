@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -24,6 +26,8 @@ import com.multibrand.vo.response.WseResponse;
 @Component("weeklySummaryEmailDAO")
 public class WeeklySummaryEmailDAOImpl extends AbstractSpringDAO implements WeeklySummaryEmailDAO, Constants {
 
+	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	
 	@Autowired(required=true)
 	public WeeklySummaryEmailDAOImpl(@Qualifier("cpdbJdbcTemplate") JdbcTemplate jdbcTemplate) {
 		super(jdbcTemplate);					
