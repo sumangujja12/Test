@@ -1,9 +1,10 @@
 package com.multibrand.dao;
 
+import com.multibrand.vo.request.WeeklySummaryEmailRequest;
 import com.multibrand.vo.response.WeeklySummaryEmailResponse;
 
 public interface WeeklySummaryEmailDAO {
 
-	public WeeklySummaryEmailResponse getHistoricalWse(String contractAccountNumber, String companyCode);
+	public WeeklySummaryEmailResponse getHistoricalWse(WeeklySummaryEmailRequest request);
 
 }

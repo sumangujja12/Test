@@ -1,11 +1,26 @@
 package com.multibrand.vo.response;
 
-public class WeeklySummaryEmailResponseList {
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+public class WseDO {
+	@SerializedName("email_file_name")
+	@Expose
 	private String emailFileName;
+	@SerializedName("email_sent_date")
+	@Expose
 	private String emailSentDate;
+	@SerializedName("email_address")
+	@Expose
 	private String emailAddress;
+	@SerializedName("contract_account_number")
+	@Expose
 	private String contractAccountNumber;
+	@SerializedName("email_url")
+	@Expose
 	private String emailUrl;
+	@SerializedName("contract_account")
+	@Expose
 	private String contractAccount;
 	
 	public String getEmailFileName() {

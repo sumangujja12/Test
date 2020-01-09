@@ -5,15 +5,28 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 @XmlRootElement(name="WeeklySummaryEmailResponse")
-@XmlSeeAlso({WeeklySummaryEmailResponseList.class})
+@XmlSeeAlso({WseDO.class,WseResponse.class})
 public class WeeklySummaryEmailResponse extends GenericResponse
 {
-	private String contractAccountNumber ="";
-	private String companyCode ="";
-	private List<WeeklySummaryEmailResponseList> wseList;
-    private String errorCode ="";
-	private String errorMessage ="";
+	@SerializedName("contract_account_number")
+	@Expose
+	private String contractAccountNumber;
+	@SerializedName("company_code")
+	@Expose
+	private String companyCode;
+	@SerializedName("wseList")
+	@Expose
+	private List<WseResponse> wseList = null;
+	@SerializedName("error_code")
+	@Expose
+	private String errorCode;
+	@SerializedName("error_message")
+	@Expose
+	private String errorMessage;
 	
 	
 	public String getContractAccountNumber() {
@@ -28,10 +41,10 @@ public class WeeklySummaryEmailResponse extends GenericResponse
 	public void setCompanyCode(String companyCode) {
 		this.companyCode = companyCode;
 	}
-	public List<WeeklySummaryEmailResponseList> getWseList() {
+	public List<WseResponse> getWseList() {
 		return wseList;
 	}
-	public void setWseList(List<WeeklySummaryEmailResponseList> wseList) {
+	public void setWseList(List<WseResponse> wseList) {
 		this.wseList = wseList;
 	}
 	public String getErrorCode() {
