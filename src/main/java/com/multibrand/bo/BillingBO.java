@@ -3403,7 +3403,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			AMBEligibiltyCheckResponseVO response = ambeligibilityCheck(request, sessionId);
 			Double currentBillAmount = response.getAmbWebTab()[0].getAmtFinal();
 			Double ambAmt = response.getAmbAmt();
-			Double calculatedAmbAmt = currentBillAmount - ((currentBillAmount * 10) / 100); // change this value
+			Double calculatedAmbAmt = currentBillAmount - ((currentBillAmount * 10) / 100); 
+			retroAvgBillingResponse.setRetroAvgAmount(calculatedAmbAmt);
 			if (ambAmt > 0 && ambAmt <= calculatedAmbAmt) {
 				retroAvgBillingResponse.setRetroAvgBillEligibilityStatus(true);
 			}
