@@ -1280,7 +1280,6 @@ public interface Constants {
 	public static final String BP_RESTRICT = "BPRESTRICT";
 	//End || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 	
-	
 
 	//Content Service metadata
 	public static final String CUSTOM_METADATA= "CustomMetas%28%29?&$filter=(PublicationId%20eq%20";
@@ -1307,4 +1306,10 @@ public interface Constants {
 	public static final String CANCEL_PAYMENT_CONTR_ACCT_ID = "CONTR_ACCT_ID";
 	public static final String CANCEL_PAYMENT_CHECK_DIGIT = "CHECK_DIGIT";
 
+	//WSE Email Archive
+	public static final String WSE_REPORT_WEEKS_FROM_ENV_PROP = "wse.report.weeks";
+	public static final int DEFAULT_WSE_REPORT_WEEKS = 12;
+	public static final String ERR_NO_DATA = "No data found for the CA and Company code";
+	public static final String ERR_DB = "Error occured while fetching data from database";
+	public static final String ERR_UNKNOWN = "An application error occured.  Please check NRG REST logs.";
 }
