@@ -5,14 +5,14 @@ import com.multibrand.vo.response.GenericResponse;
 public class RetroAvgBillingResponse extends GenericResponse {
 	
 	private boolean retroAvgBillEligibilityStatus;
-	private Double retroAvgAmount;
+	private Double ambAmount;
 
-	public Double getRetroAvgAmount() {
-		return retroAvgAmount;
+	public Double getAmbAmount() {
+		return ambAmount;
 	}
 
-	public void setRetroAvgAmount(Double retroAvgAmount) {
-		this.retroAvgAmount = retroAvgAmount;
+	public void setAmbAmount(Double ambAmount) {
+		this.ambAmount = ambAmount;
 	}
 
 	public boolean isRetroAvgBillEligibilityStatus() {
