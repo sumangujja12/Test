@@ -421,24 +421,28 @@ public class BillingResource {
 	public Response doCancelPayment(@FormParam("accountNumber") String accountNumber,
 			@FormParam("companyCode") String companyCode, @FormParam("paymentId") String paymentId,
 			@FormParam("brandName") String brandName, @FormParam("businessPartnerId") String bpid,
-			@FormParam("action") String action) {
+			@FormParam("action") String action, @FormParam("source") String source, @FormParam("email") String email,
+			@FormParam("paymentAmount") String paymentAmount,
+			@FormParam("scheduledPaymentDate") String scheduledPaymentDate, @FormParam("checkDigit") String checkDigit,
+			@FormParam("langCode") String langCode) {
 		logger.debug("Start BillingResource.doCancelPayment :: START");
 		Response response = null;
-		CancelPaymentResponse cancelPaymentResponse  = null;
-		
+		CancelPaymentResponse cancelPaymentResponse = null;
+
 		if (StringUtils.isNotBlank(action) && action.equalsIgnoreCase(Constants.ONLINE_ACCOUNT_TYPE_CC)) {
-			EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(bpid, accountNumber, paymentId, action,
-					companyCode, brandName, httpRequest.getSession(true).getId());
-			cancelPaymentResponse  = new CancelPaymentResponse();	
+			EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(bpid,
+					accountNumber, paymentId, action, companyCode, brandName, httpRequest.getSession(true).getId(),
+					source, email, paymentAmount, scheduledPaymentDate, checkDigit, langCode);
+			cancelPaymentResponse = new CancelPaymentResponse();
 			BeanUtils.copyProperties(editCancelOTCCPaymentResponse, cancelPaymentResponse);
 		} else {
-			 cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode,
-					paymentId, brandName, httpRequest.getSession(true).getId());
-		}		
-		
-		
+			cancelPaymentResponse = billingBO.doCancelPayment(accountNumber, companyCode, paymentId, brandName,
+					httpRequest.getSession(true).getId(), source, email, paymentAmount, scheduledPaymentDate,
+					checkDigit, langCode);
+		}
+
 		response = Response.status(200).entity(cancelPaymentResponse).build();
-		
+
 		logger.debug("END BillingResource.doCancelPayment :: END");
 		return response;
 	}
@@ -675,28 +679,22 @@ public class BillingResource {
 	@Path("editCancelOTCCPayment")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response editCancelOTCCPayment(
-			@FormParam("businessPartnerId") String bpid,
-			@FormParam("contractAccountNumber")String contractAccountNumber,
-			@FormParam("trackingId") String trackingId, 
-			@FormParam("action")String action,
-			@FormParam("companyCode") String companyCode, 
-			@FormParam("brandName") String brandName){
+	public Response editCancelOTCCPayment(@FormParam("businessPartnerId") String bpid,
+			@FormParam("contractAccountNumber") String contractAccountNumber,
+			@FormParam("trackingId") String trackingId, @FormParam("action") String action,
+			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
+			@FormParam("source") String source, @FormParam("email") String email,
+			@FormParam("paymentAmount") String paymentAmount,
+			@FormParam("scheduledPaymentDate") String scheduledPaymentDate, @FormParam("checkDigit") String checkDigit,
+			@FormParam("langCode") String langCode) {
 		Response response = null;
-		EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(
-						bpid, 
-						contractAccountNumber,
-						trackingId,
-						action,
-						companyCode,
-						brandName,
-						httpRequest.getSession(true).getId());
+		EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = billingBO.editCancelOTCCPayment(bpid,
+				contractAccountNumber, trackingId, action, companyCode, brandName, httpRequest.getSession(true).getId(),
+				source, email, paymentAmount, scheduledPaymentDate, checkDigit, langCode);
 		response = Response.status(200).entity(editCancelOTCCPaymentResponse).build();
-				
 		return response;
-		
 	}
-	
+
 	@POST
 	@Path("getPayAccounts")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })

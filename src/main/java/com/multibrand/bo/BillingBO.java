@@ -964,8 +964,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public CancelPaymentResponse doCancelPayment(String accountNumber,
-			String companyCode,String paymentId,String brandName,String sessionId)
+	public CancelPaymentResponse doCancelPayment(String accountNumber, String companyCode, String paymentId,
+			String brandName, String sessionId, String source, String email, String paymentAmount,
+			String scheduledPaymentDate, String checkDigit, String langCode)
 	{
 		logger.info("START-[BillingBO-doCancelPayment]");
 		CancelPaymentResponse cancelPaymentResponse =  new CancelPaymentResponse();
@@ -982,10 +983,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(response.getErrorMessage()!=null)cancelPaymentResponse.setErrorMessage(response.getErrorMessage());
 
 			} else {
-				
 				cancelPaymentResponse.setSuccessCode(response.getStrStatus());
 				cancelPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
 				cancelPaymentResponse.setResultDescription(MSG_SUCCESS);
+				if (!StringUtils.isEmpty(source) && source.equalsIgnoreCase(MOBILE)) {
+					sendCancelPaymentEmail(paymentId, email, paymentAmount, scheduledPaymentDate, accountNumber,
+							checkDigit,langCode);
+				}
 				
 			}
 			
@@ -1740,53 +1744,40 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public EditCancelOTCCPaymentResponse editCancelOTCCPayment(String bpid,String contractAccountNumber, String trackingId, String action,String companyCode, String brandName, String sessionId)
-	{
+	public EditCancelOTCCPaymentResponse editCancelOTCCPayment(String bpid, String contractAccountNumber,
+			String trackingId, String action, String companyCode, String brandName, String sessionId, String source,
+			String email, String paymentAmount, String scheduledPaymentDate, String checkDigit, String langCode) {
 		logger.info("START-[BillingBO-editCancelOTCCPayment]");
-		//padding the bpid with 0s
-				
-		if(StringUtils.isNotEmpty(bpid))bpid = StringUtils.leftPad(bpid,  10, "0");
-		
-		EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse =  new EditCancelOTCCPaymentResponse();
-		
-		CancelSchdOtccPaymetReq request= new CancelSchdOtccPaymetReq();
+		// padding the bpid with 0s
+
+		if (StringUtils.isNotEmpty(bpid))
+			bpid = StringUtils.leftPad(bpid, 10, "0");
+		EditCancelOTCCPaymentResponse editCancelOTCCPaymentResponse = new EditCancelOTCCPaymentResponse();
+		CancelSchdOtccPaymetReq request = new CancelSchdOtccPaymetReq();
 		request.setBpNumber(bpid);
 		request.setCompanyCode(companyCode);
 		request.setTrackingId(trackingId);
 		request.setContractAccount(contractAccountNumber);
 		request.setAction(action);
-		
-		
-		
-	
-		try{
-			
-			
+		try {
 			CancelOtccPaymentResp response = paymentService.editCancelOTCCPayment(request, sessionId);
-			
-			if(StringUtils.isEmpty(response.getErrorCode())){
-			
-				// successful call
-			   editCancelOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
-			   editCancelOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
-			
-			} else{
-				
-				// ccs error
-				
+			if (StringUtils.isEmpty(response.getErrorCode())) {
+				editCancelOTCCPaymentResponse.setResultCode(RESULT_CODE_SUCCESS);
+				editCancelOTCCPaymentResponse.setResultDescription(MSG_SUCCESS);
+				if (!StringUtils.isEmpty(source) && source.equalsIgnoreCase(MOBILE)) {
+					sendCancelPaymentEmail(trackingId, email, paymentAmount, scheduledPaymentDate,
+							contractAccountNumber, checkDigit, langCode);
+				}
+			} else {
 				editCancelOTCCPaymentResponse.setResultCode(RESULT_CODE_CCS_ERROR);
-				if(StringUtils.isNotEmpty(response.getErrorMessage())){
+				if (StringUtils.isNotEmpty(response.getErrorMessage())) {
 					editCancelOTCCPaymentResponse.setResultDescription(response.getErrorMessage());
 				}
 				// setting the ccs error code
 				editCancelOTCCPaymentResponse.setErrorCode(response.getErrorCode());
-				
 			}
-		
-		
-			
 		} catch (Exception e) {
-			if(logger.isDebugEnabled())
+			if (logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
 			logger.error(e);
 			editCancelOTCCPaymentResponse = new EditCancelOTCCPaymentResponse();
@@ -3393,6 +3384,38 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 
 	} 
+	
+	public void sendCancelPaymentEmail(String paymentId, String email, String paymentAmount,
+			String scheduledPaymentDate, String accountNumber, String checkDigit, String langCode) {
+		EmailRequest emailRequest = new EmailRequest();
+		if (StringUtils.isNotBlank(langCode) && langCode.equalsIgnoreCase(LANGUAGE_CODE_ES)) {
+			emailRequest.setExternalId(CANCEL_PAYMENT_GME_TEMPLATE_ES_US);
+		} else {
+			emailRequest.setExternalId(CANCEL_PAYMENT_GME_TEMPLATE_EN_US);
+		}
+		emailRequest.setSubject(SCHEDULE_CC_PAYMENT_GME_SUB);
+		emailRequest.setCompanyCode(COMPANY_CODE_GME);
+		if (StringUtils.isNotBlank(langCode) && langCode.equalsIgnoreCase(S)) {
+			emailRequest.setLanguageCode(ES);
+		} else {
+			emailRequest.setLanguageCode(EN);
+		}
+		emailRequest.setBrandName(GME_BRAND_NAME);
+		emailRequest.setTemplateType(BASE64HTML);
+		List<String> emailList = new ArrayList<String>();
+		emailList.add(email);
+		emailRequest.setToEmailList(emailList);
+		List<String> prop = new ArrayList<String>();
+		prop.add(CANCEL_PAYMENT_TXN_DATE + ":"
+				+ CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(), yyyy_MM_dd, MM_dd_yyyy));
+		prop.add(CANCEL_PAYMENT_PAYMENT_DATE + ":" + scheduledPaymentDate);
+		prop.add(CANCEL_PAYMENT_PAYMENT_AMOUNT + ":" + DOLLAR_SIGN + paymentAmount);
+		prop.add(CANCEL_PAYMENT_CONFIRM_NUM + ":" + paymentId);
+		prop.add(CANCEL_PAYMENT_CONTR_ACCT_ID + ":" + accountNumber);
+		prop.add(CANCEL_PAYMENT_CHECK_DIGIT + ":" + checkDigit);
+		emailRequest.setPropertyList(prop);
+		emailService.sendEmail(emailRequest);
+	}
 
 
 	
