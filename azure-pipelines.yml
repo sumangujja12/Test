@@ -1,0 +1,16 @@
+pool:
+  name: '$(param.agent.pool.name)'
+
+trigger:
+- develop
+- master
+- features/*
+
+steps:
+- task: JenkinsQueueJob@2
+  displayName: 'Queue Jenkins job: Services/nrg-rest-services'
+  inputs:
+    serverEndpoint: 'Prod Jenkins'
+    jobName: 'Services/nrg-rest-services'
+    isMultibranchJob: true
+    multibranchPipelineBranch: '$(Build.SourceBranch)'
