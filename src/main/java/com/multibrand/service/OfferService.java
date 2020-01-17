@@ -71,16 +71,13 @@ public class OfferService extends BaseAbstractService {
 	@Autowired
 	private OfferHelper offerHelper;
 	
-	@Autowired
-	@Qualifier("appConstMessageSource")
-	protected ReloadableResourceBundleMessageSource appConstMessageSource;
 
 	/**
 	 * This will return OEDomain and set EndPoint URL
 	 * 
 	 * @return proxy The OEDomain Object
 	 */
-	protected OEDomain getOEServiceProxy() throws ServiceException {
+	protected OEDomain getOEServiceProxy()  {
 		return (OEDomain) getServiceProxy(OEDomainPortBindingStub.class,
 				OE_SERVICE_ENDPOINT_URL);
 	}
@@ -128,7 +125,7 @@ public class OfferService extends BaseAbstractService {
 						+ promoOfferResponse.getStrErrMessage());
 			}
 		} catch (Exception e) {
-			logger.error("getOfferPricingFromCCS : Exception while fetching Offer pricing from ccs:"
+			logger.error("getOfferPricingFromCCS : Exception while fetching Offer pricing from ccs: {}"
 					, e);
 			throw new ServiceException("MSG_ERR_GET_OFFER_PRICING_FROM_CCS");
 		}
@@ -461,31 +458,25 @@ public class OfferService extends BaseAbstractService {
 	}
 	private TDSPChargeDO getTDSPChargesDTO(PromoOfferTDSPCharge[] offerTDSPCharges) {
 		TDSPChargeDO tdspChargeDTO = new TDSPChargeDO();		
-		String strBundlingTag=EMPTY;
-		String strBundlingGroup=EMPTY;
-		if(null!=offerTDSPCharges && offerTDSPCharges.length>0)
-		{
-			for(int nCount=0;nCount<offerTDSPCharges.length;nCount++){
-				PromoOfferTDSPCharge promoOfferTDSPChargeEntry = offerTDSPCharges[nCount];
-
-				strBundlingTag=promoOfferTDSPChargeEntry.getStrBundlingTag();
+		String strBundlingTag = "";
+		String strBundlingGroup = "";
+		if(null!=offerTDSPCharges && offerTDSPCharges.length>0) {
+			for(PromoOfferTDSPCharge promoOfferTDSPCharge : offerTDSPCharges){
+				PromoOfferTDSPCharge promoOfferTDSPChargeEntry = promoOfferTDSPCharge;
+	
+				strBundlingTag = promoOfferTDSPChargeEntry.getStrBundlingTag();
 				strBundlingGroup = promoOfferTDSPChargeEntry.getStrBundlingGroup();
 				
-				if(StringUtils.equalsIgnoreCase(strBundlingTag,strBundlingGroup+"_MO")){
+				if(StringUtils.equalsIgnoreCase(strBundlingTag, strBundlingGroup+"_MO")){
 					tdspChargeDTO.setPerMonthValue(promoOfferTDSPChargeEntry.getStrValue());
 				}
-				
-				if(StringUtils.equalsIgnoreCase(strBundlingTag,strBundlingGroup+"_KWH")){
+				if(StringUtils.equalsIgnoreCase(strBundlingTag, strBundlingGroup+"_KWH")){
 					tdspChargeDTO.setPerKWValue(promoOfferTDSPChargeEntry.getStrValue());
 				}
-								
 			}
 			
 			logger.info("TDSP perMonth Value"+tdspChargeDTO.getPerMonthValue());
 			logger.info("TDSP perKWh Value"+tdspChargeDTO.getPerKWValue());
-			
-			//logger.info("---------------------------------");
-
 		}
 		return tdspChargeDTO;
 	}
