@@ -1,7 +1,13 @@
 package com.multibrand.vo.response;
 
-public class TDSPChargeDO {
+import java.io.Serializable;
 
+public class TDSPChargeDO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String perMonthValue;
 	private String perKWValue;
 	

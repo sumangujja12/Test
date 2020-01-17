@@ -37,6 +37,7 @@ import com.multibrand.domain.OfferPricingRequest;
 import com.multibrand.domain.PromoOfferOutData;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.domain.PromoOfferTDSPCharge;
 import com.multibrand.domain.SSDomain;
 import com.multibrand.domain.SSDomainPortBindingStub;
 import com.multibrand.domain.SmallBusinessOfferRequest;
@@ -51,6 +52,7 @@ import com.multibrand.helper.OfferHelper;
 import com.multibrand.util.DBConstants;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.response.POWOfferDO;
+import com.multibrand.vo.response.TDSPChargeDO;
 
 @Service("offerService")
 public class OfferService extends BaseAbstractService {
@@ -242,11 +244,14 @@ public class OfferService extends BaseAbstractService {
 		promoOfferRequest.setStrTdspCode(productOfferRequest.getTdspCode());
 		promoOfferRequest.setStrDate(sdfDate.format(cal.getTime()));
 		promoOfferRequest.setStrTime(sdfTime.format(cal.getTime()));
-		
+		promoOfferRequest.setStrPromoCode(getPromoOfferCode(productOfferRequest));
 		return promoOfferRequest;
 	}
 
 
+	private String getPromoOfferCode(ProductOfferRequest productOfferRequest) {
+			return appConstMessageSource.getMessage(productOfferRequest.getChannelPartnerCode(), null, null);
+	}
 	private String getLangCode(ProductOfferRequest productOfferRequest) {
 		return (productOfferRequest.getLangCode().equalsIgnoreCase("es")? "S" : "E");
 	}
@@ -351,6 +356,8 @@ public class OfferService extends BaseAbstractService {
 					smallBusinessOfferDO.setOfferHighlights(offerPlanSDL.getHighlights());
 					smallBusinessOfferDO.setOfferTagline(offerPlanSDL.getTagLine());
 					smallBusinessOfferDO.setOfferOverview(offerPlanSDL.getOverViewText());
+					smallBusinessOfferDO.setStrPromoText(offerPlanSDL.getPromotionText());
+					smallBusinessOfferDO.setStrPromoTitle(offerPlanSDL.getPromotionTitle());
 					//key input value
 					smallBusinessOfferDO.setStrCampaignCode(offerKeyData.getCampaignCode());
 					smallBusinessOfferDO.setStrPromoCode(offerKeyData.getPromoCode());
@@ -403,12 +410,20 @@ public class OfferService extends BaseAbstractService {
 				offerPlan.setZipcode(productOfferRequest.getZipCode());
 				offerPlan.setChannelPartner(productOfferRequest.getChannelPartnerCode());
 			    offerPlan.setOfferName(offerPlanSDL.getOfferName());
+			    offerPlan.setStrPromoText(offerPlanSDL.getPromotionText());
+			    offerPlan.setStrPromoTitle(offerPlanSDL.getPromotionTitle());
 			    offerPlan.setOfferHighlights(offerPlanSDL.getHighlights());
+			    offerPlan.setOfferTagline(offerPlanSDL.getTagLine());
+			    offerPlan.setOfferOverview(offerPlanSDL.getOverViewText());
 				offerPlan.setStrCancelFee(promoOfferOutData.getStrCancelFee());
+				offerPlan.setStrWebRank(promoOfferOutData.getStrWebOfferRank());
 				offerPlan.setStrContractTerm(promoOfferOutData.getStrContractTerm());
-				offerPlan.setStrEFLDocID(offerHelper.getDocURlwithID(promoOfferOutData.getStrEFLDocID()));
-			    offerPlan.setStrYRAACDocID(offerHelper.getDocURlwithID(promoOfferOutData.getStrYRAACDocID()));
-			    offerPlan.setStrTOSDocID(offerHelper.getDocURlwithID(promoOfferOutData.getStrTOSDocID()));
+				offerPlan.setStrEFLDocID(promoOfferOutData.getStrEFLDocID());
+				offerPlan.setStrYRAACDocID(promoOfferOutData.getStrYRAACDocID());
+			    offerPlan.setStrTOSDocID(promoOfferOutData.getStrTOSDocID());
+				offerPlan.setStrEFLDocLink(offerHelper.getDocURlwithID(promoOfferOutData.getStrEFLDocID()));
+			    offerPlan.setStrYRAACDocLink(offerHelper.getDocURlwithID(promoOfferOutData.getStrYRAACDocID()));
+			    offerPlan.setStrTOSDocLink(offerHelper.getDocURlwithID(promoOfferOutData.getStrTOSDocID()));
 			    offerPlan.setStrCampaignCode(promoOfferOutData.getStrCampaignCode());
 			    offerPlan.setStrOfferCode(promoOfferOutData.getStrOfferCode());
 			    offerPlan.setStrValidToDate(promoOfferOutData.getStrValidToDate());
@@ -436,13 +451,43 @@ public class OfferService extends BaseAbstractService {
 			    offerPlan.setStrDwellingType(promoOfferOutData.getStrDwellingType());
 			    offerPlan.setAvgPrices(promoOfferOutData.getAvgPriceMap());
 			    offerPlan.setStrTOSSmartCode(promoOfferOutData.getStrTOSSmartCode());
-			    offerPlan.setOfferTDSPCharges(promoOfferOutData.getOfferTDSPCharges());
+			    offerPlan.setOfferTDSPCharges(getTDSPChargesDTO(promoOfferOutData.getOfferTDSPCharges()));
 			    offerPlanList.add(offerPlan);
 			}
 		}
 		logger.info("Finish construct the ResidentalOfferPlan");
 		
 		return offerPlanList;
+	}
+	private TDSPChargeDO getTDSPChargesDTO(PromoOfferTDSPCharge[] offerTDSPCharges) {
+		TDSPChargeDO tdspChargeDTO = new TDSPChargeDO();		
+		String strBundlingTag=EMPTY;
+		String strBundlingGroup=EMPTY;
+		if(null!=offerTDSPCharges && offerTDSPCharges.length>0)
+		{
+			for(int nCount=0;nCount<offerTDSPCharges.length;nCount++){
+				PromoOfferTDSPCharge promoOfferTDSPChargeEntry = offerTDSPCharges[nCount];
+
+				strBundlingTag=promoOfferTDSPChargeEntry.getStrBundlingTag();
+				strBundlingGroup = promoOfferTDSPChargeEntry.getStrBundlingGroup();
+				
+				if(StringUtils.equalsIgnoreCase(strBundlingTag,strBundlingGroup+"_MO")){
+					tdspChargeDTO.setPerMonthValue(promoOfferTDSPChargeEntry.getStrValue());
+				}
+				
+				if(StringUtils.equalsIgnoreCase(strBundlingTag,strBundlingGroup+"_KWH")){
+					tdspChargeDTO.setPerKWValue(promoOfferTDSPChargeEntry.getStrValue());
+				}
+								
+			}
+			
+			logger.info("TDSP perMonth Value"+tdspChargeDTO.getPerMonthValue());
+			logger.info("TDSP perKWh Value"+tdspChargeDTO.getPerKWValue());
+			
+			//logger.info("---------------------------------");
+
+		}
+		return tdspChargeDTO;
 	}
 
 

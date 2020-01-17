@@ -24,6 +24,12 @@ public class OfferPlanSDLVO implements Serializable  {
 	@JsonProperty("overviewText")
 	private String overViewText;
 	
+	@JsonProperty("promotionTitle")
+	private String promotionTitle;
+	
+	@JsonProperty("promotionText")
+	private String promotionText;
+	
 	@JsonProperty("tagline")
 	private String tagLine;
 	
@@ -31,6 +37,22 @@ public class OfferPlanSDLVO implements Serializable  {
 	private String offerCodes;
 	
 	
+	public String getPromotionTitle() {
+		return promotionTitle;
+	}
+
+	public void setPromotionTitle(String promotionTitle) {
+		this.promotionTitle = promotionTitle;
+	}
+
+	public String getPromotionText() {
+		return promotionText;
+	}
+
+	public void setPromotionText(String promotionText) {
+		this.promotionText = promotionText;
+	}
+
 	public String getOverViewText() {
 		return overViewText;
 	}

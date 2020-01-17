@@ -10,13 +10,14 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
+
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -33,6 +34,7 @@ import com.multibrand.dto.SmallBusinessAvgPriceVO;
 import com.multibrand.dto.SmallBusinessOfferDTO;
 import com.multibrand.exception.ServiceException;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.response.TDSPChargeDO;
 
 
 @Component("offerHelper")
@@ -176,6 +178,7 @@ public class OfferHelper implements Constants{
 				
 				if (docid.getDoctype().equalsIgnoreCase(TEFLF)) {
 					smallBusinessOfferDO.setStrEFLDocID(docid.getDocid());
+					smallBusinessOfferDO.setStrEFLDocLink(getDocURlwithID(docid.getDocid()));
 					smallBusinessOfferDO.setStrEFLSmartCode(docid.getSmartcode());
 				}
 				if (docid.getDoctype().equalsIgnoreCase(EFL)) {
@@ -186,12 +189,14 @@ public class OfferHelper implements Constants{
 			
 				if (docid.getDoctype().equalsIgnoreCase(YRAAC)) {
 					smallBusinessOfferDO.setStrYRAACDocID(docid.getDocid());
+					smallBusinessOfferDO.setStrYRAACDocLink(getDocURlwithID(docid.getDocid()));
 					smallBusinessOfferDO.setStrYRAACSmartCode(docid.getSmartcode());
 				}
 			
 				if (docid.getDoctype().equalsIgnoreCase(TOS)) {
 			
 					smallBusinessOfferDO.setStrTOSDocID(docid.getDocid());
+					smallBusinessOfferDO.setStrTOSDocLink(getDocURlwithID(docid.getDocid()));
 					smallBusinessOfferDO.setStrTOSSmartCode(docid.getSmartcode());
 				}
 			}
@@ -213,15 +218,27 @@ public class OfferHelper implements Constants{
 		smallBusinessOfferDO.setAvgPrices(avgPriceList);
 	}
 
-	public PromoOfferTDSPCharge[] getTDSPCharges(OfferOutPut offerDO) {
+	public TDSPChargeDO getTDSPCharges(OfferOutPut offerDO) {
 		TdspCharge[] tdspCharges = offerDO.getOfferData().getTdspCharges();
-		int tdspChahresSize = tdspCharges.length;
-		int counter = 0;
-		PromoOfferTDSPCharge[] promoOfferTDSPChargeList = new PromoOfferTDSPCharge[tdspChahresSize];
-		for (TdspCharge tdsp : tdspCharges) {
-			promoOfferTDSPChargeList[counter] = new PromoOfferTDSPCharge(tdsp.getTdsp(),tdsp.getValidForm(), tdsp.getValidTo(), tdsp.getBundlingTag(), tdsp.getValue(), tdsp.getWebReccCharggrp(), tdsp.getMarketSegment(), tdsp.getOfferCode());
+		String strBundlingTag=EMPTY;
+		String strBundlingGroup=EMPTY;
+		TDSPChargeDO tdspChargeDTO = new TDSPChargeDO();
+		if(null  != tdspCharges && tdspCharges.length>0) {
+			for (TdspCharge tdsp : tdspCharges) {
+				strBundlingTag= tdsp.getBundlingTag();
+				strBundlingGroup = tdsp.getWebReccCharggrp();
+				
+				if(StringUtils.equalsIgnoreCase(strBundlingTag,strBundlingGroup+"_MO")){
+					tdspChargeDTO.setPerMonthValue(tdsp.getValue());
+				}
+				
+				if(StringUtils.equalsIgnoreCase(strBundlingTag,strBundlingGroup+"_KWH")){
+					tdspChargeDTO.setPerKWValue(tdsp.getValue());
+				}
+								
+			}
 		}
-		return promoOfferTDSPChargeList;
+		return tdspChargeDTO;
 	}
 
 	public String getDocURlwithID(String strEFLDocID) {
