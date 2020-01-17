@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.multibrand.domain.PromoOfferTDSPCharge;
+import com.multibrand.vo.response.TDSPChargeDO;
 
 
 public class SmallBusinessOfferDTO extends ProductOfferCommonVO implements Serializable {
@@ -15,7 +16,7 @@ public class SmallBusinessOfferDTO extends ProductOfferCommonVO implements Seria
 	private String strPaymentTerm;
 	private String strLateFee;
 	private List<SmallBusinessAvgPriceVO> avgPrices;
-	private PromoOfferTDSPCharge[] offerTDSPCharges;
+	private TDSPChargeDO offerTDSPCharges;
 	private String strPaymentOption;
 	
 	
@@ -64,14 +65,16 @@ public class SmallBusinessOfferDTO extends ProductOfferCommonVO implements Seria
 		this.strPaymentOption = strPaymentOption;
 	}
 
-
-	public PromoOfferTDSPCharge[] getOfferTDSPCharges() {
+	public TDSPChargeDO getOfferTDSPCharges() {
 		return offerTDSPCharges;
 	}
 
-	public void setOfferTDSPCharges(PromoOfferTDSPCharge[] offerTDSPCharges) {
+	public void setOfferTDSPCharges(TDSPChargeDO offerTDSPCharges) {
 		this.offerTDSPCharges = offerTDSPCharges;
 	}
+
+
+
 
 	
 	

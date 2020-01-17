@@ -5,6 +5,7 @@ import java.io.Serializable;
 import com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.domain.PromoOfferTDSPCharge;
 import com.multibrand.dto.ProductOfferCommonVO;
+import com.multibrand.vo.response.TDSPChargeDO;
 
 public class ResidentialOfferPlanDTO  extends ProductOfferCommonVO implements Serializable {
 
@@ -14,17 +15,17 @@ public class ResidentialOfferPlanDTO  extends ProductOfferCommonVO implements Se
 	private static final long serialVersionUID = 1L;
 	
 	private PromoOfferOutDataAvgPriceMapEntry [] avgPrices;
-	private PromoOfferTDSPCharge[] offerTDSPCharges;
+	private TDSPChargeDO offerTDSPCharges;
 	public PromoOfferOutDataAvgPriceMapEntry[] getAvgPrices() {
 		return avgPrices;
 	}
 	public void setAvgPrices(PromoOfferOutDataAvgPriceMapEntry[] avgPrices) {
 		this.avgPrices = avgPrices;
 	}
-	public PromoOfferTDSPCharge[] getOfferTDSPCharges() {
+	public TDSPChargeDO getOfferTDSPCharges() {
 		return offerTDSPCharges;
 	}
-	public void setOfferTDSPCharges(PromoOfferTDSPCharge[] offerTDSPCharges) {
+	public void setOfferTDSPCharges(TDSPChargeDO offerTDSPCharges) {
 		this.offerTDSPCharges = offerTDSPCharges;
 	}
 	

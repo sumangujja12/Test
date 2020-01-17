@@ -16,10 +16,13 @@ public class ProductOfferCommonVO {
 	private BigDecimal strCancelFee;
 	private String strContractTerm;
 	private String strEFLDocID;
+	private String strEFLDocLink;
 	private String strEFLSmartCode;
 	private String strYRAACDocID;
+	private String strYRAACDocLink;
 	private String strYRAACSmartCode;
 	private String strTOSDocID;
+	private String strTOSDocLink;
 	private String strTOSSmartCode;
 	private String strCampaignCode;
 	private String strPromoCode;
@@ -45,8 +48,39 @@ public class ProductOfferCommonVO {
 	private BigDecimal strPenaltyValue;
 	private String strDwellingType;
 	
+	private String strPromoText;
+	private String strPromoTitle;
 	
-	
+	public String getStrPromoText() {
+		return strPromoText;
+	}
+	public void setStrPromoText(String strPromoText) {
+		this.strPromoText = strPromoText;
+	}
+	public String getStrPromoTitle() {
+		return strPromoTitle;
+	}
+	public void setStrPromoTitle(String strPromoTitle) {
+		this.strPromoTitle = strPromoTitle;
+	}
+	public String getStrEFLDocLink() {
+		return strEFLDocLink;
+	}
+	public void setStrEFLDocLink(String strEFLDocLink) {
+		this.strEFLDocLink = strEFLDocLink;
+	}
+	public String getStrYRAACDocLink() {
+		return strYRAACDocLink;
+	}
+	public void setStrYRAACDocLink(String strYRAACDocLink) {
+		this.strYRAACDocLink = strYRAACDocLink;
+	}
+	public String getStrTOSDocLink() {
+		return strTOSDocLink;
+	}
+	public void setStrTOSDocLink(String strTOSDocLink) {
+		this.strTOSDocLink = strTOSDocLink;
+	}
 	public String getStrWebRank() {
 		return strWebRank;
 	}

@@ -1288,7 +1288,7 @@ public interface Constants {
 	
 	public static final String STRING_VALUE = "StringValue%20eq%20%27";
 	
-	public static final String JSON_FORMAT_COMPONENT_PRESENTATION = ")&$expand=Component/ComponentPresentations&$format=json";
+	public static final String JSON_FORMAT_COMPONENT_PRESENTATION = "))&$expand=Component/ComponentPresentations&$format=json";
 	
 	public static final String OR = "%20OR%20";
 	public static final String ERROR = "error";
