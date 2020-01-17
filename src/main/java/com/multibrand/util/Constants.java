@@ -1284,7 +1284,7 @@ public interface Constants {
 	//Content Service metadata
 	public static final String CUSTOM_METADATA= "CustomMetas%28%29?&$filter=(PublicationId%20eq%20";
 	
-	public static final String KEY_NAME = "%20and%20keyName%20eq%20%27offerCodesLookup%27%20and%20";
+	public static final String KEY_NAME = "%20and%20keyName%20eq%20%27offerCodesLookup%27%20and%20(";
 	
 	public static final String STRING_VALUE = "StringValue%20eq%20%27";
 	
