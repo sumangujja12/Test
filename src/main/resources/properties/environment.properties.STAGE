@@ -148,8 +148,8 @@ ce.pub.id_en=143
 ce.pub.id_es=144
 gm.pub.id_en=123
 gm.pub.id_es=124
-xoom.pub.id_en=366
-xoom.pub.id_es=367
+xoom.pub.id_en=321
+xoom.pub.id_es=330
 
 re.taxonomy.id = 301
 pw.taxonomy.id = TODO
