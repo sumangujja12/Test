@@ -305,9 +305,19 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   Arrays.sort(contractDO, new ContractDOSort());
 				for(ContractDO contract:contractDO)
 				{
+						Date mvoDate = null;
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+						Date currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
+						if (StringUtils.isNotBlank(contract.getStrMoveOutDate())
+								&& COMPANY_CODE_GME.equalsIgnoreCase(companyCode)) {
+							mvoDate = sdf.parse(contract.getStrMoveOutDate());
+							if (mvoDate.before(currentDate)) {
+								continue;
+							}
+						}
 					
 					logger.info("contract MVO date :::::: " + contract.getStrMoveOutDate());
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+					
 					////US US12202 Changes - DK - 09/19/2019
 					if(StringUtils.isNotBlank(contract.getStrContractID()))
 					{
@@ -345,9 +355,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					
 					if(contract.getStrMoveOutDate()!=null && !contract.getStrMoveOutDate().equals(""))
 					{
-						Date mvoDate = sdf.parse(contract.getStrMoveOutDate());
+						
 						logger.info("Parsed Date object : " + mvoDate );
-						Date currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
 						if(mvoDate.after(currentDate)|| mvoDate.equals(currentDate))
 						{
 							logger.info("Active Contract!! MVO Date :: "+ mvoDate);
