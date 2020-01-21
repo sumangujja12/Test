@@ -495,7 +495,9 @@ public class ProfileService extends BaseAbstractService {
 				List<ContractDO> contracArrList = new LinkedList<ContractDO>();
 				int counter = 0;
 				for(ZcontractOutput contractOutput: zcontractOutput){
-					
+					if (CommonUtil.checkInactiveAccount(companyCode, contractOutput.getExAuszdat())) {
+						continue;
+					}
 					contractDO = new ContractDO();
 					offerDO = new com.multibrand.domain.OfferDO();
 					serviceAddressDO = new AddressDO();
@@ -508,9 +510,7 @@ public class ProfileService extends BaseAbstractService {
 					contractDO.setStrMoveInDate(contractOutput.getExEinzdat());
 					contractDO.setStrMoveOutDate(contractOutput.getExAuszdat());
 					
-					if (CommonUtil.checkInactiveAccount(companyCode, contractDO.getStrMoveOutDate())) {
-						continue;
-					}
+					
 					contractDO.setStrGuardLightFlag(CommonUtil.getFlagValue(contractOutput.getExGuard()));
 					
 					contractDO.setStrContractLength(contractOutput.getExContractLength());
