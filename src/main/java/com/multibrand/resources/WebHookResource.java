@@ -44,7 +44,12 @@ private static Logger logger = LogManager.getLogger(WebHookResource.class);
 		Response response=null;
 		logger.info("Start-[WebHookResource-addWebHookData]");
 		WebHookResponse userIdResponse = webHookHelper.addWebHookData(request);
-		response=Response.status(200).entity(userIdResponse).build();
+		if(userIdResponse.getResultcode().equalsIgnoreCase(Constants.ZERO)) {
+			response=Response.status(200).entity(userIdResponse).build();
+		} else {
+			response=Response.status(500).entity(userIdResponse).build();
+		}
+		
 		logger.info("End-[WebHookResource-addWebHookData]");
 		return response;
 	}
