@@ -560,10 +560,14 @@ public class ProfileService extends BaseAbstractService {
 					contractDO.setCurrentPlan(offerDO);	
 					contracArrList.add(contractDO);
 					//contractDOList[counter]= contractDO;		
+					
+				}
+				contractDOList = new ContractDO[contracArrList.size()];
+				for(ContractDO contractDOTemp :contracArrList) {
+					contractDOList[counter] = contractDOTemp;
 					counter++;
 				}
 				
-				contractDOList = (ContractDO[])contracArrList.toArray();
 			}
 			else{
 				
