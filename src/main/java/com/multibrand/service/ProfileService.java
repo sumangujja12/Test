@@ -507,12 +507,9 @@ public class ProfileService extends BaseAbstractService {
 					contractDO.setStrContractEndDate(contractOutput.getExVende());
 					contractDO.setStrMoveInDate(contractOutput.getExEinzdat());
 					contractDO.setStrMoveOutDate(contractOutput.getExAuszdat());
-					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-					Date currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
-					boolean isActive = CommonUtil.checkInactiveAccount(companyCode , contractDO.getStrMoveOutDate(), currentDate);
-					if (isActive) {
-						    
-							continue;
+					
+					if (CommonUtil.checkInactiveAccount(companyCode, contractDO.getStrMoveOutDate())) {
+						continue;
 					}
 					contractDO.setStrGuardLightFlag(CommonUtil.getFlagValue(contractOutput.getExGuard()));
 					
@@ -564,7 +561,7 @@ public class ProfileService extends BaseAbstractService {
 				}
 				contractDOList = new ContractDO[contracArrList.size()];
 				for(ContractDO contractDOTemp :contracArrList) {
-					contractDOList[0] = contractDOTemp;
+					contractDOList[counter] = contractDOTemp;
 					counter++;
 				}
 				

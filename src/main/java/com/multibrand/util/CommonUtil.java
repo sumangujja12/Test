@@ -1877,13 +1877,14 @@ public class CommonUtil implements Constants {
 		return input;
 	}
 	
-	public static boolean checkInactiveAccount(String companyCode, String moveOutDate, Date CurrentDate) {
+	public static boolean checkInactiveAccount(String companyCode, String moveOutDate) {
 		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYY_MM_DD);
 		boolean isActive = false;
 		try {
+			Date currentDate = dateFormat.parse(dateFormat.format(Calendar.getInstance().getTime()));
 			if (StringUtils.isNotBlank(moveOutDate)
 					&& COMPANY_CODE_GME.equalsIgnoreCase(companyCode)) {
-				if (dateFormat.parse(moveOutDate).before(CurrentDate)) {
+				if (dateFormat.parse(moveOutDate).before(currentDate)) {
 					isActive= true;
 				}
 				
