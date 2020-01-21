@@ -70,6 +70,7 @@ public class CommonUtil implements Constants {
 	public static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
 	private static final char[] alphanumeric = alphanumeric();
+	private static final String DATE_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";
 	
 	static {
 		init();
@@ -1876,6 +1877,23 @@ public class CommonUtil implements Constants {
 		return input;
 	}
 	
+	public static boolean checkInactiveAccount(String companyCode, String moveOutDate, Date CurrentDate) {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYY_MM_DD);
+		boolean isActive = false;
+		try {
+			if (StringUtils.isNotBlank(moveOutDate)
+					&& COMPANY_CODE_GME.equalsIgnoreCase(companyCode)) {
+				if (dateFormat.parse(moveOutDate).before(CurrentDate)) {
+					isActive= true;
+				}
+				
+			}
+		} catch (Exception e) {
+
+			logger.warn("checkInactiveAccount date parsing failed:", e);
+		}
+		return isActive;
+	}	
 	public static String getCurrentDateandTime() {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 		Date date = new Date();

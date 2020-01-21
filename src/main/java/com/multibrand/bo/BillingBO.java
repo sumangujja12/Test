@@ -288,6 +288,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		String averageBillingEligibilty = AVG_BILL_FLAG_NO;
 		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
+		Date mvoDate = null;
 		try {			
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
 			if(responseMap!= null && responseMap.size()!= 0)
@@ -305,16 +306,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   Arrays.sort(contractDO, new ContractDOSort());
 				for(ContractDO contract:contractDO)
 				{
-						Date mvoDate = null;
+						
 						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 						Date currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
-						if (StringUtils.isNotBlank(contract.getStrMoveOutDate())
-								&& COMPANY_CODE_GME.equalsIgnoreCase(companyCode)) {
-							mvoDate = sdf.parse(contract.getStrMoveOutDate());
-							if (mvoDate.before(currentDate)) {
-								continue;
-							}
-						}
+						mvoDate = sdf.parse(contract.getStrMoveOutDate());
+					
 					
 					logger.info("contract MVO date :::::: " + contract.getStrMoveOutDate());
 					
