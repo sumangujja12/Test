@@ -490,7 +490,9 @@ public class ProfileService extends BaseAbstractService {
 				contractDOList = new ContractDO[zcontractOutput.length];
 				int counter = 0;
 				for(ZcontractOutput contractOutput: zcontractOutput){
-					
+					if (CommonUtil.checkInactiveAccount(companyCode, contractOutput.getExAuszdat())) {
+						continue;
+					}
 					contractDO = new ContractDO();
 					offerDO = new com.multibrand.domain.OfferDO();
 					serviceAddressDO = new AddressDO();
