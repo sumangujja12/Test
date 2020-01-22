@@ -1289,4 +1289,8 @@ public interface Constants {
 	public static final String CANCEL_PAYMENT_CONTR_ACCT_ID = "CONTR_ACCT_ID";
 	public static final String CANCEL_PAYMENT_CHECK_DIGIT = "CHECK_DIGIT";
 
+	public static final String CHANNEL_TYPE_AA="AA";
+    public static final String DRL_STATE_TX = "TX";
+    public static final String POSID_BLANK_DATE = "0000-00-00";
+    
 }
