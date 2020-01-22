@@ -112,6 +112,8 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	//START : OE :Sprint61 :US21009 :Kdeshmu1
 	String agentID;
 	
+	String ipAddress;
+	
 	
 	public String getAgentID() {
 		return agentID;
@@ -362,6 +364,14 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}	
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
 	}
 
 	@Override

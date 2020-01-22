@@ -1312,4 +1312,11 @@ public interface Constants {
 	public static final String ERR_NO_DATA = "No data found for the CA and Company code";
 	public static final String ERR_DB = "Error occured while fetching data from database";
 	public static final String ERR_UNKNOWN = "An application error occured.  Please check NRG REST logs.";
+
+	
+
+	public static final String CHANNEL_TYPE_AA="AA";
+    public static final String DRL_STATE_TX = "TX";
+    public static final String POSID_BLANK_DATE = "0000-00-00";
+    
 }

@@ -25,6 +25,8 @@ public class BaseAffiliateRequest extends BaseRequest {
 	@Length(max = 40, groups = SizeConstraint.class)
 	private String affiliateId;
 	
+	private String channelType;
+	
 	/**
 	 * @return the affiliateId
 	 */
@@ -38,6 +40,14 @@ public class BaseAffiliateRequest extends BaseRequest {
 	 */
 	public void setAffiliateId(String affiliateId) {
 		this.affiliateId = affiliateId;
+	}
+
+	public String getChannelType() {
+		return channelType;
+	}
+
+	public void setChannelType(String channelType) {
+		this.channelType = channelType;
 	}
 
 	@Override
