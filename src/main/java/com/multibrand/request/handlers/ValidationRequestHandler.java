@@ -7,6 +7,7 @@ import com.multibrand.domain.ValidatePosIdKBARequest;
 import com.multibrand.domain.ValidatePosIdRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.util.Constants;
+import com.multibrand.util.DateUtil;
 import com.multibrand.util.LoggerUtil;
 
 @Component
@@ -44,15 +45,16 @@ public class ValidationRequestHandler implements Constants {
 		validatePosIdKBARequest.setChannel(CHANNEL_TYPE_AA);
 		
 		validatePosIdKBARequest.setChannelType((performPosIdBpRequest.getChannelType()!= null) ?performPosIdBpRequest.getChannelType():CHANNEL_TYPE_AA);
-		
-		validatePosIdKBARequest.setLanguageCode(performPosIdBpRequest.getLanguageCode());
+		String langCode = (StringUtils.equalsIgnoreCase(performPosIdBpRequest.getLanguageCode(), EN_US)? E:S);
+		validatePosIdKBARequest.setLanguageCode(langCode);
 		
 		validatePosIdKBARequest.setIsNoKBA(FLAG_X);
 		
 		validatePosIdKBARequest.setFirstName(performPosIdBpRequest.getFirstName());
 		validatePosIdKBARequest.setLastName(performPosIdBpRequest.getLastName());
-		validatePosIdKBARequest.setMiddleInitial(performPosIdBpRequest.getMiddleName());	
-		validatePosIdKBARequest.setDob(performPosIdBpRequest.getDob());
+		validatePosIdKBARequest.setMiddleInitial(performPosIdBpRequest.getMiddleName());
+		String dob = DateUtil.getFormattedDate(DATE_FORMAT, Constants.MMddyyyy, performPosIdBpRequest.getDob());
+		validatePosIdKBARequest.setDob(dob);
 		validatePosIdKBARequest.setTokenizedSSN(performPosIdBpRequest.getTokenSSN());		
 		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTokenTDL())){
 			validatePosIdKBARequest.setTokenizedDrl(performPosIdBpRequest.getTokenTDL());        
