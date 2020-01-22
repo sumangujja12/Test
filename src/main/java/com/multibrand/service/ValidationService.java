@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multibrand.domain.ValidateCustReferralIdResponse;
+import com.multibrand.domain.ValidatePosIdKBARequest;
+import com.multibrand.domain.ValidatePosIdKBAResponse;
 import com.multibrand.domain.ValidatePosIdRequest;
 import com.multibrand.domain.ValidatePosIdResponse;
 import com.multibrand.domain.ValidateReferralIdRequest;
@@ -130,6 +132,42 @@ public class ValidationService extends BaseAbstractService {
 			return response;
 			
 		}
+		
+		public ValidatePosIdKBAResponse validatePosIdWihKBA(ValidatePosIdKBARequest validatePosIdKBAReq) throws Exception{
+			
+			ValidatePosIdKBAResponse response= new ValidatePosIdKBAResponse();
+			String responseStatus=null;
+			long startTime=CommonUtil.getStartTime();
+			logger.debug(" START *******ValidationService:: validatePosIdWihKBA API**********");
+			try{
+				logger.debug("inside service validatePosIdWihKBA:: inside try");
+				ValidationDomain proxy = getValidationServiceProxy();
+
+				response = proxy.validatePosidWithKBA(validatePosIdKBAReq);
+				logger.debug("inside service validatePosIdWihKBA:: after call ::"+CommonUtil.doRender(validatePosIdKBAReq));
+				logger.debug("inside validatePosIdWihKBA:: response is :: "+CommonUtil.doRender(response));
+
+				if(StringUtils.isNotBlank(response.getStrErroMessage())){
+					responseStatus = response.getStrErroMessage();
+				}
+			}
+			catch(Exception e )
+			{			
+				logger.error("Exception in validatePosIdWihKBA.validatePosId :: ",e);
+			}
+			
+			finally{
+				try{
+					 utilityloggerHelper.logTransaction("ValidatePosId", false, validatePosIdKBAReq, response, responseStatus, CommonUtil.getElapsedTime(startTime),"","",validatePosIdKBAReq.getCompanyCode());
+					}catch(Exception e){
+						logger.error("Exception While logging::", e);
+					}
+			}
+						
+			return response;
+			
+		}
+		
 		
 		//END ONLINE AFFILIATES PROJECT - JSINGH1
 	

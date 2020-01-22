@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.helper.ValidateAddressHelper;
 import com.multibrand.domain.ValidateCustReferralIdResponse;
+import com.multibrand.domain.ValidatePosIdKBARequest;
+import com.multibrand.domain.ValidatePosIdKBAResponse;
 import com.multibrand.domain.ValidatePosIdRequest;
 import com.multibrand.domain.ValidatePosIdResponse;
 import com.multibrand.domain.ValidateReferralIdRequest;
@@ -252,46 +254,42 @@ public class ValidationBO extends BaseBO {
 
 		logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id :"
 				+ " "+performPosIdBpRequest.getAffiliateId() +":: retry Count is ::"+retryCount);
-		ValidatePosIdResponse validatePosIdResponse= new ValidatePosIdResponse();
+		ValidatePosIdKBAResponse validatePosIdKBAResponse= new ValidatePosIdKBAResponse();
 		try{
 			/*
 			 * Step 5: Make validatePosId call
 			 */
 			recentCallMade=RECENT_CALL_MADE_POSID;
-			ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenTDL(),
-					performPosIdBpRequest.getCompanyCode(),
-					performPosIdBpRequest.getMaidenName(),performPosIdBpRequest.getFirstName(), performPosIdBpRequest.getLastName(),
-					performPosIdBpRequest.getTokenSSN(), performPosIdBpRequest.getMiddleName());
-			validatePosIdResponse=validationService.validatePosId(validatePosIdReq);
+			ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
+			validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
 
 			//Pass the parameters from NRG response to wrapper Response POJO
-			response.setErrorDescription(validatePosIdResponse.getStrErroMessage());
+			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
 
 			/*
 			 * PosId Scenario: 
 			 */
-			logger.debug("inside validatePosId:: response from posid cal is: "+CommonUtil.doRender(validatePosIdResponse));
-			if(null!=(validatePosIdResponse) && ((X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidDl()) || 
-					(X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidSsn())))))
+			logger.debug("inside validatePosId:: response from posid cal is: "+CommonUtil.doRender(validatePosIdKBAResponse));
+			if(null!=(validatePosIdKBAResponse) && isPosidValidated(validatePosIdKBAResponse))
 			{
 				logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 						+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID SUCCESSFULLY CONDUCTED");
 				posidStatus=POSID_FLAG_YES;
 
-				if(X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidDl()))
+				if(!StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
 				{
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
-							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID conducted on Driver license");
-					posIdDate=validatePosIdResponse.getExDlVerifydate();
-					response.setPosidDLDate(validatePosIdResponse.getExDlVerifydate());
+							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID conducted on Driver license");					
+					posIdDate = DateUtil.getFormattedDate(DATE_FORMAT, Constants.RESPONSE_DATE_FORMAT, validatePosIdKBAResponse.getExDlVerifydate());					
+					response.setPosidDLDate(posIdDate);
 					posidPii=DL;
 				}
-				else if (X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidSsn()))
+				else if(!StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE))
 				{
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID conducted on SSN");
-					posIdDate=validatePosIdResponse.getExSsnVerifydate();
-					response.setPosidSSNDate(validatePosIdResponse.getExSsnVerifydate());
+					posIdDate = DateUtil.getFormattedDate(DATE_FORMAT, Constants.RESPONSE_DATE_FORMAT, validatePosIdKBAResponse.getExSsnVerifydate());					
+					response.setPosidSSNDate(posIdDate);
 					posidPii=SSN;
 				}
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
@@ -315,10 +313,10 @@ public class ValidationBO extends BaseBO {
 				logger.debug("inside validatePosId:: messagecode is after bpmatch ::"+response.getMessageCode());
 			}
 
-			else if(null!=(validatePosIdResponse)&&(StringUtils.isBlank(validatePosIdResponse.getExIsValidDl()))
-					&&(StringUtils.isBlank(validatePosIdResponse.getExIsValidSsn())) && 
-					(StringUtils.isBlank( validatePosIdResponse.getStrErroMessage()) 
-							|| StringUtils.isBlank(validatePosIdResponse.getStrErroCode())) ) 
+			else if(null!=(validatePosIdKBAResponse)&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
+					&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE)) && 
+					(StringUtils.isBlank( validatePosIdKBAResponse.getStrErroMessage()) 
+							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
 			{
 				if(retryCount!=2){
 					response.setStatusCode(STATUS_CODE_ASK);
@@ -905,5 +903,17 @@ public class ValidationBO extends BaseBO {
 						+ "Agent ID is not valid");
 		
 		return validatePosIdResponse;
+	}
+	
+	public boolean isPosidValidated(ValidatePosIdKBAResponse validatePosIdKBAResponse) {
+		boolean status = false;
+		
+		if( validatePosIdKBAResponse != null && (StringUtils.isNotEmpty(validatePosIdKBAResponse.getExSsnVerifydate())
+				||StringUtils.isNotEmpty(validatePosIdKBAResponse.getExDlVerifydate())) 
+				&& (!StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE) 
+						|| !StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE) )) {
+			status = true;
+		}			
+		return status;
 	}
 }
