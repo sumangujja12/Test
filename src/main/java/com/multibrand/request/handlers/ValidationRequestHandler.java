@@ -41,7 +41,11 @@ public class ValidationRequestHandler implements Constants {
 		ValidatePosIdKBARequest validatePosIdKBARequest = new ValidatePosIdKBARequest();
 		
 		validatePosIdKBARequest.setCompanyCode(performPosIdBpRequest.getCompanyCode());
-		validatePosIdKBARequest.setBrandName(performPosIdBpRequest.getBrandId());
+		String brandName = performPosIdBpRequest.getBrandId();
+		if(StringUtils.isEmpty(brandName)){
+			brandName = getBrandNameFromCompanycode(performPosIdBpRequest.getCompanyCode());
+		}
+		validatePosIdKBARequest.setBrandName(brandName);
 		validatePosIdKBARequest.setChannel(CHANNEL_TYPE_AA);
 		
 		validatePosIdKBARequest.setChannelType((performPosIdBpRequest.getChannelType()!= null) ?performPosIdBpRequest.getChannelType():CHANNEL_TYPE_AA);
@@ -83,6 +87,24 @@ public class ValidationRequestHandler implements Constants {
 		
 	}
 	
-	
+	private String getBrandNameFromCompanycode(String companyCode){
+		String brandName = EMPTY;
+		
+		switch(companyCode){
+			case COMPANY_CODE_RELIANT:
+					brandName = BRAND_ID_RELIANT;
+					break;
+			case COMPANY_CODE_GME:
+					brandName = BRAND_ID_GME;
+					break;
+			case COMPANY_CODE_PENNYWISE:
+					brandName = BRAND_ID_PENNYWISE;
+					break;
+			default:
+				break;
+		}
+		
+		return brandName;
+	}	
 	
 }
