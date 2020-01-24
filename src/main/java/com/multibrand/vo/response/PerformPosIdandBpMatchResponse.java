@@ -24,6 +24,7 @@ public class PerformPosIdandBpMatchResponse extends GenericResponse {
 	private String existingState;
 	private String existingZip;
 	private String retryCount;
+	private String kbaSuggestionFlag;
 		
 	
 	
@@ -107,8 +108,13 @@ public class PerformPosIdandBpMatchResponse extends GenericResponse {
 	public void setRetryCount(String retryCount) {
 		this.retryCount = retryCount;
 	}
+	public String getKbaSuggestionFlag() {
+		return kbaSuggestionFlag;
+	}
+	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
+		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
 	
 	
 	
-
 }

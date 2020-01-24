@@ -352,6 +352,10 @@ public class ValidationBO extends BaseBO {
 
 			//setting retrycount in response:
 			response.setRetryCount(Integer.toString(retryCount));
+			if(StringUtils.equalsIgnoreCase(performPosIdBpRequest.getChannelType(), CHANNEL_TYPE_AA)){
+				response.setKbaSuggestionFlag(FLAG_X);	
+				oESignupDTO.setKbaSuggestionFlag(FLAG_X);
+			}
 
 		}
 		catch(Exception e)
