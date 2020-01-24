@@ -1293,4 +1293,6 @@ public interface Constants {
     public static final String DRL_STATE_TX = "TX";
     public static final String POSID_BLANK_DATE = "0000-00-00";
     
+    public static final String MSG_KEY_CHANNEL_TYPE="msg.key.channel.type";
+    
 }

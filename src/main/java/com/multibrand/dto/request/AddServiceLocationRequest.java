@@ -214,6 +214,11 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	String errorCdList;
 	@ProcedureInParameter(name = "in_system_notes", parameterIndex = 62)
 	String systemNotes;
+	
+	// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+	@ProcedureInParameter(name="in_channel", parameterIndex=64)
+	private String channel;
+	// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		
 		public String getAgentID() {
 			return agentID;
@@ -1256,6 +1261,14 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	 */
 	public void setRealtorId(String realtorId) {
 		this.realtorId = realtorId;
+	}
+
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
 	}
 
 	@Override
