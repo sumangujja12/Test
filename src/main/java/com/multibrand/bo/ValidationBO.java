@@ -713,6 +713,9 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setTlpReportApiStatus("");
 		addServiceLocation.setErrorCdList("");
 		addServiceLocation.setSystemNotes("");
+		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		addServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
+		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
