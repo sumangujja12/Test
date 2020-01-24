@@ -160,6 +160,8 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	private PermitDTO permitDTO;
 	private PrepayDTO prepayDTO;
 	
+	private String kbaSuggestionFlag;
+	
 	public OESignupDTO() {
 		
 	}
@@ -1348,7 +1350,13 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		this.enrolled = enrolled;
 	}
 
+	public String getKbaSuggestionFlag() {
+		return kbaSuggestionFlag;
+	}
 
+	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
+		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
 	
 	
 }
