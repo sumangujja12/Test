@@ -352,6 +352,10 @@ public class ValidationBO extends BaseBO {
 
 			//setting retrycount in response:
 			response.setRetryCount(Integer.toString(retryCount));
+			if(StringUtils.equalsIgnoreCase(performPosIdBpRequest.getChannelType(), CHANNEL_TYPE_AA)){
+				response.setKbaSuggestionFlag(FLAG_X);	
+				oESignupDTO.setKbaSuggestionFlag(FLAG_X);
+			}
 
 		}
 		catch(Exception e)
@@ -713,6 +717,9 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setTlpReportApiStatus("");
 		addServiceLocation.setErrorCdList("");
 		addServiceLocation.setSystemNotes("");
+		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		addServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
+		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
