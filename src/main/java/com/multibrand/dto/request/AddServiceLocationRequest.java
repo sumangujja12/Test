@@ -187,7 +187,7 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_recent_msg_cd", parameterIndex = 53)
 	private String messageCode;
 
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 63)
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 78)
 	private String outErrorCode;
 
 	private String offerCategory;
@@ -215,8 +215,38 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_system_notes", parameterIndex = 62)
 	String systemNotes;
 	
+	//START : OE :Sprint 2 : Kdeshmu1
+	@ProcedureInParameter(name = "in_entry_point", parameterIndex = 63)
+	String entryPoint ;
+	@ProcedureInParameter(name = "in_partner_id", parameterIndex = 64)
+	String partnerId;
+	@ProcedureInParameter(name = "in_partner_desc", parameterIndex = 65)
+	String partnerDesc;
+	@ProcedureInParameter(name = "in_location_id ", parameterIndex = 66)
+	String locationId ;
+	@ProcedureInParameter(name = "in_location_desc ", parameterIndex = 67)
+	String locationDesc ;
+	@ProcedureInParameter(name = "in_tpv_status ", parameterIndex = 68)
+	String tpvStatus ;
+	@ProcedureInParameter(name = "in_campaign_cd ", parameterIndex = 69)
+	String campaignCd ;
+	@ProcedureInParameter(name = "in_page_revisited ", parameterIndex = 70)
+	String pageRevisited ;
+	@ProcedureInParameter(name = "in_prospect_id", parameterIndex = 71)
+	String prospectId;
+	@ProcedureInParameter(name = "in_prospect_preapproved_flag", parameterIndex = 72)
+	String prospectPreapprovedFlag;
+	@ProcedureInParameter(name = "in_prospect_partner_id", parameterIndex = 73)
+	String prospectPartnerId;
+	@ProcedureInParameter(name = "in_bypass_posid", parameterIndex = 74)
+	String bypassPosid;
+	@ProcedureInParameter(name = "in_ip_address", parameterIndex = 75)
+	String ipAddress;
+	@ProcedureInParameter(name = "in_tablet_id", parameterIndex = 76)
+	String tabletId;
+	//END : OE :Sprint 2 : Kdeshmu1
 	// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
-	@ProcedureInParameter(name="in_channel", parameterIndex=64)
+	@ProcedureInParameter(name="in_channel", parameterIndex=77)
 	private String channel;
 	// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		
@@ -1275,4 +1305,117 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this);
 	}
+
+	public String getEntryPoint() {
+		return entryPoint;
+	}
+
+	public void setEntryPoint(String entryPoint) {
+		this.entryPoint = entryPoint;
+	}
+
+	public String getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(String partnerId) {
+		this.partnerId = partnerId;
+	}
+
+	public String getPartnerDesc() {
+		return partnerDesc;
+	}
+
+	public void setPartnerDesc(String partnerDesc) {
+		this.partnerDesc = partnerDesc;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getLocationDesc() {
+		return locationDesc;
+	}
+
+	public void setLocationDesc(String locationDesc) {
+		this.locationDesc = locationDesc;
+	}
+
+	public String getTpvStatus() {
+		return tpvStatus;
+	}
+
+	public void setTpvStatus(String tpvStatus) {
+		this.tpvStatus = tpvStatus;
+	}
+
+	public String getCampaignCd() {
+		return campaignCd;
+	}
+
+	public void setCampaignCd(String campaignCd) {
+		this.campaignCd = campaignCd;
+	}
+
+	public String getPageRevisited() {
+		return pageRevisited;
+	}
+
+	public void setPageRevisited(String pageRevisited) {
+		this.pageRevisited = pageRevisited;
+	}
+
+	public String getProspectId() {
+		return prospectId;
+	}
+
+	public void setProspectId(String prospectId) {
+		this.prospectId = prospectId;
+	}
+
+	public String getProspectPreapprovedFlag() {
+		return prospectPreapprovedFlag;
+	}
+
+	public void setProspectPreapprovedFlag(String prospectPreapprovedFlag) {
+		this.prospectPreapprovedFlag = prospectPreapprovedFlag;
+	}
+
+	public String getProspectPartnerId() {
+		return prospectPartnerId;
+	}
+
+	public void setProspectPartnerId(String prospectPartnerId) {
+		this.prospectPartnerId = prospectPartnerId;
+	}
+
+	public String getBypassPosid() {
+		return bypassPosid;
+	}
+
+	public void setBypassPosid(String bypassPosid) {
+		this.bypassPosid = bypassPosid;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	public String getTabletId() {
+		return tabletId;
+	}
+
+	public void setTabletId(String tabletId) {
+		this.tabletId = tabletId;
+	}
+	
 }
