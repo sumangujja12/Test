@@ -393,7 +393,7 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_recent_msg_cd", parameterIndex = 120)
 	private String messageCode;
 
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 130)
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 144)
 	private String outErrorCode;
 
 	private String offerCategory;
@@ -419,6 +419,35 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 	String errorCdList;
 	@ProcedureInParameter(name = "in_system_notes", parameterIndex = 129)
 	String systemNotes;
+	
+	@ProcedureInParameter(name = "in_pdf_capture_flag", parameterIndex = 130)
+	String pdfCaptureFlag;
+	@ProcedureInParameter(name = "in_bp_name_match_code", parameterIndex = 131)
+	String bpNameMatchCode;
+	@ProcedureInParameter(name = "in_agent_upd_response", parameterIndex = 132)
+	String agentUpResponse;
+	@ProcedureInParameter(name = "in_ex_cust_opt_sel", parameterIndex = 133)
+	String eCustOptSel;
+	@ProcedureInParameter(name = "in_ex_cust_verify_val", parameterIndex = 134)
+	String exCustVerifyVal;
+	@ProcedureInParameter(name = "in_etf_flag", parameterIndex = 135)
+	String etfFlag;
+	@ProcedureInParameter(name = "in_device_latitude", parameterIndex = 136)
+	String deviceLatitude;
+	@ProcedureInParameter(name = "in_device_longitude", parameterIndex = 137)
+	String deviceLongitude;
+	@ProcedureInParameter(name = "in_device_accuracy", parameterIndex = 138)
+	String deviceAccuracy;
+	@ProcedureInParameter(name = "in_pending_bal_amount", parameterIndex = 139)
+	String pendingBalAmount;
+	@ProcedureInParameter(name = "in_past_service_ca", parameterIndex = 140)
+	String pastServiceCa;
+	@ProcedureInParameter(name = "in_kba_transaction_key", parameterIndex = 141)
+	String kbaTransactionKey;
+	@ProcedureInParameter(name = "in_kba_suggestion_flag", parameterIndex = 142)
+	String kbaSuggestionFlag;
+	@ProcedureInParameter(name = "in_abandoned_enroll_stat_flag", parameterIndex = 143)
+	String abandonedEnrollStatFlag;
 	
 	public String getAgentID() {
 		return agentID;
@@ -2533,4 +2562,118 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this);
 	}
+
+	public String getPdfCaptureFlag() {
+		return pdfCaptureFlag;
+	}
+
+	public void setPdfCaptureFlag(String pdfCaptureFlag) {
+		this.pdfCaptureFlag = pdfCaptureFlag;
+	}
+
+	public String getBpNameMatchCode() {
+		return bpNameMatchCode;
+	}
+
+	public void setBpNameMatchCode(String bpNameMatchCode) {
+		this.bpNameMatchCode = bpNameMatchCode;
+	}
+
+	public String getAgentUpResponse() {
+		return agentUpResponse;
+	}
+
+	public void setAgentUpResponse(String agentUpResponse) {
+		this.agentUpResponse = agentUpResponse;
+	}
+
+	public String geteCustOptSel() {
+		return eCustOptSel;
+	}
+
+	public void seteCustOptSel(String eCustOptSel) {
+		this.eCustOptSel = eCustOptSel;
+	}
+
+	public String getExCustVerifyVal() {
+		return exCustVerifyVal;
+	}
+
+	public void setExCustVerifyVal(String exCustVerifyVal) {
+		this.exCustVerifyVal = exCustVerifyVal;
+	}
+
+	public String getEtfFlag() {
+		return etfFlag;
+	}
+
+	public void setEtfFlag(String etfFlag) {
+		this.etfFlag = etfFlag;
+	}
+
+	public String getDeviceLatitude() {
+		return deviceLatitude;
+	}
+
+	public void setDeviceLatitude(String deviceLatitude) {
+		this.deviceLatitude = deviceLatitude;
+	}
+
+	public String getDeviceLongitude() {
+		return deviceLongitude;
+	}
+
+	public void setDeviceLongitude(String deviceLongitude) {
+		this.deviceLongitude = deviceLongitude;
+	}
+
+	public String getDeviceAccuracy() {
+		return deviceAccuracy;
+	}
+
+	public void setDeviceAccuracy(String deviceAccuracy) {
+		this.deviceAccuracy = deviceAccuracy;
+	}
+
+	public String getPendingBalAmount() {
+		return pendingBalAmount;
+	}
+
+	public void setPendingBalAmount(String pendingBalAmount) {
+		this.pendingBalAmount = pendingBalAmount;
+	}
+
+	public String getPastServiceCa() {
+		return pastServiceCa;
+	}
+
+	public void setPastServiceCa(String pastServiceCa) {
+		this.pastServiceCa = pastServiceCa;
+	}
+
+	public String getKbaTransactionKey() {
+		return kbaTransactionKey;
+	}
+
+	public void setKbaTransactionKey(String kbaTransactionKey) {
+		this.kbaTransactionKey = kbaTransactionKey;
+	}
+
+	public String getKbaSuggestionFlag() {
+		return kbaSuggestionFlag;
+	}
+
+	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
+		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
+
+	public String getAbandonedEnrollStatFlag() {
+		return abandonedEnrollStatFlag;
+	}
+
+	public void setAbandonedEnrollStatFlag(String abandonedEnrollStatFlag) {
+		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
+	}
+	
+	
 }
