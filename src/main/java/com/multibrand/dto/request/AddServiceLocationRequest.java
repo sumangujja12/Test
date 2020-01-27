@@ -215,40 +215,52 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_system_notes", parameterIndex = 62)
 	String systemNotes;
 	
-	//START : OE :Sprint 2 : Kdeshmu1
+	///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	@ProcedureInParameter(name = "in_entry_point", parameterIndex = 63)
-	String entryPoint ;
+	private String entryPoint ;
 	@ProcedureInParameter(name = "in_partner_id", parameterIndex = 64)
-	String partnerId;
+	private String partnerId;
 	@ProcedureInParameter(name = "in_partner_desc", parameterIndex = 65)
-	String partnerDesc;
+	private String partnerDesc;
 	@ProcedureInParameter(name = "in_location_id ", parameterIndex = 66)
-	String locationId ;
+	private String locationId ;
 	@ProcedureInParameter(name = "in_location_desc ", parameterIndex = 67)
-	String locationDesc ;
-	@ProcedureInParameter(name = "in_tpv_status ", parameterIndex = 68)
-	String tpvStatus ;
-	@ProcedureInParameter(name = "in_campaign_cd ", parameterIndex = 69)
-	String campaignCd ;
-	@ProcedureInParameter(name = "in_page_revisited ", parameterIndex = 70)
-	String pageRevisited ;
-	@ProcedureInParameter(name = "in_prospect_id", parameterIndex = 71)
-	String prospectId;
-	@ProcedureInParameter(name = "in_prospect_preapproved_flag", parameterIndex = 72)
-	String prospectPreapprovedFlag;
-	@ProcedureInParameter(name = "in_prospect_partner_id", parameterIndex = 73)
-	String prospectPartnerId;
-	@ProcedureInParameter(name = "in_bypass_posid", parameterIndex = 74)
-	String bypassPosid;
-	@ProcedureInParameter(name = "in_ip_address", parameterIndex = 75)
-	String ipAddress;
-	@ProcedureInParameter(name = "in_tablet_id", parameterIndex = 76)
-	String tabletId;
-	//END : OE :Sprint 2 : Kdeshmu1
-	// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
-	@ProcedureInParameter(name="in_channel", parameterIndex=77)
+	private String locationDesc ;
+	@ProcedureInParameter(name = "in_page_revisited ", parameterIndex = 68)
+	private String pageRevisited ;
+	@ProcedureInParameter(name = "in_prospect_id", parameterIndex = 69)
+	private String prospectId;
+	@ProcedureInParameter(name = "in_prospect_preapproved_flag", parameterIndex = 70)
+	private String prospectPreapprovedFlag;
+	@ProcedureInParameter(name = "in_prospect_partner_id", parameterIndex = 71)
+	private String prospectPartnerId;
+	@ProcedureInParameter(name = "in_bypass_posid", parameterIndex = 72)
+	private String bypassPosid;
+	@ProcedureInParameter(name = "in_ip_address", parameterIndex = 73)
+	private String ipAddress;
+	@ProcedureInParameter(name = "in_tablet_id", parameterIndex = 74)
+	private String tabletId;
+	@ProcedureInParameter(name="in_channel", parameterIndex=75)
 	private String channel;
-	// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+	@ProcedureInParameter(name = "in_abandoned_enroll_stat_flag", parameterIndex = 76)
+	private String abandonedEnrollStatFlag;
+	@ProcedureInParameter(name = "in_bp_name_match_code", parameterIndex = 77)
+	private String bpNameMatchCode;
+	@ProcedureInParameter(name = "in_device_latitude", parameterIndex = 78)
+	private String deviceLatitude;
+	@ProcedureInParameter(name = "in_device_longitude", parameterIndex = 79)
+	private String deviceLongitude;
+	@ProcedureInParameter(name = "in_device_accuracy", parameterIndex = 80)
+	private String deviceAccuracy;
+	@ProcedureInParameter(name = "in_etf_flag", parameterIndex = 81)
+	private String etfFlag;
+	@ProcedureInParameter(name = "in_kba_suggestion_flag", parameterIndex = 82)
+	private String kbaSuggestionFlag;
+	@ProcedureInParameter(name = "in_pending_bal_amount", parameterIndex = 83)
+	private String pendingBalAmount;
+	@ProcedureInParameter(name = "in_past_service_ca", parameterIndex = 84)
+	private String pastServiceCa;
+	///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		
 		public String getAgentID() {
 			return agentID;
@@ -1346,22 +1358,6 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 		this.locationDesc = locationDesc;
 	}
 
-	public String getTpvStatus() {
-		return tpvStatus;
-	}
-
-	public void setTpvStatus(String tpvStatus) {
-		this.tpvStatus = tpvStatus;
-	}
-
-	public String getCampaignCd() {
-		return campaignCd;
-	}
-
-	public void setCampaignCd(String campaignCd) {
-		this.campaignCd = campaignCd;
-	}
-
 	public String getPageRevisited() {
 		return pageRevisited;
 	}
@@ -1417,5 +1413,78 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	public void setTabletId(String tabletId) {
 		this.tabletId = tabletId;
 	}
+
+	public String getAbandonedEnrollStatFlag() {
+		return abandonedEnrollStatFlag;
+	}
+
+	public void setAbandonedEnrollStatFlag(String abandonedEnrollStatFlag) {
+		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
+	}
+
+	public String getBpNameMatchCode() {
+		return bpNameMatchCode;
+	}
+
+	public void setBpNameMatchCode(String bpNameMatchCode) {
+		this.bpNameMatchCode = bpNameMatchCode;
+	}
+
+	public String getDeviceLatitude() {
+		return deviceLatitude;
+	}
+
+	public void setDeviceLatitude(String deviceLatitude) {
+		this.deviceLatitude = deviceLatitude;
+	}
+
+	public String getDeviceLongitude() {
+		return deviceLongitude;
+	}
+
+	public void setDeviceLongitude(String deviceLongitude) {
+		this.deviceLongitude = deviceLongitude;
+	}
+
+	public String getDeviceAccuracy() {
+		return deviceAccuracy;
+	}
+
+	public void setDeviceAccuracy(String deviceAccuracy) {
+		this.deviceAccuracy = deviceAccuracy;
+	}
+
+	public String getEtfFlag() {
+		return etfFlag;
+	}
+
+	public void setEtfFlag(String etfFlag) {
+		this.etfFlag = etfFlag;
+	}
+
+	public String getKbaSuggestionFlag() {
+		return kbaSuggestionFlag;
+	}
+
+	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
+		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
+
+	public String getPendingBalAmount() {
+		return pendingBalAmount;
+	}
+
+	public void setPendingBalAmount(String pendingBalAmount) {
+		this.pendingBalAmount = pendingBalAmount;
+	}
+
+	public String getPastServiceCa() {
+		return pastServiceCa;
+	}
+
+	public void setPastServiceCa(String pastServiceCa) {
+		this.pastServiceCa = pastServiceCa;
+	}
+	
 	
 }
