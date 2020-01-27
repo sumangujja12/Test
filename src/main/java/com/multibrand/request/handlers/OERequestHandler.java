@@ -178,7 +178,7 @@ public class OERequestHandler implements Constants {
 		request.setPastServiceCa("");
 		request.setKbaTransactionKey("");
 		request.setKbaSuggestionFlag("");
-		request.setAbandonedEnrollStatFlag(abandonedEnrollStatFlag);
+		request.setAbandonedEnrollStatFlag("");
 		return request;
 	}
 	
