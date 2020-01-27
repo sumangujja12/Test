@@ -46,12 +46,13 @@ public class ValidationRequestHandler implements Constants {
 			brandName = getBrandNameFromCompanycode(performPosIdBpRequest.getCompanyCode());
 		}
 		validatePosIdKBARequest.setBrandName(brandName);
-		validatePosIdKBARequest.setChannel(CHANNEL_TYPE_AA);
+		validatePosIdKBARequest.setChannel(CALLER_WEB);
 		
-		validatePosIdKBARequest.setChannelType((performPosIdBpRequest.getChannelType()!= null) ?performPosIdBpRequest.getChannelType():CHANNEL_TYPE_AA);
+		validatePosIdKBARequest.setChannelType(StringUtils.equalsIgnoreCase(performPosIdBpRequest.getChannelType(),CHANNEL_TYPE_AA) ? CHANNEL_TYPE_AA : EMPTY );
 		String langCode = (StringUtils.equalsIgnoreCase(performPosIdBpRequest.getLanguageCode(), EN_US)? E:S);
 		validatePosIdKBARequest.setLanguageCode(langCode);
 		
+		// This will change in future when we support posid kba.
 		validatePosIdKBARequest.setIsNoKBA(FLAG_X);
 		
 		validatePosIdKBARequest.setFirstName(performPosIdBpRequest.getFirstName());
