@@ -717,22 +717,29 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setTlpReportApiStatus("");
 		addServiceLocation.setErrorCdList("");
 		addServiceLocation.setSystemNotes("");
-		//START :OE :Sprint 2 :Kdeshmu1
-		addServiceLocation.setEntryPoint("");
-		addServiceLocation.setPartnerId("");
-		addServiceLocation.setPartnerDesc("");
-		addServiceLocation.setLocationId("");
-		addServiceLocation.setLocationDesc("");
-		addServiceLocation.setTpvStatus("");
-		addServiceLocation.setCampaignCd("");
-		addServiceLocation.setPageRevisited("");
-		addServiceLocation.setProspectId("");
-		addServiceLocation.setProspectPreapprovedFlag("");
-		addServiceLocation.setProspectPartnerId("");
-		addServiceLocation.setBypassPosid("");
-		addServiceLocation.setIpAddress("");
-		addServiceLocation.setTabletId("");
-		//END :OE :Sprint 2 :Kdeshmu1
+		//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		addServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
+		addServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
+		addServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerDesc());
+		addServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
+		addServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationDesc());
+		addServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
+		addServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
+		addServiceLocation.setProspectPreapprovedFlag(performPosIdBpRequest.getProspectPreapprovedFlag());
+		addServiceLocation.setProspectPartnerId(performPosIdBpRequest.getProspectId());
+		addServiceLocation.setBypassPosid(performPosIdBpRequest.getBypassPosid());
+		addServiceLocation.setIpAddress(performPosIdBpRequest.getIpAddress());
+		addServiceLocation.setTabletId(performPosIdBpRequest.getTabletId());
+		addServiceLocation.setBpNameMatchCode(performPosIdBpRequest.getBpNameMatchCode());
+		addServiceLocation.setEtfFlag(performPosIdBpRequest.getEtfFlag());
+		addServiceLocation.setDeviceLatitude(performPosIdBpRequest.getDeviceLatitude());
+		addServiceLocation.setDeviceLongitude(performPosIdBpRequest.getDeviceLatitude());
+		addServiceLocation.setDeviceAccuracy(performPosIdBpRequest.getDeviceAccuracy());
+		addServiceLocation.setPendingBalAmount(performPosIdBpRequest.getPendingBalAmount());
+		addServiceLocation.setPastServiceCa(performPosIdBpRequest.getPastServiceCa());
+		addServiceLocation.setKbaSuggestionFlag(performPosIdBpRequest.getKbaSuggestionFlag());
+		addServiceLocation.setAbandonedEnrollStatFlag(performPosIdBpRequest.getAbandonedEnrollStatFlag());
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		addServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
 		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
