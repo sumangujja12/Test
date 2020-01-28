@@ -187,9 +187,6 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_recent_msg_cd", parameterIndex = 53)
 	private String messageCode;
 
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 78)
-	private String outErrorCode;
-
 	private String offerCategory;
 	private String frequentFlyerNumber;
 	private String realtorId;
@@ -260,6 +257,10 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	private String pendingBalAmount;
 	@ProcedureInParameter(name = "in_past_service_ca", parameterIndex = 84)
 	private String pastServiceCa;
+	
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 85)
+	private String outErrorCode;
+
 	///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		
 		public String getAgentID() {
