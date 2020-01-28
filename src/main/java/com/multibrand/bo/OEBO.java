@@ -34,12 +34,17 @@ import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
+import com.multibrand.domain.AddressDTO;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.CampEnvironmentOutData;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.GetEsiidResponse;
+import com.multibrand.domain.KbaAnswerDTO;
+import com.multibrand.domain.KbaQuestionDTO;
+import com.multibrand.domain.KbaQuestionRequest;
+import com.multibrand.domain.KbaQuestionResponse;
 import com.multibrand.domain.NewCreditScoreRequest;
 import com.multibrand.domain.OetdspRequest;
 import com.multibrand.domain.OfferPricingRequest;
@@ -59,6 +64,8 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
+import com.multibrand.domain.ValidatePosIdKBARequest;
+import com.multibrand.domain.ValidatePosIdKBAResponse;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
@@ -71,6 +78,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
+import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
@@ -117,6 +125,7 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferDO;
@@ -132,8 +141,11 @@ import com.multibrand.vo.response.TDSPDO;
 import com.multibrand.vo.response.TLPOfferDO;
 import com.multibrand.vo.response.TdspResponse;
 import com.multibrand.vo.response.TokenizedResponse;
+import com.multibrand.vo.response.KBO.Option;
+import com.multibrand.vo.response.KBO.Question;
 import com.multibrand.vo.response.billingResponse.AddressDO;
 import com.multibrand.web.i18n.WebI18nMessageSource;
+
 import com.reliant.domain.AddressValidateResponse;
 
 
@@ -4942,6 +4954,135 @@ private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO o
 		request.setDeviceType("");
 		return request;
 	}
+
+public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
+	
+	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
+	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
+	KbaQuestionResponse kbaQuestionResponse = null;
+	List<Question> questions = new ArrayList<>();
+	try {
+					
+		logger.debug("inside getKBAQuestions::Tracking Number ::{} :: preferred language is:{}"+request.getTrackingId());
+		kbaQuestionRequest = createKBAQuestionRequest(request);
+		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
+		 if (kbaQuestionResponse != null && (kbaQuestionResponse.getQuestionList() != null
+					&& kbaQuestionResponse.getQuestionList().length > 0)) {
+				
+				getKBAQuestion(kbaQuestionResponse.getQuestionList(), questions);
+				
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setTransactionKey(kbaQuestionResponse.getTransactionKey());
+				response.setQuestions(questions);
+			} else {
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setMessageCode(POSID_FAIL);
+				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+
+
+			}
+			
+
+	} catch (Exception e) {
+		response.setStatusCode(STATUS_CODE_ASK);
+		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
+		response.setMessageCode(POSID_FAIL);
+		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+	} finally {
+		try{
+				// Making Update Servicelocation call now
+				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())){
+				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
+				updateServiceLocationRequest.setTrackingId(request.getTrackingId());
+				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
+				this.updateServiceLocation(updateServiceLocationRequest);
+				response.setTrackingId(request.getTrackingId());
+			}
+		}catch(Exception e){
+			response.setStatusCode(STATUS_CODE_STOP);
+			response.setResultDescription("Java exception making Database call for getKBaQuestion-updateServiceLocation with exception ::"+e.getMessage());
+			logger.error("Tracking Number ::"+request.getTrackingId()+" :: affiliate Id : "
+					+ ""+request.getAffiliateId() +"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
+		}
+		
+	}
+
+	return response;
+}
+
+private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest request){
+	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
+	kbaQuestionRequest.setCompanyCode(request.getCompanyCode());
+	kbaQuestionRequest.setBrandName(request.getBrandId());
+	kbaQuestionRequest.setChannel(CHANNEL);
+	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
+	String langCode = (StringUtils.equalsIgnoreCase(request.getLanguageCode(), EN_US)? E:S);
+	kbaQuestionRequest.setLanguageCode(langCode);
+	
+	kbaQuestionRequest.setFirstName(request.getFirstName());
+	kbaQuestionRequest.setLastName(request.getLastName());
+	kbaQuestionRequest.setMiddleName(request.getMiddleName());	
+	kbaQuestionRequest.setDob(request.getDateOfBirth());
+	kbaQuestionRequest.setTokenizedSSN(request.getTokenizedSsn());		
+	if(StringUtils.isNotEmpty(request.getTokenizedDrivingLc())){
+        kbaQuestionRequest.setTokenizedDrl(request.getTokenizedDrivingLc());        
+        kbaQuestionRequest.setDlrState(request.getDrivingLicenseState());
+    } 
+	
+//	kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
+//	kbaQuestionRequest.setDlrState("TX");
+//	kbaQuestionRequest.setTokenizedSSN("2RD6VE6-5840");
+//	kbaQuestionRequest.setDlrState(null);
+	
+	
+	kbaQuestionRequest.setHomePhone(request.getPhoneNumber());
+	kbaQuestionRequest.setEmailAddress(request.getEmailAddress());
+	kbaQuestionRequest.setIpAddress(request.getIpAddress());
+	kbaQuestionRequest.setEsid(request.getEsidNumber());
+	kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
+	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
+	
+	
+	AddressDTO serviceAddressDTO = new AddressDTO();
+	serviceAddressDTO.setStrStreetNum(request.getServiceAddressStreetNumber());
+	serviceAddressDTO.setStrStreetName(request.getServiceAddressStreetName());		
+	serviceAddressDTO.setStrUnitNumber(request.getServiceAddressAptNumber());
+	serviceAddressDTO.setStrCity(request.getServiceAddressCity());
+	serviceAddressDTO.setStrState(request.getServiceAddressState());
+	serviceAddressDTO.setStrZip(request.getServiceAddressZipCode());
+	
+	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
+	kbaQuestionRequest.setPosidUniqueKey(request.getPosidUniqueKey());
+	
+	return kbaQuestionRequest;
+}
+
+
+private void getKBAQuestion(KbaQuestionDTO[] questionList, List<Question> questions) {
+
+	for (KbaQuestionDTO question : questionList) {
+		Question q = new Question();
+		q.setQuestionId(question.getQuestionId());
+		q.setQuestionText(question.getQuestionText());
+		q.setQuizeId(question.getQuizId());
+
+		List<Option> options = new ArrayList<>();
+		if (question.getAnswerList() != null && question.getAnswerList().length > 0) {
+			for (KbaAnswerDTO answer : question.getAnswerList()) {
+				Option option = new Option();
+				option.setOptionId(answer.getAnswerId());
+				option.setOptionText(answer.getContent());
+				option.setCorrectAnswer(answer.isCorrectAnswer());
+				options.add(option);
+			}
+			q.setOptions(options);
+		}
+
+		questions.add(q);
+	}
+
+}
 
 }
 

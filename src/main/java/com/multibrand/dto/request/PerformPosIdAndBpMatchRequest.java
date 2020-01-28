@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.multibrand.dao.jdbc.sp.ProcedureInParameter;
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.SizeConstraint;
@@ -115,6 +116,136 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String ipAddress;
 	
 	
+	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+	String entryPoint ;
+	String partnerId;
+	String partnerDesc;
+	String locationId ;
+	String locationDesc ;
+	String tpvStatus ;
+	String campaignCd ;
+	String pageRevisited ;
+	String prospectId;
+	String prospectPreapprovedFlag;
+	String prospectPartnerId;
+	String bypassPosid;
+	String tabletId;
+	 String abandonedEnrollStatFlag;
+	 String bpNameMatchCode;
+	 String deviceLatitude;
+	 String deviceLongitude;
+	 String deviceAccuracy;
+	 String etfFlag;
+	 String kbaSuggestionFlag;
+	 String pendingBalAmount;
+	 String pastServiceCa;
+	
+	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+	
+	public String getEntryPoint() {
+		return entryPoint;
+	}
+
+	public void setEntryPoint(String entryPoint) {
+		this.entryPoint = entryPoint;
+	}
+
+	public String getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(String partnerId) {
+		this.partnerId = partnerId;
+	}
+
+	public String getPartnerDesc() {
+		return partnerDesc;
+	}
+
+	public void setPartnerDesc(String partnerDesc) {
+		this.partnerDesc = partnerDesc;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getLocationDesc() {
+		return locationDesc;
+	}
+
+	public void setLocationDesc(String locationDesc) {
+		this.locationDesc = locationDesc;
+	}
+
+	public String getTpvStatus() {
+		return tpvStatus;
+	}
+
+	public void setTpvStatus(String tpvStatus) {
+		this.tpvStatus = tpvStatus;
+	}
+
+	public String getCampaignCd() {
+		return campaignCd;
+	}
+
+	public void setCampaignCd(String campaignCd) {
+		this.campaignCd = campaignCd;
+	}
+
+	public String getPageRevisited() {
+		return pageRevisited;
+	}
+
+	public void setPageRevisited(String pageRevisited) {
+		this.pageRevisited = pageRevisited;
+	}
+
+	public String getProspectId() {
+		return prospectId;
+	}
+
+	public void setProspectId(String prospectId) {
+		this.prospectId = prospectId;
+	}
+
+	public String getProspectPreapprovedFlag() {
+		return prospectPreapprovedFlag;
+	}
+
+	public void setProspectPreapprovedFlag(String prospectPreapprovedFlag) {
+		this.prospectPreapprovedFlag = prospectPreapprovedFlag;
+	}
+
+	public String getProspectPartnerId() {
+		return prospectPartnerId;
+	}
+
+	public void setProspectPartnerId(String prospectPartnerId) {
+		this.prospectPartnerId = prospectPartnerId;
+	}
+
+	public String getBypassPosid() {
+		return bypassPosid;
+	}
+
+	public void setBypassPosid(String bypassPosid) {
+		this.bypassPosid = bypassPosid;
+	}
+
+	public String getTabletId() {
+		return tabletId;
+	}
+
+	public void setTabletId(String tabletId) {
+		this.tabletId = tabletId;
+	}
+
 	public String getAgentID() {
 		return agentID;
 	}
@@ -125,6 +256,80 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	
 
 	//END : OE :Sprint61 :US21009 :Kdeshmu1
+	
+	
+	public String getAbandonedEnrollStatFlag() {
+		return abandonedEnrollStatFlag;
+	}
+
+	public void setAbandonedEnrollStatFlag(String abandonedEnrollStatFlag) {
+		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
+	}
+
+	public String getBpNameMatchCode() {
+		return bpNameMatchCode;
+	}
+
+	public void setBpNameMatchCode(String bpNameMatchCode) {
+		this.bpNameMatchCode = bpNameMatchCode;
+	}
+
+	public String getDeviceLatitude() {
+		return deviceLatitude;
+	}
+
+	public void setDeviceLatitude(String deviceLatitude) {
+		this.deviceLatitude = deviceLatitude;
+	}
+
+	public String getDeviceLongitude() {
+		return deviceLongitude;
+	}
+
+	public void setDeviceLongitude(String deviceLongitude) {
+		this.deviceLongitude = deviceLongitude;
+	}
+
+	public String getDeviceAccuracy() {
+		return deviceAccuracy;
+	}
+
+	public void setDeviceAccuracy(String deviceAccuracy) {
+		this.deviceAccuracy = deviceAccuracy;
+	}
+
+	public String getEtfFlag() {
+		return etfFlag;
+	}
+
+	public void setEtfFlag(String etfFlag) {
+		this.etfFlag = etfFlag;
+	}
+
+	public String getKbaSuggestionFlag() {
+		return kbaSuggestionFlag;
+	}
+
+	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
+		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
+
+	public String getPendingBalAmount() {
+		return pendingBalAmount;
+	}
+
+	public void setPendingBalAmount(String pendingBalAmount) {
+		this.pendingBalAmount = pendingBalAmount;
+	}
+
+	public String getPastServiceCa() {
+		return pastServiceCa;
+	}
+
+	public void setPastServiceCa(String pastServiceCa) {
+		this.pastServiceCa = pastServiceCa;
+	}
+
 	public String getDobForPosId() {
 		return dobForPosId;
 	}
@@ -373,6 +578,7 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
 	}
+	
 
 	@Override
 	public String toString() {

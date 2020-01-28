@@ -1295,5 +1295,6 @@ public interface Constants {
     public static final String CALLER_WEB="WEB";
     
     public static final String MSG_KEY_CHANNEL_TYPE="msg.key.channel.type";
+    public static final String MSG_KEY_KBA_QUESTION_LIST_EMPTY="msg.key.kba.question.list.empty";
     
 }
