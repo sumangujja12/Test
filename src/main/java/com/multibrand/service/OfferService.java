@@ -1,5 +1,6 @@
 package com.multibrand.service;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 
 import com.multibrand.dao.OfferCategoryDAOIF;
@@ -412,7 +412,8 @@ public class OfferService extends BaseAbstractService {
 			    offerPlan.setOfferHighlights(offerPlanSDL.getHighlights());
 			    offerPlan.setOfferTagline(offerPlanSDL.getTagLine());
 			    offerPlan.setOfferOverview(offerPlanSDL.getOverViewText());
-				offerPlan.setStrCancelFee(promoOfferOutData.getStrCancelFee());
+//				offerPlan.setStrCancelFee(promoOfferOutData.getStrCancelFee());
+			    offerPlan.setStrCancelFee(promoOfferOutData.getStrCancelFee().setScale(0,BigDecimal.ROUND_FLOOR));
 				offerPlan.setStrWebRank(promoOfferOutData.getStrWebOfferRank());
 				offerPlan.setStrContractTerm(promoOfferOutData.getStrContractTerm());
 				offerPlan.setStrEFLDocID(promoOfferOutData.getStrEFLDocID());
