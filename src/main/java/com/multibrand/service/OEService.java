@@ -25,6 +25,8 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
+import com.multibrand.domain.KbaQuestionRequest;
+import com.multibrand.domain.KbaQuestionResponse;
 import com.multibrand.domain.OEDomain;
 import com.multibrand.domain.OEDomainPortBindingStub;
 import com.multibrand.domain.OetdspRequest;
@@ -527,4 +529,17 @@ public class OEService extends BaseAbstractService {
 			return updateRequest;
 
 		}
+		
+		public KbaQuestionResponse getKBAQuestionList(KbaQuestionRequest kbaQuestionRequest)   {
+			KbaQuestionResponse kbaQuestionResponse = null;
+			try {
+				OEDomain proxyclient = getOEServiceProxy();
+				kbaQuestionResponse = proxyclient.getKBAQuestionList(kbaQuestionRequest);
+			} catch (Exception e) {
+				logger.error("ERROR_IN_GETKBAQUESTIOINFO");
+			} 
+			return kbaQuestionResponse;
+		}
+		
+		
 }
