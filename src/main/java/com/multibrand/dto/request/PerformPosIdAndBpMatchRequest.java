@@ -126,19 +126,11 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String campaignCd ;
 	String pageRevisited ;
 	String prospectId;
-	String prospectPreapprovedFlag;
-	String prospectPartnerId;
 	String bypassPosid;
 	String tabletId;
-	 String abandonedEnrollStatFlag;
-	 String bpNameMatchCode;
-	 String deviceLatitude;
-	 String deviceLongitude;
-	 String deviceAccuracy;
-	 String etfFlag;
-	 String kbaSuggestionFlag;
-	 String pendingBalAmount;
-	 String pastServiceCa;
+	String abandonedEnrollStatFlag;
+	String etfFlag;
+	 
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	
@@ -214,21 +206,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 		this.prospectId = prospectId;
 	}
 
-	public String getProspectPreapprovedFlag() {
-		return prospectPreapprovedFlag;
-	}
-
-	public void setProspectPreapprovedFlag(String prospectPreapprovedFlag) {
-		this.prospectPreapprovedFlag = prospectPreapprovedFlag;
-	}
-
-	public String getProspectPartnerId() {
-		return prospectPartnerId;
-	}
-
-	public void setProspectPartnerId(String prospectPartnerId) {
-		this.prospectPartnerId = prospectPartnerId;
-	}
 
 	public String getBypassPosid() {
 		return bypassPosid;
@@ -266,37 +243,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
 	}
 
-	public String getBpNameMatchCode() {
-		return bpNameMatchCode;
-	}
-
-	public void setBpNameMatchCode(String bpNameMatchCode) {
-		this.bpNameMatchCode = bpNameMatchCode;
-	}
-
-	public String getDeviceLatitude() {
-		return deviceLatitude;
-	}
-
-	public void setDeviceLatitude(String deviceLatitude) {
-		this.deviceLatitude = deviceLatitude;
-	}
-
-	public String getDeviceLongitude() {
-		return deviceLongitude;
-	}
-
-	public void setDeviceLongitude(String deviceLongitude) {
-		this.deviceLongitude = deviceLongitude;
-	}
-
-	public String getDeviceAccuracy() {
-		return deviceAccuracy;
-	}
-
-	public void setDeviceAccuracy(String deviceAccuracy) {
-		this.deviceAccuracy = deviceAccuracy;
-	}
 
 	public String getEtfFlag() {
 		return etfFlag;
@@ -306,29 +252,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 		this.etfFlag = etfFlag;
 	}
 
-	public String getKbaSuggestionFlag() {
-		return kbaSuggestionFlag;
-	}
-
-	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
-		this.kbaSuggestionFlag = kbaSuggestionFlag;
-	}
-
-	public String getPendingBalAmount() {
-		return pendingBalAmount;
-	}
-
-	public void setPendingBalAmount(String pendingBalAmount) {
-		this.pendingBalAmount = pendingBalAmount;
-	}
-
-	public String getPastServiceCa() {
-		return pastServiceCa;
-	}
-
-	public void setPastServiceCa(String pastServiceCa) {
-		this.pastServiceCa = pastServiceCa;
-	}
 
 	public String getDobForPosId() {
 		return dobForPosId;

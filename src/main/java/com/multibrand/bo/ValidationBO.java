@@ -725,24 +725,29 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationDesc());
 		addServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
 		addServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
-		addServiceLocation.setProspectPreapprovedFlag(performPosIdBpRequest.getProspectPreapprovedFlag());
-		addServiceLocation.setProspectPartnerId(performPosIdBpRequest.getProspectId());
+		
 		addServiceLocation.setBypassPosid(performPosIdBpRequest.getBypassPosid());
 		addServiceLocation.setIpAddress(performPosIdBpRequest.getIpAddress());
 		addServiceLocation.setTabletId(performPosIdBpRequest.getTabletId());
-		addServiceLocation.setBpNameMatchCode(performPosIdBpRequest.getBpNameMatchCode());
+		
 		addServiceLocation.setEtfFlag(performPosIdBpRequest.getEtfFlag());
-		addServiceLocation.setDeviceLatitude(performPosIdBpRequest.getDeviceLatitude());
-		addServiceLocation.setDeviceLongitude(performPosIdBpRequest.getDeviceLatitude());
-		addServiceLocation.setDeviceAccuracy(performPosIdBpRequest.getDeviceAccuracy());
-		addServiceLocation.setPendingBalAmount(performPosIdBpRequest.getPendingBalAmount());
-		addServiceLocation.setPastServiceCa(performPosIdBpRequest.getPastServiceCa());
-		addServiceLocation.setKbaSuggestionFlag(performPosIdBpRequest.getKbaSuggestionFlag());
+		
 		addServiceLocation.setAbandonedEnrollStatFlag(performPosIdBpRequest.getAbandonedEnrollStatFlag());
 		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		addServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
 		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		//START TBD - Set value
+		addServiceLocation.setProspectPreapprovedFlag(EMPTY);
+		addServiceLocation.setProspectPartnerId(EMPTY);
+		addServiceLocation.setBpNameMatchCode(EMPTY);
+		addServiceLocation.setDeviceLatitude(EMPTY);
+		addServiceLocation.setDeviceLongitude(EMPTY);
+		addServiceLocation.setDeviceAccuracy(EMPTY);
+		addServiceLocation.setPendingBalAmount(EMPTY);
+		addServiceLocation.setPastServiceCa(EMPTY);
+		addServiceLocation.setKbaSuggestionFlag(EMPTY);
+		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
@@ -807,6 +812,11 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setTlpReportApiStatus("");
 		updateServiceLocation.setErrorCdList("");
 		updateServiceLocation.setSystemNotes("");
+		updateServiceLocation.setBpNameMatchCode(EMPTY);
+		updateServiceLocation.setPendingBalAmount(EMPTY);
+		updateServiceLocation.setPastServiceCa(EMPTY);
+		updateServiceLocation.setProspectPreapprovedFlag(EMPTY);
+		updateServiceLocation.setProspectPartnerId(EMPTY);
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
