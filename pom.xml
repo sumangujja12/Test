@@ -29,6 +29,7 @@
 
 	<properties>
 		<jdk.version>1.7</jdk.version>
+		<testng.version>6.14.3</testng.version>
 		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
 		<junit.version>4.11</junit.version>
 		<spring-version>3.2.3.RELEASE</spring-version>
@@ -647,6 +648,12 @@
 		</plugins>
 	</build>
 	<dependencies>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
 	  <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
