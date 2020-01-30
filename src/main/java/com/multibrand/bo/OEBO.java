@@ -5002,7 +5002,8 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 	} finally {
 		try{
 				// Making Update Servicelocation call now
-				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())){
+				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
+						&& StringUtils.isNotEmpty(request.getTrackingId())){
 				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
 				updateServiceLocationRequest.setTrackingId(request.getTrackingId());
 				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
