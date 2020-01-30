@@ -746,7 +746,7 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setDeviceAccuracy(EMPTY);
 		addServiceLocation.setPendingBalAmount(EMPTY);
 		addServiceLocation.setPastServiceCa(EMPTY);
-		addServiceLocation.setKbaSuggestionFlag(EMPTY);
+		addServiceLocation.setKbaSuggestionFlag(oESignupDTO.getKbaSuggestionFlag());
 		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
