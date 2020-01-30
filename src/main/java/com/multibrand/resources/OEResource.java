@@ -1221,6 +1221,11 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
+	/**
+	 * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+	 * @param getKBAQuestionsRequest
+	 * @return
+	 */
 	@POST
     @Path("getKBAQuestions")
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })

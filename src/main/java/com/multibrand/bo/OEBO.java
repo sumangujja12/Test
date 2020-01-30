@@ -32,6 +32,7 @@ import org.springframework.util.Assert;
 
 import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.domain.AddressDTO;
@@ -185,6 +186,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	@Resource(name = "personDAO")
 	private PersonDao personDao;
+	
+	@Resource(name = "kbaDAO")
+	private KbaDAO kbaDao;
 	
 	@Autowired
 	private OEProxy oeProxy;
@@ -4955,6 +4959,12 @@ private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO o
 		return request;
 	}
 
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @author 289347
+ * @param request
+ * @return
+ */
 public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 	
 	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
@@ -4981,10 +4991,10 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 
 
 			}
-			
+		 boolean addKBAErrorCode=this.addKBADetails(kbaQuestionResponse);
 
 	} catch (Exception e) {
-		response.setStatusCode(STATUS_CODE_ASK);
+		response.setStatusCode(STATUS_CODE_CONTINUE);
 		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
 		response.setMessageCode(POSID_FAIL);
@@ -4998,6 +5008,8 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
 				this.updateServiceLocation(updateServiceLocationRequest);
 				response.setTrackingId(request.getTrackingId());
+				
+				
 			}
 		}catch(Exception e){
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -5011,6 +5023,11 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 	return response;
 }
 
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @param request
+ * @return
+ */
 private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest request){
 	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
 	kbaQuestionRequest.setCompanyCode(request.getCompanyCode());
@@ -5023,10 +5040,10 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 	kbaQuestionRequest.setFirstName(request.getFirstName());
 	kbaQuestionRequest.setLastName(request.getLastName());
 	kbaQuestionRequest.setMiddleName(request.getMiddleName());	
-	kbaQuestionRequest.setDob(request.getDateOfBirth());
-	kbaQuestionRequest.setTokenizedSSN(request.getTokenizedSsn());		
-	if(StringUtils.isNotEmpty(request.getTokenizedDrivingLc())){
-        kbaQuestionRequest.setTokenizedDrl(request.getTokenizedDrivingLc());        
+	kbaQuestionRequest.setDob(request.getDob());
+	kbaQuestionRequest.setTokenizedSSN(request.getTokenSSN());		
+	if(StringUtils.isNotEmpty(request.getTokenTDL())){
+        kbaQuestionRequest.setTokenizedDrl(request.getTokenTDL());        
         kbaQuestionRequest.setDlrState(request.getDrivingLicenseState());
     } 
 	
@@ -5036,21 +5053,21 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 //	kbaQuestionRequest.setDlrState(null);
 	
 	
-	kbaQuestionRequest.setHomePhone(request.getPhoneNumber());
-	kbaQuestionRequest.setEmailAddress(request.getEmailAddress());
+	kbaQuestionRequest.setHomePhone(request.getPhoneNum());
+	kbaQuestionRequest.setEmailAddress(request.getEmail());
 	kbaQuestionRequest.setIpAddress(request.getIpAddress());
-	kbaQuestionRequest.setEsid(request.getEsidNumber());
+	kbaQuestionRequest.setEsid(request.getEsid());
 	kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
 	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
 	
 	
 	AddressDTO serviceAddressDTO = new AddressDTO();
-	serviceAddressDTO.setStrStreetNum(request.getServiceAddressStreetNumber());
-	serviceAddressDTO.setStrStreetName(request.getServiceAddressStreetName());		
-	serviceAddressDTO.setStrUnitNumber(request.getServiceAddressAptNumber());
-	serviceAddressDTO.setStrCity(request.getServiceAddressCity());
-	serviceAddressDTO.setStrState(request.getServiceAddressState());
-	serviceAddressDTO.setStrZip(request.getServiceAddressZipCode());
+	serviceAddressDTO.setStrStreetNum(request.getServStreetNum());
+	serviceAddressDTO.setStrStreetName(request.getServStreetName());		
+	serviceAddressDTO.setStrUnitNumber(request.getServStreetAptNum());
+	serviceAddressDTO.setStrCity(request.getServCity());
+	serviceAddressDTO.setStrState(request.getServState());
+	serviceAddressDTO.setStrZip(request.getServZipCode());
 	
 	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
 	kbaQuestionRequest.setPosidUniqueKey(request.getPosidUniqueKey());
@@ -5059,6 +5076,11 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 }
 
 
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @param questionList
+ * @param questions
+ */
 private void getKBAQuestion(KbaQuestionDTO[] questionList, List<Question> questions) {
 
 	for (KbaQuestionDTO question : questionList) {
@@ -5073,7 +5095,9 @@ private void getKBAQuestion(KbaQuestionDTO[] questionList, List<Question> questi
 				Option option = new Option();
 				option.setOptionId(answer.getAnswerId());
 				option.setOptionText(answer.getContent());
-				option.setCorrectAnswer(answer.isCorrectAnswer());
+				if(answer.isCorrectAnswer()){
+				option.setKeyAnswer(FLAG_X);
+				}
 				options.add(option);
 			}
 			q.setOptions(options);
@@ -5082,6 +5106,21 @@ private void getKBAQuestion(KbaQuestionDTO[] questionList, List<Question> questi
 		questions.add(q);
 	}
 
+}
+
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @author Kdeshmu1
+ * @param request
+ * @return
+ * @throws Exception
+ */
+public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
+	logger.debug("Entering >> addKBADetails");
+	logger.debug("request = " + request);
+	boolean errorCode = kbaDao.addKbaDetails(request);
+	logger.debug("Exiting << addKBADetails");
+	return errorCode;
 }
 
 }

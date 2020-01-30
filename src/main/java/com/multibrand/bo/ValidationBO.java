@@ -812,12 +812,38 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setTlpReportApiStatus("");
 		updateServiceLocation.setErrorCdList("");
 		updateServiceLocation.setSystemNotes("");
-		updateServiceLocation.setBpNameMatchCode(EMPTY);
-		updateServiceLocation.setPendingBalAmount(EMPTY);
-		updateServiceLocation.setPastServiceCa(EMPTY);
+		//END : OE :Sprint61 :US21009 :Kdeshmu1
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		updateServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
+		updateServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
+		updateServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerDesc());
+		updateServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
+		updateServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationDesc());
+		updateServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
+		updateServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
+		
+		updateServiceLocation.setBypassPosid(performPosIdBpRequest.getBypassPosid());
+		updateServiceLocation.setIpAddress(performPosIdBpRequest.getIpAddress());
+		updateServiceLocation.setTabletId(performPosIdBpRequest.getTabletId());
+		
+		updateServiceLocation.setEtfFlag(performPosIdBpRequest.getEtfFlag());
+		
+		updateServiceLocation.setAbandonedEnrollStatFlag(performPosIdBpRequest.getAbandonedEnrollStatFlag());
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		updateServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
+		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		//START TBD - Set value
 		updateServiceLocation.setProspectPreapprovedFlag(EMPTY);
 		updateServiceLocation.setProspectPartnerId(EMPTY);
-		//END : OE :Sprint61 :US21009 :Kdeshmu1
+		updateServiceLocation.setBpNameMatchCode(EMPTY);
+		updateServiceLocation.setDeviceLatitude(EMPTY);
+		updateServiceLocation.setDeviceLongitude(EMPTY);
+		updateServiceLocation.setDeviceAccuracy(EMPTY);
+		updateServiceLocation.setPendingBalAmount(EMPTY);
+		updateServiceLocation.setPastServiceCa(EMPTY);
+		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
+		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 
 
