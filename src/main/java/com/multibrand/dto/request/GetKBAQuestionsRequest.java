@@ -32,7 +32,6 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	String middleName;
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "must be in MMddyyyy format",messageCode="INVALID_DOB",messageCodeText="INVALID_DOB")
 	String dob;
 	
 	@NotBlank(groups = BasicConstraint.class)
