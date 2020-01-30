@@ -12,8 +12,7 @@ public class GetKBAQuestionsResponse extends GenericResponse {
 	private static final long serialVersionUID = 1L;
 	
 	private String transactionKey;
-	private String retryCount= "";
-	private String trackingId= "";	
+	private String trackingId= null;	
 	private List<Question> questions;
 	
 	public String getTransactionKey() {
@@ -28,12 +27,7 @@ public class GetKBAQuestionsResponse extends GenericResponse {
 	public void setQuestions(List<Question> questions) {
 		this.questions = questions;
 	}
-	public String getRetryCount() {
-		return retryCount;
-	}
-	public void setRetryCount(String retryCount) {
-		this.retryCount = retryCount;
-	}
+	
 	public String getTrackingId() {
 		return trackingId;
 	}

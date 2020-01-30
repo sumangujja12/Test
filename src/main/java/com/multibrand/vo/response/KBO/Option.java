@@ -4,14 +4,9 @@ public class Option {
 	
 	private int optionId;
 	private String optionText;
-	private boolean isCorrectAnswer;  
+	private String keyAnswer = null ;  
 	
-	public boolean isCorrectAnswer() {
-		return isCorrectAnswer;
-	}
-	public void setCorrectAnswer(boolean isCorrectAnswer) {
-		this.isCorrectAnswer = isCorrectAnswer;
-	}
+	
 	public int getOptionId() {
 		return optionId;
 	}
@@ -23,6 +18,12 @@ public class Option {
 	}
 	public void setOptionText(String optionText) {
 		this.optionText = optionText;
+	}
+	public String getKeyAnswer() {
+		return keyAnswer;
+	}
+	public void setKeyAnswer(String keyAnswer) {
+		this.keyAnswer = keyAnswer;
 	}
 	
 

@@ -2,6 +2,17 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.SizeConstraint;
+import com.multibrand.request.validation.ValidDateTime;
+
 
 public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Serializable {
 
@@ -9,47 +20,71 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 40, groups = SizeConstraint.class)
+	String lastName;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 40, groups = SizeConstraint.class)
+	String firstName;
+	
+	@Length(max = 1,groups = SizeConstraint.class)
+	String middleName;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "must be in MMddyyyy format",messageCode="INVALID_DOB",messageCodeText="INVALID_DOB")
+	String dob;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 100, groups = SizeConstraint.class)
+	@Email(groups = FormatConstraint.class)
+	String email;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 10, groups = SizeConstraint.class)
+	@Pattern(regexp = "\\d{10}", groups = FormatConstraint.class, message="is invalid")
+	String phoneNum;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 10, groups = SizeConstraint.class)
+	private String servStreetNum;
+
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 60, groups = SizeConstraint.class)
+	private String servStreetName;
+
+	@Length(max = 10, groups = SizeConstraint.class)
+	private String servStreetAptNum;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 30, groups = SizeConstraint.class)
+	String servCity;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(min = 2, max = 2, groups = SizeConstraint.class)
+	String servState;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	@Length(max = 10, groups = SizeConstraint.class)
+	String servZipCode;
+	
+	@Length(max = 25, groups = SizeConstraint.class)
+	String tokenTDL;
+	
+	@Length(max = 20, groups = SizeConstraint.class)
+	String tokenSSN;
+	
 	private String drivingLicenseState;
 	private String trackingId;
-	private String dateOfBirth;
-	private String emailAddress;
-	private String esiId;
+	private String esid;
 	private String transactionType;
-	private String firstName;
-	private String middleName;
-	private String lastName;
+	
 	private String middleNameInitials;
-	private String phoneNumber;
 	private String ipAddress;
-	private String tokenizedDrivingLc;
-	private String tokenizedSsn;
-	private String serviceAddressCity;
-	private String serviceAddressCountry;
-	private String serviceAddressPoBox;
-	private String serviceAddressState;
-	private String serviceAddressStreetName;
-	private String serviceAddressStreetNumber;
-	private String serviceAddressAptNumber;
-	private String serviceAddressZipCode;
-	private String preferredLanguage;
-	private String esidNumber;
 	private String posidHoldFlag;
-	private String  PosidUniqueKey;
+	private String posidUniqueKey;
 	
 	
-	
-	public String getPosidUniqueKey() {
-		return PosidUniqueKey;
-	}
-	public void setPosidUniqueKey(String posidUniqueKey) {
-		PosidUniqueKey = posidUniqueKey;
-	}
-	public String getEsidNumber() {
-		return esidNumber;
-	}
-	public void setEsidNumber(String esidNumber) {
-		this.esidNumber = esidNumber;
-	}
 	public String getPosidHoldFlag() {
 		return posidHoldFlag;
 	}
@@ -74,24 +109,7 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	public void setDrivingLicenseState(String drivingLicenseState) {
 		this.drivingLicenseState = drivingLicenseState;
 	}
-	public String getDateOfBirth() {
-		return dateOfBirth;
-	}
-	public void setDateOfBirth(String dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
-	}
-	public String getEmailAddress() {
-		return emailAddress;
-	}
-	public void setEmailAddress(String emailAddress) {
-		this.emailAddress = emailAddress;
-	}
-	public String getEsiId() {
-		return esiId;
-	}
-	public void setEsiId(String esiId) {
-		this.esiId = esiId;
-	}
+	
 	public String getTransactionType() {
 		return transactionType;
 	}
@@ -122,79 +140,85 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	public void setMiddleNameInitials(String middleNameInitials) {
 		this.middleNameInitials = middleNameInitials;
 	}
+	public String getDob() {
+		return dob;
+	}
+	public void setDob(String dob) {
+		this.dob = dob;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getPhoneNum() {
+		return phoneNum;
+	}
+	public void setPhoneNum(String phoneNum) {
+		this.phoneNum = phoneNum;
+	}
+	public String getServStreetNum() {
+		return servStreetNum;
+	}
+	public void setServStreetNum(String servStreetNum) {
+		this.servStreetNum = servStreetNum;
+	}
+	public String getServStreetName() {
+		return servStreetName;
+	}
+	public void setServStreetName(String servStreetName) {
+		this.servStreetName = servStreetName;
+	}
+	public String getServStreetAptNum() {
+		return servStreetAptNum;
+	}
+	public void setServStreetAptNum(String servStreetAptNum) {
+		this.servStreetAptNum = servStreetAptNum;
+	}
+	public String getServCity() {
+		return servCity;
+	}
+	public void setServCity(String servCity) {
+		this.servCity = servCity;
+	}
+	public String getServState() {
+		return servState;
+	}
+	public void setServState(String servState) {
+		this.servState = servState;
+	}
+	public String getServZipCode() {
+		return servZipCode;
+	}
+	public void setServZipCode(String servZipCode) {
+		this.servZipCode = servZipCode;
+	}
+	public String getTokenTDL() {
+		return tokenTDL;
+	}
+	public void setTokenTDL(String tokenTDL) {
+		this.tokenTDL = tokenTDL;
+	}
+	public String getTokenSSN() {
+		return tokenSSN;
+	}
+	public void setTokenSSN(String tokenSSN) {
+		this.tokenSSN = tokenSSN;
+	}
+	public String getEsid() {
+		return esid;
+	}
+	public void setEsid(String esid) {
+		this.esid = esid;
+	}
+	public String getPosidUniqueKey() {
+		return posidUniqueKey;
+	}
+	public void setPosidUniqueKey(String posidUniqueKey) {
+		this.posidUniqueKey = posidUniqueKey;
+	}
 	
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-	public String getTokenizedDrivingLc() {
-		return tokenizedDrivingLc;
-	}
-	public void setTokenizedDrivingLc(String tokenizedDrivingLc) {
-		this.tokenizedDrivingLc = tokenizedDrivingLc;
-	}
-	public String getTokenizedSsn() {
-		return tokenizedSsn;
-	}
-	public void setTokenizedSsn(String tokenizedSsn) {
-		this.tokenizedSsn = tokenizedSsn;
-	}
-	public String getServiceAddressCity() {
-		return serviceAddressCity;
-	}
-	public void setServiceAddressCity(String serviceAddressCity) {
-		this.serviceAddressCity = serviceAddressCity;
-	}
-	public String getServiceAddressCountry() {
-		return serviceAddressCountry;
-	}
-	public void setServiceAddressCountry(String serviceAddressCountry) {
-		this.serviceAddressCountry = serviceAddressCountry;
-	}
-	public String getServiceAddressPoBox() {
-		return serviceAddressPoBox;
-	}
-	public void setServiceAddressPoBox(String serviceAddressPoBox) {
-		this.serviceAddressPoBox = serviceAddressPoBox;
-	}
-	public String getServiceAddressState() {
-		return serviceAddressState;
-	}
-	public void setServiceAddressState(String serviceAddressState) {
-		this.serviceAddressState = serviceAddressState;
-	}
-	public String getServiceAddressStreetName() {
-		return serviceAddressStreetName;
-	}
-	public void setServiceAddressStreetName(String serviceAddressStreetName) {
-		this.serviceAddressStreetName = serviceAddressStreetName;
-	}
-	public String getServiceAddressStreetNumber() {
-		return serviceAddressStreetNumber;
-	}
-	public void setServiceAddressStreetNumber(String serviceAddressStreetNumber) {
-		this.serviceAddressStreetNumber = serviceAddressStreetNumber;
-	}
-	public String getServiceAddressAptNumber() {
-		return serviceAddressAptNumber;
-	}
-	public void setServiceAddressAptNumber(String serviceAddressAptNumber) {
-		this.serviceAddressAptNumber = serviceAddressAptNumber;
-	}
-	public String getServiceAddressZipCode() {
-		return serviceAddressZipCode;
-	}
-	public void setServiceAddressZipCode(String serviceAddressZipCode) {
-		this.serviceAddressZipCode = serviceAddressZipCode;
-	}
-	public String getPreferredLanguage() {
-		return preferredLanguage;
-	}
-	public void setPreferredLanguage(String preferredLanguage) {
-		this.preferredLanguage = preferredLanguage;
-	}
 	
 	
 }
