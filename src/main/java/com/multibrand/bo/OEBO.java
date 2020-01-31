@@ -23,6 +23,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.time.DateUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.NoSuchMessageException;
@@ -74,10 +76,12 @@ import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
 import com.multibrand.dto.KBAAnswerDTO;
 import com.multibrand.dto.KBAErrorDTO;
+import com.multibrand.dto.KBAQuestionAnserDTO;
 import com.multibrand.dto.KBAQuestionDTO;
 import com.multibrand.dto.KBAResponseAssessmentDTO;
 import com.multibrand.dto.KBAResponseReasonDTO;
 import com.multibrand.dto.KBASubmitResultsDTO;
+import com.multibrand.dto.KbaAnswerResponseDTO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
@@ -5165,7 +5169,7 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 		logger.info(kbaAnswerRequest.getTrackingId()+" kbaSubmitAnswerResponse : "+CommonUtil.doRender(kbaSubmitAnswerResponse));
 	    kbaSubmitResultsDTO = constructKBAResponseOutputDTO(kbaSubmitAnswerResponse);
 		logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
-		kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
+		//kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
 		
 		if(StringUtils.isEmpty(kbaSubmitAnswerResponse.getStrErrCode())){				
 			String returnCode = kbaSubmitAnswerResponse.getReturnCode();
@@ -5194,26 +5198,15 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
 					response.setErrorCode(POSIDHOLD);
-					response.setErrorMessage(getMessage(POSID_FAIL_MSG_TXT));
 					response.setMessageCode(POSIDHOLD);
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 				}
 				
-				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
-				response.setTransactionKey(
-						kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getTransactionKey());
-				response.setFraudlevel(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getFraudlevel());
-				response.setIdentityScore(
-						kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getIdentityScore());
-				response.setInteractiveQscore(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getInteractiveQscore());
-				response.setOverallScore(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getOverallScore());
-				response.setSsnVerifyDate(kbaSubmitAnswerResponse.getSsnVerifyDate());
-				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
+				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());				
 			} else{
 				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
 				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setErrorCode(POSIDHOLD);
-				response.setErrorMessage(getMessage(POSID_FAIL_MSG_TXT));
+				response.setErrorCode(POSIDHOLD);				
 				response.setMessageCode(POSIDHOLD);
 				response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 			}
@@ -5221,22 +5214,17 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
 			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
-			response.setErrorCode(POSIDHOLD);
-			response.setErrorMessage(getMessage(POSID_FAIL_MSG_TXT));
+			response.setErrorCode(POSIDHOLD);			
 			response.setMessageCode(POSIDHOLD);
 			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 		}
 		
 	}catch (Exception e) {
 		response.setStatusCode(STATUS_CODE_STOP);
-		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-		response.setErrorMessage(RESULT_DESCRIPTION_EXCEPTION);
+		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);		
 		
 	}finally{
 		if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
-			response.setTrackingId(kbaAnswerRequest.getTrackingId());
-			response.setCompanyCode(kbaAnswerRequest.getCompanyCode());
-			response.setBrandId(kbaAnswerRequest.getBrandId());
 			//update service location affiliate
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
@@ -5254,8 +5242,8 @@ private KBASubmitResultsDTO constructKBAResponseOutputDTO(KbaSubmitAnswerRespons
 	List<KBAErrorDTO> kbaErrorDTOList = getKBAErrorList(kbaSubmitAnswerResponse);
 	kbaSubmitResultsDTO.setErrorList(kbaErrorDTOList);				
 	
-	KbaAnswerResponse kbaResponseOutputDTO = getKBAResponseOutputDTO(kbaSubmitAnswerResponse);
-	kbaSubmitResultsDTO.setKbaSubmitAnswerResponseOutput(kbaResponseOutputDTO);
+	KbaAnswerResponseDTO kbaResponseOutputDTO = getKBAResponseOutputDTO(kbaSubmitAnswerResponse);
+	kbaSubmitResultsDTO.setKbaAnswerResponseDTO(kbaResponseOutputDTO);
 	
 	kbaSubmitResultsDTO.setReturnCode(kbaSubmitAnswerResponse.getReturnCode());
 	kbaSubmitResultsDTO.setReturnMessage(kbaSubmitAnswerResponse.getReturnMessage());			
@@ -5280,8 +5268,8 @@ private List<KBAErrorDTO> getKBAErrorList(KbaSubmitAnswerResponse kbaSubmitAnswe
 	return kbaErrorDTOList;
 }
 
-private KbaAnswerResponse getKBAResponseOutputDTO(KbaSubmitAnswerResponse kbaSubmitAnswerResponse){
-	KbaAnswerResponse kbaResponseOutputDTO = null;
+private KbaAnswerResponseDTO getKBAResponseOutputDTO(KbaSubmitAnswerResponse kbaSubmitAnswerResponse){
+	KbaAnswerResponseDTO kbaResponseOutputDTO = null;
 	if( (kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput() != null) && (!StringUtils.isEmpty(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision()))){
 		kbaResponseOutputDTO = getKBAResponseOutputDTO(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput());
 	}
@@ -5289,8 +5277,8 @@ private KbaAnswerResponse getKBAResponseOutputDTO(KbaSubmitAnswerResponse kbaSub
 	return kbaResponseOutputDTO;
 }
 
-private KbaAnswerResponse getKBAResponseOutputDTO(KbaResponseOutputDTO responseDTO){
-	KbaAnswerResponse kbaResponseOutputDTO = new KbaAnswerResponse();
+private KbaAnswerResponseDTO getKBAResponseOutputDTO(KbaResponseOutputDTO responseDTO){
+	KbaAnswerResponseDTO kbaResponseOutputDTO = new KbaAnswerResponseDTO();
 	kbaResponseOutputDTO.setTransactionKey(responseDTO.getTransactionKey());
 	kbaResponseOutputDTO.setDecision(responseDTO.getDecision());
 	kbaResponseOutputDTO.setFraudlevel(responseDTO.getFraudlevel());
@@ -5333,11 +5321,13 @@ private KbaAnswerResponse getKBAResponseOutputDTO(KbaResponseOutputDTO responseD
 private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
 	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
 	KBAQuestionAnswerVO questionAnswerVO = new KBAQuestionAnswerVO();
-	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){
-		for(KBAQuestionDTO questionDTO:kbaAnswerRequest.getQuestionList() ){
-			for(KBAAnswerDTO answer:questionDTO.getAnswerList()){
-			questionAnswerVO.setAnswerId(answer.getAnswerId());
-			}
+	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){		
+		ObjectMapper mapper = new ObjectMapper();
+		List<KBAQuestionAnserDTO> questionList = mapper.convertValue(kbaAnswerRequest.getQuestionList(), new TypeReference<List<KBAQuestionAnserDTO>>() { });
+		
+		for(KBAQuestionAnserDTO questionDTO:questionList ){
+
+			questionAnswerVO.setAnswerId(questionDTO.getAnswerId());
 			questionAnswerVO.setQuizId(questionDTO.getQuizId());
 			questionAnswerVO.setQuestionId(questionDTO.getQuestionId());
 			questionAnswerList.add(questionAnswerVO);

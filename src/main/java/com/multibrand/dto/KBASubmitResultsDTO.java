@@ -10,7 +10,7 @@ import com.multibrand.vo.response.KbaAnswerResponse;
 public class KBASubmitResultsDTO {
 
 	private List<KBAErrorDTO> errorList;
-	private KbaAnswerResponse kbaSubmitAnswerResponseOutput;
+	private KbaAnswerResponseDTO KbaAnswerResponseDTO;
 	private String returnCode;
 	private String returnMessage;
 
@@ -22,11 +22,12 @@ public class KBASubmitResultsDTO {
 	public void setErrorList(List<KBAErrorDTO> errorList) {
 		this.errorList = errorList;
 	}
-	public KbaAnswerResponse getKbaSubmitAnswerResponseOutput() {
-		return kbaSubmitAnswerResponseOutput;
+	
+	public KbaAnswerResponseDTO getKbaAnswerResponseDTO() {
+		return KbaAnswerResponseDTO;
 	}
-	public void setKbaSubmitAnswerResponseOutput(KbaAnswerResponse kbaSubmitAnswerResponseOutput) {
-		this.kbaSubmitAnswerResponseOutput = kbaSubmitAnswerResponseOutput;
+	public void setKbaAnswerResponseDTO(KbaAnswerResponseDTO kbaAnswerResponseDTO) {
+		KbaAnswerResponseDTO = kbaAnswerResponseDTO;
 	}
 	public String getReturnCode() {
 		return returnCode;

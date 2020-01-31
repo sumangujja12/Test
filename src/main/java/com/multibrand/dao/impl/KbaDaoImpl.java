@@ -195,19 +195,19 @@ public boolean updateKbaDetails(KBASubmitResultsDTO kBASubmitResultsDTO) throws 
 			error_code_list= error_code_list.substring(0,4);
 		}
 		error_msg_list = kBASubmitResultsDTO.getErrorMsgList();
-		reason_code_list = kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getReasonCodeList();
+		reason_code_list = kBASubmitResultsDTO.getKbaAnswerResponseDTO().getReasonCodeList();
 		int result = getJdbcTemplate().update(updateKbaDetailsQuery,
-				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getDecision(),
-				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getIdentityScore(),
-				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getOverallScore(),
-				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getInteractiveQscore(),
-				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getFraudlevel(),
+				kBASubmitResultsDTO.getKbaAnswerResponseDTO().getDecision(),
+				kBASubmitResultsDTO.getKbaAnswerResponseDTO().getIdentityScore(),
+				kBASubmitResultsDTO.getKbaAnswerResponseDTO().getOverallScore(),
+				kBASubmitResultsDTO.getKbaAnswerResponseDTO().getInteractiveQscore(),
+				kBASubmitResultsDTO.getKbaAnswerResponseDTO().getFraudlevel(),
 				kBASubmitResultsDTO.getReturnCode(),
 				kBASubmitResultsDTO.getReturnMessage(),
 				error_code_list,
 				error_msg_list,
 				reason_code_list,
-				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getTransactionKey()
+				kBASubmitResultsDTO.getKbaAnswerResponseDTO().getTransactionKey()
 				);
 		
 		Long endTime = Calendar.getInstance().getTimeInMillis();
