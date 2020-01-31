@@ -1320,8 +1320,7 @@ public interface Constants {
     public static final String POSID_BLANK_DATE = "0000-00-00";
     public static final String CALLER_WEB="WEB";
     public static final String MSG_KEY_KBA_QUESTION_LIST_EMPTY="msg.key.kba.question.list.empty";
-    
-    public static final String[] channelTypeArray = {"WEB","AA","AFF","CC","SMB"};    
+          
     
     public static final String DELIMITER = "_";
     public static final String POSIDHOLD  = "POSIDHOLD";

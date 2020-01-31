@@ -1,32 +1,19 @@
 package com.it.multibrand.karate.utils;
 
 
-import net.masterthought.cucumber.Configuration;
-import net.masterthought.cucumber.ReportBuilder;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import net.masterthought.cucumber.Configuration;
+import net.masterthought.cucumber.ReportBuilder;
 
 public class BaseFunctions {
 
-   public static String generateRandomNumber(){
-     int min = 1;
-     int max = 9;
-     
-     Random r = new Random();
-     float random = min + r.nextFloat() * (max - min);
-     double roundOff = (double) Math.round(random * 100) / 100;
-     return Double.toString(roundOff);
-  
 
-   }
-   
-   public static String getCurrentDate(){
-     String date = new SimpleDateFormat("MM/dd/yyyy").format(new Date());
-     return date;
-   }
 
 
   public void generateReport(String karateOutputPath) {
@@ -35,7 +22,6 @@ public class BaseFunctions {
      for(File jsonFile : jsonFiles){
     	 jsonPaths.add(jsonFile.getAbsolutePath());
      }
-     //jsonFiles.forEach(file -> jsonPaths.add(file.getAbsolutePath()));
      Configuration config = new Configuration(new File("target"), "cucumber-html-report");
      ReportBuilder reportBuilder = new ReportBuilder(jsonPaths, config);
      reportBuilder.generateReports();
