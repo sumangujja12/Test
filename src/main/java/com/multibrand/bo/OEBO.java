@@ -5236,11 +5236,12 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 			response.setTrackingId(kbaAnswerRequest.getTrackingId());
 			response.setCompanyCode(kbaAnswerRequest.getCompanyCode());
 			response.setBrandId(kbaAnswerRequest.getBrandId());
-			
+			//update service location affiliate
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
-            serviceLocationDAO.updateServiceLocation(requestData);
-            kbaDao.updateKbaDetails(kbaSubmitResultsDTO);
+            this.updateServiceLocation(requestData);
+            //update kba_api
+            this.updateKbaDetails(kbaSubmitResultsDTO);
 		}
 	}
 	return response;
@@ -5330,7 +5331,6 @@ private KbaAnswerResponse getKBAResponseOutputDTO(KbaResponseOutputDTO responseD
 
 private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
 	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
-	//KBAQuestionsMasterDTO kbaQuestionsMasterDTO = oeSignUpDTO.getKbaQuestionsMasterDTO();
 	if(kbaAnswerRequest != null){
 		for(KBAQuestionDTO questionDTO:kbaAnswerRequest.getQuestionList() ){
 			String answerId = questionDTO.getQuizId()+DELIMITER+questionDTO.getQuestionId();
@@ -5356,6 +5356,20 @@ private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequ
 	return questionAnswerList;
 }
 
+/**
+ * Start: OE : Sprint3 : 14065 - Create New KBA Answers API :asingh
+ * @author asingh
+ * @param request
+ * @return
+ * @throws Exception
+ */
+public boolean updateKbaDetails(KBASubmitResultsDTO request) throws Exception {
+	logger.debug("Entering in method: updateKbaDetails");
+	logger.debug("request = " + request);
+	boolean errorCode = kbaDao.updateKbaDetails(request);
+	logger.debug("Exiting in method: updateKbaDetails");
+	return errorCode;
+}
 
 }
 
