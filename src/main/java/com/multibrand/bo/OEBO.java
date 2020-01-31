@@ -74,10 +74,7 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
-import com.multibrand.dto.KBAAnswerDTO;
 import com.multibrand.dto.KBAErrorDTO;
-import com.multibrand.dto.KBAQuestionAnserDTO;
-import com.multibrand.dto.KBAQuestionDTO;
 import com.multibrand.dto.KBAResponseAssessmentDTO;
 import com.multibrand.dto.KBAResponseReasonDTO;
 import com.multibrand.dto.KBASubmitResultsDTO;
@@ -5320,18 +5317,11 @@ private KbaAnswerResponseDTO getKBAResponseOutputDTO(KbaResponseOutputDTO respon
 
 private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
 	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
-	KBAQuestionAnswerVO questionAnswerVO = new KBAQuestionAnswerVO();
+	
 	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){		
 		ObjectMapper mapper = new ObjectMapper();
-		List<KBAQuestionAnserDTO> questionList = mapper.convertValue(kbaAnswerRequest.getQuestionList(), new TypeReference<List<KBAQuestionAnserDTO>>() { });
+		questionAnswerList = mapper.convertValue(kbaAnswerRequest.getQuestionList(), new TypeReference<List<KBAQuestionAnswerVO>>() { });
 		
-		for(KBAQuestionAnserDTO questionDTO:questionList ){
-
-			questionAnswerVO.setAnswerId(questionDTO.getAnswerId());
-			questionAnswerVO.setQuizId(questionDTO.getQuizId());
-			questionAnswerVO.setQuestionId(questionDTO.getQuestionId());
-			questionAnswerList.add(questionAnswerVO);
-		}
 	}
 	return questionAnswerList;
 }

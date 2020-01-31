@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
 import com.multibrand.dto.KBAErrorDTO;
-import com.multibrand.dto.KBAQuestionAnserDTO;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.response.KbaAnswerResponse;
 
 
@@ -18,7 +18,7 @@ public class KbaAnswerRequest extends BaseAffiliateRequest{
 	private static final long serialVersionUID = 1L;
 	private String transactionKey;
 	private String trackingId;
-	private List<KBAQuestionAnserDTO> questionList; 
+	private List<KBAQuestionAnswerVO> questionList; 
 	private String returnCode;
 	private String returnMessage;
 	private List<KBAErrorDTO> errorList = new ArrayList<KBAErrorDTO>();
@@ -37,11 +37,11 @@ public class KbaAnswerRequest extends BaseAffiliateRequest{
 	}
 
 
-	public List<KBAQuestionAnserDTO> getQuestionList() {
+	public List<KBAQuestionAnswerVO> getQuestionList() {
 		return questionList;
 	}
 
-	public void setQuestionList(List<KBAQuestionAnserDTO> questionList) {
+	public void setQuestionList(List<KBAQuestionAnswerVO> questionList) {
 		this.questionList = questionList;
 	}
 
