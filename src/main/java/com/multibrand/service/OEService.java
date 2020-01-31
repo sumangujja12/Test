@@ -27,6 +27,8 @@ import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.KbaQuestionRequest;
 import com.multibrand.domain.KbaQuestionResponse;
+import com.multibrand.domain.KbaSubmitAnswerRequest;
+import com.multibrand.domain.KbaSubmitAnswerResponse;
 import com.multibrand.domain.OEDomain;
 import com.multibrand.domain.OEDomainPortBindingStub;
 import com.multibrand.domain.OetdspRequest;
@@ -539,6 +541,17 @@ public class OEService extends BaseAbstractService {
 				logger.error("ERROR_IN_GETKBAQUESTIOINFO");
 			} 
 			return kbaQuestionResponse;
+		}
+		
+		public KbaSubmitAnswerResponse submitKBAAnswer(KbaSubmitAnswerRequest kbaSubmitAnswerRequest)   {
+			KbaSubmitAnswerResponse kbaSubmitAnswerResponse = null;
+			try {
+				OEDomain proxyclient = getOEServiceProxy();
+				kbaSubmitAnswerResponse = proxyclient.submitAnswerKBA(kbaSubmitAnswerRequest);
+			} catch (Exception e) {
+				logger.error("Error in method: submitKbaAnswer");
+			} 
+			return kbaSubmitAnswerResponse;
 		}
 		
 		

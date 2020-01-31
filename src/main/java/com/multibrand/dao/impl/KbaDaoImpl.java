@@ -14,6 +14,7 @@ import com.multibrand.dao.KbaDAO;
 import com.multibrand.domain.KbaErrorDTO;
 import com.multibrand.domain.KbaQuestionResponse;
 import com.multibrand.domain.KbaResponseReasonDTO;
+import com.multibrand.dto.KBASubmitResultsDTO;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DBConstants;
 import com.multibrand.dao.AbstractSpringDAO;
@@ -175,7 +176,56 @@ private String getKBAReasonCodeList(KbaQuestionResponse kbaQuestionResponse){
 		}
 	return reasonCodeList;
 }
+
+
+
+@Override
+public boolean updateKbaDetails(KBASubmitResultsDTO kBASubmitResultsDTO) throws Exception {
+	// TODO Auto-generated method stub
+	logger.debug("KbaDaoImpl::updateKbaDetails: Entering the method");
+	String 	reason_code_list= null;
+	String error_code_list=null;
+	String error_msg_list=null;
+	Long startTime = Calendar.getInstance().getTimeInMillis();
+	
+	try {
+		String updateKbaDetailsQuery = getSqlMessage().getMessage(DBConstants.OE_UPDATE_KBA_DETAILS_QUERY, null, null);
+		error_code_list = kBASubmitResultsDTO.getErrorCodeList() ;
+		if(StringUtils.isNotBlank(error_code_list) && error_code_list.length()>5 ) {
+			error_code_list= error_code_list.substring(0,4);
+		}
+		error_msg_list = kBASubmitResultsDTO.getErrorMsgList();
+		reason_code_list = kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getReasonCodeList();
+		int result = getJdbcTemplate().update(updateKbaDetailsQuery,
+				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getDecision(),
+				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getIdentityScore(),
+				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getOverallScore(),
+				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getInteractiveQscore(),
+				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getFraudlevel(),
+				kBASubmitResultsDTO.getReturnCode(),
+				kBASubmitResultsDTO.getReturnMessage(),
+				error_code_list,
+				error_msg_list,
+				reason_code_list,
+				kBASubmitResultsDTO.getKbaSubmitAnswerResponseOutput().getTransactionKey()
+				);
+		
+		Long endTime = Calendar.getInstance().getTimeInMillis();
+		logger.info(OE_SPRING_CALL_LOG_STATEMENT + EMPTY +"updateKbaDetails"+endTime+startTime);
+
+		if(result >0){
+			return true;                                  
+		}else{
+			return false;
+		}
+			
+	} catch (DataAccessException exception) {	
+		logger.error("updateKbaDetails insert Failed " + exception);
+		throw new Exception(exception);
+		}
+	}
 }
+
 
 
 
