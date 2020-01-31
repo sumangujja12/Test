@@ -72,6 +72,7 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
+import com.multibrand.dto.KBAAnswerDTO;
 import com.multibrand.dto.KBAErrorDTO;
 import com.multibrand.dto.KBAQuestionDTO;
 import com.multibrand.dto.KBAResponseAssessmentDTO;
@@ -5331,26 +5332,15 @@ private KbaAnswerResponse getKBAResponseOutputDTO(KbaResponseOutputDTO responseD
 
 private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
 	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
-	if(kbaAnswerRequest != null){
+	KBAQuestionAnswerVO questionAnswerVO = new KBAQuestionAnswerVO();
+	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){
 		for(KBAQuestionDTO questionDTO:kbaAnswerRequest.getQuestionList() ){
-			String answerId = questionDTO.getQuizId()+DELIMITER+questionDTO.getQuestionId();
-			if(StringUtils.isEmpty(answerId)){
-				answerId = StringUtils.EMPTY;
+			for(KBAAnswerDTO answer:questionDTO.getAnswerList()){
+			questionAnswerVO.setAnswerId(answer.getAnswerId());
 			}
-			int intAnswerId = 0;
-			if(StringUtils.isNotEmpty(answerId)){
-				try{
-					intAnswerId = Integer.parseInt(answerId);
-				} catch(Exception en){
-					logger.error("KBA Questions constructKBAQuestionAnswerVOList AnswerId is not number :"+ answerId);
-				}
-			}
-			KBAQuestionAnswerVO questionAnswerVO = new KBAQuestionAnswerVO();
 			questionAnswerVO.setQuizId(questionDTO.getQuizId());
 			questionAnswerVO.setQuestionId(questionDTO.getQuestionId());
-			questionAnswerVO.setAnswerId(intAnswerId);
 			questionAnswerList.add(questionAnswerVO);
-			
 		}
 	}
 	return questionAnswerList;
