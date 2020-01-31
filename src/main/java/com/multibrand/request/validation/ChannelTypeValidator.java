@@ -18,7 +18,7 @@ public class ChannelTypeValidator implements
 			ConstraintValidator<ChannelType, String>, Constants{
 	
     private List<String> channelTypeList = null;
-    public static final String[] channelTypeArray = {"WEB","AA","AFF","CC","SMB"}; 
+    private static final String[] channelTypeArray = {"WEB","AA","AFF","CC","SMB"}; 
     
     @Override
 	public boolean isValid(String channelType, ConstraintValidatorContext arg1) {
