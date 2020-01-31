@@ -5146,6 +5146,7 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
 	KbaSubmitAnswerResponse kbaSubmitAnswerResponse = new KbaSubmitAnswerResponse();
 	try{
+
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
 		logger.info("KBAHelper.submitKBAAnswer questionAnswerList"+questionAnswerList);
 		request.setTransactionKey(kbaAnswerRequest.getTransactionKey());
@@ -5194,8 +5195,8 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 					
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
-					response.setErrorCode(POSIDHOLD);
-					response.setMessageCode(POSIDHOLD);
+					response.setErrorCode(POSID_FAIL);
+					response.setMessageCode(POSID_FAIL);
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 				}
 				
@@ -5203,16 +5204,16 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 			} else{
 				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
 				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setErrorCode(POSIDHOLD);				
-				response.setMessageCode(POSIDHOLD);
+				response.setErrorCode(POSID_FAIL);				
+				response.setMessageCode(POSID_FAIL);
 				response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 			}
 		}else{
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
 			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
-			response.setErrorCode(POSIDHOLD);			
-			response.setMessageCode(POSIDHOLD);
+			response.setErrorCode(POSID_FAIL);			
+			response.setMessageCode(POSID_FAIL);
 			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 		}
 		
@@ -5318,7 +5319,7 @@ private KbaAnswerResponseDTO getKBAResponseOutputDTO(KbaResponseOutputDTO respon
 private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
 	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
 	
-	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){		
+	if(kbaAnswerRequest.getQuestionList() != null){		
 		ObjectMapper mapper = new ObjectMapper();
 		questionAnswerList = mapper.convertValue(kbaAnswerRequest.getQuestionList(), new TypeReference<List<KBAQuestionAnswerVO>>() { });
 		
