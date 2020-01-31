@@ -11,7 +11,6 @@ import com.multibrand.dto.KBAResponseReasonDTO;
 import com.multibrand.util.Constants;
 
 public class KbaAnswerResponseDTO {
-	private List<KBAErrorDTO> errorList;
 	private String returnCode;
 	private String returnMessage;
 
@@ -29,9 +28,6 @@ public class KbaAnswerResponseDTO {
 	private String drivingLicenceVerifyDate;
 	private String errorMessage;
 	
-	private String companyCode;
-	private String brandId;
-	private String trackingId;
 	
 	
 	
@@ -47,24 +43,7 @@ public class KbaAnswerResponseDTO {
 	public void setVerificationAssessmentList(List<KBAResponseAssessmentDTO> verificationAssessmentList) {
 		this.verificationAssessmentList = verificationAssessmentList;
 	}
-	public String getTrackingId() {
-		return trackingId;
-	}
-	public void setTrackingId(String trackingId) {
-		this.trackingId = trackingId;
-	}
-	public String getCompanyCode() {
-		return companyCode;
-	}
-	public void setCompanyCode(String companyCode) {
-		this.companyCode = companyCode;
-	}
-	public String getBrandId() {
-		return brandId;
-	}
-	public void setBrandId(String brandId) {
-		this.brandId = brandId;
-	}
+
 	
 	public String getSsnVerifyDate() {
 		return ssnVerifyDate;
@@ -84,12 +63,7 @@ public class KbaAnswerResponseDTO {
 	public void setErrorMessage(String errorMessage) {
 		this.errorMessage = errorMessage;
 	}
-	public List<KBAErrorDTO> getErrorList() {
-		return errorList;
-	}
-	public void setErrorList(List<KBAErrorDTO> errorList) {
-		this.errorList = errorList;
-	}
+
 	public String getReturnCode() {
 		return returnCode;
 	}
