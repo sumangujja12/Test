@@ -41,6 +41,7 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
+import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
@@ -67,6 +68,7 @@ import com.multibrand.vo.response.GMEEnviornmentalImpact;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
+import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
@@ -1236,5 +1238,23 @@ public class OEResource extends BaseResource {
            response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
            return response;
     }
+	
+	/**
+	 * Start | 14065 | Sprint 3 -Create New Submit KBA Answers API  | Asingh | 01/28/2020
+	 * @author 
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	@POST
+	@Path("/submitAnswerKba")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitAnswerKba(@Valid KbaAnswerRequest request) throws Exception {
+		Response response = null;
+		KbaAnswerResponse kbaAnsweresponse = oeBO.submitanswerskba(request);
+		response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
+		return response;
+	}
 
 }

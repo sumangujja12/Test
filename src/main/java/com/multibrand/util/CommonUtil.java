@@ -1881,5 +1881,15 @@ public class CommonUtil implements Constants {
 		Date date = new Date();
 		return dateFormat.format(date); //05/07/2019 06:53:11 PM
 	}
+	
+	public static String getRequestParameter(HttpServletRequest request, String in_ParameterName)
+    {
+        if (request.getParameter(in_ParameterName) != null)
+        {
+            return request.getParameter(in_ParameterName);
+        }
+        
+        return StringUtils.EMPTY;
+ }
 
 }

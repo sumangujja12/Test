@@ -1,5 +1,6 @@
 package com.multibrand.util;
 
+
 public interface DBConstants {
 
 	public static final String OUTPUT = "OUTPUT";
@@ -358,6 +359,8 @@ public interface DBConstants {
 	public static final String QUERY_GME_VALIDATE_PASSWORD_LINK = "query.gme.validate.password.link";
 	public static final String QUERY_GET_USER_LOGIN_ID = "query.get.user.login.id";
 	public static final String  OE_ADD_KBA_DETAILS_QUERY = "db.choice.reliant.addkbadetailsquery";
+	
+	public static final String OE_UPDATE_KBA_DETAILS_QUERY = "db.choice.reliant.updatekbadetailsquery";
 	
 	
 }
