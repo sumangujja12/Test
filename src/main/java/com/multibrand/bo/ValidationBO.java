@@ -717,25 +717,37 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setTlpReportApiStatus("");
 		addServiceLocation.setErrorCdList("");
 		addServiceLocation.setSystemNotes("");
-		//START :OE :Sprint 2 :Kdeshmu1
-		addServiceLocation.setEntryPoint("");
-		addServiceLocation.setPartnerId("");
-		addServiceLocation.setPartnerDesc("");
-		addServiceLocation.setLocationId("");
-		addServiceLocation.setLocationDesc("");
-		addServiceLocation.setTpvStatus("");
-		addServiceLocation.setCampaignCd("");
-		addServiceLocation.setPageRevisited("");
-		addServiceLocation.setProspectId("");
-		addServiceLocation.setProspectPreapprovedFlag("");
-		addServiceLocation.setProspectPartnerId("");
-		addServiceLocation.setBypassPosid("");
-		addServiceLocation.setIpAddress("");
-		addServiceLocation.setTabletId("");
-		//END :OE :Sprint 2 :Kdeshmu1
+		//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		addServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
+		addServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
+		addServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerDesc());
+		addServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
+		addServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationDesc());
+		addServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
+		addServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
+		
+		addServiceLocation.setBypassPosid(performPosIdBpRequest.getBypassPosid());
+		addServiceLocation.setIpAddress(performPosIdBpRequest.getIpAddress());
+		addServiceLocation.setTabletId(performPosIdBpRequest.getTabletId());
+		
+		addServiceLocation.setEtfFlag(performPosIdBpRequest.getEtfFlag());
+		
+		addServiceLocation.setAbandonedEnrollStatFlag(performPosIdBpRequest.getAbandonedEnrollStatFlag());
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		addServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
 		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		//START TBD - Set value
+		addServiceLocation.setProspectPreapprovedFlag(EMPTY);
+		addServiceLocation.setProspectPartnerId(EMPTY);
+		addServiceLocation.setBpNameMatchCode(EMPTY);
+		addServiceLocation.setDeviceLatitude(EMPTY);
+		addServiceLocation.setDeviceLongitude(EMPTY);
+		addServiceLocation.setDeviceAccuracy(EMPTY);
+		addServiceLocation.setPendingBalAmount(EMPTY);
+		addServiceLocation.setPastServiceCa(EMPTY);
+		addServiceLocation.setKbaSuggestionFlag(oESignupDTO.getKbaSuggestionFlag());
+		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
@@ -801,6 +813,37 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setErrorCdList("");
 		updateServiceLocation.setSystemNotes("");
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		updateServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
+		updateServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
+		updateServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerDesc());
+		updateServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
+		updateServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationDesc());
+		updateServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
+		updateServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
+		
+		updateServiceLocation.setBypassPosid(performPosIdBpRequest.getBypassPosid());
+		updateServiceLocation.setIpAddress(performPosIdBpRequest.getIpAddress());
+		updateServiceLocation.setTabletId(performPosIdBpRequest.getTabletId());
+		
+		updateServiceLocation.setEtfFlag(performPosIdBpRequest.getEtfFlag());
+		
+		updateServiceLocation.setAbandonedEnrollStatFlag(performPosIdBpRequest.getAbandonedEnrollStatFlag());
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		updateServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
+		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		//START TBD - Set value
+		updateServiceLocation.setProspectPreapprovedFlag(EMPTY);
+		updateServiceLocation.setProspectPartnerId(EMPTY);
+		updateServiceLocation.setBpNameMatchCode(EMPTY);
+		updateServiceLocation.setDeviceLatitude(EMPTY);
+		updateServiceLocation.setDeviceLongitude(EMPTY);
+		updateServiceLocation.setDeviceAccuracy(EMPTY);
+		updateServiceLocation.setPendingBalAmount(EMPTY);
+		updateServiceLocation.setPastServiceCa(EMPTY);
+		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
+		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 
 

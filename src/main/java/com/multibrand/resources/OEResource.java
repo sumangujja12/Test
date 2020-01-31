@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
+import com.multibrand.domain.KbaQuestionResponse;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
@@ -40,7 +41,9 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
+import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
+import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProductOfferRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
@@ -65,7 +68,10 @@ import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GenericResponse;
+import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
+import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
@@ -1251,4 +1257,39 @@ public class OEResource extends BaseResource {
 		response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();
 		return response;
 	}
+	
+	/**
+	 * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+	 * @param getKBAQuestionsRequest
+	 * @return
+	 */
+	@POST
+    @Path("getKBAQuestions")
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest getKBAQuestionsRequest) {
+           Response response;
+           GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestions(getKBAQuestionsRequest);
+           response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
+           return response;
+    }
+	
+	/**
+	 * Start | 14065 | Sprint 3 -Create New Submit KBA Answers API  | Asingh | 01/28/2020
+	 * @author 
+	 * @param request
+	 * @return
+	 * @throws Exception 
+	 */
+	@POST
+	@Path("/submitAnswerKba")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitAnswerKba(@Valid KbaAnswerRequest request) throws Exception {
+		Response response = null;
+		KbaAnswerResponse kbaAnsweresponse = oeBO.submitanswerskba(request);
+		response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
+		return response;
+	}
+
 }

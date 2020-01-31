@@ -32,14 +32,27 @@ import org.springframework.util.Assert;
 
 import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
+import com.multibrand.domain.AddressDTO;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.CampEnvironmentOutData;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.GetEsiidResponse;
+import com.multibrand.domain.KbaAnswerDTO;
+import com.multibrand.domain.KbaErrorDTO;
+import com.multibrand.domain.KbaQuestionDTO;
+import com.multibrand.domain.KbaQuestionRequest;
+import com.multibrand.domain.KbaQuestionResponse;
+import com.multibrand.domain.KbaQuizAnswerDTO;
+import com.multibrand.domain.KbaResponseAssessmentDTO;
+import com.multibrand.domain.KbaResponseOutputDTO;
+import com.multibrand.domain.KbaResponseReasonDTO;
+import com.multibrand.domain.KbaSubmitAnswerRequest;
+import com.multibrand.domain.KbaSubmitAnswerResponse;
 import com.multibrand.domain.NewCreditScoreRequest;
 import com.multibrand.domain.OetdspRequest;
 import com.multibrand.domain.OfferOutPut;
@@ -61,6 +74,12 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
+import com.multibrand.dto.KBAAnswerDTO;
+import com.multibrand.dto.KBAErrorDTO;
+import com.multibrand.dto.KBAQuestionDTO;
+import com.multibrand.dto.KBAResponseAssessmentDTO;
+import com.multibrand.dto.KBAResponseReasonDTO;
+import com.multibrand.dto.KBASubmitResultsDTO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
@@ -73,8 +92,10 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
+import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.ProductOfferRequest;
+import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -111,6 +132,7 @@ import com.multibrand.util.Token;
 import com.multibrand.vo.request.CharityDetailsVO;
 import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.request.EnrollmentReportDataRequest;
+import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.request.OESignupVO;
 import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.AffiliateOfferDO;
@@ -118,7 +140,9 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
+import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.OfferPriceDO;
@@ -135,11 +159,11 @@ import com.multibrand.vo.response.TDSPDO;
 import com.multibrand.vo.response.TLPOfferDO;
 import com.multibrand.vo.response.TdspResponse;
 import com.multibrand.vo.response.TokenizedResponse;
+import com.multibrand.vo.response.KBO.Option;
+import com.multibrand.vo.response.KBO.Question;
 import com.multibrand.vo.response.billingResponse.AddressDO;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.reliant.domain.AddressValidateResponse;
-
-
 
 /**
  * @author vsood30
@@ -176,6 +200,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	@Resource(name = "personDAO")
 	private PersonDao personDao;
+	
+	@Resource(name = "kbaDAO")
+	private KbaDAO kbaDao;
 	
 	@Autowired
 	private OEProxy oeProxy;
@@ -4940,6 +4967,399 @@ private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO o
 		request.setDeviceType("");
 		return request;
 	}
+
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @author 289347
+ * @param request
+ * @return
+ */
+public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
+	
+	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
+	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
+	KbaQuestionResponse kbaQuestionResponse = null;
+	List<Question> questions = new ArrayList<>();
+	try {
+					
+		logger.debug("inside getKBAQuestions::Tracking Number ::{} :: preferred language is:{}"+request.getTrackingId());
+		kbaQuestionRequest = createKBAQuestionRequest(request);
+		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
+		 if (kbaQuestionResponse != null && (kbaQuestionResponse.getQuestionList() != null
+					&& kbaQuestionResponse.getQuestionList().length > 0)) {
+				
+				getKBAQuestion(kbaQuestionResponse.getQuestionList(), questions);
+				
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setTransactionKey(kbaQuestionResponse.getTransactionKey());
+				response.setQuestions(questions);
+			} else {
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setMessageCode(POSID_FAIL);
+				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+
+
+			}
+		 boolean addKBAErrorCode=this.addKBADetails(kbaQuestionResponse);
+
+	} catch (Exception e) {
+		response.setStatusCode(STATUS_CODE_CONTINUE);
+		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
+		response.setMessageCode(POSID_FAIL);
+		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+	} finally {
+		try{
+				// Making Update Servicelocation call now
+				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
+						&& StringUtils.isNotEmpty(request.getTrackingId())){
+				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
+				updateServiceLocationRequest.setTrackingId(request.getTrackingId());
+				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
+				this.updateServiceLocation(updateServiceLocationRequest);
+				response.setTrackingId(request.getTrackingId());
+				
+				
+			}
+		}catch(Exception e){
+			response.setStatusCode(STATUS_CODE_STOP);
+			response.setResultDescription("Java exception making Database call for getKBaQuestion-updateServiceLocation with exception ::"+e.getMessage());
+			logger.error("Tracking Number ::"+request.getTrackingId()+" :: affiliate Id : "
+					+ ""+request.getAffiliateId() +"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
+		}
+		
+	}
+
+	return response;
+}
+
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @param request
+ * @return
+ */
+private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest request){
+	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
+	kbaQuestionRequest.setCompanyCode(request.getCompanyCode());
+	kbaQuestionRequest.setBrandName(request.getBrandId());
+	kbaQuestionRequest.setChannel(CHANNEL);
+	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
+	String langCode = (StringUtils.equalsIgnoreCase(request.getLanguageCode(), EN_US)? E:S);
+	kbaQuestionRequest.setLanguageCode(langCode);
+	
+	kbaQuestionRequest.setFirstName(request.getFirstName());
+	kbaQuestionRequest.setLastName(request.getLastName());
+	kbaQuestionRequest.setMiddleName(request.getMiddleName());	
+	kbaQuestionRequest.setDob(request.getDob());
+	kbaQuestionRequest.setTokenizedSSN(request.getTokenSSN());		
+	if(StringUtils.isNotEmpty(request.getTokenTDL())){
+        kbaQuestionRequest.setTokenizedDrl(request.getTokenTDL());        
+        kbaQuestionRequest.setDlrState(request.getDrivingLicenseState());
+    } 
+	
+//	kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
+//	kbaQuestionRequest.setDlrState("TX");
+//	kbaQuestionRequest.setTokenizedSSN("2RD6VE6-5840");
+//	kbaQuestionRequest.setDlrState(null);
+	
+	
+	kbaQuestionRequest.setHomePhone(request.getPhoneNum());
+	kbaQuestionRequest.setEmailAddress(request.getEmail());
+	kbaQuestionRequest.setIpAddress(request.getIpAddress());
+	kbaQuestionRequest.setEsid(request.getEsid());
+	kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
+	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
+	
+	
+	AddressDTO serviceAddressDTO = new AddressDTO();
+	serviceAddressDTO.setStrStreetNum(request.getServStreetNum());
+	serviceAddressDTO.setStrStreetName(request.getServStreetName());		
+	serviceAddressDTO.setStrUnitNumber(request.getServStreetAptNum());
+	serviceAddressDTO.setStrCity(request.getServCity());
+	serviceAddressDTO.setStrState(request.getServState());
+	serviceAddressDTO.setStrZip(request.getServZipCode());
+	
+	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
+	kbaQuestionRequest.setPosidUniqueKey(request.getPosidUniqueKey());
+	
+	return kbaQuestionRequest;
+}
+
+
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @param questionList
+ * @param questions
+ */
+private void getKBAQuestion(KbaQuestionDTO[] questionList, List<Question> questions) {
+
+	for (KbaQuestionDTO question : questionList) {
+		Question q = new Question();
+		q.setQuestionId(question.getQuestionId());
+		q.setQuestionText(question.getQuestionText());
+		q.setQuizeId(question.getQuizId());
+
+		List<Option> options = new ArrayList<>();
+		if (question.getAnswerList() != null && question.getAnswerList().length > 0) {
+			for (KbaAnswerDTO answer : question.getAnswerList()) {
+				Option option = new Option();
+				option.setOptionId(answer.getAnswerId());
+				option.setOptionText(answer.getContent());
+				if(answer.isCorrectAnswer()){
+				option.setKeyAnswer(FLAG_X);
+				}
+				options.add(option);
+			}
+			q.setOptions(options);
+		}
+
+		questions.add(q);
+	}
+
+}
+
+/**
+ * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
+ * @author Kdeshmu1
+ * @param request
+ * @return
+ * @throws Exception
+ */
+public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
+	logger.debug("Entering >> addKBADetails");
+	logger.debug("request = " + request);
+	boolean errorCode = kbaDao.addKbaDetails(request);
+	logger.debug("Exiting << addKBADetails");
+	return errorCode;
+}
+
+/**
+ * Start: OE : Sprint3 : 14065 - Create New KBA Answer API :asingh
+ * @author 
+ * @param request
+ * @return
+ */
+public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) throws Exception{
+	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
+	KbaAnswerResponse response = new KbaAnswerResponse();
+	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
+	KbaSubmitAnswerResponse kbaSubmitAnswerResponse = new KbaSubmitAnswerResponse();
+	try{
+		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
+		logger.info("KBAHelper.submitKBAAnswer questionAnswerList"+questionAnswerList);
+		request.setTransactionKey(kbaAnswerRequest.getTransactionKey());
+		
+		KbaQuizAnswerDTO[] answerArr = new KbaQuizAnswerDTO[questionAnswerList.size()];
+		int i =0;
+		for(KBAQuestionAnswerVO answerVO:questionAnswerList){
+			KbaQuizAnswerDTO quizAnswerDTO = new KbaQuizAnswerDTO();
+			quizAnswerDTO.setAnswerId(answerVO.getAnswerId());
+			quizAnswerDTO.setQuestionId(answerVO.getQuestionId());
+			quizAnswerDTO.setQuizId(answerVO.getQuizId());
+			answerArr[i] = quizAnswerDTO;
+			i++;
+		}
+		request.setKbaQuizAnswerArr(answerArr);
+
+		kbaSubmitAnswerResponse = oeService.submitKBAAnswer(request);
+		logger.info(kbaAnswerRequest.getTrackingId()+" kbaSubmitAnswerResponse : "+CommonUtil.doRender(kbaSubmitAnswerResponse));
+	    kbaSubmitResultsDTO = constructKBAResponseOutputDTO(kbaSubmitAnswerResponse);
+		logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
+		kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
+		
+		if(StringUtils.isEmpty(kbaSubmitAnswerResponse.getStrErrCode())){				
+			String returnCode = kbaSubmitAnswerResponse.getReturnCode();
+			int intReturnCode = 0;
+			if(!StringUtils.isEmpty(returnCode)){
+				intReturnCode = Integer.parseInt(returnCode);
+			}
+			if(intReturnCode ==0){
+				if(null != kbaSubmitAnswerResponse 
+						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getSsnVerifyDate()) 
+						&&  !StringUtils.equalsIgnoreCase(kbaSubmitAnswerResponse.getSsnVerifyDate(), POSID_BLANK_DATE)){
+				
+					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
+							kbaSubmitAnswerResponse.getSsnVerifyDate());
+					response.setSsnVerifyDate(validatedDate);
+					
+					
+				} else if(null != kbaSubmitAnswerResponse 
+						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getDlVerifyDate()) 
+						&& !StringUtils.equalsIgnoreCase(kbaSubmitAnswerResponse.getDlVerifyDate(), POSID_BLANK_DATE)){								
+					
+					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
+							kbaSubmitAnswerResponse.getDlVerifyDate());
+					response.setDrivingLicenceVerifyDate(validatedDate);
+					
+				}else{
+					response.setStatusCode(STATUS_CODE_CONTINUE);
+					response.setErrorCode(POSIDHOLD);
+					response.setErrorMessage(getMessage(POSID_FAIL_MSG_TXT));
+					response.setMessageCode(POSIDHOLD);
+					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
+				}
+				
+				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
+				response.setTransactionKey(
+						kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getTransactionKey());
+				response.setFraudlevel(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getFraudlevel());
+				response.setIdentityScore(
+						kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getIdentityScore());
+				response.setInteractiveQscore(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getInteractiveQscore());
+				response.setOverallScore(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getOverallScore());
+				response.setSsnVerifyDate(kbaSubmitAnswerResponse.getSsnVerifyDate());
+				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
+			} else{
+				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setErrorCode(POSIDHOLD);
+				response.setErrorMessage(getMessage(POSID_FAIL_MSG_TXT));
+				response.setMessageCode(POSIDHOLD);
+				response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
+			}
+		}else{
+			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
+			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
+			response.setStatusCode(STATUS_CODE_CONTINUE);
+			response.setErrorCode(POSIDHOLD);
+			response.setErrorMessage(getMessage(POSID_FAIL_MSG_TXT));
+			response.setMessageCode(POSIDHOLD);
+			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
+		}
+		
+	}catch (Exception e) {
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+		response.setErrorMessage(RESULT_DESCRIPTION_EXCEPTION);
+		
+	}finally{
+		if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
+			response.setTrackingId(kbaAnswerRequest.getTrackingId());
+			response.setCompanyCode(kbaAnswerRequest.getCompanyCode());
+			response.setBrandId(kbaAnswerRequest.getBrandId());
+			//update service location affiliate
+			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+             requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
+            this.updateServiceLocation(requestData);
+            //update kba_api
+            this.updateKbaDetails(kbaSubmitResultsDTO);
+		}
+	}
+	return response;
+	}
+
+private KBASubmitResultsDTO constructKBAResponseOutputDTO(KbaSubmitAnswerResponse kbaSubmitAnswerResponse){
+	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
+			
+	List<KBAErrorDTO> kbaErrorDTOList = getKBAErrorList(kbaSubmitAnswerResponse);
+	kbaSubmitResultsDTO.setErrorList(kbaErrorDTOList);				
+	
+	KbaAnswerResponse kbaResponseOutputDTO = getKBAResponseOutputDTO(kbaSubmitAnswerResponse);
+	kbaSubmitResultsDTO.setKbaSubmitAnswerResponseOutput(kbaResponseOutputDTO);
+	
+	kbaSubmitResultsDTO.setReturnCode(kbaSubmitAnswerResponse.getReturnCode());
+	kbaSubmitResultsDTO.setReturnMessage(kbaSubmitAnswerResponse.getReturnMessage());			
+	kbaSubmitResultsDTO.setStrErrCode(kbaSubmitAnswerResponse.getStrErrCode());
+	kbaSubmitResultsDTO.setStrErrMessage(kbaSubmitAnswerResponse.getStrErrMessage());
+	return kbaSubmitResultsDTO;
+}
+
+private List<KBAErrorDTO> getKBAErrorList(KbaSubmitAnswerResponse kbaSubmitAnswerResponse){
+	List<KBAErrorDTO> kbaErrorDTOList = null;
+	if(kbaSubmitAnswerResponse.getErrorList() != null && kbaSubmitAnswerResponse.getErrorList().length >0){
+		kbaErrorDTOList = new ArrayList();
+		for(KbaErrorDTO errorDTO:kbaSubmitAnswerResponse.getErrorList()){
+			KBAErrorDTO kbaErrorDTO = new KBAErrorDTO();
+			kbaErrorDTO.setErrorCode(errorDTO.getErrorCode());
+			kbaErrorDTO.setErrorDescription(errorDTO.getErrorDescription());
+			kbaErrorDTO.setErrorMsg(errorDTO.getErrorMsg());
+			kbaErrorDTO.setTransactionKey(errorDTO.getTransactionKey());
+			kbaErrorDTOList.add(kbaErrorDTO);
+		}
+	}
+	return kbaErrorDTOList;
+}
+
+private KbaAnswerResponse getKBAResponseOutputDTO(KbaSubmitAnswerResponse kbaSubmitAnswerResponse){
+	KbaAnswerResponse kbaResponseOutputDTO = null;
+	if( (kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput() != null) && (!StringUtils.isEmpty(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision()))){
+		kbaResponseOutputDTO = getKBAResponseOutputDTO(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput());
+	}
+					
+	return kbaResponseOutputDTO;
+}
+
+private KbaAnswerResponse getKBAResponseOutputDTO(KbaResponseOutputDTO responseDTO){
+	KbaAnswerResponse kbaResponseOutputDTO = new KbaAnswerResponse();
+	kbaResponseOutputDTO.setTransactionKey(responseDTO.getTransactionKey());
+	kbaResponseOutputDTO.setDecision(responseDTO.getDecision());
+	kbaResponseOutputDTO.setFraudlevel(responseDTO.getFraudlevel());
+	kbaResponseOutputDTO.setIdentityScore(responseDTO.getIdentityScore());
+	kbaResponseOutputDTO.setInteractiveQscore(responseDTO.getInteractiveQscore());
+	kbaResponseOutputDTO.setOverallScore(responseDTO.getOverallScore());
+	
+	List<KBAResponseReasonDTO> kbaReasonList = new ArrayList();
+	
+	if(responseDTO.getKbaReasonList() != null && (responseDTO.getKbaReasonList().length >0)){
+		
+		for(KbaResponseReasonDTO reasonDTO :responseDTO.getKbaReasonList() ){
+			KBAResponseReasonDTO kbaReasonDTO = new KBAResponseReasonDTO();
+			kbaReasonDTO.setReasonCode(reasonDTO.getReasonCode());
+			kbaReasonDTO.setReasonDesc(reasonDTO.getReasonDesc());
+			
+			kbaReasonList.add(kbaReasonDTO);
+		}
+	}
+	
+	kbaResponseOutputDTO.setKbaReasonList(kbaReasonList);
+	
+	List<KBAResponseAssessmentDTO> verificationAssessmentList = new ArrayList();
+	
+	if(responseDTO.getVerificationAssessmentList() != null && (responseDTO.getVerificationAssessmentList().length >0)){
+		for(KbaResponseAssessmentDTO assessment: responseDTO.getVerificationAssessmentList()){
+			KBAResponseAssessmentDTO kbaAssessmentDTO = new KBAResponseAssessmentDTO();
+			kbaAssessmentDTO.setAssessmentName(assessment.getAssessmentName());
+			kbaAssessmentDTO.setAssessmentValue(assessment.getAssessmentValue());
+			
+			verificationAssessmentList.add(kbaAssessmentDTO);
+		}
+	}
+	
+	kbaResponseOutputDTO.setVerificationAssessmentList(verificationAssessmentList);
+	
+	return kbaResponseOutputDTO;
+}
+
+private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
+	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
+	KBAQuestionAnswerVO questionAnswerVO = new KBAQuestionAnswerVO();
+	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){
+		for(KBAQuestionDTO questionDTO:kbaAnswerRequest.getQuestionList() ){
+			for(KBAAnswerDTO answer:questionDTO.getAnswerList()){
+			questionAnswerVO.setAnswerId(answer.getAnswerId());
+			}
+			questionAnswerVO.setQuizId(questionDTO.getQuizId());
+			questionAnswerVO.setQuestionId(questionDTO.getQuestionId());
+			questionAnswerList.add(questionAnswerVO);
+		}
+	}
+	return questionAnswerList;
+}
+
+/**
+ * Start: OE : Sprint3 : 14065 - Create New KBA Answers API :asingh
+ * @author asingh
+ * @param request
+ * @return
+ * @throws Exception
+ */
+public boolean updateKbaDetails(KBASubmitResultsDTO request) throws Exception {
+	logger.debug("Entering in method: updateKbaDetails");
+	logger.debug("request = " + request);
+	boolean errorCode = kbaDao.updateKbaDetails(request);
+	logger.debug("Exiting in method: updateKbaDetails");
+	return errorCode;
+}
 
 
 	public SmallBusinessProductOfferResponse getSmallBusinessOfferData(ProductOfferRequest productOfferRequest) {

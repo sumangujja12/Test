@@ -164,21 +164,10 @@ public class OERequestHandler implements Constants {
 			request.setDepositAmount(ZERO);
 		}
 		request.setTlpReportApiStatus(oeSignupDTO.getTlpReportApiStatus());
-		
-		request.setPdfCaptureFlag("");
-		request.setBpNameMatchCode("");
-		request.setAgentUpResponse("");
-		request.seteCustOptSel("");
-		request.setExCustVerifyVal("");
-		request.setEtfFlag("");
-		request.setDeviceLatitude("");
-		request.setDeviceLongitude("");
-		request.setDeviceAccuracy("");
-		request.setPendingBalAmount("");
-		request.setPastServiceCa("");
-		request.setKbaTransactionKey("");
-		request.setKbaSuggestionFlag("");
-		request.setAbandonedEnrollStatFlag("");
+		request.setPdfCaptureFlag(oeSignupDTO.getPdfCaptureFlag());
+		request.setAgentUpResponse(oeSignupDTO.getAgentUpResponse());
+		request.setTpv_status(oeSignupDTO.getTpvStatus());
+		request.setCampaignCd(oeSignupDTO.getCampaignCd());
 		return request;
 	}
 	

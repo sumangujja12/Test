@@ -1319,7 +1319,13 @@ public interface Constants {
     public static final String DRL_STATE_TX = "TX";
     public static final String POSID_BLANK_DATE = "0000-00-00";
     public static final String CALLER_WEB="WEB";
+    public static final String MSG_KEY_KBA_QUESTION_LIST_EMPTY="msg.key.kba.question.list.empty";
     
-    public static final String MSG_KEY_CHANNEL_TYPE="msg.key.channel.type";
+    public static final String[] channelTypeArray = {"WEB","AA","AFF","CC","SMB"};    
     
+    public static final String DELIMITER = "_";
+    public static final String POSIDHOLD  = "POSIDHOLD";
+    public static final String CALL_NAME_KBA_SUBMIT = "KBASUBMIT";
+    public static final String OE_SPRING_CALL_LOG_STATEMENT="{}: OE Spring JDBC Response Call Name : {} : {} Time in ms  ";
+   
 }

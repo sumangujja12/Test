@@ -1967,4 +1967,16 @@ public class CommonUtil implements Constants {
 	}	
 	
 	
+
+	public static String getRequestParameter(HttpServletRequest request, String in_ParameterName)
+    {
+        if (request.getParameter(in_ParameterName) != null)
+        {
+            return request.getParameter(in_ParameterName);
+        }
+        
+        return StringUtils.EMPTY;
+ }
+
+	
 }
