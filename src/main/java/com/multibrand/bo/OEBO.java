@@ -5146,6 +5146,7 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
 	KbaSubmitAnswerResponse kbaSubmitAnswerResponse = new KbaSubmitAnswerResponse();
 	try{
+
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
 		logger.info("KBAHelper.submitKBAAnswer questionAnswerList"+questionAnswerList);
 		request.setTransactionKey(kbaAnswerRequest.getTransactionKey());
@@ -5318,7 +5319,7 @@ private KbaAnswerResponseDTO getKBAResponseOutputDTO(KbaResponseOutputDTO respon
 private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
 	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
 	
-	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){		
+	if(kbaAnswerRequest.getQuestionList() != null){		
 		ObjectMapper mapper = new ObjectMapper();
 		questionAnswerList = mapper.convertValue(kbaAnswerRequest.getQuestionList(), new TypeReference<List<KBAQuestionAnswerVO>>() { });
 		
