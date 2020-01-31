@@ -72,6 +72,7 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
+import com.multibrand.dto.KBAAnswerDTO;
 import com.multibrand.dto.KBAErrorDTO;
 import com.multibrand.dto.KBAQuestionDTO;
 import com.multibrand.dto.KBAResponseAssessmentDTO;
@@ -5236,11 +5237,12 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 			response.setTrackingId(kbaAnswerRequest.getTrackingId());
 			response.setCompanyCode(kbaAnswerRequest.getCompanyCode());
 			response.setBrandId(kbaAnswerRequest.getBrandId());
-			
+			//update service location affiliate
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
-            serviceLocationDAO.updateServiceLocation(requestData);
-            kbaDao.updateKbaDetails(kbaSubmitResultsDTO);
+            this.updateServiceLocation(requestData);
+            //update kba_api
+            this.updateKbaDetails(kbaSubmitResultsDTO);
 		}
 	}
 	return response;
@@ -5330,32 +5332,34 @@ private KbaAnswerResponse getKBAResponseOutputDTO(KbaResponseOutputDTO responseD
 
 private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
 	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
-	//KBAQuestionsMasterDTO kbaQuestionsMasterDTO = oeSignUpDTO.getKbaQuestionsMasterDTO();
-	if(kbaAnswerRequest != null){
+	KBAQuestionAnswerVO questionAnswerVO = new KBAQuestionAnswerVO();
+	if(kbaAnswerRequest != null && kbaAnswerRequest.getQuestionList() != null){
 		for(KBAQuestionDTO questionDTO:kbaAnswerRequest.getQuestionList() ){
-			String answerId = questionDTO.getQuizId()+DELIMITER+questionDTO.getQuestionId();
-			if(StringUtils.isEmpty(answerId)){
-				answerId = StringUtils.EMPTY;
+			for(KBAAnswerDTO answer:questionDTO.getAnswerList()){
+			questionAnswerVO.setAnswerId(answer.getAnswerId());
 			}
-			int intAnswerId = 0;
-			if(StringUtils.isNotEmpty(answerId)){
-				try{
-					intAnswerId = Integer.parseInt(answerId);
-				} catch(Exception en){
-					logger.error("KBA Questions constructKBAQuestionAnswerVOList AnswerId is not number :"+ answerId);
-				}
-			}
-			KBAQuestionAnswerVO questionAnswerVO = new KBAQuestionAnswerVO();
 			questionAnswerVO.setQuizId(questionDTO.getQuizId());
 			questionAnswerVO.setQuestionId(questionDTO.getQuestionId());
-			questionAnswerVO.setAnswerId(intAnswerId);
 			questionAnswerList.add(questionAnswerVO);
-			
 		}
 	}
 	return questionAnswerList;
 }
 
+/**
+ * Start: OE : Sprint3 : 14065 - Create New KBA Answers API :asingh
+ * @author asingh
+ * @param request
+ * @return
+ * @throws Exception
+ */
+public boolean updateKbaDetails(KBASubmitResultsDTO request) throws Exception {
+	logger.debug("Entering in method: updateKbaDetails");
+	logger.debug("request = " + request);
+	boolean errorCode = kbaDao.updateKbaDetails(request);
+	logger.debug("Exiting in method: updateKbaDetails");
+	return errorCode;
+}
 
 }
 
