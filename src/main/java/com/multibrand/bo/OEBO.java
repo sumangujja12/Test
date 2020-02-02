@@ -5195,8 +5195,8 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 					
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
-					response.setErrorCode(POSIDHOLD);
-					response.setMessageCode(POSIDHOLD);
+					response.setErrorCode(POSID_FAIL);
+					response.setMessageCode(POSID_FAIL);
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 				}
 				
@@ -5204,16 +5204,16 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 			} else{
 				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
 				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setErrorCode(POSIDHOLD);				
-				response.setMessageCode(POSIDHOLD);
+				response.setErrorCode(POSID_FAIL);				
+				response.setMessageCode(POSID_FAIL);
 				response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 			}
 		}else{
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
 			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
-			response.setErrorCode(POSIDHOLD);			
-			response.setMessageCode(POSIDHOLD);
+			response.setErrorCode(POSID_FAIL);			
+			response.setMessageCode(POSID_FAIL);
 			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 		}
 		
