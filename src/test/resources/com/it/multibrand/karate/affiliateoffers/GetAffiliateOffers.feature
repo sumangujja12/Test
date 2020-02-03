@@ -1,29 +1,43 @@
- Feature: Get Affiliate Offer funtionality 
+ Feature: Get Affiliate Offer funtionality
+ 
  Background:
   * url  BASE_SERVER_URL
-  * def utility = Java.type('com.it.multibrand.karate.utils.BaseFunctions')
   * json getaffilateofferrequest = read('classpath:com/it/multibrand/karate/affiliateoffers/GetAffiliateOffers.json')
 
-  
-    
-    
-@valuePromoCode
-   Scenario: check affilaite offers call
-   * set getaffilateofferrequest.promoCode = 'WB3677'
+@validMVIPromo
+   Scenario: Validate Affilaite offers call response using a valid promocode for MVI
+   * set getaffilateofferrequest.promoCode = 'WASD0K'
+   * set getaffilateofferrequest.transactionType = 'MVI'
     Given path  '/NRGREST/rest/oeResource/getAffiliateOffers'
     And  request getaffilateofferrequest
     When method POST
     Then status 200    
+    And print 'MVI Promo Response Successful'
+    And print 'Valid MVI Promo Response Time:' + responseTime
+		And print 'Valid MVI Promo Response Below:' 
     And print response
-    And  print responseTime
-    
+
+@validSWIPromo
+   Scenario: Validate Affilaite offers call response using a valid promocode for SWI
+   * set getaffilateofferrequest.promoCode = 'WASD0M'
+   * set getaffilateofferrequest.transactionType = 'SWI'
+    Given path  '/NRGREST/rest/oeResource/getAffiliateOffers'
+    And  request getaffilateofferrequest
+    When method POST
+    Then status 200
+    And print 'SWI Promo Response Successful'
+    And print 'Valid SWI Promo Response Time:' + responseTime
+		And print 'Valid SWI Promo Response Below:' 
+    And print response
     
 @invalidPromoCode
-   Scenario: check affilaite offers call
+   Scenario: Validate Affilaite offers call response using an invalid promocode
    * set getaffilateofferrequest.promoCode = '12345'
     Given path  '/NRGREST/rest/oeResource/getAffiliateOffers'
     And  request getaffilateofferrequest
     When method POST
-    Then status 200    
+    Then status 200  
+    And print 'Invalid Promo Response Successful'
+    And print 'Invalid Promo Response Time:' + responseTime
+		And print 'Invalid Promo Response Below:' 
     And print response
-    And  print responseTime
