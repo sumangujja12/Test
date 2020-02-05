@@ -4979,7 +4979,7 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 	
 	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
 	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
-	KbaQuestionResponse kbaQuestionResponse = null;
+	KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
 	List<Question> questions = new ArrayList<>();
 	try {
 					
@@ -5144,7 +5144,7 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
-	KbaSubmitAnswerResponse kbaSubmitAnswerResponse = new KbaSubmitAnswerResponse();
+	//KbaSubmitAnswerResponse kbaSubmitAnswerResponse = new KbaSubmitAnswerResponse();
 	try{
 
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
@@ -5163,7 +5163,7 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 		}
 		request.setKbaQuizAnswerArr(answerArr);
 
-		kbaSubmitAnswerResponse = oeService.submitKBAAnswer(request);
+		KbaSubmitAnswerResponse kbaSubmitAnswerResponse = oeService.submitKBAAnswer(request);
 		logger.info(kbaAnswerRequest.getTrackingId()+" kbaSubmitAnswerResponse : "+CommonUtil.doRender(kbaSubmitAnswerResponse));
 	    kbaSubmitResultsDTO = constructKBAResponseOutputDTO(kbaSubmitAnswerResponse);
 		logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
@@ -5226,6 +5226,7 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 			//update service location affiliate
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
+             requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
             this.updateServiceLocation(requestData);
             //update kba_api
             this.updateKbaDetails(kbaSubmitResultsDTO);

@@ -171,8 +171,8 @@ public class KbaDaoImpl extends AbstractSpringDAO implements KbaDAO, Constants {
 		String error_code_list = null;
 		String error_msg_list = null;
 		Long startTime = Calendar.getInstance().getTimeInMillis();
-
-		try {
+		int result = 0;
+try {
 			String updateKbaDetailsQuery = getSqlMessage().getMessage(DBConstants.OE_UPDATE_KBA_DETAILS_QUERY, null,
 					null);
 			error_code_list = getErrorCodeList(kBASubmitResultsDTO);
@@ -181,16 +181,19 @@ public class KbaDaoImpl extends AbstractSpringDAO implements KbaDAO, Constants {
 			}
 			error_msg_list = getErrorMsgList(kBASubmitResultsDTO);
 			reason_code_list = getKBAReasonCodeList(kBASubmitResultsDTO);
-			int result = getJdbcTemplate().update(updateKbaDetailsQuery,
+			if(null != kBASubmitResultsDTO.getKbaAnswerResponseDTO()){
+			result = getJdbcTemplate().update(updateKbaDetailsQuery,
+
 					kBASubmitResultsDTO.getKbaAnswerResponseDTO().getDecision(),
 					kBASubmitResultsDTO.getKbaAnswerResponseDTO().getIdentityScore(),
 					kBASubmitResultsDTO.getKbaAnswerResponseDTO().getOverallScore(),
 					kBASubmitResultsDTO.getKbaAnswerResponseDTO().getInteractiveQscore(),
+
 					kBASubmitResultsDTO.getKbaAnswerResponseDTO().getFraudlevel(), kBASubmitResultsDTO.getReturnCode(),
 					kBASubmitResultsDTO.getReturnMessage(), error_code_list, error_msg_list, reason_code_list,
 					kBASubmitResultsDTO.getKbaAnswerResponseDTO().getTransactionKey());
-
-			Long endTime = Calendar.getInstance().getTimeInMillis();
+			}
+           Long endTime = Calendar.getInstance().getTimeInMillis();
 			logger.info(OE_SPRING_CALL_LOG_STATEMENT + EMPTY + "updateKbaDetails" + endTime + startTime);
 
 			if (result > 0) {
@@ -203,7 +206,8 @@ public class KbaDaoImpl extends AbstractSpringDAO implements KbaDAO, Constants {
 			logger.error("updateKbaDetails insert Failed " + exception);
 			throw new Exception(exception);
 		}
-	}
+}
+
 
 	/**
 	 * Start: OE : Sprint3 : 14065 - Create New KBA Answers API :asingh
@@ -214,6 +218,7 @@ public class KbaDaoImpl extends AbstractSpringDAO implements KbaDAO, Constants {
 	 */
 	private String getKBAReasonCodeList(KBASubmitResultsDTO kBASubmitResultsDTO) {
 		String reasonCodeList = StringUtils.EMPTY;
+		if(null != kBASubmitResultsDTO.getKbaAnswerResponseDTO()){
 		if (kBASubmitResultsDTO.getKbaAnswerResponseDTO().getKbaReasonList() != null) {
 			for (KBAResponseReasonDTO reasonDTO : kBASubmitResultsDTO.getKbaAnswerResponseDTO().getKbaReasonList()) {
 
@@ -228,6 +233,7 @@ public class KbaDaoImpl extends AbstractSpringDAO implements KbaDAO, Constants {
 			}
 
 		}
+	}
 		return reasonCodeList;
 	}
 
@@ -273,5 +279,5 @@ public class KbaDaoImpl extends AbstractSpringDAO implements KbaDAO, Constants {
 			errorCodeList = errorCodeList.substring(0, 39);
 		}
 		return errorCodeList;
-	}
+}
 }
