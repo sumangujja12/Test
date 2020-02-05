@@ -176,3 +176,8 @@ iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 content.server.endpoint.url=http://txaixebxbls01:18081/client/v2/content.svc/
 #File
 documentum.endpoint=http://dev-texas.xoomenergy.com/files/{0}.pdf
+
+#Start Togglz Framework Integration
+ws.rest.togglz.base.url=http://stg1-ws.nrgenergy.com/togglz
+togglz.default.groupName=SalesAPI
+#End Togglz Framework Integration

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.domain.ValidatePosIdKBARequest;
 import com.multibrand.domain.ValidatePosIdRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
+import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.LoggerUtil;
@@ -43,7 +44,7 @@ public class ValidationRequestHandler implements Constants {
 		validatePosIdKBARequest.setCompanyCode(performPosIdBpRequest.getCompanyCode());
 		String brandName = performPosIdBpRequest.getBrandId();
 		if(StringUtils.isEmpty(brandName)){
-			brandName = getBrandNameFromCompanycode(performPosIdBpRequest.getCompanyCode());
+			brandName = CommonUtil.getBrandIdFromCompanycodeForCCS(performPosIdBpRequest.getCompanyCode());
 		}
 		validatePosIdKBARequest.setBrandName(brandName);
 		validatePosIdKBARequest.setChannel(CALLER_WEB);
@@ -88,24 +89,6 @@ public class ValidationRequestHandler implements Constants {
 		
 	}
 	
-	private String getBrandNameFromCompanycode(String companyCode){
-		String brandName = EMPTY;
-		
-		switch(companyCode){
-			case COMPANY_CODE_RELIANT:
-					brandName = BRAND_ID_RELIANT;
-					break;
-			case COMPANY_CODE_GME:
-					brandName = BRAND_ID_GME;
-					break;
-			case COMPANY_CODE_PENNYWISE:
-					brandName = BRAND_ID_PENNYWISE;
-					break;
-			default:
-				break;
-		}
-		
-		return brandName;
-	}	
+
 	
 }

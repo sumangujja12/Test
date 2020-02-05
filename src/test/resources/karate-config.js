@@ -24,10 +24,8 @@ function() {
     };
     
     karate.log('karate.env selected environment was:', env);
-    
-    karate.configure('retry',{ count:3, interval:5000});
+    //karate.configure('retry',{ count:3, interval:5000});
     karate.configure('connectTimeout', 60000);
     karate.configure('readTimeout', 60000);
-   
     return config;
   }
