@@ -3534,7 +3534,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 			tokenRequest.setActionCode(Constants.ACTION_CODE_DL_ACTION);
 			tokenRequest.setNumToBeTokenized(tdl);
-			tokenResponse=getTokenResponse(tokenRequest);
+			//tokenResponse=getTokenResponse(tokenRequest);
+			tokenResponse = new TokenizedResponse();
+			tokenResponse.setReturnToken("BQ1W6GWD-2736");
 			tokenTdl=tokenResponse.getReturnToken();
 			}
 		getPosIdTokenResponse.put("tokenTdl", tokenTdl);

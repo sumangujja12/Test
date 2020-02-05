@@ -100,6 +100,7 @@ public interface Constants {
 	public static final String COMPANY_CODE_PENNYWISE = "0391";
 	public static final String COMPANY_CODE_CIRRO = "0391";
 	public static final String COMPANY_CODE_EE = "0400";
+	public static final String COMPANY_CODE_DISCOUNTPOWER = "0391";
 	
 	public static final String COMPANY_NAME_RELIANT = "Reliant";
 	public static final String COMPANY_NAME_GME = "Green Mountain";
@@ -112,6 +113,8 @@ public interface Constants {
 	public static final String BRAND_ID_PENNYWISE = "PW";
 	public static final String BRAND_ID_CIRRO = "CE";
 	public static final String BRAND_ID_EE = "EE";
+	public static final String BRAND_ID_DISCOUNTPOWER = "DP";
+	public static final String CCS_BRAND_ID_GME = "GR";
 	
 	public static final String ALT_BRAND_ID_RELIANT = "REL";
 	public static final String ALT_BRAND_ID_GME = "GME";
@@ -1300,5 +1303,9 @@ public interface Constants {
     public static final String POSIDHOLD  = "POSIDHOLD";
     public static final String CALL_NAME_KBA_SUBMIT = "KBASUBMIT";
     public static final String OE_SPRING_CALL_LOG_STATEMENT="{}: OE Spring JDBC Response Call Name : {} : {} Time in ms  ";
+    
+    public static final String DEFAULT_GROUP_NAME = "togglz.default.groupName";
+    public static final String TOGGLZ_REST_BASE_URL = "ws.rest.togglz.base.url";
+    public static final String TOGGLZ_FEATURE_NEW_POSID_CALL="salesapi.newposid.flag";
    
 }

@@ -41,6 +41,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.JavaBeanUtil;
+import com.multibrand.util.TogglzUtil;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
 import com.reliant.domain.AddressValidateRequest;
@@ -74,6 +75,9 @@ public class ValidationBO extends BaseBO {
 	// ~Autowire entries
 	@Autowired
 	ValidationRequestHandler validateRequestHandler;
+	
+	 @Autowired
+	private TogglzUtil togglzUtil;
 
 
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -260,8 +264,13 @@ public class ValidationBO extends BaseBO {
 			 * Step 5: Make validatePosId call
 			 */
 			recentCallMade=RECENT_CALL_MADE_POSID;
-			ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
-			validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
+			boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
+			if(isNewPosidCallEnabled){
+				ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
+				validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
+			} else{
+				validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
+			}
 
 			//Pass the parameters from NRG response to wrapper Response POJO
 			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
@@ -981,5 +990,29 @@ public class ValidationBO extends BaseBO {
 			status = true;
 		}			
 		return status;
+	}
+	
+	public ValidatePosIdKBAResponse validatePosIdOldCSSCall(PerformPosIdAndBpMatchRequest performPosIdBpRequest) throws Exception  
+	{
+		ValidatePosIdKBAResponse validatePosIdKBAResponse = new ValidatePosIdKBAResponse();		
+		ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenTDL(),
+				performPosIdBpRequest.getCompanyCode(),
+				performPosIdBpRequest.getMaidenName(),performPosIdBpRequest.getFirstName(), performPosIdBpRequest.getLastName(),
+				performPosIdBpRequest.getTokenSSN(), performPosIdBpRequest.getMiddleName());
+		ValidatePosIdResponse validatePosIdResponse=validationService.validatePosId(validatePosIdReq);
+		validatePosIdKBAResponse.setExSsnVerifydate(POSID_BLANK_DATE);
+		validatePosIdKBAResponse.setExDlVerifydate(POSID_BLANK_DATE);
+		validatePosIdKBAResponse.setStrErroCode(validatePosIdResponse.getStrErroCode());
+		validatePosIdKBAResponse.setStrErroMessage(validatePosIdResponse.getStrErroMessage());
+		if(StringUtils.equalsIgnoreCase(validatePosIdResponse.getExIsValidSsn(), FLAG_X)){
+			String validatedDate = DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,DATE_FORMAT, validatePosIdResponse.getExSsnVerifydate());
+			validatePosIdKBAResponse.setExSsnVerifydate(validatedDate);
+		}
+		if(StringUtils.equalsIgnoreCase(validatePosIdResponse.getExIsValidDl(), FLAG_X)){
+			String validatedDate = DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,DATE_FORMAT, validatePosIdResponse.getExDlVerifydate());
+			validatePosIdKBAResponse.setExDlVerifydate(validatedDate);
+		}
+		
+		return validatePosIdKBAResponse;
 	}
 }

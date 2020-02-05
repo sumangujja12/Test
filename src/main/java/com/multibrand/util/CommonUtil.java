@@ -1891,5 +1891,44 @@ public class CommonUtil implements Constants {
         
         return StringUtils.EMPTY;
  }
+	
+	public static String getBrandIdFromCompanycodeForCCS(String companyCode){
+		String brandName = EMPTY;
+		
+		switch(companyCode){
+			case COMPANY_CODE_RELIANT:
+					brandName = BRAND_ID_RELIANT;
+					break;
+			case COMPANY_CODE_GME:
+					brandName = CCS_BRAND_ID_GME;
+					break;
+			case COMPANY_CODE_PENNYWISE:
+					brandName = BRAND_ID_PENNYWISE;
+					break;
+			default:
+				break;
+		}
+		
+		return brandName;
+	}	
 
+	public static String getBrandIdFromCompanycodeForTogglz(String companyCode){
+		String brandName = EMPTY;
+		
+		switch(companyCode){
+			case COMPANY_CODE_RELIANT:
+					brandName = BRAND_ID_RELIANT;
+					break;
+			case COMPANY_CODE_GME:
+					brandName = BRAND_ID_GME;
+					break;
+			case COMPANY_CODE_DISCOUNTPOWER:
+					brandName = BRAND_ID_DISCOUNTPOWER;
+					break;
+			default:
+				break;
+		}
+		
+		return brandName;
+	}
 }
