@@ -169,3 +169,8 @@ rest.api.password=tester
 rest.ws.endpointURL.iot.enrollment.report.data.submit=http://txaixsexbls05/iotproxy/enrollment/sendReliantEnrollmentDataToTLP
 iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 #END : OE :Sprint62 :US21019 :Kdeshmu1
+
+#Start Togglz Framework Integration
+ws.rest.togglz.base.url=http://stg1-ws.nrgenergy.com/togglz
+togglz.default.groupName=SalesAPI
+#End Togglz Framework Integration
