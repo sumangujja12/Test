@@ -35,3 +35,22 @@
 		And print 'Posid Response Below:' 
     And print response
     And match response.posidDLDate == null
+    
+    
+ 
+ @invalidPosid    
+     Scenario: Validate Posid with invalid Posid SSN test data
+   * set posidbpmatchrequest.firstName = 'CORLEY'
+   * set posidbpmatchrequest.lastName = 'ZANNS'
+   * set posidbpmatchrequest.dob = '03011968'
+   * set posidbpmatchrequest.tdl = ''
+   * set posidbpmatchrequest.ssn = '12345678'   
+    Given path  '/NRGREST/rest/oeResource/performPosidAndBpMatch'
+    And  request posidbpmatchrequest
+    When method POST
+    Then status 200    
+    And print 'Validate Posid Response Successful'
+    And print 'Posid Response Time:' + responseTime
+		And print 'Posid Response Below:' 
+    And print response
+    And match response.posidSSNDate == null
