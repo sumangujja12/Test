@@ -1307,5 +1307,15 @@ public interface Constants {
     public static final String DEFAULT_GROUP_NAME = "togglz.default.groupName";
     public static final String TOGGLZ_REST_BASE_URL = "ws.rest.togglz.base.url";
     public static final String TOGGLZ_FEATURE_NEW_POSID_CALL="salesapi.newposid.flag";
-   
+ 
+    //***************** SALES APIs *************************
+    public static final String API_GET_AFFILIATE_OFFERS = "getAffiliateOffers";
+    public static final String API_PERFORM_POSID_AND_BPMATCH= "performPosidAndBpMatch";
+    public static final String API_GET_ESID_AND_CALENDAR_DATES= "getESIDAndCalendarDates";
+    public static final String API_PERFORM_CREDIT_CHECK= "performCreditCheck";
+    public static final String API_SUBMIT_UCC_DATA= "submitUCCData";
+    public static final String API_SUBMIT_ENROLLMENT= "submitEnrollment";
+    public static final String API_GET_KBA_QUESTION = "getKBAQuestions";
+    public static final String API_SUBMIT_KBA_ANSWERS = "submitKBAAnswers";
+    
 }

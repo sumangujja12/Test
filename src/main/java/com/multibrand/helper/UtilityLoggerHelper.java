@@ -1,5 +1,8 @@
 package com.multibrand.helper;
 
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -8,6 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.dto.request.BaseAffiliateRequest;
+import com.multibrand.dto.request.BaseRequest;
+import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.UtilityService;
 import com.multibrand.util.CommonUtil;
@@ -157,6 +163,28 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		}
 		
 		//return true;
+	}
+
+	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, BaseAffiliateRequest request, Response response, long responseTime, String trackingId, String caNumber) {
+		LoggingVO logVO = new LoggingVO();	
+		logVO.setTransactionType(apiName);
+		logVO.setCompanyCode(request.getCompanyCode());
+		logVO.setRequestData(request);
+		logVO.setResponseData(response);
+		logVO.setResponseStatus(Integer.toString(response.getStatus()));
+		logVO.setMask(isLogMaskingRequired);
+		logVO.setUserId(trackingId);
+		logVO.setConfirmationNumber(caNumber);
+		logVO.setResponseTime(responseTime);
+		if(isLoggingEnable()){
+			logger.debug("LOGGING SERVICE IS ENABLED:::");
+			try{
+				logVO.setEndPointURL(this.envMessageReader.getMessage(Constants.UTILITY_SERVICE_ENDPOINT_URL));
+				asycHelper.asychLogging(logVO);
+			}catch(Exception e){
+				logger.error("Error logging using UtilityService!!! "+e.getMessage());
+			}
+		}
 	}
 	
 }
