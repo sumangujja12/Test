@@ -9,8 +9,9 @@ import com.intuit.karate.Results;
 import com.intuit.karate.Runner;
 import com.it.multibrand.karate.utils.BaseFunctions;
 							
-@KarateOptions (features = "src/test/resources/com/it/multibrand/karate/affiliateoffers/GetAffiliateOffers.feature",tags= "~@invalidPromoCode")
-public class GetAffiliateOffers {
+@KarateOptions (features = {"src/test/resources/com/it/multibrand/karate/affiliateoffers/GetAffiliateOffers.feature",
+		"src/test/resources/com/it/multibrand/karate/posidbpmatch/PerformPosidBPMatch.feature"},tags= "~@invalidPromoCode")
+public class APIRunner {
 		BaseFunctions baseFunctions = new BaseFunctions();
 
 	   @Test
