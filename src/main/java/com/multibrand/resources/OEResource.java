@@ -1247,7 +1247,7 @@ public class OEResource extends BaseResource {
 	 * @throws Exception 
 	 */
 	@POST
-	@Path("/submitAnswerKba")
+	@Path("/submitKBAAnswers")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response submitAnswerKba(@Valid KbaAnswerRequest request) throws Exception {
