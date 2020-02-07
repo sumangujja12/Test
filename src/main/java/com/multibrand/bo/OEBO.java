@@ -5199,7 +5199,9 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 				}
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
+				if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
 				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
+				}
 			} else{
 				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
 				response.setStatusCode(STATUS_CODE_CONTINUE);
