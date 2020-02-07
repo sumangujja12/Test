@@ -119,7 +119,7 @@ public class OEBOTest {
 		try {
 			when(oeService.submitKBAAnswer(Matchers.any(KbaSubmitAnswerRequest.class)))
 					.thenReturn(kbaSubmitAnswerResponse);
-			response = oebo.submitanswerskba(request);
+			response = oebo.submitKBAAnswers(request);
 			Assert.assertEquals(response.getStatusCode(), Constants.STATUS_CODE_CONTINUE);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -151,7 +151,7 @@ public class OEBOTest {
 			when(serviceLocationDAO.updateServiceLocation(Matchers.any(UpdateServiceLocationRequest.class)))
 					.thenReturn("errorcode");
 			when(kbaDao.updateKbaDetails(Matchers.any(KBASubmitResultsDTO.class))).thenReturn(true);
-			response = oebo.submitanswerskba(request);
+			response = oebo.submitKBAAnswers(request);
 			Assert.assertEquals(response.getStatusCode(), Constants.STATUS_CODE_CONTINUE);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -183,7 +183,7 @@ public class OEBOTest {
 			when(serviceLocationDAO.updateServiceLocation(Matchers.any(UpdateServiceLocationRequest.class)))
 					.thenReturn("errorcode");
 			when(kbaDao.updateKbaDetails(Matchers.any(KBASubmitResultsDTO.class))).thenReturn(true);
-			response = oebo.submitanswerskba(request);
+			response = oebo.submitKBAAnswers(request);
 			Assert.assertEquals(response.getStatusCode(), Constants.STATUS_CODE_CONTINUE);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -223,7 +223,7 @@ public class OEBOTest {
 			when(serviceLocationDAO.updateServiceLocation(Matchers.any(UpdateServiceLocationRequest.class)))
 					.thenReturn("errorcode");
 			when(kbaDao.updateKbaDetails(Matchers.any(KBASubmitResultsDTO.class))).thenReturn(true);
-			response = oebo.submitanswerskba(request);
+			response = oebo.submitKBAAnswers(request);
 			Assert.assertEquals(response.getSsnVerifyDate(), "12/20/2013");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -292,7 +292,7 @@ public class OEBOTest {
 			when(serviceLocationDAO.updateServiceLocation(Matchers.any(UpdateServiceLocationRequest.class)))
 					.thenReturn("errorcode");
 			when(kbaDao.updateKbaDetails(Matchers.any(KBASubmitResultsDTO.class))).thenReturn(true);
-			response = oebo.submitanswerskba(request);
+			response = oebo.submitKBAAnswers(request);
 			Assert.assertEquals(response.getSsnVerifyDate(), "12/20/2013");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -324,7 +324,7 @@ public class OEBOTest {
 			when(serviceLocationDAO.updateServiceLocation(Matchers.any(UpdateServiceLocationRequest.class)))
 					.thenReturn("errorcode");
 			when(kbaDao.updateKbaDetails(Matchers.any(KBASubmitResultsDTO.class))).thenReturn(true);
-			response = oebo.submitanswerskba(request);
+			response = oebo.submitKBAAnswers(request);
 			Assert.assertEquals(response.getDrivingLicenceVerifyDate(), "2013-12-20");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -346,7 +346,7 @@ public class OEBOTest {
 
 		try {
 			when(oeService.submitKBAAnswer(Matchers.any(KbaSubmitAnswerRequest.class))).thenThrow(Exception.class);
-			response = oebo.submitanswerskba(request);
+			response = oebo.submitKBAAnswers(request);
 			Assert.assertEquals(response.getStatusCode(), Constants.STATUS_CODE_STOP);
 		} catch (Exception e) {
 			e.printStackTrace();
