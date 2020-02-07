@@ -5045,8 +5045,7 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 	kbaQuestionRequest.setBrandName(request.getBrandId());
 	kbaQuestionRequest.setChannel(CHANNEL);
 	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
-	String langCode = (StringUtils.equalsIgnoreCase(request.getLanguageCode(), EN_US)? E:S);
-	kbaQuestionRequest.setLanguageCode(langCode);
+	kbaQuestionRequest.setLanguageCode(request.getLanguageCode());
 	
 	kbaQuestionRequest.setFirstName(request.getFirstName());
 	kbaQuestionRequest.setLastName(request.getLastName());
@@ -5195,42 +5194,47 @@ public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) thr
 					
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
-					response.setErrorCode(POSID_FAIL);
-					response.setMessageCode(POSID_FAIL);
-					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
+					response.setMessageCode(POSID_FAIL_MAX);
+					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 				}
 				
-				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());				
+				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
+				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
 			} else{
 				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
 				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setErrorCode(POSID_FAIL);				
-				response.setMessageCode(POSID_FAIL);
-				response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
+				response.setMessageCode(POSID_FAIL_MAX);
+				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 			}
 		}else{
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
 			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
-			response.setErrorCode(POSID_FAIL);			
-			response.setMessageCode(POSID_FAIL);
-			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
+			response.setMessageCode(POSID_FAIL_MAX);
+			response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 		}
-		
+		//update kba_api
+		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
 	}catch (Exception e) {
 		response.setStatusCode(STATUS_CODE_STOP);
 		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);		
 		
 	}finally{
+		try{
 		if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
 			//update service location affiliate
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
              requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
+             //update RECENT_MSG_CD
+             requestData.setMessageCode(response.getMessageCode());
             this.updateServiceLocation(requestData);
-            //update kba_api
-            this.updateKbaDetails(kbaSubmitResultsDTO);
-		}
+        }
+	}catch(Exception e){
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setResultDescription("Java exception making Database call for submitKbaAnswers-updateServiceLocation with exception ::"+e.getMessage());
+		logger.error("Tracking Number ::"+kbaAnswerRequest.getTrackingId()+ "Exception while making submitKbaAnswers-updateserviceLocation call :: ", e);
+	}
 	}
 	return response;
 	}

@@ -4,7 +4,15 @@ public class KbaAnswerResponse extends GenericResponse{
 	
 	private String ssnVerifyDate;
 	private String drivingLicenceVerifyDate;
+	private String decision;
 	
+	
+	public String getDecision() {
+		return decision;
+	}
+	public void setDecision(String decision) {
+		this.decision = decision;
+	}
 	public String getSsnVerifyDate() {
 		return ssnVerifyDate;
 	}
