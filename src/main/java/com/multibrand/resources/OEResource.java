@@ -775,13 +775,9 @@ public class OEResource extends BaseResource {
 								+ request.getAffiliateId()
 								+ "::rendering response pojo :: " + response);
 								
-						if(StringUtils.equals(request.getAffiliateId(),"372529") &&
-								(validPosIdResponse.getBpMatchFlag()!=null && 
-								!validPosIdResponse.getBpMatchFlag().trim().isEmpty()) &&
-								
-								(validPosIdResponse.getStatusCode()!=null && 
-								validPosIdResponse.getStatusCode()!="00")){				
-							
+						if(StringUtils.equals(request.getAffiliateId(),"372529") 
+								&& StringUtils.isNotBlank(validPosIdResponse.getBpMatchFlag())							
+								&& !StringUtils.equals(validPosIdResponse.getStatusCode(), "00")){	
 							logger.info("inside sendPowerGeniusConfirmationEmail");
 							try{
 								oeBo.sendPowerGeniusConfirmationEmail(request.getEmail());
