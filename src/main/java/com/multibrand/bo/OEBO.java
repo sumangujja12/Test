@@ -5139,7 +5139,7 @@ public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
  * @param request
  * @return
  */
-public KbaAnswerResponse submitanswerskba(KbaAnswerRequest kbaAnswerRequest) throws Exception{
+public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) throws Exception{
 	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();

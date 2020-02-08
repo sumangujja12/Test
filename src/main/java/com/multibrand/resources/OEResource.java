@@ -3,6 +3,7 @@ package com.multibrand.resources;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
-import com.multibrand.domain.KbaQuestionResponse;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
@@ -62,6 +62,7 @@ import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.exception.OEException;
+import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
@@ -112,11 +113,10 @@ public class OEResource extends BaseResource {
 
 	@Resource(name = "webI18nMessageSource")
 	private WebI18nMessageSource msgSource;
-
 	
-	
-	
-	
+	@Autowired
+	private UtilityLoggerHelper utilityloggerHelper;
+		
 	/**
 	 * get product offer informations plus sdl content
 	 * @param productOfferRequest
@@ -260,172 +260,6 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	/**
-	 * 
-	 * This call determines whether a deposit will be required based on the
-	 * information provided, and provides details about the amount of the
-	 * deposit and reasons for deposit if one is required.
-	 * 
-	 * @param affiliateId
-	 * @param companyCode
-	 * @param brandId
-	 * @param locale
-	 * @param trackingId
-	 * @param firstName
-	 * @param lastName
-	 * @param tokenizedSSN
-	 * @param matchedBP
-	 * @param transactionType
-	 * @param esid
-	 * @param offerCode
-	 * @param mviDate
-	 * @param servStreetNum
-	 * @param servStreetName
-	 * @param servStreetAptNum
-	 * @param servCity
-	 * @param servState
-	 * @param servZipCode
-	 * @param billStreetNum
-	 * @param billStreetName
-	 * @param billStreetAptNum
-	 * @param billCity
-	 * @param billState
-	 * @param billZipCode
-	 * @param billPOBox
-	 * @param bpMatchFlag
-	 *            (BPSD or blank)
-	 * @return {@link com.multibrand.vo.response.NewCreditScoreResponse
-	 *         NewCreditScoreResponse}
-	 * 
-	 */
-
-	@POST
-	@Path("performCreditCheck")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(
-			@Valid CreditCheckRequest creditCheckRequest) throws OEException {
-		/* author Mayank Mishra */
-		Response response = null;
-		HashMap<String, Object> mandatoryParamList = new HashMap<String, Object>();
-
-		if (StringUtils.isBlank(creditCheckRequest.getBillStreetNum())
-				&& StringUtils.isBlank(creditCheckRequest.getBillStreetName())) {
-			// Either Billing PO box or Billing Street num/name should be
-			// supplied
-			mandatoryParamList.put("billPOBox",
-					creditCheckRequest.getBillPOBox());
-		} else {
-			mandatoryParamList.put("billStreetNum",
-					creditCheckRequest.getBillStreetNum());
-			mandatoryParamList.put("billStreetName",
-					creditCheckRequest.getBillStreetName());
-		}
-
-		if (StringUtils.isBlank(creditCheckRequest.getLanguageCode()))
-			creditCheckRequest
-					.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-
-		HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil
-				.checkMandatoryParam(mandatoryParamList);
-
-		String resultCode = (String) mandatoryParamCheckResponse
-				.get("resultCode");
-
-		logger.debug("inside performCreditCheck:: resultcode is :: "+resultCode);
-		
-		if (StringUtils.isNotBlank(creditCheckRequest.getBpMatchFlag())
-				&& creditCheckRequest.getBpMatchFlag().equalsIgnoreCase(BPSD))
-			creditCheckRequest.setMatchedBP(EMPTY);
-
-		if (StringUtils.isNotBlank(resultCode)
-				&& resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
-			NewCreditScoreResponse newCreditScoreResponse = oeBO
-					.performCreditCheck(oeRequestHandler
-							.createNewCreditScoreRequest(creditCheckRequest),
-							creditCheckRequest);
-			response = Response.status(Response.Status.OK)
-					.entity(newCreditScoreResponse).build();
-		} else {
-			String errorDesc = (String) mandatoryParamCheckResponse
-					.get("errorDesc");
-			if (StringUtils.isNotBlank(errorDesc)) {
-				response = CommonUtil.buildNotValidResponse(resultCode,
-						errorDesc);
-			} else {
-				response = CommonUtil.buildNotValidResponse(errorDesc,
-						Constants.STATUS_CODE_ASK);
-			}
-			logger.debug("Inside performCreditCheck:: errorDesc is " + errorDesc);
-		}
-		logger.debug("END ******* performCreditCheck API**********");
-
-		return response;
-	}
-
-	/**
-	 * 
-	 * This call locates the unique identifier needed to ensure electricity
-	 * service at the correct location, identifies any issues with the location
-	 * that might affect receiving service, and determines available dates to
-	 * start service for eligible locations.
-	 * 
-	 * @param affiliateId
-	 * @param companyCode
-	 *            (0121 - Reliant)
-	 * @param brandId
-	 *            (PW - Pennywise, CE - Cirro, blank)
-	 * @param locale
-	 *            (E - English or S - Spanish or null - defaulted to E)
-	 * @param trackingId
-	 * @param servStreetNum
-	 * @param servStreetName
-	 * @param servStreetAptNum
-	 * @param servZipCode
-	 *            (Zip or Zip+5)
-	 * @param transactionType
-	 *            (Should be either MVI or SWI)
-	 * @param bpMatchFlag
-	 *            (BPSD or blank)
-	 * @param tdspCodeCCS
-	 *            (D0001, D0002...)
-	 * @return {@link com.multibrand.vo.response.EsidInfoTdspCalendarResponse
-	 *         EsidInfoTdspCalendarResponse}
-	 */
-	@POST
-	@Path("getESIDAndCalendarDates")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDAndCalendarDates(
-			@Valid EsidCalendarRequest esidCalendarRequest) {
-		/* author Mayank Mishra */
-		Response response = null;
-
-		if (StringUtils.isBlank(esidCalendarRequest.getLanguageCode()))
-			esidCalendarRequest
-					.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-
-		EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
-				.getESIDAndCalendarDates(esidCalendarRequest.getCompanyCode(),
-						esidCalendarRequest.getAffiliateId(),
-						esidCalendarRequest.getBrandId(),
-						esidCalendarRequest.getServStreetNum(),
-						esidCalendarRequest.getServStreetName(),
-						esidCalendarRequest.getServStreetAptNum(),
-						esidCalendarRequest.getServZipCode(),
-						esidCalendarRequest.getTdspCodeCCS(),
-						esidCalendarRequest.getTransactionType(),
-						esidCalendarRequest.getTrackingId(),
-						esidCalendarRequest.getBpMatchFlag(),
-						esidCalendarRequest.getLanguageCode(),
-						esidCalendarRequest.getEsid(),
-						httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK)
-				.entity(esidInfoTdspResponse).build();
-
-		return response;
-	}
-
 	@POST
 	@Path("get/person/affiliate/id/{trackingNo}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
@@ -521,100 +355,8 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 
-	/**
-	 * 
-	 * This call takes all the relevant information and submits for service,
-	 * tagging those that require manual intervention within our system.
-	 * Successful enrollments will return a contract account number. (Does not
-	 * include deposit payment handling.)
-	 * 
-	 * <p>
-	 * The following properties of the enrollment are included in the request.
-	 * <ul>
-	 * <li><strong>affiliateId<strong>
-	 * <li><strong>companyCode<strong>
-	 * <li><strong>brandId<strong>
-	 * <li><strong>trackingId<strong>
-	 * <li><strong>languageCode<strong>
-	 * <li><strong>ebillFlag<strong>
-	 * <li><strong>bpMatchFlag<strong>
-	 * <li><strong>mviDate<strong>
-	 * <li><strong>transactionType<strong>
-	 * <li><strong>tdspCodeCCS<strong>
-	 * <li><strong>offerDate<strong>
-	 * <li><strong>offerTime<strong>
-	 * <li><strong>switchHoldFlag<strong>
-	 * <li><strong>mktPref<strong>
-	 * <li><strong>matchedBP<strong>
-	 * <li><strong>campaignCode<strong>
-	 * <li><strong>offerCode<strong>
-	 * <li><strong>promoCode<strong>
-	 * <li><strong>productPriceCode<strong>
-	 * <li><strong>incentiveCode<strong>
-	 * <li><strong>marketSegment<strong>
-	 * <li><strong>firstName<strong>
-	 * <li><strong>middleName<strong>
-	 * <li><strong>lastName<strong>
-	 * <li><strong>maidenName<strong>
-	 * <li><strong>dob<strong>
-	 * <li><strong>posidDLDate<strong>
-	 * <li><strong>posidSSNDate<strong>
-	 * <li><strong>email<strong>
-	 * <li><strong>phoneNum<strong>
-	 * <li><strong>tokenizedSSN<strong>
-	 * <li><strong>tokenizedTDL<strong>
-	 * <li><strong>billStreetName<strong>
-	 * <li><strong>billStreetNum<strong>
-	 * <li><strong>billStreetAptNum<strong>
-	 * <li><strong>billCity<strong>
-	 * <li><strong>billState<strong>
-	 * <li><strong>billZipCode<strong>
-	 * <li><strong>servStreetName<strong>
-	 * <li><strong>servStreetNum<strong>
-	 * <li><strong>servStreetAptNum<strong>
-	 * <li><strong>servCity<strong>
-	 * <li><strong>servState<strong>
-	 * <li><strong>servZipCode<strong>
-	 * <li><strong>creditSource<strong>
-	 * <li><strong>creditBucket<strong>
-	 * <li><strong>creditScore<strong>
-	 * <li><strong>depositAmount<strong>
-	 * <li><strong>creditFactors<strong>
-	 * <li><strong>esid<strong>
-	 * <li><strong>referrerId<strong>
-	 * <li><strong>preferredLanguage<strong>
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param enrollmentRequest
-	 *            instance of <code>EnrollmentRequest</code>.
-	 * 
-	 * @return Response the enrollment output (JSON format).
-	 * 
-	 * @throws OEException
-	 *             if the enrollment call contains any error or failed.
-	 * 
-	 * 
-	 * @author Jenith
-	 */
-	@POST
-	@Path("submitEnrollment")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(@Valid EnrollmentRequest enrollmentRequest)
-			throws OEException {
-		Response response = null;
-
-		// Start Submit enrollment call
-		EnrollmentResponse enrollmentResponse = oeBO
-				.submitEnrollment(enrollmentRequest);
-
-		// Build Submit enrollment response
-		response = Response.status(Response.Status.OK)
-				.entity(enrollmentResponse).build();
-
-		return response;
-	}
+	
+	
 
 	/**
 	 * Checks if a Pending request exists for the same Service address.
@@ -673,295 +415,8 @@ public class OEResource extends BaseResource {
 
 		response = Response.status(Response.Status.OK)
 				.entity(permitCheckResponse).build();
-
 		return response;
 	}
-
-	// START ONLINE AFFILIATES PROJECT - JSINGH1
-	// @SuppressWarnings("unchecked")
-	/**
-	 * This call performs online verification of prospect's identification and
-	 * checks for pre-existing matching customer information that may affect
-	 * handling of this enrollment request.
-	 * <ul>
-	 * <li><strong> lastName<strong>
-	 * <li><strong> firstName<strong>
-	 * <li><strong> middleName <strong>
-	 * <li><strong> dob<strong>
-	 * <li><strong> tdl<strong>
-	 * <li><strong> ssn<strong>
-	 * <li><strong> maidenName<strong>
-	 * <li><strong> companyCode <strong>
-	 * <li><strong> brandId <strong>
-	 * <li><strong> affiliateId <strong>
-	 * <li><strong>trackingId<strong>
-	 * <li><strong> email <strong>
-	 * <li><strong> languageCode<strong>
-	 * <li><strong> phoneNumber <strong>
-	 * <li><strong> mktPref<strong>
-	 * <li><strong> transactionType <strong>
-	 * <li><strong> servStreetNum <strong>
-	 * <li><strong> servStreetName <strong>
-	 * <li><strong> servStreetAptNum <strong>
-	 * <li><strong> servCity <strong>
-	 * <li><strong> servState <strong>
-	 * <li><strong> servZipCode<strong>
-	 * <li><strong> billStreetNum <strong>
-	 * <li><strong> billStreetName <strong>
-	 * <li><strong> billStreetAptNum <strong>
-	 * <li><strong> billCity <strong>
-	 * <li><strong> billState <strong>
-	 * <li><strong> billZipCode <strong>
-	 * <li><strong> billPOBox<strong>
-	 * </ul>
-	 * 
-	 * @return {@link com.multibrand.vo.response.TokenizedResponse
-	 *         TokenizedResponse},
-	 *         {@link com.multibrand.vo.response.PerformPosIdandBpMatchResponse
-	 *         PerformPosIdandBpMatchResponse}
-	 */
-	@POST
-	@Path("performPosidAndBpMatch")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performPosidAndBpMatch(
-			@Valid PerformPosIdAndBpMatchRequest performPosIdBpRequest) {
-		
-		/* author Jasveen Singh */
-		logger.info(" START ******* performPosidAndBpMatch API**********");
-
-		Response response = null;
-		String dobForPosId=null;
-		HashMap<String, Object> mandatoryParamList = null;
-		HashMap<String, Object> mandatoryParamCheckResponse = null;
-		String resultCode = null;
-		String errorDesc = null;
-		boolean isValidAge = false;
-		AgentDetailsResponse agentDetailsResponse;
-		OEBO oeBo = null;
-		TokenizedResponse tokenResponse = null;
-		Map<String, Object> getPosIdTokenResponse = null;
-		OESignupDTO oESignupDTO = new OESignupDTO();
-		// Start Validating DOB- Jsingh1
-		//Checking if DOB lies in Valid age Range (18-100)
-		try{
-			logger.info("inside performPosidAndBpMatch:: formatting DOB to Posid acceptable format");
-			
-			dobForPosId=CommonUtil.formatDateForNrgws(performPosIdBpRequest.getDob());
-			performPosIdBpRequest.setDobForPosId(dobForPosId);
-			
-			logger.info("inside performPosidAndBpMatch:: dob for posid call is:: "+dobForPosId);
-			
-			mandatoryParamList = new HashMap<String, Object>();
-
-			if (StringUtils.isBlank(performPosIdBpRequest.getBillStreetNum())
-					&& StringUtils.isBlank(performPosIdBpRequest.getBillStreetName())) {
-				// Either Billing PO box or Billing Street num/name should be supplied
-				mandatoryParamList.put("billPOBox",
-						performPosIdBpRequest.getBillPOBox());
-			} else {
-				mandatoryParamList.put("billStreetNum",
-						performPosIdBpRequest.getBillStreetNum());
-				mandatoryParamList.put("billStreetName",
-						performPosIdBpRequest.getBillStreetName());
-			}
-			if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,performPosIdBpRequest.getAffiliateId())){
-				mandatoryParamList.put("agentId",
-						performPosIdBpRequest.getAgentID());
-			}
-			mandatoryParamCheckResponse = CommonUtil
-			.checkMandatoryParam(mandatoryParamList);
-			resultCode = (String) mandatoryParamCheckResponse
-			.get("resultCode");
-
-			if (StringUtils.isNotBlank(resultCode)
-			&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
-
-				errorDesc = (String) mandatoryParamCheckResponse
-				.get("errorDesc");
-				
-				if (StringUtils.isNotBlank(errorDesc)) {
-					response = CommonUtil.buildNotValidResponse(resultCode,
-					errorDesc);
-				} else {
-					response  = CommonUtil.buildNotValidResponse(errorDesc,
-					Constants.STATUS_CODE_ASK);
-				}
-				logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
-			
-
-				return response;
-
-				
-			}
-			
-			isValidAge=validationBO.getValidAge(dobForPosId);
-			if( !isValidAge )
-			{
-				logger.info("inside performPosidAndBpMatch::Invalid Age: Prospect must be at least 18 years old but not "
-						+ "over 100 years old or invalid date format");
-				PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(performPosIdBpRequest.getAffiliateId(),
-						performPosIdBpRequest.getTrackingId());				
-				
-				response = Response.status(200).entity(validPosIdResponse)
-						.build();
-				return response;
-			}
-			//START : OE :Sprint61 :US21009 :Kdeshmu1
-			if(StringUtils.isNotBlank(performPosIdBpRequest.getAgentID())){
-				agentDetailsResponse=validationBO.validateAgentID(performPosIdBpRequest.getAgentID());
-				if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
-				{
-					logger.info("Agent Id is not valid");
-					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(performPosIdBpRequest.getAgentID(),
-							performPosIdBpRequest.getTrackingId());				
-					response = Response.status(200).entity(validPosIdResponse)
-							.build(); 
-					return response;
-				}else{
-					oESignupDTO.setAgentID(performPosIdBpRequest.getAgentID());
-					oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
-					oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
-					oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
-					oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
-					oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
-				}
-			}//END : OE :Sprint61 :US21009 :Kdeshmu1  
-			
-		}
-		catch(Exception e)
-		{
-			logger.info("inside performPosidAndBpMatch :: unable to validate age or Agent ID for the prospect.", e);
-		}				
-		//End Validating DOB- Jsingh1
-		
-		oeBo = new OEBO();
-		tokenResponse = new TokenizedResponse();
-		getPosIdTokenResponse = new HashMap<String, Object>();
-		
-		// Changing language code to suitable locale
-		performPosIdBpRequest.setLanguageCode(CommonUtil
-				.localeCode(performPosIdBpRequest.getLanguageCode()));
-		logger.info("inside validatePosId::after local change languageCode langauge is :: "
-				+ performPosIdBpRequest.getLanguageCode());
-		
-		getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
-				performPosIdBpRequest.getTdl(), performPosIdBpRequest.getSsn(),
-				performPosIdBpRequest.getAffiliateId(),
-				performPosIdBpRequest.getTrackingId());
-		
-		if (getPosIdTokenResponse != null) {
-			tokenResponse = (TokenizedResponse) getPosIdTokenResponse
-					.get("tokenResponse");
-			performPosIdBpRequest.setTokenTDL((String) getPosIdTokenResponse
-					.get("tokenTdl"));
-			performPosIdBpRequest.setTokenSSN((String) getPosIdTokenResponse
-					.get("tokenSSN"));
-
-			if (tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
-			&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
-				logger.info("inside performPosidAndBpMatch:: affiliate Id : "
-						+ performPosIdBpRequest.getAffiliateId()
-						+ ":: got token back.");
-				if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
-					
-					PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-							.validatePosId(performPosIdBpRequest,oESignupDTO );
-					response = Response.status(200).entity(validPosIdResponse)
-							.build();
-					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
-							+ performPosIdBpRequest.getAffiliateId()
-							+ "::rendering response pojo :: " + response);
-					
-					// Start : Validate for Power Genius Online Affiliates by KB
-					logger.info("affiliate Id : "
-					+ performPosIdBpRequest.getAffiliateId()
-					+ "::validPosIdResponse.getBpMatchFlag() : " 
-					+ validPosIdResponse.getBpMatchFlag() 
-					+ "::validPosIdResponse.getStatusCode() :"
-					+ validPosIdResponse.getStatusCode());
-					
-					logger.info("Condition 1 : "  + ((performPosIdBpRequest.getAffiliateId()!=null && 
-							(performPosIdBpRequest.getAffiliateId().trim() == "372529" ||
-							performPosIdBpRequest.getAffiliateId().trim().equals("372529")))));
-					
-					logger.info("Condition 2 : "  + (validPosIdResponse.getBpMatchFlag()!=null &&
-							!validPosIdResponse.getBpMatchFlag().trim().isEmpty()));
-					
-					logger.info("Condition 3 : "  + (validPosIdResponse.getStatusCode() !=null && 
-							validPosIdResponse.getStatusCode()!="00"));
-					
-					logger.info("Condition : "  + ((performPosIdBpRequest.getAffiliateId()!=null && 
-							(performPosIdBpRequest.getAffiliateId().trim() == "372529" ||
-							performPosIdBpRequest.getAffiliateId().trim().equals("372529"))) &&
-									
-							(validPosIdResponse.getBpMatchFlag()!=null && 
-							!validPosIdResponse.getBpMatchFlag().trim().isEmpty()) &&
-									
-							(validPosIdResponse.getStatusCode() !=null && 
-							validPosIdResponse.getStatusCode()!="00")));
-							
-					if(
-							(performPosIdBpRequest.getAffiliateId()!=null && 
-							(performPosIdBpRequest.getAffiliateId().trim() == "372529" ||
-							performPosIdBpRequest.getAffiliateId().trim().equals("372529"))) &&
-							
-							(validPosIdResponse.getBpMatchFlag()!=null && 
-							!validPosIdResponse.getBpMatchFlag().trim().isEmpty()) &&
-							
-							(validPosIdResponse.getStatusCode()!=null && 
-							validPosIdResponse.getStatusCode()!="00")){				
-						
-						logger.info("inside sendPowerGeniusConfirmationEmail");
-						try{
-							oeBo.sendPowerGeniusConfirmationEmail(performPosIdBpRequest.getEmail());
-						}catch(Exception e){
-							logger.error("inside performPosidAndBpMatch :: email sent failed for Power genius Online affiliates.", e);							
-						}
-					}
-					// End : Validate for Power Genius Online Affiliates by KB
-				}
-
-				else { // returning exception and error as token server is down
-					logger.info("inside performPosidAndBpMatch:: Token Server Down ");
-					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-					tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
-					tokenResponse.setMessageText(msgSource
-							.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
-					tokenResponse
-							.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-					response = Response.status(200).entity(tokenResponse)
-							.build();
-					return response;
-				}
-			} else if (tokenResponse.getResultCode().equals(
-			Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
-
-				response = Response.status(200).entity(tokenResponse).build();
-				return response;
-			} else {
-				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-				tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
-				tokenResponse.setMessageText(msgSource
-						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
-				tokenResponse
-						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-				response = Response.status(200).entity(tokenResponse).build();
-				return response;
-			}
-		} else {
-			tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-			tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
-			tokenResponse.setMessageText(msgSource
-					.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
-			tokenResponse
-					.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			response = Response.status(200).entity(tokenResponse).build();
-			return response;
-		}
-		return response;
-	}
-	// END ONLINE AFFILIATES PROJECT - JSINGH1
 
 	/**
 	 * After the user has tokenized their payment information by going to the
@@ -1059,19 +514,7 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
-	@POST
-	@Path("getAffiliateOffers")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAffiliateOffers(
-			@Valid AffiliateOfferRequest request) {
-		Response response = null;
-		AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,
-				httpRequest.getSession(true).getId());
-		response = Response.status(Response.Status.OK).entity(offerResponse).build();
-		return response;
-	}
-	
+		
 	/**
 	 * Alternate Channel : Sprint 13 :US 11783 
 	 * @author KDeshmu1
@@ -1258,38 +701,432 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
-	/**
-	 * Start: OE : Sprint3 : 14064 - Create New KBA Question API :Kdeshmu1
-	 * @param getKBAQuestionsRequest
-	 * @return
-	 */
+	/*****************************************************************************************************************************************************************
+	 ******************************************************************************** SALES APIs BELOW ****************************************************************
+	 *****************************************************************************************************************************************************************/
 	@POST
-    @Path("getKBAQuestions")
-    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-    @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest getKBAQuestionsRequest) {
-           Response response;
-           GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestions(getKBAQuestionsRequest);
-           response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
-           return response;
-    }
-	
-	/**
-	 * Start | 14065 | Sprint 3 -Create New Submit KBA Answers API  | Asingh | 01/28/2020
-	 * @author 
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	@POST
-	@Path("/submitKBAAnswers")
+	@Path(API_GET_AFFILIATE_OFFERS)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitAnswerKba(@Valid KbaAnswerRequest request) throws Exception {
+	public Response getAffiliateOffers(	@Valid AffiliateOfferRequest request) {
+		Response response=null;
+		try{
+			AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,	httpRequest.getSession(true).getId());
+			response = Response.status(Response.Status.OK).entity(offerResponse).build();
+   		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   		}finally{
+   			// Not logging Offer API calls - vsood
+   			//utilityloggerHelper.logSalesAPITransaction(API_GET_AFFILIATE_OFFERS, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
+       return response;
+	}
+	
+	@POST
+	@Path(API_PERFORM_POSID_AND_BPMATCH)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response performPosidAndBpMatch(
+			@Valid PerformPosIdAndBpMatchRequest request) {
+		long startTime = CommonUtil.getStartTime();
 		Response response = null;
-		KbaAnswerResponse kbaAnsweresponse = oeBO.submitanswerskba(request);
-		response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
+		String dobForPosId=null;
+		HashMap<String, Object> mandatoryParamList = null;
+		HashMap<String, Object> mandatoryParamCheckResponse = null;
+		String resultCode = null;
+		String errorDesc = null;
+		boolean isValidAge = false;
+		AgentDetailsResponse agentDetailsResponse;
+		OEBO oeBo = null;
+		TokenizedResponse tokenResponse = null;
+		Map<String, Object> getPosIdTokenResponse = null;
+		OESignupDTO oESignupDTO = new OESignupDTO();
+		// Start Validating DOB- Jsingh1
+		//Checking if DOB lies in Valid age Range (18-100)
+		try{
+			try{
+				logger.info("inside performPosidAndBpMatch:: formatting DOB to Posid acceptable format");
+				
+				dobForPosId=CommonUtil.formatDateForNrgws(request.getDob());
+				request.setDobForPosId(dobForPosId);
+				
+				logger.info("inside performPosidAndBpMatch:: dob for posid call is:: "+dobForPosId);
+				
+				mandatoryParamList = new HashMap<String, Object>();
+	
+				if (StringUtils.isBlank(request.getBillStreetNum())
+						&& StringUtils.isBlank(request.getBillStreetName())) {
+					// Either Billing PO box or Billing Street num/name should be supplied
+					mandatoryParamList.put("billPOBox",
+							request.getBillPOBox());
+				} else {
+					mandatoryParamList.put("billStreetNum",
+							request.getBillStreetNum());
+					mandatoryParamList.put("billStreetName",
+							request.getBillStreetName());
+				}
+				if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,request.getAffiliateId())){
+					mandatoryParamList.put("agentId",
+							request.getAgentID());
+				}
+				mandatoryParamCheckResponse = CommonUtil
+				.checkMandatoryParam(mandatoryParamList);
+				resultCode = (String) mandatoryParamCheckResponse
+				.get("resultCode");
+	
+				if (StringUtils.isNotBlank(resultCode)
+				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+	
+					errorDesc = (String) mandatoryParamCheckResponse
+					.get("errorDesc");
+					
+					if (StringUtils.isNotBlank(errorDesc)) {
+						response = CommonUtil.buildNotValidResponse(resultCode,
+						errorDesc);
+					} else {
+						response  = CommonUtil.buildNotValidResponse(errorDesc,
+						Constants.STATUS_CODE_ASK);
+					}
+					logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
+				
+					return response;
+					
+				}
+				
+				isValidAge=validationBO.getValidAge(dobForPosId);
+				if( !isValidAge )
+				{
+					logger.info("inside performPosidAndBpMatch::Invalid Age: Prospect must be at least 18 years old but not "
+							+ "over 100 years old or invalid date format");
+					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(request.getAffiliateId(),
+							request.getTrackingId());				
+					
+					response = Response.status(200).entity(validPosIdResponse)
+							.build();
+					return response;
+				}
+				//START : OE :Sprint61 :US21009 :Kdeshmu1
+				if(StringUtils.isNotBlank(request.getAgentID())){
+					agentDetailsResponse=validationBO.validateAgentID(request.getAgentID());
+					if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
+					{
+						logger.info("Agent Id is not valid");
+						PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(request.getAgentID(),
+								request.getTrackingId());				
+						
+						response = Response.status(200).entity(validPosIdResponse)
+								.build();
+						return response;
+					}else{
+						oESignupDTO.setAgentID(request.getAgentID());
+						oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
+						oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
+						oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
+						oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
+						oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
+					}
+				}//END : OE :Sprint61 :US21009 :Kdeshmu1  
+				
+			}
+			catch(Exception e)
+			{
+				logger.info("inside performPosidAndBpMatch :: unable to validate age or Agent ID for the prospect.", e);
+			}				
+			//End Validating DOB- Jsingh1
+			
+			oeBo = new OEBO();
+			tokenResponse = new TokenizedResponse();
+			getPosIdTokenResponse = new HashMap<String, Object>();
+			
+			// Changing language code to suitable locale
+			request.setLanguageCode(CommonUtil
+					.localeCode(request.getLanguageCode()));
+			logger.info("inside validatePosId::after local change languageCode langauge is :: "
+					+ request.getLanguageCode());
+			
+			getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
+					request.getTdl(), request.getSsn(),
+					request.getAffiliateId(),
+					request.getTrackingId());
+			
+			if (getPosIdTokenResponse != null) {
+				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
+						.get("tokenResponse");
+				request.setTokenTDL((String) getPosIdTokenResponse
+						.get("tokenTdl"));
+				request.setTokenSSN((String) getPosIdTokenResponse
+						.get("tokenSSN"));
+	
+				if (tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
+				&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
+					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+							+ request.getAffiliateId()
+							+ ":: got token back.");
+					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
+						
+						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
+								.validatePosId(request,oESignupDTO );
+						response = Response.status(200).entity(validPosIdResponse)
+								.build();
+						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+								+ request.getAffiliateId()
+								+ "::rendering response pojo :: " + response);
+						
+						// Start : Validate for Power Genius Online Affiliates by KB
+						logger.info("affiliate Id : "
+						+ request.getAffiliateId()
+						+ "::validPosIdResponse.getBpMatchFlag() : " 
+						+ validPosIdResponse.getBpMatchFlag() 
+						+ "::validPosIdResponse.getStatusCode() :"
+						+ validPosIdResponse.getStatusCode());
+						
+						logger.info("Condition 1 : "  + ((request.getAffiliateId()!=null && 
+								(request.getAffiliateId().trim() == "372529" ||
+								request.getAffiliateId().trim().equals("372529")))));
+						
+						logger.info("Condition 2 : "  + (validPosIdResponse.getBpMatchFlag()!=null &&
+								!validPosIdResponse.getBpMatchFlag().trim().isEmpty()));
+						
+						logger.info("Condition 3 : "  + (validPosIdResponse.getStatusCode() !=null && 
+								validPosIdResponse.getStatusCode()!="00"));
+						
+						logger.info("Condition : "  + ((request.getAffiliateId()!=null && 
+								(request.getAffiliateId().trim() == "372529" ||
+								request.getAffiliateId().trim().equals("372529"))) &&
+										
+								(validPosIdResponse.getBpMatchFlag()!=null && 
+								!validPosIdResponse.getBpMatchFlag().trim().isEmpty()) &&
+										
+								(validPosIdResponse.getStatusCode() !=null && 
+								validPosIdResponse.getStatusCode()!="00")));
+								
+						if(
+								(request.getAffiliateId()!=null && 
+								(request.getAffiliateId().trim() == "372529" ||
+								request.getAffiliateId().trim().equals("372529"))) &&
+								
+								(validPosIdResponse.getBpMatchFlag()!=null && 
+								!validPosIdResponse.getBpMatchFlag().trim().isEmpty()) &&
+								
+								(validPosIdResponse.getStatusCode()!=null && 
+								validPosIdResponse.getStatusCode()!="00")){				
+							
+							logger.info("inside sendPowerGeniusConfirmationEmail");
+							try{
+								oeBo.sendPowerGeniusConfirmationEmail(request.getEmail());
+							}catch(Exception e){
+								logger.error("inside performPosidAndBpMatch :: email sent failed for Power genius Online affiliates.", e);							
+							}
+						}
+						// End : Validate for Power Genius Online Affiliates by KB
+					}
+	
+					else { // returning exception and error as token server is down
+						logger.info("inside performPosidAndBpMatch:: Token Server Down ");
+						tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+						tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+						tokenResponse.setMessageText(msgSource
+								.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+						tokenResponse
+								.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+						response = Response.status(200).entity(tokenResponse)
+								.build();
+						return response;
+					}
+				} else if (tokenResponse.getResultCode().equals(
+				Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
+	
+					response = Response.status(200).entity(tokenResponse).build();
+					return response;
+				} else {
+					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+					tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+					tokenResponse.setMessageText(msgSource
+							.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+					tokenResponse
+							.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+					response = Response.status(200).entity(tokenResponse).build();
+					return response;
+				}
+			} else {
+				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+				tokenResponse.setMessageText(msgSource
+						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+				tokenResponse
+						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+				response = Response.status(200).entity(tokenResponse).build();
+				return response;
+			}
+		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_PERFORM_POSID_AND_BPMATCH, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
+       return response;
+	}
+	
+	@POST
+	@Path(API_GET_ESID_AND_CALENDAR_DATES)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getESIDAndCalendarDates(
+			@Valid EsidCalendarRequest request) {
+		long startTime = CommonUtil.getStartTime();
+		Response response = null;
+		try{
+			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
+				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
+					.getESIDAndCalendarDates(request.getCompanyCode(),
+							request.getAffiliateId(),
+							request.getBrandId(),
+							request.getServStreetNum(),
+							request.getServStreetName(),
+							request.getServStreetAptNum(),
+							request.getServZipCode(),
+							request.getTdspCodeCCS(),
+							request.getTransactionType(),
+							request.getTrackingId(),
+							request.getBpMatchFlag(),
+							request.getLanguageCode(),
+							request.getEsid(),
+							httpRequest.getSession(true).getId());
+				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
+		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_GET_ESID_AND_CALENDAR_DATES, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
+       return response;
+	}
+	
+	@POST
+	@Path(API_PERFORM_CREDIT_CHECK)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response performCreditCheck(
+			@Valid CreditCheckRequest request) throws OEException {
+		long startTime = CommonUtil.getStartTime();
+		Response response = null;
+		try{
+			HashMap<String, Object> mandatoryParamList = new HashMap<String, Object>();
+	
+			if (StringUtils.isBlank(request.getBillStreetNum())
+					&& StringUtils.isBlank(request.getBillStreetName())) {
+				// Either Billing PO box or Billing Street num/name should be
+				// supplied
+				mandatoryParamList.put("billPOBox",
+						request.getBillPOBox());
+			} else {
+				mandatoryParamList.put("billStreetNum",
+						request.getBillStreetNum());
+				mandatoryParamList.put("billStreetName",
+						request.getBillStreetName());
+			}
+	
+			if (StringUtils.isBlank(request.getLanguageCode()))
+				request
+						.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
+	
+			HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil
+					.checkMandatoryParam(mandatoryParamList);
+	
+			String resultCode = (String) mandatoryParamCheckResponse
+					.get("resultCode");
+	
+			logger.debug("inside performCreditCheck:: resultcode is :: "+resultCode);
+			
+			if (StringUtils.isNotBlank(request.getBpMatchFlag())
+					&& request.getBpMatchFlag().equalsIgnoreCase(BPSD))
+				request.setMatchedBP(EMPTY);
+	
+			if (StringUtils.isNotBlank(resultCode)
+					&& resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+				NewCreditScoreResponse newCreditScoreResponse = oeBO
+						.performCreditCheck(oeRequestHandler
+								.createNewCreditScoreRequest(request),
+								request);
+				response = Response.status(Response.Status.OK)
+						.entity(newCreditScoreResponse).build();
+			} else {
+				String errorDesc = (String) mandatoryParamCheckResponse
+						.get("errorDesc");
+				if (StringUtils.isNotBlank(errorDesc)) {
+					response = CommonUtil.buildNotValidResponse(resultCode,
+							errorDesc);
+				} else {
+					response = CommonUtil.buildNotValidResponse(errorDesc,
+							Constants.STATUS_CODE_ASK);
+				}
+				logger.debug("Inside performCreditCheck:: errorDesc is " + errorDesc);
+			}
+			logger.debug("END ******* performCreditCheck API**********");
+		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_PERFORM_CREDIT_CHECK, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
 		return response;
 	}
+		
+	@POST
+	@Path(API_SUBMIT_ENROLLMENT)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitEnrollment(@Valid EnrollmentRequest request)
+			throws OEException {
+		long startTime = CommonUtil.getStartTime();
+		Response response = null;
+	    try{
+	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
+	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
+	    } catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_SUBMIT_ENROLLMENT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
+       return response;
+	}
+	
+	@POST
+    @Path(API_GET_KBA_QUESTION)
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest request) {
+		long startTime = CommonUtil.getStartTime();
+		Response response=null;
+       try{
+        	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestions(request);
+            response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
+   		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTION, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
+       return response;
+    }
+	
+	@POST
+	@Path(API_SUBMIT_KBA_ANSWERS)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitKBAAnswers(@Valid KbaAnswerRequest request) throws Exception {
+		long startTime = CommonUtil.getStartTime();
+		Response response=null;
+		
+		try{
+			KbaAnswerResponse kbaAnsweresponse = oeBO.submitKBAAnswers(request);
+			response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
+   		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_SUBMIT_KBA_ANSWERS, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
+       return response;
+	}
+	
+	/*****************************************************************************************************************************************************************
+	 ******************************************************************************** SALES APIs ABOVE ****************************************************************
+	 *****************************************************************************************************************************************************************/
 
 }

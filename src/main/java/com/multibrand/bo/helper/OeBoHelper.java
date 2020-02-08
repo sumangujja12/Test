@@ -3,6 +3,7 @@ package com.multibrand.bo.helper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -1110,5 +1111,13 @@ public class OeBoHelper extends BaseBO {
 		return isEmailSent;
 	}
 	// End : Validate for Power Genius Online Affiliates by KB
-		
+	
+	public String getTechnicalErrorMessage(String languageCode) {
+		Locale localeObj = null;
+		if (StringUtils.equalsIgnoreCase(languageCode, S) || StringUtils.equalsIgnoreCase(languageCode, ES))
+			localeObj = new Locale("es", "US");
+		else
+			localeObj = new Locale("en", "US");
+		return msgSource.getMessage(MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj);
+	}
 }
