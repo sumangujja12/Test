@@ -774,40 +774,8 @@ public class OEResource extends BaseResource {
 						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
 								+ request.getAffiliateId()
 								+ "::rendering response pojo :: " + response);
-						
-						// Start : Validate for Power Genius Online Affiliates by KB
-						logger.info("affiliate Id : "
-						+ request.getAffiliateId()
-						+ "::validPosIdResponse.getBpMatchFlag() : " 
-						+ validPosIdResponse.getBpMatchFlag() 
-						+ "::validPosIdResponse.getStatusCode() :"
-						+ validPosIdResponse.getStatusCode());
-						
-						logger.info("Condition 1 : "  + ((request.getAffiliateId()!=null && 
-								(request.getAffiliateId().trim() == "372529" ||
-								request.getAffiliateId().trim().equals("372529")))));
-						
-						logger.info("Condition 2 : "  + (validPosIdResponse.getBpMatchFlag()!=null &&
-								!validPosIdResponse.getBpMatchFlag().trim().isEmpty()));
-						
-						logger.info("Condition 3 : "  + (validPosIdResponse.getStatusCode() !=null && 
-								validPosIdResponse.getStatusCode()!="00"));
-						
-						logger.info("Condition : "  + ((request.getAffiliateId()!=null && 
-								(request.getAffiliateId().trim() == "372529" ||
-								request.getAffiliateId().trim().equals("372529"))) &&
-										
-								(validPosIdResponse.getBpMatchFlag()!=null && 
-								!validPosIdResponse.getBpMatchFlag().trim().isEmpty()) &&
-										
-								(validPosIdResponse.getStatusCode() !=null && 
-								validPosIdResponse.getStatusCode()!="00")));
 								
-						if(
-								(request.getAffiliateId()!=null && 
-								(request.getAffiliateId().trim() == "372529" ||
-								request.getAffiliateId().trim().equals("372529"))) &&
-								
+						if(StringUtils.equals(request.getAffiliateId(),"372529") &&
 								(validPosIdResponse.getBpMatchFlag()!=null && 
 								!validPosIdResponse.getBpMatchFlag().trim().isEmpty()) &&
 								
