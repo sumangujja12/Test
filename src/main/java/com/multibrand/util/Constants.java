@@ -1335,13 +1335,23 @@ public interface Constants {
     public static final String TOGGLZ_FEATURE_NEW_POSID_CALL="salesapi.newposid.flag";
  
     //***************** SALES APIs *************************
-    public static final String API_GET_AFFILIATE_OFFERS = "getAffiliateOffers";
-    public static final String API_PERFORM_POSID_AND_BPMATCH= "performPosidAndBpMatch";
-    public static final String API_GET_ESID_AND_CALENDAR_DATES= "getESIDAndCalendarDates";
-    public static final String API_PERFORM_CREDIT_CHECK= "performCreditCheck";
-    public static final String API_SUBMIT_UCC_DATA= "submitUCCData";
-    public static final String API_SUBMIT_ENROLLMENT= "submitEnrollment";
-    public static final String API_GET_KBA_QUESTION = "getKBAQuestions";
-    public static final String API_SUBMIT_KBA_ANSWERS = "submitKBAAnswers";
+    //Legacy Sales APIs - Currently being used by Affiliates - To be deprecated
+    public static final String API_LEGACY_GET_AFFILIATE_OFFERS = "getAffiliateOffers";
+    public static final String API_LEGACY_PERFORM_POSID_AND_BPMATCH= "performPosidAndBpMatch";
+    public static final String API_LEGACY_GET_ESID_AND_CALENDAR_DATES= "getESIDAndCalendarDates";
+    public static final String API_LEGACY_PERFORM_CREDIT_CHECK= "performCreditCheck";
+    public static final String API_LEGACY_SUBMIT_UCC_DATA= "submitUCCData";
+    public static final String API_LEGACY_SUBMIT_ENROLLMENT= "submitEnrollment";
+    
+    //New Sales APIs - To be used by all channels and brands
+    public static final String API_OFFERS = "offers";
+    public static final String API_BPMATCH= "bpmatch";
+    public static final String API_POSID= "posid";
+    public static final String API_AVAILABLE_DATES= "available-dates";
+    public static final String API_CHECK_CREDIT= "check-credit";
+    public static final String API_CREDIT_DATA= "credit-data";
+    public static final String API_SUBMIT_ENROLLMENT= "enrollment";
+    public static final String API_GET_KBA_QUESTIONS = "kba-questions";
+    public static final String API_KBA_RESULT = "kba-result";
     
 }
