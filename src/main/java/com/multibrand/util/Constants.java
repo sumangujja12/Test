@@ -1328,4 +1328,8 @@ public interface Constants {
     public static final String API_GET_KBA_QUESTIONS = "kba-questions";
     public static final String API_KBA_RESULT = "kba-result";
     
+    //Submit new KBA Answers API
+    public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
+    public static final String RETRY_NOT_ALLOWED_TXT = "Retry of KBA Answers is not allowed on same transactionKey. Please rerun the getKBAQuestions API to generate a new transactionKey";
+    
 }

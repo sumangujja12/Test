@@ -5200,6 +5200,10 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
 				if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
+					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
+						response.setErrorCode(RETRY_NOT_ALLOWED);
+						response.setErrorDescription(RETRY_NOT_ALLOWED_TXT);
+					}
 				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
 				}
 			} else{
