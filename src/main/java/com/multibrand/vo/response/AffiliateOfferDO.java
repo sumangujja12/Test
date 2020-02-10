@@ -35,6 +35,14 @@ public class AffiliateOfferDO {
 	private String usageCredit;
 	private String creditMaxUsageThreshold;
 	private String creditMinUsageThreshold;
+	private String cmsProductTagline;
+	private String cmsProductMarketingDetails;
+	private String cmsGreenFlag ;
+	private String cmsSmartMeterFlag;
+	private String cmsBannerTitle;
+	private String cmsBannerColor;
+	private String cmsSaveOffer;
+	
 
 	public String getSapPlanName() {
 		return sapPlanName;
@@ -238,7 +246,48 @@ public class AffiliateOfferDO {
 	public void setCreditMinUsageThreshold(String creditMinUsageThreshold) {
 		this.creditMinUsageThreshold = creditMinUsageThreshold;
 	}
-
+	public String getCmsProductTagline() {
+		return cmsProductTagline;
+	}
+	public void setCmsProductTagline(String cmsProductTagline) {
+		this.cmsProductTagline = cmsProductTagline;
+	}
+	public String getCmsProductMarketingDetails() {
+		return cmsProductMarketingDetails;
+	}
+	public void setCmsProductMarketingDetails(String cmsProductMarketingDetails) {
+		this.cmsProductMarketingDetails = cmsProductMarketingDetails;
+	}
+	public String getCmsGreenFlag() {
+		return cmsGreenFlag;
+	}
+	public void setCmsGreenFlag(String cmsGreenFlag) {
+		this.cmsGreenFlag = cmsGreenFlag;
+	}
+	public String getCmsSmartMeterFlag() {
+		return cmsSmartMeterFlag;
+	}
+	public void setCmsSmartMeterFlag(String cmsSmartMeterFlag) {
+		this.cmsSmartMeterFlag = cmsSmartMeterFlag;
+	}
+	public String getCmsBannerTitle() {
+		return cmsBannerTitle;
+	}
+	public void setCmsBannerTitle(String cmsBannerTitle) {
+		this.cmsBannerTitle = cmsBannerTitle;
+	}
+	public String getCmsBannerColor() {
+		return cmsBannerColor;
+	}
+	public void setCmsBannerColor(String cmsBannerColor) {
+		this.cmsBannerColor = cmsBannerColor;
+	}
+	public String getCmsSaveOffer() {
+		return cmsSaveOffer;
+	}
+	public void setCmsSaveOffer(String cmsSaveOffer) {
+		this.cmsSaveOffer = cmsSaveOffer;
+	}
 	
 
 }

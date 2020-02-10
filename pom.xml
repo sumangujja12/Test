@@ -646,6 +646,12 @@
 	</build>
 	<dependencies>
 		<dependency>
+			<groupId>com.nrg.util</groupId>
+			<artifactId>nrg-content-utils</artifactId>
+			<version>3</version>
+			<scope>${dependency.scope}</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>2.10.0</version>

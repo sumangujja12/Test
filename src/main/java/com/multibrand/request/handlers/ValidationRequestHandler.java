@@ -42,10 +42,8 @@ public class ValidationRequestHandler implements Constants {
 		ValidatePosIdKBARequest validatePosIdKBARequest = new ValidatePosIdKBARequest();
 		
 		validatePosIdKBARequest.setCompanyCode(performPosIdBpRequest.getCompanyCode());
-		String brandName = performPosIdBpRequest.getBrandId();
-		if(StringUtils.isEmpty(brandName)){
-			brandName = CommonUtil.getBrandIdFromCompanycodeForCCS(performPosIdBpRequest.getCompanyCode());
-		}
+		String brandName = CommonUtil.getBrandIdFromCompanycodeForCCS(performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
+		
 		validatePosIdKBARequest.setBrandName(brandName);
 		validatePosIdKBARequest.setChannel(CALLER_WEB);
 		

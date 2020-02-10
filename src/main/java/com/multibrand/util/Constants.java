@@ -1330,9 +1330,12 @@ public interface Constants {
     public static final String CALL_NAME_KBA_SUBMIT = "KBASUBMIT";
     public static final String OE_SPRING_CALL_LOG_STATEMENT="{}: OE Spring JDBC Response Call Name : {} : {} Time in ms  ";
     
+    public static final String DELIMETER_COMMA_REGEX=",$";
+    
     public static final String DEFAULT_GROUP_NAME = "togglz.default.groupName";
     public static final String TOGGLZ_REST_BASE_URL = "ws.rest.togglz.base.url";
     public static final String TOGGLZ_FEATURE_NEW_POSID_CALL="salesapi.newposid.flag";
+	public static final String TOGGLZ_FEATURE_CMS_OFFER_DATA="salesapi.cmsofferdata.flag";
  
     //***************** SALES APIs *************************
     //Legacy Sales APIs - Currently being used by Affiliates - To be deprecated
@@ -1354,4 +1357,10 @@ public interface Constants {
     public static final String API_GET_KBA_QUESTIONS = "kba-questions";
     public static final String API_KBA_RESULT = "kba-result";
     
+    //Submit new KBA Answers API
+    public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
+    public static final String RETRY_NOT_ALLOWED_TXT = "Retry of KBA Answers is not allowed on same transactionKey. Please rerun the getKBAQuestions API to generate a new transactionKey";
+    
+    
+   
 }
