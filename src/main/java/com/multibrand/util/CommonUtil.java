@@ -1892,7 +1892,7 @@ public class CommonUtil implements Constants {
         return StringUtils.EMPTY;
  }
 	
-	public static String getBrandIdFromCompanycodeForCCS(String companyCode){
+	public static String getBrandIdFromCompanycodeForCCS(String companyCode, String brandId){
 		String brandName = EMPTY;
 		
 		switch(companyCode){
@@ -1903,7 +1903,7 @@ public class CommonUtil implements Constants {
 					brandName = CCS_BRAND_ID_GME;
 					break;
 			case COMPANY_CODE_PENNYWISE:
-					brandName = BRAND_ID_PENNYWISE;
+					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_PENNYWISE);
 					break;
 			default:
 				break;
@@ -1912,7 +1912,7 @@ public class CommonUtil implements Constants {
 		return brandName;
 	}	
 
-	public static String getBrandIdFromCompanycodeForTogglz(String companyCode){
+	public static String getBrandIdFromCompanycodeForTogglz(String companyCode, String brandId){
 		String brandName = EMPTY;
 		
 		switch(companyCode){
@@ -1923,7 +1923,7 @@ public class CommonUtil implements Constants {
 					brandName = BRAND_ID_GME;
 					break;
 			case COMPANY_CODE_DISCOUNTPOWER:
-					brandName = BRAND_ID_DISCOUNTPOWER;
+					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_DISCOUNTPOWER);
 					break;
 			default:
 				break;

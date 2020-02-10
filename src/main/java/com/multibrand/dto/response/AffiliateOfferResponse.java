@@ -7,6 +7,8 @@ public class AffiliateOfferResponse extends GenericResponse {
 	private String offerDate;
 	private String offerTime;
 	private String tdspCodeCCS;
+	private String cmsErrorOffers;
+	private String erpErrorOffers;
 	
 	private AffiliateOfferDO[] affiliateOfferList;
 
@@ -42,5 +44,21 @@ public class AffiliateOfferResponse extends GenericResponse {
 		this.affiliateOfferList = affiliateOfferList;
 	}
 
+	public String getCmsErrorOffers() {
+		return cmsErrorOffers;
+	}
+
+	public void setCmsErrorOffers(String cmsErrorOffers) {
+		this.cmsErrorOffers = cmsErrorOffers;
+	}
+
+	public String getErpErrorOffers() {
+		return erpErrorOffers;
+	}
+
+	public void setErpErrorOffers(String erpErrorOffers) {
+		this.erpErrorOffers = erpErrorOffers;
+	}
+	
 
 }

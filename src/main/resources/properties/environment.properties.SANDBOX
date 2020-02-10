@@ -124,3 +124,44 @@ iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 ws.rest.togglz.base.url=http://dev1-ws.nrgenergy.com/togglz
 togglz.default.groupName=SalesAPI
 #End Togglz Framework Integration
+
+#Content server props
+gm.content.server.endpoint.url=http://txaixebxindxs01:13180/cd-service/gme/cdws/odata.svc/
+content.rest.server.url=http://txaixebxindxs02:13180/contentService/content/getContentData
+re.content.server.endpoint.url=http://txaixebnbld01:8081/client/v2/content.svc/
+pw.content.server.endpoint=http://txaixebxbls01:18081/client/v2/content.svc/
+ce.content.server.endpoint=http://txaixebxindxs01:13180/cd-service/cirro/cdws/odata.svc/
+
+#Tempalte Id's
+re.tempalte.id_desktop=111201
+re.tempalte.id_mobile=TODO
+pw.tempalte.id_desktop=884
+pw.tempalte.id_mobile=TODO
+ce.tempalte.id_desktop=884
+ce.tempalte.id_mobile=TODO
+gm.tempalte.id_desktop=6974
+gm.tempalte.id_mobile=TODO
+
+#Publication Id's
+re.pub.id_en=84
+re.pub.id_es=101
+pw.pub.id_en=21
+pw.pub.id_es=81
+ce.pub.id_en=143
+ce.pub.id_es=144
+gm.pub.id_en=123
+gm.pub.id_es=124
+
+re.taxonomy.id = 301
+pw.taxonomy.id = TODO
+ce.taxonomy.id = TODO
+gm.taxonomy.id = TODO
+
+#Schema Id's
+re.prodoffer.schema.id=6868
+re.prodbonus.schema.id=6872
+pw.prodoffer.schema.id=63
+pw.prodbonus.schema.id=TODO
+gm.prodoffer.schema.id =6969
+gm.prodbonus.schema.id=TODO
+gm.base.url=https://stg-signup.greenmountain.com 
