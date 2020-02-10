@@ -1,3 +1,4 @@
+ @getAffiliateOfferFeature
  Feature: Get Affiliate Offer funtionality
  
  Background:
