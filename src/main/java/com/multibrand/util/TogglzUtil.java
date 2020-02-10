@@ -30,10 +30,9 @@ public class TogglzUtil implements Constants {
 
 	
 	public boolean getFeatureStatusFromTogglzByBrandId(String featureName, String CompanyCode, String brandId ){
+				
+		brandId = CommonUtil.getBrandIdFromCompanycodeForTogglz(CompanyCode, brandId);
 		
-		if(StringUtils.isEmpty(brandId)){
-			brandId = CommonUtil.getBrandIdFromCompanycodeForTogglz(CompanyCode);
-		}
 		brandId = brandId.toLowerCase();
 		String actualFeatureName = featureName+DOT+brandId;		
 		

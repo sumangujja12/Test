@@ -113,6 +113,7 @@ import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
+import com.multibrand.helper.ContentHelper;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.service.AddressService;
@@ -126,6 +127,7 @@ import com.multibrand.util.CompanyMsgText;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.LoggerUtil;
+import com.multibrand.util.TogglzUtil;
 import com.multibrand.util.Token;
 import com.multibrand.vo.request.CharityDetailsVO;
 import com.multibrand.vo.request.ESIDDO;
@@ -160,6 +162,8 @@ import com.multibrand.vo.response.KBO.Question;
 import com.multibrand.vo.response.billingResponse.AddressDO;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.reliant.domain.AddressValidateResponse;
+
+import bsh.StringUtil;
 
 /**
  * @author vsood30
@@ -220,6 +224,12 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	@Autowired
 	private DateUtil dateUtil;
+	
+	@Autowired
+	ContentHelper contentHelper;
+	
+	 @Autowired
+	private TogglzUtil togglzUtil;
 	
 	/**
 	 * Method to return Company Code + Brand Id specific offers based on TDSP code or address or esid
@@ -1193,7 +1203,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 			} else {
 				offerPriceDO
-						.setPrice(decimalformat.format(Double.valueOf("0")));
+					.setPrice(decimalformat.format(Double.valueOf("0")));
+
+				
 			}
 			offerPriceDO.setStartDate(promoOfferOutDataAvgPriceMapEntry
 					.getValue().getDateStart());
@@ -4153,8 +4165,17 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
 			}
 			response = constructMainFields(response,offerResponse);
-		} else{
+		} else{			
 			response = constructAffiliateOfferResponse(offerResponse,request);
+			
+			boolean isCMSEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_CMS_OFFER_DATA, request.getCompanyCode(), request.getBrandId());			
+			if(isCMSEnabled && response.getAffiliateOfferList() != null & response.getAffiliateOfferList().length>0)
+			{				
+				List<AffiliateOfferDO> affiliateOfferList =  new ArrayList<AffiliateOfferDO>(Arrays.asList(response.getAffiliateOfferList())); 			
+				String cmsErrorOffers = contentHelper.fillAndFilterSDLContentOffer(affiliateOfferList, request.getCompanyCode(), request.getBrandId(), request.getLanguageCode());
+				response.setCmsErrorOffers(cmsErrorOffers);	
+				response.setAffiliateOfferList(affiliateOfferList.toArray(new AffiliateOfferDO[affiliateOfferList.size()]));
+			}
 		}
 		
 		
@@ -4167,7 +4188,11 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		response = constructCommonFields(response,offerResponse);
 		response = constructMainFields(response,offerResponse);
-		AffiliateOfferDO[] offerDOList = constructAffiliateOfferDOList(offerResponse,request);
+		StringBuffer erpErrorOffers = new StringBuffer();
+		AffiliateOfferDO[] offerDOList = constructAffiliateOfferDOList(offerResponse,request, erpErrorOffers);
+		String erpErrorOffersStr = erpErrorOffers.toString();
+		erpErrorOffersStr = erpErrorOffersStr. replaceAll(DELIMETER_COMMA_REGEX, EMPTY);		
+		response.setErpErrorOffers(erpErrorOffersStr);
 		response.setAffiliateOfferList(offerDOList);
 		return response;
 	}
@@ -4191,27 +4216,27 @@ public class OEBO extends OeBoHelper implements Constants{
 	}	
 	
 	private AffiliateOfferDO[] constructAffiliateOfferDOList(
-			OfferResponse offerResponse, AffiliateOfferRequest request) {
-		OfferDO[] offerDOArr = offerResponse.getOfferDOList();
-		AffiliateOfferDO[] affiliateOfferDOArr = null;
-		if (offerDOArr != null) {
-			affiliateOfferDOArr = new AffiliateOfferDO[offerDOArr.length];
+			OfferResponse offerResponse, AffiliateOfferRequest request,StringBuffer erpErrorOffers) {
+		OfferDO[] offerDOArr = offerResponse.getOfferDOList();		
+		ArrayList<AffiliateOfferDO> affiliateOfferDOList = new ArrayList<AffiliateOfferDO>();
+		if (offerDOArr != null) {			
 			int i = 0;
 			for (OfferDO offerDO : offerDOArr) {
-				affiliateOfferDOArr[i] = new AffiliateOfferDO();
-				affiliateOfferDOArr[i].setSapPlanName(offerDO.getStrPlanName());
-				affiliateOfferDOArr[i].setSapOfferTagline(offerDO
+				
+				AffiliateOfferDO affiliateOfferDO = new AffiliateOfferDO();
+				affiliateOfferDO.setSapPlanName(offerDO.getStrPlanName());
+				affiliateOfferDO.setSapOfferTagline(offerDO
 						.getStrOfferCodeTitle());
-				affiliateOfferDOArr[i].setOfferCode(offerDO.getStrOfferCode());
-				affiliateOfferDOArr[i].setPromoCode(offerDO
+				affiliateOfferDO.setOfferCode(offerDO.getStrOfferCode());
+				affiliateOfferDO.setPromoCode(offerDO
 						.getStrOfferCellTrackCode());
-				affiliateOfferDOArr[i].setCampaignCode(offerDO
+				affiliateOfferDO.setCampaignCode(offerDO
 						.getStrCampaignCode());
-				affiliateOfferDOArr[i].setProductPriceCode(offerDO
+				affiliateOfferDO.setProductPriceCode(offerDO
 						.getStrProductPriceCode());
-				affiliateOfferDOArr[i].setMarketSegment(offerDO
+				affiliateOfferDO.setMarketSegment(offerDO
 						.getStrMarketSegment());
-				affiliateOfferDOArr[i].setIncentiveCode(offerDO
+				affiliateOfferDO.setIncentiveCode(offerDO
 						.getStrIncentiveCode());
 				String contractTerm = StringUtils.isEmpty(offerDO
 						.getStrContractTerm()) ? ZERO : offerDO
@@ -4219,70 +4244,70 @@ public class OEBO extends OeBoHelper implements Constants{
 				int intContractTerm = Integer.parseInt(contractTerm);
 
 				if (intContractTerm > 1) {
-					affiliateOfferDOArr[i].setPlanType(PLAN_TYPE_FIXED);
-					affiliateOfferDOArr[i].setContractTerm(contractTerm);
+					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
+					affiliateOfferDO.setContractTerm(contractTerm);
 				} else {
-					affiliateOfferDOArr[i].setPlanType(PLAN_TYPE_VARIABLE);
-					affiliateOfferDOArr[i].setContractTerm(ZERO);
+					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
+					affiliateOfferDO.setContractTerm(ZERO);
 				}
 
 				String webURL = getWebURL(request.getCompanyCode(),
 						request.getBrandId());
 
-				affiliateOfferDOArr[i].setEflURL(webURL + CONST_FILES
+				affiliateOfferDO.setEflURL(webURL + CONST_FILES
 						+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
-				affiliateOfferDOArr[i].setTosURL(webURL + CONST_FILES
+				affiliateOfferDO.setTosURL(webURL + CONST_FILES
 						+ offerDO.getStrTOSDocID() + CONST_DOT_PDF);
-				affiliateOfferDOArr[i].setYraacURL(webURL + CONST_FILES
+				affiliateOfferDO.setYraacURL(webURL + CONST_FILES
 						+ offerDO.getStrYRAACDocID() + CONST_DOT_PDF);
-				affiliateOfferDOArr[i].setCancelFee(offerDO.getStrCancelFee());
-				affiliateOfferDOArr[i].setEflSmartCode(offerDO
+				affiliateOfferDO.setCancelFee(offerDO.getStrCancelFee());
+				affiliateOfferDO.setEflSmartCode(offerDO
 						.getStrEFLSmartCode());
-				affiliateOfferDOArr[i].setTosSmartCode(offerDO
+				affiliateOfferDO.setTosSmartCode(offerDO
 						.getStrTOSSmartCode());
-				affiliateOfferDOArr[i].setYraacSmartCode(offerDO
+				affiliateOfferDO.setYraacSmartCode(offerDO
 						.getStrYRAACSmartCode());
 
 				
 				//Start - Alt Channels US8596 | Pratyush
-				affiliateOfferDOArr[i].setAverageEFLPrice1000(getAveragePriceEFL1000(offerDO));
-				affiliateOfferDOArr[i].setAverageEFLPrice2000(getAveragePricEFL2000(offerDO));
-				affiliateOfferDOArr[i].setAverageEFLPrice500(getAveragePriceEFL500(offerDO));
-				affiliateOfferDOArr[i].setAutoPayDiscount(getAutoPayPrice(offerDO));
-				affiliateOfferDOArr[i].setDigitalDiscount(getDigitalDiscountPrice(offerDO));
+				affiliateOfferDO.setAverageEFLPrice1000(getAveragePriceEFL1000(offerDO));
+				affiliateOfferDO.setAverageEFLPrice2000(getAveragePricEFL2000(offerDO));
+				affiliateOfferDO.setAverageEFLPrice500(getAveragePriceEFL500(offerDO));
+				affiliateOfferDO.setAutoPayDiscount(getAutoPayPrice(offerDO));
+				affiliateOfferDO.setDigitalDiscount(getDigitalDiscountPrice(offerDO));
 				//End Alt Channels US8596
 				
 				//Start - Alt Channels -- US14171 | Pratyush -- 11/13/2018
-				affiliateOfferDOArr[i].setUsageCredit(getAveragePriceEUsageCR(offerDO));
-				affiliateOfferDOArr[i].setCreditMaxUsageThreshold(getAveragePriceMaxThreshold(offerDO));
-				affiliateOfferDOArr[i].setCreditMinUsageThreshold(getAveragePriceMinThreshold(offerDO));
+				affiliateOfferDO.setUsageCredit(getAveragePriceEUsageCR(offerDO));
+				affiliateOfferDO.setCreditMaxUsageThreshold(getAveragePriceMaxThreshold(offerDO));
+				affiliateOfferDO.setCreditMinUsageThreshold(getAveragePriceMinThreshold(offerDO));
 				//End - Alt Channels -- US14171
 				
 				if (!StringUtils.equalsIgnoreCase(
 						offerDO.getStrOfferCategory(), CATEGORY_TWW)) {
-					affiliateOfferDOArr[i]
+					affiliateOfferDO
 							.setAveragePrice500(getAveragePrice500(offerDO));
-					affiliateOfferDOArr[i]
+					affiliateOfferDO
 							.setAveragePrice1000(getAveragePrice1000(offerDO));
-					affiliateOfferDOArr[i]
+					affiliateOfferDO
 							.setAveragePrice2000(getAveragePrice2000(offerDO));
 				} else {
-					affiliateOfferDOArr[i].setAveragePrice500(getKeyPrice(
+					affiliateOfferDO.setAveragePrice500(getKeyPrice(
 							offerDO, EFL_1R0500));
-					affiliateOfferDOArr[i].setAveragePrice1000(getKeyPrice(
+					affiliateOfferDO.setAveragePrice1000(getKeyPrice(
 							offerDO, EFL_1R1000));
-					affiliateOfferDOArr[i].setAveragePrice2000(getKeyPrice(
+					affiliateOfferDO.setAveragePrice2000(getKeyPrice(
 							offerDO, EFL_1R2000));
 				}
 
-				affiliateOfferDOArr[i].setOfferCategory(offerDO
+				affiliateOfferDO.setOfferCategory(offerDO
 						.getStrOfferCategory());
 
 				if (StringUtils.equalsIgnoreCase(
-						affiliateOfferDOArr[i].getOfferCategory(),
+						affiliateOfferDO.getOfferCategory(),
 						CONSERVATION_CATEGORY)) {
 
-					affiliateOfferDOArr[i].setEnergyChargeText(msgSource
+					affiliateOfferDO.setEnergyChargeText(msgSource
 							.getMessage(
 									CONSERVATION_ENERGY_CHARGE,
 									new String[] {
@@ -4292,7 +4317,7 @@ public class OEBO extends OeBoHelper implements Constants{
 									CommonUtil.localeCode(request
 											.getLanguageCode())));
 				} else {
-					affiliateOfferDOArr[i].setEnergyChargeText(msgSource
+					affiliateOfferDO.setEnergyChargeText(msgSource
 							.getMessage(
 									NOT_CONSERVATION_ENERGY_CHARGE,
 									new String[] { getEnergyCharge(offerDO,
@@ -4300,7 +4325,8 @@ public class OEBO extends OeBoHelper implements Constants{
 									CommonUtil.localeCode(request
 											.getLanguageCode())));
 				}
-
+				String energyCharge = getEnergyCharge(offerDO,
+						request.getCompanyCode());
 				String usageAmt = getKeyPrice(offerDO, LPP_CAP);
 				
 				String baseCharge = getBaseCharge(offerDO);
@@ -4310,7 +4336,7 @@ public class OEBO extends OeBoHelper implements Constants{
 							BASE_CHARGE_PER_MONTH, new String[] { baseCharge },
 							CommonUtil.localeCode(request.getLanguageCode()));
 					if (StringUtils.isEmpty(usageAmt)) {
-						affiliateOfferDOArr[i]
+						affiliateOfferDO
 								.setBaseUsageChargeText(baseChargeText);
 					} else {
 
@@ -4324,28 +4350,35 @@ public class OEBO extends OeBoHelper implements Constants{
 										usageAmt }, CommonUtil
 										.localeCode(request.getLanguageCode()));
 						;
-						affiliateOfferDOArr[i]
+						affiliateOfferDO
 								.setBaseUsageChargeText(baseChargeText + "; "
 										+ usageChargeText);
 					}
 
 				} else {
-					affiliateOfferDOArr[i]
-							.setBaseUsageChargeText(StringUtils.EMPTY);
+					affiliateOfferDO
+							.setBaseUsageChargeText(StringUtils.EMPTY);					
 				}
+				
+				boolean validOffer = checkMandatoryFields(affiliateOfferDO, energyCharge);
+				if(!validOffer){
+					erpErrorOffers.append(affiliateOfferDO.getOfferCode()+DELIMETER_COMMA);
+					continue;
+				}
+				
 				if(StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_CIRRO)){
 					String perMonthValue = getKeyPrice(offerDO, TDSP_CHRG1);
 					String perKWValue = getKeyPrice(offerDO, TDSP_CHRG2);
 					if (StringUtils.isEmpty(perMonthValue)
 							&& StringUtils.isEmpty(perKWValue)) {
-						affiliateOfferDOArr[i].setTdspChargeText(StringUtils.EMPTY);
+						affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
 					} else {
 						
 						Float perMonthFloatValue = Float.parseFloat(perMonthValue);
 						Float perKWFloatValue = Float.parseFloat(perKWValue);
 						if(perMonthFloatValue >0 || perKWFloatValue >0){
 						
-						affiliateOfferDOArr[i].setTdspChargeText(msgSource
+						affiliateOfferDO.setTdspChargeText(msgSource
 								.getMessage(TDSP_CHARGE_TEXT,
 										new String[] {
 											perMonthValue,
@@ -4353,7 +4386,7 @@ public class OEBO extends OeBoHelper implements Constants{
 										CommonUtil.localeCode(request
 												.getLanguageCode())));
 						} else {
-							affiliateOfferDOArr[i].setTdspChargeText(StringUtils.EMPTY);
+							affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
 						}
 					}
 					
@@ -4362,9 +4395,9 @@ public class OEBO extends OeBoHelper implements Constants{
 							.getPerMonthValue())
 							&& StringUtils.isEmpty(offerDO.getTdspChargeDO()
 									.getPerKWValue())) {
-						affiliateOfferDOArr[i].setTdspChargeText(StringUtils.EMPTY);
+						affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
 					} else {
-						affiliateOfferDOArr[i].setTdspChargeText(msgSource
+						affiliateOfferDO.setTdspChargeText(msgSource
 								.getMessage(TDSP_CHARGE_TEXT,
 										new String[] {
 												offerDO.getTdspChargeDO()
@@ -4377,10 +4410,24 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				}
 				
-				i++;
+				affiliateOfferDOList.add(affiliateOfferDO);
 			}
 		}
-		return affiliateOfferDOArr;
+		return affiliateOfferDOList.toArray(new AffiliateOfferDO[affiliateOfferDOList.size()]);
+	}
+	
+	private boolean checkMandatoryFields(AffiliateOfferDO affiliateOfferDO, String energyCharge){
+		boolean validOffer = true;
+		if(StringUtils.isEmpty(affiliateOfferDO.getAveragePrice2000()) 
+				|| StringUtils.isEmpty(affiliateOfferDO.getBaseUsageChargeText())
+				||   StringUtils.isEmpty(energyCharge)){
+			validOffer =false;
+			logger.info("SAP Errored Offer Code "+affiliateOfferDO.getOfferCode()
+						+ " AvgPrice : "+affiliateOfferDO.getAveragePrice2000()
+						+ "// Base Charge : "+affiliateOfferDO.getBaseUsageChargeText()
+						+ "// Energy Charge : "+energyCharge );
+		}
+		return validOffer;
 	}
 	
 	private String getAveragePrice500(OfferDO offerDO) {
