@@ -8,9 +8,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -18,6 +20,8 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +42,8 @@ import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
+import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AgentDetailsResponse;
@@ -85,15 +91,35 @@ public class SalesAPIResource extends BaseResource {
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 	
-	@POST
-	@Path(API_OFFERS)
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@GET
+	@Path(API_OFFERS)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAffiliateOffers(	@Valid AffiliateOfferRequest request) {
+	public Response getAffiliateOffers(	@QueryParam(value = "companyCode")  @NotBlank(groups = BasicConstraint.class) @Length(max = 4, groups = SizeConstraint.class) String companyCode,
+			@QueryParam(value = "brandId")   String brandId,
+			@QueryParam(value = "languageCode")   String languageCode,
+			@QueryParam(value = "affiliateId") String affiliateId,
+			@QueryParam(value = "channelType")  String channelType,
+			@QueryParam(value = "transactionType")   String transactionType ,
+			@QueryParam(value = "promoCode")  String promoCode,
+			@QueryParam(value = "tdspCodeCCS")  String tdspCodeCCS,
+			@QueryParam(value = "esid")   String esid ) {
+		AffiliateOfferRequest request = new AffiliateOfferRequest();	
+		request.setCompanyCode(companyCode);
+		request.setBrandId(brandId);
+		request.setLanguageCode(languageCode);
+		request.setAffiliateId(affiliateId);
+		request.setChannelType(channelType);
+		request.setTransactionType(transactionType);
+		request.setPromoCode(promoCode);
+		request.setTdspCodeCCS(tdspCodeCCS);
+		request.setEsid(esid);		
 		Response response=null;
-		try{
+		try{			
+
+			
 			AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,	httpRequest.getSession(true).getId());
-			response = Response.status(Response.Status.OK).entity(offerResponse).build();
+			Response.Status status = offerResponse.getHttpStatus() != null ? offerResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(offerResponse).build();
    		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
