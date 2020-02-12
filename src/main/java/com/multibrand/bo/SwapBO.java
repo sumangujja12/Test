@@ -401,8 +401,8 @@ public class SwapBO extends BaseAbstractService implements Constants {
 					if ((value1 < 0) && (value2 < 0)) {
 						swapROEffectiveDate = enSdf.format(today);
 					} else {
-						// Updated condiation to add +1 for all brands
 							// Updated logic for GME to send future date + 1 to CCS in RO Effective Date
+						// Updated condition to add ced +1 for Cirro
 							Calendar cal = Calendar.getInstance(); 
 							cal.setTime(swapDate); 
 							cal.add(Calendar.DATE, 1);

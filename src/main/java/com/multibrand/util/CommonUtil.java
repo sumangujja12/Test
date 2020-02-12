@@ -1929,6 +1929,7 @@ public class CommonUtil implements Constants {
 		return input;
 	}
 	
+	
 	public static String getCurrentDateandTime() {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 		Date date = new Date();
