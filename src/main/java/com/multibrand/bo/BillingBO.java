@@ -383,9 +383,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 									.setStrAvgBillFlag(aMBEligibiltyStatusResponse.getAvgBillFlag());
 							accountDetailsResp.getContractAccountDO()
 									.setStrAvlBillFlag(aMBEligibiltyStatusResponse.getAvlBillFlag());
+							if(aMBEligibiltyStatusResponse.isRetroAvgBillEligible()) {
+								accountDetailsResp.getContractAccountDO().setStrRetroEligible(FLAG_Y);
+							} else {
+								accountDetailsResp.getContractAccountDO().setStrRetroEligible(FLAG_N);
+							}
+							
 						} else {
 							accountDetailsResp.getContractAccountDO().setStrAvgBillFlag(averageBillingEligibilty);
 							accountDetailsResp.getContractAccountDO().setStrAvlBillFlag(averageBillingEnrolment);
+							accountDetailsResp.getContractAccountDO().setStrRetroEligible(FLAG_N);
 						}
 					
 				}
@@ -3067,6 +3074,17 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					aMBEligibiltyStatusResponse
 							.setAvgBillFlag(averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES)
 									? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
+					if (aMBEligibiltyStatusResponse.getAvgBillFlag().equalsIgnoreCase(AVG_BILL_FLAG_Y)
+							&& (ambEligibiltyCheckResponseVO.getAmbWebTab() != null
+									&& ambEligibiltyCheckResponseVO.getAmbWebTab().length > 0)) {
+						Double currentBillAmount = ambEligibiltyCheckResponseVO.getAmbWebTab()[0].getAmtFinal();
+						Double ambAmt = ambEligibiltyCheckResponseVO.getAmbAmt();
+						Double calculatedAmbAmt = currentBillAmount - ((currentBillAmount * 10) / 100);
+						if (ambAmt > 0 && ambAmt <= calculatedAmbAmt) {
+							aMBEligibiltyStatusResponse.setRetroAvgBillEligible(true);
+						}
+					}
+					
 				}
 			}
 		} catch (Exception e) {
