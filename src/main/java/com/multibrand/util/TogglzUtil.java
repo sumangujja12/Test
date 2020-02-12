@@ -41,9 +41,8 @@ public class TogglzUtil implements Constants {
 	
 	public boolean getFeatureStatusFromTogglzByChannel(String featureName, String channel){
 		
-		if(StringUtils.isEmpty(channel)){
-			channel = channel.toLowerCase();
-		}
+		channel = CommonUtil.getChannelTypeForTogglz(channel);			
+		channel = channel.toLowerCase();		
 		String actualFeatureName = featureName+DOT+channel;		
 		
 		return getFeatureStatusFromTogglz(actualFeatureName);
