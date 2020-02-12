@@ -4107,7 +4107,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		AffiliateOfferResponse response = new AffiliateOfferResponse();
 		
-	if(StringUtils.isBlank(request.getPromoCode()))
+		boolean isReactiveOffersEnabled = togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_DEFAULT_REACTIVE_OFFER, request.getChannelType());
+		
+	if(StringUtils.isBlank(request.getPromoCode()) && !isReactiveOffersEnabled)
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
@@ -4156,15 +4158,30 @@ public class OEBO extends OeBoHelper implements Constants{
 				request.getTdspCodeCCS(), request.getEsid(), sessionId, request.getTransactionType());
 		
 		logger.info("OfferResponse : strErrorCode : "+offerResponse.getStrErrorCode());
+		
+						
 		if(StringUtils.equalsIgnoreCase(MSG_CCSERR_8_GET_PROMO_OFFERS, offerResponse.getStrErrorCode()) || StringUtils.equalsIgnoreCase(MSG_CCSERR_E_GET_PROMO_OFFERS, offerResponse.getStrErrorCode())) {
-			response.setMessageCode(PROMO_INVALID);
-			response.setMessageText(msgSource.getMessage(PROMO_INVALID_TEXT,null,CommonUtil.localeCode(request.getLanguageCode())));
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_SUCCESS );
-			response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
-			response = constructMainFields(response,offerResponse);
 			
-		} else if(StringUtils.isEmpty(offerResponse.getStrTDSPCode())|| !isServicedTDSPCode(offerResponse.getStrTDSPCode())) {
+			if(! isReactiveOffersEnabled){
+				response.setMessageCode(PROMO_INVALID);
+				response.setMessageText(msgSource.getMessage(PROMO_INVALID_TEXT,null,CommonUtil.localeCode(request.getLanguageCode())));
+				response.setStatusCode(Constants.STATUS_CODE_STOP);
+				response.setResultCode(Constants.RESULT_CODE_SUCCESS );
+				response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
+				response = constructMainFields(response,offerResponse);
+				return response;
+			} else {
+				offerResponse = getOffers(request.getLanguageCode(),
+						request.getCompanyCode(), request.getBrandId(), null,
+						null, null, null, null,
+						request.getTdspCodeCCS(), request.getEsid(), sessionId, request.getTransactionType());
+				offerResponse.setStatusCode(Constants.STATUS_CODE_CONTINUE);
+				offerResponse.setMessageCode(PROMO_INVALID);
+				offerResponse.setMessageText(msgSource.getMessage(PROMO_INVALID_TEXT,null,CommonUtil.localeCode(request.getLanguageCode())));
+			}
+		}
+			
+		if(StringUtils.isEmpty(offerResponse.getStrTDSPCode())|| !isServicedTDSPCode(offerResponse.getStrTDSPCode())) {
 			response.setMessageCode(AREA_NOT_SERVICED);			
 			response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(request.getLanguageCode())));
 			response.setStatusCode(Constants.STATUS_CODE_STOP);

@@ -2019,4 +2019,23 @@ public class CommonUtil implements Constants {
 		return brandName;
 	}
 	
+	
+
+	public static String getChannelTypeForTogglz(String channelType){
+		String channel = CHANNEL_WEB;
+		
+		switch(channelType){
+			case CHANNEL_AA:
+				channel = CHANNEL_AA;
+					break;
+			case CHENNEL_AFF:
+				channel = CHENNEL_AFF;
+					break;			
+			default:
+				break;
+		}
+		
+		return channel;
+	}
+
 }
