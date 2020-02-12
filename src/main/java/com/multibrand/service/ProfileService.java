@@ -4,9 +4,13 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -487,10 +491,13 @@ public class ProfileService extends BaseAbstractService {
 				else{
 					contractAccountDO.setStrMultiContractFlag(FLAG_O);
 				}
-				contractDOList = new ContractDO[zcontractOutput.length];
+				
+				List<ContractDO> contracArrList = new LinkedList<ContractDO>();
 				int counter = 0;
 				for(ZcontractOutput contractOutput: zcontractOutput){
-					
+					if (CommonUtil.checkInactiveAccount(companyCode, contractOutput.getExAuszdat())) {
+						continue;
+					}
 					contractDO = new ContractDO();
 					offerDO = new com.multibrand.domain.OfferDO();
 					serviceAddressDO = new AddressDO();
@@ -502,6 +509,8 @@ public class ProfileService extends BaseAbstractService {
 					contractDO.setStrContractEndDate(contractOutput.getExVende());
 					contractDO.setStrMoveInDate(contractOutput.getExEinzdat());
 					contractDO.setStrMoveOutDate(contractOutput.getExAuszdat());
+					
+					
 					contractDO.setStrGuardLightFlag(CommonUtil.getFlagValue(contractOutput.getExGuard()));
 					
 					contractDO.setStrContractLength(contractOutput.getExContractLength());
@@ -545,10 +554,17 @@ public class ProfileService extends BaseAbstractService {
 					offerDO.setStrContractTerm(contractOutput.getExContractLength());
 					offerDO.setStrOfferTeaser(contractOutput.getExOfferTeaser());					
 					contractDO.setServiceAddressDO(serviceAddressDO);
-					contractDO.setCurrentPlan(offerDO);					
-					contractDOList[counter]= contractDO;		
+					contractDO.setCurrentPlan(offerDO);	
+					contracArrList.add(contractDO);
+					//contractDOList[counter]= contractDO;		
+					
+				}
+				contractDOList = new ContractDO[contracArrList.size()];
+				for(ContractDO contractDOTemp :contracArrList) {
+					contractDOList[counter] = contractDOTemp;
 					counter++;
 				}
+				
 			}
 			else{
 				

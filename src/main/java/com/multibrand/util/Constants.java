@@ -1285,4 +1285,14 @@ public interface Constants {
 	public static final String ERR_NO_DATA = "No data found for the CA and Company code";
 	public static final String ERR_DB = "Error occured while fetching data from database";
 	public static final String ERR_UNKNOWN = "An application error occured.  Please check NRG REST logs.";
+	//Cancel Payment Email
+	public static final String CANCEL_PAYMENT_GME_TEMPLATE_EN_US = "CANCEL_PAYMENT_GME.EN_US";
+	public static final String CANCEL_PAYMENT_GME_TEMPLATE_ES_US = "CANCEL_PAYMENT_GME.ES_US";
+	public static final String CANCEL_PAYMENT_TXN_DATE = "TXN_DATE";
+	public static final String CANCEL_PAYMENT_PAYMENT_DATE = "PAYMENT_DATE";
+	public static final String CANCEL_PAYMENT_PAYMENT_AMOUNT = "PAYMENT_AMOUNT";
+	public static final String CANCEL_PAYMENT_CONFIRM_NUM = "CONFIRM_NUM";
+	public static final String CANCEL_PAYMENT_CONTR_ACCT_ID = "CONTR_ACCT_ID";
+	public static final String CANCEL_PAYMENT_CHECK_DIGIT = "CHECK_DIGIT";
+
 }
