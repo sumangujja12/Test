@@ -4112,6 +4112,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
 			response.setResultDescription("promoCode may not be Empty");
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;	
 		}
@@ -4121,6 +4123,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
 			response.setResultDescription("Tdsp Code and Esid are empty");
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;	
 		}
@@ -4130,6 +4134,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
 			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");		
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;			
 		}

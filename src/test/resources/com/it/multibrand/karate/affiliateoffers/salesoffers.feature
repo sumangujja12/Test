@@ -42,3 +42,27 @@
     And print 'Invalid Promo Response Time:' + responseTime
 		And print 'Invalid Promo Response Below:' 
     And print response
+    
+ @EmptyPromoCode
+   Scenario: Validate Affilaite offers call response using an empty promocode
+   * set getaffilateofferrequest.promoCode = ''
+    Given path  '/NRGREST/rest/sales/offers'
+    And  params getaffilateofferrequest
+    When method GET
+    Then status 400  
+    And print 'Empty Promo Response Successful'
+    And print 'Empty Promo Response Time:' + responseTime
+		And print 'Empty Promo Response Below:' 
+    And print response
+    
+ @EmptyCompanyCode
+   Scenario: Validate Affilaite offers call response using an empty companyCode
+   * set getaffilateofferrequest.companyCode = ''
+    Given path  '/NRGREST/rest/sales/offers'
+    And  params getaffilateofferrequest
+    When method GET
+    Then status 400  
+    And print 'Empty Promo Response Successful'
+    And print 'Empty Promo Response Time:' + responseTime
+		And print 'Empty Promo Response Below:' 
+    And print response
