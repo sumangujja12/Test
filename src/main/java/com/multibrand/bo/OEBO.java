@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.ws.rs.core.Response;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -4111,6 +4112,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
 			response.setResultDescription("promoCode may not be Empty");
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;	
 		}
 		
@@ -4118,7 +4120,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		{  //If Tdsp Code & Esid are passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Tdsp Code and Esid are empty");			
+			response.setResultDescription("Tdsp Code and Esid are empty");
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;	
 		}
 		
@@ -4126,7 +4129,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		{  //If Tdsp Code & Esid are passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");			
+			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");		
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;			
 		}
 		
