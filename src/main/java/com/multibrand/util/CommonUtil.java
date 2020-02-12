@@ -70,6 +70,7 @@ public class CommonUtil implements Constants {
 	public static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
 	private static final char[] alphanumeric = alphanumeric();
+	private static final String DATE_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";
 	
 	static {
 		init();
@@ -1876,12 +1877,29 @@ public class CommonUtil implements Constants {
 		return input;
 	}
 	
+	public static boolean checkInactiveAccount(String companyCode, String moveOutDate) {
+		DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT_YYYY_MM_DD);
+		boolean isActive = false;
+		try {
+			Date currentDate = dateFormat.parse(dateFormat.format(Calendar.getInstance().getTime()));
+			if (StringUtils.isNotBlank(moveOutDate)
+					&& COMPANY_CODE_GME.equalsIgnoreCase(companyCode)) {
+				if (dateFormat.parse(moveOutDate).before(currentDate)) {
+					isActive= true;
+				}
+				
+			}
+		} catch (Exception e) {
+
+			logger.warn("checkInactiveAccount date parsing failed:", e);
+		}
+		return isActive;
+	}	
 	public static String getCurrentDateandTime() {
 		DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
 		Date date = new Date();
 		return dateFormat.format(date); //05/07/2019 06:53:11 PM
 	}
-	
 	public static String getRequestParameter(HttpServletRequest request, String in_ParameterName)
     {
         if (request.getParameter(in_ParameterName) != null)
@@ -1891,7 +1909,6 @@ public class CommonUtil implements Constants {
         
         return StringUtils.EMPTY;
  }
-	
 	public static String getBrandIdFromCompanycodeForCCS(String companyCode, String brandId){
 		String brandName = EMPTY;
 		
@@ -1931,4 +1948,6 @@ public class CommonUtil implements Constants {
 		
 		return brandName;
 	}
+
+
 }
