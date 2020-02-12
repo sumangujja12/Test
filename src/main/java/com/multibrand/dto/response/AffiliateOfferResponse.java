@@ -1,5 +1,7 @@
 package com.multibrand.dto.response;
 
+import javax.ws.rs.core.Response;
+
 import com.multibrand.vo.response.AffiliateOfferDO;
 import com.multibrand.vo.response.GenericResponse;
 
@@ -11,6 +13,10 @@ public class AffiliateOfferResponse extends GenericResponse {
 	private String erpErrorOffers;
 	
 	private AffiliateOfferDO[] affiliateOfferList;
+	
+	private Response.Status httpStatus;
+
+
 
 	public String getOfferDate() {
 		return offerDate;
@@ -58,6 +64,14 @@ public class AffiliateOfferResponse extends GenericResponse {
 
 	public void setErpErrorOffers(String erpErrorOffers) {
 		this.erpErrorOffers = erpErrorOffers;
+	}
+
+	public Response.Status getHttpStatus() {
+		return httpStatus;
+	}
+
+	public void setHttpStatus(Response.Status httpStatus) {
+		this.httpStatus = httpStatus;
 	}
 	
 
