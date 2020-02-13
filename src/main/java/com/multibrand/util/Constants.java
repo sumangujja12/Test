@@ -1368,7 +1368,11 @@ public interface Constants {
     public static final String CHENNEL_AFF = "AFF";
     
   //tokenization
+   // START :OE ADO SPrint4 : To get Prospect Data :Kdeshmu1
     public static final String TOKENIZATION = "token";
+    public static final String NO_PROSPECT_MATCH_FOUND = "NO_PROSPECT_MATCH_FOUND";
+    public static final String PROSPECT = "prospect";
+   // END :OE ADO SPrint4 : To get Prospect Data :Kdeshmu1
     
    
 }

@@ -1,5 +1,6 @@
 package com.multibrand.dao.impl;
 
+import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +18,17 @@ import org.springframework.stereotype.Repository;
 import com.multibrand.dao.AbstractSpringDAO;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.ResultObject;
+import com.multibrand.dao.mapper.EsiidInfoResponseRowMapper;
 import com.multibrand.dao.mapper.GetPendingEnrollmentRequestRowMapper;
 import com.multibrand.dto.request.CheckPendingServiceRequest;
+import com.multibrand.dto.request.GetEsiidRequest;
 import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.manager.BaseStoredProcedure;
 import com.multibrand.manager.StoredProcedureManager;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.request.ESIDDO;
+import com.multibrand.vo.response.GetEsiidResponse;
 
 @Repository("addressDAO")
 public class AddressDAOImpl extends AbstractSpringDAO implements
@@ -156,5 +161,53 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 		logger.debug("getESIDTypeList : sqlQuery for getESIDTypeList: " + sqlQuery);
 		List<Map<String,Object> > esidTypeList = getMapDataWithoutParam(sqlQuery);
 		return esidTypeList;
+	}
+
+	/**
+	* Start || PBI 15786: Update ESID Call || atiwari
+	* @author atiwari
+	* @param getEsiidRequest GetEsiidRequest
+	* @return GetEsiidResponse
+	* @throws SQLException,Exception 
+	*/
+	@Override
+	public GetEsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws SQLException,Exception {
+		logger.debug("AddressDAOImpl ::getESIDDetails");
+		GetEsiidResponse esiidResponse=new GetEsiidResponse();
+		BaseStoredProcedure storedProc = null;
+		Map<String, Object> inParams = null;
+		Map<String, Integer> inParamsTypeMap = null;
+		Map<String, ResultObject> outParamsTypeMap = null;
+		Map<String, Object> storedProcResult= null;
+		inParams = new LinkedHashMap<String, Object>();
+		inParamsTypeMap = new LinkedHashMap<String, Integer>();
+		outParamsTypeMap = new LinkedHashMap<String, ResultObject>();
+		String sqlQuery = sqlMessage.getMessage(
+				PROC_GET_ESIID_INFO, null, null);
+		inParamsTypeMap.put(in_addr, OracleTypes.VARCHAR);
+		inParamsTypeMap.put(in_city, OracleTypes.VARCHAR);
+		inParamsTypeMap.put(in_state, OracleTypes.VARCHAR);
+		inParamsTypeMap.put(in_zip, OracleTypes.VARCHAR);
+		inParamsTypeMap.put(in_aptno, OracleTypes.VARCHAR);
+		
+		inParams.put(in_addr, CommonUtil
+				.getValue(getEsiidRequest.getStrStreet()).trim().toUpperCase());
+		inParams.put(in_city, CommonUtil.getValue(getEsiidRequest.getStrCity()).trim());
+		inParams.put(in_state, TX);
+		inParams.put(in_zip,
+				CommonUtil.getValue(getEsiidRequest.getStrZipCode()).trim());
+		inParams.put(in_aptno,
+				CommonUtil.getValue(getEsiidRequest.getStrAprtNum()).trim());
+		
+		for (Map.Entry<String, Object> entry : inParams.entrySet()) {
+			logger.debug("inputParamKey : " + entry.getKey() + " inputParamValue : " + entry.getValue());
+		}
+		/*inParams.forEach((inputParamValue,inputParamCount) -> logger.info("inParams value"+ inputParamValue +"  inputParamCount "+inputParamCount));*/
+		outParamsTypeMap.put(OUT_CURR_GET_ESI, new ResultObject(OracleTypes.CURSOR,new EsiidInfoResponseRowMapper()));
+		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
+		storedProc = storedProcedure.createStoredProcedure(getJdbcTemplate(),sqlQuery, inParams, inParamsTypeMap, outParamsTypeMap, OUTPUT);
+		storedProcResult = storedProc.execute();
+		esiidResponse.setEsidList((List<ESIDDO>)storedProcResult.get(OUT_CURR_GET_ESI));
+		return esiidResponse;
 	}
 }
