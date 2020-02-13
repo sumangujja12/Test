@@ -38,6 +38,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
+import com.multibrand.dto.request.GetEsiidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
@@ -66,6 +67,7 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
 import com.multibrand.vo.response.GenericResponse;
+import com.multibrand.vo.response.GetEsiidResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
@@ -573,6 +575,28 @@ public class OEResource extends BaseResource {
 		GiactBankValidationResponse bankDetailsValidationResponse = oeBO.validateBankDetailsGiact(bankDetailsValidationRequest);
 		response = Response.status(Response.Status.OK).entity(bankDetailsValidationResponse).build();
 		return response;
+	}
+	
+	/**
+	* Start || PBI 15786: Update ESID Call || atiwari
+	* @author atiwari
+	* @param getEsiidRequest GetEsiidRequest
+	* @return GetEsiidResponse
+	*/
+	@POST
+	@Path("esiidDetails")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_JSON })
+	public Response getESIDDetails(@Valid GetEsiidRequest getEsiidRequest){
+		Response response = null;
+		try{
+			GetEsiidResponse getEsiidResponse = oeBO.getESIDDetails(getEsiidRequest);
+			response = Response.status(Response.Status.OK).entity(getEsiidResponse).build();
+		}catch(Exception e){
+			logger.debug("OEResource getESIDDetails: "+e);
+		}
+		return response;
+		
 	}
 	
 	/*****************************************************************************************************************************************************************

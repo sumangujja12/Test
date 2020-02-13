@@ -92,6 +92,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
+import com.multibrand.dto.request.GetEsiidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
@@ -5430,6 +5431,19 @@ public boolean updateKbaDetails(KBASubmitResultsDTO request) throws Exception {
 	return errorCode;
 }
 
+/**
+* Start || PBI 15786: Update ESID Call || atiwari
+* @author atiwari
+* @param getEsiidRequest GetEsiidRequest
+* @return com.multibrand.vo.response.GetEsiidResponse
+* @throws SQLException, Exception
+*/
+public com.multibrand.vo.response.GetEsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws Exception{
+com.multibrand.vo.response.GetEsiidResponse esidResponse=null;
+esidResponse = addressDAO.getESIDDetails(getEsiidRequest);
+return esidResponse;
+
+}
 }
 
 	

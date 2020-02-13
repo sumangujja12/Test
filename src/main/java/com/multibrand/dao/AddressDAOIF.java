@@ -1,10 +1,13 @@
 package com.multibrand.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
 import com.multibrand.dto.request.CheckPendingServiceRequest;
+import com.multibrand.dto.request.GetEsiidRequest;
 import com.multibrand.dto.response.CheckPendingServiceResponse;
+import com.multibrand.vo.response.GetEsiidResponse;
 
 
 
@@ -16,6 +19,8 @@ public interface AddressDAOIF{
 	int getESIDCount(String esidNumber);
 	
 	List<Map<String,Object>> getESIDTypeList(String esidNumber);
+	
+	public GetEsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws SQLException,Exception;
 }
 
 
