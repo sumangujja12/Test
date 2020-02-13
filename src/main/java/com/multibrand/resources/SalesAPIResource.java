@@ -620,12 +620,20 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
+	/**
+	 * START :OE ADO SPrint4 : Tokenization API
+	 * @author Asingh
+	 * @param actionCode
+	 * @param numToBeTokenized
+	 * @return
+	 */
 	@GET
 	@Path(TOKENIZATION)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getTokenResponse(@QueryParam("actionCode") String actionCode,@QueryParam("numToBeTokenized") String numToBeTokenized) throws Exception {
+	public Response getTokenResponse(@QueryParam(value = "actionCode") String actionCode,@QueryParam(value ="numToBeTokenized") String numToBeTokenized) throws Exception {
 		Response response=null;
 		TokenRequestVO request = new TokenRequestVO();
+		long startTime = CommonUtil.getStartTime();
 		try{
 			request.setActionCode(actionCode);
 			request.setNumToBeTokenized(numToBeTokenized);
@@ -633,8 +641,10 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = tokenizedResponse.getHttpStatus() != null ? tokenizedResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(tokenizedResponse).build();
 		}catch(Exception e){ 
-			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getNumToBeTokenized()))).build();
-		}
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   		}
 		return response;
 	}
 	
