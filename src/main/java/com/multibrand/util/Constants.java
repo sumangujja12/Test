@@ -1350,7 +1350,7 @@ public interface Constants {
     //New Sales APIs - To be used by all channels and brands
     public static final String API_OFFERS = "offers";
     public static final String API_BPMATCH= "bpmatch";
-    public static final String API_POSID= "posid";
+    public static final String API_POSID= "identity";
     public static final String API_AVAILABLE_DATES= "available-dates";
     public static final String API_CHECK_CREDIT= "check-credit";
     public static final String API_CREDIT_DATA= "credit-data";

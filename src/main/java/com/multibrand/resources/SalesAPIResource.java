@@ -133,26 +133,6 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
-	//TBD
-	@POST
-	@Path(API_BPMATCH)
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performBPMatch(@Valid KbaAnswerRequest request) throws Exception {
-		long startTime = CommonUtil.getStartTime();
-		Response response=null;
-		
-		try{
-			//TBD
-			//KbaAnswerResponse kbaAnsweresponse = oeBO.submitKBAAnswers(request);
-			//response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
-   		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
-   		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_BPMATCH, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
-   		}
-       return response;
-	}
 	
 	@POST
 	@Path(API_POSID)
