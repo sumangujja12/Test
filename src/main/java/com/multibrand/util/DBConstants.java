@@ -361,6 +361,17 @@ public interface DBConstants {
 	public static final String  OE_ADD_KBA_DETAILS_QUERY = "db.choice.reliant.addkbadetailsquery";
 	
 	public static final String OE_UPDATE_KBA_DETAILS_QUERY = "db.choice.reliant.updatekbadetailsquery";
-	
-	
+	//START || PBI 15786: Update ESID Call || atiwari
+	public static final String PROC_GET_ESIID_INFO = "proc.getesiidInfo";
+	public static final String V_ESID = "V_ESID";
+	public static final String V_CLASS = "v_class";
+	public static final String V_DEPOSIT = "v_deposit";
+	public static final String V_TDSP = "v_tdsp";
+	public static final String V_STATUS = "v_status";
+	public static final String V_PERMISETYPE = "v_premisetype";
+	public static final String in_addr = "in_addr";
+	public static final String in_zip = "in_zip";
+	public static final String in_aptno = "in_aptno";
+	public static final String OUT_CURR_GET_ESI = "get_esi";
+	//END || PBI 15786: Update ESID Call || atiwari
 }
