@@ -200,7 +200,7 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 				CommonUtil.getValue(getEsiidRequest.getStrAprtNum()).trim());
 		
 		for (Map.Entry<String, Object> entry : inParams.entrySet()) {
-			System.out.println("inputParamValue : " + entry.getKey() + " inputParamCount : " + entry.getValue());
+			logger.debug("inputParamKey : " + entry.getKey() + " inputParamValue : " + entry.getValue());
 		}
 		/*inParams.forEach((inputParamValue,inputParamCount) -> logger.info("inParams value"+ inputParamValue +"  inputParamCount "+inputParamCount));*/
 		outParamsTypeMap.put(OUT_CURR_GET_ESI, new ResultObject(OracleTypes.CURSOR,new EsiidInfoResponseRowMapper()));
