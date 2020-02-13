@@ -36,6 +36,7 @@ import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
+import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
@@ -55,6 +56,7 @@ import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
+import com.multibrand.vo.response.ProspectDataResponse;
 import com.multibrand.vo.response.TokenizedResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 
@@ -618,12 +620,20 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
+	/**
+	 * START :OE ADO SPrint4 : Tokenization API
+	 * @author Asingh
+	 * @param actionCode
+	 * @param numToBeTokenized
+	 * @return
+	 */
 	@GET
 	@Path(TOKENIZATION)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getTokenResponse(@QueryParam("actionCode") String actionCode,@QueryParam("numToBeTokenized") String numToBeTokenized) throws Exception {
+	public Response getTokenResponse(@QueryParam(value = "actionCode") String actionCode,@QueryParam(value ="numToBeTokenized") String numToBeTokenized) throws Exception {
 		Response response=null;
 		TokenRequestVO request = new TokenRequestVO();
+		long startTime = CommonUtil.getStartTime();
 		try{
 			request.setActionCode(actionCode);
 			request.setNumToBeTokenized(numToBeTokenized);
@@ -631,9 +641,46 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = tokenizedResponse.getHttpStatus() != null ? tokenizedResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(tokenizedResponse).build();
 		}catch(Exception e){ 
-			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getNumToBeTokenized()))).build();
-		}
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   		}
 		return response;
 	}
 	
+	/**
+	 * START :OE ADO SPrint4 : To get Prospect Data
+	 * @author Kdeshmu1
+	 * @param prospectID
+	 * @param lastfourdigitSSN
+	 * @param companyCode
+	 * @param languageCode
+	 * @return
+	 */
+	@GET
+	@Path(PROSPECT)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getProspectData(@QueryParam(value = "prospectID")   String prospectID,
+			@QueryParam(value = "lastfourdigitSSN")   String lastfourdigitSSN,
+			@QueryParam(value = "companyCode")   String companyCode,
+			@QueryParam(value = "languageCode")   String languageCode) {
+		Response response = null;
+		long startTime = CommonUtil.getStartTime();
+		ProspectDataRequest request = null;
+		try{
+			request = new ProspectDataRequest();
+			request.setCompanyCode(companyCode);
+			request.setProspectID(prospectID);
+			request.setLastfourdigitSSN(lastfourdigitSSN);
+		ProspectDataResponse prospectDataResponse = oeBO.getProspectData(prospectID,lastfourdigitSSN,companyCode);
+		Response.Status status = prospectDataResponse.getHttpStatus() != null ? prospectDataResponse.getHttpStatus() :Response.Status.OK;
+		response = Response.status(status).entity(prospectDataResponse).build();
+		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(languageCode))).build();
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   		}
+		return response;
+	}
+
 }
