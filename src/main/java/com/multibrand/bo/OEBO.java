@@ -69,6 +69,8 @@ import com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.domain.PromoOfferTDSPCharge;
+import com.multibrand.domain.ProspectRequest;
+import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.SegmentedFlagsOutData;
 import com.multibrand.domain.SubmitEnrollResponse;
 import com.multibrand.domain.TdspByESIDResponse;
@@ -152,6 +154,7 @@ import com.multibrand.vo.response.OfferPriceWraperDO;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.POWOfferDO;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
+import com.multibrand.vo.response.ProspectDataResponse;
 import com.multibrand.vo.response.SegmentedFlagDO;
 import com.multibrand.vo.response.ServiceAddressDO;
 import com.multibrand.vo.response.TDSPChargeDO;
@@ -5444,6 +5447,80 @@ esidResponse = addressDAO.getESIDDetails(getEsiidRequest);
 return esidResponse;
 
 }
+
+/**
+ * Start ;ADO :Sprint 4 :: To get Prospect Data
+ * @author Kdeshmu1
+ * @param prospectId
+ * @param lastFourDigitSsn
+ * @param companyCode
+ * @return com.multibrand.vo.response.ProspectDataResponse
+ */
+public ProspectDataResponse getProspectData(String prospectId, String  lastFourDigitSsn,String companyCode) {
+	
+	ProspectDataResponse response = new ProspectDataResponse();
+		
+	if(StringUtils.isBlank(prospectId))
+		{  
+		response.setStatusCode(Constants.STATUS_CODE_STOP);
+		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+		response.setResultDescription("ProspectID may not be Empty");
+		response.setErrorCode(HTTP_BAD_REQUEST);
+		response.setErrorDescription(response.getResultDescription());
+		response.setHttpStatus(Response.Status.BAD_REQUEST);
+		return response;
+		}
+	if( StringUtils.isBlank(lastFourDigitSsn))
+	{  
+		response.setStatusCode(Constants.STATUS_CODE_STOP);
+		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+		response.setResultDescription("LastfourdigitSSN may not be Empty");
+		response.setErrorCode(HTTP_BAD_REQUEST);
+		response.setErrorDescription(response.getResultDescription());
+		response.setHttpStatus(Response.Status.BAD_REQUEST);
+		return response;
+	}
+		
+	try {
+		
+		ProspectRequest prospectRequest = new ProspectRequest();
+		prospectRequest.setCompanyCode(companyCode);
+		prospectRequest.setLastfourdigitSSN(lastFourDigitSsn);
+		prospectRequest.setProspectId(prospectId);
+		
+		ProspectResponse prospectResponse = oeService.getProspectData(prospectRequest);
+		
+		if (prospectResponse != null && prospectResponse.getStatusCode().equalsIgnoreCase(S_VALUE)){
+			response.setProspectBpID(prospectResponse.getPartner());
+			response.setProspectBpIDType(prospectResponse.getBpType());
+			response.setProspectCreditBucket(prospectResponse.getCreditBucket());
+			response.setProspectCreditScore(prospectResponse.getCreditScore());
+			response.setProspectCreditScoreDate(prospectResponse.getCreditDate());
+			response.setProspectCreditSource(prospectResponse.getCreditSource());
+			response.setProspectPreApprovalFlag(prospectResponse.getCreditSegmentIndicator());
+			response.setStatusCode(Constants.STATUS_CODE_CONTINUE);
+			response.setResultCode(RESULT_CODE_SUCCESS);
+		}else{
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setMessageCode(NO_PROSPECT_MATCH_FOUND);
+			response.setMessageText(prospectResponse.getErrorMessage());//Jay to confirm the msg
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+		
+	} catch (Exception e) {
+		response.setStatusCode(Constants.STATUS_CODE_STOP);
+		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+		response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
+		logger.error("Exception in getting Prospect Details: ", e);
+	}
+	logger.info("ProspectDataResponse : ResultCode : "+response.getResultCode());
+	return response;
+	
+	}
+
 }
 
 	

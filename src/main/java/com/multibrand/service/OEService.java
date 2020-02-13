@@ -37,6 +37,8 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.domain.ProspectRequest;
+import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.UpdateCRMAgentInfoRequest;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -532,6 +534,11 @@ public class OEService extends BaseAbstractService {
 
 		}
 		
+/**
+ * @author 289347
+ * @param kbaQuestionRequest
+ * @return
+ */
 		public KbaQuestionResponse getKBAQuestionList(KbaQuestionRequest kbaQuestionRequest)   {
 			KbaQuestionResponse kbaQuestionResponse = null;
 			try {
@@ -542,7 +549,11 @@ public class OEService extends BaseAbstractService {
 			} 
 			return kbaQuestionResponse;
 		}
-		
+/**
+ * 	
+ * @param kbaSubmitAnswerRequest
+ * @return
+ */
 		public KbaSubmitAnswerResponse submitKBAAnswer(KbaSubmitAnswerRequest kbaSubmitAnswerRequest)   {
 			KbaSubmitAnswerResponse kbaSubmitAnswerResponse = null;
 			try {
@@ -554,5 +565,22 @@ public class OEService extends BaseAbstractService {
 			return kbaSubmitAnswerResponse;
 		}
 		
+/**
+ * START :OE ADO SPrint4 : To get Prospect Data
+ * @author 289347
+ * @param request
+ * @return
+ */
+public ProspectResponse getProspectData(ProspectRequest request)   {
+			
+			ProspectResponse  response = null;
+			try {
+				OEDomain proxyclient = getOEServiceProxy();
+				response= proxyclient.getProsectData(request);
+			} catch (Exception e) {
+				logger.error("Error in method: submitKbaAnswer");
+			} 
+			return response;
+		}
 		
 }
