@@ -5503,7 +5503,9 @@ public ProspectDataResponse getProspectData(String prospectId, String  lastFourD
 		}else{
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setMessageCode(NO_PROSPECT_MATCH_FOUND);
-			response.setMessageText(prospectResponse.getErrorMessage());//Jay to confirm the msg
+			if(prospectResponse != null){
+				response.setMessageText(prospectResponse.getErrorMessage());//Jay to confirm the msg
+			}
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 		}
 		
