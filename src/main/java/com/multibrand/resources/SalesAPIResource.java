@@ -11,6 +11,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -46,6 +47,7 @@ import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GenericResponse;
@@ -615,4 +617,23 @@ public class SalesAPIResource extends BaseResource {
    		}
        return response;
 	}
+	
+	@GET
+	@Path(TOKENIZATION)	
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getTokenResponse(@QueryParam("actionCode") String actionCode,@QueryParam("numToBeTokenized") String numToBeTokenized) throws Exception {
+		Response response=null;
+		TokenRequestVO request = new TokenRequestVO();
+		try{
+			request.setActionCode(actionCode);
+			request.setNumToBeTokenized(numToBeTokenized);
+			TokenizedResponse tokenizedResponse = oeBO.getTokenResponse(request);
+			Response.Status status = tokenizedResponse.getHttpStatus() != null ? tokenizedResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(tokenizedResponse).build();
+		}catch(Exception e){ 
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getNumToBeTokenized()))).build();
+		}
+		return response;
+	}
+	
 }

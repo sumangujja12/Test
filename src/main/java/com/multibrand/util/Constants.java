@@ -1341,5 +1341,8 @@ public interface Constants {
     public static final String CHANNEL_AA = "AA";
     public static final String CHENNEL_AFF = "AFF";
     
+  //tokenization
+    public static final String TOKENIZATION = "token";
+    
    
 }
