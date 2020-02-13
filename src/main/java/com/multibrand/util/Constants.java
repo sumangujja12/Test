@@ -1323,7 +1323,6 @@ public interface Constants {
     
     //New Sales APIs - To be used by all channels and brands
     public static final String API_OFFERS = "offers";
-    public static final String API_BPMATCH= "bpmatch";
     public static final String API_POSID= "identity";
     public static final String API_AVAILABLE_DATES= "available-dates";
     public static final String API_CHECK_CREDIT= "check-credit";
@@ -1331,22 +1330,19 @@ public interface Constants {
     public static final String API_SUBMIT_ENROLLMENT= "enrollment";
     public static final String API_GET_KBA_QUESTIONS = "kba-questions";
     public static final String API_KBA_RESULT = "kba-result";
+    public static final String API_TOKEN = "token";
+    public static final String API_PROSPECT = "prospect";
     
     //Submit new KBA Answers API
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
     public static final String RETRY_NOT_ALLOWED_TXT = "Retry of KBA Answers is not allowed on same transactionKey. Please rerun the getKBAQuestions API to generate a new transactionKey";
-    
+    public static final String NO_PROSPECT_MATCH_FOUND = "NO_PROSPECT_MATCH_FOUND";
     public static final String HTTP_BAD_REQUEST  = "BAD_REQUEST";
     public static final String CHANNEL_WEB = "WEB";
     public static final String CHANNEL_AA = "AA";
-    public static final String CHENNEL_AFF = "AFF";
+    public static final String CHANNEL_AFF = "AFF";
     
-  //tokenization
-   // START :OE ADO SPrint4 : To get Prospect Data :Kdeshmu1
-    public static final String TOKENIZATION = "token";
-    public static final String NO_PROSPECT_MATCH_FOUND = "NO_PROSPECT_MATCH_FOUND";
-    public static final String PROSPECT = "prospect";
-   // END :OE ADO SPrint4 : To get Prospect Data :Kdeshmu1
-    
+    public static final String[] channelTypeArray = {CHANNEL_WEB,CHANNEL_AA,CHANNEL_AFF }; 
+    public static final String[] tokenActionCodeArray = {CHANNEL_WEB,CHANNEL_AA,CHANNEL_AFF }; 
    
 }
