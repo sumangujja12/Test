@@ -1755,6 +1755,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				tokenizedResponse.setResultCode(RESULT_CODE_SUCCESS);
 				tokenizedResponse.setResultDescription(ACTION_CODE_INVALID);
 				tokenizedResponse.setReturnToken(returnToken);
+				tokenizedResponse.setErrorCode(HTTP_BAD_REQUEST);
+				tokenizedResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 				logger.debug("getTokenResponse :::::::: Ends with invalid action code");
 				return tokenizedResponse;
 			}
@@ -1777,7 +1779,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			logger.error(e);
 			tokenizedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			tokenizedResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			throw new OAMException(200, e.getMessage(), tokenizedResponse);
+			tokenizedResponse.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+			//throw new OAMException(200, e.getMessage(), tokenizedResponse);
 		}
 
 		logger.debug("getTokenResponse :::::::: End");

@@ -1,6 +1,8 @@
 package com.multibrand.vo.request;
 
-public class TokenRequestVO {
+import com.multibrand.dto.request.BaseAffiliateRequest;
+
+public class TokenRequestVO extends BaseAffiliateRequest {
 	private String actionCode;
 	private String numToBeTokenized;
 	/**
