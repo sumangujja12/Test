@@ -358,5 +358,6 @@ public interface DBConstants {
 	public static final String QUERY_GME_VALIDATE_PASSWORD_LINK = "query.gme.validate.password.link";
 	public static final String QUERY_GET_USER_LOGIN_ID = "query.get.user.login.id";
 	
-	
+	public static final String QUERY_GET_WEEKLY_SUMMARY_EMAIL = "query.get.wse.sqlQuery";
+
 }
