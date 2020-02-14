@@ -24,10 +24,8 @@ public class ChannelTypeValidatorTest {
 		assertTrue( validator.isValid("", null ));
 		assertTrue( validator.isValid(null, null));
 		assertTrue( validator.isValid("AA", null));
-		assertTrue( validator.isValid("SMB", null));
 		assertTrue( validator.isValid("WEB", null));
 		assertTrue( validator.isValid("AFF", null));
-		assertTrue( validator.isValid("CC", null));
 	}
 	@Test
 	public void testInValidChannelType() {
