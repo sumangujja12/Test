@@ -3,7 +3,7 @@
 Feature: Get ESID Details
 
 Background:
-  * url  'http://dev1-ws.nrgenergy.com/'
+  * url  BASE_SERVER_URL
 	* json getesiddetailsrequest = read('classpath:com/it/multibrand/karate/esiddetails/GetESIDDetails.json')
  
  	Scenario: Get ESID detail response using a valid address
