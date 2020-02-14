@@ -2028,8 +2028,8 @@ public class CommonUtil implements Constants {
 			case CHANNEL_AA:
 				channel = CHANNEL_AA;
 					break;
-			case CHENNEL_AFF:
-				channel = CHENNEL_AFF;
+			case CHANNEL_AFF:
+				channel = CHANNEL_AFF;
 					break;			
 			default:
 				break;

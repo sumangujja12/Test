@@ -1739,56 +1739,46 @@ public class OEBO extends OeBoHelper implements Constants{
 	/**
 	 * @param request
 	 * @return TokenizedResponse
+	 * @throws ServiceException 
 	 */
 	public TokenizedResponse getTokenResponse(TokenRequestVO request) {
 
 		logger.debug("getTokenResponse :::::::: Start");
 
 		TokenizedResponse tokenizedResponse = new TokenizedResponse();
-
-		try {
-
-			String returnToken = "";
-			
-			if (StringUtils.isBlank(request.getActionCode())
-					|| (!request.getActionCode().equalsIgnoreCase(Token.getCreditCardAction())
-					    && !request.getActionCode().equalsIgnoreCase(Token.getBankAccountAction())
-					    && !request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceAction())
-					    && !request.getActionCode().equalsIgnoreCase(Token.getSsnAction())))
-			{
-				tokenizedResponse.setResultCode(RESULT_CODE_SUCCESS);
-				tokenizedResponse.setResultDescription(ACTION_CODE_INVALID);
-				tokenizedResponse.setReturnToken(returnToken);
-				tokenizedResponse.setErrorCode(HTTP_BAD_REQUEST);
-				tokenizedResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-				logger.debug("getTokenResponse :::::::: Ends with invalid action code");
-				return tokenizedResponse;
-			}
-			
-			if (request.getActionCode().equalsIgnoreCase(Token.getCreditCardAction())) {
-				returnToken = Token.getToken(request.getNumToBeTokenized());
-				tokenizedResponse.setReturnToken(returnToken);
-			} else if (request.getActionCode().equalsIgnoreCase(Token.getBankAccountAction())) {
-				returnToken = Token.getBankAccountToken(request.getNumToBeTokenized());
-				tokenizedResponse.setReturnToken(returnToken);
-			} else if (request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceAction())) {
-				returnToken = Token.getDRLToken(request.getNumToBeTokenized());	
-				tokenizedResponse.setReturnToken(returnToken);
-			} else if (request.getActionCode().equalsIgnoreCase(Token.getSsnAction())) {
-				returnToken = Token.getSSNToken(request.getNumToBeTokenized());
-				tokenizedResponse.setReturnToken(returnToken);
-			}
-			
-		} catch (Exception e) {
-			logger.error(e);
+		String returnToken = null;
+		
+		if (StringUtils.isBlank(request.getActionCode())
+				|| (!request.getActionCode().equalsIgnoreCase(Token.getCreditCardAction())
+				    && !request.getActionCode().equalsIgnoreCase(Token.getBankAccountAction())
+				    && !request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceAction())
+				    && !request.getActionCode().equalsIgnoreCase(Token.getSsnAction())))
+		{
 			tokenizedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			tokenizedResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			tokenizedResponse.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
-			//throw new OAMException(200, e.getMessage(), tokenizedResponse);
+			tokenizedResponse.setResultDescription(ACTION_CODE_INVALID);
+			tokenizedResponse.setReturnToken(returnToken);
+			tokenizedResponse.setStatusCode(STATUS_CODE_STOP);
+			tokenizedResponse.setErrorCode(HTTP_BAD_REQUEST);
+			tokenizedResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+			logger.debug("getTokenResponse :::::::: Ends with invalid action code");
+			return tokenizedResponse;
 		}
-
+		
+		if (request.getActionCode().equalsIgnoreCase(Token.getCreditCardAction())) {
+			returnToken = Token.getToken(request.getNumToBeTokenized());
+			tokenizedResponse.setReturnToken(returnToken);
+		} else if (request.getActionCode().equalsIgnoreCase(Token.getBankAccountAction())) {
+			returnToken = Token.getBankAccountToken(request.getNumToBeTokenized());
+			tokenizedResponse.setReturnToken(returnToken);
+		} else if (request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceAction())) {
+			returnToken = Token.getDRLToken(request.getNumToBeTokenized());	
+			tokenizedResponse.setReturnToken(returnToken);
+		} else if (request.getActionCode().equalsIgnoreCase(Token.getSsnAction())) {
+			returnToken = Token.getSSNToken(request.getNumToBeTokenized());
+			tokenizedResponse.setReturnToken(returnToken);
+		}
+			
 		logger.debug("getTokenResponse :::::::: End");
-
 		return tokenizedResponse;
 	}
 	
@@ -5531,7 +5521,7 @@ public ProspectDataResponse getProspectData(String prospectId, String  lastFourD
 	{  
 		response.setStatusCode(Constants.STATUS_CODE_STOP);
 		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-		response.setResultDescription("LastfourdigitSSN may not be Empty");
+		response.setResultDescription("last4SSN may not be Empty");
 		response.setErrorCode(HTTP_BAD_REQUEST);
 		response.setErrorDescription(response.getResultDescription());
 		response.setHttpStatus(Response.Status.BAD_REQUEST);
@@ -5539,7 +5529,6 @@ public ProspectDataResponse getProspectData(String prospectId, String  lastFourD
 	}
 		
 	try {
-		
 		ProspectRequest prospectRequest = new ProspectRequest();
 		prospectRequest.setCompanyCode(companyCode);
 		prospectRequest.setLastfourdigitSSN(lastFourDigitSsn);
