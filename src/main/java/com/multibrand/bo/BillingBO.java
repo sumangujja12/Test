@@ -69,6 +69,7 @@ import com.multibrand.service.TOSService;
 import com.multibrand.thread.AMBMailServiceWorker;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.DateUtil;
 import com.multibrand.util.JavaBeanUtil;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
@@ -3079,17 +3080,14 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					aMBEligibiltyStatusResponse
 							.setAvgBillFlag(averageBillingEnrolment.equalsIgnoreCase(AVG_BILL_FLAG_YES)
 									? AVG_BILL_FLAG_Y : AVG_BILL_FLAG_N);
-					if (aMBEligibiltyStatusResponse.getAvgBillFlag().equalsIgnoreCase(AVG_BILL_FLAG_Y)
-							&& (ambEligibiltyCheckResponseVO.getAmbWebTab() != null
-									&& ambEligibiltyCheckResponseVO.getAmbWebTab().length > 0)) {
-						Double currentBillAmount = ambEligibiltyCheckResponseVO.getAmbWebTab()[0].getAmtFinal();
-						Double ambAmt = ambEligibiltyCheckResponseVO.getAmbAmt();
-						Double calculatedAmbAmt = currentBillAmount - ((currentBillAmount * 10) / 100);
-						if (ambAmt > 0 && ambAmt <= calculatedAmbAmt) {
-							aMBEligibiltyStatusResponse.setRetroAvgBillEligible(true);
-						}
-					}
 					
+				}
+				
+				if(StringUtils.equalsIgnoreCase(aMBEligibiltyStatusResponse.getAvlBillFlag(), AVG_BILL_FLAG_Y)
+						&& ambEligibiltyCheckResponseVO.getAmbWebTab() != null && ambEligibiltyCheckResponseVO.getAmbWebTab().length > 0) {
+					aMBEligibiltyStatusResponse.setRetroAvgBillEligible(
+							isRetroAmbEligible(ambEligRequest.getAccountNumber(), ambEligRequest.getBpNumber(),
+									ambEligRequest.getContractId(), ambEligibiltyCheckResponseVO));
 				}
 			}
 		} catch (Exception e) {
@@ -3469,8 +3467,70 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		emailRequest.setPropertyList(prop);
 		emailService.sendEmail(emailRequest);
 	}
-	
-	
-	
 
+
+	
+	public boolean isRetroAmbEligible(String accountNumber, String bpNumber, String contractId,
+			AMBEligibiltyCheckResponseVO ccsAmbResponse) {
+		boolean eligible = false;
+		double currentBillAmt = 0.0;
+		logger.info("isRetroAmbEligible - Check ccsAmbResponse size {}", ccsAmbResponse.getAmbWebTab().length);
+		
+		List<AmbOutputTab> list = Arrays.asList(ccsAmbResponse.getAmbWebTab());
+
+		Collections.sort(list, new Comparator<AmbOutputTab>() {
+
+			@Override
+			public int compare(AmbOutputTab o1, AmbOutputTab o2) {
+				if (o1 == null || o2 == null)
+					return 0;
+				System.out.println(o1.getAmtFinal());
+				System.out.println(o2.getAmtFinal());
+				if ((o1.getInvoice() == null || o2.getInvoice() == null)) {
+					return 0;
+
+				}
+				Date date1 = null;
+				Date date2 = null;
+
+				date1 = DateUtil.getDate(o1.getBillAllocDate(), "yyyy-MM-dd");
+				date2 = DateUtil.getDate(o2.getBillAllocDate(), "yyyy-MM-dd");
+
+				if (date1.compareTo(date2) > 0) {
+					return -1;
+				} else if (date1.compareTo(date2) < 0) {
+					return 1;
+				} else if (date1.compareTo(date2) == 0) {
+					return 0;
+				} else {
+					return 0;
+				}
+			}
+
+		});
+
+		/*
+		 * com.multibrand.vo.response.billingResponse.GetArResponse response =
+		 * getBalance(accountNumber, bpNumber, Constants.COMPANY_CODE_GME,
+		 * CommonUtil.generateUUID(), Constants.BRAND_ID_GME); String dueAmt =
+		 * response.getStrCreditAmt();
+		 */
+		String invoiceId = list.get(0).getInvoice();
+		currentBillAmt = Double.valueOf(list.get(0).getAmtFinal());
+		logger.info("isRetroAmbEligible - invoiceId {}", invoiceId);
+		logger.info("currentBillAmt - currentBillAmt {}", currentBillAmt);
+		logger.info("currentBillAmt - Date {}", list.get(0).getBillAllocDate());
+		//logger.info("currentBillAmt - dueAmt {}", dueAmt);
+		
+		String retroConfigVal = this.envMessageReader.getMessage("RetroAmbPercentageValue");
+		double calculatedAmbAmt = currentBillAmt - (Double.valueOf(retroConfigVal) * currentBillAmt) / 100;
+		if (Double.valueOf(ccsAmbResponse.getAmbAmt()) > 0
+				&& Double.valueOf(ccsAmbResponse.getAmbAmt()) <= calculatedAmbAmt) {
+			eligible = true;
+		}
+
+		logger.info("isRetroAmbEligible {} - eligible {}", accountNumber, eligible);
+		return eligible;
+	}
+	
 }

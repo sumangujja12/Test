@@ -173,7 +173,6 @@ rest.api.password=tester
 rest.ws.endpointURL.iot.enrollment.report.data.submit=http://txaixsexbls05/iotproxy/enrollment/sendReliantEnrollmentDataToTLP
 iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 #END : OE :Sprint62 :US21019 :Kdeshmu1
-
 #Content Service 
 content.server.endpoint.url=http://txaixebxbls01:18081/client/v2/content.svc/
 #File
@@ -183,3 +182,4 @@ documentum.endpoint=http://dev-texas.xoomenergy.com/files/{0}.pdf
 ws.rest.togglz.base.url=http://stg1-ws.nrgenergy.com/togglz
 togglz.default.groupName=SalesAPI
 #End Togglz Framework Integration
+RetroAmbPercentageValue=10

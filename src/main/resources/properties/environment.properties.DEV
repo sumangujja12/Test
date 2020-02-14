@@ -176,7 +176,6 @@ rest.ws.endpointURL.iot.enrollment.report.data.submit=http://txaixsexbls05/iotpr
 iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 #END : OE :Sprint62 :US21019 :Kdeshmu1
 
-
 #Content Service 
 content.server.endpoint.url=http://txaixebnbld01.retail.nrgenergy.com:18081/client/v2/content.svc/
 #File
@@ -186,3 +185,4 @@ documentum.endpoint=http://dev-texas.xoomenergy.com/files/{0}.pdf
 ws.rest.togglz.base.url=http://dev1-ws.nrgenergy.com/togglz
 togglz.default.groupName=SalesAPI
 #End Togglz Framework Integration
+RetroAmbPercentageValue=10
