@@ -39,4 +39,19 @@ public class CommonUtilTest {
 		assertEquals(brandId, "");
 		
 	}
+	
+	@Test
+	public void testValidGetChannelTypeForTogglz(){
+		String channelType = CommonUtil.getChannelTypeForTogglz(Constants.CHANNEL_AA);
+		assertEquals(channelType, Constants.CHANNEL_AA);
+		channelType = CommonUtil.getChannelTypeForTogglz(Constants.CHANNEL_AFF);
+		assertEquals(channelType, Constants.CHANNEL_AFF);
+		channelType = CommonUtil.getChannelTypeForTogglz(Constants.CHANNEL_WEB);
+		assertEquals(channelType, Constants.CHANNEL_WEB);
+	}
+	@Test
+	public void testInvalidGetChannelTypeForTogglz(){
+		String channelType = CommonUtil.getChannelTypeForTogglz("TEST");
+		assertEquals(channelType, Constants.CHANNEL_WEB);
+	}
 }

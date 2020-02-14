@@ -23,12 +23,12 @@ import com.multibrand.dao.mapper.GetPendingEnrollmentRequestRowMapper;
 import com.multibrand.dto.request.CheckPendingServiceRequest;
 import com.multibrand.dto.request.GetEsiidRequest;
 import com.multibrand.dto.response.CheckPendingServiceResponse;
+import com.multibrand.dto.response.EsiidResponse;
 import com.multibrand.manager.BaseStoredProcedure;
 import com.multibrand.manager.StoredProcedureManager;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.ESIDDO;
-import com.multibrand.vo.response.GetEsiidResponse;
 
 @Repository("addressDAO")
 public class AddressDAOImpl extends AbstractSpringDAO implements
@@ -171,9 +171,9 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 	* @throws SQLException,Exception 
 	*/
 	@Override
-	public GetEsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws SQLException,Exception {
+	public EsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws SQLException,Exception {
 		logger.debug("AddressDAOImpl ::getESIDDetails");
-		GetEsiidResponse esiidResponse=new GetEsiidResponse();
+		EsiidResponse esiidResponse=new EsiidResponse();
 		BaseStoredProcedure storedProc = null;
 		Map<String, Object> inParams = null;
 		Map<String, Integer> inParamsTypeMap = null;

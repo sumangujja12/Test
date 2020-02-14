@@ -110,6 +110,7 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
+import com.multibrand.dto.response.EsiidResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
@@ -5431,8 +5432,8 @@ public boolean updateKbaDetails(KBASubmitResultsDTO request) throws Exception {
 * @return com.multibrand.vo.response.GetEsiidResponse
 * @throws SQLException, Exception
 */
-public com.multibrand.vo.response.GetEsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws Exception{
-com.multibrand.vo.response.GetEsiidResponse esidResponse=null;
+public EsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws Exception{
+EsiidResponse esidResponse=null;
 esidResponse = addressDAO.getESIDDetails(getEsiidRequest);
 return esidResponse;
 
