@@ -4202,6 +4202,11 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setCmsErrorOffers(cmsErrorOffers);	
 				response.setAffiliateOfferList(affiliateOfferList.toArray(new AffiliateOfferDO[affiliateOfferList.size()]));
 			}
+			
+			if(response.getAffiliateOfferList() == null || response.getAffiliateOfferList() .length ==0){
+				response.setStatusCode(Constants.STATUS_CODE_STOP);				
+			}
+			
 		}
 		
 		
