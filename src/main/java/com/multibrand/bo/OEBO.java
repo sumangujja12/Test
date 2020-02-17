@@ -2009,7 +2009,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				for (FactorDetailDO factObj : factorsArray) {
 					if (!locale.equalsIgnoreCase(factObj.getLanguage()))
 						continue;
-					creditFactor.append(factObj.getKey_FACTOR() + SEMI_COLON);
+					//creditFactor.append(factObj.getKey_FACTOR() + SEMI_COLON);
+					creditFactor.append(factObj.getSource() + DOT + factObj.getType() + DOT +factObj.getKey_FACTOR() + SEMI_COLON );
 					String key = factObj.getSource() + DOT + factObj.getType()
 							+ DOT + factObj.getKey_FACTOR();
 					creditFactorsText.append(oweRPMFactors.getMessage(key,
