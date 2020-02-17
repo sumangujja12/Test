@@ -6,14 +6,14 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 import com.multibrand.util.DBConstants;
-import com.multibrand.vo.request.ESIDDO;
+import com.multibrand.vo.request.ESIDData;
 
 
-public class EsiidInfoResponseRowMapper implements RowMapper<ESIDDO>, DBConstants {
+public class EsiidInfoResponseRowMapper implements RowMapper<ESIDData>, DBConstants {
 
 	@Override
-	public ESIDDO mapRow(ResultSet resultSet, int arg1) throws SQLException {
-		ESIDDO getEsiidResponse = new ESIDDO();
+	public ESIDData mapRow(ResultSet resultSet, int arg1) throws SQLException {
+		ESIDData getEsiidResponse = new ESIDData();
 		getEsiidResponse.setEsidNumber(resultSet.getString(V_ESID));
 		getEsiidResponse.setEsidClass(resultSet.getString(V_CLASS));
 		getEsiidResponse.setEsidDeposit(resultSet.getString(V_DEPOSIT));

@@ -11,7 +11,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -33,6 +32,7 @@ import com.multibrand.dto.request.AffiliateOfferRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
+import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
@@ -40,6 +40,7 @@ import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
+import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -672,4 +673,22 @@ public class SalesAPIResource extends BaseResource {
 		return response;
 	}
 
+	@POST
+	@Path(API_ESID)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_JSON })
+	public Response getESIDDetails(@Valid EsidRequest request){
+		Response response = null;
+		long startTime = CommonUtil.getStartTime();
+		try{
+			EsidResponse getEsiidResponse = oeBO.getESIDDetails(request);
+			response = Response.status(Response.Status.OK).entity(getEsiidResponse).build();
+		}catch (Exception e) {
+	   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+	   			logger.error(e.fillInStackTrace());
+	   	}finally{
+	   			utilityloggerHelper.logSalesAPITransaction(API_PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+	   	}
+		return response;	
+	}
 }
