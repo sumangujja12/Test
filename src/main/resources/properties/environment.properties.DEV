@@ -169,3 +169,4 @@ rest.ws.endpointURL.iot.enrollment.report.data.submit=http://txaixsexbls05/iotpr
 iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 #END : OE :Sprint62 :US21019 :Kdeshmu1
 RetroAmbPercentageValue=10
+contractAccountNumberRetro=000010474734
