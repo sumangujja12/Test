@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.multibrand.dto.request.CheckPendingServiceRequest;
-import com.multibrand.dto.request.GetEsiidRequest;
+import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.response.CheckPendingServiceResponse;
-import com.multibrand.dto.response.EsiidResponse;
+import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.domain.GetEsiidResponse;
 
 
@@ -21,7 +21,7 @@ public interface AddressDAOIF{
 	
 	List<Map<String,Object>> getESIDTypeList(String esidNumber);
 	
-	public EsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws SQLException,Exception;
+	public EsidResponse getESIDDetails(EsidRequest esidRequest) throws SQLException,Exception;
 }
 
 
