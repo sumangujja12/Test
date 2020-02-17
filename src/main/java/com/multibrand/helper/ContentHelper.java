@@ -769,8 +769,8 @@ public class ContentHelper implements Constants {
 					cmsErrorOfferList.add(affiliateOfferDO);
 					cmsErroredOfferCodes = cmsErroredOfferCodes + affiliateOfferDO.getOfferCode()+ DELIMETER_COMMA;					
 				}else{
-					affiliateOfferDO.setCmsProductTagline(productOffer.getStrProductTagLine());
-					affiliateOfferDO.setCmsProductMarketingDetails(productOffer.getStrAdditionalText());
+					affiliateOfferDO.setCmsProductTagline(com.reliant.cd.util.CommonUtil.removeHTMLTags(productOffer.getStrProductTagLine()));
+					affiliateOfferDO.setCmsProductMarketingDetails(com.reliant.cd.util.CommonUtil.removeHTMLTags(productOffer.getStrAdditionalText()));
 					affiliateOfferDO.setCmsGreenFlag(String.valueOf(productOffer.isGreenPlan()));
 					affiliateOfferDO.setCmsSmartMeterFlag(String.valueOf(productOffer.isSmartMeterRequired()));
 					OfferBanner offerBanner = productOffer.getOfferBanner();
