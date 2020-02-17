@@ -631,7 +631,7 @@ public class SalesAPIResource extends BaseResource {
 			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
 			logger.error(e.fillInStackTrace());
 		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_TOKEN, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
    		}
 		return response;
 	}
