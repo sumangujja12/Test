@@ -54,6 +54,7 @@ import com.multibrand.dto.response.CCDepositPaymentResponse;
 import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
+import com.multibrand.dto.response.EsiidResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -67,7 +68,7 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
 import com.multibrand.vo.response.GenericResponse;
-import com.multibrand.vo.response.GetEsiidResponse;
+import com.multibrand.domain.GetEsiidResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
@@ -590,7 +591,7 @@ public class OEResource extends BaseResource {
 	public Response getESIDDetails(@Valid GetEsiidRequest getEsiidRequest){
 		Response response = null;
 		try{
-			GetEsiidResponse getEsiidResponse = oeBO.getESIDDetails(getEsiidRequest);
+			EsiidResponse getEsiidResponse = oeBO.getESIDDetails(getEsiidRequest);
 			response = Response.status(Response.Status.OK).entity(getEsiidResponse).build();
 		}catch(Exception e){
 			logger.debug("OEResource getESIDDetails: "+e);
