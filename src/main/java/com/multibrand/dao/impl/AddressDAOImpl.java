@@ -21,14 +21,14 @@ import com.multibrand.dao.ResultObject;
 import com.multibrand.dao.mapper.EsiidInfoResponseRowMapper;
 import com.multibrand.dao.mapper.GetPendingEnrollmentRequestRowMapper;
 import com.multibrand.dto.request.CheckPendingServiceRequest;
-import com.multibrand.dto.request.GetEsiidRequest;
+import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.response.CheckPendingServiceResponse;
-import com.multibrand.dto.response.EsiidResponse;
+import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.manager.BaseStoredProcedure;
 import com.multibrand.manager.StoredProcedureManager;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
-import com.multibrand.vo.request.ESIDDO;
+import com.multibrand.vo.request.ESIDData;
 
 @Repository("addressDAO")
 public class AddressDAOImpl extends AbstractSpringDAO implements
@@ -171,9 +171,9 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 	* @throws SQLException,Exception 
 	*/
 	@Override
-	public EsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws SQLException,Exception {
+	public EsidResponse getESIDDetails(EsidRequest getEsiidRequest) throws SQLException,Exception {
 		logger.debug("AddressDAOImpl ::getESIDDetails");
-		EsiidResponse esiidResponse=new EsiidResponse();
+		EsidResponse esiidResponse=new EsidResponse();
 		BaseStoredProcedure storedProc = null;
 		Map<String, Object> inParams = null;
 		Map<String, Integer> inParamsTypeMap = null;
@@ -191,13 +191,13 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 		inParamsTypeMap.put(in_aptno, OracleTypes.VARCHAR);
 		
 		inParams.put(in_addr, CommonUtil
-				.getValue(getEsiidRequest.getStrStreet()).trim().toUpperCase());
-		inParams.put(in_city, CommonUtil.getValue(getEsiidRequest.getStrCity()).trim());
+				.getValue(getEsiidRequest.getServStreet()).trim().toUpperCase());
+		inParams.put(in_city, CommonUtil.getValue(getEsiidRequest.getServCity()).trim());
 		inParams.put(in_state, TX);
 		inParams.put(in_zip,
-				CommonUtil.getValue(getEsiidRequest.getStrZipCode()).trim());
+				CommonUtil.getValue(getEsiidRequest.getServZipCode()).trim());
 		inParams.put(in_aptno,
-				CommonUtil.getValue(getEsiidRequest.getStrAprtNum()).trim());
+				CommonUtil.getValue(getEsiidRequest.getServStreetAptNum()).trim());
 		
 		for (Map.Entry<String, Object> entry : inParams.entrySet()) {
 			logger.debug("inputParamKey : " + entry.getKey() + " inputParamValue : " + entry.getValue());
@@ -207,7 +207,7 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
 		storedProc = storedProcedure.createStoredProcedure(getJdbcTemplate(),sqlQuery, inParams, inParamsTypeMap, outParamsTypeMap, OUTPUT);
 		storedProcResult = storedProc.execute();
-		esiidResponse.setEsidList((List<ESIDDO>)storedProcResult.get(OUT_CURR_GET_ESI));
+		esiidResponse.setEsidList((List<ESIDData>)storedProcResult.get(OUT_CURR_GET_ESI));
 		return esiidResponse;
 	}
 }

@@ -96,7 +96,7 @@ import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
-import com.multibrand.dto.request.GetEsiidRequest;
+import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.ProductOfferRequest;
@@ -113,7 +113,7 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
-import com.multibrand.dto.response.EsiidResponse;
+import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
@@ -1762,6 +1762,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			tokenizedResponse.setErrorCode(HTTP_BAD_REQUEST);
 			tokenizedResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 			logger.debug("getTokenResponse :::::::: Ends with invalid action code");
+			return tokenizedResponse;
+		}else if(StringUtils.isBlank(request.getNumToBeTokenized())){
+			tokenizedResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			tokenizedResponse.setResultDescription("numToBeTokenized should not be blank");
+			tokenizedResponse.setReturnToken(returnToken);
+			tokenizedResponse.setStatusCode(STATUS_CODE_STOP);
+			tokenizedResponse.setErrorCode(HTTP_BAD_REQUEST);
+			tokenizedResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+			logger.debug("getTokenResponse :::::::: Ends with blank numToBeTokenized");
 			return tokenizedResponse;
 		}
 		
@@ -5491,13 +5500,13 @@ public boolean updateKbaDetails(KBASubmitResultsDTO request) throws Exception {
 /**
 * Start || PBI 15786: Update ESID Call || atiwari
 * @author atiwari
-* @param getEsiidRequest GetEsiidRequest
+* @param request GetEsiidRequest
 * @return com.multibrand.vo.response.GetEsiidResponse
 * @throws SQLException, Exception
 */
-public EsiidResponse getESIDDetails(GetEsiidRequest getEsiidRequest) throws Exception{
-EsiidResponse esidResponse=null;
-esidResponse = addressDAO.getESIDDetails(getEsiidRequest);
+public EsidResponse getESIDDetails(EsidRequest request) throws Exception{
+EsidResponse esidResponse=null;
+esidResponse = addressDAO.getESIDDetails(request);
 return esidResponse;
 
 }
