@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import com.multibrand.util.DBConstants;
 import com.multibrand.vo.request.ESIDDO;
 
+
 public class EsiidInfoResponseRowMapper implements RowMapper<ESIDDO>, DBConstants {
 
 	@Override
