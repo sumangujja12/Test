@@ -2023,7 +2023,9 @@ public class CommonUtil implements Constants {
 
 	public static String getChannelTypeForTogglz(String channelType){
 		String channel = CHANNEL_WEB;
-		
+		if(channelType == null){
+			channelType = StringUtils.EMPTY;
+		}
 		switch(channelType){
 			case CHANNEL_AA:
 				channel = CHANNEL_AA;
