@@ -1,6 +1,7 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
+import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -4343,27 +4344,47 @@ public class OEBO extends OeBoHelper implements Constants{
 				affiliateOfferDO.setOfferCategory(offerDO
 						.getStrOfferCategory());
 
-				if (StringUtils.equalsIgnoreCase(
-						affiliateOfferDO.getOfferCategory(),
-						CONSERVATION_CATEGORY)) {
-
+				if (OFFER_CATEGORY_LIST_CONSERVATION.contains(affiliateOfferDO.getOfferCategory()) 
+						|| (StringUtils.equalsIgnoreCase(affiliateOfferDO.getOfferCategory(), OFFER_CATEGORY_CONS600)) 
+						|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_SEASONAL, affiliateOfferDO.getOfferCategory())) 
+						|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_3TIER_500, affiliateOfferDO.getOfferCategory())) 
+						|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_3TIER_1350, affiliateOfferDO.getOfferCategory()))) 
+				{
+					String energyCharge = getEnergyCharge(offerDO,
+							request.getCompanyCode());
+					String energyCharge2 = getEnergyCharge2(offerDO) ;
 					affiliateOfferDO.setEnergyChargeText(msgSource
 							.getMessage(
 									CONSERVATION_ENERGY_CHARGE,
 									new String[] {
-											getEnergyCharge(offerDO,
-													request.getCompanyCode()),
-											getEnergyCharge2(offerDO) },
+											energyCharge,
+											energyCharge2 },
 									CommonUtil.localeCode(request
 											.getLanguageCode())));
-				} else {
+					affiliateOfferDO.setEnergyCharge(energyCharge);
+					affiliateOfferDO.setEnergyChargeOther(energyCharge2);
+				} else if((StringUtils.equalsIgnoreCase(OFFER_CATEGORY_EV_PLAN, affiliateOfferDO.getOfferCategory()))){
+					String energyCharge = getKeyPrice(offerDO,
+							EFL_ONPK);
+					String energyCharge2 = getKeyPrice(offerDO,
+							EFL_OFFPK1);					
+					affiliateOfferDO.setEnergyCharge(energyCharge);
+					affiliateOfferDO.setEnergyChargeOther(energyCharge2);
+				}else {
+					String energyCharge = getEnergyCharge(offerDO,
+							request.getCompanyCode());
 					affiliateOfferDO.setEnergyChargeText(msgSource
 							.getMessage(
 									NOT_CONSERVATION_ENERGY_CHARGE,
-									new String[] { getEnergyCharge(offerDO,
-											request.getCompanyCode()) },
+									new String[] { energyCharge },
 									CommonUtil.localeCode(request
 											.getLanguageCode())));
+					affiliateOfferDO.setEnergyCharge(energyCharge);
+					if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
+							|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
+							|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
+						affiliateOfferDO.setEnergyChargeOther(DEFAULT_PRICE_VALUE);
+					}
 				}
 				String energyCharge = getEnergyCharge(offerDO,
 						request.getCompanyCode());
@@ -4446,6 +4467,14 @@ public class OEBO extends OeBoHelper implements Constants{
 														.getPerKWValue() },
 										CommonUtil.localeCode(request
 												.getLanguageCode())));
+						affiliateOfferDO.setTdspCharge(offerDO.getTdspChargeDO()
+														.getPerKWValue());
+						if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
+								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
+								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
+							affiliateOfferDO.setTdspChargeOther(DEFAULT_PRICE_VALUE);
+						}
+						
 					}
 				
 				}

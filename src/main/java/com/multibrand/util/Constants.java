@@ -1369,6 +1369,31 @@ public interface Constants {
     public static final String CHANNEL_AA = "AA";
     public static final String CHANNEL_AFF = "AFF";
     
-     
+    public static final String DEFAULT_PRICE_VALUE= "0.0";
+    public static final String EFL_OFFPK1 = "EFL_OFFPK1";
+	public static final String EFL_ONPK = "EFL_ONPK";
+    
+	public static final String OFFER_CATEGORY_NESTCAM = "NESTCAM";
+	public static final String OFFER_CATEGORY_NESTCONS = "NESTCONS";
+	public static final String OFFER_CATEGORY_NESTCAMCONS = "NESTCAMCONS";
+	public static final String OFFER_CATEGORY_NESTTRUFREEWKND = "NESTTRUFREEWKND";
+	public static final String OFFER_CATEGORY_NESTCAMTRUFREEWKND = "NESTCAMTRUFREEWKND";	
+	public static final String OFFER_CATEGORY_NESTTSTATE = "NESTTSTATE";
+	public static final String OFFER_CATEGORY_NESTTSTATECONS = "NESTTSTATECONS";
+	public static final String OFFER_CATEGORY_NESTSTATETRUFREEWKND = "NESTSTATETRUFREEWKND";
+	public static final String OFFER_CATEGORY_CONSAPT = "CONSAPT";
+	public static final String OFFER_CATEGORY_TRULY_FREE_WEEKENDS = "TRULYFREEWKND";
+	public static final String OFFER_CATEGORY_CONS600="CONS600";
+	public static final String OFFER_CATEGORY_SEASONAL = "SEASONAL";
+	public static final String OFFER_CATEGORY_3TIER_500 = "3TIER-500";
+	public static final String OFFER_CATEGORY_3TIER_1350= "3TIER-1350";
+	public static final String OFFER_CATEGORY_EV_PLAN = "EVPLAN";
+	public static final String OFFER_CATEGORY_TRUELY_FREE_NIGHTS= "TRULYFREENIGHTS";
+	public static final String OFFER_CATEGORY_TRUELY_FREE_DAYS= "TRULYFREEDAYS";
+	
+
+    public static final List<String> OFFER_CATEGORY_LIST_CONSERVATION = Arrays.asList(CONSERVATION_CATEGORY,OFFER_CATEGORY_NESTCONS,OFFER_CATEGORY_NESTCAMCONS,OFFER_CATEGORY_CONSAPT,OFFER_CATEGORY_NESTTSTATECONS);    
+	public static final List<String> OFFER_CATEGORY_LIST_TRULYFREEWKND = Arrays.asList(OFFER_CATEGORY_TRULY_FREE_WEEKENDS,OFFER_CATEGORY_NESTTRUFREEWKND,OFFER_CATEGORY_NESTCAMTRUFREEWKND,OFFER_CATEGORY_NESTSTATETRUFREEWKND);
+
    
 }
