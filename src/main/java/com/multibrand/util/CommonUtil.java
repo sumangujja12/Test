@@ -1969,4 +1969,14 @@ public class CommonUtil implements Constants {
 	}
 
 
+	public static String removeHTMLTags(String contentMsg)
+	  {
+	    String updatedContentMsg = "";
+
+	    if (StringUtils.isNotBlank(contentMsg))
+	    {
+	      updatedContentMsg = contentMsg.replaceAll("<[^>]*>", "");
+	    }
+	    return updatedContentMsg;
+	  }
 }

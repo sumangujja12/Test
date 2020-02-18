@@ -42,6 +42,10 @@ public class AffiliateOfferDO {
 	private String cmsBannerTitle;
 	private String cmsBannerColor;
 	private String cmsSaveOffer;
+	private String energyCharge;
+	private String tdspCharge;
+	private String energyChargeOther;
+	private String tdspChargeOther;
 	
 
 	public String getSapPlanName() {
@@ -288,6 +292,29 @@ public class AffiliateOfferDO {
 	public void setCmsSaveOffer(String cmsSaveOffer) {
 		this.cmsSaveOffer = cmsSaveOffer;
 	}
-	
-
+	public String getEnergyCharge() {
+		return energyCharge;
+	}
+	public void setEnergyCharge(String energyCharge) {
+		this.energyCharge = energyCharge;
+	}
+	public String getTdspCharge() {
+		return tdspCharge;
+	}
+	public void setTdspCharge(String tdspCharge) {
+		this.tdspCharge = tdspCharge;
+	}
+	public String getEnergyChargeOther() {
+		return energyChargeOther;
+	}
+	public void setEnergyChargeOther(String energyChargeOther) {
+		this.energyChargeOther = energyChargeOther;
+	}
+	public String getTdspChargeOther() {
+		return tdspChargeOther;
+	}
+	public void setTdspChargeOther(String tdspChargeOther) {
+		this.tdspChargeOther = tdspChargeOther;
+	}
+		
 }

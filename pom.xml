@@ -656,12 +656,6 @@
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.reliant.cd</groupId>
-			<artifactId>reliant-sdl-java</artifactId>
-			<version>2.3.5</version>
-			<scope>${dependency.scope}</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>2.10.0</version>
