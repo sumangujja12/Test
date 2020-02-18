@@ -3449,8 +3449,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			public int compare(AmbOutputTab o1, AmbOutputTab o2) {
 				if (o1 == null || o2 == null)
 					return 0;
-				System.out.println(o1.getAmtFinal());
-				System.out.println(o2.getAmtFinal());
 				if ((o1.getInvoice() == null || o2.getInvoice() == null)) {
 					return 0;
 
