@@ -93,6 +93,7 @@ import com.multibrand.vo.response.billingResponse.AMBEligibiltyCheckResponseVO;
 import com.multibrand.vo.response.billingResponse.AMBEligibiltyStatusResponse;
 import com.multibrand.vo.response.billingResponse.AMBSignupResponseVO;
 import com.multibrand.vo.response.billingResponse.AccountDetailsProp;
+import com.multibrand.vo.response.billingResponse.AmbOutputTabSort;
 import com.multibrand.vo.response.billingResponse.ArMobileGMEResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
 import com.multibrand.vo.response.billingResponse.AutoPayInfoResponse;
@@ -3473,50 +3474,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	public boolean isRetroAmbEligible(String accountNumber, String bpNumber, String contractId,
 			AMBEligibiltyCheckResponseVO ccsAmbResponse) {
 		boolean eligible = false;
-		double currentBillAmt = 0.0;
 		logger.info("isRetroAmbEligible - Check ccsAmbResponse size {}", ccsAmbResponse.getAmbWebTab().length);
 		
 		List<AmbOutputTab> list = Arrays.asList(ccsAmbResponse.getAmbWebTab());
 
-		Collections.sort(list, new Comparator<AmbOutputTab>() {
+		Collections.sort(list, new AmbOutputTabSort());
 
-			@Override
-			public int compare(AmbOutputTab o1, AmbOutputTab o2) {
-				if (o1 == null || o2 == null)
-					return 0;
-				if ((o1.getInvoice() == null || o2.getInvoice() == null)) {
-					return 0;
-
-				}
-				Date date1 = null;
-				Date date2 = null;
-
-				date1 = DateUtil.getDate(o1.getBillAllocDate(), "yyyy-MM-dd");
-				date2 = DateUtil.getDate(o2.getBillAllocDate(), "yyyy-MM-dd");
-
-				if (date1.compareTo(date2) > 0) {
-					return -1;
-				} else if (date1.compareTo(date2) < 0) {
-					return 1;
-				} else if (date1.compareTo(date2) == 0) {
-					return 0;
-				} else {
-					return 0;
-				}
-			}
-
-		});
-
-		/*
-		 * com.multibrand.vo.response.billingResponse.GetArResponse response =
-		 * getBalance(accountNumber, bpNumber, Constants.COMPANY_CODE_GME,
-		 * CommonUtil.generateUUID(), Constants.BRAND_ID_GME); String dueAmt =
-		 * response.getStrCreditAmt();
-		 */
 		String retroConfigVal = this.envMessageReader.getMessage("RetroAmbPercentageValue");
 		String contractAccountNumberRetro = this.envMessageReader.getMessage("contractAccountNumberRetro");
 		String invoiceId = list.get(0).getInvoice();
-		currentBillAmt = list.get(0).getAmtFinal();
+		double currentBillAmt = list.get(0).getAmtFinal();
 		CommonUtil.addLeadingZeros(accountNumber, 12);
 		if(StringUtils.equalsIgnoreCase(contractAccountNumberRetro, accountNumber)) {
 			currentBillAmt = currentBillAmt + ((30 * currentBillAmt) / 100);
@@ -3524,7 +3491,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("isRetroAmbEligible - invoiceId {}", invoiceId);
 		logger.info("currentBillAmt - currentBillAmt {}", currentBillAmt);
 		logger.info("currentBillAmt - Date {}", list.get(0).getBillAllocDate());
-		//logger.info("currentBillAmt - dueAmt {}", dueAmt);
 		
 		
 		double calculatedAmbAmt = currentBillAmt - (Double.valueOf(retroConfigVal) * currentBillAmt) / 100;
