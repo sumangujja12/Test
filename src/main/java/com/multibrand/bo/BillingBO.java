@@ -3483,7 +3483,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		String retroConfigVal = this.envMessageReader.getMessage("RetroAmbPercentageValue");
 		String contractAccountNumberRetro = this.envMessageReader.getMessage("contractAccountNumberRetro");
 		String invoiceId = list.get(0).getInvoice();
-		currentBillAmt = Double.valueOf(list.get(0).getAmtFinal());
+		currentBillAmt = list.get(0).getAmtFinal();
 		CommonUtil.addLeadingZeros(accountNumber, 12);
 		if(StringUtils.equalsIgnoreCase(contractAccountNumberRetro, accountNumber)) {
 			currentBillAmt = currentBillAmt + ((30 * currentBillAmt) / 100);
@@ -3495,8 +3495,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		
 		
 		double calculatedAmbAmt = currentBillAmt - (Double.valueOf(retroConfigVal) * currentBillAmt) / 100;
-		if (Double.valueOf(ccsAmbResponse.getAmbAmt()) > 0
-				&& Double.valueOf(ccsAmbResponse.getAmbAmt()) <= calculatedAmbAmt) {
+		if (ccsAmbResponse.getAmbAmt() > 0
+				&& ccsAmbResponse.getAmbAmt() <= calculatedAmbAmt) {
 			eligible = true;
 		}
 
