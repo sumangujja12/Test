@@ -1343,7 +1343,6 @@ public interface Constants {
     public static final String CHANNEL_AA = "AA";
     public static final String CHANNEL_AFF = "AFF";
     
-    public static final String[] channelTypeArray = {CHANNEL_WEB,CHANNEL_AA,CHANNEL_AFF }; 
-    public static final String[] tokenActionCodeArray = {CHANNEL_WEB,CHANNEL_AA,CHANNEL_AFF }; 
+     
    
 }
