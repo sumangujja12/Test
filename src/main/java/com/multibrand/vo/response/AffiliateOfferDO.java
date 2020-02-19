@@ -43,7 +43,8 @@ public class AffiliateOfferDO {
 	private String cmsBannerColor;
 	private String cmsSaveOffer;
 	private String energyCharge;
-	private String tdspCharge;
+	private String tdspChargeKWh;
+	private String tdspChargeMo;
 	private String energyChargeOther;
 	private String tdspChargeOther;
 	
@@ -298,12 +299,7 @@ public class AffiliateOfferDO {
 	public void setEnergyCharge(String energyCharge) {
 		this.energyCharge = energyCharge;
 	}
-	public String getTdspCharge() {
-		return tdspCharge;
-	}
-	public void setTdspCharge(String tdspCharge) {
-		this.tdspCharge = tdspCharge;
-	}
+
 	public String getEnergyChargeOther() {
 		return energyChargeOther;
 	}
@@ -316,5 +312,18 @@ public class AffiliateOfferDO {
 	public void setTdspChargeOther(String tdspChargeOther) {
 		this.tdspChargeOther = tdspChargeOther;
 	}
+	public String getTdspChargeKWh() {
+		return tdspChargeKWh;
+	}
+	public void setTdspChargeKWh(String tdspChargeKWh) {
+		this.tdspChargeKWh = tdspChargeKWh;
+	}
+	public String getTdspChargeMo() {
+		return tdspChargeMo;
+	}
+	public void setTdspChargeMo(String tdspChargeMo) {
+		this.tdspChargeMo = tdspChargeMo;
+	}
+		
 		
 }

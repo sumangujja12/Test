@@ -1343,7 +1343,7 @@ public interface Constants {
     public static final String CHANNEL_AA = "AA";
     public static final String CHANNEL_AFF = "AFF";
     
-    public static final String DEFAULT_PRICE_VALUE= "0.0";
+    public static final String DEFAULT_PRICE_VALUE= "0.00";
     public static final String EFL_OFFPK1 = "EFL_OFFPK1";
 	public static final String EFL_ONPK = "EFL_ONPK";
     
