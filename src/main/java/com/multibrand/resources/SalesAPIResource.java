@@ -60,6 +60,7 @@ import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
 import com.multibrand.vo.response.ProspectDataResponse;
 import com.multibrand.vo.response.TokenizedResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
+import com.sun.jersey.api.core.InjectParam;
 
 /**
  * This Resource is to handle all the Online Enrollment API calls.
@@ -618,13 +619,13 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_TOKEN)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getTokenResponse(@QueryParam(value = "actionCode") String actionCode,@QueryParam(value ="numToBeTokenized") String numToBeTokenized) throws Exception {
+	@Valid
+	public Response getTokenResponse(@InjectParam TokenRequestVO request) throws Exception {
 		Response response=null;
-		TokenRequestVO request = new TokenRequestVO();
 		long startTime = CommonUtil.getStartTime();
 		try{
-			request.setActionCode(actionCode);
-			request.setNumToBeTokenized(numToBeTokenized);
+			request.setActionCode(request.getActionCode());
+			request.setNumToBeTokenized(request.getNumToBeTokenized());
 			TokenizedResponse tokenizedResponse = oeBO.getTokenResponse(request);
 			Response.Status status = tokenizedResponse.getHttpStatus() != null ? tokenizedResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(tokenizedResponse).build();

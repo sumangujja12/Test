@@ -129,10 +129,16 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String etfFlag;
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
-	
+	@Length(max = 10, groups = SizeConstraint.class)
 	String partnerId;
+	
+	@Length(max = 40, groups = SizeConstraint.class)
 	String partnerName;
+	
+	@Length(max = 10, groups = SizeConstraint.class)
 	String locationId;
+	
+	@Length(max = 40, groups = SizeConstraint.class)
 	String locationName;
 	
 	public String getEntryPoint() {

@@ -7,7 +7,9 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.SizeConstraint;
+import com.multibrand.request.validation.ValidateCompanyCode;
 import com.multibrand.util.Constants;
 
 /**
@@ -23,8 +25,10 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 	 */
 	private static final long serialVersionUID = -4445444910516034860L;
 	
+	
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 4, groups = SizeConstraint.class)
+	@ValidateCompanyCode(message="{err.msg.valid.company.code}", groups=FormatConstraint.class)
 	private String companyCode;
 
 	@Length(max = 2, groups = SizeConstraint.class)
@@ -66,6 +70,7 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 	/**
 	 * @return the companyCode
 	 */
+	
 	public String getCompanyCode() {
 		return companyCode;
 	}
@@ -103,4 +108,7 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 		return value.toString();
 	}
 
+	enum CompanyCode{
+		WRONG_COMPANY_CODE
+	}
 }
