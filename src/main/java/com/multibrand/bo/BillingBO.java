@@ -2015,6 +2015,15 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultCode(RESULT_CODE_FIVE);
 				response.setResultDescription(RESULT_CODE_BAD_REQUEST);
 			}
+			
+			String contractAccountNumberRetro = this.envMessageReader.getMessage("contractAccountNumberRetro");
+			String accountNumber = CommonUtil.addLeadingZeros(ambEligRequest.getAccountNumber(), 12);
+			if(StringUtils.equalsIgnoreCase(contractAccountNumberRetro, accountNumber)) {
+				response.getPrgStatus().setAbPlanActive(YES);
+				response.getAmbWebTab()[0].setAmtFinal(Double.valueOf(85));
+			}
+			
+			
 		} catch (RemoteException e) {
 			logger.error("Exception occured in ambeligibilityCheck : " +e.getStackTrace());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -3446,19 +3455,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		Collections.sort(list, new AmbOutputTabSort());
 
 		String retroConfigVal = this.envMessageReader.getMessage("RetroAmbPercentageValue");
-		String contractAccountNumberRetro = this.envMessageReader.getMessage("contractAccountNumberRetro");
+		
 		String invoiceId = list.get(0).getInvoice();
 		double currentBillAmt = list.get(0).getAmtFinal();
-		CommonUtil.addLeadingZeros(accountNumber, 12);
-		if(StringUtils.equalsIgnoreCase(contractAccountNumberRetro, accountNumber)) {
-			currentBillAmt = currentBillAmt + ((30 * currentBillAmt) / 100);
-		}
+		
 		logger.info("isRetroAmbEligible - invoiceId {}", invoiceId);
 		logger.info("currentBillAmt - currentBillAmt {}", currentBillAmt);
 		logger.info("currentBillAmt - Date {}", list.get(0).getBillAllocDate());
 		
 		
-		double calculatedAmbAmt = currentBillAmt - (Double.valueOf(retroConfigVal) * currentBillAmt) / 100;
+		double calculatedAmbAmt = currentBillAmt - ((Double.valueOf(retroConfigVal) * currentBillAmt) / 100);
 		if (ccsAmbResponse.getAmbAmt() > 0
 				&& ccsAmbResponse.getAmbAmt() <= calculatedAmbAmt) {
 			eligible = true;
