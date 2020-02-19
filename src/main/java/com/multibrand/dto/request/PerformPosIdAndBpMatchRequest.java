@@ -118,10 +118,7 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	String entryPoint ;
-	String partnerId;
-	String partnerDesc;
-	String locationId ;
-	String locationDesc ;
+	
 	String tpvStatus ;
 	String campaignCd ;
 	String pageRevisited ;
@@ -130,9 +127,13 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String tabletId;
 	String abandonedEnrollStatFlag;
 	String etfFlag;
-	 
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+	
+	String partnerId;
+	String partnerName;
+	String locationId;
+	String locationName;
 	
 	public String getEntryPoint() {
 		return entryPoint;
@@ -142,37 +143,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 		this.entryPoint = entryPoint;
 	}
 
-	public String getPartnerId() {
-		return partnerId;
-	}
-
-	public void setPartnerId(String partnerId) {
-		this.partnerId = partnerId;
-	}
-
-	public String getPartnerDesc() {
-		return partnerDesc;
-	}
-
-	public void setPartnerDesc(String partnerDesc) {
-		this.partnerDesc = partnerDesc;
-	}
-
-	public String getLocationId() {
-		return locationId;
-	}
-
-	public void setLocationId(String locationId) {
-		this.locationId = locationId;
-	}
-
-	public String getLocationDesc() {
-		return locationDesc;
-	}
-
-	public void setLocationDesc(String locationDesc) {
-		this.locationDesc = locationDesc;
-	}
 
 	public String getTpvStatus() {
 		return tpvStatus;
@@ -502,6 +472,37 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 		this.ipAddress = ipAddress;
 	}
 	
+	public String getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(String partnerId) {
+		this.partnerId = partnerId;
+	}
+
+	public String getPartnerName() {
+		return partnerName;
+	}
+
+	public void setPartnerName(String partnerName) {
+		this.partnerName = partnerName;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
 
 	@Override
 	public String toString() {

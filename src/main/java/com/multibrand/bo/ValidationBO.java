@@ -729,9 +729,9 @@ public class ValidationBO extends BaseBO {
 		//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		addServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
 		addServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
-		addServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerDesc());
+		addServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerName());
 		addServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
-		addServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationDesc());
+		addServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationName());
 		addServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
 		addServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
 		
@@ -825,9 +825,9 @@ public class ValidationBO extends BaseBO {
 		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		updateServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
 		updateServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
-		updateServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerDesc());
+		updateServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerName());
 		updateServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
-		updateServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationDesc());
+		updateServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationName());
 		updateServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
 		updateServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
 		
