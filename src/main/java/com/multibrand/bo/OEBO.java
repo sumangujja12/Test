@@ -4470,8 +4470,9 @@ public class OEBO extends OeBoHelper implements Constants{
 														.getPerKWValue() },
 										CommonUtil.localeCode(request
 												.getLanguageCode())));
-						affiliateOfferDO.setTdspCharge(offerDO.getTdspChargeDO()
+						affiliateOfferDO.setTdspChargeKWh(offerDO.getTdspChargeDO()
 														.getPerKWValue());
+						affiliateOfferDO.setTdspChargeMo(offerDO.getTdspChargeDO().getPerMonthValue());
 						if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
 								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
 								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
