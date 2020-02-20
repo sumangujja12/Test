@@ -2,6 +2,7 @@ package com.multibrand.vo.response;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
 
 import com.multibrand.vo.response.KBO.Question;
 
@@ -14,6 +15,23 @@ public class GetKBAQuestionsResponse extends GenericResponse {
 	private String transactionKey;
 	private String trackingId= null;	
 	private List<Question> questions;
+	
+private Response.Status httpStatus;
+	
+	
+
+
+	public Response.Status getHttpStatus() {
+		return httpStatus;
+	}
+
+
+
+	public void setHttpStatus(Response.Status httpStatus) {
+		this.httpStatus = httpStatus;
+	}
+
+
 	
 	public String getTransactionKey() {
 		return transactionKey;

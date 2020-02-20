@@ -380,5 +380,29 @@ public class PersonDaoImpl extends AbstractSpringDAO implements PersonDao,
 			}
 		}
 	}
+	/**
+	 * {@inheritDoc}
+	 */
+	
+	public String getPersonIdByTrackingNoGuid(String trackingNo,String guid) {
+		String personId = null;
+		if (StringUtils.isNotEmpty(trackingNo) && StringUtils.isNotEmpty(guid)) {
+			try {
+				String sqlQuery = sqlMessage.getMessage(
+						QUERY_GET_PERSON_AFFILIATE_ID_BY_TRACKING_NO_GUID, null,
+						null);
+				@SuppressWarnings("deprecation")
+				long personIdLong = getJdbcTemplate().queryForLong(sqlQuery,
+						new Object[] { Long.valueOf(trackingNo),guid });
+				personId = Long.toString(personIdLong);
+			} catch (Exception e) {
+				logger.error("Problem occurred while getting a "
+						+ "Person ID with Tracking ID as: " + trackingNo, e);
+				personId = null;
+			}
+		}
+		return personId;
+	}
+
 
 }

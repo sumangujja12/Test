@@ -3136,12 +3136,33 @@ public class OEBO extends OeBoHelper implements Constants{
 		logger.info("Exiting << getEnrollmentData");
 		return serviceLocationResponse;
 	}
+	public ServiceLocationResponse getEnrollmentData(String trackingId,String guid) {
+		logger.info("Entering >> getServiceLocationData");
+		logger.info("trackingId = " + trackingId);
+		logger.info("guid = " + guid);
+		ServiceLocationResponse serviceLocationResponse = serviceLocationDAO
+				.getServiceLocation(trackingId,guid);
+		logger.info("Exiting << getEnrollmentData");
+		return serviceLocationResponse;
+	}
 
 	public String getPersonIdByTrackingNo(String trackingNo) {
 		logger.debug("Entering >> getPersonIdByTrackingNo");
 		logger.debug("trackingNo = " + trackingNo);
 		Assert.notNull(trackingNo, "trackingNo must not be null.");
 		String personId = personDao.getPersonIdByTrackingNo(trackingNo);
+		logger.debug("personId = " + personId);
+		logger.debug("Exiting << getPersonIdByTrackingNo");
+		return personId;
+	}
+	
+	public String getPersonIdByTrackingNoGuid(String trackingNo,String guid) {
+		logger.debug("Entering >> getPersonIdByTrackingNoGuid");
+		logger.debug("trackingNo = " + trackingNo);
+		logger.debug("guid = " + guid);
+		Assert.notNull(trackingNo, "trackingNo must not be null.");
+		Assert.notNull(guid, "guid must not be null.");
+		String personId = personDao.getPersonIdByTrackingNoGuid(trackingNo,guid);
 		logger.debug("personId = " + personId);
 		logger.debug("Exiting << getPersonIdByTrackingNo");
 		return personId;
@@ -5561,6 +5582,162 @@ public ProspectDataResponse getProspectData(String prospectId, String  lastFourD
 	
 	}
 
+public GetKBAQuestionsResponse kbaOE(String trackingId,String guid,String companyCode,String languageCode, String brandId) {
+	
+	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
+	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
+	KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
+	PersonResponse personResponse= null;
+	ServiceLocationResponse serviceLocationResponse = null;
+	List<Question> questions = new ArrayList<>();
+	try {
+					
+		//logger.debug("inside getKBAQuestions::Tracking Number ::{} :: preferred language is:{}"+request.getTrackingId());
+		boolean flag = validateTrackinIDAndGuid( trackingId, guid);
+		if(!flag){
+			response.setStatusCode(STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+			response.setResultDescription("trackingId or guid may not be Empty");
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+		
+		String personId = getPersonIdByTrackingNoGuid(trackingId,guid);
+		
+		if(StringUtils.isNotBlank(personId)){
+			 personResponse = this.getPerson(personId);
+			if(null!= personResponse ){
+				 serviceLocationResponse =  getEnrollmentData(trackingId,guid);
+				if(null !=serviceLocationResponse){
+					kbaQuestionRequest = createKBAQuestionRequest(personResponse,serviceLocationResponse,companyCode,languageCode,brandId);
+				}
+			}
+		}
+		if(StringUtils.isBlank(personId)|| null== personResponse ||null==serviceLocationResponse){
+			response.setStatusCode(STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+			response.setResultDescription("Data not found for Given input");
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+		}
+		
+		
+		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
+		 if (kbaQuestionResponse != null && (kbaQuestionResponse.getQuestionList() != null
+					&& kbaQuestionResponse.getQuestionList().length > 0)) {
+				
+				getKBAQuestion(kbaQuestionResponse.getQuestionList(), questions);
+				
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setTransactionKey(kbaQuestionResponse.getTransactionKey());
+				response.setQuestions(questions);
+			} else {
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setMessageCode(POSID_FAIL);
+				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+
+
+			}
+		 boolean addKBAErrorCode=this.addKBADetails(kbaQuestionResponse);
+
+	} catch (Exception e) {
+		response.setStatusCode(STATUS_CODE_CONTINUE);
+		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
+		response.setMessageCode(POSID_FAIL);
+		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+	} finally {
+		try{
+				// Making Update Servicelocation call now
+				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
+						&& StringUtils.isNotEmpty(trackingId)){
+				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
+				updateServiceLocationRequest.setTrackingId(trackingId);
+				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
+				this.updateServiceLocation(updateServiceLocationRequest);
+				response.setTrackingId(trackingId);
+				
+				
+			}
+		}catch(Exception e){
+			response.setStatusCode(STATUS_CODE_STOP);
+			response.setResultDescription("Java exception making Database call for getKBaQuestion-updateServiceLocation with exception ::"+e.getMessage());
+			logger.error("Tracking Number ::"+trackingId+"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
+		}
+		
+	}
+
+	return response;
+}
+
+private KbaQuestionRequest createKBAQuestionRequest(PersonResponse personResponse,ServiceLocationResponse serviceLocationResponse,String companyCode,String languageCode, String brandId) throws ParseException{
+	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest(); ;
+	
+	
+	kbaQuestionRequest.setCompanyCode(companyCode);
+	kbaQuestionRequest.setBrandName(brandId);
+	kbaQuestionRequest.setChannel(CHANNEL);
+	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
+	kbaQuestionRequest.setLanguageCode(languageCode);
+	
+	kbaQuestionRequest.setFirstName(personResponse.getFirstName());
+	kbaQuestionRequest.setLastName(personResponse.getLastName());
+	kbaQuestionRequest.setMiddleName(personResponse.getMiddleName());	
+	
+	Date serDate=new SimpleDateFormat("MMddyyyy").parse(personResponse.getDob());
+	String finalSerDate = new SimpleDateFormat("MM/dd/YYYY").format(serDate);
+	kbaQuestionRequest.setDob(finalSerDate.toString());
+	
+	kbaQuestionRequest.setTokenizedSSN(personResponse.getSsn());		
+	if(StringUtils.isNotEmpty(personResponse.getIdNumber())){
+        kbaQuestionRequest.setTokenizedDrl(personResponse.getIdNumber());        
+        kbaQuestionRequest.setDlrState(personResponse.getIdStateOfIssue());
+    }
+	
+//	kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
+//	kbaQuestionRequest.setDlrState("TX");
+//	kbaQuestionRequest.setTokenizedSSN("2RD6VE6-5840");
+//	kbaQuestionRequest.setDlrState(null);
+	
+	
+	kbaQuestionRequest.setHomePhone(personResponse.getPhoneNum());
+	kbaQuestionRequest.setEmailAddress(personResponse.getEmail());
+	
+	
+	
+	kbaQuestionRequest.setIpAddress("");
+	kbaQuestionRequest.setEsid(serviceLocationResponse.getEsid());
+	kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
+	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
+	
+	
+	AddressDTO serviceAddressDTO = new AddressDTO();
+	String streetNum = serviceLocationResponse.getServAddressLine1().substring(0, serviceLocationResponse.getServAddressLine1().indexOf(" "));
+	String streetName = serviceLocationResponse.getServAddressLine1().substring(serviceLocationResponse.getServAddressLine1().indexOf(" "));
+	
+	serviceAddressDTO.setStrStreetNum(streetNum);
+	serviceAddressDTO.setStrStreetName(streetName);		
+	serviceAddressDTO.setStrUnitNumber(serviceLocationResponse.getServAddressLine2());
+	serviceAddressDTO.setStrCity(serviceLocationResponse.getServCity());
+	serviceAddressDTO.setStrState(serviceLocationResponse.getServState());
+	serviceAddressDTO.setStrZip(serviceLocationResponse.getServZipCode());
+	
+	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
+	kbaQuestionRequest.setPosidUniqueKey("");
+	
+	return kbaQuestionRequest;
+}
+
+private boolean validateTrackinIDAndGuid(String trackingId,String guid)
+{
+	Boolean validationFlag= false;
+	if(StringUtils.isNotBlank(trackingId)&& StringUtils.isNotBlank(guid)){
+		validationFlag= true;
+	}
+	return validationFlag;
+}	
 }
 
 	

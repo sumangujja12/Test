@@ -67,5 +67,14 @@ public interface PersonDao {
 	 *         instance).
 	 */
 	public PersonResponse getPerson(String personId);
+	
+	/**
+	 * Gets Person ID associated with a given tracking number and guid
+	 * 
+	 * @param trackingNo
+	 *            Tracking number.
+	 * @return Person ID associated with a given tracking number.
+	 */
+	public String getPersonIdByTrackingNoGuid(String trackingNo,String guid);
 
 }
