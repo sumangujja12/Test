@@ -101,29 +101,9 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_OFFERS)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAffiliateOffers(	@QueryParam(value = "companyCode")  @NotBlank(groups = BasicConstraint.class) @Length(max = 4, groups = SizeConstraint.class) String companyCode,
-			@QueryParam(value = "brandId")   String brandId,
-			@QueryParam(value = "languageCode")   String languageCode,
-			@QueryParam(value = "affiliateId") String affiliateId,
-			@QueryParam(value = "channelType")  String channelType,
-			@QueryParam(value = "transactionType")   String transactionType ,
-			@QueryParam(value = "promoCode")  String promoCode,
-			@QueryParam(value = "tdspCodeCCS")  String tdspCodeCCS,
-			@QueryParam(value = "esid")   String esid ) {
-		AffiliateOfferRequest request = new AffiliateOfferRequest();	
-		request.setCompanyCode(companyCode);
-		request.setBrandId(brandId);
-		request.setLanguageCode(languageCode);
-		request.setAffiliateId(affiliateId);
-		request.setChannelType(channelType);
-		request.setTransactionType(transactionType);
-		request.setPromoCode(promoCode);
-		request.setTdspCodeCCS(tdspCodeCCS);
-		request.setEsid(esid);		
+	public Response getAffiliateOffers(@InjectParam AffiliateOfferRequest request ) {			
 		Response response=null;
-		try{			
-
-			
+		try{						
 			AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,	httpRequest.getSession(true).getId());
 			Response.Status status = offerResponse.getHttpStatus() != null ? offerResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(offerResponse).build();

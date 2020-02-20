@@ -2,6 +2,8 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.ws.rs.QueryParam;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
@@ -25,15 +27,17 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 	 */
 	private static final long serialVersionUID = -4445444910516034860L;
 	
-	
+	@QueryParam(value = "companyCode")
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 4, groups = SizeConstraint.class)
 	@ValidateCompanyCode(message="{err.msg.valid.company.code}", groups=FormatConstraint.class)
 	private String companyCode;
-
+	
+	@QueryParam(value = "brandId")
 	@Length(max = 2, groups = SizeConstraint.class)
 	private String brandId;
 	
+	@QueryParam(value = "languageCode")
 	@Length(max = 1, groups = SizeConstraint.class)
 	private String languageCode = null;
 
