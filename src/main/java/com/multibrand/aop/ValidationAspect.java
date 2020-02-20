@@ -12,6 +12,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -28,7 +30,8 @@ public class ValidationAspect {
 
 	private Validator validator;
 	ConstraintViolationException constraintViolationException;
-
+	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	
 	public ValidationAspect() {
 		this.validator = Validation.buildDefaultValidatorFactory().getValidator();
 	}
@@ -50,7 +53,7 @@ public class ValidationAspect {
 				responseBuilder.append(violation.getPropertyPath()+" "+violation.getMessage());
 			}	
 		}
-		if (!violations.isEmpty()) {
+		if (null!=violations && !violations.isEmpty()) {
 			genericResponse.setErrorCode("400");
 			genericResponse.setErrorDescription(Status.BAD_REQUEST.toString());
 			genericResponse.setResultDescription(responseBuilder.toString());
@@ -64,7 +67,7 @@ public class ValidationAspect {
 			try {
 				response = (Response) joinPoint.proceed();
 			} catch (Throwable e) {
-				e.printStackTrace();
+				logger.error("Exception in ValidationAspect.validate() -> "+e.getStackTrace());
 			}
 		}
 		return response;
