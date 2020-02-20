@@ -50,8 +50,8 @@ cs.rest.url.timeout=60
 rest.url.timeout=30
 ###################
 
-#OTHER THIRD PARTY END POINTS
-tokenServerUrl=https://pwared01:8443/cardsecure/cs
+#tokenServerUrl=https://pwared01:8443/cardsecure/cs
+tokenServerUrl=https://rripcid01:8443/cardsecure/cs
 cardsecureUrl=https://txaixpiid01:8443/cardsecure/cs
 #################
 
