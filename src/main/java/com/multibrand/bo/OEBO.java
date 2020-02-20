@@ -5075,9 +5075,9 @@ private EnrollmentReportDataRequest setEnrollmentReportDataRequest(OESignupDTO o
 		request.setSameServiceBillAddressFlag(oeSignUpDTO.getSameBillingServiceAddressFlag());
 	
 		Date serDate=new SimpleDateFormat("ddMMyyyy").parse(oeSignUpDTO.getServiceStartDate());
-		String finalSerDate = new SimpleDateFormat("dd/MM/YYYY").format(serDate);
+		String finalSerDate = new SimpleDateFormat("dd/MM/yyyy").format(serDate);
 		request.setServiceStartDate(finalSerDate.toString());
-		String timeStamp = new SimpleDateFormat("dd-MMM-YYYY hh:mm:ss aa").format(new Date());
+		String timeStamp = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa").format(new Date());
 		request.setCreationDateTimestamp(timeStamp);
 		
 		if(null!=oeSignUpDTO.getSelectedOffer())
