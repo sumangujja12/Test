@@ -5687,7 +5687,7 @@ private KbaQuestionRequest createKBAQuestionRequest(PersonResponse personRespons
 	kbaQuestionRequest.setMiddleName(personResponse.getMiddleName());	
 	
 	Date serDate=new SimpleDateFormat("MMddyyyy").parse(personResponse.getDob());
-	String finalSerDate = new SimpleDateFormat("MM/dd/YYYY").format(serDate);
+	String finalSerDate = new SimpleDateFormat("MM/dd/yyyy").format(serDate);
 	kbaQuestionRequest.setDob(finalSerDate.toString());
 	
 	kbaQuestionRequest.setTokenizedSSN(personResponse.getSsn());		
