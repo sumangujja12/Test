@@ -638,15 +638,6 @@ public class SalesAPIResource extends BaseResource {
 		return response;
 	}
 	
-	/**
-	 * START :OE ADO SPrint4 : To get Prospect Data
-	 * @author Kdeshmu1
-	 * @param prospectID
-	 * @param lastFourSSN
-	 * @param companyCode
-	 * @param languageCode
-	 * @return
-	 */
 	@GET
 	@Path(API_PROSPECT)
 	@Produces({ MediaType.APPLICATION_JSON })
