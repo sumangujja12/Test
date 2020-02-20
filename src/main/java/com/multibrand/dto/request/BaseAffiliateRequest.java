@@ -1,5 +1,7 @@
 package com.multibrand.dto.request;
 
+import javax.ws.rs.QueryParam;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
@@ -21,12 +23,14 @@ public class BaseAffiliateRequest extends BaseRequest {
 	 * 
 	 */
 	private static final long serialVersionUID = -4445444910516034860L;
-
+	
+	@QueryParam(value = "affiliateId")
 	// Online Affiliate attributes:
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 40, groups = SizeConstraint.class)
 	private String affiliateId;
 	
+	@QueryParam(value = "channelType")
 	@ChannelType(format = "", groups = FormatConstraint.class, message = "ChannelType is not Valid",messageCode="INVALID_CHHANEL_TYPE",messageCodeText="INVALID_CHHANEL_TYPE")
 	private String channelType;
 	
