@@ -2019,7 +2019,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			String contractAccountNumberRetro = this.envMessageReader.getMessage("contractAccountNumberRetro");
 			String accountNumber = CommonUtil.addLeadingZeros(ambEligRequest.getAccountNumber(), 12);
 			if(StringUtils.equalsIgnoreCase(contractAccountNumberRetro, accountNumber)) {
-				response.getPrgStatus().setAbPlanActive(YES);
 				response.getAmbWebTab()[0].setAmtFinal(Double.valueOf(85));
 			}
 			
