@@ -840,5 +840,303 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 		logger.info("Exiting << getServiceLocation");
 		return data;
 	}
+	
+	public ServiceLocationResponse getServiceLocation(String trackingId,String guid) {
+		logger.info("Entering >> getServiceLocation");
+		logger.info("trackingId = " + trackingId);
+		ServiceLocationResponse data = null;
+		if (StringUtils.isNotEmpty(trackingId) && StringUtils.isNotEmpty(guid)) {
+			try {
+				String sqlQuery = sqlMessage
+						.getMessage(
+								QUERY_GET_SERVICE_LOCATION_AFFILIATE_DETAILS_BY_TRACKING_ID_GUID,
+								null, null);
+				List<ServiceLocationResponse> dataList = getJdbcTemplate()
+						.query(sqlQuery,
+								new Object[] { Long.valueOf(trackingId), guid },
+								new RowMapper<ServiceLocationResponse>() {
+									@Override
+									public ServiceLocationResponse mapRow(
+											ResultSet rs, int rowNo)
+											throws SQLException {
+										ServiceLocationResponse dataRow = new ServiceLocationResponse();
+										dataRow.setTrackingId(rs
+												.getString("tracking_number"));
+										dataRow.setPersonId(rs
+												.getString("person_id"));
+										dataRow.setServiceRequestTypeCode(rs
+												.getString("srvc_req_type_cd"));
+										dataRow.setPreviousProviderCode(rs
+												.getString("rep_cd"));
+										dataRow.setDepositCode(rs
+												.getString("deposit_cd"));
+										dataRow.setRequestStatusCode(rs
+												.getString("req_status_cd"));
+										dataRow.setOfferCode(rs
+												.getString("offer_cd"));
+										dataRow.setSpanishReqFlag(rs
+												.getString("spanish_req_flag"));
+										dataRow.setProviderAgreementFlag(rs
+												.getString("provider_agreement_flag"));
+										dataRow.setDepositAmount(rs
+												.getString("deposit_amount"));
+										dataRow.setEsid(rs.getString("esid"));
+										dataRow.setContractAccountNum(rs
+												.getString("contract_account_num"));
+										dataRow.setServAddressLine1(rs
+												.getString("srvc_address_line_1"));
+										dataRow.setServAddressLine2(rs
+												.getString("srvc_address_line_2"));
+										dataRow.setServCity(rs
+												.getString("srvc_city"));
+										dataRow.setServState(rs
+												.getString("srvc_state"));
+										dataRow.setServZipCode(rs
+												.getString("srvc_zip"));
+										dataRow.setServiceZipOverrideFlag(rs
+												.getString("srvc_zip_override_flag"));
+										dataRow.setAddressBillSameAsServiceFlag(rs
+												.getString("address_bill_sameas_srvc_flag"));
+										dataRow.setServiceAddressOverrideFlag(rs
+												.getString("srvc_address_override_flag"));
+										dataRow.setBillAddressLine1(rs
+												.getString("bill_address_line_1"));
+										dataRow.setBillAddressLine2(rs
+												.getString("bill_address_line_2"));
+										dataRow.setBillCity(rs
+												.getString("bill_city"));
+										dataRow.setBillState(rs
+												.getString("bill_state"));
+										dataRow.setBillZipCode(rs
+												.getString("bill_zip"));
+										dataRow.setServiceStartDate(DateUtil.getFormattedDate(
+												MMddyyyy,
+												DT_SQL_FMT_DB,
+												rs.getString("service_start_date")));
+										dataRow.setGuid(rs.getString("guid_id"));
+										dataRow.setSignupChannelCode(rs
+												.getString("signup_channel_cd"));
+										dataRow.setReferrerCode(rs
+												.getString("referrer_cd"));
+										dataRow.setAccountName(rs
+												.getString("acct_name"));
+										dataRow.setMailAddressLine1(rs
+												.getString("mail_address_line_1"));
+										dataRow.setMailAddressLine2(rs
+												.getString("mail_address_line_2"));
+										dataRow.setMailCity(rs
+												.getString("mail_address_city"));
+										dataRow.setMailState(rs
+												.getString("mail_address_state"));
+										dataRow.setMailZipCode(rs
+												.getString("mail_address_zip"));
+										dataRow.setEsidMatchFlag(rs
+												.getString("esid_match_flag"));
+										dataRow.setGeoZone(rs
+												.getString("geo_zone"));
+										dataRow.setPromoCodeEntered(rs
+												.getString("offer_cell_trk_cd"));
+										dataRow.setCompletionStatusCode(rs
+												.getString("completion_status_cd"));
+										dataRow.setAdId(rs.getString("ad_id"));
+										dataRow.setPayCode(rs
+												.getString("deposit_required_cd"));
+										dataRow.setTdspCode(rs
+												.getString("tdsp_cd"));
+										dataRow.setOfferCodeTitle(rs
+												.getString("offer_teaser"));
+										dataRow.setCaCheckDigit(rs
+												.getString("ca_check_digit"));
+										dataRow.setOfferCellTrackCodeSelected(rs
+												.getString("offer_cell_trk_cd_selected"));
+										dataRow.setBillingAddressOverrideFlag(rs
+												.getString("blng_address_override_flag"));
+										dataRow.setErrorCode(rs
+												.getString("error_cd"));
+										dataRow.setPromoType(rs
+												.getString("promo_type"));
+										dataRow.setPromoValue(rs
+												.getString("promo_value"));
+										dataRow.setDwellingType(rs
+												.getString("dwelling_type"));
+										dataRow.setCepProcessedFlag(rs
+												.getString("cep_processed_flag"));
+										dataRow.setRecentPageAccessed(rs
+												.getString("recent_page_accessed"));
+										dataRow.setEsuiteFlag(rs
+												.getString("esuite_flag"));
+										dataRow.setEsuiteStatus(rs
+												.getString("esuite_status"));
+										dataRow.setEsuiteAuthFlag(rs
+												.getString("esuite_auth_flag"));
+										dataRow.setEsuiteOamFlag(rs
+												.getString("esuite_oam_flag"));
+										dataRow.setEsuiteEmailFlag(rs
+												.getString("esuite_email_flag"));
+										dataRow.setEsuiteAutoPayFlag(rs
+												.getString("esuite_auto_pay_flag"));
+										dataRow.setEsuiteOamDate(rs
+												.getString("esuite_oam_date"));
+										dataRow.setEsuiteEmailDate(DateUtil.getFormattedDate(
+												MMddyyyy,
+												DT_SQL_FMT_DB,
+												rs.getString("esuite_email_date")));
+										dataRow.setEsuiteAutoPayDate(DateUtil.getFormattedDate(
+												MMddyyyy,
+												DT_SQL_FMT_DB,
+												rs.getString("esuite_auto_pay_date")));
+										dataRow.setEsuiteAutoPayOption(rs
+												.getString("esuite_auto_pay_option"));
+										dataRow.setUserName(rs
+												.getString("user_name"));
+										dataRow.setPassword(rs
+												.getString("password"));
+										dataRow.setWeeklySummaryEnroll(rs
+												.getString("wse_flag"));
+										dataRow.setPermitType(rs
+												.getString("permit_type"));
+										dataRow.setPermitClass(rs
+												.getString("permit_class"));
+										dataRow.setPermitDetail(rs
+												.getString("permit_detail"));
+										dataRow.setCityCountry(rs
+												.getString("city_county"));
+										dataRow.setCityCountryName(rs
+												.getString("city_county_name"));
+										dataRow.setPermitPhone(rs
+												.getString("permit_phone"));
+										dataRow.setPriorityMoveinFlag(rs
+												.getString("priority_movein_flag"));
+										dataRow.setHtmlCaptureFlag(rs
+												.getString("html_capture_flag"));
+										dataRow.setNonCommodityProduct(rs
+												.getString("value_product_code"));
+										dataRow.setPrepayFlag(rs
+												.getString("prepay_flag"));
+										dataRow.setPrepayTotalToday(rs
+												.getString("prepay_total_today"));
+										dataRow.setPrepayDocId(rs
+												.getString("prepay_doc_id"));
+										dataRow.setEcoShare(rs
+												.getString("eco_share"));
+										dataRow.setActiveCustomerFlag(rs
+												.getString("active_customer_flag"));
+										dataRow.setAddressMatchFlag(rs
+												.getString("address_match_flag"));
+										dataRow.setPendingBalanceFlag(rs
+												.getString("pending_bal_flag"));
+										dataRow.setBpActiveContract(rs
+												.getString("bp_match_active_contract"));
+										dataRow.setMatchedPartnerId(rs
+												.getString("matched_partner_id"));
+										dataRow.setAddressSearchPerformed(rs
+												.getString("add_search_performed"));
+										dataRow.setBpMatchNoCcsResponse(rs
+												.getString("bpmatch_no_ccs_resp"));
+										dataRow.setProductType(rs
+												.getString("offer_type"));
+										dataRow.setProductSkuCode(rs
+												.getString("product_sku_code"));
+										dataRow.setPlanName(rs
+												.getString("offer_name"));
+										dataRow.setEnrollSource(rs
+												.getString("enroll_source"));
+										dataRow.setActivationFee(rs
+												.getString("activation_fee"));
+										dataRow.setBondPrice(rs
+												.getString("bond_price"));
+										dataRow.setAccSecStatus(rs
+												.getString("acc_sec_status"));
+										dataRow.setIsPayUpFront(rs
+												.getString("is_pay_upfront"));
+										dataRow.setSecurityMethod(rs
+												.getString("security_method"));
+										dataRow.setActivationFeeCode(rs
+												.getString("activation_fee_cd"));
+										dataRow.setMeterType(rs
+												.getString("meter_type"));
+										dataRow.setSwitchHoldStatus(rs
+												.getString("sw_hold_status"));
+										dataRow.setRecentDisconnectFlag(rs
+												.getString("rec_disconnect_flag"));
+										dataRow.setPremiseType(rs
+												.getString("premise_type"));
+										dataRow.setEsidStatus(rs
+												.getString("esid_status"));
+										dataRow.setVerifyAdditionalOptions(rs
+												.getString("verify_lightbox_options"));
+										dataRow.setAmbProgramCode(rs
+												.getString("average_billing_request"));
+										dataRow.setPaperlessProgramCode(rs
+												.getString("paperless_billing_request"));
+										dataRow.setRhsProgramCodeOne(rs
+												.getString("rhs_offer_name_one"));
+										dataRow.setRhsProgramCodeTwo(rs
+												.getString("rhs_offer_name_two"));
+										dataRow.setRhsOfferType(rs
+												.getString("rhs_offer_type"));
+										dataRow.setFreqFlyerFirstName(rs
+												.getString("freq_flyer_first_name"));
+										dataRow.setFreqFlyerLastName(rs
+												.getString("freq_flyer_last_name"));
+										dataRow.setReferralId(rs
+												.getString("referral_id"));
+										dataRow.setRecentCallMade(rs
+												.getString("recent_call_made"));
+										dataRow.setNestSid(rs
+												.getString("nest_sid"));
+										dataRow.setGzProductId(rs
+												.getString("gz_product_id"));
+										dataRow.setAffiliateId(rs
+												.getString("affiliate_id"));
+										dataRow.setBrandId(rs
+												.getString("brand_name"));
+										dataRow.setCompanyCode(rs
+												.getString("company_code"));
+										dataRow.setSunClub(rs
+												.getString("sun_club"));
+										dataRow.setDriverClub(rs
+												.getString("driver_club"));
+										dataRow.setGiftCard(rs
+												.getString("gift_card"));
+										dataRow.setResidentialSolar(rs
+												.getString("residential_solar"));
+										dataRow.setMessageCode(rs
+												.getString("recent_msg_cd"));
+										dataRow.setAgentID(rs
+												.getString("agent_id"));
+										dataRow.setAgentType(rs
+												.getString("agent_type"));
+										dataRow.setAgentFirstName(rs
+												.getString("agent_first_name"));
+										dataRow.setAgentLastName(rs
+												.getString("agent_last_name"));
+										dataRow.setVendorCode(rs
+												.getString("vendor_code"));
+										dataRow.setVendorName(rs
+												.getString("vendor_name"));
+										dataRow.setTlpReportApiStatus(rs
+												.getString("tlp_report_api_status"));
+										
+										return dataRow;
+									}
+								});
+				if (dataList != null && dataList.size() > 0) {
+					data = dataList.get(0);
+					PersonResponse personResponse = personDao.getPerson(data
+							.getPersonId());
+					data.setPersonResponse(personResponse);
+				}
+			} catch (Exception e) {
+				logger.error("Problem occurred while getting a "
+						+ "Service Location details with Tracking ID as: "
+						+ trackingId, e);
+				data = null;
+			}
+		}
+		logger.info("data = " + data);
+		logger.info("Exiting << getServiceLocation");
+		return data;
+	}
 
 }

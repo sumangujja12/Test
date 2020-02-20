@@ -10,6 +10,7 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -683,4 +684,35 @@ public class SalesAPIResource extends BaseResource {
 	   	}
 		return response;	
 	}
+	
+	@PUT
+    @Path("kba-oe")
+    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
+    @Produces({ MediaType.APPLICATION_JSON })
+    public Response kbaOE(@QueryParam(value = "trackingID") String trackingID,
+    		 @QueryParam(value = "guID") String guID,
+    		 @QueryParam(value = "companyCode")   String companyCode,
+    		 @QueryParam(value = "languageCode")   String languageCode,
+    		 @QueryParam(value = "brandId")   String brandId
+    		) {
+		long startTime = CommonUtil.getStartTime();
+		Response response=null;
+		GetKBAQuestionsRequest request = new GetKBAQuestionsRequest();
+       try{
+    	   
+    	   request.setCompanyCode(companyCode);
+    	   request.setLanguageCode(languageCode);
+    	   request.setTrackingId(trackingID);
+    	   request.setBrandId(brandId);
+        	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.kbaOE(trackingID, guID, companyCode, languageCode, brandId);
+            response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
+   		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(languageCode))).build();
+   			logger.error(e.fillInStackTrace());
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), trackingID, EMPTY);
+   		}
+       return response;
+    }
+
 }

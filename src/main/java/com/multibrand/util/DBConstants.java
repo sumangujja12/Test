@@ -284,9 +284,11 @@ public interface DBConstants {
 	public static final String ADD = "add";
 	
 	public static final String QUERY_GET_PERSON_AFFILIATE_ID_BY_TRACKING_NO = "query.get.personAffiliate.id.by.trackingNo";
+	public static final String QUERY_GET_PERSON_AFFILIATE_ID_BY_TRACKING_NO_GUID = "query.get.personAffiliate.id.by.trackingNo.guid";
 	public static final String QUERY_GET_PERSON_AFFILIATE_ID_AND_RETRY_COUNT_BY_TRACKING_NO = "query.get.personAffiliate.id.and.retrycount.by.trackingNo";
 	public static final String QUERY_GET_PERSON_AFFILIATE_DETAILS_BY_PERSON_ID = "query.get.personAffiliate.details.by.personId";
 	public static final String QUERY_GET_SERVICE_LOCATION_AFFILIATE_DETAILS_BY_TRACKING_ID = "query.get.serviceLocationAffiliate.details.by.trackingId";
+	public static final String QUERY_GET_SERVICE_LOCATION_AFFILIATE_DETAILS_BY_TRACKING_ID_GUID = "query.get.serviceLocationAffiliate.details.by.trackingId.guid";
 	public static final String QUERY_GET_ESIDCOUNT = "query.get.esidCount.sqlQuery";
 	public static final String QUERY_GET_ESIDTYPE = "query.get.esidType.sqlQuery";
 	
