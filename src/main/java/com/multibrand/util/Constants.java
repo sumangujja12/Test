@@ -1365,6 +1365,8 @@ public interface Constants {
 	public static final String OFFER_CATEGORY_TRUELY_FREE_NIGHTS= "TRULYFREENIGHTS";
 	public static final String OFFER_CATEGORY_TRUELY_FREE_DAYS= "TRULYFREEDAYS";
 	
+	public static final String KBA_OE="kba-oe";
+	
 
     
 
