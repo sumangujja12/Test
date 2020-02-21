@@ -258,7 +258,10 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_past_service_ca", parameterIndex = 84)
 	private String pastServiceCa;
 	
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 85)
+	@ProcedureInParameter(name = "in_posid_snro", parameterIndex = 85)
+	private String posidSNRO;
+	
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 86)
 	private String outErrorCode;
 
 	///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
@@ -1485,6 +1488,14 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 
 	public void setPastServiceCa(String pastServiceCa) {
 		this.pastServiceCa = pastServiceCa;
+	}
+
+	public String getPosidSNRO() {
+		return posidSNRO;
+	}
+
+	public void setPosidSNRO(String posidSNRO) {
+		this.posidSNRO = posidSNRO;
 	}
 	
 	

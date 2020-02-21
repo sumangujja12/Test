@@ -162,6 +162,8 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	
 	private String kbaSuggestionFlag;
 	
+	private String posidSNRO;
+	
 	public OESignupDTO() {
 		
 	}
@@ -1400,6 +1402,14 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 
 	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
 		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
+
+	public String getPosidSNRO() {
+		return posidSNRO;
+	}
+
+	public void setPosidSNRO(String posidSNRO) {
+		this.posidSNRO = posidSNRO;
 	}
 	
 	

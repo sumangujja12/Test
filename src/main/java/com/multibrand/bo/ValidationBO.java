@@ -280,7 +280,7 @@ public class ValidationBO extends BaseBO {
 
 			//Pass the parameters from NRG response to wrapper Response POJO
 			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
-
+			oESignupDTO.setPosidSNRO(validatePosIdKBAResponse.getPosidUniqueKey());
 			/*
 			 * PosId Scenario: 
 			 */
@@ -767,6 +767,7 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setPendingBalAmount(EMPTY);
 		addServiceLocation.setPastServiceCa(EMPTY);
 		addServiceLocation.setKbaSuggestionFlag(oESignupDTO.getKbaSuggestionFlag());
+		addServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
 		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
@@ -863,6 +864,7 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setPendingBalAmount(EMPTY);
 		updateServiceLocation.setPastServiceCa(EMPTY);
 		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
+		updateServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
 		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 
