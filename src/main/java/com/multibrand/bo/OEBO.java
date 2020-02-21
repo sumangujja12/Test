@@ -2022,14 +2022,11 @@ public class OEBO extends OeBoHelper implements Constants{
 						.getArrayFactors();
 
 				for (FactorDetailDO factObj : factorsArray) {
-					if (!locale.equalsIgnoreCase(factObj.getLanguage()))
-						continue;
-					//creditFactor.append(factObj.getKey_FACTOR() + SEMI_COLON);
-					creditFactor.append(factObj.getSource() + DOT + factObj.getType() + DOT +factObj.getKey_FACTOR() + SEMI_COLON );
-					String key = factObj.getSource() + DOT + factObj.getType()
-							+ DOT + factObj.getKey_FACTOR();
-					creditFactorsText.append(oweRPMFactors.getMessage(key,
-							null, localeObj) + SEMI_COLON);
+					if (StringUtils.equalsIgnoreCase(locale,factObj.getLanguage())){
+						creditFactor.append(factObj.getSource() + DOT + factObj.getType() + DOT +factObj.getKey_FACTOR() + DELIMETER_COMMA );
+						String key = factObj.getSource() + DOT + factObj.getType()+ DOT + factObj.getKey_FACTOR();
+						creditFactorsText.append(oweRPMFactors.getMessage(key,null, localeObj) + SEMI_COLON);
+					}
 				}
 			}
 
@@ -2338,7 +2335,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					requestDataPerson.setCredScoreNum(newCreditScoreResponse
 							.getStrCreditScore());
 				requestDataPerson.setAdvActionData(StringUtils.removeEnd(
-						creditFactor.toString(), String.valueOf(SEMI_COLON)));
+						creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
 
 
 				if(StringUtils.isNotBlank(response.getDepositAmount())) {
