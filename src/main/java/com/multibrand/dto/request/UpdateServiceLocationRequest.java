@@ -473,7 +473,9 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 		private String pendingBalAmount;
 		@ProcedureInParameter(name = "in_past_service_ca", parameterIndex = 156)
 		private String pastServiceCa;
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 157)
+		@ProcedureInParameter(name = "in_posid_snro", parameterIndex = 157)
+		private String posidSNRO;
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 158)
 	private String outErrorCode;
 
 	
@@ -2805,6 +2807,14 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 
 	public void setPastServiceCa(String pastServiceCa) {
 		this.pastServiceCa = pastServiceCa;
+	}
+
+	public String getPosidSNRO() {
+		return posidSNRO;
+	}
+
+	public void setPosidSNRO(String posidSNRO) {
+		this.posidSNRO = posidSNRO;
 	}
 	
 	
