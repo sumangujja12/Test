@@ -97,6 +97,7 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidDetailsRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
+import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
@@ -3129,22 +3130,23 @@ public class OEBO extends OeBoHelper implements Constants{
 	}
 	
 	public ServiceLocationResponse getEnrollmentData(String trackingId) {
-		logger.info("Entering >> getEnrollmentData");
-		logger.info("trackingId = " + trackingId);
+		logger.debug("Entering >> getEnrollmentData");
+		logger.debug("trackingId = " + trackingId);
 		ServiceLocationResponse serviceLocationResponse = serviceLocationDAO
 				.getServiceLocation(trackingId);
-		logger.info("Exiting << getEnrollmentData");
+		logger.debug("Exiting << getEnrollmentData");
 		return serviceLocationResponse;
 	}
 	public ServiceLocationResponse getEnrollmentData(String trackingId,String guid) {
-		logger.info("Entering >> getServiceLocationData");
-		logger.info("trackingId = " + trackingId);
-		logger.info("guid = " + guid);
+		logger.debug("Entering >> getServiceLocationData");
+		logger.debug("trackingId = " + trackingId);
+		logger.debug("guid = " + guid);
 		ServiceLocationResponse serviceLocationResponse = serviceLocationDAO
-				.getServiceLocation(trackingId,guid);
-		logger.info("Exiting << getEnrollmentData");
+				.getEnrollmentData(trackingId,guid);
+		logger.debug("Exiting << getEnrollmentData");
 		return serviceLocationResponse;
 	}
+	
 
 	public String getPersonIdByTrackingNo(String trackingNo) {
 		logger.debug("Entering >> getPersonIdByTrackingNo");
@@ -3156,18 +3158,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		return personId;
 	}
 	
-	public String getPersonIdByTrackingNoGuid(String trackingNo,String guid) {
-		logger.debug("Entering >> getPersonIdByTrackingNoGuid");
-		logger.debug("trackingNo = " + trackingNo);
-		logger.debug("guid = " + guid);
-		Assert.notNull(trackingNo, "trackingNo must not be null.");
-		Assert.notNull(guid, "guid must not be null.");
-		String personId = personDao.getPersonIdByTrackingNoGuid(trackingNo,guid);
-		logger.debug("personId = " + personId);
-		logger.debug("Exiting << getPersonIdByTrackingNo");
-		return personId;
-	}
-
+	
 	public List<Map<String, String>> getPersonIdAndRetryCountByTrackingNo(
 			String trackingNo) {
 		logger.debug("Entering >> getPersonIdAndRetryCountByTrackingNo");
@@ -5121,27 +5112,13 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
 	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
 	KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
-	List<Question> questions = new ArrayList<>();
 	try {
 					
 		logger.debug("inside getKBAQuestions::Tracking Number ::{} :: preferred language is:{}"+request.getTrackingId());
 		kbaQuestionRequest = createKBAQuestionRequest(request);
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
-		 if (kbaQuestionResponse != null && (kbaQuestionResponse.getQuestionList() != null
-					&& kbaQuestionResponse.getQuestionList().length > 0)) {
-				
-				getKBAQuestion(kbaQuestionResponse.getQuestionList(), questions);
-				
-				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setTransactionKey(kbaQuestionResponse.getTransactionKey());
-				response.setQuestions(questions);
-			} else {
-				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setMessageCode(POSID_FAIL);
-				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-
-
-			}
+		 response = createKBAQuestionResposne(kbaQuestionResponse);
+		 
 		 boolean addKBAErrorCode=this.addKBADetails(kbaQuestionResponse);
 
 	} catch (Exception e) {
@@ -5165,7 +5142,7 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 			}
 		}catch(Exception e){
 			response.setStatusCode(STATUS_CODE_STOP);
-			response.setResultDescription("Java exception making Database call for getKBaQuestion-updateServiceLocation with exception ::"+e.getMessage());
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			logger.error("Tracking Number ::"+request.getTrackingId()+" :: affiliate Id : "
 					+ ""+request.getAffiliateId() +"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
 		}
@@ -5582,39 +5559,25 @@ public ProspectDataResponse getProspectData(String prospectId, String  lastFourD
 	
 	}
 
-public GetKBAQuestionsResponse kbaOE(String trackingId,String guid,String companyCode,String languageCode, String brandId) {
+/**
+ * 
+ * @param getOEKBAQuestionsRequest
+ * @return
+ */
+public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) {
 	
 	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
 	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
 	KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
-	PersonResponse personResponse= null;
 	ServiceLocationResponse serviceLocationResponse = null;
-	List<Question> questions = new ArrayList<>();
 	try {
 					
-		//logger.debug("inside getKBAQuestions::Tracking Number ::{} :: preferred language is:{}"+request.getTrackingId());
-		boolean flag = validateTrackinIDAndGuid( trackingId, guid);
-		if(!flag){
-			response.setStatusCode(STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("trackingId or guid may not be Empty");
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-		}
-		
-		String personId = getPersonIdByTrackingNoGuid(trackingId,guid);
-		
-		if(StringUtils.isNotBlank(personId)){
-			 personResponse = this.getPerson(personId);
-			if(null!= personResponse ){
-				 serviceLocationResponse =  getEnrollmentData(trackingId,guid);
-				if(null !=serviceLocationResponse){
-					kbaQuestionRequest = createKBAQuestionRequest(personResponse,serviceLocationResponse,companyCode,languageCode,brandId);
-				}
+					
+		 serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
+			if(null !=serviceLocationResponse){
+				kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
 			}
-		}
-		if(StringUtils.isBlank(personId)|| null== personResponse ||null==serviceLocationResponse){
+		if(null==serviceLocationResponse){
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
 			response.setResultDescription("Data not found for Given input");
@@ -5625,22 +5588,8 @@ public GetKBAQuestionsResponse kbaOE(String trackingId,String guid,String compan
 		
 		
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
-		 if (kbaQuestionResponse != null && (kbaQuestionResponse.getQuestionList() != null
-					&& kbaQuestionResponse.getQuestionList().length > 0)) {
-				
-				getKBAQuestion(kbaQuestionResponse.getQuestionList(), questions);
-				
-				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setTransactionKey(kbaQuestionResponse.getTransactionKey());
-				response.setQuestions(questions);
-			} else {
-				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setMessageCode(POSID_FAIL);
-				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-
-
-			}
-		 boolean addKBAErrorCode=this.addKBADetails(kbaQuestionResponse);
+		 response = createKBAQuestionResposne(kbaQuestionResponse);
+		 boolean addKBAErrorCode =this.addKBADetails(kbaQuestionResponse);
 
 	} catch (Exception e) {
 		response.setStatusCode(STATUS_CODE_CONTINUE);
@@ -5652,19 +5601,19 @@ public GetKBAQuestionsResponse kbaOE(String trackingId,String guid,String compan
 		try{
 				// Making Update Servicelocation call now
 				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
-						&& StringUtils.isNotEmpty(trackingId)){
+						&& StringUtils.isNotEmpty(getOEKBAQuestionsRequest.getTrackingId())){
 				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
-				updateServiceLocationRequest.setTrackingId(trackingId);
+				updateServiceLocationRequest.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
 				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
 				this.updateServiceLocation(updateServiceLocationRequest);
-				response.setTrackingId(trackingId);
+				response.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
 				
 				
 			}
 		}catch(Exception e){
 			response.setStatusCode(STATUS_CODE_STOP);
-			response.setResultDescription("Java exception making Database call for getKBaQuestion-updateServiceLocation with exception ::"+e.getMessage());
-			logger.error("Tracking Number ::"+trackingId+"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Tracking Number ::"+getOEKBAQuestionsRequest.getTrackingId()+"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
 		}
 		
 	}
@@ -5672,28 +5621,28 @@ public GetKBAQuestionsResponse kbaOE(String trackingId,String guid,String compan
 	return response;
 }
 
-private KbaQuestionRequest createKBAQuestionRequest(PersonResponse personResponse,ServiceLocationResponse serviceLocationResponse,String companyCode,String languageCode, String brandId) throws ParseException{
+private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serviceLocationResponse,GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) throws ParseException{
 	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest(); ;
 	
 	
-	kbaQuestionRequest.setCompanyCode(companyCode);
-	kbaQuestionRequest.setBrandName(brandId);
+	kbaQuestionRequest.setCompanyCode(getOEKBAQuestionsRequest.getCompanyCode());
+	kbaQuestionRequest.setBrandName(getOEKBAQuestionsRequest.getBrandId());
 	kbaQuestionRequest.setChannel(CHANNEL);
 	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
-	kbaQuestionRequest.setLanguageCode(languageCode);
+	kbaQuestionRequest.setLanguageCode(getOEKBAQuestionsRequest.getLanguageCode());
 	
-	kbaQuestionRequest.setFirstName(personResponse.getFirstName());
-	kbaQuestionRequest.setLastName(personResponse.getLastName());
-	kbaQuestionRequest.setMiddleName(personResponse.getMiddleName());	
+	kbaQuestionRequest.setFirstName(serviceLocationResponse.getPersonResponse().getFirstName());
+	kbaQuestionRequest.setLastName(serviceLocationResponse.getPersonResponse().getLastName());
+	kbaQuestionRequest.setMiddleName(serviceLocationResponse.getPersonResponse().getMiddleName());	
 	
-	Date serDate=new SimpleDateFormat("MMddyyyy").parse(personResponse.getDob());
+	Date serDate=new SimpleDateFormat("MMddyyyy").parse(serviceLocationResponse.getPersonResponse().getDob());
 	String finalSerDate = new SimpleDateFormat("MM/dd/yyyy").format(serDate);
 	kbaQuestionRequest.setDob(finalSerDate.toString());
 	
-	kbaQuestionRequest.setTokenizedSSN(personResponse.getSsn());		
-	if(StringUtils.isNotEmpty(personResponse.getIdNumber())){
-        kbaQuestionRequest.setTokenizedDrl(personResponse.getIdNumber());        
-        kbaQuestionRequest.setDlrState(personResponse.getIdStateOfIssue());
+	kbaQuestionRequest.setTokenizedSSN(serviceLocationResponse.getPersonResponse().getSsn());		
+	if(StringUtils.isNotEmpty(serviceLocationResponse.getPersonResponse().getIdNumber())){
+        kbaQuestionRequest.setTokenizedDrl(serviceLocationResponse.getPersonResponse().getIdNumber());        
+        kbaQuestionRequest.setDlrState(serviceLocationResponse.getPersonResponse().getIdStateOfIssue());
     }
 	
 //	kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
@@ -5702,8 +5651,8 @@ private KbaQuestionRequest createKBAQuestionRequest(PersonResponse personRespons
 //	kbaQuestionRequest.setDlrState(null);
 	
 	
-	kbaQuestionRequest.setHomePhone(personResponse.getPhoneNum());
-	kbaQuestionRequest.setEmailAddress(personResponse.getEmail());
+	kbaQuestionRequest.setHomePhone(serviceLocationResponse.getPersonResponse().getPhoneNum());
+	kbaQuestionRequest.setEmailAddress(serviceLocationResponse.getPersonResponse().getEmail());
 	
 	
 	
@@ -5730,14 +5679,36 @@ private KbaQuestionRequest createKBAQuestionRequest(PersonResponse personRespons
 	return kbaQuestionRequest;
 }
 
-private boolean validateTrackinIDAndGuid(String trackingId,String guid)
-{
-	Boolean validationFlag= false;
-	if(StringUtils.isNotBlank(trackingId)&& StringUtils.isNotBlank(guid)){
-		validationFlag= true;
+/**
+ * @author Kdeshmu1
+ * @param kbaQuestionResponse
+ * @return
+ */
+private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kbaQuestionResponse){
+	
+	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
+	
+	List<Question> questions = new ArrayList<>();
+	
+	if (kbaQuestionResponse != null && (kbaQuestionResponse.getQuestionList() != null
+			&& kbaQuestionResponse.getQuestionList().length > 0)) {
+		
+		getKBAQuestion(kbaQuestionResponse.getQuestionList(), questions);
+		
+		response.setStatusCode(STATUS_CODE_CONTINUE);
+		response.setTransactionKey(kbaQuestionResponse.getTransactionKey());
+		response.setQuestions(questions);
+	} else {
+		response.setStatusCode(STATUS_CODE_CONTINUE);
+		response.setMessageCode(POSID_FAIL);
+		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+
+
 	}
-	return validationFlag;
-}	
+	return response;
+}
+
+	
 }
 
 	

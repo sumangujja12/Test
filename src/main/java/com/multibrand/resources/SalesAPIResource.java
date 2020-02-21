@@ -35,6 +35,7 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
+import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
@@ -565,7 +566,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
    		}
        return response;
     }
@@ -665,32 +666,22 @@ public class SalesAPIResource extends BaseResource {
 		return response;	
 	}
 	
-	@PUT
-    @Path("kba-oe")
+	@POST
+    @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response kbaOE(@QueryParam(value = "trackingID") String trackingID,
-    		 @QueryParam(value = "guID") String guID,
-    		 @QueryParam(value = "companyCode")   String companyCode,
-    		 @QueryParam(value = "languageCode")   String languageCode,
-    		 @QueryParam(value = "brandId")   String brandId
-    		) {
+    public Response getKBAQuestionsWithinOE(@Valid GetOEKBAQuestionsRequest request){
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
-		GetKBAQuestionsRequest request = new GetKBAQuestionsRequest();
        try{
     	   
-    	   request.setCompanyCode(companyCode);
-    	   request.setLanguageCode(languageCode);
-    	   request.setTrackingId(trackingID);
-    	   request.setBrandId(brandId);
-        	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.kbaOE(trackingID, guID, companyCode, languageCode, brandId);
+        	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestionsWithinOE(request);
             response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(languageCode))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), trackingID, EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    		}
        return response;
     }
