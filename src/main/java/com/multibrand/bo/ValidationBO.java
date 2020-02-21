@@ -30,6 +30,7 @@ import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.request.ValidateAddressRequest;
+import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.ValidateAddressResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
@@ -194,7 +195,7 @@ public class ValidationBO extends BaseBO {
 		else 
 			performPosIdBpRequest.setPreferredLanguage(EN);
 
-		logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
+		logger.info("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 				+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: preferred language is"
 						+ " "+performPosIdBpRequest.getPreferredLanguage());
 
@@ -210,6 +211,7 @@ public class ValidationBO extends BaseBO {
 			logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
 					+ "Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: tracking number is numeric ");
 			List<Map<String, String>> personIdAndRetryCountResponse =oeBO.getPersonIdAndRetryCountByTrackingNo(performPosIdBpRequest.getTrackingId());
+			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
 
 			personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
 			logger.debug("inside validatePosId::personIdAndRetryCountResponse.get(0) "+personIdAndRetryCountResponse.get(0));
@@ -227,6 +229,10 @@ public class ValidationBO extends BaseBO {
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
+										
+					ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+					response.setGuID(serviceLoationResponse.getGuid());
+
 					response.setStatusCode(STATUS_CODE_STOP);
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
@@ -361,10 +367,10 @@ public class ValidationBO extends BaseBO {
 
 			//setting retrycount in response:
 			response.setRetryCount(Integer.toString(retryCount));
-			if(StringUtils.equalsIgnoreCase(performPosIdBpRequest.getChannelType(), CHANNEL_TYPE_AA)){
-				response.setKbaSuggestionFlag(FLAG_X);	
-				oESignupDTO.setKbaSuggestionFlag(FLAG_X);
-			}
+						
+			response.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());	
+			oESignupDTO.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());
+			
 
 		}
 		catch(Exception e)
@@ -393,13 +399,15 @@ public class ValidationBO extends BaseBO {
 					if(StringUtils.isNotBlank(personId))
 					{
 						logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making addservicelocation call now");
-						AddServiceLocationRequest addServiceLocation =new AddServiceLocationRequest();
+						AddServiceLocationRequest addServiceLocation =new AddServiceLocationRequest();						
+						String guid= addServiceLocation.getGuid();											
 						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade,oESignupDTO);
 						performPosIdBpRequest.setTrackingId(oeBO.addServiceLocation(addServiceLocation));
 						//checking if addServiceLocation call was successful
 						if(StringUtils.isNotBlank(performPosIdBpRequest.getTrackingId()))
 						{
 							response.setTrackingId(performPosIdBpRequest.getTrackingId());
+							response.setGuID(guid);
 							logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +"::"
 									+ " tracking id after servicelocation call is :: "+performPosIdBpRequest.getTrackingId());
 						}
@@ -428,6 +436,9 @@ public class ValidationBO extends BaseBO {
 					logger.error("Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "
 							+ ""+performPosIdBpRequest.getAffiliateId() +"::Exception while making addperson and addserviceLocation call :: ", e);
 				}
+			}else{
+				ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+				response.setGuID(serviceLoationResponse.getGuid());
 			}
 
 			response.setTrackingId(performPosIdBpRequest.getTrackingId());

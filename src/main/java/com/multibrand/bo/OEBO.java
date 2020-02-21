@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 import javax.xml.rpc.ServiceException;
 
@@ -100,6 +101,7 @@ import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
+import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -147,6 +149,7 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
@@ -238,6 +241,10 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	 @Autowired
 	private TogglzUtil togglzUtil;
+	 
+	 /** Object of ValidationBO class. */
+	@Autowired
+	private ValidationBO validationBO;
 	 
 	protected static final List<String> OFFER_CATEGORY_LIST_CONSERVATION = Arrays.asList(CONSERVATION_CATEGORY,OFFER_CATEGORY_NESTCONS,OFFER_CATEGORY_NESTCAMCONS,OFFER_CATEGORY_CONSAPT,OFFER_CATEGORY_NESTTSTATECONS);    
 	protected static final List<String> OFFER_CATEGORY_LIST_TRULYFREEWKND = Arrays.asList(OFFER_CATEGORY_TRULY_FREE_WEEKENDS,OFFER_CATEGORY_NESTTRUFREEWKND,OFFER_CATEGORY_NESTCAMTRUFREEWKND,OFFER_CATEGORY_NESTSTATETRUFREEWKND);
@@ -5704,6 +5711,228 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 	}
 	return response;
 }
+	
+	public Response performPosidAndBpMatch(
+			@Valid PerformPosIdAndBpMatchRequest request) {		
+		Response response = null;
+		String dobForPosId=null;
+		HashMap<String, Object> mandatoryParamList = null;
+		HashMap<String, Object> mandatoryParamCheckResponse = null;
+		String resultCode = null;
+		String errorDesc = null;
+		boolean isValidAge = false;
+		AgentDetailsResponse agentDetailsResponse;
+		OEBO oeBo = null;
+		TokenizedResponse tokenResponse = null;
+		Map<String, Object> getPosIdTokenResponse = null;
+		OESignupDTO oESignupDTO = new OESignupDTO();
+		// Start Validating DOB- Jsingh1
+		//Checking if DOB lies in Valid age Range (18-100)
+			try{
+				
+				if(StringUtils.isNotEmpty(request.getTrackingId())){
+					ServiceLocationResponse serviceLoationResponse = null;
+					if(StringUtils.isNotEmpty(request.getGuid())){
+						 serviceLoationResponse=getEnrollmentData(request.getTrackingId(),request.getGuid() );
+					}else{
+						 serviceLoationResponse=getEnrollmentData(request.getTrackingId() );
+					}					
+					if(serviceLoationResponse == null){
+						PerformPosIdandBpMatchResponse bpMatchResponse = new PerformPosIdandBpMatchResponse();
+						bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+						bpMatchResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+						if(StringUtils.isNotEmpty(request.getGuid())){
+							bpMatchResponse.setResultDescription("Invalid trackingId or guid");
+						}else{
+							bpMatchResponse.setResultDescription("Invalid trackingId");
+						}						
+						bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+						bpMatchResponse.setErrorDescription(bpMatchResponse.getResultDescription());					
+						response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+						return response;
+					}
+				}
+				
+				logger.info("inside performPosidAndBpMatch:: formatting DOB to Posid acceptable format");
+				
+				dobForPosId=CommonUtil.formatDateForNrgws(request.getDob());
+				request.setDobForPosId(dobForPosId);
+				
+				logger.info("inside performPosidAndBpMatch:: dob for posid call is:: "+dobForPosId);
+				
+				mandatoryParamList = new HashMap<String, Object>();
+	
+				if (StringUtils.isBlank(request.getBillStreetNum())
+						&& StringUtils.isBlank(request.getBillStreetName())) {
+					// Either Billing PO box or Billing Street num/name should be supplied
+					mandatoryParamList.put("billPOBox",
+							request.getBillPOBox());
+				} else {
+					mandatoryParamList.put("billStreetNum",
+							request.getBillStreetNum());
+					mandatoryParamList.put("billStreetName",
+							request.getBillStreetName());
+				}
+				if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,request.getAffiliateId())){
+					mandatoryParamList.put("agentId",
+							request.getAgentID());
+				}
+				mandatoryParamCheckResponse = CommonUtil
+				.checkMandatoryParam(mandatoryParamList);
+				resultCode = (String) mandatoryParamCheckResponse
+				.get("resultCode");
+	
+				if (StringUtils.isNotBlank(resultCode)
+				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+	
+					errorDesc = (String) mandatoryParamCheckResponse
+					.get("errorDesc");
+					
+					if (StringUtils.isNotBlank(errorDesc)) {
+						response = CommonUtil.buildNotValidResponse(resultCode,
+						errorDesc);
+					} else {
+						response  = CommonUtil.buildNotValidResponse(errorDesc,
+						Constants.STATUS_CODE_ASK);
+					}
+					logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
+				
+					return response;
+					
+				}
+				
+				isValidAge=validationBO.getValidAge(dobForPosId);
+				if( !isValidAge )
+				{
+					logger.info("inside performPosidAndBpMatch::Invalid Age: Prospect must be at least 18 years old but not "
+							+ "over 100 years old or invalid date format");
+					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(request.getAffiliateId(),
+							request.getTrackingId());				
+					
+					response = Response.status(200).entity(validPosIdResponse)
+							.build();
+					return response;
+				}
+				//START : OE :Sprint61 :US21009 :Kdeshmu1
+				if(StringUtils.isNotBlank(request.getAgentID())){
+					agentDetailsResponse=validationBO.validateAgentID(request.getAgentID());
+					if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
+					{
+						logger.info("Agent Id is not valid");
+						PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(request.getAgentID(),
+								request.getTrackingId());				
+						
+						response = Response.status(200).entity(validPosIdResponse)
+								.build();
+						return response;
+					}else{
+						oESignupDTO.setAgentID(request.getAgentID());
+						oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
+						oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
+						oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
+						oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
+						oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
+					}
+				}//END : OE :Sprint61 :US21009 :Kdeshmu1  
+				
+			}
+			catch(Exception e)
+			{
+				logger.info("inside performPosidAndBpMatch :: unable to validate age or Agent ID for the prospect.", e);
+			}				
+			//End Validating DOB- Jsingh1
+			
+			oeBo = new OEBO();
+			tokenResponse = new TokenizedResponse();
+			getPosIdTokenResponse = new HashMap<String, Object>();
+			
+			// Changing language code to suitable locale
+			request.setLanguageCode(CommonUtil
+					.localeCode(request.getLanguageCode()));
+			logger.info("inside validatePosId::after local change languageCode langauge is :: "
+					+ request.getLanguageCode());
+			
+			getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
+					request.getTdl(), request.getSsn(),
+					request.getAffiliateId(),
+					request.getTrackingId());
+			
+			
+			if (getPosIdTokenResponse != null) {
+				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
+						.get("tokenResponse");
+				request.setTokenTDL((String) getPosIdTokenResponse
+						.get("tokenTdl"));
+				request.setTokenSSN((String) getPosIdTokenResponse
+						.get("tokenSSN"));
+	
+				if (tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
+				&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
+					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+							+ request.getAffiliateId()
+							+ ":: got token back."+tokenResponse.getReturnToken());
+					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
+						
+						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
+								.validatePosId(request,oESignupDTO );
+						response = Response.status(200).entity(validPosIdResponse)
+								.build();
+						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+								+ request.getAffiliateId()
+								+ "::rendering response pojo :: " + response);
+												
+						if(StringUtils.equals(request.getAffiliateId(),"372529") 
+								&& StringUtils.isNotBlank(validPosIdResponse.getBpMatchFlag())							
+								&& !StringUtils.equals(validPosIdResponse.getStatusCode(), "00")){	
+							logger.info("inside sendPowerGeniusConfirmationEmail");
+							try{
+								oeBo.sendPowerGeniusConfirmationEmail(request.getEmail());
+							}catch(Exception e){
+								logger.error("inside performPosidAndBpMatch :: email sent failed for Power genius Online affiliates.", e);							
+							}
+						}
+						// End : Validate for Power Genius Online Affiliates by KB
+					}
+	
+					else { // returning exception and error as token server is down
+						logger.info("inside performPosidAndBpMatch:: Token Server Down ");
+						tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+						tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+						tokenResponse.setMessageText(msgSource
+								.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+						tokenResponse
+								.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+						response = Response.status(200).entity(tokenResponse)
+								.build();
+						return response;
+					}
+				} else if (tokenResponse.getResultCode().equals(
+				Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
+	
+					response = Response.status(200).entity(tokenResponse).build();
+					return response;
+				} else {
+					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+					tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+					tokenResponse.setMessageText(msgSource
+							.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+					tokenResponse
+							.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+					response = Response.status(200).entity(tokenResponse).build();
+					return response;
+				}
+			} else {
+				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+				tokenResponse.setMessageText(msgSource
+						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+				tokenResponse
+						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+				response = Response.status(200).entity(tokenResponse).build();
+				return response;
+			}		
+	   return response;
+	}
 
 	
 }

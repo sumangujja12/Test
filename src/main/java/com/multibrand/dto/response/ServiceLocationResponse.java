@@ -721,10 +721,7 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the guid
 	 */
 	public String getGuid() {
-		if (StringUtils.isBlank(guid)) {
-			UUID uuID = UUID.randomUUID();
-			setGuid(uuID.toString());
-		}
+	
 		return guid;
 	}
 
