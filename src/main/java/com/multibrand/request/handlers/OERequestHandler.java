@@ -860,7 +860,7 @@ public class OERequestHandler implements Constants {
 				logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: arrayFactors:: "+arrayFactors);
 				for (String factStr : factorsKeyList) {
 					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStr:: "+factStr);
-					factStrArray = factStr.split("\\"+DELIMITER_SEMI_COLON);
+					factStrArray = factStr.split("\\"+DOT);
 					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray:: "+factStrArray);
 					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray.length:: "+factStrArray.length);
 					logger.debug(oeSignUpDTO.printOETrackingID()+"Inside EnrollmentService :: createSubmitEnrollRequest : factStrArray :: " + factStrArray[1] + " **** "
