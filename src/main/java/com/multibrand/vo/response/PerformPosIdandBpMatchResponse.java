@@ -25,7 +25,7 @@ public class PerformPosIdandBpMatchResponse extends GenericResponse {
 	private String existingZip;
 	private String retryCount;
 	private String kbaSuggestionFlag;
-		
+	private String guID;	
 	
 	
 	
@@ -115,6 +115,11 @@ public class PerformPosIdandBpMatchResponse extends GenericResponse {
 		this.kbaSuggestionFlag = kbaSuggestionFlag;
 	}
 	
-	
+	public String getGuID() {
+		return guID;
+	}
+	public void setGuID(String guID) {
+		this.guID = guID;
+	}
 	
 }

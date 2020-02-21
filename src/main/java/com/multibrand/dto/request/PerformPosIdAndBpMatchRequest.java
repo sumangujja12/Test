@@ -8,7 +8,6 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
-import com.multibrand.dao.jdbc.sp.ProcedureInParameter;
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.SizeConstraint;
@@ -140,6 +139,10 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	
 	@Length(max = 40, groups = SizeConstraint.class)
 	String locationName;
+	
+	String guid;
+	String prospectID;
+	
 	
 	public String getEntryPoint() {
 		return entryPoint;
@@ -508,6 +511,23 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 
 	public void setLocationName(String locationName) {
 		this.locationName = locationName;
+	}
+	
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+
+	public String getProspectID() {
+		return prospectID;
+	}
+
+	public void setProspectID(String prospectID) {
+		this.prospectID = prospectID;
 	}
 
 	@Override

@@ -564,6 +564,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 										ServiceLocationResponse dataRow = new ServiceLocationResponse();
 										dataRow.setTrackingId(rs
 												.getString("tracking_number"));
+										dataRow.setGuid(rs
+												.getString("guid_id"));
 										dataRow.setPersonId(rs
 												.getString("person_id"));
 										dataRow.setServiceRequestTypeCode(rs

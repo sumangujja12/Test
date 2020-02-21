@@ -379,11 +379,7 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	}
 
 	public String getGuid() {
-		if(StringUtils.isBlank(guid))
-		{
-			UUID uuID= UUID.randomUUID();
-			setGuid(uuID.toString());
-		}
+		
 		return guid;
 	}
 
