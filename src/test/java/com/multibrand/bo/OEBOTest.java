@@ -430,7 +430,7 @@ public class OEBOTest {
 			}
 		}
 	
-		@Test
+	/*	@Test
 		public void testGetKBAQuestionsWithOutTokenDLWithQuestionListException(){
 			GetKBAQuestionsRequest request = getRequestForGetKBAQuestionsRequest();
 			//request.setTrackingId("34444");
@@ -459,7 +459,7 @@ public class OEBOTest {
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-		}
+		} */
 		
 		@Test
 		public void testGetKBAQuestionsWithTokenDLWithOutAnswerList(){
