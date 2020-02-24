@@ -141,7 +141,9 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String locationName;
 	
 	String guid;
-	String prospectID;
+	String prospectid;
+	String noid;
+	String etf;
 	
 	
 	public String getEntryPoint() {
@@ -521,13 +523,30 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	public void setGuid(String guid) {
 		this.guid = guid;
 	}
+	
 
-	public String getProspectID() {
-		return prospectID;
+	public String getProspectid() {
+		return prospectid;
 	}
 
-	public void setProspectID(String prospectID) {
-		this.prospectID = prospectID;
+	public void setProspectid(String prospectid) {
+		this.prospectid = prospectid;
+	}
+
+	public String getNoid() {
+		return noid;
+	}
+
+	public void setNoid(String noid) {
+		this.noid = noid;
+	}	
+
+	public String getEtf() {
+		return etf;
+	}
+
+	public void setEtf(String etf) {
+		this.etf = etf;
 	}
 
 	@Override

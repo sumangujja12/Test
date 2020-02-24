@@ -1368,7 +1368,8 @@ public interface Constants {
 	public static final String KBA_OE="kba-oe";
 	
 
-    
+	public static final String SYMBOL_DOLLAR = "$";
+	public static final String SYMBOL_CENTS = "¢";
 
    
 }

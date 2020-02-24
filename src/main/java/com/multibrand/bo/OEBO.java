@@ -4465,6 +4465,8 @@ public class OEBO extends OeBoHelper implements Constants{
 											perKWValue },
 										CommonUtil.localeCode(request
 												.getLanguageCode())));
+						affiliateOfferDO.setTdspChargeKWh(perKWValue+SYMBOL_CENTS);
+						affiliateOfferDO.setTdspChargeMo(SYMBOL_DOLLAR+perMonthValue);
 						} else {
 							affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
 						}
@@ -4487,12 +4489,12 @@ public class OEBO extends OeBoHelper implements Constants{
 										CommonUtil.localeCode(request
 												.getLanguageCode())));
 						affiliateOfferDO.setTdspChargeKWh(offerDO.getTdspChargeDO()
-														.getPerKWValue());
-						affiliateOfferDO.setTdspChargeMo(offerDO.getTdspChargeDO().getPerMonthValue());
+								.getPerKWValue()+SYMBOL_CENTS);
+						affiliateOfferDO.setTdspChargeMo(SYMBOL_DOLLAR+offerDO.getTdspChargeDO().getPerMonthValue());
 						if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
 								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
 								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
-							affiliateOfferDO.setTdspChargeOther(DEFAULT_PRICE_VALUE);
+							affiliateOfferDO.setTdspChargeOther(SYMBOL_DOLLAR+DEFAULT_PRICE_VALUE);
 						}
 						
 					}
