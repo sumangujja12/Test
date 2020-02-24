@@ -5118,7 +5118,6 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 	KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
 	try {
 					
-		logger.debug("inside getKBAQuestions::Tracking Number ::{} :: preferred language is:{}"+request.getTrackingId());
 		kbaQuestionRequest = createKBAQuestionRequest(request);
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
 		 response = createKBAQuestionResposne(kbaQuestionResponse);
@@ -5131,27 +5130,7 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
 		response.setMessageCode(POSID_FAIL);
 		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-	} finally {
-		try{
-				// Making Update Servicelocation call now
-				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
-						&& StringUtils.isNotEmpty(request.getTrackingId())){
-				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
-				updateServiceLocationRequest.setTrackingId(request.getTrackingId());
-				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
-				this.updateServiceLocation(updateServiceLocationRequest);
-				response.setTrackingId(request.getTrackingId());
-				
-				
-			}
-		}catch(Exception e){
-			response.setStatusCode(STATUS_CODE_STOP);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.error("Tracking Number ::"+request.getTrackingId()+" :: affiliate Id : "
-					+ ""+request.getAffiliateId() +"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
-		}
-		
-	}
+	} 
 
 	return response;
 }

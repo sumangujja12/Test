@@ -11,7 +11,6 @@ import org.hibernate.validator.constraints.NotBlank;
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.SizeConstraint;
-import com.multibrand.request.validation.ValidDateTime;
 
 
 public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Serializable {
@@ -74,7 +73,6 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	String tokenSSN;
 	
 	private String drivingLicenseState;
-	private String trackingId;
 	private String esid;
 	private String transactionType;
 	
@@ -95,12 +93,6 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	}
 	public void setIpAddress(String ipAddress) {
 		this.ipAddress = ipAddress;
-	}
-	public String getTrackingId() {
-		return trackingId;
-	}
-	public void setTrackingId(String trackingId) {
-		this.trackingId = trackingId;
 	}
 	public String getDrivingLicenseState() {
 		return drivingLicenseState;
