@@ -2151,6 +2151,13 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		logger.info("Start - [ProfileBO - validatePassword]");
 		PasswordValidityResponse passwordValidityResponse = new PasswordValidityResponse();
 		try {
+			if(StringUtils.isBlank(password)) {
+				passwordValidityResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				passwordValidityResponse.setResultDescription("Password should not be empty for the uresname -"+ userName);
+				logger.error("Password should not be empty for the uresname {}", userName);
+				return passwordValidityResponse;
+			}
+			
 			if (ldapHelper.validateUser(userName, password)) {
 				passwordValidityResponse.setResultCode(RESULT_CODE_SUCCESS);
 				passwordValidityResponse.setResultDescription(MSG_SUCCESS);
