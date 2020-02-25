@@ -4197,6 +4197,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setResultCode(Constants.RESULT_CODE_SUCCESS );
 				response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
 				response = constructMainFields(response,offerResponse);
+				response.setErrorCode(HTTP_BAD_REQUEST);
+				response.setErrorDescription(response.getResultDescription());
+				response.setHttpStatus(Response.Status.BAD_REQUEST);
 				return response;
 			} else {
 				offerResponse = getOffers(request.getLanguageCode(),
