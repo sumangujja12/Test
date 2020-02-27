@@ -49,6 +49,7 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.SizeConstraint;
+import com.multibrand.request.validation.ValidateGetMapppingRequestParam;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.TokenRequestVO;
@@ -444,7 +445,7 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_TOKEN)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	@Valid
+	@ValidateGetMapppingRequestParam
 	public Response getTokenResponse(@InjectParam TokenRequestVO request) throws Exception {
 		Response response=null;
 		long startTime = CommonUtil.getStartTime();

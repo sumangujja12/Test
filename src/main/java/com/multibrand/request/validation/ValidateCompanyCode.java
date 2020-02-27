@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
 @Documented
 public @interface ValidateCompanyCode {
 
-	String message() default  StringUtils.EMPTY;
+	String message() default  "Please provide Valid Company Code";
 	
 	String messageText() default  StringUtils.EMPTY;
 	

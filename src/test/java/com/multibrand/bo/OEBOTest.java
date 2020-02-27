@@ -2,6 +2,7 @@ package com.multibrand.bo;
 
 import static org.mockito.Mockito.when;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import com.multibrand.domain.KbaQuestionDTO;
+import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.ServiceLocationDao;
+import com.multibrand.dao.impl.AddressDAOImpl;
 import com.multibrand.domain.KbaAnswerDTO;
 import com.multibrand.domain.KbaErrorDTO;
 import com.multibrand.domain.KbaQuestionRequest;
@@ -32,6 +35,7 @@ import com.multibrand.domain.KbaSubmitAnswerRequest;
 import com.multibrand.domain.KbaSubmitAnswerResponse;
 
 import com.multibrand.dto.KBASubmitResultsDTO;
+import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
@@ -43,6 +47,8 @@ import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
+import com.multibrand.vo.request.ESIDData;
+import com.multibrand.dto.response.EsidResponse;
 
 @Test(singleThreaded = true)
 public class OEBOTest {
@@ -64,6 +70,9 @@ public class OEBOTest {
 
 	@Mock
 	protected WebI18nMessageSource msgSource;
+	
+	@Mock
+	private AddressDAOIF addressDAO;
 
 	@Spy
 	ReloadableResourceBundleMessageSource viewResolverMessageSource = new ReloadableResourceBundleMessageSource();
@@ -522,4 +531,53 @@ public class OEBOTest {
 		return request;
 	}
 
+	@Test
+	public void testPositiveGetESIDDetails() throws SQLException, Exception{
+		EsidRequest request = createEsidRequest();
+		EsidResponse esidResponse = createEsidResponse();
+		when(addressDAO.getESIDDetails(Matchers.any(EsidRequest.class))).thenReturn(esidResponse);
+		esidResponse = oebo.getESIDDetails(request);
+		Assert.assertEquals(esidResponse.getEsidList().size(), 1);
+		
+	}
+	@Test
+	public void testNegativeGetESIDDetails() throws SQLException, Exception{
+		EsidRequest request = createEsidRequest();
+		EsidResponse esidResponse= new EsidResponse();
+		List<ESIDData> esidList = new ArrayList<>();
+		esidResponse.setEsidList(esidList);
+		when(addressDAO.getESIDDetails(Matchers.any(EsidRequest.class))).thenReturn(esidResponse);
+		esidResponse = oebo.getESIDDetails(request);
+		Assert.assertEquals(esidResponse.getEsidList().size(), 0);
+	}
+	
+	private EsidRequest createEsidRequest(){
+		EsidRequest request = new EsidRequest();
+		request.setAffiliateId("12345");
+		request.setBrandId("RE");
+		request.setChannelType("WEB");
+		request.setCompanyCode("0121");
+		request.setLanguageCode("EN");
+		request.setServCity("MIDLAND");
+		request.setServStreet("40010 ANGELINA DR");
+		request.setServZipCode("79707");
+		return request;
+	}
+	
+	private EsidResponse createEsidResponse(){
+		List<ESIDData> esidList=null;
+		ESIDData esid = null;
+		esidList = new ArrayList<>();
+		esid = new ESIDData();
+		esid.setEsidNumber("10443720003000440");
+		esid.setPremiseType("Resdential");
+		esid.setEsidStatus("Active");
+		esid.setEsidClass("1");
+		esid.setEsidDeposit("410");
+		esid.setEsidTDSP("44372");
+		esidList.add(esid);
+		EsidResponse esidResponse= new EsidResponse();
+		esidResponse.setEsidList(esidList);
+		return esidResponse;
+	}
 }

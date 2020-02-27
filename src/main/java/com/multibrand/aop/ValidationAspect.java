@@ -21,6 +21,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+
 import com.multibrand.vo.response.GenericResponse;
 
 @Aspect
@@ -35,7 +36,7 @@ public class ValidationAspect {
 	public ValidationAspect() {
 		this.validator = Validation.buildDefaultValidatorFactory().getValidator();
 	}
-	@Pointcut("@annotation(javax.validation.Valid) && execution(public * com.multibrand.resources.SalesAPIResource.*(..))")
+	@Pointcut("@annotation(com.multibrand.request.validation.ValidateGetMapppingRequestParam) && execution(public * com.multibrand.resources.SalesAPIResource.*(..))")
 	public void validationPoint(){}
 
 	@Around("validationPoint()")
