@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.request.validation.ChannelType;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidateCompanyCode;
+import com.multibrand.util.Constants;
 
 /**
  * 
@@ -17,7 +18,7 @@ import com.multibrand.request.validation.ValidateCompanyCode;
  * 
  */
 @Component
-public class BaseAffiliateRequest{
+public class BaseAffiliateRequest implements Constants{
 	/**
 	 * 
 	 */
