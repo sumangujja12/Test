@@ -1071,7 +1071,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-validation-domain</artifactId>
-			<version>9-SNAPSHOT</version>
+			<version>8</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 
