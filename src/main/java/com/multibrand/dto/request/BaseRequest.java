@@ -27,10 +27,8 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 	 */
 	private static final long serialVersionUID = -4445444910516034860L;
 	
-	@QueryParam(value = "companyCode")
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 4, groups = SizeConstraint.class)
-	@ValidateCompanyCode(message="{err.msg.valid.company.code}", groups=FormatConstraint.class)
 	private String companyCode;
 	
 	@QueryParam(value = "brandId")
