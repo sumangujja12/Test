@@ -1,5 +1,6 @@
 package com.multibrand.util;
 
+
 public interface DBConstants {
 
 	public static final String OUTPUT = "OUTPUT";
@@ -286,6 +287,7 @@ public interface DBConstants {
 	public static final String QUERY_GET_PERSON_AFFILIATE_ID_AND_RETRY_COUNT_BY_TRACKING_NO = "query.get.personAffiliate.id.and.retrycount.by.trackingNo";
 	public static final String QUERY_GET_PERSON_AFFILIATE_DETAILS_BY_PERSON_ID = "query.get.personAffiliate.details.by.personId";
 	public static final String QUERY_GET_SERVICE_LOCATION_AFFILIATE_DETAILS_BY_TRACKING_ID = "query.get.serviceLocationAffiliate.details.by.trackingId";
+	public static final String QUERY_GET_ENROLLMENT_DETAILS_BY_TRACKING_ID_GUID = "query.get.enrollment.details.by.trackingId.guid";
 	public static final String QUERY_GET_ESIDCOUNT = "query.get.esidCount.sqlQuery";
 	public static final String QUERY_GET_ESIDTYPE = "query.get.esidType.sqlQuery";
 	
@@ -359,5 +361,22 @@ public interface DBConstants {
 	public static final String QUERY_GET_USER_LOGIN_ID = "query.get.user.login.id";
 	
 	public static final String QUERY_GET_WEEKLY_SUMMARY_EMAIL = "query.get.wse.sqlQuery";
+
+	public static final String  OE_ADD_KBA_DETAILS_QUERY = "db.choice.reliant.addkbadetailsquery";
+	
+	public static final String OE_UPDATE_KBA_DETAILS_QUERY = "db.choice.reliant.updatekbadetailsquery";
+	//START || PBI 15786: Update ESID Call || atiwari
+	public static final String PROC_GET_ESIID_INFO = "proc.getesiidInfo";
+	public static final String V_ESID = "V_ESID";
+	public static final String V_CLASS = "v_class";
+	public static final String V_DEPOSIT = "v_deposit";
+	public static final String V_TDSP = "v_tdsp";
+	public static final String V_STATUS = "v_status";
+	public static final String V_PERMISETYPE = "v_premisetype";
+	public static final String in_addr = "in_addr";
+	public static final String in_zip = "in_zip";
+	public static final String in_aptno = "in_aptno";
+	public static final String OUT_CURR_GET_ESI = "get_esi";
+	//END || PBI 15786: Update ESID Call || atiwari
 
 }

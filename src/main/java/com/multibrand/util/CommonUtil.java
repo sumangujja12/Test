@@ -1900,5 +1900,83 @@ public class CommonUtil implements Constants {
 		Date date = new Date();
 		return dateFormat.format(date); //05/07/2019 06:53:11 PM
 	}
+	public static String getRequestParameter(HttpServletRequest request, String in_ParameterName)
+    {
+        if (request.getParameter(in_ParameterName) != null)
+        {
+            return request.getParameter(in_ParameterName);
+        }
+        
+        return StringUtils.EMPTY;
+ }
+	public static String getBrandIdFromCompanycodeForCCS(String companyCode, String brandId){
+		String brandName = EMPTY;
+		
+		switch(companyCode){
+			case COMPANY_CODE_RELIANT:
+					brandName = BRAND_ID_RELIANT;
+					break;
+			case COMPANY_CODE_GME:
+					brandName = CCS_BRAND_ID_GME;
+					break;
+			case COMPANY_CODE_PENNYWISE:
+					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_PENNYWISE);
+					break;
+			default:
+				break;
+		}
+		
+		return brandName;
+	}	
 
+	public static String getBrandIdFromCompanycodeForTogglz(String companyCode, String brandId){
+		String brandName = EMPTY;
+		
+		switch(companyCode){
+			case COMPANY_CODE_RELIANT:
+					brandName = BRAND_ID_RELIANT;
+					break;
+			case COMPANY_CODE_GME:
+					brandName = BRAND_ID_GME;
+					break;
+			case COMPANY_CODE_DISCOUNTPOWER:
+					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_DISCOUNTPOWER);
+					break;
+			default:
+				break;
+		}
+		
+		return brandName;
+	}
+	
+	public static String getChannelTypeForTogglz(String channelType){
+		String channel = CHANNEL_WEB;
+		if(channelType == null){
+			channelType = StringUtils.EMPTY;
+		}
+		switch(channelType){
+			case CHANNEL_AA:
+				channel = CHANNEL_AA;
+					break;
+			case CHANNEL_AFF:
+				channel = CHANNEL_AFF;
+					break;			
+			default:
+				break;
+		}
+		
+		return channel;
+	}
+
+
+	public static String removeHTMLTags(String contentMsg)
+	  {
+	    String updatedContentMsg = "";
+
+	    if (StringUtils.isNotBlank(contentMsg))
+	    {
+	      updatedContentMsg = contentMsg.replaceAll("<[^>]*>", "");
+	    }
+	    return updatedContentMsg;
+	  }
 }

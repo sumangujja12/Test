@@ -160,6 +160,10 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	private PermitDTO permitDTO;
 	private PrepayDTO prepayDTO;
 	
+	private String kbaSuggestionFlag;
+	
+	private String posidSNRO;
+	
 	public OESignupDTO() {
 		
 	}
@@ -175,6 +179,54 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		String errorCdList;
 		String systemNotes;
 		private String ccsAgentUpdateStatus;
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		String tpvStatus;
+		String campaignCd;
+		String pdfCaptureFlag;
+		String agentUpResponse;
+		String kbaTransactionKey;
+		
+		public String getPdfCaptureFlag() {
+			return pdfCaptureFlag;
+		}
+
+		public void setPdfCaptureFlag(String pdfCaptureFlag) {
+			this.pdfCaptureFlag = pdfCaptureFlag;
+		}
+
+		public String getAgentUpResponse() {
+			return agentUpResponse;
+		}
+
+		public void setAgentUpResponse(String agentUpResponse) {
+			this.agentUpResponse = agentUpResponse;
+		}
+
+		public String getKbaTransactionKey() {
+			return kbaTransactionKey;
+		}
+
+		public void setKbaTransactionKey(String kbaTransactionKey) {
+			this.kbaTransactionKey = kbaTransactionKey;
+		}
+
+		public String getTpvStatus() {
+			return tpvStatus;
+		}
+
+		public void setTpvStatus(String tpvStatus) {
+			this.tpvStatus = tpvStatus;
+		}
+
+		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		public String getCampaignCd() {
+			return campaignCd;
+		}
+
+		public void setCampaignCd(String campaignCd) {
+			this.campaignCd = campaignCd;
+		}
+
 		public String getCcsAgentUpdateStatus() {
 			return ccsAgentUpdateStatus;
 		}
@@ -329,11 +381,7 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	}
 
 	public String getGuid() {
-		if(StringUtils.isBlank(guid))
-		{
-			UUID uuID= UUID.randomUUID();
-			setGuid(uuID.toString());
-		}
+		
 		return guid;
 	}
 
@@ -1348,7 +1396,21 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		this.enrolled = enrolled;
 	}
 
+	public String getKbaSuggestionFlag() {
+		return kbaSuggestionFlag;
+	}
 
+	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
+		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
+
+	public String getPosidSNRO() {
+		return posidSNRO;
+	}
+
+	public void setPosidSNRO(String posidSNRO) {
+		this.posidSNRO = posidSNRO;
+	}
 	
 	
 }

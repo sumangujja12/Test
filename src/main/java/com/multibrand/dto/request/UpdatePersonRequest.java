@@ -159,8 +159,11 @@ public class UpdatePersonRequest implements FormEntityRequest, Serializable {
 
 	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_retry_count", parameterIndex = 48)
 	private String retryCount;
+	
+	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_noid", parameterIndex = 49)
+	private String noid;
 
-	@ProcedureOutParameter(name = "sp.update.person.affiliate.out.param.out_error_code", parameterIndex = 49)
+	@ProcedureOutParameter(name = "sp.update.person.affiliate.out.param.out_error_code", parameterIndex = 50)
 	private String errorCode;
 
 	private String esuiteFlag;
@@ -963,8 +966,18 @@ public class UpdatePersonRequest implements FormEntityRequest, Serializable {
 		this.trackingId = trackingId;
 	}
 
+	
+	public String getNoid() {
+		return noid;
+	}
+
+	public void setNoid(String noid) {
+		this.noid = noid;
+	}
+
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this);
 	}
+	
 }

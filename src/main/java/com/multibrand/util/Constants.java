@@ -100,6 +100,7 @@ public interface Constants {
 	public static final String COMPANY_CODE_PENNYWISE = "0391";
 	public static final String COMPANY_CODE_CIRRO = "0391";
 	public static final String COMPANY_CODE_EE = "0400";
+	public static final String COMPANY_CODE_DISCOUNTPOWER = "0391";
 	
 	public static final String COMPANY_NAME_RELIANT = "Reliant";
 	public static final String COMPANY_NAME_GME = "Green Mountain";
@@ -112,6 +113,8 @@ public interface Constants {
 	public static final String BRAND_ID_PENNYWISE = "PW";
 	public static final String BRAND_ID_CIRRO = "CE";
 	public static final String BRAND_ID_EE = "EE";
+	public static final String BRAND_ID_DISCOUNTPOWER = "DP";
+	public static final String CCS_BRAND_ID_GME = "GR";
 	
 	public static final String ALT_BRAND_ID_RELIANT = "REL";
 	public static final String ALT_BRAND_ID_GME = "GME";
@@ -1295,4 +1298,84 @@ public interface Constants {
 	public static final String CANCEL_PAYMENT_CONTR_ACCT_ID = "CONTR_ACCT_ID";
 	public static final String CANCEL_PAYMENT_CHECK_DIGIT = "CHECK_DIGIT";
 
+	public static final String CHANNEL_TYPE_AA="AA";
+    public static final String DRL_STATE_TX = "TX";
+    public static final String POSID_BLANK_DATE = "0000-00-00";
+    public static final String CALLER_WEB="WEB";
+    public static final String MSG_KEY_KBA_QUESTION_LIST_EMPTY="msg.key.kba.question.list.empty";
+          
+    
+    public static final String DELIMITER = "_";
+    public static final String POSIDHOLD  = "POSIDHOLD";
+    public static final String CALL_NAME_KBA_SUBMIT = "KBASUBMIT";
+    public static final String OE_SPRING_CALL_LOG_STATEMENT="{}: OE Spring JDBC Response Call Name : {} : {} Time in ms  ";
+    
+    public static final String DELIMETER_COMMA_REGEX=",$";
+    
+    public static final String DEFAULT_GROUP_NAME = "togglz.default.groupName";
+    public static final String TOGGLZ_REST_BASE_URL = "ws.rest.togglz.base.url";
+    public static final String TOGGLZ_FEATURE_NEW_POSID_CALL="salesapi.newposid.flag";
+	public static final String TOGGLZ_FEATURE_CMS_OFFER_DATA="salesapi.cmsofferdata.flag";
+	public static final String TOGGLZ_FEATURE_DEFAULT_REACTIVE_OFFER="salesapi.dros.flag";
+ 
+    //***************** SALES APIs *************************
+    //Legacy Sales APIs - Currently being used by Affiliates - To be deprecated
+    public static final String API_LEGACY_GET_AFFILIATE_OFFERS = "getAffiliateOffers";
+    public static final String API_LEGACY_PERFORM_POSID_AND_BPMATCH= "performPosidAndBpMatch";
+    public static final String API_LEGACY_GET_ESID_AND_CALENDAR_DATES= "getESIDAndCalendarDates";
+    public static final String API_LEGACY_PERFORM_CREDIT_CHECK= "performCreditCheck";
+    public static final String API_LEGACY_SUBMIT_UCC_DATA= "submitUCCData";
+    public static final String API_LEGACY_SUBMIT_ENROLLMENT= "submitEnrollment";
+    
+    //New Sales APIs - To be used by all channels and brands
+    public static final String API_OFFERS = "offers";
+    public static final String API_POSID= "identity";
+    public static final String API_AVAILABLE_DATES= "available-dates";
+    public static final String API_CHECK_CREDIT= "check-credit";
+    public static final String API_CREDIT_DATA= "credit-data";
+    public static final String API_SUBMIT_ENROLLMENT= "enrollment";
+    public static final String API_GET_KBA_QUESTIONS = "kba-questions";
+    public static final String API_KBA_RESULT = "kba-result";
+    public static final String API_TOKEN = "token";
+    public static final String API_PROSPECT = "prospect";
+    public static final String API_ESID = "esid";
+    
+    //Submit new KBA Answers API
+    public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
+    public static final String RETRY_NOT_ALLOWED_TXT = "Retry of KBA Answers is not allowed on same transactionKey. Please rerun the getKBAQuestions API to generate a new transactionKey";
+    public static final String NO_PROSPECT_MATCH_FOUND = "NO_PROSPECT_MATCH_FOUND";
+    public static final String HTTP_BAD_REQUEST  = "BAD_REQUEST";
+    public static final String CHANNEL_WEB = "WEB";
+    public static final String CHANNEL_AA = "AA";
+    public static final String CHANNEL_AFF = "AFF";
+    
+    public static final String DEFAULT_PRICE_VALUE= "0.00";
+    public static final String EFL_OFFPK1 = "EFL_OFFPK1";
+	public static final String EFL_ONPK = "EFL_ONPK";
+    
+	public static final String OFFER_CATEGORY_NESTCAM = "NESTCAM";
+	public static final String OFFER_CATEGORY_NESTCONS = "NESTCONS";
+	public static final String OFFER_CATEGORY_NESTCAMCONS = "NESTCAMCONS";
+	public static final String OFFER_CATEGORY_NESTTRUFREEWKND = "NESTTRUFREEWKND";
+	public static final String OFFER_CATEGORY_NESTCAMTRUFREEWKND = "NESTCAMTRUFREEWKND";	
+	public static final String OFFER_CATEGORY_NESTTSTATE = "NESTTSTATE";
+	public static final String OFFER_CATEGORY_NESTTSTATECONS = "NESTTSTATECONS";
+	public static final String OFFER_CATEGORY_NESTSTATETRUFREEWKND = "NESTSTATETRUFREEWKND";
+	public static final String OFFER_CATEGORY_CONSAPT = "CONSAPT";
+	public static final String OFFER_CATEGORY_TRULY_FREE_WEEKENDS = "TRULYFREEWKND";
+	public static final String OFFER_CATEGORY_CONS600="CONS600";
+	public static final String OFFER_CATEGORY_SEASONAL = "SEASONAL";
+	public static final String OFFER_CATEGORY_3TIER_500 = "3TIER-500";
+	public static final String OFFER_CATEGORY_3TIER_1350= "3TIER-1350";
+	public static final String OFFER_CATEGORY_EV_PLAN = "EVPLAN";
+	public static final String OFFER_CATEGORY_TRUELY_FREE_NIGHTS= "TRULYFREENIGHTS";
+	public static final String OFFER_CATEGORY_TRUELY_FREE_DAYS= "TRULYFREEDAYS";
+	
+	public static final String KBA_OE="kba-oe";
+	
+
+	public static final String SYMBOL_DOLLAR = "$";
+	public static final String SYMBOL_CENTS = "¢";
+
+   
 }

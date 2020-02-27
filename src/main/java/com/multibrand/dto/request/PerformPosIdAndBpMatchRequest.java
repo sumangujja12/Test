@@ -112,7 +112,98 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	//START : OE :Sprint61 :US21009 :Kdeshmu1
 	String agentID;
 	
+	String ipAddress;
 	
+	
+	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+	String entryPoint ;
+	
+	String tpvStatus ;
+	String campaignCd ;
+	String pageRevisited ;
+	String prospectId;
+	String bypassPosid;
+	String tabletId;
+	String abandonedEnrollStatFlag;
+	String etfFlag;
+	
+	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+	@Length(max = 10, groups = SizeConstraint.class)
+	String partnerId;
+	
+	@Length(max = 40, groups = SizeConstraint.class)
+	String partnerName;
+	
+	@Length(max = 10, groups = SizeConstraint.class)
+	String locationId;
+	
+	@Length(max = 40, groups = SizeConstraint.class)
+	String locationName;
+	
+	String guid;
+	String prospectid;
+	String noid;
+	String etf;
+	
+	
+	public String getEntryPoint() {
+		return entryPoint;
+	}
+
+	public void setEntryPoint(String entryPoint) {
+		this.entryPoint = entryPoint;
+	}
+
+
+	public String getTpvStatus() {
+		return tpvStatus;
+	}
+
+	public void setTpvStatus(String tpvStatus) {
+		this.tpvStatus = tpvStatus;
+	}
+
+	public String getCampaignCd() {
+		return campaignCd;
+	}
+
+	public void setCampaignCd(String campaignCd) {
+		this.campaignCd = campaignCd;
+	}
+
+	public String getPageRevisited() {
+		return pageRevisited;
+	}
+
+	public void setPageRevisited(String pageRevisited) {
+		this.pageRevisited = pageRevisited;
+	}
+
+	public String getProspectId() {
+		return prospectId;
+	}
+
+	public void setProspectId(String prospectId) {
+		this.prospectId = prospectId;
+	}
+
+
+	public String getBypassPosid() {
+		return bypassPosid;
+	}
+
+	public void setBypassPosid(String bypassPosid) {
+		this.bypassPosid = bypassPosid;
+	}
+
+	public String getTabletId() {
+		return tabletId;
+	}
+
+	public void setTabletId(String tabletId) {
+		this.tabletId = tabletId;
+	}
+
 	public String getAgentID() {
 		return agentID;
 	}
@@ -123,6 +214,26 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	
 
 	//END : OE :Sprint61 :US21009 :Kdeshmu1
+	
+	
+	public String getAbandonedEnrollStatFlag() {
+		return abandonedEnrollStatFlag;
+	}
+
+	public void setAbandonedEnrollStatFlag(String abandonedEnrollStatFlag) {
+		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
+	}
+
+
+	public String getEtfFlag() {
+		return etfFlag;
+	}
+
+	public void setEtfFlag(String etfFlag) {
+		this.etfFlag = etfFlag;
+	}
+
+
 	public String getDobForPosId() {
 		return dobForPosId;
 	}
@@ -362,6 +473,80 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 
 	public static long getSerialversionuid() {
 		return serialVersionUID;
+	}	
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+	
+	public String getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(String partnerId) {
+		this.partnerId = partnerId;
+	}
+
+	public String getPartnerName() {
+		return partnerName;
+	}
+
+	public void setPartnerName(String partnerName) {
+		this.partnerName = partnerName;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+	
+	
+	public String getGuid() {
+		return guid;
+	}
+
+	public void setGuid(String guid) {
+		this.guid = guid;
+	}
+	
+
+	public String getProspectid() {
+		return prospectid;
+	}
+
+	public void setProspectid(String prospectid) {
+		this.prospectid = prospectid;
+	}
+
+	public String getNoid() {
+		return noid;
+	}
+
+	public void setNoid(String noid) {
+		this.noid = noid;
+	}	
+
+	public String getEtf() {
+		return etf;
+	}
+
+	public void setEtf(String etf) {
+		this.etf = etf;
 	}
 
 	@Override

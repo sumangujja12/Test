@@ -19,6 +19,7 @@ import com.multibrand.dao.ExternalContentDao;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.dao.jdbc.sp.ProcedureTemplate;
+import com.multibrand.dao.mapper.EnrollmentDataResponseRowMapper;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.PersonResponse;
@@ -564,6 +565,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 										ServiceLocationResponse dataRow = new ServiceLocationResponse();
 										dataRow.setTrackingId(rs
 												.getString("tracking_number"));
+										dataRow.setGuid(rs
+												.getString("guid_id"));
 										dataRow.setPersonId(rs
 												.getString("person_id"));
 										dataRow.setServiceRequestTypeCode(rs
@@ -828,6 +831,34 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 					PersonResponse personResponse = personDao.getPerson(data
 							.getPersonId());
 					data.setPersonResponse(personResponse);
+				}
+			} catch (Exception e) {
+				logger.error("Problem occurred while getting a "
+						+ "Service Location details with Tracking ID as: "
+						+ trackingId, e);
+				data = null;
+			}
+		}
+		logger.info("data = " + data);
+		logger.info("Exiting << getServiceLocation");
+		return data;
+	}
+	
+	public ServiceLocationResponse getEnrollmentData(String trackingId,String guid) {
+		logger.info("Entering >> getServiceLocation");
+		logger.info("trackingId = " + trackingId);
+		ServiceLocationResponse data = null;
+		if (StringUtils.isNotEmpty(trackingId) && StringUtils.isNotEmpty(guid)) {
+			try {
+				String sqlQuery = sqlMessage
+						.getMessage(
+								QUERY_GET_ENROLLMENT_DETAILS_BY_TRACKING_ID_GUID,
+								null, null);
+				List<ServiceLocationResponse> dataList = getJdbcTemplate()
+						.query(sqlQuery,new Object[] { Long.valueOf(trackingId), guid },new EnrollmentDataResponseRowMapper() );
+				if (dataList != null && dataList.size() > 0) {
+					data = dataList.get(0);
+					
 				}
 			} catch (Exception e) {
 				logger.error("Problem occurred while getting a "

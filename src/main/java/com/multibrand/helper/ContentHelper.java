@@ -37,12 +37,19 @@ import com.multibrand.util.MessageKey;
 import com.multibrand.util.MessageKeyTypeEnum;
 import com.multibrand.util.SearchTypeEnum;
 import com.multibrand.vo.request.ContractInfoRequest;
+import com.multibrand.vo.response.AffiliateOfferDO;
 import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.OfferDO;
 import com.multibrand.vo.response.OfferPriceDO;
 import com.multibrand.vo.response.ServiceAddressDO;
+import com.nrg.content.model.ContentDataRequest;
+import com.nrg.content.model.ContentDataResponse;
+import com.nrg.content.model.OfferBanner;
+import com.nrg.content.model.ProductOffer;
+import com.nrg.content.service.ContentDataService;
+
 
 
 @Component
@@ -78,6 +85,7 @@ public class ContentHelper implements Constants {
 		}
 	}
 
+	
 	/**
 	 * @author SMarimuthu
 	 * @param brandId
@@ -727,6 +735,59 @@ public class ContentHelper implements Constants {
 		}
 		variableField.append(errorVariable);
 		variableField.append(SYMBOL_COMMA);
+	}
+	
+	public String fillAndFilterSDLContentOffer(List<AffiliateOfferDO> offerList, String companyCode, String brandId, String languageCode ){
+		String cmsErroredOfferCodes = StringUtils.EMPTY;
+		List<AffiliateOfferDO> cmsErrorOfferList = new ArrayList<AffiliateOfferDO>();
+		if(offerList != null & !offerList.isEmpty()) {
+			brandId = CommonUtil.getBrandIdFromCompanycodeForTogglz(companyCode, brandId);
+			ContentDataRequest contentDataRequest  = new ContentDataRequest();			
+			contentDataRequest.setBrandId(brandId);
+			contentDataRequest.setEndPointUri(getEndPointURL(brandId));
+			contentDataRequest.setPublicationId(getPublicationId(brandId, languageCode));
+			contentDataRequest.setTemplateId(getTemplateId(brandId, true));
+			contentDataRequest.setTaxonomyId(getTaxonomyId(brandId));
+			contentDataRequest.setProdOfferSchemaId(getProductOfferSchemaId(brandId));
+			contentDataRequest.setProdBonusSchemaId(getProductBonusSchemaId(brandId));
+			
+			List<com.nrg.content.model.MessageKey> messageKeyList = new ArrayList<com.nrg.content.model.MessageKey>();
+			for(AffiliateOfferDO offerDO: offerList){				
+				com.nrg.content.model.MessageKey msgKey = new com.nrg.content.model.MessageKey();
+				msgKey.setKeyName(offerDO.getOfferCode());
+				msgKey.setKeyType(com.nrg.content.utils.MessageKeyTypeEnum.OFFER_CODE);
+				msgKey.setSearchType(com.nrg.content.utils.SearchTypeEnum.STR_VALUE_FILTER);
+				messageKeyList.add(msgKey);
+			}
+			contentDataRequest.getMessageKeys().setMessageKeyList(messageKeyList);
+			logger.info("SDL Offer Data Request "+			contentDataRequest		);			
+			ContentDataResponse contentDataResponse = ContentDataService.getContentData(contentDataRequest);			
+			int index = 0;
+			for(ProductOffer productOffer : contentDataResponse.getProductOfferList()){				
+				logger.info("SDL Offer Response ProductOffer : "+productOffer);				
+				AffiliateOfferDO affiliateOfferDO = offerList.get(index);
+				if(StringUtils.isEmpty(productOffer.getStrProductTagLine())){					
+					cmsErrorOfferList.add(affiliateOfferDO);
+					cmsErroredOfferCodes = cmsErroredOfferCodes + affiliateOfferDO.getOfferCode()+ DELIMETER_COMMA;					
+				}else{
+					affiliateOfferDO.setCmsProductTagline(CommonUtil.removeHTMLTags(productOffer.getStrProductTagLine()));
+					affiliateOfferDO.setCmsProductMarketingDetails(CommonUtil.removeHTMLTags(productOffer.getStrAdditionalText()));
+					affiliateOfferDO.setCmsGreenFlag(String.valueOf(productOffer.isGreenPlan()));
+					affiliateOfferDO.setCmsSmartMeterFlag(String.valueOf(productOffer.isSmartMeterRequired()));
+					OfferBanner offerBanner = productOffer.getOfferBanner();
+					if(offerBanner != null){
+						affiliateOfferDO.setCmsBannerTitle(offerBanner.getTitle());
+						affiliateOfferDO.setCmsBannerColor(offerBanner.getColor());
+						affiliateOfferDO.setCmsSaveOffer(String.valueOf(offerBanner.isSaveOffer()));
+					}
+				}
+				index++;
+			}
+			cmsErroredOfferCodes = cmsErroredOfferCodes. replaceAll(DELIMETER_COMMA_REGEX, EMPTY);
+			offerList.removeAll(cmsErrorOfferList);			
+		}
+		
+		return cmsErroredOfferCodes;
 	}
 
 }
