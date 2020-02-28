@@ -163,6 +163,8 @@ public class SalesAPIResource extends BaseResource {
    			
    		}finally{
    			try {
+   				request.setSsn(StringUtils.EMPTY);
+   				request.setTdl(StringUtils.EMPTY);
    				utilityloggerHelper.logSalesAPITransaction(API_POSID, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    			} catch(Exception en){
    				logger.error("Exception utilityloggerHelper.logSalesAPITransaction ",en);
@@ -459,7 +461,8 @@ public class SalesAPIResource extends BaseResource {
 			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
 			logger.error(e.fillInStackTrace());
 		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_TOKEN, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+			// Commented purposefully and should not log transaction.
+   		//	utilityloggerHelper.logSalesAPITransaction(API_TOKEN, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
    		}
 		return response;
 	}
