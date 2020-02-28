@@ -2,6 +2,8 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -47,5 +49,10 @@ public class EsidRequest extends BaseAffiliateRequest implements Serializable {
 	}
 	public void setServStreetAptNum(String servStreetAptNum) {
 		this.servStreetAptNum = servStreetAptNum;
+	}
+	
+	public String toString(){
+		return ReflectionToStringBuilder.toString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 }
