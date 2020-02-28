@@ -2,6 +2,8 @@ package com.multibrand.dto.request;
 
 import javax.ws.rs.QueryParam;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
@@ -114,10 +116,8 @@ public class BaseAffiliateRequest implements Constants{
 
 	@Override
 	public String toString() {
-		StringBuffer value = new StringBuffer();
-		value.append("affiliateId=").append(affiliateId).append(';');
-
-		return (value.toString() + super.toString());
+		return ReflectionToStringBuilder.toString(this,
+				ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 
 }
