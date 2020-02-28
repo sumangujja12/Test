@@ -4177,6 +4177,10 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setResultCode(Constants.RESULT_CODE_SUCCESS );
 			response.setOfferDate(DateUtil.getCurrentDateFormatted(MMddyyyy));
 			response.setOfferTime(DateUtil.getCurrentDateFormatted(TIME_FORMAT));
+			response.setResultDescription(response.getMessageText());	
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;
 		}
 		
