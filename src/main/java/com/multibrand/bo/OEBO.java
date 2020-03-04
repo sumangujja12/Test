@@ -5618,10 +5618,12 @@ private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serv
 	
 	
 	kbaQuestionRequest.setCompanyCode(getOEKBAQuestionsRequest.getCompanyCode());
-	kbaQuestionRequest.setBrandName(getOEKBAQuestionsRequest.getBrandId());
+	String brandName = CommonUtil.getBrandIdFromCompanycodeForCCS(getOEKBAQuestionsRequest.getCompanyCode(), getOEKBAQuestionsRequest.getBrandId());
+	kbaQuestionRequest.setBrandName(brandName);
 	kbaQuestionRequest.setChannel(CHANNEL);
 	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
-	kbaQuestionRequest.setLanguageCode(getOEKBAQuestionsRequest.getLanguageCode());
+	String langCode = (StringUtils.equalsIgnoreCase(getOEKBAQuestionsRequest.getLanguageCode(), LANG_ES))? LANG_ES:LANG_EN;
+	kbaQuestionRequest.setLanguageCode(langCode);
 	
 	kbaQuestionRequest.setFirstName(serviceLocationResponse.getPersonResponse().getFirstName());
 	kbaQuestionRequest.setLastName(serviceLocationResponse.getPersonResponse().getLastName());
@@ -5844,7 +5846,6 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					request.getTdl(), request.getSsn(),
 					request.getAffiliateId(),
 					request.getTrackingId());
-			
 			
 			if (getPosIdTokenResponse != null) {
 				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
