@@ -1,0 +1,21 @@
+{
+	"contractAccountNumber": "000072938063",
+	"onlinePayAccountType": "C",
+	"lastFourDigit": "",
+	"nameOnAccount": "Kara K Houser",
+	"payAccountNickName": "KaraTest",
+	"payAccountToken": "T461046674829841123",
+	"zipCode": "75219",
+	"activeFlag": "Y",
+	"activationDate": "1/4/2019",
+	"verifyCard": "Y",
+	"routingNumber": "",
+	"ccExpMonth": "01",
+	"ccExpYear": "2020",
+	"onlinePayAccountId": "1",
+	"ccType": "ZVIS",
+	"autoPay": "Y",
+	"paymentInstitutionName": "",
+	"companyCode": "0271",
+	"brandName": "GM"
+}
