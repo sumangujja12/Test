@@ -14,7 +14,7 @@ import com.it.multibrand.karate.utils.BaseFunctions;
 							"src/test/resources/com/it/multibrand/karate/kba/GetKBAQuestions.feature",
 							"src/test/resources/com/it/multibrand/karate/kba/SubmitKBAAnswers.feature",
 							"src/test/resources/com/it/multibrand/karate/affiliateoffers/Salesoffers.feature",
-							"src/test/resources/com/it/multibrand/karate/esiddetails/GetESIDDetails.feature"
+							"src/test/resources/com/it/multibrand/karate/esissddetails/GetESIDDetails.feature"
 							})
 public class APIRunner {
 		BaseFunctions baseFunctions = new BaseFunctions();

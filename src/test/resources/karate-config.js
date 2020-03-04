@@ -10,7 +10,8 @@ function() {
    
     var config = {
       env: env,
-      BASE_SERVER_URL : 'http://stg1-ws.nrgenergy.com/'
+      //BASE_SERVER_URL : 'http://stg1-ws.nrgenergy.com/'
+      BASE_SERVER_URL : 'https://stg1-service.nrg.com/'
           };
    
     
