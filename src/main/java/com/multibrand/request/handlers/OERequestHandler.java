@@ -98,6 +98,9 @@ public class OERequestHandler implements Constants {
 			request.setRequestStatusCode(oeSignupDTO.getReqStatusCd());
 		}
 		request.setErrorCode(oeSignupDTO.getErrorCode());
+		if(StringUtils.isNotEmpty(oeSignupDTO.getErrorCdList())){
+			request.setErrorCdList(oeSignupDTO.getErrorCdList());
+		}
 		request.setServiceZipOverrideFlag(oeSignupDTO.getServiceZipOverrideFlag());
 		request.setFrequentFlyerNumber(oeSignupDTO.getFrequentFlyerNumber());
 		

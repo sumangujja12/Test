@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -168,6 +169,7 @@ public class ValidationBO extends BaseBO {
 		String messageCode=null;
 		String errorCd=null;
 		String recentCallMade=null;
+		LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
 		com.multibrand.vo.response.PerformPosIdandBpMatchResponse response= new com.multibrand.vo.response.PerformPosIdandBpMatchResponse();
 		BPMatchDTO bpMatchDTO=new BPMatchDTO();
 		/*
@@ -176,6 +178,7 @@ public class ValidationBO extends BaseBO {
 		response.setTokenizedSSN(performPosIdBpRequest.getTokenSSN());
 		response.setTokenizedTDL(performPosIdBpRequest.getTokenTDL());
 
+		ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
 		
 
 		//isValidDate will confirm if DOB got processed properly into desired format
@@ -230,7 +233,6 @@ public class ValidationBO extends BaseBO {
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
 										
-					ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
 					response.setGuID(serviceLoationResponse.getGuid());
 
 					response.setStatusCode(STATUS_CODE_STOP);
@@ -316,11 +318,12 @@ public class ValidationBO extends BaseBO {
 						performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenTDL(), performPosIdBpRequest.getMaidenName(),
 						performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getServStreetAptNum(), performPosIdBpRequest.getServCity(),
 						performPosIdBpRequest.getServState(), performPosIdBpRequest.getServStreetName(), performPosIdBpRequest.getServStreetNum(),
-						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenSSN(),performPosIdBpRequest.getBrandId());	
+						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenSSN(),performPosIdBpRequest.getBrandId(),serviceLoationResponse);	
 
 				response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 				messageCode=(String)performBpMatchResponse.get("messageCode");
 				errorCd=(String)performBpMatchResponse.get("errorCd");
+				errorCdSet = (LinkedHashSet<String>) performBpMatchResponse.get("errorCdSet");
 				bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 
 				logger.debug("inside validatePosId:: status code after bpmatch call is:: "+response.getStatusCode());
@@ -339,12 +342,14 @@ public class ValidationBO extends BaseBO {
 					response.setMessageCode(messageCode);
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 					posidStatus=POSID_FLAG_NO;
+					errorCdSet.add(POSIDHOLD);
 				}
 				else{
 					response.setStatusCode(STATUS_CODE_STOP);
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					errorCdSet.add(POSIDHOLD);
 				}
 			}
 			else
@@ -354,6 +359,7 @@ public class ValidationBO extends BaseBO {
 					messageCode=POSID_FAIL;
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 					response.setMessageCode(messageCode);
+					errorCdSet.add(POSIDHOLD);
 				}
 				else{
 					logger.debug("inside com.multibrand.bo:: validatePosId ::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
@@ -362,6 +368,7 @@ public class ValidationBO extends BaseBO {
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					errorCdSet.add(POSIDHOLD);
 				}
 			}
 
@@ -378,12 +385,13 @@ public class ValidationBO extends BaseBO {
 			response.setStatusCode(STATUS_CODE_ASK);
 			response.setMessageCode(POSID_FAIL);
 			messageCode=POSID_FAIL;
+			errorCdSet.add(POSIDHOLD);
 			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 			logger.error("inside com.multibrand.bo:: validatePosId :: Exception making Posid REST Call", e);
 			throw new OAMException(200, e.getMessage(), response);
 		}
 		finally{
-
+			oESignupDTO.setErrorCdList(oeBO.getUpdatedErrorCdList(serviceLoationResponse,errorCdSet));
 			if (retryCount==0)
 			{	
 				try{//making addperson call if its 1st try
@@ -437,7 +445,7 @@ public class ValidationBO extends BaseBO {
 							+ ""+performPosIdBpRequest.getAffiliateId() +"::Exception while making addperson and addserviceLocation call :: ", e);
 				}
 			}else{
-				ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+				//ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
 				response.setGuID(serviceLoationResponse.getGuid());
 			}
 
@@ -735,7 +743,10 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setVendorCode(oESignupDTO.getVendorCode());
 		addServiceLocation.setVendorName(oESignupDTO.getVendorName());
 		addServiceLocation.setTlpReportApiStatus("");
-		addServiceLocation.setErrorCdList("");
+		if(StringUtils.isNotBlank(oESignupDTO.getErrorCdList())){
+			addServiceLocation.setErrorCdList(oESignupDTO.getErrorCdList());
+		}else{
+		addServiceLocation.setErrorCdList("");}
 		addServiceLocation.setSystemNotes("");
 		//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		addServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
@@ -831,7 +842,10 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setVendorCode(oESignupDTO.getVendorCode());
 		updateServiceLocation.setVendorName(oESignupDTO.getVendorName());
 		updateServiceLocation.setTlpReportApiStatus("");
-		updateServiceLocation.setErrorCdList("");
+		if(StringUtils.isNotBlank(oESignupDTO.getErrorCdList())){
+			updateServiceLocation.setErrorCdList(oESignupDTO.getErrorCdList());
+		}else{
+			updateServiceLocation.setErrorCdList("");}
 		updateServiceLocation.setSystemNotes("");
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1

@@ -658,6 +658,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 												.getString("blng_address_override_flag"));
 										dataRow.setErrorCode(rs
 												.getString("error_cd"));
+										dataRow.setErrorCode(rs
+												.getString("error_cd_list"));
 										dataRow.setPromoType(rs
 												.getString("promo_type"));
 										dataRow.setPromoValue(rs

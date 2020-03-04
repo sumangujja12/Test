@@ -71,6 +71,7 @@ public class ServiceLocationResponse implements Serializable {
 	private String offerCellTrackCodeSelected;
 	private String billingAddressOverrideFlag;
 	private String errorCode;
+	private String errorCdlist;
 	private String promoType;
 	private String promoValue;
 	private String dwellingType;
@@ -2272,6 +2273,14 @@ public class ServiceLocationResponse implements Serializable {
 
 	public void setPosidSNRO(String posidSNRO) {
 		this.posidSNRO = posidSNRO;
+	}
+
+	public String getErrorCdlist() {
+		return errorCdlist;
+	}
+
+	public void setErrorCdlist(String errorCdlist) {
+		this.errorCdlist = errorCdlist;
 	}
 
 	@Override

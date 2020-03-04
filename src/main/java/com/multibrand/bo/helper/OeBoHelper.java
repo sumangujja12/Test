@@ -555,7 +555,7 @@ public class OeBoHelper extends BaseBO {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(BPSD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
-
+			oeSignUpDTO.getErrorSet().add(BPSD);
 			return;
 		}
 		
@@ -566,6 +566,7 @@ public class OeBoHelper extends BaseBO {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(NESID);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
+			oeSignUpDTO.getErrorSet().add(NESID);
 		}
 		
 		// Switch Hold ON and Move IN case
@@ -575,6 +576,7 @@ public class OeBoHelper extends BaseBO {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(SWHOLD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
+			oeSignUpDTO.getErrorSet().add(SWHOLD);
 		}
 		
 		// END. Code cleanup merging and tweaking

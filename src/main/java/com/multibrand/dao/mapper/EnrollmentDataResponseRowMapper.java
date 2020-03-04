@@ -65,6 +65,7 @@ public class EnrollmentDataResponseRowMapper implements RowMapper<ServiceLocatio
 		dataRow.setOfferCellTrackCodeSelected(rs.getString("offer_cell_trk_cd_selected"));
 		dataRow.setBillingAddressOverrideFlag(rs.getString("blng_address_override_flag"));
 		dataRow.setErrorCode(rs.getString("error_cd"));
+		dataRow.setErrorCdlist(rs.getString("error_cd_list"));
 		dataRow.setPromoType(rs.getString("promo_type"));
 		dataRow.setPromoValue(rs.getString("promo_value"));
 		dataRow.setDwellingType(rs.getString("dwelling_type"));
