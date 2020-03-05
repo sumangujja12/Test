@@ -523,7 +523,8 @@ public class SalesAPIResource extends BaseResource {
        try{
     	   
         	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestionsWithinOE(request);
-            response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
+        	Response.Status status = getKBAQuestionsResponse.getHttpStatus() != null ? getKBAQuestionsResponse.getHttpStatus() :Response.Status.OK;
+            response = Response.status(status).entity(getKBAQuestionsResponse).build();
    		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
