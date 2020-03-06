@@ -1,6 +1,7 @@
 package com.multibrand.dto;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -163,7 +164,7 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	private String kbaSuggestionFlag;
 	
 	private String posidSNRO;
-	
+	private LinkedHashSet<String> errorSet = new LinkedHashSet<>();
 	public OESignupDTO() {
 		
 	}
@@ -1410,6 +1411,14 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 
 	public void setPosidSNRO(String posidSNRO) {
 		this.posidSNRO = posidSNRO;
+	}
+
+	public LinkedHashSet<String> getErrorSet() {
+		return errorSet;
+	}
+
+	public void setErrorSet(LinkedHashSet<String> errorSet) {
+		this.errorSet = errorSet;
 	}
 	
 	

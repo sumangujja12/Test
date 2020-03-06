@@ -1377,5 +1377,7 @@ public interface Constants {
 	public static final String SYMBOL_DOLLAR = "$";
 	public static final String SYMBOL_CENTS = "¢";
 
+	public static final String CREDFREEZE = "CREDFREEZE";
+	public static final String CCSD = "CCSD";
    
 }

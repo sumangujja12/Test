@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -149,7 +150,6 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
-import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
@@ -1972,6 +1972,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		 * 
 		 */
 		finally {
+			ServiceLocationResponse serviceLoationResponse = null;
+			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
+				serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
+			}
+			if(serviceLoationResponse == null){
+			oeSignUpDTO.setErrorCdList(getUpdatedErrorCdList(serviceLoationResponse,oeSignUpDTO.getErrorSet()));
+			}
 			// Calls 7, 8 and 9 are executed here.
 			// Save Person and Location details in database.
 			this.updatePersonAndServiceLocation(oeSignUpDTO);
@@ -1998,7 +2005,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		String affiliateId = creditCheckRequest.getAffiliateId();
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
-		
+		String errorCd=null;
+		LinkedHashSet<String> errorCdList = new LinkedHashSet<>();
 
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: performCreditCheck(..)";
@@ -2086,6 +2094,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					response.setMessageText(msgSource.getMessage(TEXT_FREEZE_CREDIT_CHECK, 
 							new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
 							CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));		
+					errorCd = CREDFREEZE;
+					errorCdList.add(errorCd);
 			} 
 			
 			else if(StringUtils.isNotEmpty(zesNotifyHold)&& FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold)){  
@@ -2219,6 +2229,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 		} catch (RemoteException e) {
 			logger.error(e);
+			errorCd = CCSD;
+			errorCdList.add(errorCd);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -2231,6 +2243,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setDepositReasonText(EMPTY);
 		} catch (Exception e) {
 			logger.error("ERROR:" + METHOD_NAME, e);
+			errorCd = CCSD;
+			errorCdList.add(errorCd);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -2245,8 +2259,14 @@ public class OEBO extends OeBoHelper implements Constants{
 					"trackingId must not be null.");
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 
-			if (StringUtils.isNotEmpty(creditScoreRequest.getTrackingNum()))
+			if (StringUtils.isNotEmpty(creditScoreRequest.getTrackingNum())){
+				//requestData.setErrorCdList(getUpdatedErrorCdList(serviceLoationResponse, errorCdList));
 				requestData.setTrackingId(creditScoreRequest.getTrackingNum());
+				ServiceLocationResponse serviceLocationResponse = getEnrollmentData(creditScoreRequest.getTrackingNum());
+				if(serviceLocationResponse == null){
+					requestData.setErrorCdList(getUpdatedErrorCdList(serviceLocationResponse,errorCdList));
+				}
+			}
 			requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
 
 			String personId = getPersonIdByTrackingNo(requestData
@@ -2624,7 +2644,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
-		
+		LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
+		String errorCdlist=null;
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
 		ESIDDO esidDo = new ESIDDO();
 		AddressDO serviceAddressDO = new AddressDO();
@@ -2715,7 +2736,8 @@ public class OEBO extends OeBoHelper implements Constants{
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NRESID));
 						} else {
 							response.setEsid(strESIDNumber);
-						}					
+						}	
+						errorCdSet.add(strESIDNumber);
 					}
 					// Switch Hold ON scenario for SWI
 					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
@@ -2783,9 +2805,20 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setMessageText(EMPTY);
 		}
 		finally {
+			ServiceLocationResponse serviceLoationResponse = null;
+			if(StringUtils.isNotEmpty(trackingId)){
+				/*if(StringUtils.isNotEmpty(request.getGuid())){
+					 serviceLoationResponse=getEnrollmentData(trackingId,request.getGuid() );
+				}*/
+					 serviceLoationResponse=getEnrollmentData(trackingId);
+					
+			}
+			if(serviceLoationResponse == null){
+			errorCdlist = getUpdatedErrorCdList(serviceLoationResponse,errorCdSet);
+			}
 			// Call update service location
 			this.updateServiceLocation(companyCode, affiliateId, trackingId, 
-					serviceAddressDO, esidDo, response,esid);
+					serviceAddressDO, esidDo, response,esid,errorCdlist);
 		}
 	    
 	  //Default to EMPTY if statusflag is "OFF"
@@ -3245,16 +3278,16 @@ public class OEBO extends OeBoHelper implements Constants{
 	public Map<String,Object> performBpMatch(PerformPosIdandBpMatchResponse response,String errorCd,String messageCode,
 			String firstName,String lastName,String tdl,String maidenName,
 			String companyCode,String servStreetAptNum,String servCity,String servState,String servStreetName,
-			String servStreetNum,String servZipCode,String ssn, String brandID)
+			String servStreetNum,String servZipCode,String ssn, String brandID,ServiceLocationResponse serviceLoationResponse)
 	{
 		Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
 		com.multibrand.dto.BPMatchDTO bpMatchDto=new com.multibrand.dto.BPMatchDTO();
 		String addressMatchBPId=null;
-		
+		LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
 		try{
 			BpMatchCCSRequest bpMatchReq= oeRequestHandler.createBpmatchRequest(firstName, lastName, tdl, maidenName, companyCode, servStreetAptNum, servCity, servState, servStreetName, servStreetNum, servZipCode, ssn);
 			BpMatchCCSResponse bpmatchResponse= oeService.getBPMatchStatusFromCCS(bpMatchReq);
-
+            
 			if(bpmatchResponse!=null){
 				 addressMatchBPId = bpmatchResponse.getAddressMatchBpId();
 			}
@@ -3280,6 +3313,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setMessageCode(BP_RESTRICTION);
 				response.setStatusCode(STATUS_CODE_STOP);
 				response.setMessageText(getAllBrandResponseMessage(companyCode, brandID, BP_RESTRICTION_TEXT_MESSAGE, ""));
+				errorCdSet.add(errorCd);
 			}
 			//END US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
 			//NO BPMATCH FLAG
@@ -3298,7 +3332,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			messageCode=PAST_BALANCE;
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_BALANCE_MSG_TXT));
-			
+			errorCdSet.add(errorCd);
 			}
 
 			//Current Customer
@@ -3343,6 +3377,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					{
 						response.setBpMatchFlag(BPSD);
 						errorCd=BPSD;
+						errorCdSet.add(errorCd);
 						logger.debug("inside performBpMatch:: just bpsd scenario");
 					}
 	
@@ -3364,6 +3399,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						response.setMessageCode(PAST_SERVICE_HISTORY);
 						messageCode=PAST_SERVICE_HISTORY;
 						String pastHistoryAddress=null;
+						errorCdSet.add(errorCd);
 						
 						logger.debug("inside performBpMatch:: past service history scenario");
 						
@@ -3395,7 +3431,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				errorCd=BPSD;
 				response.setStatusCode(STATUS_CODE_CONTINUE);
 				response.setResultDescription("BPMATCH CALL FAILED and continuing with BPSD flow");
-
+				errorCdSet.add(errorCd);
 			}
 			
 			bpMatchDto=populateBPMatchDTOFromBpMatchCCSResponse(bpMatchDto, bpmatchResponse);
@@ -3409,14 +3445,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			errorCd=BPSD;
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setResultDescription("BPMATCH CALL FAILED and continuing with error :: "+e.getMessage());
-			
+			errorCdSet.add(errorCd);
 		}
 		finally{
-
 			performBpMatchResponse.put("response", response);
 			performBpMatchResponse.put("messageCode", messageCode);
 			performBpMatchResponse.put("errorCd", errorCd);
-			performBpMatchResponse.put("bpMatchDTO", bpMatchDto);}
+			performBpMatchResponse.put("bpMatchDTO", bpMatchDto);
+			performBpMatchResponse.put("errorCdSet", errorCdSet);	
+		}
 
 		return performBpMatchResponse;
 	}
@@ -3916,7 +3953,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void updateServiceLocation(String companyCode, String affiliateId, String trackingId, 
 			AddressDO serviceAddressDO, ESIDDO esidDo,
-			EsidInfoTdspCalendarResponse response,String requestEsidNumber) {
+			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist) {
 		logger.debug("Processing updateServiceLocation ...");
 		Assert.notNull(Integer.parseInt(trackingId),
 				"trackingId must not be null.");
@@ -3975,6 +4012,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			if (StringUtils.isNotEmpty(response.getSwitchHoldFlag()))
 				requestData.setSwitchHoldStatus(response.getSwitchHoldFlag());
 
+			if(StringUtils.isNotEmpty(errorCdlist))
+				requestData.setErrorCdList(errorCdlist);
+			
 			/* Updating service location affiliate table */
 			String errorCode = this.updateServiceLocation(requestData);
 			if (StringUtils.isNotBlank(errorCode))
@@ -5253,7 +5293,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
-	//KbaSubmitAnswerResponse kbaSubmitAnswerResponse = new KbaSubmitAnswerResponse();
+	LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
 	try{
 
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
@@ -5306,6 +5346,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					response.setStatusCode(STATUS_CODE_CONTINUE);
 					response.setMessageCode(POSID_FAIL_MAX);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					errorCdSet.add(POSIDHOLD);
 				}
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
@@ -5321,6 +5362,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 				response.setStatusCode(STATUS_CODE_CONTINUE);
 				response.setMessageCode(POSID_FAIL_MAX);
 				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+				errorCdSet.add(POSIDHOLD);
 			}
 		}else{
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
@@ -5328,6 +5370,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setMessageCode(POSID_FAIL_MAX);
 			response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+			errorCdSet.add(POSIDHOLD);
 		}
 		//update kba_api
 		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
@@ -5338,12 +5381,17 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	}finally{
 		try{
 		if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
+			ServiceLocationResponse serviceLoationResponse = null;
 			//update service location affiliate
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
              requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
              //update RECENT_MSG_CD
              requestData.setMessageCode(response.getMessageCode());
+             serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+             if(serviceLoationResponse == null){
+             requestData.setErrorCdList(getUpdatedErrorCdList(serviceLoationResponse, errorCdSet));
+             }
             this.updateServiceLocation(requestData);
         }
 	}catch(Exception e){
@@ -5895,7 +5943,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
 						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-								.validatePosId(request,oESignupDTO );
+								.validatePosId(request,oESignupDTO);
 						response = Response.status(200).entity(validPosIdResponse)
 								.build();
 						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
@@ -5954,8 +6002,35 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 			}		
 	   return response;
 	}
-
 	
-}
+	public String getUpdatedErrorCdList(ServiceLocationResponse serviceLoationResponse,LinkedHashSet<String> errorCdList){
+		LinkedHashSet<String> newErrorCdList = new LinkedHashSet<>();
+		//errorCdList.add("CREDITCHECK");
+		try{
+		//String serviceLoationResponse = "POSIDHOLD|BPSD|DEPOSITHOLD";
+		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+		String serviceLoationResponseError = serviceLoationResponse.getErrorCdlist();
+		LinkedHashSet<String> a1 = new LinkedHashSet<String>();
+			String[] errorCdArray =serviceLoationResponseError.split("\\|");
+			for(String b1 :errorCdArray){
+				a1.add(b1);
+				
+			}
+			newErrorCdList.addAll(a1);
+			for(String c1 :errorCdList){
+				if(!a1.contains(c1)){
+					newErrorCdList.add(c1);
+				}
+		}
+		}
+		
+		}catch(Exception e){
+		e.printStackTrace();
+		}
+		return (StringUtils.join(newErrorCdList,SYMBOL_PIPE));
+		}
+	}
+	
+
 
 	
