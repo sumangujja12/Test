@@ -143,7 +143,7 @@ gm.tempalte.id_mobile=TODO
 
 #Publication Id's
 re.pub.id_en=84
-re.pub.id_es=10
+re.pub.id_es=101
 pw.pub.id_en=21
 pw.pub.id_es=81
 ce.pub.id_en=143
