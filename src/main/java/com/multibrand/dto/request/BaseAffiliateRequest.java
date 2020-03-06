@@ -1,5 +1,7 @@
 package com.multibrand.dto.request;
 
+import java.io.Serializable;
+
 import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -20,7 +22,7 @@ import com.multibrand.util.Constants;
  * 
  */
 @Component
-public class BaseAffiliateRequest implements Constants{
+public class BaseAffiliateRequest implements Constants, FormEntityRequest, Serializable{
 	/**
 	 * 
 	 */
