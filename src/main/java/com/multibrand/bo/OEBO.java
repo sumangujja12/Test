@@ -5612,19 +5612,51 @@ public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest 
 	ServiceLocationResponse serviceLocationResponse = null;
 	try {
 					
-					
-		 serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
-			if(null !=serviceLocationResponse){
-				kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
-			}
-		if(null==serviceLocationResponse){
-			response.setStatusCode(STATUS_CODE_STOP);
+		if(!StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_CIRRO))
+		{  //If Tdsp Code & Esid are passed empty
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Data not found for Given input");
+			response.setResultDescription("Company code "+getOEKBAQuestionsRequest.getCompanyCode()+" is currently not supported");		
 			response.setErrorCode(HTTP_BAD_REQUEST);
 			response.setErrorDescription(response.getResultDescription());
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			return response;			
+		}	
+		
+		if(StringUtils.isEmpty(getOEKBAQuestionsRequest.getTrackingId()))
+		{  //If Tdsp Code & Esid are passed empty
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+			response.setResultDescription("TrackingId is empty");
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			return response;	
 		}
+		
+		if(StringUtils.isEmpty(getOEKBAQuestionsRequest.getGuid()))
+		{  //If Tdsp Code & Esid are passed empty
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+			response.setResultDescription("Guid is empty");
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription(response.getResultDescription());
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			return response;	
+		}
+		
+		 serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
+			if(null !=serviceLocationResponse && StringUtils.isNotEmpty(serviceLocationResponse.getTrackingId())){
+				kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
+			}else {		
+				response.setStatusCode(STATUS_CODE_STOP);
+				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+				response.setResultDescription("Data not found for Given input");
+				response.setErrorCode(HTTP_BAD_REQUEST);
+				response.setErrorDescription(response.getResultDescription());
+				response.setHttpStatus(Response.Status.BAD_REQUEST);	
+				return response;
+			}
 		
 		
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
@@ -5666,10 +5698,12 @@ private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serv
 	
 	
 	kbaQuestionRequest.setCompanyCode(getOEKBAQuestionsRequest.getCompanyCode());
-	kbaQuestionRequest.setBrandName(getOEKBAQuestionsRequest.getBrandId());
+	String brandName = CommonUtil.getBrandIdFromCompanycodeForCCS(getOEKBAQuestionsRequest.getCompanyCode(), getOEKBAQuestionsRequest.getBrandId());
+	kbaQuestionRequest.setBrandName(brandName);
 	kbaQuestionRequest.setChannel(CHANNEL);
 	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
-	kbaQuestionRequest.setLanguageCode(getOEKBAQuestionsRequest.getLanguageCode());
+	String langCode = (StringUtils.equalsIgnoreCase(getOEKBAQuestionsRequest.getLanguageCode(), LANG_ES))? LANG_ES:LANG_EN;
+	kbaQuestionRequest.setLanguageCode(langCode);
 	
 	kbaQuestionRequest.setFirstName(serviceLocationResponse.getPersonResponse().getFirstName());
 	kbaQuestionRequest.setLastName(serviceLocationResponse.getPersonResponse().getLastName());
@@ -5892,7 +5926,6 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					request.getTdl(), request.getSsn(),
 					request.getAffiliateId(),
 					request.getTrackingId());
-			
 			
 			if (getPosIdTokenResponse != null) {
 				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
