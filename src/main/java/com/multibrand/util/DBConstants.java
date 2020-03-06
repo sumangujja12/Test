@@ -322,6 +322,7 @@ public interface DBConstants {
 
     public static String RETROPOPUP_PROC = "CPDB1_MAIN.PKG_ONLINE_USER_MANAGE_GME_MB.SP_GET_RETRO_ELIG_STATUS_GME";
     public static final String SQL_SAVE_PRIVACY_PREFERENCE = "sqlQuery.savePrivacyPreferenceSignUp";
+    public static final String SQL_ADD_WEB_HOOK = "sqlQuery.addWebHook";
     
     public static final String PROC_GET_HOUSE_AGE_HH_INCOME = "pod_pow.svcs_bus_prspct_dtls.sp_get_prspct_attr";
     public static final String CUR_OUT_ROWSET = "out_rowset";
@@ -359,6 +360,9 @@ public interface DBConstants {
 	
 	public static final String QUERY_GME_VALIDATE_PASSWORD_LINK = "query.gme.validate.password.link";
 	public static final String QUERY_GET_USER_LOGIN_ID = "query.get.user.login.id";
+	
+	public static final String QUERY_GET_WEEKLY_SUMMARY_EMAIL = "query.get.wse.sqlQuery";
+
 	public static final String  OE_ADD_KBA_DETAILS_QUERY = "db.choice.reliant.addkbadetailsquery";
 	
 	public static final String OE_UPDATE_KBA_DETAILS_QUERY = "db.choice.reliant.updatekbadetailsquery";
@@ -375,4 +379,5 @@ public interface DBConstants {
 	public static final String in_aptno = "in_aptno";
 	public static final String OUT_CURR_GET_ESI = "get_esi";
 	//END || PBI 15786: Update ESID Call || atiwari
+
 }
