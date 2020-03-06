@@ -59,6 +59,7 @@ public class PersonResponse implements Serializable {
 	private String posIdDate;
 	private String advActionData;
 	private String retryCount;
+	private String noid;
 
 	public PersonResponse() {
 
@@ -782,6 +783,15 @@ public class PersonResponse implements Serializable {
 	 */
 	public void setRetryCount(String retryCount) {
 		this.retryCount = retryCount;
+	}
+		
+
+	public String getNoid() {
+		return noid;
+	}
+
+	public void setNoid(String noid) {
+		this.noid = noid;
 	}
 
 	@Override

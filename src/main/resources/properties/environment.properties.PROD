@@ -127,36 +127,39 @@ GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount.greenmountain.com/ResetPasswo
 #Content server props
 gm.content.server.endpoint.url=http://txaixebxindxp01:13180/cd-service/gme/cdws/odata.svc/
 content.rest.server.url=http://txaixebxindxp02:13180/contentService/content/getContentData
+pw.content.server.endpoint=http://ebxblp01:18081/client/v2/content.svc/
+ce.content.server.endpoint=http://txaixebxindxp01:13180/cd-service/cirro/cdws/odata.svc/
+re.content.server.endpoint.url=http://ebxblp01:8081/client/v2/content.svc/
 
 #Tempalte Id's
-re.tempalte.id_desktop=TODO
+re.tempalte.id_desktop=111201
 re.tempalte.id_mobile=TODO
-pw.tempalte.id_desktop=TODO
+pw.tempalte.id_desktop=884
 pw.tempalte.id_mobile=TODO
-ce.tempalte.id_desktop=TODO
+ce.tempalte.id_desktop=884
 ce.tempalte.id_mobile=TODO
 gm.tempalte.id_desktop=11213
 gm.tempalte.id_mobile=TODO
 
 #Publication Id's
-re.pub.id_en=TODO
-re.pub.id_es=TODO
-pw.pub.id_en=TODO
-pw.pub.id_es=TODO
-ce.pub.id_en=TODO
-ce.pub.id_es=TODO
+re.pub.id_en=84
+re.pub.id_es=101
+pw.pub.id_en=21
+pw.pub.id_es=81
+ce.pub.id_en=143
+ce.pub.id_es=144
 gm.pub.id_en=123
 gm.pub.id_es=124
 
-re.taxonomy.id = TODO
+re.taxonomy.id = 301
 pw.taxonomy.id = TODO
 ce.taxonomy.id = TODO
 gm.taxonomy.id = TODO
 
 #Schema Id's
-re.prodoffer.schema.id=TODO
-re.prodbonus.schema.id=TODO
-pw.prodoffer.schema.id=TODO
+re.prodoffer.schema.id=6868
+re.prodbonus.schema.id=6872
+pw.prodoffer.schema.id=63
 pw.prodbonus.schema.id=TODO
 gm.prodoffer.schema.id =11211
 gm.prodbonus.schema.id=TODO
@@ -168,3 +171,8 @@ rest.api.password=tester
 rest.ws.endpointURL.iot.enrollment.report.data.submit=http://txaixsexblp05/iotproxy/enrollment/sendReliantEnrollmentDataToTLP
 iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 #END : OE :Sprint62 :US21019 :Kdeshmu1
+
+#Start Togglz Framework Integration
+ws.rest.togglz.base.url=http://ws.nrgenergy.com/togglz
+togglz.default.groupName=SalesAPI
+#End Togglz Framework Integration

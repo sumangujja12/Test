@@ -1,5 +1,7 @@
 package com.multibrand.dto.response;
 
+import javax.ws.rs.core.Response;
+
 import com.multibrand.vo.response.AffiliateOfferDO;
 import com.multibrand.vo.response.GenericResponse;
 
@@ -7,8 +9,14 @@ public class AffiliateOfferResponse extends GenericResponse {
 	private String offerDate;
 	private String offerTime;
 	private String tdspCodeCCS;
+	private String cmsErrorOffers;
+	private String erpErrorOffers;
 	
 	private AffiliateOfferDO[] affiliateOfferList;
+	
+	private Response.Status httpStatus;
+
+
 
 	public String getOfferDate() {
 		return offerDate;
@@ -42,5 +50,29 @@ public class AffiliateOfferResponse extends GenericResponse {
 		this.affiliateOfferList = affiliateOfferList;
 	}
 
+	public String getCmsErrorOffers() {
+		return cmsErrorOffers;
+	}
+
+	public void setCmsErrorOffers(String cmsErrorOffers) {
+		this.cmsErrorOffers = cmsErrorOffers;
+	}
+
+	public String getErpErrorOffers() {
+		return erpErrorOffers;
+	}
+
+	public void setErpErrorOffers(String erpErrorOffers) {
+		this.erpErrorOffers = erpErrorOffers;
+	}
+
+	public Response.Status getHttpStatus() {
+		return httpStatus;
+	}
+
+	public void setHttpStatus(Response.Status httpStatus) {
+		this.httpStatus = httpStatus;
+	}
+	
 
 }

@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.helper.ValidateAddressHelper;
 import com.multibrand.domain.ValidateCustReferralIdResponse;
+import com.multibrand.domain.ValidatePosIdKBARequest;
+import com.multibrand.domain.ValidatePosIdKBAResponse;
 import com.multibrand.domain.ValidatePosIdRequest;
 import com.multibrand.domain.ValidatePosIdResponse;
 import com.multibrand.domain.ValidateReferralIdRequest;
@@ -28,6 +30,7 @@ import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.request.ValidateAddressRequest;
+import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.ValidateAddressResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
@@ -39,6 +42,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.JavaBeanUtil;
+import com.multibrand.util.TogglzUtil;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
 import com.reliant.domain.AddressValidateRequest;
@@ -72,6 +76,9 @@ public class ValidationBO extends BaseBO {
 	// ~Autowire entries
 	@Autowired
 	ValidationRequestHandler validateRequestHandler;
+	
+	 @Autowired
+	private TogglzUtil togglzUtil;
 
 
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -188,7 +195,7 @@ public class ValidationBO extends BaseBO {
 		else 
 			performPosIdBpRequest.setPreferredLanguage(EN);
 
-		logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
+		logger.info("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 				+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: preferred language is"
 						+ " "+performPosIdBpRequest.getPreferredLanguage());
 
@@ -204,6 +211,7 @@ public class ValidationBO extends BaseBO {
 			logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
 					+ "Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: tracking number is numeric ");
 			List<Map<String, String>> personIdAndRetryCountResponse =oeBO.getPersonIdAndRetryCountByTrackingNo(performPosIdBpRequest.getTrackingId());
+			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
 
 			personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
 			logger.debug("inside validatePosId::personIdAndRetryCountResponse.get(0) "+personIdAndRetryCountResponse.get(0));
@@ -221,6 +229,10 @@ public class ValidationBO extends BaseBO {
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
+										
+					ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+					response.setGuID(serviceLoationResponse.getGuid());
+
 					response.setStatusCode(STATUS_CODE_STOP);
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
@@ -252,46 +264,47 @@ public class ValidationBO extends BaseBO {
 
 		logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id :"
 				+ " "+performPosIdBpRequest.getAffiliateId() +":: retry Count is ::"+retryCount);
-		ValidatePosIdResponse validatePosIdResponse= new ValidatePosIdResponse();
+		ValidatePosIdKBAResponse validatePosIdKBAResponse= new ValidatePosIdKBAResponse();
 		try{
 			/*
 			 * Step 5: Make validatePosId call
 			 */
 			recentCallMade=RECENT_CALL_MADE_POSID;
-			ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenTDL(),
-					performPosIdBpRequest.getCompanyCode(),
-					performPosIdBpRequest.getMaidenName(),performPosIdBpRequest.getFirstName(), performPosIdBpRequest.getLastName(),
-					performPosIdBpRequest.getTokenSSN(), performPosIdBpRequest.getMiddleName());
-			validatePosIdResponse=validationService.validatePosId(validatePosIdReq);
+			boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
+			if(isNewPosidCallEnabled){
+				ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
+				validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
+			} else{
+				validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
+			}
 
 			//Pass the parameters from NRG response to wrapper Response POJO
-			response.setErrorDescription(validatePosIdResponse.getStrErroMessage());
-
+			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
+			oESignupDTO.setPosidSNRO(validatePosIdKBAResponse.getPosidUniqueKey());
 			/*
 			 * PosId Scenario: 
 			 */
-			logger.debug("inside validatePosId:: response from posid cal is: "+CommonUtil.doRender(validatePosIdResponse));
-			if(null!=(validatePosIdResponse) && ((X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidDl()) || 
-					(X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidSsn())))))
+			logger.debug("inside validatePosId:: response from posid cal is: "+CommonUtil.doRender(validatePosIdKBAResponse));
+			if(null!=(validatePosIdKBAResponse) && isPosidValidated(validatePosIdKBAResponse))
 			{
 				logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 						+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID SUCCESSFULLY CONDUCTED");
 				posidStatus=POSID_FLAG_YES;
 
-				if(X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidDl()))
+				if(!StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
 				{
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
-							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID conducted on Driver license");
-					posIdDate=validatePosIdResponse.getExDlVerifydate();
-					response.setPosidDLDate(validatePosIdResponse.getExDlVerifydate());
+							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID conducted on Driver license");					
+					posIdDate = DateUtil.getFormattedDate(DATE_FORMAT, Constants.RESPONSE_DATE_FORMAT, validatePosIdKBAResponse.getExDlVerifydate());					
+					response.setPosidDLDate(posIdDate);
 					posidPii=DL;
 				}
-				else if (X_VALUE.equalsIgnoreCase(validatePosIdResponse.getExIsValidSsn()))
+				else if(!StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE))
 				{
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID conducted on SSN");
-					posIdDate=validatePosIdResponse.getExSsnVerifydate();
-					response.setPosidSSNDate(validatePosIdResponse.getExSsnVerifydate());
+					posIdDate = DateUtil.getFormattedDate(DATE_FORMAT, Constants.RESPONSE_DATE_FORMAT, validatePosIdKBAResponse.getExSsnVerifydate());					
+					response.setPosidSSNDate(posIdDate);
 					posidPii=SSN;
 				}
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
@@ -315,10 +328,10 @@ public class ValidationBO extends BaseBO {
 				logger.debug("inside validatePosId:: messagecode is after bpmatch ::"+response.getMessageCode());
 			}
 
-			else if(null!=(validatePosIdResponse)&&(StringUtils.isBlank(validatePosIdResponse.getExIsValidDl()))
-					&&(StringUtils.isBlank(validatePosIdResponse.getExIsValidSsn())) && 
-					(StringUtils.isBlank( validatePosIdResponse.getStrErroMessage()) 
-							|| StringUtils.isBlank(validatePosIdResponse.getStrErroCode())) ) 
+			else if(null!=(validatePosIdKBAResponse)&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
+					&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE)) && 
+					(StringUtils.isBlank( validatePosIdKBAResponse.getStrErroMessage()) 
+							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
 			{
 				if(retryCount!=2){
 					response.setStatusCode(STATUS_CODE_ASK);
@@ -354,6 +367,10 @@ public class ValidationBO extends BaseBO {
 
 			//setting retrycount in response:
 			response.setRetryCount(Integer.toString(retryCount));
+						
+			response.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());	
+			oESignupDTO.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());
+			
 
 		}
 		catch(Exception e)
@@ -382,13 +399,15 @@ public class ValidationBO extends BaseBO {
 					if(StringUtils.isNotBlank(personId))
 					{
 						logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making addservicelocation call now");
-						AddServiceLocationRequest addServiceLocation =new AddServiceLocationRequest();
+						AddServiceLocationRequest addServiceLocation =new AddServiceLocationRequest();						
+						String guid= addServiceLocation.getGuid();											
 						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade,oESignupDTO);
 						performPosIdBpRequest.setTrackingId(oeBO.addServiceLocation(addServiceLocation));
 						//checking if addServiceLocation call was successful
 						if(StringUtils.isNotBlank(performPosIdBpRequest.getTrackingId()))
 						{
 							response.setTrackingId(performPosIdBpRequest.getTrackingId());
+							response.setGuID(guid);
 							logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +"::"
 									+ " tracking id after servicelocation call is :: "+performPosIdBpRequest.getTrackingId());
 						}
@@ -417,6 +436,9 @@ public class ValidationBO extends BaseBO {
 					logger.error("Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "
 							+ ""+performPosIdBpRequest.getAffiliateId() +"::Exception while making addperson and addserviceLocation call :: ", e);
 				}
+			}else{
+				ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+				response.setGuID(serviceLoationResponse.getGuid());
 			}
 
 			response.setTrackingId(performPosIdBpRequest.getTrackingId());
@@ -715,6 +737,38 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setTlpReportApiStatus("");
 		addServiceLocation.setErrorCdList("");
 		addServiceLocation.setSystemNotes("");
+		//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		addServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
+		addServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
+		addServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerName());
+		addServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
+		addServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationName());
+		addServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
+		addServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
+		
+		addServiceLocation.setBypassPosid(performPosIdBpRequest.getBypassPosid());
+		addServiceLocation.setIpAddress(performPosIdBpRequest.getIpAddress());
+		addServiceLocation.setTabletId(performPosIdBpRequest.getTabletId());
+		
+		addServiceLocation.setEtfFlag(performPosIdBpRequest.getEtfFlag());
+		
+		addServiceLocation.setAbandonedEnrollStatFlag(performPosIdBpRequest.getAbandonedEnrollStatFlag());
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		addServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
+		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		//START TBD - Set value
+		addServiceLocation.setProspectPreapprovedFlag(EMPTY);
+		addServiceLocation.setProspectPartnerId(EMPTY);
+		addServiceLocation.setBpNameMatchCode(EMPTY);
+		addServiceLocation.setDeviceLatitude(EMPTY);
+		addServiceLocation.setDeviceLongitude(EMPTY);
+		addServiceLocation.setDeviceAccuracy(EMPTY);
+		addServiceLocation.setPendingBalAmount(EMPTY);
+		addServiceLocation.setPastServiceCa(EMPTY);
+		addServiceLocation.setKbaSuggestionFlag(oESignupDTO.getKbaSuggestionFlag());
+		addServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
 
@@ -780,6 +834,38 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setErrorCdList("");
 		updateServiceLocation.setSystemNotes("");
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		updateServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
+		updateServiceLocation.setPartnerId(performPosIdBpRequest.getPartnerId());
+		updateServiceLocation.setPartnerDesc(performPosIdBpRequest.getPartnerName());
+		updateServiceLocation.setLocationId(performPosIdBpRequest.getLocationId());
+		updateServiceLocation.setLocationDesc(performPosIdBpRequest.getLocationName());
+		updateServiceLocation.setPageRevisited(performPosIdBpRequest.getPageRevisited());
+		updateServiceLocation.setProspectId(performPosIdBpRequest.getProspectId());
+		
+		updateServiceLocation.setBypassPosid(performPosIdBpRequest.getBypassPosid());
+		updateServiceLocation.setIpAddress(performPosIdBpRequest.getIpAddress());
+		updateServiceLocation.setTabletId(performPosIdBpRequest.getTabletId());
+		
+		updateServiceLocation.setEtfFlag(performPosIdBpRequest.getEtfFlag());
+		
+		updateServiceLocation.setAbandonedEnrollStatFlag(performPosIdBpRequest.getAbandonedEnrollStatFlag());
+		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+		// Start || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		updateServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
+		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
+		//START TBD - Set value
+		updateServiceLocation.setProspectPreapprovedFlag(EMPTY);
+		updateServiceLocation.setProspectPartnerId(EMPTY);
+		updateServiceLocation.setBpNameMatchCode(EMPTY);
+		updateServiceLocation.setDeviceLatitude(EMPTY);
+		updateServiceLocation.setDeviceLongitude(EMPTY);
+		updateServiceLocation.setDeviceAccuracy(EMPTY);
+		updateServiceLocation.setPendingBalAmount(EMPTY);
+		updateServiceLocation.setPastServiceCa(EMPTY);
+		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
+		updateServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 
 
@@ -905,5 +991,41 @@ public class ValidationBO extends BaseBO {
 						+ "Agent ID is not valid");
 		
 		return validatePosIdResponse;
+	}
+	
+	public boolean isPosidValidated(ValidatePosIdKBAResponse validatePosIdKBAResponse) {
+		boolean status = false;
+		
+		if( validatePosIdKBAResponse != null && (StringUtils.isNotEmpty(validatePosIdKBAResponse.getExSsnVerifydate())
+				||StringUtils.isNotEmpty(validatePosIdKBAResponse.getExDlVerifydate())) 
+				&& (!StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE) 
+						|| !StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE) )) {
+			status = true;
+		}			
+		return status;
+	}
+	
+	public ValidatePosIdKBAResponse validatePosIdOldCSSCall(PerformPosIdAndBpMatchRequest performPosIdBpRequest) throws Exception  
+	{
+		ValidatePosIdKBAResponse validatePosIdKBAResponse = new ValidatePosIdKBAResponse();		
+		ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenTDL(),
+				performPosIdBpRequest.getCompanyCode(),
+				performPosIdBpRequest.getMaidenName(),performPosIdBpRequest.getFirstName(), performPosIdBpRequest.getLastName(),
+				performPosIdBpRequest.getTokenSSN(), performPosIdBpRequest.getMiddleName());
+		ValidatePosIdResponse validatePosIdResponse=validationService.validatePosId(validatePosIdReq);
+		validatePosIdKBAResponse.setExSsnVerifydate(POSID_BLANK_DATE);
+		validatePosIdKBAResponse.setExDlVerifydate(POSID_BLANK_DATE);
+		validatePosIdKBAResponse.setStrErroCode(validatePosIdResponse.getStrErroCode());
+		validatePosIdKBAResponse.setStrErroMessage(validatePosIdResponse.getStrErroMessage());
+		if(StringUtils.equalsIgnoreCase(validatePosIdResponse.getExIsValidSsn(), FLAG_X)){
+			String validatedDate = DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,DATE_FORMAT, validatePosIdResponse.getExSsnVerifydate());
+			validatePosIdKBAResponse.setExSsnVerifydate(validatedDate);
+		}
+		if(StringUtils.equalsIgnoreCase(validatePosIdResponse.getExIsValidDl(), FLAG_X)){
+			String validatedDate = DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,DATE_FORMAT, validatePosIdResponse.getExDlVerifydate());
+			validatePosIdKBAResponse.setExDlVerifydate(validatedDate);
+		}
+		
+		return validatePosIdKBAResponse;
 	}
 }

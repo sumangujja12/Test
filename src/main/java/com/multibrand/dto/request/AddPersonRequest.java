@@ -75,8 +75,11 @@ public class AddPersonRequest implements FormEntityRequest, Serializable {
 
 	@ProcedureInParameter(name = "sp.add.person.affiliate.in.param.in_posid_date", parameterIndex = 20)
 	private String posIdDate;
+	
+	@ProcedureInParameter(name = "sp.add.person.affiliate.in.param.in_noid", parameterIndex = 21)
+	private String noid;
 
-	@ProcedureOutParameter(name = "sp.add.person.affiliate.out.param.out_error_code", parameterIndex = 21)
+	@ProcedureOutParameter(name = "sp.add.person.affiliate.out.param.out_error_code", parameterIndex = 22)
 	private String errorCode;
 
 	public AddPersonRequest() {
@@ -396,6 +399,16 @@ public class AddPersonRequest implements FormEntityRequest, Serializable {
 	 */
 	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
+	}
+
+	
+	
+	public String getNoid() {
+		return noid;
+	}
+
+	public void setNoid(String noid) {
+		this.noid = noid;
 	}
 
 	@Override

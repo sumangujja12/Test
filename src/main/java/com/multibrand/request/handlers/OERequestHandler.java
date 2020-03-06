@@ -164,6 +164,10 @@ public class OERequestHandler implements Constants {
 			request.setDepositAmount(ZERO);
 		}
 		request.setTlpReportApiStatus(oeSignupDTO.getTlpReportApiStatus());
+		request.setPdfCaptureFlag(oeSignupDTO.getPdfCaptureFlag());
+		request.setAgentUpResponse(oeSignupDTO.getAgentUpResponse());
+		request.setTpv_status(oeSignupDTO.getTpvStatus());
+		request.setCampaignCd(oeSignupDTO.getCampaignCd());
 		return request;
 	}
 	
@@ -856,7 +860,7 @@ public class OERequestHandler implements Constants {
 				logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: arrayFactors:: "+arrayFactors);
 				for (String factStr : factorsKeyList) {
 					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStr:: "+factStr);
-					factStrArray = factStr.split("\\"+DELIMITER_SEMI_COLON);
+					factStrArray = factStr.split("\\"+DOT);
 					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray:: "+factStrArray);
 					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray.length:: "+factStrArray.length);
 					logger.debug(oeSignUpDTO.printOETrackingID()+"Inside EnrollmentService :: createSubmitEnrollRequest : factStrArray :: " + factStrArray[1] + " **** "

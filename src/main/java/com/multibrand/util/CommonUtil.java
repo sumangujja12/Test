@@ -56,9 +56,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.multibrand.dto.ErrorDTO;
 import com.multibrand.dto.OESignupDTO;
+import com.multibrand.dto.request.WebHookRequest;
 import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.UserIdResponse;
+import com.multibrand.vo.response.WebHookResponse;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -1714,6 +1716,57 @@ public class CommonUtil implements Constants {
 		return response;
 	}
 	
+	/**
+	 * This method validates WebHookRequest
+	 * paymentId not blank
+	 * accountNumber not blank
+	 * accountId not blank
+	 * CA not blank and size not greater than 12
+	 * @param request
+	 * @return
+	 */
+	
+	public static WebHookResponse validateWebHookRequest(WebHookRequest request){
+		
+		WebHookResponse response = new WebHookResponse();
+		boolean isValidRequest = true;
+		String contractAccountNumber = request.getWebHookMetadata().getExternalAccountId();
+		StringBuffer strBuffer = new StringBuffer("Request Entity has following errors: ");
+		List<String> errorMsgList = new ArrayList<>();
+		
+		if(StringUtils.isBlank(request.getPaymentId())){
+		    errorMsgList.add("payment id may not be empty,");
+		}
+		
+		if(StringUtils.isBlank(request.getAccountNumber())){
+			errorMsgList.add("bar code number may not be empty,");
+		}
+		
+		if(StringUtils.isBlank(contractAccountNumber)){
+			errorMsgList.add("contractaccountnumber may not be empty,");
+		}
+		
+		if(StringUtils.isBlank(request.getAccountId())){
+			errorMsgList.add("VD account id may not be empty,");
+		}
+		
+		if(!errorMsgList.isEmpty()) {
+			isValidRequest=false;
+		}
+	    
+		if(!isValidRequest){
+			response.setResultcode(Constants.ONE);
+			
+			for(String errorMsg:errorMsgList){
+				strBuffer.append(errorMsg);
+			}
+			
+			strBuffer.deleteCharAt(strBuffer.length()-1);
+			response.setResultdescription(strBuffer.toString());
+		}
+		
+		return response;
+	}
 	
 	/**
 	 * This method takes an input string and capitalize first character of every word and rest of each word in lowercase
@@ -1900,5 +1953,83 @@ public class CommonUtil implements Constants {
 		Date date = new Date();
 		return dateFormat.format(date); //05/07/2019 06:53:11 PM
 	}
+	public static String getRequestParameter(HttpServletRequest request, String in_ParameterName)
+    {
+        if (request.getParameter(in_ParameterName) != null)
+        {
+            return request.getParameter(in_ParameterName);
+        }
+        
+        return StringUtils.EMPTY;
+ }
+	public static String getBrandIdFromCompanycodeForCCS(String companyCode, String brandId){
+		String brandName = EMPTY;
+		
+		switch(companyCode){
+			case COMPANY_CODE_RELIANT:
+					brandName = BRAND_ID_RELIANT;
+					break;
+			case COMPANY_CODE_GME:
+					brandName = CCS_BRAND_ID_GME;
+					break;
+			case COMPANY_CODE_PENNYWISE:
+					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_PENNYWISE);
+					break;
+			default:
+				break;
+		}
+		
+		return brandName;
+	}	
 
+	public static String getBrandIdFromCompanycodeForTogglz(String companyCode, String brandId){
+		String brandName = EMPTY;
+		
+		switch(companyCode){
+			case COMPANY_CODE_RELIANT:
+					brandName = BRAND_ID_RELIANT;
+					break;
+			case COMPANY_CODE_GME:
+					brandName = BRAND_ID_GME;
+					break;
+			case COMPANY_CODE_DISCOUNTPOWER:
+					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_DISCOUNTPOWER);
+					break;
+			default:
+				break;
+		}
+		
+		return brandName;
+	}
+	
+	public static String getChannelTypeForTogglz(String channelType){
+		String channel = CHANNEL_WEB;
+		if(channelType == null){
+			channelType = StringUtils.EMPTY;
+		}
+		switch(channelType){
+			case CHANNEL_AA:
+				channel = CHANNEL_AA;
+					break;
+			case CHANNEL_AFF:
+				channel = CHANNEL_AFF;
+					break;			
+			default:
+				break;
+		}
+		
+		return channel;
+	}
+
+
+	public static String removeHTMLTags(String contentMsg)
+	  {
+	    String updatedContentMsg = "";
+
+	    if (StringUtils.isNotBlank(contentMsg))
+	    {
+	      updatedContentMsg = contentMsg.replaceAll("<[^>]*>", "");
+	    }
+	    return updatedContentMsg;
+	  }
 }

@@ -187,9 +187,6 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_recent_msg_cd", parameterIndex = 53)
 	private String messageCode;
 
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 63)
-	private String outErrorCode;
-
 	private String offerCategory;
 	private String frequentFlyerNumber;
 	private String realtorId;
@@ -214,6 +211,60 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	String errorCdList;
 	@ProcedureInParameter(name = "in_system_notes", parameterIndex = 62)
 	String systemNotes;
+	
+	///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
+	@ProcedureInParameter(name = "in_entry_point", parameterIndex = 63)
+	private String entryPoint ;
+	@ProcedureInParameter(name = "in_partner_id", parameterIndex = 64)
+	private String partnerId;
+	@ProcedureInParameter(name = "in_partner_desc", parameterIndex = 65)
+	private String partnerDesc;
+	@ProcedureInParameter(name = "in_location_id ", parameterIndex = 66)
+	private String locationId ;
+	@ProcedureInParameter(name = "in_location_desc ", parameterIndex = 67)
+	private String locationDesc ;
+	@ProcedureInParameter(name = "in_page_revisited ", parameterIndex = 68)
+	private String pageRevisited ;
+	@ProcedureInParameter(name = "in_prospect_id", parameterIndex = 69)
+	private String prospectId;
+	@ProcedureInParameter(name = "in_prospect_preapproved_flag", parameterIndex = 70)
+	private String prospectPreapprovedFlag;
+	@ProcedureInParameter(name = "in_prospect_partner_id", parameterIndex = 71)
+	private String prospectPartnerId;
+	@ProcedureInParameter(name = "in_bypass_posid", parameterIndex = 72)
+	private String bypassPosid;
+	@ProcedureInParameter(name = "in_ip_address", parameterIndex = 73)
+	private String ipAddress;
+	@ProcedureInParameter(name = "in_tablet_id", parameterIndex = 74)
+	private String tabletId;
+	@ProcedureInParameter(name="in_channel", parameterIndex=75)
+	private String channel;
+	@ProcedureInParameter(name = "in_abandoned_enroll_stat_flag", parameterIndex = 76)
+	private String abandonedEnrollStatFlag;
+	@ProcedureInParameter(name = "in_bp_name_match_code", parameterIndex = 77)
+	private String bpNameMatchCode;
+	@ProcedureInParameter(name = "in_device_latitude", parameterIndex = 78)
+	private String deviceLatitude;
+	@ProcedureInParameter(name = "in_device_longitude", parameterIndex = 79)
+	private String deviceLongitude;
+	@ProcedureInParameter(name = "in_device_accuracy", parameterIndex = 80)
+	private String deviceAccuracy;
+	@ProcedureInParameter(name = "in_etf_flag", parameterIndex = 81)
+	private String etfFlag;
+	@ProcedureInParameter(name = "in_kba_suggestion_flag", parameterIndex = 82)
+	private String kbaSuggestionFlag;
+	@ProcedureInParameter(name = "in_pending_bal_amount", parameterIndex = 83)
+	private String pendingBalAmount;
+	@ProcedureInParameter(name = "in_past_service_ca", parameterIndex = 84)
+	private String pastServiceCa;
+	
+	@ProcedureInParameter(name = "in_posid_snro", parameterIndex = 85)
+	private String posidSNRO;
+	
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 86)
+	private String outErrorCode;
+
+	///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		
 		public String getAgentID() {
 			return agentID;
@@ -1258,8 +1309,194 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 		this.realtorId = realtorId;
 	}
 
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this);
 	}
+
+	public String getEntryPoint() {
+		return entryPoint;
+	}
+
+	public void setEntryPoint(String entryPoint) {
+		this.entryPoint = entryPoint;
+	}
+
+	public String getPartnerId() {
+		return partnerId;
+	}
+
+	public void setPartnerId(String partnerId) {
+		this.partnerId = partnerId;
+	}
+
+	public String getPartnerDesc() {
+		return partnerDesc;
+	}
+
+	public void setPartnerDesc(String partnerDesc) {
+		this.partnerDesc = partnerDesc;
+	}
+
+	public String getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(String locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getLocationDesc() {
+		return locationDesc;
+	}
+
+	public void setLocationDesc(String locationDesc) {
+		this.locationDesc = locationDesc;
+	}
+
+	public String getPageRevisited() {
+		return pageRevisited;
+	}
+
+	public void setPageRevisited(String pageRevisited) {
+		this.pageRevisited = pageRevisited;
+	}
+
+	public String getProspectId() {
+		return prospectId;
+	}
+
+	public void setProspectId(String prospectId) {
+		this.prospectId = prospectId;
+	}
+
+	public String getProspectPreapprovedFlag() {
+		return prospectPreapprovedFlag;
+	}
+
+	public void setProspectPreapprovedFlag(String prospectPreapprovedFlag) {
+		this.prospectPreapprovedFlag = prospectPreapprovedFlag;
+	}
+
+	public String getProspectPartnerId() {
+		return prospectPartnerId;
+	}
+
+	public void setProspectPartnerId(String prospectPartnerId) {
+		this.prospectPartnerId = prospectPartnerId;
+	}
+
+	public String getBypassPosid() {
+		return bypassPosid;
+	}
+
+	public void setBypassPosid(String bypassPosid) {
+		this.bypassPosid = bypassPosid;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
+
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
+	public String getTabletId() {
+		return tabletId;
+	}
+
+	public void setTabletId(String tabletId) {
+		this.tabletId = tabletId;
+	}
+
+	public String getAbandonedEnrollStatFlag() {
+		return abandonedEnrollStatFlag;
+	}
+
+	public void setAbandonedEnrollStatFlag(String abandonedEnrollStatFlag) {
+		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
+	}
+
+	public String getBpNameMatchCode() {
+		return bpNameMatchCode;
+	}
+
+	public void setBpNameMatchCode(String bpNameMatchCode) {
+		this.bpNameMatchCode = bpNameMatchCode;
+	}
+
+	public String getDeviceLatitude() {
+		return deviceLatitude;
+	}
+
+	public void setDeviceLatitude(String deviceLatitude) {
+		this.deviceLatitude = deviceLatitude;
+	}
+
+	public String getDeviceLongitude() {
+		return deviceLongitude;
+	}
+
+	public void setDeviceLongitude(String deviceLongitude) {
+		this.deviceLongitude = deviceLongitude;
+	}
+
+	public String getDeviceAccuracy() {
+		return deviceAccuracy;
+	}
+
+	public void setDeviceAccuracy(String deviceAccuracy) {
+		this.deviceAccuracy = deviceAccuracy;
+	}
+
+	public String getEtfFlag() {
+		return etfFlag;
+	}
+
+	public void setEtfFlag(String etfFlag) {
+		this.etfFlag = etfFlag;
+	}
+
+	public String getKbaSuggestionFlag() {
+		return kbaSuggestionFlag;
+	}
+
+	public void setKbaSuggestionFlag(String kbaSuggestionFlag) {
+		this.kbaSuggestionFlag = kbaSuggestionFlag;
+	}
+
+	public String getPendingBalAmount() {
+		return pendingBalAmount;
+	}
+
+	public void setPendingBalAmount(String pendingBalAmount) {
+		this.pendingBalAmount = pendingBalAmount;
+	}
+
+	public String getPastServiceCa() {
+		return pastServiceCa;
+	}
+
+	public void setPastServiceCa(String pastServiceCa) {
+		this.pastServiceCa = pastServiceCa;
+	}
+
+	public String getPosidSNRO() {
+		return posidSNRO;
+	}
+
+	public void setPosidSNRO(String posidSNRO) {
+		this.posidSNRO = posidSNRO;
+	}
+	
+	
 }

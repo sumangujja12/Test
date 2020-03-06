@@ -333,6 +333,8 @@ public class PersonDaoImpl extends AbstractSpringDAO implements PersonDao,
 										.getString("adv_action_data"));
 								dataRow.setRetryCount(rs
 										.getString("retry_count"));
+								dataRow.setNoid(rs
+										.getString("noid"));
 								return dataRow;
 							}
 						});
@@ -380,5 +382,5 @@ public class PersonDaoImpl extends AbstractSpringDAO implements PersonDao,
 			}
 		}
 	}
-
+	
 }

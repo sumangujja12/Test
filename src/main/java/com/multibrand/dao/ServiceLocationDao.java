@@ -21,5 +21,6 @@ public interface ServiceLocationDao {
 	public String updateServiceLocation(UpdateServiceLocationRequest request);
 
 	public ServiceLocationResponse getServiceLocation(String trackingId);
+	public ServiceLocationResponse getEnrollmentData(String trackingId,String guid);
 
 }

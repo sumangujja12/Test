@@ -25,6 +25,10 @@ import org.springframework.web.client.RestTemplate;
 import com.google.gson.Gson;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
+import com.multibrand.domain.KbaQuestionRequest;
+import com.multibrand.domain.KbaQuestionResponse;
+import com.multibrand.domain.KbaSubmitAnswerRequest;
+import com.multibrand.domain.KbaSubmitAnswerResponse;
 import com.multibrand.domain.OEDomain;
 import com.multibrand.domain.OEDomainPortBindingStub;
 import com.multibrand.domain.OetdspRequest;
@@ -33,6 +37,8 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.domain.ProspectRequest;
+import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.UpdateCRMAgentInfoRequest;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -527,4 +533,54 @@ public class OEService extends BaseAbstractService {
 			return updateRequest;
 
 		}
+		
+/**
+ * @author 289347
+ * @param kbaQuestionRequest
+ * @return
+ */
+		public KbaQuestionResponse getKBAQuestionList(KbaQuestionRequest kbaQuestionRequest)   {
+			KbaQuestionResponse kbaQuestionResponse = null;
+			try {
+				OEDomain proxyclient = getOEServiceProxy();
+				kbaQuestionResponse = proxyclient.getKBAQuestionList(kbaQuestionRequest);
+			} catch (Exception e) {
+				logger.error("ERROR_IN_GETKBAQUESTIOINFO");
+			} 
+			return kbaQuestionResponse;
+		}
+/**
+ * 	
+ * @param kbaSubmitAnswerRequest
+ * @return
+ */
+		public KbaSubmitAnswerResponse submitKBAAnswer(KbaSubmitAnswerRequest kbaSubmitAnswerRequest)   {
+			KbaSubmitAnswerResponse kbaSubmitAnswerResponse = null;
+			try {
+				OEDomain proxyclient = getOEServiceProxy();
+				kbaSubmitAnswerResponse = proxyclient.submitAnswerKBA(kbaSubmitAnswerRequest);
+			} catch (Exception e) {
+				logger.error("Error in method: submitKbaAnswer");
+			} 
+			return kbaSubmitAnswerResponse;
+		}
+		
+/**
+ * START :OE ADO SPrint4 : To get Prospect Data
+ * @author 289347
+ * @param request
+ * @return
+ */
+public ProspectResponse getProspectData(ProspectRequest request)   {
+			
+			ProspectResponse  response = null;
+			try {
+				OEDomain proxyclient = getOEServiceProxy();
+				response= proxyclient.getProsectData(request);
+			} catch (Exception e) {
+				logger.error("Error in method: submitKbaAnswer");
+			} 
+			return response;
+		}
+		
 }

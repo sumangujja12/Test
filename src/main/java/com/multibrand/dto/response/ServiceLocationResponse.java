@@ -157,6 +157,7 @@ public class ServiceLocationResponse implements Serializable {
 			String vendorCode;
 			String vendorName;
 			String tlpReportApiStatus;
+    private String posidSNRO;
 			
 			
 			public String getAgentID() {
@@ -721,10 +722,7 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the guid
 	 */
 	public String getGuid() {
-		if (StringUtils.isBlank(guid)) {
-			UUID uuID = UUID.randomUUID();
-			setGuid(uuID.toString());
-		}
+	
 		return guid;
 	}
 
@@ -2264,6 +2262,16 @@ public class ServiceLocationResponse implements Serializable {
 	 */
 	public void setPersonResponse(PersonResponse personResponse) {
 		this.personResponse = personResponse;
+	}
+	
+	
+
+	public String getPosidSNRO() {
+		return posidSNRO;
+	}
+
+	public void setPosidSNRO(String posidSNRO) {
+		this.posidSNRO = posidSNRO;
 	}
 
 	@Override

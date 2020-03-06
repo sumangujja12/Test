@@ -50,8 +50,8 @@ cs.rest.url.timeout=60
 rest.url.timeout=30
 ###################
 
-#OTHER THIRD PARTY END POINTS
-tokenServerUrl=https://pwared01:8443/cardsecure/cs
+#tokenServerUrl=https://pwared01:8443/cardsecure/cs
+tokenServerUrl=https://rripcid01:8443/cardsecure/cs
 cardsecureUrl=https://txaixpiid01:8443/cardsecure/cs
 #################
 
@@ -127,6 +127,8 @@ GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-dev.greenmountain.com/ResetPa
 gm.content.server.endpoint.url=http://txaixebnbld01.retail.nrgenergy.com:18081/client/v2/content.svc/
 content.rest.server.url=http://txaixebxindxd02:9088/contentService/content/getContentData
 re.content.server.endpoint.url=http://txaixebnbld01:8081/client/v2/content.svc/
+pw.content.server.endpoint=http://txaixebnbld01:18081/client/v2/content.svc/
+ce.content.server.endpoint=http://txaixebxindxd01:13180/cd-service/cirro/cdws/odata.svc/
 
 #Tempalte Id's
 re.tempalte.id_desktop=111201
@@ -168,3 +170,8 @@ rest.api.password=tester
 rest.ws.endpointURL.iot.enrollment.report.data.submit=http://txaixsexbls05/iotproxy/enrollment/sendReliantEnrollmentDataToTLP
 iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 #END : OE :Sprint62 :US21019 :Kdeshmu1
+
+#Start Togglz Framework Integration
+ws.rest.togglz.base.url=http://dev1-ws.nrgenergy.com/togglz
+togglz.default.groupName=SalesAPI
+#End Togglz Framework Integration

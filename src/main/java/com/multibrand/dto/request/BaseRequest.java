@@ -2,12 +2,16 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.ws.rs.QueryParam;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.SizeConstraint;
+import com.multibrand.request.validation.ValidateCompanyCode;
 import com.multibrand.util.Constants;
 
 /**
@@ -26,10 +30,12 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 4, groups = SizeConstraint.class)
 	private String companyCode;
-
+	
+	@QueryParam(value = "brandId")
 	@Length(max = 2, groups = SizeConstraint.class)
 	private String brandId;
 	
+	@QueryParam(value = "languageCode")
 	@Length(max = 1, groups = SizeConstraint.class)
 	private String languageCode = null;
 
@@ -66,6 +72,7 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 	/**
 	 * @return the companyCode
 	 */
+	
 	public String getCompanyCode() {
 		return companyCode;
 	}
@@ -103,4 +110,7 @@ public class BaseRequest implements FormEntityRequest, Constants, Serializable {
 		return value.toString();
 	}
 
+	enum CompanyCode{
+		WRONG_COMPANY_CODE
+	}
 }
