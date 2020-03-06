@@ -653,7 +653,6 @@
 			<groupId>com.nrg.util</groupId>
 			<artifactId>nrg-content-utils</artifactId>
 			<version>3</version>
-			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
