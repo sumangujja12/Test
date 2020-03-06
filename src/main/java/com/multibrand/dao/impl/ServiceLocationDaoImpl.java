@@ -149,7 +149,9 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 					&& request.getErrorCode().length() > 10) {
 				request.setErrorCode(TIBCOSD);
 			}
-
+            if(StringUtils.isNotBlank(request.getErrorCdList())){
+            	request.setErrorCdList(request.getErrorCdList());
+            }
 			request.setReferrerCode(StringUtils.EMPTY);
 			request.setCompletionStatusCode(StringUtils.EMPTY);
 
@@ -319,6 +321,9 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 				if (StringUtils.isNotEmpty(request.getErrorCode())
 						&& request.getErrorCode().length() > 10) {
 					request.setErrorCode(TIBCOSD);
+				}
+				if(StringUtils.isNotBlank(request.getErrorCdList())){
+					request.setErrorCdList(request.getErrorCdList());
 				}
 				request.setCompletionStatusCode(StringUtils.EMPTY);
 				request.setAdId(StringUtils.EMPTY);
