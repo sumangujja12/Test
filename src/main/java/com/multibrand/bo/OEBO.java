@@ -1880,6 +1880,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		EnrollmentResponse response =  new EnrollmentResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
 		OESignupDTO oeSignUpDTO = null;
+		LinkedHashSet<String> serviceLocationResponse_errorList = new LinkedHashSet<>();
 		
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
@@ -1890,6 +1891,12 @@ public class OEBO extends OeBoHelper implements Constants{
 		}
 		
 		try {
+			ServiceLocationResponse serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
+			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+			serviceLocationResponse_errorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			
 			// Create SignupDTO from the enrollment API request.
 			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest);
 			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
@@ -1972,13 +1979,14 @@ public class OEBO extends OeBoHelper implements Constants{
 		 * 
 		 */
 		finally {
-			ServiceLocationResponse serviceLoationResponse = null;
-			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
-				serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
+			if(oeSignUpDTO.getErrorSet().isEmpty()){
+				serviceLocationResponse_errorList.remove(BPSD);
+				serviceLocationResponse_errorList.remove(NESID);
+				serviceLocationResponse_errorList.remove(SWHOLD);
+			}else{
+				serviceLocationResponse_errorList.addAll(oeSignUpDTO.getErrorSet());
 			}
-			if(serviceLoationResponse == null){
-			oeSignUpDTO.setErrorCdList(getUpdatedErrorCdList(serviceLoationResponse,oeSignUpDTO.getErrorSet()));
-			}
+			oeSignUpDTO.setErrorCdList(StringUtils.join(serviceLocationResponse_errorList,SYMBOL_PIPE));
 			// Calls 7, 8 and 9 are executed here.
 			// Save Person and Location details in database.
 			this.updatePersonAndServiceLocation(oeSignUpDTO);
@@ -2006,7 +2014,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
 		String errorCd=null;
-		LinkedHashSet<String> errorCdList = new LinkedHashSet<>();
+		LinkedHashSet<String> serviceLocationResponse_errorList = new LinkedHashSet<>();
 
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: performCreditCheck(..)";
@@ -2025,6 +2033,12 @@ public class OEBO extends OeBoHelper implements Constants{
 
 		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = null;
 		try {
+			ServiceLocationResponse serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
+			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+			serviceLocationResponse_errorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			
 			// getNewCreditScore from NRGWS OEDomain via [OE proxy layer]
 			newCreditScoreResponse = oeProxy
 					.getNewCreditScore(creditScoreRequest);
@@ -2095,7 +2109,8 @@ public class OEBO extends OeBoHelper implements Constants{
 							new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
 							CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));		
 					errorCd = CREDFREEZE;
-					errorCdList.add(errorCd);
+					serviceLocationResponse_errorList.add(errorCd);
+					serviceLocationResponse_errorList.remove(CCSD);
 			} 
 			
 			else if(StringUtils.isNotEmpty(zesNotifyHold)&& FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold)){  
@@ -2230,7 +2245,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (RemoteException e) {
 			logger.error(e);
 			errorCd = CCSD;
-			errorCdList.add(errorCd);
+			serviceLocationResponse_errorList.add(errorCd);
+			serviceLocationResponse_errorList.remove(CREDFREEZE);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -2244,7 +2260,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (Exception e) {
 			logger.error("ERROR:" + METHOD_NAME, e);
 			errorCd = CCSD;
-			errorCdList.add(errorCd);
+			serviceLocationResponse_errorList.add(errorCd);
+			serviceLocationResponse_errorList.remove(CREDFREEZE);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -2259,14 +2276,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					"trackingId must not be null.");
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 
-			if (StringUtils.isNotEmpty(creditScoreRequest.getTrackingNum())){
-				//requestData.setErrorCdList(getUpdatedErrorCdList(serviceLoationResponse, errorCdList));
-				requestData.setTrackingId(creditScoreRequest.getTrackingNum());
-				ServiceLocationResponse serviceLocationResponse = getEnrollmentData(creditScoreRequest.getTrackingNum());
-				if(serviceLocationResponse == null){
-					requestData.setErrorCdList(getUpdatedErrorCdList(serviceLocationResponse,errorCdList));
-				}
-			}
+			requestData.setErrorCdList(StringUtils.join(serviceLocationResponse_errorList,SYMBOL_PIPE));
+			
 			requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
 
 			String personId = getPersonIdByTrackingNo(requestData
@@ -2644,14 +2655,14 @@ public class OEBO extends OeBoHelper implements Constants{
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
-		LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
-		String errorCdlist=null;
+		
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
 		ESIDDO esidDo = new ESIDDO();
 		AddressDO serviceAddressDO = new AddressDO();
 		
 		Locale localeObj = null;
-
+		LinkedHashSet<String> serviceLocationResponse_errorList = new LinkedHashSet<>();
+		
 		if (locale.equalsIgnoreCase(S))
 			localeObj = new Locale("es", "US");
 		else 
@@ -2661,7 +2672,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		response.setMeterType(EMPTY);
 		response.setSwitchHoldFlag(EMPTY);
 		
-	    try {
+		try {
+			ServiceLocationResponse serviceLoationResponse=getEnrollmentData(trackingId);
+			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+			serviceLocationResponse_errorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+	    	
 			serviceAddressDO.setStrStreetNum(servStreetNum);
 			serviceAddressDO.setStrStreetName(servStreetName);
 			serviceAddressDO.setStrApartNum(servStreetAptNum);
@@ -2723,8 +2740,14 @@ public class OEBO extends OeBoHelper implements Constants{
 							response.setMessageCode(strESIDNumber);
 							if (MESID.equalsIgnoreCase(strESIDNumber)) {
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_MESID));
+								serviceLocationResponse_errorList.add(MESID);
+								serviceLocationResponse_errorList.remove(NESID);
+								serviceLocationResponse_errorList.remove(NRESID);
 							} else if (NESID.equalsIgnoreCase(strESIDNumber)) {
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
+								serviceLocationResponse_errorList.add(NESID);
+								serviceLocationResponse_errorList.remove(MESID);
+								serviceLocationResponse_errorList.remove(NRESID);
 							}
 							response.setTdspCode(EMPTY);
 							response.setAvailableDates(EMPTY);
@@ -2734,10 +2757,22 @@ public class OEBO extends OeBoHelper implements Constants{
 								response.setStatusCode(STATUS_CODE_STOP);
 								response.setMessageCode(strESIDNumber);
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NRESID));
+								serviceLocationResponse_errorList.add(NRESID);
+								serviceLocationResponse_errorList.remove(MESID);
+								serviceLocationResponse_errorList.remove(NESID);
 						} else {
 							response.setEsid(strESIDNumber);
+							serviceLocationResponse_errorList.remove(MESID);
+							serviceLocationResponse_errorList.remove(NESID);
+							serviceLocationResponse_errorList.remove(NRESID);
+							serviceLocationResponse_errorList.add(strESIDNumber);
+							
 						}	
-						errorCdSet.add(strESIDNumber);
+						
+					}else{
+						serviceLocationResponse_errorList.remove(MESID);
+						serviceLocationResponse_errorList.remove(NESID);
+						serviceLocationResponse_errorList.remove(NRESID);
 					}
 					// Switch Hold ON scenario for SWI
 					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
@@ -2805,20 +2840,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setMessageText(EMPTY);
 		}
 		finally {
-			ServiceLocationResponse serviceLoationResponse = null;
-			if(StringUtils.isNotEmpty(trackingId)){
-				/*if(StringUtils.isNotEmpty(request.getGuid())){
-					 serviceLoationResponse=getEnrollmentData(trackingId,request.getGuid() );
-				}*/
-					 serviceLoationResponse=getEnrollmentData(trackingId);
-					
-			}
-			if(serviceLoationResponse == null){
-			errorCdlist = getUpdatedErrorCdList(serviceLoationResponse,errorCdSet);
-			}
 			// Call update service location
 			this.updateServiceLocation(companyCode, affiliateId, trackingId, 
-					serviceAddressDO, esidDo, response,esid,errorCdlist);
+					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponse_errorList,SYMBOL_PIPE));
 		}
 	    
 	  //Default to EMPTY if statusflag is "OFF"
@@ -3278,7 +3302,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	public Map<String,Object> performBpMatch(PerformPosIdandBpMatchResponse response,String errorCd,String messageCode,
 			String firstName,String lastName,String tdl,String maidenName,
 			String companyCode,String servStreetAptNum,String servCity,String servState,String servStreetName,
-			String servStreetNum,String servZipCode,String ssn, String brandID,ServiceLocationResponse serviceLoationResponse)
+			String servStreetNum,String servZipCode,String ssn, String brandID)
 	{
 		Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
 		com.multibrand.dto.BPMatchDTO bpMatchDto=new com.multibrand.dto.BPMatchDTO();
@@ -5293,9 +5317,14 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
-	LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
+	LinkedHashSet<String> serviceLocationResponse_errorList = new LinkedHashSet<>();
 	try{
-
+		ServiceLocationResponse serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+		serviceLocationResponse_errorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+		}
+		
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
 		logger.info("KBAHelper.submitKBAAnswer questionAnswerList"+questionAnswerList);
 		request.setTransactionKey(kbaAnswerRequest.getTransactionKey());
@@ -5332,7 +5361,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
 							kbaSubmitAnswerResponse.getSsnVerifyDate());
 					response.setSsnVerifyDate(validatedDate);
-					
+					serviceLocationResponse_errorList.remove(POSIDHOLD);
 					
 				} else if(null != kbaSubmitAnswerResponse 
 						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getDlVerifyDate()) 
@@ -5341,12 +5370,12 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
 							kbaSubmitAnswerResponse.getDlVerifyDate());
 					response.setDrivingLicenceVerifyDate(validatedDate);
-					
+					serviceLocationResponse_errorList.remove(POSIDHOLD);
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
 					response.setMessageCode(POSID_FAIL_MAX);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-					errorCdSet.add(POSIDHOLD);
+					serviceLocationResponse_errorList.add(POSIDHOLD);
 				}
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
@@ -5354,6 +5383,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
 						response.setErrorCode(RETRY_NOT_ALLOWED);
 						response.setErrorDescription(RETRY_NOT_ALLOWED_TXT);
+						serviceLocationResponse_errorList.add(POSIDHOLD);
 					}
 				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
 				}
@@ -5362,7 +5392,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 				response.setStatusCode(STATUS_CODE_CONTINUE);
 				response.setMessageCode(POSID_FAIL_MAX);
 				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-				errorCdSet.add(POSIDHOLD);
+				serviceLocationResponse_errorList.add(POSIDHOLD);
 			}
 		}else{
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
@@ -5370,7 +5400,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setMessageCode(POSID_FAIL_MAX);
 			response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-			errorCdSet.add(POSIDHOLD);
+			serviceLocationResponse_errorList.add(POSIDHOLD);
 		}
 		//update kba_api
 		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
@@ -5390,7 +5420,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
              requestData.setMessageCode(response.getMessageCode());
              serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
              if(serviceLoationResponse == null){
-             requestData.setErrorCdList(getUpdatedErrorCdList(serviceLoationResponse, errorCdSet));
+             requestData.setErrorCdList(StringUtils.join(serviceLocationResponse_errorList,SYMBOL_PIPE));
              }
             this.updateServiceLocation(requestData);
         }
@@ -6003,32 +6033,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 	   return response;
 	}
 	
-	public String getUpdatedErrorCdList(ServiceLocationResponse serviceLoationResponse,LinkedHashSet<String> errorCdList){
-		LinkedHashSet<String> newErrorCdList = new LinkedHashSet<>();
-		//errorCdList.add("CREDITCHECK");
-		try{
-		//String serviceLoationResponse = "POSIDHOLD|BPSD|DEPOSITHOLD";
-		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-		String serviceLoationResponseError = serviceLoationResponse.getErrorCdlist();
-		LinkedHashSet<String> a1 = new LinkedHashSet<String>();
-			String[] errorCdArray =serviceLoationResponseError.split("\\|");
-			for(String b1 :errorCdArray){
-				a1.add(b1);
-				
-			}
-			newErrorCdList.addAll(a1);
-			for(String c1 :errorCdList){
-				if(!a1.contains(c1)){
-					newErrorCdList.add(c1);
-				}
-		}
-		}
-		
-		}catch(Exception e){
-		e.printStackTrace();
-		}
-		return (StringUtils.join(newErrorCdList,SYMBOL_PIPE));
-		}
+	
 	}
 	
 
