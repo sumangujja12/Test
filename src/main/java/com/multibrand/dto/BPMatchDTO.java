@@ -1,6 +1,7 @@
 package com.multibrand.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import com.multibrand.util.CommonUtil;
 
@@ -22,6 +23,10 @@ public class BPMatchDTO implements Serializable{
 	private String matchedPartnerID; // * Set in code based on logic
 	private String addressSearchPerformed; //addressChkPerformed;
 	private String bpMatchNoCCSResponse; //* If webservice call fails
+	
+	private BigDecimal pendingBalanceAmount;
+	private String pastServiceCANumber;
+
 
 	public String getActiveCustomerFlag() {
 		return activeCustomerFlag;
@@ -77,6 +82,24 @@ public class BPMatchDTO implements Serializable{
 
 	public void setBpMatchNoCCSResponse(String bpMatchNoCCSResponse) {
 		this.bpMatchNoCCSResponse = bpMatchNoCCSResponse;
+	}
+	
+
+
+	public BigDecimal getPendingBalanceAmount() {
+		return pendingBalanceAmount;
+	}
+
+	public void setPendingBalanceAmount(BigDecimal pendingBalanceAmount) {
+		this.pendingBalanceAmount = pendingBalanceAmount;
+	}
+
+	public String getPastServiceCANumber() {
+		return pastServiceCANumber;
+	}
+
+	public void setPastServiceCANumber(String pastServiceCANumber) {
+		this.pastServiceCANumber = pastServiceCANumber;
 	}
 
 	@Override

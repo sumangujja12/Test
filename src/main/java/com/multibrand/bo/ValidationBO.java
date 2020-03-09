@@ -879,6 +879,8 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setPastServiceCa(EMPTY);
 		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
 		updateServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+		updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
 		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 

@@ -41,9 +41,9 @@ import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
-import com.multibrand.domain.AddressDTO;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
+import com.multibrand.domain.BpPastServiceHistoryDTO;
 import com.multibrand.domain.CampEnvironmentOutData;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.FactorDetailDO;
@@ -80,6 +80,7 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
+import com.multibrand.dto.AddressDTO;
 import com.multibrand.dto.KBAErrorDTO;
 import com.multibrand.dto.KBAResponseAssessmentDTO;
 import com.multibrand.dto.KBAResponseReasonDTO;
@@ -3295,7 +3296,11 @@ public class OEBO extends OeBoHelper implements Constants{
 			//Mapping BpMatch call response to method response
 			if(null != bpmatchResponse.getBpPastServiceHistoryDTO()){
 				bpMatchDto.setMatchedPartnerID(bpmatchResponse.getBpPastServiceHistoryDTO().getMatchedPartnerId());
-				response.setMatchedBP(bpmatchResponse.getBpPastServiceHistoryDTO().getMatchedPartnerId());}
+				response.setMatchedBP(bpmatchResponse.getBpPastServiceHistoryDTO().getMatchedPartnerId());
+				if(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO() != null){
+					populatePastServiceHistory(response, bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO());
+				}
+			}
 			
 			//Mapping BpMatch call response to method response for address matched BpId
 			if(!StringUtils.isEmpty(bpmatchResponse.getAddressMatchBpId())) {
@@ -3304,6 +3309,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setBpMatchFlag(StringUtils.EMPTY);
 			}
 
+		
 			/**** CASE 0: CCS returns the restricted flag as X show hard stop[ page enrollment and proceed further with the OE flow. 
 			 *****/
 			//Start US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
@@ -3329,6 +3335,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setBpMatchFlag(BPSD);
 			errorCd=BPSD;
 			response.setMessageCode(PAST_BALANCE);
+			bpMatchDto.setPendingBalanceAmount(bpmatchResponse.getPendingBalanceAmount());
+			bpMatchDto.setPastServiceCANumber(bpmatchResponse.getPastServiceCANumber());
 			messageCode=PAST_BALANCE;
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_BALANCE_MSG_TXT));
@@ -3404,12 +3412,9 @@ public class OEBO extends OeBoHelper implements Constants{
 						logger.debug("inside performBpMatch:: past service history scenario");
 						
 						if(null!=bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO()){
-							response.setExistingCity(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrCity());
-							response.setExistingState(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrState());
-							response.setExistingStreetAddress(CommonUtil.getAddressLine1(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrStreetNum(),
-											bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrStreetName()));
-							response.setExistingZip(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrZip());
-							response.setExistingAptNum(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrUnitNumber());
+							
+							populatePastServiceHistory(response, bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO());
+							
 							//pass past history address in message text
 							pastHistoryAddress=CommonUtil.getCompleteAddress(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrUnitNumber(),
 									bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrStreetNum(),
@@ -5221,7 +5226,7 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
 	
 	
-	AddressDTO serviceAddressDTO = new AddressDTO();
+	com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
 	serviceAddressDTO.setStrStreetNum(request.getServStreetNum());
 	serviceAddressDTO.setStrStreetName(request.getServStreetName());		
 	serviceAddressDTO.setStrUnitNumber(request.getServStreetAptNum());
@@ -5736,7 +5741,7 @@ private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serv
 	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
 	
 	
-	AddressDTO serviceAddressDTO = new AddressDTO();
+	com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
 	String streetNum = serviceLocationResponse.getServAddressLine1().substring(0, serviceLocationResponse.getServAddressLine1().indexOf(" "));
 	String streetName = serviceLocationResponse.getServAddressLine1().substring(serviceLocationResponse.getServAddressLine1().indexOf(" "));
 	
@@ -6029,6 +6034,18 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		}
 		return (StringUtils.join(newErrorCdList,SYMBOL_PIPE));
 		}
+	
+	private void populatePastServiceHistory(PerformPosIdandBpMatchResponse response, com.multibrand.domain.AddressDTO activeAddressDTO) {
+		response.setExistingCity(activeAddressDTO.getStrCity());
+		response.setExistingState(activeAddressDTO.getStrState());
+		response.setExistingStreetAddress(CommonUtil.getAddressLine1(activeAddressDTO.getStrStreetNum(),
+				activeAddressDTO.getStrStreetName()));
+		response.setExistingZip(activeAddressDTO.getStrZip());
+		response.setExistingAptNum(activeAddressDTO.getStrUnitNumber());
+
+		
+		}
+	
 	}
 	
 
