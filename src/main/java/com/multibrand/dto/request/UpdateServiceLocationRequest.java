@@ -475,11 +475,21 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 		private String pastServiceCa;
 		@ProcedureInParameter(name = "in_posid_snro", parameterIndex = 157)
 		private String posidSNRO;
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 158)
+		@ProcedureInParameter(name = "in_bpmatch_scenario_id", parameterIndex = 158)
+		private String bpMatchScenarioId;
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 159)
 	private String outErrorCode;
 
 	
 	
+	public String getBpMatchScenarioId() {
+		return bpMatchScenarioId;
+	}
+
+	public void setBpMatchScenarioId(String bpMatchScenarioId) {
+		this.bpMatchScenarioId = bpMatchScenarioId;
+	}
+
 	public String getAgentID() {
 		return agentID;
 	}

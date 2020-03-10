@@ -47,7 +47,7 @@ public class LoggerAspect {
 	@Autowired
 	private ErrorContentHelper errorContentHelper;
 
-	@Pointcut("execution(public * com.multibrand.resources.*.*(..))")
+	@Pointcut("execution(public * com.multibrand.resources.*.*(..))" + "&& !within(com.multibrand.resources.SalesAPIResource)" )
 	public void resourceMethods() {
 	}
 

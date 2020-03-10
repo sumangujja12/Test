@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.OEBO;
+import com.multibrand.bo.SalesBO;
 import com.multibrand.bo.ValidationBO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -36,6 +37,7 @@ import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
+import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
@@ -100,6 +102,9 @@ public class SalesAPIResource extends BaseResource {
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 	
+	@Autowired
+	private SalesBO salesBO;
+	
 	@GET
 	@Path(API_OFFERS)	
 	@Produces({ MediaType.APPLICATION_JSON })
@@ -124,7 +129,7 @@ public class SalesAPIResource extends BaseResource {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response performPosidAndBpMatch(
-			@Valid PerformPosIdAndBpMatchRequest request) {
+			@Valid IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		
@@ -156,7 +161,7 @@ public class SalesAPIResource extends BaseResource {
 				}
 			}
 			
-			response = oeBO.performPosidAndBpMatch(request);
+			response = salesBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
 			logger.error(e);
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
