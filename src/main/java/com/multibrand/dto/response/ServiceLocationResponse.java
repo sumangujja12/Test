@@ -159,6 +159,8 @@ public class ServiceLocationResponse implements Serializable {
 			String vendorName;
 			String tlpReportApiStatus;
     private String posidSNRO;
+    
+    private String bpMatchScenarioId;
 			
 			
 			public String getAgentID() {
@@ -2281,6 +2283,16 @@ public class ServiceLocationResponse implements Serializable {
 
 	public void setErrorCdlist(String errorCdlist) {
 		this.errorCdlist = errorCdlist;
+	}
+	
+	
+
+	public String getBpMatchScenarioId() {
+		return bpMatchScenarioId;
+	}
+
+	public void setBpMatchScenarioId(String bpMatchScenarioId) {
+		this.bpMatchScenarioId = bpMatchScenarioId;
 	}
 
 	@Override

@@ -233,7 +233,7 @@ public class ValidationBO extends BaseBO {
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
 										
-					response.setGuID(serviceLoationResponse.getGuid());
+					response.setGuid(serviceLoationResponse.getGuid());
 
 					response.setStatusCode(STATUS_CODE_STOP);
 					messageCode=POSID_FAIL_MAX;
@@ -391,9 +391,10 @@ public class ValidationBO extends BaseBO {
 			throw new OAMException(200, e.getMessage(), response);
 		}
 		finally{
-			oESignupDTO.setErrorCdList(oeBO.getUpdatedErrorCdList(serviceLoationResponse,errorCdSet));
+			//oESignupDTO.setErrorCdList(oeBO.getUpdatedErrorCdList(serviceLoationResponse,errorCdSet));
 			if (retryCount==0)
-			{	
+			{
+				oESignupDTO.setErrorCdList(StringUtils.join(errorCdSet,SYMBOL_PIPE));
 				try{//making addperson call if its 1st try
 					logger.debug("inside com.multibrand.bo:: validatePosId ::making add person call and retrycount is 0");
 					AddPersonRequest addPersonRequest= new AddPersonRequest();
@@ -415,7 +416,7 @@ public class ValidationBO extends BaseBO {
 						if(StringUtils.isNotBlank(performPosIdBpRequest.getTrackingId()))
 						{
 							response.setTrackingId(performPosIdBpRequest.getTrackingId());
-							response.setGuID(guid);
+							response.setGuid(guid);
 							logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +"::"
 									+ " tracking id after servicelocation call is :: "+performPosIdBpRequest.getTrackingId());
 						}
@@ -446,7 +447,8 @@ public class ValidationBO extends BaseBO {
 				}
 			}else{
 				//ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
-				response.setGuID(serviceLoationResponse.getGuid());
+				oESignupDTO.setErrorCdList(oeBO.getUpdatedErrorCdList(serviceLoationResponse,errorCdSet));
+				response.setGuid(serviceLoationResponse.getGuid());
 			}
 
 			response.setTrackingId(performPosIdBpRequest.getTrackingId());
@@ -879,6 +881,8 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setPastServiceCa(EMPTY);
 		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
 		updateServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+		updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
 		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 
