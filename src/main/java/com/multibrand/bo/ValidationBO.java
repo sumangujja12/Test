@@ -334,6 +334,7 @@ public class ValidationBO extends BaseBO {
 						serviceLocationResponse_errorList.remove(POSIDHOLD);
 					
 				}else{
+					serviceLocationResponse_errorList.remove(POSIDHOLD);
 					serviceLocationResponse_errorList.add(errorCd);
 				}
 				bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
@@ -363,6 +364,8 @@ public class ValidationBO extends BaseBO {
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 					errorCd=POSIDHOLD;
 				}
+				serviceLocationResponse_errorList.remove(BP_RESTRICT);
+				serviceLocationResponse_errorList.remove(BPSD);
 				serviceLocationResponse_errorList.add(errorCd);
 			}
 			else
@@ -383,6 +386,8 @@ public class ValidationBO extends BaseBO {
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 					errorCd=POSIDHOLD;
 				}
+				serviceLocationResponse_errorList.remove(BP_RESTRICT);
+				serviceLocationResponse_errorList.remove(BPSD);
 				serviceLocationResponse_errorList.add(errorCd);
 			}
 
@@ -399,6 +404,8 @@ public class ValidationBO extends BaseBO {
 			response.setStatusCode(STATUS_CODE_ASK);
 			response.setMessageCode(POSID_FAIL);
 			messageCode=POSID_FAIL;
+			serviceLocationResponse_errorList.remove(BP_RESTRICT);
+			serviceLocationResponse_errorList.remove(BPSD);
 			serviceLocationResponse_errorList.add(POSIDHOLD);
 			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 			logger.error("inside com.multibrand.bo:: validatePosId :: Exception making Posid REST Call", e);

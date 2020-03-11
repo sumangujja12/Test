@@ -1984,6 +1984,15 @@ public class OEBO extends OeBoHelper implements Constants{
 				serviceLocationResponse_errorList.remove(NESID);
 				serviceLocationResponse_errorList.remove(SWHOLD);
 			}else{
+				for(String errorCode :oeSignUpDTO.getErrorSet()){
+					if(!errorCode.equalsIgnoreCase(BPSD)){
+						serviceLocationResponse_errorList.remove(BPSD);
+					}else if(!errorCode.equalsIgnoreCase(NESID)){
+						serviceLocationResponse_errorList.remove(NESID);
+					}else if(!errorCode.equalsIgnoreCase(SWHOLD)){
+						serviceLocationResponse_errorList.remove(SWHOLD);
+					}
+				}
 				serviceLocationResponse_errorList.addAll(oeSignUpDTO.getErrorSet());
 			}
 			oeSignUpDTO.setErrorCdList(StringUtils.join(serviceLocationResponse_errorList,SYMBOL_PIPE));
@@ -2109,8 +2118,8 @@ public class OEBO extends OeBoHelper implements Constants{
 							new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
 							CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));		
 					errorCd = CREDFREEZE;
-					serviceLocationResponse_errorList.add(errorCd);
 					serviceLocationResponse_errorList.remove(CCSD);
+					serviceLocationResponse_errorList.add(errorCd);
 			} 
 			
 			else if(StringUtils.isNotEmpty(zesNotifyHold)&& FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold)){  
@@ -2245,8 +2254,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (RemoteException e) {
 			logger.error(e);
 			errorCd = CCSD;
-			serviceLocationResponse_errorList.add(errorCd);
 			serviceLocationResponse_errorList.remove(CREDFREEZE);
+			serviceLocationResponse_errorList.add(errorCd);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -2260,8 +2269,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (Exception e) {
 			logger.error("ERROR:" + METHOD_NAME, e);
 			errorCd = CCSD;
-			serviceLocationResponse_errorList.add(errorCd);
 			serviceLocationResponse_errorList.remove(CREDFREEZE);
+			serviceLocationResponse_errorList.add(errorCd);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
