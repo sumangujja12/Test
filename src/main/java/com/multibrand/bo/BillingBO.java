@@ -2060,7 +2060,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			request.setCoNumber(requestVO.getContractId());
 			// Added Retro flag and abm web tab data- Start
 			if (StringUtils.isNotBlank(requestVO.getRetroFlag())
-					&& StringUtils.equals(FLAG_TRUE, requestVO.getRetroFlag())) {
+					&& (StringUtils.equals(FLAG_TRUE, requestVO.getRetroFlag())
+							|| StringUtils.equalsIgnoreCase(Constants.X_VALUE, requestVO.getRetroFlag()))) {
 				request.setRetroFlag(Constants.X_VALUE);
 			} else {
 				request.setRetroFlag("");
