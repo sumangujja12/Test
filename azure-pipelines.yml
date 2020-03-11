@@ -1,16 +1,42 @@
+variables:
+  release_notes_wiki_path: Reliant/release-notes.md  # <app-name>/release-notes.md
+
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Digital-IT-Projects/azure-build-templates
+
 pool:
-  name: '$(param.agent.pool.name)'
+  #vmImage: 'ubuntu-16.04'
+  name: On-Premise-DEV-Digital-IT
+  demands: maven  
 
 trigger:
-- develop
-- master
-- features/*
+  branches:
+    include:
+    - develop
+    - master
+    - features/*
+  paths:
+    exclude:
+    - README.md
 
-steps:
-- task: JenkinsQueueJob@2
-  displayName: 'Queue Jenkins job: Services/nrg-rest-services'
-  inputs:
-    serverEndpoint: 'Prod Jenkins'
-    jobName: 'Services/nrg-rest-services'
-    isMultibranchJob: true
-    multibranchPipelineBranch: '$(Build.SourceBranch)'
+jobs:
+- job: build
+  displayName: Compile and test
+  steps:
+  - bash: mvn clean
+
+- template: create_release_notes_n_autotag.yml@templates
+
+- job: trigger jenkins
+  displayName: trigger jenkins pipeline
+  steps:
+  - task: JenkinsQueueJob@2
+    displayName: 'Queue Jenkins job: Services/nrg-rest-services'
+    inputs:
+      serverEndpoint: 'Prod Jenkins'
+      jobName: 'Services/nrg-rest-services'
+      isMultibranchJob: true
+      multibranchPipelineBranch: '$(Build.SourceBranch)'
