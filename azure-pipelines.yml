@@ -1,5 +1,5 @@
 variables:
-  release_notes_wiki_path: Reliant/release-notes.md  # <app-name>/release-notes.md
+  release_notes_wiki_path: NRG-Rest-Services/release-notes.md  # <app-name>/release-notes.md
 
 resources:
   repositories:
