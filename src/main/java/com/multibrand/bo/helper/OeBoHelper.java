@@ -654,7 +654,7 @@ public class OeBoHelper extends BaseBO {
 	 * @author jyogapa1 (Jenith)
 	 */
 	protected Boolean allowSubmitEnrollment(OESignupDTO oeSignUpDTO,
-			EnrollmentResponse response) {
+			EnrollmentResponse response, int retryCount, boolean posidHoldAllowed) {
 		String METHOD_NAME = "OEBOHelper: allowSubmitEnrollment(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
@@ -665,7 +665,13 @@ public class OeBoHelper extends BaseBO {
 
 			allowSubmit = false;
 		}
+		
+		
+		if (posidHoldAllowed && retryCount>=3) {
+			allowSubmit = false;
+		}
 
+		
 		logger.debug("End:" + METHOD_NAME);
 
 		return allowSubmit;
