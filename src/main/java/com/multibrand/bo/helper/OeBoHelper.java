@@ -667,7 +667,7 @@ public class OeBoHelper extends BaseBO {
 		}
 		
 		
-		if (posidHoldAllowed && retryCount>=3) {
+		if (!posidHoldAllowed && retryCount>=3) {
 			allowSubmit = false;
 		}
 

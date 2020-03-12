@@ -1379,5 +1379,7 @@ public interface Constants {
 
 	public static final String CREDFREEZE = "CREDFREEZE";
 	public static final String CCSD = "CCSD";
+	
+	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission.flag";
    
 }

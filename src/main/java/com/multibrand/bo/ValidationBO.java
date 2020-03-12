@@ -235,7 +235,7 @@ public class ValidationBO extends BaseBO {
 										
 					response.setGuid(serviceLoationResponse.getGuid());
 					//need to change toggle name
-					boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
+					boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
 					if(posidHoldAllowed){
 						response.setStatusCode(STATUS_CODE_CONTINUE);
 					}else{
