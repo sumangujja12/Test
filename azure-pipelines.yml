@@ -30,7 +30,7 @@ jobs:
 
 - template: create_release_notes_n_autotag.yml@templates
 
-- job: trigger jenkins
+- job: trigger_jenkins
   displayName: trigger jenkins pipeline
   steps:
   - task: JenkinsQueueJob@2
