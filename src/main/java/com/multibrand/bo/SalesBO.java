@@ -1,5 +1,7 @@
 package com.multibrand.bo;
 
+import javax.ws.rs.core.Response;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,13 +11,8 @@ import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.util.Constants;
-import com.multibrand.util.JavaBeanUtil;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.vo.response.GenericResponse;
-
-import jodd.net.HttpStatus;
-
-import javax.ws.rs.core.Response;
 
 @Component
 public class SalesBO extends OeBoHelper implements Constants {
