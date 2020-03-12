@@ -176,3 +176,4 @@ iot.enrollment.report.data.submit.rest.timeout.in.sec=60
 ws.rest.togglz.base.url=http://ws.nrgenergy.com/togglz
 togglz.default.groupName=SalesAPI
 #End Togglz Framework Integration
+RetroAmbPercentageValue=10
