@@ -26,6 +26,9 @@ public class BPMatchDTO implements Serializable{
 	
 	private BigDecimal pendingBalanceAmount;
 	private String pastServiceCANumber;
+	
+	private String bpMatchScenarioId;
+	private String bpMatchScenarioDescription;
 
 
 	public String getActiveCustomerFlag() {
@@ -100,6 +103,24 @@ public class BPMatchDTO implements Serializable{
 
 	public void setPastServiceCANumber(String pastServiceCANumber) {
 		this.pastServiceCANumber = pastServiceCANumber;
+	}	
+
+	
+
+	public String getBpMatchScenarioId() {
+		return bpMatchScenarioId;
+	}
+
+	public void setBpMatchScenarioId(String bpMatchScenarioId) {
+		this.bpMatchScenarioId = bpMatchScenarioId;
+	}
+
+	public String getBpMatchScenarioDescription() {
+		return bpMatchScenarioDescription;
+	}
+
+	public void setBpMatchScenarioDescription(String bpMatchScenarioDescription) {
+		this.bpMatchScenarioDescription = bpMatchScenarioDescription;
 	}
 
 	@Override
