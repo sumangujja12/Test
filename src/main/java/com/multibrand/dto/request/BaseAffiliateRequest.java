@@ -38,9 +38,7 @@ public class BaseAffiliateRequest implements Constants, FormEntityRequest, Seria
 	private String channelType;
 	
 	@QueryParam(value = "companyCode")
-	@NotBlank
 	@Length(max = 4, groups = SizeConstraint.class)
-	@ValidateCompanyCode
 	private String companyCode;
 	
 	@QueryParam(value = "brandId")
