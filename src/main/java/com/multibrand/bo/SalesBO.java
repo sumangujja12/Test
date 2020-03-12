@@ -45,7 +45,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 			}
 			
 		} catch (Exception e) {
-			logger.error("Exception in SalesBO.performPosidAndBpMatch"+ e.getMessage());
+			logger.error("Exception in SalesBO.performPosidAndBpMatch", e);
 			throw e;
 		}
 		

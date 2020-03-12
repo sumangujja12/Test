@@ -3318,6 +3318,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		com.multibrand.dto.BPMatchDTO bpMatchDto=new com.multibrand.dto.BPMatchDTO();
 		String addressMatchBPId=null;
 		LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
+		String scenario = "5";
+		String scenarioDesc= "No BPMatch";
 		try{
 			BpMatchCCSRequest bpMatchReq= oeRequestHandler.createBpmatchRequest(firstName, lastName, tdl, maidenName, companyCode, servStreetAptNum, servCity, servState, servStreetName, servStreetNum, servZipCode, ssn);
 			BpMatchCCSResponse bpmatchResponse= oeService.getBPMatchStatusFromCCS(bpMatchReq);
@@ -3340,6 +3342,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				bpMatchDto.setMatchedPartnerID(bpmatchResponse.getAddressMatchBpId());
 				response.setMatchedBP(bpmatchResponse.getAddressMatchBpId());
 				response.setBpMatchFlag(StringUtils.EMPTY);
+				scenario = "4";
+				scenarioDesc= "Exact BPMatch";
 			}
 
 		
@@ -3353,6 +3357,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setStatusCode(STATUS_CODE_STOP);
 				response.setMessageText(getAllBrandResponseMessage(companyCode, brandID, BP_RESTRICTION_TEXT_MESSAGE, ""));
 				errorCdSet.add(errorCd);
+				scenario = "6";
+				scenarioDesc= "BP fraud";
 			}
 			//END US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
 			//NO BPMATCH FLAG
@@ -3360,6 +3366,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug(" CCS returns the flag NO_BPMATCH as true");
 				errorCd = EMPTY;
 				response.setBpMatchFlag(EMPTY);
+				scenario = "5";
+				scenarioDesc= "No BPMatch";
+				
 			}						
 			
 			//Past Balance:
@@ -3374,6 +3383,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_BALANCE_MSG_TXT));
 			errorCdSet.add(errorCd);
+			scenario = "1";
+			scenarioDesc= "Uncollected Balance";
 			}
 
 			//Current Customer
@@ -3399,6 +3410,8 @@ public class OEBO extends OeBoHelper implements Constants{
 							bpmatchResponse.getBpActiveCustomerDTO().getActiveAddressDTO().getStrZip());
 				}
 				response.setMessageText(msgSource.getMessage(BP_MATCH_CURRENT_CUSTOMER_MSG_TXT)+" "+currentCustomer);
+				scenario = "3";
+				scenarioDesc= "Existing Customer - BPSD";
 			}
 			
 			//exact match in ccs
@@ -3419,6 +3432,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						response.setBpMatchFlag(BPSD);
 						errorCd=BPSD;
 						errorCdSet.add(errorCd);
+						
 						logger.debug("inside performBpMatch:: just bpsd scenario");
 					}
 	
@@ -3456,6 +3470,8 @@ public class OEBO extends OeBoHelper implements Constants{
 									bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrZip());
 						}	
 						response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_SERVICE_HISTORY_MSG_TXT)+" "+pastHistoryAddress);
+						scenario = "2";
+						scenarioDesc= "Past service BPMatch-BPSD";
 					}
 				} else {
 					response.setBpMatchFlag(BPSD);
@@ -3474,7 +3490,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			bpMatchDto=populateBPMatchDTOFromBpMatchCCSResponse(bpMatchDto, bpmatchResponse);
 			
-			
+			bpMatchDto.setBpMatchScenarioId(scenario);
 		}
 		catch(Exception e)
 		{
@@ -5965,13 +5981,24 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					.localeCode(request.getLanguageCode()));
 			logger.info("inside validatePosId::after local change languageCode langauge is :: "
 					+ request.getLanguageCode());
-			
-			getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
-					request.getTdl(), request.getSsn(),
-					request.getAffiliateId(),
-					request.getTrackingId());
-			
-			
+						
+			if(StringUtils.isNotEmpty(request.getTokenSSN()) || StringUtils.isNotEmpty(request.getTokenTDL()) ) {				
+				String tokenValue = StringUtils.isNotEmpty(request.getTokenSSN()) ? request.getTokenSSN() : request.getTokenTDL();
+				logger.info("inside tokenValue  :: "+tokenValue);
+				tokenResponse.setReturnToken(tokenValue);
+				tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
+				getPosIdTokenResponse.put("tokenSSN", request.getTokenSSN());				
+				getPosIdTokenResponse.put("tokenTdl", request.getTokenTDL());												
+				getPosIdTokenResponse.put("tokenResponse",tokenResponse);
+							
+				
+			}else {			
+				getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
+						request.getTdl(), request.getSsn(),
+						request.getAffiliateId(),
+						request.getTrackingId());
+				
+			}
 			
 			if (getPosIdTokenResponse != null) {
 				tokenResponse = (TokenizedResponse) getPosIdTokenResponse

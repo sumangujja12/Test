@@ -180,7 +180,7 @@ public class ValidationBO extends BaseBO {
 		response.setTokenizedTDL(performPosIdBpRequest.getTokenTDL());
 
 		ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
-		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+		if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 		serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 		}
@@ -430,7 +430,7 @@ public class ValidationBO extends BaseBO {
 						logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making addservicelocation call now");
 						AddServiceLocationRequest addServiceLocation =new AddServiceLocationRequest();						
 						String guid= addServiceLocation.getGuid();											
-						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade,oESignupDTO);
+						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade,oESignupDTO, bpMatchDTO);
 						performPosIdBpRequest.setTrackingId(oeBO.addServiceLocation(addServiceLocation));
 						//checking if addServiceLocation call was successful
 						if(StringUtils.isNotBlank(performPosIdBpRequest.getTrackingId()))
@@ -718,7 +718,7 @@ public class ValidationBO extends BaseBO {
 	 */
 	private void createAddServiceLocationRequest(AddServiceLocationRequest addServiceLocation,
 			PerformPosIdAndBpMatchRequest performPosIdBpRequest, String personId,
-			String messageCode,String errorCd,String recentCallMade,OESignupDTO oESignupDTO)
+			String messageCode,String errorCd,String recentCallMade,OESignupDTO oESignupDTO, BPMatchDTO bpMatchDTO)
 	{
 		/*if(StringUtils.isNotBlank(performPosIdBpRequest.getTransactionType()) && 
 				performPosIdBpRequest.getTransactionType().equalsIgnoreCase(MVI))
@@ -800,6 +800,9 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setPastServiceCa(EMPTY);
 		addServiceLocation.setKbaSuggestionFlag(oESignupDTO.getKbaSuggestionFlag());
 		addServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		addServiceLocation.setBpMatchScenarioId(bpMatchDTO.getBpMatchScenarioId());
+		addServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+		addServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
 		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
@@ -900,6 +903,9 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setPastServiceCa(EMPTY);
 		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
 		updateServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+		updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
+		updateServiceLocation.setBpMatchScenarioId(bpMatchDTO.getBpMatchScenarioId());
 		updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
 		updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
 		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
