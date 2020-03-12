@@ -1904,7 +1904,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				retryCount=	Integer.parseInt(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT));
 			}
 			
-			boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,enrollmentRequest.getCompanyCode(), enrollmentRequest.getBrandId());
+			boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,enrollmentRequest.getChannelType());
 			
 			// Create SignupDTO from the enrollment API request.
 			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest);
