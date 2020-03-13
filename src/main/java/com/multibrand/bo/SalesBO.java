@@ -1,9 +1,10 @@
 package com.multibrand.bo;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,13 +20,8 @@ import com.multibrand.util.LoggerUtil;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.SalesEsidInfoTdspCalendarResponse;
-
-
-import jodd.net.HttpStatus;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 
 
 @Component
@@ -78,6 +74,8 @@ public class SalesBO extends OeBoHelper implements Constants {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspCalendarResponse = new SalesEsidInfoTdspCalendarResponse();
 		String bpMatchFlag= null;
+		String error="";
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		try {
 			if(StringUtils.isNotEmpty(salesEsidInfoTdspResponse.getGuid())){
 				 serviceLoationResponse=oeBO.getEnrollmentData(salesEsidInfoTdspResponse.getTrackingId(),salesEsidInfoTdspResponse.getGuid() );
@@ -87,7 +85,19 @@ public class SalesBO extends OeBoHelper implements Constants {
 			
 			
 			if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
-				&& (!StringUtils.equalsIgnoreCase(salesEsidInfoTdspResponse.getPastServiceMatchedFlag(),"Y"))){
+				&& (StringUtils.equalsIgnoreCase(salesEsidInfoTdspResponse.getPastServiceMatchedFlag(),"Y"))){
+				//bpMatchFlag=BPSD;
+				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				
+					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+					serviceLocationResponseErrorList.remove(BPSD);
+				}
+					
+					boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidInfoTdspResponse.getTrackingId(),salesEsidInfoTdspResponse.getGuid(),error,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+					
+			}else if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
+					&& (!StringUtils.equalsIgnoreCase(salesEsidInfoTdspResponse.getPastServiceMatchedFlag(),"Y"))){
 				bpMatchFlag=BPSD;
 			}
 			EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
