@@ -2015,7 +2015,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultCode(RESULT_CODE_FIVE);
 				response.setResultDescription(RESULT_CODE_BAD_REQUEST);
 			}
-			
+			// Below Code is to test the AMB Eligibility in the local , development & stage server
 			String contractAccountNumberRetro = this.envMessageReader.getMessage("contractAccountNumberRetro");
 			String accountNumber = CommonUtil.addLeadingZeros(ambEligRequest.getAccountNumber(), 12);
 			if(StringUtils.equalsIgnoreCase(contractAccountNumberRetro, accountNumber)) {
