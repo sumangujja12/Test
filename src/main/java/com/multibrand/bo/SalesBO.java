@@ -1,9 +1,10 @@
 package com.multibrand.bo;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,13 +20,6 @@ import com.multibrand.util.LoggerUtil;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.SalesEsidInfoTdspCalendarResponse;
-
-
-import jodd.net.HttpStatus;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 
 
 @Component
