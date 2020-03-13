@@ -1986,12 +1986,15 @@ public class OEBO extends OeBoHelper implements Constants{
 				serviceLocationResponseErrorList.remove(SWHOLD);
 			}else{
 				for(String errorCode :oeSignUpDTO.getErrorSet()){
-					if(!errorCode.equalsIgnoreCase(BPSD)){
-						serviceLocationResponseErrorList.remove(BPSD);
-					}else if(!errorCode.equalsIgnoreCase(NESID)){
+					if(errorCode.equalsIgnoreCase(BPSD)){
 						serviceLocationResponseErrorList.remove(NESID);
-					}else if(!errorCode.equalsIgnoreCase(SWHOLD)){
 						serviceLocationResponseErrorList.remove(SWHOLD);
+					}else if(errorCode.equalsIgnoreCase(NESID)){
+						serviceLocationResponseErrorList.remove(BPSD);
+						serviceLocationResponseErrorList.remove(SWHOLD);
+					}else if(errorCode.equalsIgnoreCase(SWHOLD)){
+						serviceLocationResponseErrorList.remove(BPSD);
+						serviceLocationResponseErrorList.remove(NESID);
 					}
 				}
 				serviceLocationResponseErrorList.addAll(oeSignUpDTO.getErrorSet());
