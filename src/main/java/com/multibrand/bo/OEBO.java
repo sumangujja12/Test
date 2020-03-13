@@ -5858,7 +5858,7 @@ private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serv
 	serviceAddressDTO.setStrZip(serviceLocationResponse.getServZipCode());
 	
 	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
-	kbaQuestionRequest.setPosidUniqueKey("");
+	kbaQuestionRequest.setPosidUniqueKey(serviceLocationResponse.getPosidSNRO());
 	
 	return kbaQuestionRequest;
 }
