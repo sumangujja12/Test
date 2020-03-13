@@ -41,6 +41,7 @@ import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
@@ -63,6 +64,7 @@ import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
 import com.multibrand.vo.response.ProspectDataResponse;
+import com.multibrand.vo.response.SalesEsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.TokenizedResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
@@ -183,27 +185,13 @@ public class SalesAPIResource extends BaseResource {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getESIDAndCalendarDates(
-			@Valid EsidCalendarRequest request) {
+			@Valid SalesEsidCalendarRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
-					.getESIDAndCalendarDates(request.getCompanyCode(),
-							request.getAffiliateId(),
-							request.getBrandId(),
-							request.getServStreetNum(),
-							request.getServStreetName(),
-							request.getServStreetAptNum(),
-							request.getServZipCode(),
-							request.getTdspCodeCCS(),
-							request.getTransactionType(),
-							request.getTrackingId(),
-							request.getBpMatchFlag(),
-							request.getLanguageCode(),
-							request.getEsid(),
-							httpRequest.getSession(true).getId());
-				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
+				SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspResponse = salesBO.getSalesESIDAndCalendarDates(request,httpRequest);
+				response = Response.status(Response.Status.OK).entity(salesEsidInfoTdspResponse).build();
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());

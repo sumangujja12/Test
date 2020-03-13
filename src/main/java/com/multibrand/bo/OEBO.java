@@ -2661,7 +2661,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			String companyCode, String affiliateId, String brandId, String servStreetNum,
 			String servStreetName, String servStreetAptNum, String servZipCode,
 			String tdspCodeCCS, String transactionType, String trackingId, String bpMatchFlag,
-			String locale, String esid,String sessionId) throws OAMException {
+			String locale, String esid,String sessionId,String holdType) throws OAMException {
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
@@ -2839,7 +2839,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				}//else return response;
 			} 
 			// GET tdsp calendar dates
-			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj);
+			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType);
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
 			e.printStackTrace();
@@ -2879,6 +2879,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		List<TDSPDO> tdspDOList = new ArrayList<TDSPDO>();
 
 		try {
+			
+			
 			serviceAddressDO.setStrStreetNum(request.getServStreetNum());
 			serviceAddressDO.setStrStreetName(request.getServStreetName());
 			serviceAddressDO.setStrApartNum(request.getServStreetAptNum());
@@ -3108,7 +3110,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		for(TDSPDO tdspDo : tdspDataList)
 		{
 			try {
-				this.getTdspDates(request.getCompanyCode(), sessionId, transactionType, tdspDo.getTdspCodeCCS(), StringUtils.EMPTY, esidDo, calendarResp, new Locale(CommonUtil.localeCode(request.getLanguageCode())));
+				this.getTdspDates(request.getCompanyCode(), sessionId, transactionType, tdspDo.getTdspCodeCCS(), StringUtils.EMPTY, esidDo, calendarResp, new Locale(CommonUtil.localeCode(request.getLanguageCode())),null);
 				tdspDo.setAvailableDates(calendarResp.getAvailableDates());
 				tdspDo.setTdspFee(calendarResp.getTdspFee());
 			} catch (Exception e) {
@@ -4092,7 +4094,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void getTdspDates(String companyCode, String trackingId,
 			String transactionType, String tdspCodeCCS, String bpMatchFlag,
-			ESIDDO esidDo, EsidInfoTdspCalendarResponse response, Locale locale) throws Exception {
+			ESIDDO esidDo, EsidInfoTdspCalendarResponse response, Locale locale,String holdType) throws Exception {
 		String METHOD_NAME = "OEBO: getTdspDates(..)";
 
 		logger.debug("Start:" + METHOD_NAME);
@@ -4183,7 +4185,7 @@ public class OEBO extends OeBoHelper implements Constants{
     			allInclusiveDateList.remove(df2.format(c.getTime()));
     		}
     		//END  : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-    		if (allInclusiveDateList.size() > 0 // List still has data
+    		/*if (allInclusiveDateList.size() > 0 // List still has data
     				&& (StringUtils.isBlank(response.getEsid()) // Blank ESID means no ESID found
     						|| StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) // Switch Hold Status On
     						|| (StringUtils.equals(bpMatchFlag,BPSD))) // BPSD true
@@ -4199,7 +4201,52 @@ public class OEBO extends OeBoHelper implements Constants{
     			for (int i = 0; i < PUSH_2; i++)
     				allInclusiveDateList.remove(0);
     		}
-
+*/
+    		
+    		if (allInclusiveDateList.size() > 0	&& (StringUtils.equals(transactionType,TRANSACTIONTYPE_N)))
+    		{
+    			
+					if(StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON) ||StringUtils.isBlank(response.getEsid()) 
+							|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)) 
+					{
+						for (int i = 0; i < PUSH_4; i++)
+		    				allInclusiveDateList.remove(0);
+					}else if(StringUtils.equals(holdType,POSIDHOLD)){
+						for (int i = 0; i < PUSH_2; i++)
+		    				allInclusiveDateList.remove(0);
+					}else if(!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
+						for (int i = 0; i < PUSH_2; i++)
+		    				allInclusiveDateList.remove(0);
+					}
+						
+    		}else if(allInclusiveDateList.size() > 0){
+    			
+    			if(StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
+    				if(StringUtils.isBlank(response.getEsid())|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
+    						for (int i = 0; i < PUSH_7; i++)
+    		    				allInclusiveDateList.remove(0);
+    				}else if(StringUtils.equals(holdType,POSIDHOLD))
+    				{
+						for (int i = 0; i < PUSH_2; i++)
+		    				allInclusiveDateList.remove(0);
+					}else if(StringUtils.equals(holdType,HOLD_DNP))
+    				{
+						for (int i = 0; i < PUSH_4; i++)
+		    				allInclusiveDateList.remove(0);
+					}
+    			}else{
+    				
+    				if(StringUtils.isBlank(response.getEsid())){
+						for (int i = 0; i < PUSH_9; i++)
+		    				allInclusiveDateList.remove(0);
+					}else 
+					{
+						for (int i = 0; i < PUSH_7; i++)
+		    				allInclusiveDateList.remove(0);
+					}
+    			}
+    			
+    		}
     		String availableDates = StringUtils.join(allInclusiveDateList, SEMI_COLON);
     		availableDatesNoFwdSlash = StringUtils.replace(availableDates, FWD_SLASH , EMPTY);
     	}

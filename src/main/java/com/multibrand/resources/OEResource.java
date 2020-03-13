@@ -52,6 +52,7 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
+import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
@@ -620,6 +621,9 @@ public class OEResource extends BaseResource {
 		Response response = null;
 		try{
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
+			//START : OE : Sprint 6 : Update Calendar dates call	
+			ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(request.getTrackingId() );
+			//END : OE : Sprint 6 : Update Calendar dates call	
 				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
 					.getESIDAndCalendarDates(request.getCompanyCode(),
 							request.getAffiliateId(),
@@ -634,7 +638,9 @@ public class OEResource extends BaseResource {
 							request.getBpMatchFlag(),
 							request.getLanguageCode(),
 							request.getEsid(),
-							httpRequest.getSession(true).getId());
+							httpRequest.getSession(true).getId(),
+							serviceLoationResponse.getErrorCode()
+							);
 				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
