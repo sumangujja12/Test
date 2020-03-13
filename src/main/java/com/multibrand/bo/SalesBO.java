@@ -33,7 +33,8 @@ public class SalesBO extends OeBoHelper implements Constants {
 	private OEBO oeBO;
 	
 	@Context
-	private HttpServletRequest httpRequest;s
+	private HttpServletRequest httpRequest;
+
 	
 	public Response performPosidAndBpMatch(IdentityRequest request) throws Exception {
 		PerformPosIdAndBpMatchRequest performPosidAndBPMatchRequest = new PerformPosIdAndBpMatchRequest();
@@ -69,7 +70,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 	 * @return
 	 * @throws Exception
 	 */
-	public SalesEsidInfoTdspCalendarResponse getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidInfoTdspResponse) throws Exception {
+	public SalesEsidInfoTdspCalendarResponse getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidInfoTdspResponse, HttpServletRequest httpRequest) throws Exception {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspCalendarResponse = new SalesEsidInfoTdspCalendarResponse();
 		String bpMatchFlag= null;
@@ -85,7 +86,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 				&& (!StringUtils.equalsIgnoreCase(salesEsidInfoTdspResponse.getPastServiceMatchedFlag(),"Y"))){
 				bpMatchFlag=BPSD;
 			}
-			if(serviceLoationResponse == null){
 			EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
 					.getESIDAndCalendarDates(salesEsidInfoTdspResponse.getCompanyCode(),
 							salesEsidInfoTdspResponse.getAffiliateId(),
@@ -100,12 +100,13 @@ public class SalesBO extends OeBoHelper implements Constants {
 							bpMatchFlag,
 							salesEsidInfoTdspResponse.getLanguageCode(),
 							serviceLoationResponse.getEsid(),
-							httpRequest.getSession(true).getId());
+							httpRequest.getSession(true).getId(),
+							serviceLoationResponse.getErrorCode());
 			
 					    
 			    BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);	
 			    
-			}
+			
 				
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch"+ e.getMessage());

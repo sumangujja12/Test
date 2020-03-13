@@ -190,7 +190,7 @@ public class SalesAPIResource extends BaseResource {
 		Response response = null;
 		try{
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-				SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspResponse = salesBO.getSalesESIDAndCalendarDates(request);
+				SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspResponse = salesBO.getSalesESIDAndCalendarDates(request,httpRequest);
 				response = Response.status(Response.Status.OK).entity(salesEsidInfoTdspResponse).build();
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();

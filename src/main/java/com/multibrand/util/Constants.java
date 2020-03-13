@@ -704,6 +704,8 @@ public interface Constants {
 	public static final String STATUS_ACTIVE = "ACTIVE";
 	public static final int PUSH_2 = 2;
 	public static final int PUSH_4 = 4;
+	public static final int PUSH_7 = 7;
+	public static final int PUSH_9 = 9;
 	
 	public static final String ENV_UPDATE_CRM_ASYNC_DELAY_MS="env.updatecrm.async.delay.ms";
 	public static final String METHOD_UPDATE_CONTACT_ASYNC="updateContactInfoWithAsyncDelay";
@@ -1379,5 +1381,8 @@ public interface Constants {
 
 	public static final String CREDFREEZE = "CREDFREEZE";
 	public static final String CCSD = "CCSD";
-   
+	public static final String TRANSACTIONTYPE_N = "N";
+	public static final String PBSD = "PBSD";
+	public static final String HOLD_DNP  = "DNP";
+	   
 }
