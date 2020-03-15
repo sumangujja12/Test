@@ -1385,4 +1385,7 @@ public interface Constants {
 	public static final String PBSD = "PBSD";
 	public static final String HOLD_DNP  = "DNP";
 	   
+	
+	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission.flag";
+   
 }

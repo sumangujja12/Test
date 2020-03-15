@@ -1880,6 +1880,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		response.setTrackingId(enrollmentRequest.getTrackingId());
 		OESignupDTO oeSignUpDTO = null;
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		int retryCount=0;
+		String personId=null;
 		
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
@@ -1895,6 +1897,19 @@ public class OEBO extends OeBoHelper implements Constants{
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 			}
+
+			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
+			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
+
+			personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
+			logger.debug("inside validatePosId::personIdAndRetryCountResponse.get(0) "+personIdAndRetryCountResponse.get(0));
+
+			if(StringUtils.isNotBlank(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT))){
+				retryCount=	Integer.parseInt(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT));
+			}
+			
+			boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,enrollmentRequest.getChannelType());
+			
 			
 			// Create SignupDTO from the enrollment API request.
 			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest);
@@ -1903,7 +1918,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			// Do the input normalization/sanitization
 			this.initNormalization(oeSignUpDTO);
 			logger.info("oeSignUpDTO : "+oeSignUpDTO);
-			if (allowSubmitEnrollment(oeSignUpDTO, response)) {
+			if (allowSubmitEnrollment(oeSignUpDTO, response, retryCount, posidHoldAllowed)) {
 	
 				// Populate all Pre-requisite input for enrollment
 				this.initPrerequisites(oeSignUpDTO);

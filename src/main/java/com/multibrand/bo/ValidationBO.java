@@ -232,15 +232,21 @@ public class ValidationBO extends BaseBO {
 				/*
 				 * Step 4: Check the retry count value if greater than 2 then dont process and return FAILURE
 				 */
-				if(retryCount>=2)
+				if(retryCount>2)
 				{
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
 										
 					response.setGuid(serviceLoationResponse.getGuid());
-
-					response.setStatusCode(STATUS_CODE_STOP);
+					//need to change toggle name
+					boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
+					if(posidHoldAllowed){
+						response.setStatusCode(STATUS_CODE_CONTINUE);
+					}else{
+						response.setStatusCode(STATUS_CODE_STOP);
+					}
+					
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
 					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -349,7 +355,7 @@ public class ValidationBO extends BaseBO {
 					(StringUtils.isBlank( validatePosIdKBAResponse.getStrErroMessage()) 
 							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
 			{
-				if(retryCount!=2){
+				if(retryCount<=2){
 					response.setStatusCode(STATUS_CODE_ASK);
 					messageCode=POSID_FAIL;
 					response.setMessageCode(messageCode);
@@ -370,7 +376,7 @@ public class ValidationBO extends BaseBO {
 			}
 			else
 			{ 
-				if(retryCount!=2){
+				if(retryCount<=2){
 					response.setStatusCode(STATUS_CODE_ASK);
 					messageCode=POSID_FAIL;
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
