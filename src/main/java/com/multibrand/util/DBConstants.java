@@ -380,5 +380,7 @@ public interface DBConstants {
 	public static final String in_aptno = "in_aptno";
 	public static final String OUT_CURR_GET_ESI = "get_esi";
 	//END || PBI 15786: Update ESID Call || atiwari
+	
+	public static final String OE_UPDATE_ERROR_SLA_QUERY = "db.choice.reliant.updateerrorinsla";
 
 }

@@ -2845,7 +2845,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
 			e.printStackTrace();
 			response.setResultCode(RESULT_CODE_SUCCESS);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION + ": " + e.getMessage());
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setMessageCode(EMPTY);
 			response.setMessageText(EMPTY);
@@ -6132,6 +6132,14 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		response.setExistingZip(activeAddressDTO.getStrZip());
 		response.setExistingAptNum(activeAddressDTO.getStrUnitNumber());
 
+	}
+	
+
+public boolean updateErrorCodeinSLA(String TrackingId, String guid, String errorCode , String errorCDList) throws Exception {
+		logger.debug("Entering >> updateServiceLocation");
+		boolean errorCd = serviceLocationDAO.updateErrorCodeinSLA(TrackingId,guid,errorCode,errorCDList);
+		logger.debug("Exiting << updateServiceLocation");
+		return errorCd;
 	}
 		
 		}

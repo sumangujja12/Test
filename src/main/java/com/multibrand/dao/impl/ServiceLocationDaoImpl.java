@@ -2,6 +2,7 @@ package com.multibrand.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +11,7 @@ import javax.annotation.Resource;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -27,8 +29,11 @@ import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.DBConstants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.LoggerUtil;
+
+
 
 @Repository("serviceLocationDAO")
 public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
@@ -39,6 +44,10 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 
 	@Resource(name = "personDAO")
 	private PersonDao personDao;
+	
+	@Autowired
+	@Qualifier("choiceJdbcTemplate")
+	private JdbcTemplate choicedbcTemplate;
 
 	@Resource(name = "choiceDataSourceProcedureTemplate")
 	private ProcedureTemplate procedureTemplate;
@@ -878,5 +887,38 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 		logger.info("Exiting << getServiceLocation");
 		return data;
 	}
+	
+	@Override
+	public boolean updateErrorCodeinSLA(String TrackingId, String guid, String errorCode , String errorCDList) throws Exception  {
+		// TODO Auto-generated method stub
+		logger.debug("serviceLocationImpl::updateErrorCodeinSLA: Entering the method");
+		
+		Long startTime = Calendar.getInstance().getTimeInMillis();
+		int result = 0;
+try {
+			String updateErrorInSLA = getSqlMessage().getMessage(DBConstants.OE_UPDATE_ERROR_SLA_QUERY, null,
+					null);
+	
+			result = getJdbcTemplate().update(updateErrorInSLA,errorCode,errorCDList,TrackingId,guid);
+			
+           Long endTime = Calendar.getInstance().getTimeInMillis();
+			logger.info(OE_SPRING_CALL_LOG_STATEMENT + EMPTY + "updateErrorCodeinSLA" + endTime + startTime);
+
+			if (result > 0) {
+				return true;
+			} else {
+				return false;
+			}
+
+		} catch (DataAccessException exception) {
+			logger.error("updateErrorCodeinSLA insert Failed " + exception);
+			throw new Exception(exception);
+		}
+		catch (Exception exception) {
+			logger.error("updateErrorCodeinSLA insert Failed " + exception);
+			throw new Exception(exception);
+		}
+}
+
 
 }
