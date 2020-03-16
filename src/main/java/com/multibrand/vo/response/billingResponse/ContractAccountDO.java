@@ -79,6 +79,7 @@ public class ContractAccountDO {
   	private String strConversionDate;
   	private String strExFirstName;
   	private String strExLastName;
+  	private String strRetroEligible ="";
   	
   	
   	@XmlElement(name="legacyAccountNumber")
@@ -385,6 +386,19 @@ public class ContractAccountDO {
 	{
 		this.billingAddressDO = billingAddressDO;
 	}
+	/**
+	 * @return the strRetroEligible
+	 */
+	public String getStrRetroEligible() {
+		return strRetroEligible;
+	}
+	/**
+	 * @param strRetroEligible the strRetroEligible to set
+	 */
+	public void setStrRetroEligible(String strRetroEligible) {
+		this.strRetroEligible = strRetroEligible;
+	}
+	
     
     
     
