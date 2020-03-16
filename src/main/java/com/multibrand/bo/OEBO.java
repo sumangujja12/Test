@@ -1879,10 +1879,10 @@ public class OEBO extends OeBoHelper implements Constants{
 		EnrollmentResponse response =  new EnrollmentResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
 		OESignupDTO oeSignUpDTO = null;
-		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		LinkedHashSet<String> serviceLocationResponseErrorList = null;
 		int retryCount=0;
 		String personId=null;
-		
+		ServiceLocationResponse serviceLoationResponse =null;
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -1892,10 +1892,15 @@ public class OEBO extends OeBoHelper implements Constants{
 		}
 		
 		try {
-			ServiceLocationResponse serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
+			
+			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
+		    serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			}else{
+				serviceLocationResponseErrorList = new LinkedHashSet<>();
 			}
 
 			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
@@ -2040,8 +2045,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
 		String errorCd=null;
-		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-
+		LinkedHashSet<String> serviceLocationResponseErrorList = null;
+		ServiceLocationResponse serviceLoationResponse =null;
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: performCreditCheck(..)";
 
@@ -2059,10 +2064,14 @@ public class OEBO extends OeBoHelper implements Constants{
 
 		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = null;
 		try {
-			ServiceLocationResponse serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
+			if(StringUtils.isNotEmpty(creditCheckRequest.getTrackingId())){
+		    serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			}else{
+				serviceLocationResponseErrorList = new LinkedHashSet<>();
 			}
 			
 			// getNewCreditScore from NRGWS OEDomain via [OE proxy layer]
@@ -2687,7 +2696,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		AddressDO serviceAddressDO = new AddressDO();
 		
 		Locale localeObj = null;
-		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		LinkedHashSet<String> serviceLocationResponseErrorList = null;
+		ServiceLocationResponse serviceLoationResponse =null;
+		
 		
 		if (locale.equalsIgnoreCase(S))
 			localeObj = new Locale("es", "US");
@@ -2699,10 +2710,14 @@ public class OEBO extends OeBoHelper implements Constants{
 		response.setSwitchHoldFlag(EMPTY);
 		
 		try {
-			ServiceLocationResponse serviceLoationResponse=getEnrollmentData(trackingId);
+			if(StringUtils.isNotEmpty(trackingId)){
+		    serviceLoationResponse=getEnrollmentData(trackingId);
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			}else{
+				serviceLocationResponseErrorList = new LinkedHashSet<>();
 			}
 	    	
 			serviceAddressDO.setStrStreetNum(servStreetNum);
@@ -5410,12 +5425,17 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
-	LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+	LinkedHashSet<String> serviceLocationResponseErrorList = null;
+	ServiceLocationResponse serviceLoationResponse=null;
 	try{
-		ServiceLocationResponse serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+		if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
+	    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
 		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 		serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+		}
+		}else{
+			serviceLocationResponseErrorList =new LinkedHashSet<>();
 		}
 		
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
@@ -5504,17 +5524,13 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	}finally{
 		try{
 		if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
-			ServiceLocationResponse serviceLoationResponse = null;
 			//update service location affiliate
 			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
              requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
              //update RECENT_MSG_CD
              requestData.setMessageCode(response.getMessageCode());
-             serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
-             if(serviceLoationResponse == null){
              requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
-             }
             this.updateServiceLocation(requestData);
         }
 	}catch(Exception e){
