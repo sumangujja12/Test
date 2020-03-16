@@ -70,57 +70,63 @@ public class SalesBO extends OeBoHelper implements Constants {
 	 * @return
 	 * @throws Exception
 	 */
-	public SalesEsidInfoTdspCalendarResponse getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidInfoTdspResponse, HttpServletRequest httpRequest) throws Exception {
+	public SalesEsidInfoTdspCalendarResponse getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidCalendarRequest, HttpServletRequest httpRequest) throws Exception {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspCalendarResponse = new SalesEsidInfoTdspCalendarResponse();
 		String bpMatchFlag= null;
 		String error="";
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		try {
-			if(StringUtils.isNotEmpty(salesEsidInfoTdspResponse.getGuid())){
-				 serviceLoationResponse=oeBO.getEnrollmentData(salesEsidInfoTdspResponse.getTrackingId(),salesEsidInfoTdspResponse.getGuid() );
+			if(StringUtils.isNotEmpty(salesEsidCalendarRequest.getGuid())){
+				 serviceLoationResponse=oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),salesEsidCalendarRequest.getGuid() );
 			}else{
-				 serviceLoationResponse=oeBO.getEnrollmentData(salesEsidInfoTdspResponse.getTrackingId() );
+				 serviceLoationResponse=oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId() );
 			}	
 			
-			
-			if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
-				&& (StringUtils.equalsIgnoreCase(salesEsidInfoTdspResponse.getPastServiceMatchedFlag(),"Y"))){
-				//bpMatchFlag=BPSD;
-				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
-				
-					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-					serviceLocationResponseErrorList.remove(BPSD);
+			if (null!= serviceLoationResponse){
+				if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
+					&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(),"Y"))){
+					//bpMatchFlag=BPSD;
+					if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+						String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+					
+						serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+						serviceLocationResponseErrorList.remove(BPSD);
+					}
+						
+						boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidCalendarRequest.getTrackingId(),salesEsidCalendarRequest.getGuid(),error,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+						
+				}else if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
+						&& (!StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(),"Y"))){
+					bpMatchFlag=BPSD;
 				}
-					
-					boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidInfoTdspResponse.getTrackingId(),salesEsidInfoTdspResponse.getGuid(),error,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
-					
-			}else if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
-					&& (!StringUtils.equalsIgnoreCase(salesEsidInfoTdspResponse.getPastServiceMatchedFlag(),"Y"))){
-				bpMatchFlag=BPSD;
-			}
-			EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
-					.getESIDAndCalendarDates(salesEsidInfoTdspResponse.getCompanyCode(),
-							salesEsidInfoTdspResponse.getAffiliateId(),
-							salesEsidInfoTdspResponse.getBrandId(),
-							serviceLoationResponse.getServStreetNum(),
-							serviceLoationResponse.getServStreetName(),
-							serviceLoationResponse.getServStreetAptNum(),
-							serviceLoationResponse.getServZipCode(),
-							serviceLoationResponse.getTdspCode(),
-							serviceLoationResponse.getServiceRequestTypeCode(),
-							salesEsidInfoTdspResponse.getTrackingId(),
-							bpMatchFlag,
-							salesEsidInfoTdspResponse.getLanguageCode(),
-							serviceLoationResponse.getEsid(),
-							httpRequest.getSession(true).getId(),
-							serviceLoationResponse.getErrorCode());
-			
+				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
+						.getESIDAndCalendarDates(salesEsidCalendarRequest.getCompanyCode(),
+								salesEsidCalendarRequest.getAffiliateId(),
+								salesEsidCalendarRequest.getBrandId(),
+								serviceLoationResponse.getServStreetNum(),
+								serviceLoationResponse.getServStreetName(),
+								serviceLoationResponse.getServStreetAptNum(),
+								serviceLoationResponse.getServZipCode(),
+								serviceLoationResponse.getTdspCode(),
+								serviceLoationResponse.getServiceRequestTypeCode(),
+								salesEsidCalendarRequest.getTrackingId(),
+								bpMatchFlag,
+								salesEsidCalendarRequest.getLanguageCode(),
+								serviceLoationResponse.getEsid(),
+								httpRequest.getSession(true).getId(),
+								serviceLoationResponse.getErrorCode());
+				
 					    
 			    BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);	
 			    
-			
+			}else{
+				//These values need to set after discussion
+				salesEsidInfoTdspCalendarResponse.setStatusCode(STATUS_CODE_CONTINUE);
+				salesEsidInfoTdspCalendarResponse.setMessageCode(EMPTY);
+				salesEsidInfoTdspCalendarResponse.setMessageText(EMPTY);
+				salesEsidInfoTdspCalendarResponse.setErrorDescription("No Data in SLA Table");
+			}
 				
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch"+ e.getMessage());

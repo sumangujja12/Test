@@ -2,8 +2,10 @@ package com.multibrand.vo.response;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.multibrand.dto.response.SalesBaseResponse;
+
 @XmlRootElement(name="EsidInfoTdspCalendarResponse")
-public class SalesEsidInfoTdspCalendarResponse extends GenericResponse {
+public class SalesEsidInfoTdspCalendarResponse extends SalesBaseResponse {
 	private String esid;
 	private String tdspCode;
 	private String availableDates;
