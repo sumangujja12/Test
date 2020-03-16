@@ -170,7 +170,8 @@ public class ValidationBO extends BaseBO {
 		String messageCode=null;
 		String errorCd=null;
 		String recentCallMade=null;
-		LinkedHashSet<String> serviceLocationResponseerrorList = new LinkedHashSet<>();
+		LinkedHashSet<String> serviceLocationResponseerrorList = null;
+		ServiceLocationResponse serviceLoationResponse =null;
 		com.multibrand.vo.response.PerformPosIdandBpMatchResponse response= new com.multibrand.vo.response.PerformPosIdandBpMatchResponse();
 		BPMatchDTO bpMatchDTO=new BPMatchDTO();
 		/*
@@ -178,13 +179,6 @@ public class ValidationBO extends BaseBO {
 		 */
 		response.setTokenizedSSN(performPosIdBpRequest.getTokenSSN());
 		response.setTokenizedTDL(performPosIdBpRequest.getTokenTDL());
-
-		ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
-		if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
-		serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-		}
-
 
 		//isValidDate will confirm if DOB got processed properly into desired format
 		/*boolean isValidDate=true;
@@ -279,6 +273,17 @@ public class ValidationBO extends BaseBO {
 				+ " "+performPosIdBpRequest.getAffiliateId() +":: retry Count is ::"+retryCount);
 		ValidatePosIdKBAResponse validatePosIdKBAResponse= new ValidatePosIdKBAResponse();
 		try{
+			
+			if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
+			    serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+				if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+				}
+				}else{
+					serviceLocationResponseerrorList = new LinkedHashSet<>();
+				}
+			
 			/*
 			 * Step 5: Make validatePosId call
 			 */
