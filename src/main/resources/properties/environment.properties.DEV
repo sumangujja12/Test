@@ -177,3 +177,6 @@ togglz.default.groupName=SalesAPI
 #End Togglz Framework Integration
 RetroAmbPercentageValue=10
 contractAccountNumberRetro=000010474734
+#//START : GMD APIS
+CCS_GMD_STMT=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/z_e_isu_get_gmd_stmt/z_e_isu_get_gmd_stmt
+

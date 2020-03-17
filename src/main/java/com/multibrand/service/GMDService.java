@@ -1,15 +1,14 @@
 package com.multibrand.service;
 
+import java.math.BigDecimal;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -103,6 +102,10 @@ public class GMDService extends BaseAbstractService {
 						
 			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt);
 			
+			double rate = handleRateResponse(holderZetGmdStmt);
+			
+			gmdStatementBreakDownResp.setRate(rate);
+			
 		}catch(Exception ex){
 			utilityloggerHelper.logTransaction("getGMDStatementDetails", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 			throw new NRGException(ex);
@@ -117,6 +120,30 @@ public class GMDService extends BaseAbstractService {
 		
 		return  gmdStatementBreakDownResp;
 	}
+	
+	private double handleRateResponse(Holder<ZetGmdStmt>  holderZetGmdStmt) {
+	
+		
+		ZetGmdStmt zetGmdStmt = holderZetGmdStmt.value;
+		
+		double rate = 0;
+		
+		int count = 0;
+		
+		for ( ZesGmdStmt ZesGmdStmt : zetGmdStmt.getItem()) {
+			rate = rate+ZesGmdStmt.getUseChrg().doubleValue();
+			count ++;
+		}
+					
+
+		if ( count  > 0) {
+			return Double.parseDouble(String.format("%.2f", rate/count));
+		} else {
+			return rate;
+		}
+		
+
+	}	
 	
 	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt) {
 
@@ -136,7 +163,6 @@ public class GMDService extends BaseAbstractService {
 		
 		breakdown.add(gmdMemberBreakDown(zesGmdStmt, GMD_MEMBERSHIP));
 		breakdown.add(taxesBreakDown(zesGmdStmt, TAXES_FEES));
-		
 		
 		
 		response.setBreakdown(breakdown);
@@ -170,6 +196,9 @@ public class GMDService extends BaseAbstractService {
 		wholeSaleCost.add(costs);
 		
 		wholesaleElecBreakDown.setGroup(group);
+
+		
+		wholesaleElecBreakDown.setTotalCost(zesGmdStmt.getSolarFee() .add(zesGmdStmt.getAnclServ()).add(zesGmdStmt.getUseChrg()));
 		wholesaleElecBreakDown.setCosts(wholeSaleCost);
 		return wholesaleElecBreakDown;
 	}
@@ -192,10 +221,10 @@ public class GMDService extends BaseAbstractService {
 		
 		wholeSaleCost.add(costs);
 		
-		
-		
 		tduDeliveryitemBreakDown.setGroup(group);
+		tduDeliveryitemBreakDown.setTotalCost(zesGmdStmt.getTduDely() .add(zesGmdStmt.getServQual()));
 		tduDeliveryitemBreakDown.setCosts(wholeSaleCost);
+		
 		return tduDeliveryitemBreakDown;
 	}	
 	
@@ -207,18 +236,21 @@ public class GMDService extends BaseAbstractService {
 		
 		gmdMemberBreakDown.setGroup(group);
 		gmdMemberBreakDown.setTotalCost(zesGmdStmt.getMemFee());
+		gmdMemberBreakDown.setTotalCost(zesGmdStmt.getMemFee());
 		return gmdMemberBreakDown;
 	}
 	
 	private Breakdown taxesBreakDown(ZesGmdStmt zesGmdStmt, String group) {
 		
-		Breakdown gmdMemberBreakDown = new Breakdown();
+		Breakdown gmdTaxesBreakDown = new Breakdown();
 		
-	
+		gmdTaxesBreakDown.setGroup(group);
+		gmdTaxesBreakDown.setTotalCost(zesGmdStmt.getTax());
+		gmdTaxesBreakDown.setTotalCost(zesGmdStmt.getTax());
+
 		
-		gmdMemberBreakDown.setGroup(group);
-		gmdMemberBreakDown.setTotalCost(zesGmdStmt.getTax());
-		return gmdMemberBreakDown;
+		
+		return gmdTaxesBreakDown;
 	}	
 	
 }

@@ -19,6 +19,10 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
     private BigDecimal totalCost;
     private List<Breakdown> breakdown;
     
+
+
+    
+    
 	/**
 	 * @return the rate
 	 */
@@ -31,7 +35,6 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
 	public void setRate(double rate) {
 		this.rate = rate;
 	}
-	
 	/**
 	 * @return the totalUsage
 	 */
