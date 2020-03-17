@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.request.validation.ChannelType;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidateCompanyCode;
+import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 
 @Component
@@ -84,5 +85,8 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 		this.languageCode = languageCode;
 	}	
 	
-	
+	@Override
+	public String toString() {
+		return CommonUtil.doRender(this);
+	}
 }

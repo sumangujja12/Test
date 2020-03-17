@@ -33,9 +33,6 @@ public class IdentityRequest extends SalesBaseRequest {
 	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "must be in MMddyyyy format",messageCode="INVALID_DOB",messageCodeText="INVALID_DOB")
 	String dob;
 	
-	String tdl;
-	String ssn ;
-	
 	@Length(max = 40,groups = SizeConstraint.class)
 	String maidenName; 
 	
@@ -104,22 +101,14 @@ public class IdentityRequest extends SalesBaseRequest {
 	
 	@Length(max = 20, groups = SizeConstraint.class)
 	String tokenSSN;
-	String dobForPosId;
 	
-	//START : OE :Sprint61 :US21009 :Kdeshmu1
 	String agentID;
 	
 	String ipAddress;
 	
-	
-	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	String entryPoint ;
-	
-	String tpvStatus ;
-	String campaignCd ;
-	String pageRevisited ;
+
 	String prospectId;
-	String bypassPosid;
 	String tabletId;
 	String abandonedEnrollStatFlag;
 	String etfFlag;
@@ -138,7 +127,6 @@ public class IdentityRequest extends SalesBaseRequest {
 	String locationName;
 	
 	String guid;
-	String prospectid;
 	String noid;
 	String etf;
 	public String getLastName() {
@@ -164,18 +152,6 @@ public class IdentityRequest extends SalesBaseRequest {
 	}
 	public void setDob(String dob) {
 		this.dob = dob;
-	}
-	public String getTdl() {
-		return tdl;
-	}
-	public void setTdl(String tdl) {
-		this.tdl = tdl;
-	}
-	public String getSsn() {
-		return ssn;
-	}
-	public void setSsn(String ssn) {
-		this.ssn = ssn;
 	}
 	public String getMaidenName() {
 		return maidenName;
@@ -309,12 +285,6 @@ public class IdentityRequest extends SalesBaseRequest {
 	public void setTokenSSN(String tokenSSN) {
 		this.tokenSSN = tokenSSN;
 	}
-	public String getDobForPosId() {
-		return dobForPosId;
-	}
-	public void setDobForPosId(String dobForPosId) {
-		this.dobForPosId = dobForPosId;
-	}
 	public String getAgentID() {
 		return agentID;
 	}
@@ -333,35 +303,11 @@ public class IdentityRequest extends SalesBaseRequest {
 	public void setEntryPoint(String entryPoint) {
 		this.entryPoint = entryPoint;
 	}
-	public String getTpvStatus() {
-		return tpvStatus;
-	}
-	public void setTpvStatus(String tpvStatus) {
-		this.tpvStatus = tpvStatus;
-	}
-	public String getCampaignCd() {
-		return campaignCd;
-	}
-	public void setCampaignCd(String campaignCd) {
-		this.campaignCd = campaignCd;
-	}
-	public String getPageRevisited() {
-		return pageRevisited;
-	}
-	public void setPageRevisited(String pageRevisited) {
-		this.pageRevisited = pageRevisited;
-	}
 	public String getProspectId() {
 		return prospectId;
 	}
 	public void setProspectId(String prospectId) {
 		this.prospectId = prospectId;
-	}
-	public String getBypassPosid() {
-		return bypassPosid;
-	}
-	public void setBypassPosid(String bypassPosid) {
-		this.bypassPosid = bypassPosid;
 	}
 	public String getTabletId() {
 		return tabletId;
@@ -411,12 +357,6 @@ public class IdentityRequest extends SalesBaseRequest {
 	public void setGuid(String guid) {
 		this.guid = guid;
 	}
-	public String getProspectid() {
-		return prospectid;
-	}
-	public void setProspectid(String prospectid) {
-		this.prospectid = prospectid;
-	}
 	public String getNoid() {
 		return noid;
 	}
@@ -428,8 +368,5 @@ public class IdentityRequest extends SalesBaseRequest {
 	}
 	public void setEtf(String etf) {
 		this.etf = etf;
-	}
-	
-	
-	
+	}	
 }

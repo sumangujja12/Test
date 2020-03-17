@@ -3644,10 +3644,11 @@ public class OEBO extends OeBoHelper implements Constants{
 			{  //If DL & SSN are passed empty
 				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 				tokenResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-				tokenResponse.setResultDescription("DL and SSN are empty");
+				tokenResponse.setResultDescription("Both DL and SSN are empty");
+				tokenResponse.setErrorCode("MISSING_PII");
+				tokenResponse.setErrorDescription("Both DL and SSN are empty");
 				getPosIdTokenResponse.put("tokenResponse", tokenResponse);
 				return getPosIdTokenResponse;
-				
 			}
 			if(StringUtils.isNotBlank(ssn))
 			{   logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: setting ssn action ");
@@ -5938,7 +5939,6 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		// Start Validating DOB- Jsingh1
 		//Checking if DOB lies in Valid age Range (18-100)
 			try{
-				
 				if(StringUtils.isNotEmpty(request.getTrackingId())){
 					ServiceLocationResponse serviceLoationResponse = null;
 					if(StringUtils.isNotEmpty(request.getGuid())){
@@ -6130,7 +6130,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 				} else if (tokenResponse.getResultCode().equals(
 				Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
 	
-					response = Response.status(200).entity(tokenResponse).build();
+					response = Response.status(500).entity(tokenResponse).build();
 					return response;
 				} else {
 					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -6139,7 +6139,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 					tokenResponse
 							.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-					response = Response.status(200).entity(tokenResponse).build();
+					response = Response.status(500).entity(tokenResponse).build();
 					return response;
 				}
 			} else {
@@ -6149,7 +6149,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 				tokenResponse
 						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-				response = Response.status(200).entity(tokenResponse).build();
+				response = Response.status(500).entity(tokenResponse).build();
 				return response;
 			}		
 	   return response;

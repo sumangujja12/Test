@@ -215,37 +215,39 @@ public class ValidationBO extends BaseBO {
 			List<Map<String, String>> personIdAndRetryCountResponse =oeBO.getPersonIdAndRetryCountByTrackingNo(performPosIdBpRequest.getTrackingId());
 			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
 
-			personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
-			logger.debug("inside validatePosId::personIdAndRetryCountResponse.get(0) "+personIdAndRetryCountResponse.get(0));
-
-			if(StringUtils.isNotBlank(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT))){
+			if(null!=personIdAndRetryCountResponse 
+					&& personIdAndRetryCountResponse.size()>0
+					&& StringUtils.isNotBlank(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT)))
+			{
+				personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
 				retryCount=	Integer.parseInt(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT));
 				logger.debug("inside validatePosId:: Tracking number :: "+performPosIdBpRequest.getTrackingId()+""
-						+ " retry count for database is :: "+retryCount);
+						+ " retry count from database is :: "+retryCount);
 
 				/*
-				 * Step 4: Check the retry count value if greater than 2 then dont process and return FAILURE
+				 * Step 4: Check the retry count value if greater than 2 then 
+				 * continue as PASS and assess POSIDHOLD (when Togglz is ON)
+				 * or hardstop (when TOGGLZ is OFF)
 				 */
 				if(retryCount>2)
 				{
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
-										
-					response.setGuid(serviceLoationResponse.getGuid());
 					//need to change toggle name
 					boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
 					if(posidHoldAllowed){
 						response.setStatusCode(STATUS_CODE_CONTINUE);
+						messageCode=POSID_FAIL_MAX;
+						response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
 					}else{
 						response.setStatusCode(STATUS_CODE_STOP);
-					}
-					
-					messageCode=POSID_FAIL_MAX;
+						messageCode=POSID_FAIL_MAX;
+						response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					}					
 					response.setMessageCode(messageCode);
 					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 					response.setRetryCount(Integer.toString(retryCount));
-					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 					response.setTrackingId(performPosIdBpRequest.getTrackingId());
 					return response;
 				}
