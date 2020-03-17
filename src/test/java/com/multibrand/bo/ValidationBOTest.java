@@ -106,8 +106,8 @@ public class ValidationBOTest {
 	private PerformPosIdAndBpMatchRequest createPerformPosIdAndBpMatchRequestForThireRetry(){
 		PerformPosIdAndBpMatchRequest performPosIdBpRequest = new PerformPosIdAndBpMatchRequest();
 		
-		performPosIdBpRequest.setTokenSSN("GDFF-G53156");
-		performPosIdBpRequest.setTokenTDL("");		
+		performPosIdBpRequest.setTokenizedSSN("GDFF-G53156");
+		performPosIdBpRequest.setTokenizedTDL("");		
 		performPosIdBpRequest.setTrackingId("21231213312");
 		performPosIdBpRequest.setPreferredLanguage("E");
 		performPosIdBpRequest.setAffiliateId("A44225");
