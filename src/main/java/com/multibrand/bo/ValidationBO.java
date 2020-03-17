@@ -170,7 +170,7 @@ public class ValidationBO extends BaseBO {
 		String messageCode=null;
 		String errorCd=null;
 		String recentCallMade=null;
-		LinkedHashSet<String> serviceLocationResponseerrorList = null;
+		LinkedHashSet<String> serviceLocationResponseerrorList = new LinkedHashSet<>();
 		ServiceLocationResponse serviceLoationResponse =null;
 		com.multibrand.vo.response.PerformPosIdandBpMatchResponse response= new com.multibrand.vo.response.PerformPosIdandBpMatchResponse();
 		BPMatchDTO bpMatchDTO=new BPMatchDTO();
@@ -282,8 +282,6 @@ public class ValidationBO extends BaseBO {
 				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 				}
-				}else{
-					serviceLocationResponseerrorList = new LinkedHashSet<>();
 				}
 			
 			/*
