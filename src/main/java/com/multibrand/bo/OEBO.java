@@ -3641,7 +3641,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				tokenResponse.setResultDescription("Both DL and SSN are empty");
 				tokenResponse.setErrorCode("MISSING_PII");
 				tokenResponse.setErrorDescription("Both DL and SSN are empty");
+				tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 				getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+
 				return getPosIdTokenResponse;
 			}
 			if(StringUtils.isNotBlank(ssn))
@@ -6053,13 +6055,13 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 			logger.info("inside validatePosId::after local change languageCode langauge is :: "
 					+ request.getLanguageCode());
 						
-			if(StringUtils.isNotEmpty(request.getTokenSSN()) || StringUtils.isNotEmpty(request.getTokenTDL()) ) {				
-				String tokenValue = StringUtils.isNotEmpty(request.getTokenSSN()) ? request.getTokenSSN() : request.getTokenTDL();
+			if(StringUtils.isNotEmpty(request.getTokenizedSSN()) || StringUtils.isNotEmpty(request.getTokenizedTDL()) ) {				
+				String tokenValue = StringUtils.isNotEmpty(request.getTokenizedSSN()) ? request.getTokenizedSSN() : request.getTokenizedTDL();
 				logger.info("inside tokenValue  :: "+tokenValue);
 				tokenResponse.setReturnToken(tokenValue);
 				tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
-				getPosIdTokenResponse.put("tokenSSN", request.getTokenSSN());				
-				getPosIdTokenResponse.put("tokenTdl", request.getTokenTDL());												
+				getPosIdTokenResponse.put("tokenSSN", request.getTokenizedSSN());				
+				getPosIdTokenResponse.put("tokenTdl", request.getTokenizedTDL());												
 				getPosIdTokenResponse.put("tokenResponse",tokenResponse);
 							
 				
@@ -6074,9 +6076,9 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 			if (getPosIdTokenResponse != null) {
 				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
 						.get("tokenResponse");
-				request.setTokenTDL((String) getPosIdTokenResponse
+				request.setTokenizedTDL((String) getPosIdTokenResponse
 						.get("tokenTdl"));
-				request.setTokenSSN((String) getPosIdTokenResponse
+				request.setTokenizedSSN((String) getPosIdTokenResponse
 						.get("tokenSSN"));
 	
 				if (tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
@@ -6122,7 +6124,8 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 				} else if (tokenResponse.getResultCode().equals(
 				Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
 	
-					response = Response.status(500).entity(tokenResponse).build();
+					response = Response.status(tokenResponse.getHttpStatus()).entity(tokenResponse).build();
+					logger.info("It is coming here ");
 					return response;
 				} else {
 					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);

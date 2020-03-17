@@ -177,8 +177,8 @@ public class ValidationBO extends BaseBO {
 		/*
 		 * setting tokenized values into response
 		 */
-		response.setTokenizedSSN(performPosIdBpRequest.getTokenSSN());
-		response.setTokenizedTDL(performPosIdBpRequest.getTokenTDL());
+		response.setTokenizedSSN(performPosIdBpRequest.getTokenizedSSN());
+		response.setTokenizedTDL(performPosIdBpRequest.getTokenizedTDL());
 
 		//isValidDate will confirm if DOB got processed properly into desired format
 		/*boolean isValidDate=true;
@@ -331,10 +331,10 @@ public class ValidationBO extends BaseBO {
 				 */
 				Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
 				performBpMatchResponse=oeBO.performBpMatch(response,errorCd,messageCode, performPosIdBpRequest.getFirstName(),
-						performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenTDL(), performPosIdBpRequest.getMaidenName(),
+						performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenizedTDL(), performPosIdBpRequest.getMaidenName(),
 						performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getServStreetAptNum(), performPosIdBpRequest.getServCity(),
 						performPosIdBpRequest.getServState(), performPosIdBpRequest.getServStreetName(), performPosIdBpRequest.getServStreetNum(),
-						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenSSN(),performPosIdBpRequest.getBrandId());	
+						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenizedSSN(),performPosIdBpRequest.getBrandId());	
 
 				response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 				messageCode=(String)performBpMatchResponse.get("messageCode");
@@ -696,8 +696,8 @@ public class ValidationBO extends BaseBO {
 		addPersonRequest.setFirstName(performPosIdBpRequest.getFirstName());
 		addPersonRequest.setMaidenName(performPosIdBpRequest.getMaidenName());
 		addPersonRequest.setMiddleName(performPosIdBpRequest.getMiddleName());
-		addPersonRequest.setIdNumber(performPosIdBpRequest.getTokenTDL());
-		addPersonRequest.setSsn(performPosIdBpRequest.getTokenSSN());
+		addPersonRequest.setIdNumber(performPosIdBpRequest.getTokenizedTDL());
+		addPersonRequest.setSsn(performPosIdBpRequest.getTokenizedSSN());
 		addPersonRequest.setPosIdStatus(posidStatus);
 		//logic for mktpref
 		if(StringUtils.isNotBlank(performPosIdBpRequest.getMktPref()) && 
@@ -807,13 +807,18 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setDeviceLatitude(EMPTY);
 		addServiceLocation.setDeviceLongitude(EMPTY);
 		addServiceLocation.setDeviceAccuracy(EMPTY);
-		addServiceLocation.setPendingBalAmount(EMPTY);
-		addServiceLocation.setPastServiceCa(EMPTY);
+		//addServiceLocation.setPendingBalAmount(EMPTY);
+		//addServiceLocation.setPastServiceCa(EMPTY);
 		addServiceLocation.setKbaSuggestionFlag(oESignupDTO.getKbaSuggestionFlag());
 		addServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
 		addServiceLocation.setBpMatchScenarioId(bpMatchDTO.getBpMatchScenarioId());
-		addServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
-		addServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
+		if(bpMatchDTO.getPendingBalanceAmount() != null){
+			addServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+			addServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
+		}else{
+			addServiceLocation.setPendingBalAmount(EMPTY);
+			addServiceLocation.setPastServiceCa(EMPTY);
+		}
 		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
@@ -933,13 +938,13 @@ public class ValidationBO extends BaseBO {
 		updatePerson.setFirstName(performPosIdBpRequest.getFirstName());
 		updatePerson.setMaidenName(performPosIdBpRequest.getMaidenName());
 		updatePerson.setMiddleName(performPosIdBpRequest.getMiddleName());
-		updatePerson.setIdNumber(performPosIdBpRequest.getTokenTDL());
+		updatePerson.setIdNumber(performPosIdBpRequest.getTokenizedTDL());
 		//logic for mktpref
 		if(StringUtils.isNotBlank(performPosIdBpRequest.getMktPref()) && performPosIdBpRequest.getMktPref().equalsIgnoreCase("Y"))
 			updatePerson.setEmailOptionRps(X_VALUE);
 		else
 			updatePerson.setEmailOptionRps(O_VALUE);
-		updatePerson.setSsn(performPosIdBpRequest.getTokenSSN());
+		updatePerson.setSsn(performPosIdBpRequest.getTokenizedSSN());
 		updatePerson.setPosIdStatus(posidStatus);
 		updatePerson.setLastName(performPosIdBpRequest.getLastName());
 
@@ -1062,10 +1067,10 @@ public class ValidationBO extends BaseBO {
 	public ValidatePosIdKBAResponse validatePosIdOldCSSCall(PerformPosIdAndBpMatchRequest performPosIdBpRequest) throws Exception  
 	{
 		ValidatePosIdKBAResponse validatePosIdKBAResponse = new ValidatePosIdKBAResponse();		
-		ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenTDL(),
+		ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenizedTDL(),
 				performPosIdBpRequest.getCompanyCode(),
 				performPosIdBpRequest.getMaidenName(),performPosIdBpRequest.getFirstName(), performPosIdBpRequest.getLastName(),
-				performPosIdBpRequest.getTokenSSN(), performPosIdBpRequest.getMiddleName());
+				performPosIdBpRequest.getTokenizedSSN(), performPosIdBpRequest.getMiddleName());
 		ValidatePosIdResponse validatePosIdResponse=validationService.validatePosId(validatePosIdReq);
 		validatePosIdKBAResponse.setExSsnVerifydate(POSID_BLANK_DATE);
 		validatePosIdKBAResponse.setExDlVerifydate(POSID_BLANK_DATE);
