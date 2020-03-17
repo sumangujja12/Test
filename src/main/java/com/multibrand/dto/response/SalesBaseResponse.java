@@ -3,6 +3,7 @@ package com.multibrand.dto.response;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 
 @XmlRootElement
@@ -13,7 +14,7 @@ public class SalesBaseResponse implements Constants  {
 	private String messageCode = "";
 	private String messageText = "";
 	private String statusCode = STATUS_CODE_CONTINUE;
-	private Response.Status httpStatus;
+	private Response.Status httpStatus = Response.Status.OK;
 	
 	
 	public String getErrorCode() {
@@ -53,5 +54,26 @@ public class SalesBaseResponse implements Constants  {
 		this.httpStatus = httpStatus;
 	}
 	
+	@Override
+	public String toString() {
+		return CommonUtil.doRender(this);
+	}
 	
+	public SalesBaseResponse getGenericErrorResponse(Exception ex, String messageText) {
+		this.errorCode=MESSAGE_CODE_TECHNICAL_ERROR;
+		this.errorDescription=ex.getMessage();
+		this.messageCode=MESSAGE_CODE_TECHNICAL_ERROR;
+		this.messageText=messageText;
+		this.statusCode=STATUS_CODE_STOP;
+		this.httpStatus=Response.Status.INTERNAL_SERVER_ERROR;
+		return this;
+	}
+	
+	public SalesBaseResponse getInvalidTrackingAndGuidResponse() {
+		this.errorCode=MESSAGE_CODE_NO_MATCH_FOUND;
+		this.errorDescription="Invalid trackingId / guid";
+		this.statusCode=STATUS_CODE_STOP;
+		this.httpStatus=Response.Status.BAD_REQUEST;
+		return this;
+	}
 }

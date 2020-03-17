@@ -1,6 +1,5 @@
 package com.multibrand.vo.response;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -144,7 +143,7 @@ public class GenericResponse implements Constants {
 		this.resultDisplayText = StringEscapeUtils.unescapeHtml(resultDisplayText);
 	}
 	
-	public GenericResponse setGenericErrorResponse(Exception ex, String messageText) {
+	public GenericResponse getGenericErrorResponse(Exception ex, String messageText) {
 		this.resultCode=RESULT_CODE_EXCEPTION_FAILURE;
 		this.resultDescription=RESULT_DESCRIPTION_EXCEPTION;
 		this.errorCode=MESSAGE_CODE_TECHNICAL_ERROR;
