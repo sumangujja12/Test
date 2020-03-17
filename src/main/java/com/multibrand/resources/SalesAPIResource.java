@@ -2,7 +2,6 @@
 package com.multibrand.resources;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +9,6 @@ import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -21,43 +19,35 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.SalesBO;
 import com.multibrand.bo.ValidationBO;
-import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AffiliateOfferRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
-import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
-import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
-import com.multibrand.request.validation.BasicConstraint;
-import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidateGetMapppingRequestParam;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.TokenRequestVO;
-import com.multibrand.vo.response.AgentDetailsResponse;
-import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
@@ -127,7 +117,7 @@ public class SalesAPIResource extends BaseResource {
 	}
 
 	@POST
-	@Path(API_POSID)
+	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response performPosidAndBpMatch(
@@ -137,32 +127,21 @@ public class SalesAPIResource extends BaseResource {
 		
 		try{
 			
-			if(StringUtils.isNotEmpty(request.getGuid())){
-				if(StringUtils.isEmpty(request.getTrackingId())){
-					PerformPosIdandBpMatchResponse bpMatchResponse = new PerformPosIdandBpMatchResponse();
-					bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-					bpMatchResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-					bpMatchResponse.setResultDescription("trackingNumber may not be Empty");
-					bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-					bpMatchResponse.setErrorDescription(bpMatchResponse.getResultDescription());					
-					response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
-					return response;
-				}
+			if(StringUtils.isNotEmpty(request.getGuid()) && StringUtils.isEmpty(request.getTrackingId())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("trackingId cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
+			} else if(StringUtils.isNotEmpty(request.getTrackingId()) && StringUtils.isEmpty(request.getGuid())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("guid cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
 			}
-			
-			if(StringUtils.isNotEmpty(request.getTrackingId())){
-				if(StringUtils.isEmpty(request.getGuid())){
-					PerformPosIdandBpMatchResponse bpMatchResponse = new PerformPosIdandBpMatchResponse();
-					bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-					bpMatchResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-					bpMatchResponse.setResultDescription("guid may not be Empty");
-					bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-					bpMatchResponse.setErrorDescription(bpMatchResponse.getResultDescription());					
-					response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
-					return response;
-				}
-			}
-			
 			response = salesBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
 			logger.error(e);
@@ -170,9 +149,7 @@ public class SalesAPIResource extends BaseResource {
    			
    		}finally{
    			try {
-   				request.setSsn(StringUtils.EMPTY);
-   				request.setTdl(StringUtils.EMPTY);
-   				utilityloggerHelper.logSalesAPITransaction(API_POSID, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   				utilityloggerHelper.logSalesAPITransaction(API_IDENTITY, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    			} catch(Exception en){
    				logger.error("Exception utilityloggerHelper.logSalesAPITransaction ",en);
    			}

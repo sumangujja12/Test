@@ -438,6 +438,23 @@ public class CommonUtil implements Constants {
 	}
 
 	/**
+	 * replace all characters in input string no. with '*' leaving last 4
+	 * characters as it is
+	 * 
+	 * @param rawData
+	 * @return
+	 */
+	public static String maskPIIData(String rawData) {
+		if(null!=rawData && rawData.length()>4){
+			String replaceCharSequence = rawData.substring(0, rawData.length() - 4);
+			replaceCharSequence = replaceCharSequence.replaceAll("(?s).", "*");
+			return replaceCharSequence	+ rawData.substring(rawData.length() - 4, rawData.length());
+		}else{
+			return rawData;
+		}
+	}
+	
+	/**
 	 * replace all characters in Credit card no. with '*' leaving last 4
 	 * characters as it is
 	 * 
