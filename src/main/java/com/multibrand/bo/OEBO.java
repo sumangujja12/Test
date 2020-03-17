@@ -1879,7 +1879,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		EnrollmentResponse response =  new EnrollmentResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
 		OESignupDTO oeSignUpDTO = null;
-		LinkedHashSet<String> serviceLocationResponseErrorList = null;
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		int retryCount=0;
 		String personId=null;
 		ServiceLocationResponse serviceLoationResponse =null;
@@ -1899,8 +1899,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 			}
-			}else{
-				serviceLocationResponseErrorList = new LinkedHashSet<>();
 			}
 
 			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
@@ -2045,7 +2043,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
 		String errorCd=null;
-		LinkedHashSet<String> serviceLocationResponseErrorList = null;
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		ServiceLocationResponse serviceLoationResponse =null;
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: performCreditCheck(..)";
@@ -2070,8 +2068,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 			}
-			}else{
-				serviceLocationResponseErrorList = new LinkedHashSet<>();
 			}
 			
 			// getNewCreditScore from NRGWS OEDomain via [OE proxy layer]
@@ -2696,7 +2692,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		AddressDO serviceAddressDO = new AddressDO();
 		
 		Locale localeObj = null;
-		LinkedHashSet<String> serviceLocationResponseErrorList = null;
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		ServiceLocationResponse serviceLoationResponse =null;
 		
 		
@@ -2716,8 +2712,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 			}
-			}else{
-				serviceLocationResponseErrorList = new LinkedHashSet<>();
 			}
 	    	
 			serviceAddressDO.setStrStreetNum(servStreetNum);
@@ -5426,7 +5420,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
-	LinkedHashSet<String> serviceLocationResponseErrorList = null;
+	LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 	ServiceLocationResponse serviceLoationResponse=null;
 	try{
 		if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
@@ -5435,8 +5429,6 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 		serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 		}
-		}else{
-			serviceLocationResponseErrorList =new LinkedHashSet<>();
 		}
 		
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
