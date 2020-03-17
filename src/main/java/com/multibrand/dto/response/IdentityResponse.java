@@ -22,6 +22,8 @@ public class IdentityResponse extends  SalesBaseResponse {
 	private String retryCount;
 	private String kbaSuggestionFlag;
 	private String guid;
+	private String pendingBalanceAmount;
+	private String bpMatchScenarioId;
 	
 	public String getPosidDLDate() {
 		return posidDLDate;
@@ -112,6 +114,18 @@ public class IdentityResponse extends  SalesBaseResponse {
 	}
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+	public String getPendingBalanceAmount() {
+		return pendingBalanceAmount;
+	}
+	public void setPendingBalanceAmount(String pendingBalanceAmount) {
+		this.pendingBalanceAmount = pendingBalanceAmount;
+	}
+	public String getBpMatchScenarioId() {
+		return bpMatchScenarioId;
+	}
+	public void setBpMatchScenarioId(String bpMatchScenarioId) {
+		this.bpMatchScenarioId = bpMatchScenarioId;
 	}	
 	
 	
