@@ -1377,5 +1377,9 @@ public interface Constants {
 	public static final String SYMBOL_DOLLAR = "$";
 	public static final String SYMBOL_CENTS = "¢";
 
+    //***************** GMD APP APIs *************************
+    
+   public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
+   public static final String GMD_STATEMENT_ENDPOINT_URL_JNDINAME = "CCS_GMD_STMT";
    
 }
