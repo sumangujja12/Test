@@ -3412,6 +3412,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			errorCdSet.add(errorCd);
 			scenario = "1";
 			scenarioDesc= "Uncollected Balance";
+			response.setPendingBalanceAmount(String.valueOf(bpmatchResponse.getPendingBalanceAmount()));
 			}
 
 			//Current Customer
@@ -3518,6 +3519,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			bpMatchDto=populateBPMatchDTOFromBpMatchCCSResponse(bpMatchDto, bpmatchResponse);
 			
 			bpMatchDto.setBpMatchScenarioId(scenario);
+			response.setBpMatchScenarioId(scenario);
 		}
 		catch(Exception e)
 		{
