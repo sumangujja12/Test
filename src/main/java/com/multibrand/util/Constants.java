@@ -1382,4 +1382,18 @@ public interface Constants {
    public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
    public static final String GMD_STATEMENT_ENDPOINT_URL_JNDINAME = "CCS_GMD_STMT";
    
+   public static final String SOLAR_FEE = "Solar Fee";
+   public static final String ANCILLARY_SERVICES = "Ancillary Services";
+   public static final String ELECTRICITY_USAGE = "Electricity Usage";
+   
+   public static final String QUALITY_OTHER_CREDIT = "Quality Other Credit";
+   
+   
+   public static final String TDU_DELIVERY_CHARGES = "TDU Delivery Charges";
+   
+   public static final String GMD_MEMBERSHIP = " GMD Membership";
+   public static final String  TAXES_FEES = " Taxes & Fees";
+  
+   public static final String WHOLESALE_ELECTRICITY = "Wholesale Electricity";
+      
 }

@@ -9,12 +9,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.bo.GMDBO;
-import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
+import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 
 
 /** This Resource is to handle all the GMD APP Related API calls.
@@ -49,9 +51,9 @@ public class GMDResource extends BaseResource {
 		
 		logger.info(" START ******* getGMDStatementDetails API**********");
 		Response response = null;
-		GetAccountDetailsResponse getAccountDetailsResp = gmdBO.getGMDStatementDetails(accountNumber, companyCode, esiId, year, month, httpRequest.getSession(true).getId());
+		GMDStatementBreakDownResponse gmdStatementBreakDownResp = gmdBO.getGMDStatementDetails(accountNumber, companyCode, esiId, year, month, httpRequest.getSession(true).getId());
 		
-		response = Response.status(200).entity(getAccountDetailsResp).build();
+		response = Response.status(200).entity(gmdStatementBreakDownResp).build();
 		
 		logger.info("END of the getGMDStatementDetails API*************");
 		return response;
