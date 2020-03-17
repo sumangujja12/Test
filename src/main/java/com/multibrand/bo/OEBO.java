@@ -116,6 +116,7 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.PersonResponse;
+import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -5938,18 +5939,8 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					}else{
 						 serviceLoationResponse=getEnrollmentData(request.getTrackingId() );
 					}					
-					if(serviceLoationResponse == null){
-						PerformPosIdandBpMatchResponse bpMatchResponse = new PerformPosIdandBpMatchResponse();
-						bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-						bpMatchResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-						if(StringUtils.isNotEmpty(request.getGuid())){
-							bpMatchResponse.setResultDescription("Invalid trackingId or guid");
-						}else{
-							bpMatchResponse.setResultDescription("Invalid trackingId");
-						}						
-						bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-						bpMatchResponse.setErrorDescription(bpMatchResponse.getResultDescription());					
-						response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+					if(serviceLoationResponse == null){					
+						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().getInvalidTrackingAndGuidResponse()).build();
 						return response;
 					}
 				}
@@ -6010,7 +6001,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(request.getAffiliateId(),
 							request.getTrackingId());				
 					
-					response = Response.status(200).entity(validPosIdResponse)
+					response = Response.status(400).entity(validPosIdResponse)
 							.build();
 					return response;
 				}
@@ -6023,7 +6014,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(request.getAgentID(),
 								request.getTrackingId());				
 						
-						response = Response.status(200).entity(validPosIdResponse)
+						response = Response.status(400).entity(validPosIdResponse)
 								.build();
 						return response;
 					}else{

@@ -45,7 +45,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 		    GenericResponse affiliateResponse = (GenericResponse) response.getEntity();
 			IdentityResponse identityResponse = new IdentityResponse();
 			BeanUtils.copyProperties(affiliateResponse, identityResponse);	
-			response = Response.status(200).entity(identityResponse).build();	
+			response = Response.status(identityResponse.getHttpStatus()).entity(identityResponse).build();	
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch", e);
 			throw e;
@@ -60,19 +60,15 @@ public class SalesBO extends OeBoHelper implements Constants {
 	 * @return
 	 * @throws Exception
 	 */
-	public SalesEsidInfoTdspCalendarResponse getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidCalendarRequest, HttpServletRequest httpRequest) throws Exception {
+	public Response getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidCalendarRequest, HttpServletRequest httpRequest) throws Exception {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspCalendarResponse = new SalesEsidInfoTdspCalendarResponse();
 		String bpMatchFlag= null;
 		String error="";
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		try {
-			if(StringUtils.isNotEmpty(salesEsidCalendarRequest.getGuid())){
-				 serviceLoationResponse=oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),salesEsidCalendarRequest.getGuid() );
-			}else{
-				 serviceLoationResponse=oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId() );
-			}	
-			
+		Response response = null;
+		try{
+			serviceLoationResponse=oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),salesEsidCalendarRequest.getGuid() );
 			if (null!= serviceLoationResponse){
 				if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
 					&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(),"Y"))){
@@ -117,13 +113,12 @@ public class SalesBO extends OeBoHelper implements Constants {
 				salesEsidInfoTdspCalendarResponse.setMessageText(EMPTY);
 				salesEsidInfoTdspCalendarResponse.setErrorDescription("No Data in SLA Table");
 			}
-				
+			response = Response.status(salesEsidInfoTdspCalendarResponse.getHttpStatus()).entity(salesEsidInfoTdspCalendarResponse).build();	
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch"+ e.getMessage());
 			throw e;
 		}
 		
-		return salesEsidInfoTdspCalendarResponse;
+		return response;
 	}
-
 }

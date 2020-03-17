@@ -585,7 +585,7 @@ public class OEResource extends BaseResource {
 			AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,	httpRequest.getSession(true).getId());
 			response = Response.status(Response.Status.OK).entity(offerResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
    			// Not logging Offer API calls - vsood
    			//utilityloggerHelper.logSalesAPITransaction(API_GET_AFFILIATE_OFFERS, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -604,7 +604,7 @@ public class OEResource extends BaseResource {
 		try{
 			response = oeBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_PERFORM_POSID_AND_BPMATCH, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    		}
@@ -643,7 +643,7 @@ public class OEResource extends BaseResource {
 							);
 				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_GET_ESID_AND_CALENDAR_DATES, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    		}
@@ -712,7 +712,7 @@ public class OEResource extends BaseResource {
 			}
 			logger.debug("END ******* performCreditCheck API**********");
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_PERFORM_CREDIT_CHECK, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    		}
@@ -811,7 +811,7 @@ public class OEResource extends BaseResource {
 				httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(uccResp).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_SUBMIT_UCC_DATA, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    		}
@@ -830,7 +830,7 @@ public class OEResource extends BaseResource {
 	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
 	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
 	    } catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_SUBMIT_ENROLLMENT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    		}
