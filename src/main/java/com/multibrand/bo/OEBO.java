@@ -5933,18 +5933,18 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
 		OESignupDTO oESignupDTO = new OESignupDTO();
+		ServiceLocationResponse serviceLoationResponse = null;
 		// Start Validating DOB- Jsingh1
 		//Checking if DOB lies in Valid age Range (18-100)
 			try{
 				if(StringUtils.isNotEmpty(request.getTrackingId())){
-					ServiceLocationResponse serviceLoationResponse = null;
 					if(StringUtils.isNotEmpty(request.getGuid())){
 						 serviceLoationResponse=getEnrollmentData(request.getTrackingId(),request.getGuid() );
 					}else{
 						 serviceLoationResponse=getEnrollmentData(request.getTrackingId() );
 					}					
 					if(serviceLoationResponse == null){					
-						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().getInvalidTrackingAndGuidResponse()).build();
+						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateInvalidTrackingAndGuidResponse()).build();
 						return response;
 					}
 				}
@@ -6082,7 +6082,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
 						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-								.validatePosId(request,oESignupDTO);
+								.validatePosId(request,oESignupDTO, serviceLoationResponse);
 						response = Response.status(200).entity(validPosIdResponse)
 								.build();
 						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
