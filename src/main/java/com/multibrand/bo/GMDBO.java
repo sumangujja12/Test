@@ -42,6 +42,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
+import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 
 /**
@@ -99,6 +100,24 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		return gmdStatementBreakDownResp;
 
 	}
+	
+	public GMDPricingResponse getGMDPriceDetails(String accountNumber, String contractId, String companyCode,
+			String esiId,String sessionId) {
+
+		GMDPricingResponse gmdPricingResp = new GMDPricingResponse();
+
+		try {
+			gmdPricingResp = gmdService.getGMDPriceDetails(accountNumber, contractId, companyCode, esiId, sessionId);
+
+		} catch (NRGException e) {
+			logger.error("Exception occured in getGMDPriceDetails :{}", e);
+			gmdPricingResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			gmdPricingResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), gmdPricingResp);
+		}
+		return gmdPricingResp;
+
+	}	
 
 	public EsidInfoTdspCalendarResponse getESIDAndCalendarDates(String companyCode, String brandId, String tdspCodeCCS,
 			String transactionType, String locale, String esid) {

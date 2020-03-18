@@ -1380,7 +1380,10 @@ public interface Constants {
     //***************** GMD APP APIs *************************
     
    public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
+   public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
+   
    public static final String GMD_STATEMENT_ENDPOINT_URL_JNDINAME = "CCS_GMD_STMT";
+   public static final String GMD_PRICET_ENDPOINT_URL_JNDINAME = "CCS_PRICE_STMT";
    
    public static final String SOLAR_FEE = "Solar Fee";
    public static final String ANCILLARY_SERVICES = "Ancillary Services";

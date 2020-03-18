@@ -22,12 +22,33 @@ import com.multibrand.dto.request.GMDEsidCalendarRequest;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
+import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 
 
 /** This Resource is to handle all the GMD APP Related API calls.
  * 
  * @author rpendur1
+ */
+/**
+ * @author RPendur1
+ *
+ */
+/**
+ * @author RPendur1
+ *
+ */
+/**
+ * @author RPendur1
+ *
+ */
+/**
+ * @author RPendur1
+ *
+ */
+/**
+ * @author RPendur1
+ *
  */
 @Component
 @Path("gmdResource")
@@ -43,7 +64,17 @@ public class GMDResource extends BaseResource {
 	private GMDBO gmdBO;
 	
 	
-	//This service is to provide GMD Statement details from CCS Service
+	
+	/**
+	 * This service is to provide GMD Statement details from CCS Service
+	 * @param accountNumber
+	 * @param companyCode
+	 * @param brandName
+	 * @param esiId
+	 * @param year
+	 * @param month
+	 * @return
+	 */
 	@POST
 	@Path(API_GET_GMD_STATEMENT_DATA)
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
@@ -64,6 +95,26 @@ public class GMDResource extends BaseResource {
 	}
 	
 	
+	@POST
+	@Path(API_GET_GMD_PRICE_DATA)
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	
+	public Response getGMDPriceDetails(@FormParam("contractAccountNumber") String accountNumber,@FormParam("contractId") String contractId, 
+			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
+			@FormParam("esiId") String esiId) {
+		
+		logger.info(" START ******* getGMDPriceDetails API**********");
+		
+		Response response = null;
+		GMDPricingResponse gmdPricingResp = gmdBO.getGMDPriceDetails(accountNumber, contractId, companyCode, esiId, httpRequest.getSession(true).getId());
+		
+		response = Response.status(200).entity(gmdPricingResp).build();
+		
+		logger.info("END of the getGMDPriceDetails API*************");
+		return response;
+		
+	}	
 
 	 
 	@POST
