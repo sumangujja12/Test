@@ -10,12 +10,18 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.GMDBO;
+import com.multibrand.dto.request.GMDEnrollmentRequest;
+import com.multibrand.dto.request.GMDEsidCalendarRequest;
+import com.multibrand.dto.response.GMDEnrollmentResponse;
+import com.multibrand.util.Constants;
+import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 
 
@@ -38,9 +44,6 @@ public class GMDResource extends BaseResource {
 	
 	
 	//This service is to provide GMD Statement details from CCS Service
-	
-	
-
 	@POST
 	@Path(API_GET_GMD_STATEMENT_DATA)
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
@@ -58,5 +61,41 @@ public class GMDResource extends BaseResource {
 		logger.info("END of the getGMDStatementDetails API*************");
 		return response;
 		
+	}
+	
+	
+
+	 
+	@POST
+	@Path("/getESIDAndCalendarDates")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getESIDAndCalendarDates(GMDEsidCalendarRequest esidCalendarRequest) {
+		Response response = null;
+		EsidInfoTdspCalendarResponse esidInfoTdspResponse = null;
+		if (StringUtils.isBlank(esidCalendarRequest.getLanguageCode()))
+			esidCalendarRequest.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
+		esidInfoTdspResponse = gmdBO.getESIDAndCalendarDates(esidCalendarRequest.getCompanyCode(),
+				esidCalendarRequest.getBrandName(), esidCalendarRequest.getTdspCode(),
+				esidCalendarRequest.getTransactionType(), esidCalendarRequest.getLanguageCode(),
+				esidCalendarRequest.getEsiId());
+
+		response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
+
+		return response;
+
+	}
+	
+
+	@POST
+	@Path("/submitEnrollment")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitEnrollment(GMDEnrollmentRequest enrollmentRequest) {
+		Response response = null;
+		// Start Submit enrollment call
+		GMDEnrollmentResponse enrollmentResponse = gmdBO.submitEnrollment(enrollmentRequest);
+		response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
+		return response;
 	}
 }	
