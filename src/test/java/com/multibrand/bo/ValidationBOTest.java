@@ -55,7 +55,7 @@ public class ValidationBOTest {
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
-	@Test
+/*	@Test
 	public void testValidatePosIdForThirdRetrywithPosidAllowed() throws Exception{
 		
 		PerformPosIdAndBpMatchRequest performPosIdBpRequest = createPerformPosIdAndBpMatchRequestForThireRetry();
@@ -74,7 +74,7 @@ public class ValidationBOTest {
 		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null,null);
 		
 		Assert.assertEquals(result.getStatusCode(), Constants.STATUS_CODE_CONTINUE);
-	}
+	} 
 	@Test
 	public void testValidatePosIdForThirdRetrywithPosidNotAllowed() throws Exception{
 		
@@ -93,7 +93,7 @@ public class ValidationBOTest {
 		
 		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null,null);
 		Assert.assertEquals(result.getStatusCode(), Constants.STATUS_CODE_STOP);
-	}
+	} */
 	@Test
 	public void testValidatePosIdForInvalidTrackingID() throws Exception{
 		
