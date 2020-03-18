@@ -59,7 +59,7 @@ public class SalesBaseResponse implements Constants  {
 		return CommonUtil.doRender(this);
 	}
 	
-	public SalesBaseResponse getGenericErrorResponse(Exception ex, String messageText) {
+	public SalesBaseResponse populateGenericErrorResponse(Exception ex, String messageText) {
 		this.errorCode=MESSAGE_CODE_TECHNICAL_ERROR;
 		this.errorDescription=ex.getMessage();
 		this.messageCode=MESSAGE_CODE_TECHNICAL_ERROR;
@@ -69,7 +69,7 @@ public class SalesBaseResponse implements Constants  {
 		return this;
 	}
 	
-	public SalesBaseResponse getInvalidTrackingAndGuidResponse() {
+	public SalesBaseResponse populateInvalidTrackingAndGuidResponse() {
 		this.errorCode=MESSAGE_CODE_NO_MATCH_FOUND;
 		this.errorDescription="Invalid trackingId / guid";
 		this.statusCode=STATUS_CODE_STOP;

@@ -71,7 +71,7 @@ public class ValidationBOTest {
 		.thenReturn(true);
 		when(msgSource.getMessage(Constants.POSID_HOLD_MSG_TXT)).thenReturn("TBD");
 		
-		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null);
+		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null,null);
 		
 		Assert.assertEquals(result.getStatusCode(), Constants.STATUS_CODE_CONTINUE);
 	}
@@ -91,7 +91,7 @@ public class ValidationBOTest {
 		.thenReturn(false);
 		when(msgSource.getMessage(Constants.POSID_HOLD_MSG_TXT)).thenReturn("TBD");
 		
-		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null);
+		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null,null);
 		Assert.assertEquals(result.getStatusCode(), Constants.STATUS_CODE_STOP);
 	}
 	@Test
@@ -99,7 +99,7 @@ public class ValidationBOTest {
 		
 		PerformPosIdAndBpMatchRequest performPosIdBpRequest = createPerformPosIdAndBpMatchRequestForThireRetry();
 		performPosIdBpRequest.setTrackingId("FDDFG");
-		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null);
+		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null, null);
 		
 		Assert.assertEquals(result.getStatusCode(), Constants.STATUS_CODE_STOP);
 	}

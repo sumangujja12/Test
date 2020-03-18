@@ -157,7 +157,7 @@ public class ValidationBO extends BaseBO {
 	 * @return {@link com.multibrand.vo.response.PerformPosIdandBpMatchResponse PerformPosIdandBpMatchResponse}
 	 */
 	public com.multibrand.vo.response.PerformPosIdandBpMatchResponse validatePosId(
-			PerformPosIdAndBpMatchRequest performPosIdBpRequest,OESignupDTO oESignupDTO)
+			PerformPosIdAndBpMatchRequest performPosIdBpRequest,OESignupDTO oESignupDTO, ServiceLocationResponse serviceLoationResponse)
 	{
 		logger.debug(" START *******ValidationBO:: validatePosID API**********");
 		logger.debug("inside validatePosId:: tracking id from Form Parameters is :: "+performPosIdBpRequest.getTrackingId());
@@ -171,7 +171,7 @@ public class ValidationBO extends BaseBO {
 		String errorCd=null;
 		String recentCallMade=null;
 		LinkedHashSet<String> serviceLocationResponseerrorList = new LinkedHashSet<>();
-		ServiceLocationResponse serviceLoationResponse =null;
+		
 		com.multibrand.vo.response.PerformPosIdandBpMatchResponse response= new com.multibrand.vo.response.PerformPosIdandBpMatchResponse();
 		BPMatchDTO bpMatchDTO=new BPMatchDTO();
 		/*
@@ -212,15 +212,16 @@ public class ValidationBO extends BaseBO {
 		else if (StringUtils.isNumeric(performPosIdBpRequest.getTrackingId())){
 			logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
 					+ "Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: tracking number is numeric ");
+			
 			List<Map<String, String>> personIdAndRetryCountResponse =oeBO.getPersonIdAndRetryCountByTrackingNo(performPosIdBpRequest.getTrackingId());
 			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
 
-			if(null!=personIdAndRetryCountResponse 
-					&& personIdAndRetryCountResponse.size()>0
-					&& StringUtils.isNotBlank(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT)))
+			if(null!=serviceLoationResponse 
+					&& serviceLoationResponse.getPersonResponse() != null
+					)
 			{
-				personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
-				retryCount=	Integer.parseInt(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT));
+				
+				retryCount=	Integer.parseInt(serviceLoationResponse.getPersonResponse().getRetryCount());
 				logger.debug("inside validatePosId:: Tracking number :: "+performPosIdBpRequest.getTrackingId()+""
 						+ " retry count from database is :: "+retryCount);
 
@@ -277,7 +278,7 @@ public class ValidationBO extends BaseBO {
 		try{
 			
 			if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
-			    serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+			    
 				if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
