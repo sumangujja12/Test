@@ -27,6 +27,15 @@ import com.multibrand.vo.response.historyResponse.InvoiceUsageHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PlanHistoryResponse;
 import com.multibrand.vo.response.historyResponse.WeeklyUsageResponse;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import com.multibrand.util.Constants;
+import com.multibrand.util.DateUtil;
+import com.multibrand.vo.response.DailyResponseVO;
+import com.multibrand.vo.response.HourlyUsage;
 
 
 /***
@@ -462,5 +471,61 @@ public class HistoryResource
 		response = Response.status(200).entity(weeklyUsageSummary).build();
 		return response;
 	}
+	
+	 @POST
+	    @Path("/getWeeklyUsageByHuorly")
+	    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	    public Response getWeeklyUsageByHuorly(@FormParam("accountNumber") String accountNumber,
+	            @FormParam("contractId") String contractId, @FormParam("esid") String esid,
+	            @FormParam("zoneId") String zoneId, @FormParam("companyCode") String companyCode,
+	            @FormParam("brandName") String brandName, @FormParam("weekNumber") int weekNumber,
+	            @FormParam("year") int year) {
+	        Response response = null;
+	 
+	        logger.info("fetching ActualDay from getWeeklyUsage API");
+	        WeeklyUsageResponse weeklyUsageSummary = historyBO.getWeeklyUsageData(accountNumber, contractId, esid, zoneId,
+	                companyCode, brandName, weekNumber, year, httpRequest.getSession(true).getId());
+	 
+	        // Sorting ActualDay List
+	        Set<DailyResponseVO> dailyResponseSet = weeklyUsageSummary != null ? weeklyUsageSummary.getWeeklyUsageData()
+	                : null;
+	 
+	        if (dailyResponseSet != null) {
+	            Date[] arrayOfDates = new Date[dailyResponseSet.size()];
+	            int i = 0;
+	            for (DailyResponseVO dailyResponseVO : dailyResponseSet) {
+	                if (dailyResponseVO != null && dailyResponseVO.getActualDay() != null) {
+	                    arrayOfDates[i] = DateUtil.getDate(dailyResponseVO.getActualDay(), Constants.yyyyMMdd);
+	                    i++;
+	                }
+	            }
+	            Arrays.sort(arrayOfDates);// Sorting Dates
+	 
+	            // Data Base Call
+	            logger.info("fetching ActualDay from getWeeklyUsage API");
+	            if (arrayOfDates.length > 0) {
+	                DailyResponseVO dailyRespVO = dailyResponseSet.iterator().next();
+	                List<HourlyUsage> hourlyUsageList = historyBO.getWeeklyUsageByHuorlyDetails(dailyRespVO.getEsiId(),
+	                        dailyRespVO.getContractId(), DateUtil.getFormatedDate(arrayOfDates[0], Constants.MM_dd_yyyy),
+	                        DateUtil.getFormatedDate(arrayOfDates[arrayOfDates.length - 1], Constants.MM_dd_yyyy));
+	    
+	                // Map hourlyUsage to DailyResponse
+	                Iterator<DailyResponseVO> dailyResponseItr = dailyResponseSet.iterator();
+	                while (dailyResponseItr.hasNext()) {
+	                    dailyRespVO = dailyResponseItr.next();
+	                    for (HourlyUsage hourlyUsage : hourlyUsageList) {
+	                        if (hourlyUsage.getActualDay().equals(dailyRespVO.getActualDay())) {
+	                            dailyRespVO.setHourlyUsageList(hourlyUsage);
+	                            break;
+	                        }
+	                    }
+	                }
+	            }
+	        }
+	 
+	        response = Response.status(200).entity(weeklyUsageSummary).build();
+	        return response;
+	    }
 
 }

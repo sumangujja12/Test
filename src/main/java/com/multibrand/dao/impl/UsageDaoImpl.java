@@ -46,6 +46,7 @@ import com.multibrand.vo.response.SmartMeterUsageHistory;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponse;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.HourlyUsageResponse;
 
 
 @Component("usageDao")
@@ -507,6 +508,20 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		return responseList;
 	}
 	
+	   @Override
+	    public List<HourlyUsage> getWeeklyUsageByHuorlyDetails(String esiId, String contractId, String fromDate,
+	            String toDate) {
+	        logger.info("UsageDaoImpl-getWeeklyUsageByHuorlyDetails :: Start");
+	 
+	        String query = "SELECT esiid, contract_id, contract_acct_id, bus_partner, actual_day, usage_hr01, usage_hr02, usage_hr03, usage_hr04, usage_hr05, usage_hr06, usage_hr07, usage_hr08, usage_hr09, usage_hr10, usage_hr11, usage_hr12, usage_hr13, usage_hr14, usage_hr15, usage_hr16, usage_hr17, usage_hr18, usage_hr19, usage_hr20, usage_hr21, usage_hr22, usage_hr23, usage_hr24, cost_hr01, cost_hr02, cost_hr03, cost_hr04, cost_hr05, cost_hr06, cost_hr07, cost_hr08, cost_hr09, cost_hr10, cost_hr11, cost_hr12, cost_hr13, cost_hr14, cost_hr15, cost_hr16, cost_hr17, cost_hr18, cost_hr19, cost_hr20, cost_hr21, cost_hr22, cost_hr23, cost_hr24, total_usage_day day_usg, total_cost_day day_cst, day_temp_high,day_temp_low  "
+	                + "FROM SMART_SYNC.wp_hr_day_ods  "
+	                + "WHERE esiid = ? AND contract_id = ? AND actual_day between TO_DATE (?, 'mm/dd/YYYY') AND TO_DATE (?, 'mm/dd/YYYY')";
+	 
+	        Object[] args = { esiId, contractId, fromDate, toDate };
+	        logger.info("UsageDaoImpl-getWeeklyUsageByHuorlyDetails :: End");
+	        return smartJdbcTemplate.query(query, args, new HourlyUsageRowMapper());
+	 
+	    }
 	
 /*	*//**
 	    * Method main.

@@ -17,6 +17,8 @@ import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import java.util.List;
+import com.multibrand.vo.response.HourlyUsage;
 
 @Component
 public class UsageHelper
@@ -74,4 +76,10 @@ public class UsageHelper
 		logger.info(" START getDailyWeeklyUsageDetails Method");
 		return usageDAOImpl.getSmartMeterUsageHistory(requestVO, companyCode, sessionId);
 	}
+	
+    public List<HourlyUsage> getWeeklyUsageByHuorlyDetails(String esiId, String contractId, String fromDate , String toDate)
+    {
+        logger.info(" START getWeeklyUsageByHuorlyDetails Method");
+        return usageDAOImpl.getWeeklyUsageByHuorlyDetails(esiId, contractId, fromDate , toDate);
+    }
 }

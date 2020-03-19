@@ -19,6 +19,7 @@ public class DailyResponseVO implements UsageInterface
 	private String dayCst;
 	private String dayTempHigh;
 	private String dayTempLow;
+	private HourlyUsage hourlyUsageList;
 
 	/**
 	 * @return the esiId
@@ -171,6 +172,20 @@ public class DailyResponseVO implements UsageInterface
 	public void setDayTempLow(String dayTempLow)
 	{
 		this.dayTempLow = dayTempLow;
+	}
+
+	/**
+	 * @return the hourlyUsageList
+	 */
+	public HourlyUsage getHourlyUsageList() {
+		return hourlyUsageList;
+	}
+
+	/**
+	 * @param hourlyUsageList the hourlyUsageList to set
+	 */
+	public void setHourlyUsageList(HourlyUsage hourlyUsageList) {
+		this.hourlyUsageList = hourlyUsageList;
 	}
 
 }
