@@ -62,8 +62,8 @@ public class ValidationAspect implements Constants{
 			genericResponse.setHttpStatus(Status.BAD_REQUEST);
 			errorMessages.add(genericResponse);
 			response = Response.status(Status.BAD_REQUEST)
-					.entity(errorMessages)
-					.type(MediaType.APPLICATION_JSON)
+					.entity(genericResponse)
+					//.type(MediaType.APPLICATION_JSON)
 					.build();
 		}else {
 			try {

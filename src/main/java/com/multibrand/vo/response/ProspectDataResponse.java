@@ -5,9 +5,11 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.google.gson.annotations.SerializedName;
+import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.resources.SalesAPIResource;
 
 @XmlRootElement(name="AgentDetailsResponse")
-public class ProspectDataResponse extends GenericResponse  {
+public class ProspectDataResponse extends SalesBaseResponse  {
 
 
 	private String prospectBpID;
