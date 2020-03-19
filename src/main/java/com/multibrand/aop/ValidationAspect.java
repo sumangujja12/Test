@@ -21,13 +21,14 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-
+import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.util.Constants;
 import com.multibrand.vo.response.GenericResponse;
 
 @Aspect
 @Component
 @Order(value=0)
-public class ValidationAspect {
+public class ValidationAspect implements Constants{
 
 	private Validator validator;
 	ConstraintViolationException constraintViolationException;
@@ -41,11 +42,11 @@ public class ValidationAspect {
 
 	@Around("validationPoint()")
 	public Object validate(ProceedingJoinPoint joinPoint) throws Exception{
-		List<GenericResponse> errorMessages = new ArrayList<GenericResponse>();
+		List<SalesBaseResponse> errorMessages = new ArrayList<SalesBaseResponse>();
 		StringBuilder responseBuilder = new StringBuilder();
 		Set<ConstraintViolation<Object>> violations = null;
 		Response response=null; 
-		GenericResponse genericResponse =  new GenericResponse();
+		SalesBaseResponse genericResponse =  new SalesBaseResponse();
 		responseBuilder.append("Request entity has following errors:");
 		for (Object parameter : joinPoint.getArgs()) {
 			violations = validator.validate(parameter);
@@ -55,10 +56,10 @@ public class ValidationAspect {
 			}	
 		}
 		if (null!=violations && !violations.isEmpty()) {
-			genericResponse.setErrorCode("400");
-			genericResponse.setErrorDescription(Status.BAD_REQUEST.toString());
-			genericResponse.setResultDescription(responseBuilder.toString());
-			genericResponse.setResultCode("400");
+			genericResponse.setErrorCode(Status.BAD_REQUEST.name());
+			genericResponse.setErrorDescription(responseBuilder.toString());
+			genericResponse.setStatusCode(STATUS_CODE_STOP);
+			genericResponse.setHttpStatus(Status.BAD_REQUEST);
 			errorMessages.add(genericResponse);
 			response = Response.status(Status.BAD_REQUEST)
 					.entity(errorMessages)
