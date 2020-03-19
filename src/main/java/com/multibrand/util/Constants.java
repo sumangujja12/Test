@@ -1346,6 +1346,7 @@ public interface Constants {
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
     public static final String RETRY_NOT_ALLOWED_TXT = "Retry of KBA Answers is not allowed on same transactionKey. Please rerun the getKBAQuestions API to generate a new transactionKey";
     public static final String NO_PROSPECT_MATCH_FOUND = "NO_PROSPECT_MATCH_FOUND";
+    public static final String NO_PROSPECT_MATCH_FOUND_TEXT = "msg_prospect_match_not_found";
     public static final String HTTP_BAD_REQUEST  = "BAD_REQUEST";
     public static final String CHANNEL_WEB = "WEB";
     public static final String CHANNEL_AA = "AA";

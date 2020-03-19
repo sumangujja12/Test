@@ -4353,9 +4353,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setOfferDate(DateUtil.getCurrentDateFormatted(MMddyyyy));
 			response.setOfferTime(DateUtil.getCurrentDateFormatted(TIME_FORMAT));
 			response.setResultDescription(response.getMessageText());	
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			response.setHttpStatus(Response.Status.OK);
 			return response;
 		}
 		
@@ -4376,9 +4374,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setResultCode(Constants.RESULT_CODE_SUCCESS );
 				response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
 				response = constructMainFields(response,offerResponse);
-				response.setErrorCode(HTTP_BAD_REQUEST);
-				response.setErrorDescription(response.getResultDescription());
-				response.setHttpStatus(Response.Status.BAD_REQUEST);
+				response.setHttpStatus(Response.Status.OK);
 				return response;
 			} else {
 				offerResponse = getOffers(request.getLanguageCode(),
@@ -5666,7 +5662,7 @@ return esidResponse;
 }
 
 /**
- * Start ;ADO :Sprint 4 :: To get Prospect Data
+ * Start ADO :Sprint 4 :: To get Prospect Data
  * @author Kdeshmu1
  * @param prospectId
  * @param lastFourDigitSsn
@@ -5690,16 +5686,12 @@ public ProspectDataResponse getProspectData(ProspectDataRequest request) {
 		response.setProspectCreditSource(prospectResponse.getCreditSource());
 		response.setProspectPreApprovalFlag(prospectResponse.getCreditSegmentIndicator());
 		response.setStatusCode(Constants.STATUS_CODE_CONTINUE);
-		response.setResultCode(RESULT_CODE_SUCCESS);
 	}else{
 		response.setStatusCode(Constants.STATUS_CODE_STOP);
 		response.setMessageCode(NO_PROSPECT_MATCH_FOUND);
-		if(prospectResponse != null){
-			response.setMessageText(prospectResponse.getErrorMessage());//Jay to confirm the msg
-		}
-		response.setHttpStatus(Response.Status.BAD_REQUEST);
+		response.setMessageText(msgSource.getMessage(NO_PROSPECT_MATCH_FOUND_TEXT));
+		response.setHttpStatus(Response.Status.OK);
 	}
-	logger.info("ProspectDataResponse : ResultCode : "+response.getResultCode());
 	return response;
 	}
 
