@@ -866,9 +866,6 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		logger.info("Before submitting JSON:{}", gson.toJson(submitEnrollRequest));
 		SubmitEnrollResponse submitEnrollResponse = oeProxy.submitEnrollment(submitEnrollRequest);
 
-		// logger.info("Request: "
-		// + XmlUtil.pojoToXMLwithRootElement(submitEnrollRequest,
-		// "SubmitEnrollment"));
 		logger.info("Error code: {}" , submitEnrollResponse.getStrErrCode());
 		logger.info("Error message: {}" , submitEnrollResponse.getStrErrMessage());
 

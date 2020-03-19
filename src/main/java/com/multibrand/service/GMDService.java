@@ -26,6 +26,7 @@ import com.multibrand.vo.response.gmd.Pricing;
 import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
+import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
 import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT;
 import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT_Service;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
@@ -160,15 +161,15 @@ public class GMDService extends BaseAbstractService {
 
 		
 		//Start : Added for Redbull CXF upgrade by IJ
-		URL url = com.nrg.cxfstubs.gmdprice.Service.class.getResource("Z_E_ISU_GET_GMD_PRICE.wsdl");
+		URL url = ZEISUGETGMDPRICE_Service.class.getResource("Z_E_ISU_GET_GMD_PRICE.wsdl");
         if (url == null) {
-            java.util.logging.Logger.getLogger(com.nrg.cxfstubs.gmdprice.Service.class.getName())
+            java.util.logging.Logger.getLogger(ZEISUGETGMDPRICE_Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "Z_E_ISU_GET_GMD_PRICE.wsdl");
         }
-        com.nrg.cxfstubs.gmdprice.Service gmdPriceService = new com.nrg.cxfstubs.gmdprice.Service(url);
+        ZEISUGETGMDPRICE_Service gmdPriceService = new ZEISUGETGMDPRICE_Service(url);
 		
-        ZEISUGETGMDPRICE stub = gmdPriceService.getBinding();
+        ZEISUGETGMDPRICE stub = gmdPriceService.getZEISUGETGMDPRICE();
 		BindingProvider binding = (BindingProvider)stub;
 	    
 	    binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  this.envMessageReader.getMessage(CCS_USER_NAME));
@@ -183,12 +184,13 @@ public class GMDService extends BaseAbstractService {
         Holder<XMLGregorianCalendar> exCurrentTime = new Holder<>();
         
         Holder<String> exErrorMessage = new Holder<>();
+        Holder<String> exZone = new Holder<>();
         
         Holder<TEPROFVALUES> exTepProfValues = new Holder<>(); 
         
 		try{
 			
-			stub.zEISUGETGMDPRICE(companyCode, accountNumber, esiId, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage, exTepProfValues);
+			stub.zEISUGETGMDPRICE(companyCode, accountNumber, esiId, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage, exTepProfValues,exZone);
 			gmdPricingResp = handleGMDCurrentPriceResponse(exTepProfValues, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage );
 			
 		}catch(Exception ex){
