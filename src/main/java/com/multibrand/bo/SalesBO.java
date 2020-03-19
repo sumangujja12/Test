@@ -14,6 +14,7 @@ import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.response.IdentityResponse;
+import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.util.Constants;
 import com.multibrand.util.LoggerUtil;
@@ -72,7 +73,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 			if (null!= serviceLoationResponse){
 				if((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(),BPSD))
 					&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(),"Y"))){
-					//bpMatchFlag=BPSD;
 					if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 						String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 					
@@ -105,15 +105,11 @@ public class SalesBO extends OeBoHelper implements Constants {
 				
 					    
 			    BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);	
-			    
+			    response = Response.status(salesEsidInfoTdspCalendarResponse.getHttpStatus()).entity(salesEsidInfoTdspCalendarResponse).build();
 			}else{
-				//These values need to set after discussion
-				salesEsidInfoTdspCalendarResponse.setStatusCode(STATUS_CODE_CONTINUE);
-				salesEsidInfoTdspCalendarResponse.setMessageCode(EMPTY);
-				salesEsidInfoTdspCalendarResponse.setMessageText(EMPTY);
-				salesEsidInfoTdspCalendarResponse.setErrorDescription("No Data in SLA Table");
+				SalesBaseResponse salesBaseResponse =salesEsidInfoTdspCalendarResponse.populateInvalidTrackingAndGuidResponse();
+				response = Response.status(salesBaseResponse.getHttpStatus()).entity(salesBaseResponse).build();
 			}
-			response = Response.status(salesEsidInfoTdspCalendarResponse.getHttpStatus()).entity(salesEsidInfoTdspCalendarResponse).build();	
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch"+ e.getMessage());
 			throw e;
