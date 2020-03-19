@@ -102,6 +102,7 @@ import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
+import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -5670,71 +5671,36 @@ return esidResponse;
  * @param companyCode
  * @return com.multibrand.vo.response.ProspectDataResponse
  */
-public ProspectDataResponse getProspectData(String prospectId, String  lastFourDigitSsn,String companyCode) {
+public ProspectDataResponse getProspectData(ProspectDataRequest request) {
 	
 	ProspectDataResponse response = new ProspectDataResponse();
-		
-	if(StringUtils.isBlank(prospectId))
-		{  
+	ProspectRequest prospectRequest = new ProspectRequest();
+	prospectRequest.setCompanyCode(request.getCompanyCode());
+	prospectRequest.setLastfourdigitSSN(request.getLastfourdigitSSN());
+	prospectRequest.setProspectId(request.getProspectID());
+	ProspectResponse prospectResponse = oeService.getProspectData(prospectRequest);
+	if (prospectResponse != null && prospectResponse.getStatusCode().equalsIgnoreCase(S_VALUE)){
+		response.setProspectBpID(prospectResponse.getPartner());
+		response.setProspectBpIDType(prospectResponse.getBpType());
+		response.setProspectCreditBucket(prospectResponse.getCreditBucket());
+		response.setProspectCreditScore(prospectResponse.getCreditScore());
+		response.setProspectCreditScoreDate(prospectResponse.getCreditDate());
+		response.setProspectCreditSource(prospectResponse.getCreditSource());
+		response.setProspectPreApprovalFlag(prospectResponse.getCreditSegmentIndicator());
+		response.setStatusCode(Constants.STATUS_CODE_CONTINUE);
+		response.setResultCode(RESULT_CODE_SUCCESS);
+	}else{
 		response.setStatusCode(Constants.STATUS_CODE_STOP);
-		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-		response.setResultDescription("ProspectID may not be Empty");
-		response.setErrorCode(HTTP_BAD_REQUEST);
-		response.setErrorDescription(response.getResultDescription());
-		response.setHttpStatus(Response.Status.BAD_REQUEST);
-		return response;
+		response.setMessageCode(NO_PROSPECT_MATCH_FOUND);
+		if(prospectResponse != null){
+			response.setMessageText(prospectResponse.getErrorMessage());//Jay to confirm the msg
 		}
-	if( StringUtils.isBlank(lastFourDigitSsn))
-	{  
-		response.setStatusCode(Constants.STATUS_CODE_STOP);
-		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-		response.setResultDescription("last4SSN may not be Empty");
-		response.setErrorCode(HTTP_BAD_REQUEST);
-		response.setErrorDescription(response.getResultDescription());
 		response.setHttpStatus(Response.Status.BAD_REQUEST);
-		return response;
-	}
-		
-	try {
-		ProspectRequest prospectRequest = new ProspectRequest();
-		prospectRequest.setCompanyCode(companyCode);
-		prospectRequest.setLastfourdigitSSN(lastFourDigitSsn);
-		prospectRequest.setProspectId(prospectId);
-		
-		ProspectResponse prospectResponse = oeService.getProspectData(prospectRequest);
-		
-		if (prospectResponse != null && prospectResponse.getStatusCode().equalsIgnoreCase(S_VALUE)){
-			response.setProspectBpID(prospectResponse.getPartner());
-			response.setProspectBpIDType(prospectResponse.getBpType());
-			response.setProspectCreditBucket(prospectResponse.getCreditBucket());
-			response.setProspectCreditScore(prospectResponse.getCreditScore());
-			response.setProspectCreditScoreDate(prospectResponse.getCreditDate());
-			response.setProspectCreditSource(prospectResponse.getCreditSource());
-			response.setProspectPreApprovalFlag(prospectResponse.getCreditSegmentIndicator());
-			response.setStatusCode(Constants.STATUS_CODE_CONTINUE);
-			response.setResultCode(RESULT_CODE_SUCCESS);
-		}else{
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setMessageCode(NO_PROSPECT_MATCH_FOUND);
-			if(prospectResponse != null){
-				response.setMessageText(prospectResponse.getErrorMessage());//Jay to confirm the msg
-			}
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-		}
-		
-	} catch (Exception e) {
-		response.setStatusCode(Constants.STATUS_CODE_STOP);
-		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-		response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-		response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
-		logger.error("Exception in getting Prospect Details: ", e);
 	}
 	logger.info("ProspectDataResponse : ResultCode : "+response.getResultCode());
 	return response;
-	
 	}
+
 
 /**
  * 

@@ -8,11 +8,7 @@ import com.multibrand.request.validation.BasicConstraint;
 @Component
 public class SalesOERequest extends SalesBaseRequest {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8124673383761196410L;
-	
+	private static final long serialVersionUID = -8124673383761196410L;	
 	
 	@NotBlank(groups = BasicConstraint.class)
 	private String trackingId;

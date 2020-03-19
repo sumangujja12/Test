@@ -11,7 +11,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,8 +23,6 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.SalesBO;
-import com.multibrand.bo.ValidationBO;
-import com.multibrand.dto.request.AffiliateOfferRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidRequest;
@@ -35,12 +32,13 @@ import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
+import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
-import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -48,12 +46,12 @@ import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.request.validation.ValidateGetMapppingRequestParam;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
-import com.multibrand.vo.request.TokenRequestVO;
+import com.multibrand.vo.request.SalesTokenRequest;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.ProspectDataResponse;
-import com.multibrand.vo.response.TokenizedResponse;
+import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
 
@@ -79,10 +77,6 @@ public class SalesAPIResource extends BaseResource {
 	@Autowired
 	private OEBO oeBO;
 
-	/** Object of ValidationBO class. */
-	@Autowired
-	private ValidationBO validationBO;
-
 	@Context
 	private HttpServletRequest httpRequest;
 
@@ -98,10 +92,11 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_OFFERS)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAffiliateOffers(@InjectParam AffiliateOfferRequest request ) {			
+	@ValidateGetMapppingRequestParam
+	public Response getAffiliateOffers(@InjectParam SalesOfferRequest request ) {			
 		Response response=null;
 		try{						
-			AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,	httpRequest.getSession(true).getId());
+			SalesOfferResponse offerResponse = salesBO.getSalesOffers(request,	httpRequest.getSession(true).getId());
 			Response.Status status = offerResponse.getHttpStatus() != null ? offerResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(offerResponse).build();
    		} catch (Exception e) {
@@ -404,24 +399,16 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
-	/**
-	 * START :OE ADO SPrint4 : Tokenization API
-	 * @author Asingh
-	 * @param actionCode
-	 * @param numToBeTokenized
-	 * @return
-	 */
 	@GET
 	@Path(API_TOKEN)	
 	@Produces({ MediaType.APPLICATION_JSON })
 	@ValidateGetMapppingRequestParam
-	public Response getTokenResponse(@InjectParam TokenRequestVO request) throws Exception {
+	public Response getTokenResponse(@InjectParam SalesTokenRequest request) throws Exception {
 		Response response=null;
-		long startTime = CommonUtil.getStartTime();
 		try{
 			request.setActionCode(request.getActionCode());
 			request.setNumToBeTokenized(request.getNumToBeTokenized());
-			TokenizedResponse tokenizedResponse = oeBO.getTokenResponse(request);
+			SalesTokenResponse tokenizedResponse = salesBO.getTokenResponse(request);
 			Response.Status status = tokenizedResponse.getHttpStatus() != null ? tokenizedResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(tokenizedResponse).build();
 		}catch(Exception e){ 
@@ -437,23 +424,16 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_PROSPECT)
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getProspectData(@QueryParam(value = "prospectID")   String prospectID,
-			@QueryParam(value = "last4SSN")   String lastFourSSN,
-			@QueryParam(value = "companyCode")   String companyCode,
-			@QueryParam(value = "languageCode")   String languageCode) {
+	@ValidateGetMapppingRequestParam
+	public Response getProspectData(@InjectParam ProspectDataRequest request) {
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
-		ProspectDataRequest request = null;
 		try{
-			request = new ProspectDataRequest();
-			request.setCompanyCode(companyCode);
-			request.setProspectID(prospectID);
-			request.setLastfourdigitSSN(lastFourSSN);
-		ProspectDataResponse prospectDataResponse = oeBO.getProspectData(prospectID,lastFourSSN,companyCode);
-		Response.Status status = prospectDataResponse.getHttpStatus() != null ? prospectDataResponse.getHttpStatus() :Response.Status.OK;
-		response = Response.status(status).entity(prospectDataResponse).build();
+			ProspectDataResponse prospectDataResponse = oeBO.getProspectData(request);
+			Response.Status status = prospectDataResponse.getHttpStatus() != null ? prospectDataResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(prospectDataResponse).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(languageCode))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
