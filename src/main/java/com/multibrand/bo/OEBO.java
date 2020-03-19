@@ -2311,6 +2311,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
 			
 			requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
+			
+			requestData.setTrackingId(creditScoreRequest.getTrackingNum());
 
 			String personId = getPersonIdByTrackingNo(requestData
 					.getTrackingId());
