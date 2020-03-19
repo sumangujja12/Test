@@ -473,7 +473,7 @@ public class HistoryResource
 	}
 	
 	 @POST
-	    @Path("/getWeeklyUsageByHuorly")
+	    @Path("/getWeeklyUsageByHourly")
 	    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	    public Response getWeeklyUsageByHuorly(@FormParam("accountNumber") String accountNumber,
