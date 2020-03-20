@@ -69,7 +69,6 @@ public class SalesAPIResource extends BaseResource {
 	 */
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
-	// ~Autowire entries
 	@Autowired
 	OERequestHandler oeRequestHandler;
 
@@ -92,7 +91,6 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_OFFERS)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
 	public Response getAffiliateOffers(@InjectParam SalesOfferRequest request ) {			
 		Response response=null;
 		try{						
@@ -113,9 +111,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
-	public Response performPosidAndBpMatch(
-			@Valid IdentityRequest request) {
+	public Response performPosidAndBpMatch(IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		
@@ -155,9 +151,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_AVAILABLE_DATES)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
-	public Response getESIDAndCalendarDates(
-			@Valid SalesEsidCalendarRequest request) {
+	public Response getESIDAndCalendarDates(SalesEsidCalendarRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -176,9 +170,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
-	public Response performCreditCheck(
-			@Valid CreditCheckRequest request) throws OEException {
+	public Response performCreditCheck(CreditCheckRequest request) throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -247,8 +239,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CREDIT_DATA)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
-	public Response submitUCCData(@Valid UCCDataRequest request) {
+	public Response submitUCCData(UCCDataRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		String errorDesc = null;
@@ -348,7 +339,6 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_SUBMIT_ENROLLMENT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
 	public Response submitEnrollment(EnrollmentRequest request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
@@ -369,7 +359,6 @@ public class SalesAPIResource extends BaseResource {
     @Path(API_GET_KBA_QUESTIONS)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
     public Response getKBAQuestions(GetKBAQuestionsRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
@@ -389,7 +378,6 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_KBA_RESULT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
 	public Response submitKBAAnswers(KbaAnswerRequest request) throws Exception {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
@@ -409,7 +397,6 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_TOKEN)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
 	public Response getTokenResponse(@InjectParam SalesTokenRequest request) throws Exception {
 		Response response=null;
 		try{
@@ -431,7 +418,6 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_PROSPECT)
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
 	public Response getProspectData(@InjectParam ProspectDataRequest request) {
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
@@ -452,7 +438,6 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
 	public Response getESIDDetails(EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
@@ -472,7 +457,6 @@ public class SalesAPIResource extends BaseResource {
     @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
-	@ValidateSalesAPI
     public Response getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest request){
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
