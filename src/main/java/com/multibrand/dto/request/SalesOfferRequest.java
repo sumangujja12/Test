@@ -18,8 +18,6 @@ public class SalesOfferRequest extends SalesBaseRequest {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-
-
 	/** The transaction type. */
 	@QueryParam(value = "transactionType")
 	@Length(max = 3, groups = SizeConstraint.class)
