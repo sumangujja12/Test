@@ -37,7 +37,7 @@ public class ValidationAspect implements Constants{
 	public ValidationAspect() {
 		this.validator = Validation.buildDefaultValidatorFactory().getValidator();
 	}
-	@Pointcut("@annotation(com.multibrand.request.validation.ValidateGetMapppingRequestParam) && execution(public * com.multibrand.resources.SalesAPIResource.*(..))")
+	@Pointcut("@annotation(com.multibrand.request.validation.ValidateSalesAPI) && execution(public * com.multibrand.resources.SalesAPIResource.*(..))")
 	public void validationPoint(){}
 
 	@Around("validationPoint()")

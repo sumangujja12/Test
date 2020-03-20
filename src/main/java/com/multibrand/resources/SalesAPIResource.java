@@ -43,7 +43,7 @@ import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
-import com.multibrand.request.validation.ValidateGetMapppingRequestParam;
+import com.multibrand.request.validation.ValidateSalesAPI;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.SalesTokenRequest;
@@ -92,7 +92,7 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_OFFERS)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateGetMapppingRequestParam
+	@ValidateSalesAPI
 	public Response getAffiliateOffers(@InjectParam SalesOfferRequest request ) {			
 		Response response=null;
 		try{						
@@ -113,6 +113,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
+	@ValidateSalesAPI
 	public Response performPosidAndBpMatch(
 			@Valid IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
@@ -154,6 +155,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_AVAILABLE_DATES)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
+	@ValidateSalesAPI
 	public Response getESIDAndCalendarDates(
 			@Valid SalesEsidCalendarRequest request) {
 		long startTime = CommonUtil.getStartTime();
@@ -174,6 +176,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
+	@ValidateSalesAPI
 	public Response performCreditCheck(
 			@Valid CreditCheckRequest request) throws OEException {
 		long startTime = CommonUtil.getStartTime();
@@ -244,6 +247,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CREDIT_DATA)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
+	@ValidateSalesAPI
 	public Response submitUCCData(@Valid UCCDataRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
@@ -344,7 +348,8 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_SUBMIT_ENROLLMENT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(@Valid EnrollmentRequest request)
+	@ValidateSalesAPI
+	public Response submitEnrollment(EnrollmentRequest request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
@@ -364,7 +369,8 @@ public class SalesAPIResource extends BaseResource {
     @Path(API_GET_KBA_QUESTIONS)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest request) {
+	@ValidateSalesAPI
+    public Response getKBAQuestions(GetKBAQuestionsRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
@@ -383,7 +389,8 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_KBA_RESULT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitKBAAnswers(@Valid KbaAnswerRequest request) throws Exception {
+	@ValidateSalesAPI
+	public Response submitKBAAnswers(KbaAnswerRequest request) throws Exception {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
 		
@@ -402,7 +409,7 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_TOKEN)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateGetMapppingRequestParam
+	@ValidateSalesAPI
 	public Response getTokenResponse(@InjectParam SalesTokenRequest request) throws Exception {
 		Response response=null;
 		try{
@@ -424,7 +431,7 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_PROSPECT)
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateGetMapppingRequestParam
+	@ValidateSalesAPI
 	public Response getProspectData(@InjectParam ProspectDataRequest request) {
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
@@ -445,7 +452,8 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDDetails(@Valid EsidRequest request){
+	@ValidateSalesAPI
+	public Response getESIDDetails(EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -464,7 +472,8 @@ public class SalesAPIResource extends BaseResource {
     @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestionsWithinOE(@Valid GetOEKBAQuestionsRequest request){
+	@ValidateSalesAPI
+    public Response getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest request){
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
