@@ -162,8 +162,11 @@ public class UpdatePersonRequest implements FormEntityRequest, Serializable {
 	
 	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_noid", parameterIndex = 49)
 	private String noid;
+	
+	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_cred_score_date", parameterIndex = 50)
+	private String creditScoreDate;
 
-	@ProcedureOutParameter(name = "sp.update.person.affiliate.out.param.out_error_code", parameterIndex = 50)
+	@ProcedureOutParameter(name = "sp.update.person.affiliate.out.param.out_error_code", parameterIndex = 51)
 	private String errorCode;
 
 	private String esuiteFlag;
@@ -973,6 +976,15 @@ public class UpdatePersonRequest implements FormEntityRequest, Serializable {
 
 	public void setNoid(String noid) {
 		this.noid = noid;
+	}
+
+	
+	public String getCreditScoreDate() {
+		return creditScoreDate;
+	}
+
+	public void setCreditScoreDate(String creditScoreDate) {
+		this.creditScoreDate = creditScoreDate;
 	}
 
 	@Override

@@ -187,6 +187,11 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		String agentUpResponse;
 		String kbaTransactionKey;
 		
+		String prospectId;
+		String prospectBpNumber;
+		String prospectPreapprovalStatus;
+		
+		
 		public String getPdfCaptureFlag() {
 			return pdfCaptureFlag;
 		}
@@ -1420,6 +1425,33 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	public void setErrorSet(LinkedHashSet<String> errorSet) {
 		this.errorSet = errorSet;
 	}
+
+	public String getProspectId() {
+		return prospectId;
+	}
+
+	public void setProspectId(String prospectId) {
+		this.prospectId = prospectId;
+	}
+
+	public String getProspectBpNumber() {
+		return prospectBpNumber;
+	}
+
+	public void setProspectBpNumber(String prospectBpNumber) {
+		this.prospectBpNumber = prospectBpNumber;
+	}
+
+	public String getProspectPreapprovalStatus() {
+		return prospectPreapprovalStatus;
+	}
+
+	public void setProspectPreapprovalStatus(String prospectPreapprovalStatus) {
+		this.prospectPreapprovalStatus = prospectPreapprovalStatus;
+	}
+
+
+	
 	
 	
 }

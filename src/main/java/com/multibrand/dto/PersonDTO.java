@@ -43,6 +43,11 @@ public class PersonDTO implements Serializable{
 	private String posidDLDate="";	//for DL verify date @jsingh1
 	private String posidSSNDate=""; //for SSN verify date @jsingh1
 	
+	private String creditScore;
+	private String creditSource;
+	private String creditBucket;
+	private String creditScoreDate;
+	
 	public PersonDTO() {
 		
 	}
@@ -269,6 +274,47 @@ public class PersonDTO implements Serializable{
 	public String toString() {
 		return CommonUtil.doRender(this);
 	}
+
+
+	public String getCreditScore() {
+		return creditScore;
+	}
+
+
+	public void setCreditScore(String creditScore) {
+		this.creditScore = creditScore;
+	}
+
+
+	public String getCreditSource() {
+		return creditSource;
+	}
+
+
+	public void setCreditSource(String creditSource) {
+		this.creditSource = creditSource;
+	}
+
+
+	public String getCreditBucket() {
+		return creditBucket;
+	}
+
+
+	public void setCreditBucket(String creditBucket) {
+		this.creditBucket = creditBucket;
+	}
+
+
+	public String getCreditScoreDate() {
+		return creditScoreDate;
+	}
+
+
+	public void setCreditScoreDate(String creditScoreDate) {
+		this.creditScoreDate = creditScoreDate;
+	}
+	
 	
 	
 }

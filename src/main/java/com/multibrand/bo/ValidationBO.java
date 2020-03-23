@@ -490,16 +490,16 @@ public class ValidationBO extends BaseBO {
 			//Checking if person Id is present then only make updatePerson call
 			if(StringUtils.isNotBlank(personId))
 			{
-				logger.debug("inside com.multibrand.bo:: validatePosId ::Person Id available so making updatePerson call");
+				logger.info("inside com.multibrand.bo:: validatePosId ::Person Id available so making updatePerson call");
 				UpdatePersonRequest updatePerson = new UpdatePersonRequest();
-				createUpdatePersonRequest(updatePerson, posidPii, performPosIdBpRequest, personId, posidStatus, posIdDate, retryCount);
+				createUpdatePersonRequest(updatePerson, posidPii, performPosIdBpRequest, personId, posidStatus, posIdDate, retryCount, oESignupDTO);
 
-				logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
+				logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
 						+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +"::"
 								+ " retry count after increment which is sent to db is :: "+retryCountStr);
 
 				String updatePersonErrorCode=oeBO.updatePerson(updatePerson);
-				logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+""
+				logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+""
 						+ " :: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+":: errorCode is :: "+updatePersonErrorCode);
 			}
 			else{
@@ -910,27 +910,29 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
 		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		//START TBD - Set value
-		updateServiceLocation.setProspectPreapprovedFlag(EMPTY);
-		updateServiceLocation.setProspectPartnerId(EMPTY);
+		updateServiceLocation.setProspectPreapprovedFlag(oESignupDTO.getProspectPreapprovalStatus());
+		updateServiceLocation.setProspectPartnerId(oESignupDTO.getProspectBpNumber());
 		updateServiceLocation.setBpNameMatchCode(EMPTY);
 		updateServiceLocation.setDeviceLatitude(EMPTY);
 		updateServiceLocation.setDeviceLongitude(EMPTY);
 		updateServiceLocation.setDeviceAccuracy(EMPTY);
-		updateServiceLocation.setPendingBalAmount(EMPTY);
-		updateServiceLocation.setPastServiceCa(EMPTY);
 		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
 		updateServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
-		updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
-		updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
+		if(bpMatchDTO.getPendingBalanceAmount() != null){
+			updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+			updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
+		}else{
+			updateServiceLocation.setPendingBalAmount(EMPTY);
+			updateServiceLocation.setPastServiceCa(EMPTY);
+		}
+
 		updateServiceLocation.setBpMatchScenarioId(bpMatchDTO.getBpMatchScenarioId());
-		updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
-		updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
 		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 
 
 	private void createUpdatePersonRequest(UpdatePersonRequest updatePerson,String posidPii,
-			PerformPosIdAndBpMatchRequest performPosIdBpRequest,String personId, String posidStatus, String posIdDate,int retryCount  )
+			PerformPosIdAndBpMatchRequest performPosIdBpRequest,String personId, String posidStatus, String posIdDate,int retryCount, OESignupDTO oeSignupDTO )
 	{
 		updatePerson.setIdType(posidPii);
 		updatePerson.setPersonId(personId.trim());
@@ -961,6 +963,10 @@ public class ValidationBO extends BaseBO {
 		retryCountStr=Integer.toString(retryCount);
 		updatePerson.setRetryCount(retryCountStr.trim());
 		updatePerson.setTrackingId(performPosIdBpRequest.getTrackingId());
+		updatePerson.setCredLevelNum(oeSignupDTO.getPerson().getCreditBucket());
+		updatePerson.setCredScoreNum(oeSignupDTO.getPerson().getCreditScore());
+		updatePerson.setCredSourceNum(oeSignupDTO.getPerson().getCreditSource());
+		updatePerson.setCreditScoreDate(oeSignupDTO.getPerson().getCreditScoreDate());
 	}
 	
 	
