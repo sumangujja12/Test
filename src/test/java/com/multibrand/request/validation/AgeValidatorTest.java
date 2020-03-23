@@ -21,11 +21,11 @@ public class AgeValidatorTest {
 	
 	@Test
 	public void testValidAge() {
-		assertTrue( validator.isValid("04/12/1956", null));
+		assertTrue( validator.isValid("04121956", null));
 		
 	}
 	@Test
 	public void testInValidAge() {
-		assertFalse(validator.isValid( "04/12/2003", null));
+		assertFalse(validator.isValid( "04122003", null));
 	}
 }
