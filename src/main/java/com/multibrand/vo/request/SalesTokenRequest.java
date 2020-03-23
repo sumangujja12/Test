@@ -4,6 +4,7 @@ import javax.ws.rs.QueryParam;
 
 import org.hibernate.validator.constraints.NotBlank;
 import com.multibrand.dto.request.SalesBaseRequest;
+import com.multibrand.request.validation.ActionCode;
 
 public class SalesTokenRequest extends SalesBaseRequest {
 	
@@ -14,6 +15,7 @@ public class SalesTokenRequest extends SalesBaseRequest {
 	
 	@QueryParam(value = "actionCode")
 	@NotBlank
+	@ActionCode
 	private String actionCode;
 	
 	@QueryParam(value = "numToBeTokenized")
