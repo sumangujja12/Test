@@ -143,7 +143,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String locationName;
 	
 	String guid;
-	String prospectid;
 	String noid;
 	String etf;
 	
@@ -527,13 +526,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	}
 	
 
-	public String getProspectid() {
-		return prospectid;
-	}
-
-	public void setProspectid(String prospectid) {
-		this.prospectid = prospectid;
-	}
 
 	public String getNoid() {
 		return noid;

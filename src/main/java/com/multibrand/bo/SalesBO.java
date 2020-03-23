@@ -52,10 +52,12 @@ public class SalesBO extends OeBoHelper implements Constants {
 		try {
 			BeanUtils.copyProperties(request, performPosidAndBPMatchRequest);						
 			response = oeBO.performPosidAndBpMatch(performPosidAndBPMatchRequest);
-		    GenericResponse affiliateResponse = (GenericResponse) response.getEntity();
-			IdentityResponse identityResponse = new IdentityResponse();
-			BeanUtils.copyProperties(affiliateResponse, identityResponse);	
-			response = Response.status(response.getStatus()).entity(identityResponse).build();	
+			if(response.getEntity() instanceof GenericResponse ){
+			    GenericResponse affiliateResponse = (GenericResponse) response.getEntity();
+				IdentityResponse identityResponse = new IdentityResponse();
+				BeanUtils.copyProperties(affiliateResponse, identityResponse);	
+				response = Response.status(response.getStatus()).entity(identityResponse).build();	
+			}
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch", e);
 			throw e;

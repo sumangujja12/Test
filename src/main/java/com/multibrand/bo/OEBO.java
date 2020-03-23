@@ -6041,6 +6041,16 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							+ ":: got token back."+tokenResponse.getReturnToken());
 					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
+						if(StringUtils.isNotEmpty(request.getProspectId())) {
+							ProspectDataResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
+						
+							if(StringUtils.equals(prospectResponse.getStatusCode(), STATUS_CODE_STOP) ) {
+								response = Response.status(Response.Status.BAD_REQUEST).entity(prospectResponse)
+										.build();
+								return response;
+							}
+						}
+						
 						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
 								.validatePosId(request,oESignupDTO, serviceLoationResponse);
 						response = Response.status(200).entity(validPosIdResponse)
@@ -6120,8 +6130,39 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		logger.debug("Exiting << updateServiceLocation");
 		return errorCd;
 	}
+
+     public ProspectDataResponse validateProspectDetails(PerformPosIdAndBpMatchRequest posidBPMatchRequest, OESignupDTO oeSignupDTO){
+   
+    	 
+    	 ProspectDataRequest prospectRequest = new ProspectDataRequest();
+    	 prospectRequest.setCompanyCode(posidBPMatchRequest.getCompanyCode());
+    	 String tokenizedSSN = posidBPMatchRequest.getTokenizedSSN();
+    	 prospectRequest.setLastfourdigitSSN(tokenizedSSN.substring(tokenizedSSN.length()-4));
+    	 prospectRequest.setProspectID(posidBPMatchRequest.getProspectId());
+    	 
+    	
+    	 
+    	 ProspectDataResponse prospectDataResponse = getProspectData(prospectRequest);
+    	 
+    	 logger.info("Prospect validation Response "+prospectDataResponse);
+    	 
+    	 if(StringUtils.equalsIgnoreCase(prospectDataResponse.getStatusCode(), STATUS_CODE_CONTINUE)){
+    		 oeSignupDTO.setProspectId(posidBPMatchRequest.getProspectId());
+    		 oeSignupDTO.setProspectBpNumber(prospectDataResponse.getProspectBpID());
+    		 oeSignupDTO.setProspectPreapprovalStatus(prospectDataResponse.getProspectPreApprovalFlag()); 
+    		 oeSignupDTO.getPerson().setCreditBucket(prospectDataResponse.getProspectCreditBucket());
+    		 oeSignupDTO.getPerson().setCreditScore(prospectDataResponse.getProspectCreditScore());
+    		 oeSignupDTO.getPerson().setCreditScoreDate(DateUtil.getFormattedDate("MMddyyyy", "MM/dd/yyyy", prospectDataResponse.getProspectCreditScoreDate()));
+    		 oeSignupDTO.getPerson().setCreditSource(prospectDataResponse.getProspectCreditSource());
+    		 
+    	 } else{
+    		 prospectDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+    	 }
+    	 
+    	return prospectDataResponse;
+    }
 		
-		}
+}
 	
 	
 

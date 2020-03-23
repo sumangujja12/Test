@@ -6,12 +6,14 @@ import javax.ws.rs.QueryParam;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import com.multibrand.util.CommonUtil;
+
 /**
  * 
  * @author 289347
  *
  */
-public class ProspectDataRequest extends SalesBaseRequest  {
+public class ProspectDataRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1L;
 
@@ -37,5 +39,10 @@ public class ProspectDataRequest extends SalesBaseRequest  {
 
 	public void setLastfourdigitSSN(String lastfourdigitSSN) {
 		this.lastfourdigitSSN = lastfourdigitSSN;
+	}
+	
+	@Override
+	public String toString() {
+		return CommonUtil.doRender(this);
 	}
 }
