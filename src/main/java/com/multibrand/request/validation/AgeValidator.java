@@ -17,7 +17,7 @@ public class AgeValidator implements
     @Override
 	public boolean isValid(String dob, ConstraintValidatorContext arg1) {
     	
-    	DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(MM_dd_yyyy);         
+    	DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(MMddyyyy);         
         LocalDate birthday = LocalDate.parse(dob, dateTimeFormatter);
         LocalDate today = LocalDate.now(); 
         Period period = Period.between(birthday, today);
