@@ -516,9 +516,15 @@ public class HistoryResource
 	                    dailyRespVO = dailyResponseItr.next();
 	                    for (HourlyUsage hourlyUsage : hourlyUsageList) {
 	                        if (hourlyUsage.getActualDay().equals(dailyRespVO.getActualDay())) {
-	                            dailyRespVO.setHourlyUsageList(hourlyUsage);
+	                            dailyRespVO.setHourlyUsageList(hourlyUsage);	                            
 	                            break;
 	                        }
+	                    }
+	                    
+	                    if(dailyRespVO.getHourlyUsageList() == null) {
+	                    	dailyRespVO.setDayUsg(Constants.DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO);
+	                    	dailyRespVO.setDayCst(Constants.DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO);
+	                    	
 	                    }
 	                }
 	            }

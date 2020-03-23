@@ -1372,8 +1372,8 @@ public interface Constants {
 	public static final String OFFER_CATEGORY_TRUELY_FREE_DAYS= "TRULYFREEDAYS";
 	
 	public static final String KBA_OE="kba-oe";
+	public static final String DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO= "0.0";
 	
-
 	public static final String SYMBOL_DOLLAR = "$";
 	public static final String SYMBOL_CENTS = "¢";
 
