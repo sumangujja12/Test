@@ -6045,7 +6045,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							ProspectDataResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
 						
 							if(StringUtils.equals(prospectResponse.getStatusCode(), STATUS_CODE_STOP) ) {
-								response = Response.status(Response.Status.BAD_REQUEST).entity(prospectResponse)
+								response = Response.status(Response.Status.OK).entity(prospectResponse)
 										.build();
 								return response;
 							}
@@ -6155,9 +6155,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     		 oeSignupDTO.getPerson().setCreditScoreDate(DateUtil.getFormattedDate("MMddyyyy", "MM/dd/yyyy", prospectDataResponse.getProspectCreditScoreDate()));
     		 oeSignupDTO.getPerson().setCreditSource(prospectDataResponse.getProspectCreditSource());
     		 
-    	 } else{
-    		 prospectDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-    	 }
+    	 } 
     	 
     	return prospectDataResponse;
     }

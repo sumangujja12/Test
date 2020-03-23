@@ -41,8 +41,5 @@ public class ProspectDataRequest extends SalesBaseRequest {
 		this.lastfourdigitSSN = lastfourdigitSSN;
 	}
 	
-	@Override
-	public String toString() {
-		return CommonUtil.doRender(this);
-	}
+
 }
