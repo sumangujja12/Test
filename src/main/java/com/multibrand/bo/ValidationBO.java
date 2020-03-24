@@ -347,8 +347,10 @@ public class ValidationBO extends BaseBO {
 					
 				}else{
 					serviceLocationResponseerrorList.remove(POSIDHOLD);
-					serviceLocationResponseerrorList.add(errorCd);
+					LinkedHashSet<String> errorCdSet = (LinkedHashSet<String>) performBpMatchResponse.get("errorCdSet");
+					serviceLocationResponseerrorList.addAll(errorCdSet);
 				}
+				
 				bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 
 				logger.debug("inside validatePosId:: status code after bpmatch call is:: "+response.getStatusCode());

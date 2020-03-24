@@ -3411,9 +3411,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			bpMatchDto.setPendingBalanceAmount(bpmatchResponse.getPendingBalanceAmount());
 			bpMatchDto.setPastServiceCANumber(bpmatchResponse.getPastServiceCANumber());
 			messageCode=PAST_BALANCE;
-			response.setStatusCode(STATUS_CODE_STOP);
+			response.setStatusCode(STATUS_CODE_ASK);
 			response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_BALANCE_MSG_TXT));
-			errorCdSet.add(errorCd);
+			errorCdSet.add(PBSD);
 			scenario = "1";
 			scenarioDesc= "Uncollected Balance";
 			response.setPendingBalanceAmount(String.valueOf(bpmatchResponse.getPendingBalanceAmount()));
