@@ -2804,7 +2804,7 @@ public class OEBO extends OeBoHelper implements Constants{
 							serviceLocationResponseErrorList.remove(MESID);
 							serviceLocationResponseErrorList.remove(NESID);
 							serviceLocationResponseErrorList.remove(NRESID);
-							serviceLocationResponseErrorList.add(strESIDNumber);
+						//	serviceLocationResponseErrorList.add(strESIDNumber);
 							
 						}	
 						
