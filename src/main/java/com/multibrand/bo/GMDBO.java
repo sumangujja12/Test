@@ -635,7 +635,18 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				&& MVI.equalsIgnoreCase(oeSignUpDTO.getTransactionType())) {
 			enrollmentType = MOVEIN;
 			contactText = "Move in " + startSvrcDate + ".Web.";
-		}
+		} else if (StringUtils.isNotBlank(oeSignUpDTO.getTransactionType())
+				&& SWI.equalsIgnoreCase(oeSignUpDTO.getTransactionType())) {
+			enrollmentType = SWITCH;
+			contactText = "Move in " + startSvrcDate + ".Web.";
+			
+			if(StringUtils.isNotBlank(startSvrcDate)){
+				contactText = "Selected Date Switch." + startSvrcDate + ".Web.";
+			}
+			else{
+		        contactText = "Standard Switch. Web.";
+			}
+		}		
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("EnrollmentService creating submitEnrollmentRequest,contactText is ::{}" , contactText);
