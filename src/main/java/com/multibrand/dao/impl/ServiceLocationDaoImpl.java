@@ -838,7 +838,11 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 												.getString("vendor_name"));
 										dataRow.setTlpReportApiStatus(rs
 												.getString("tlp_report_api_status"));
-										
+										dataRow.setPosidSNRO(rs.getString("posid_snro"));
+										dataRow.setBpMatchScenarioId(rs.getString("bpmatch_scenario_id"));
+										dataRow.setProspectId(rs.getString("prospect_id"));
+										dataRow.setProspectPartnerId(rs.getString("prospect_partner_id"));														 
+										dataRow.setProspectPreapprovalFlag(rs.getString("prospect_preapproved_flag"));
 										return dataRow;
 									}
 								});
