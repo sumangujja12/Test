@@ -637,9 +637,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			contactText = "Move in " + startSvrcDate + ".Web.";
 		} else if (StringUtils.isNotBlank(oeSignUpDTO.getTransactionType())
 				&& SWI.equalsIgnoreCase(oeSignUpDTO.getTransactionType())) {
-			enrollmentType = SWITCH;
-			contactText = "Move in " + startSvrcDate + ".Web.";
-			
+			enrollmentType = SWITCH;			
 			if(StringUtils.isNotBlank(startSvrcDate)){
 				contactText = "Selected Date Switch." + startSvrcDate + ".Web.";
 			}
@@ -762,33 +760,6 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrProductPriceCode(EMPTY);
 		submitEnrollRequest.setStrIncentiveCode(EMPTY);
 		submitEnrollRequest.setStrmarketSegment("RS");
-
-		String DepositAmt = EMPTY;
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,DepositAmt is ::{}" , DepositAmt);
-		}
-		// txtPayAmt replaced with DepositAmt
-		if (StringUtils.isNotBlank(DepositAmt)) {
-
-			requestedAmount = DepositAmt;
-			contactText += "$" + DepositAmt + " Deposit." + "Agr#" + agreementNumber;
-
-			if (StringUtils.equals(DepositAmt, "0")) {
-				depositCode = FLAG_B;
-			} else {
-				depositCode = FLAG_C;
-			}
-		} else {
-			requestedAmount = EMPTY;
-			reasonSEcurityDeposit = EMPTY;
-			depositCode = EMPTY;
-			contactText += "No Deposit." + "Agr#" + agreementNumber;
-
-		}
-
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,contactText is ::{}" , contactText);
-		}
 
 		submitEnrollRequest.setStrContactText(contactText);
 
