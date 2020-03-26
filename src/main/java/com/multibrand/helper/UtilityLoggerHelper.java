@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.dto.request.BaseAffiliateRequest;
 import com.multibrand.dto.request.BaseRequest;
+import com.multibrand.dto.request.SalesBaseRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.UtilityService;
@@ -166,6 +167,28 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 	}
 
 	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, BaseAffiliateRequest request, Response response, long responseTime, String trackingId, String caNumber) {
+		LoggingVO logVO = new LoggingVO();	
+		logVO.setTransactionType(apiName);
+		logVO.setCompanyCode(request.getCompanyCode());
+		logVO.setRequestData(request);
+		logVO.setResponseData(response);
+		logVO.setResponseStatus(Integer.toString(response.getStatus()));
+		logVO.setMask(isLogMaskingRequired);
+		logVO.setUserId(trackingId);
+		logVO.setConfirmationNumber(caNumber);
+		logVO.setResponseTime(responseTime);
+		if(isLoggingEnable()){
+			logger.debug("LOGGING SERVICE IS ENABLED:::");
+			try{
+				logVO.setEndPointURL(this.envMessageReader.getMessage(Constants.UTILITY_SERVICE_ENDPOINT_URL));
+				asycHelper.asychLogging(logVO);
+			}catch(Exception e){
+				logger.error("Error logging using UtilityService!!! "+e.getMessage());
+			}
+		}
+	}
+	
+	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, SalesBaseRequest request, Response response, long responseTime, String trackingId, String caNumber) {
 		LoggingVO logVO = new LoggingVO();	
 		logVO.setTransactionType(apiName);
 		logVO.setCompanyCode(request.getCompanyCode());

@@ -96,7 +96,7 @@ public class OEBOTest {
 	  /*@Before public void init()
 	  { MockitoAnnotations.initMocks(this); }*/
 	 
-
+/*
 	@Test
 	public void testSubmitanswerskbaWithoutQuestionAnswerList() {
 		// without que answer from input
@@ -134,7 +134,8 @@ public class OEBOTest {
 			e.printStackTrace();
 		}
 	}
-
+*/
+	/*
 	@Test
 	public void testSubmitanswerskbaWithQuestionAnswerList() {
 		// with que answer from input with return code
@@ -166,8 +167,8 @@ public class OEBOTest {
 			e.printStackTrace();
 		}
 	}
-
-	@Test
+*/
+/*	@Test
 	public void testSubmitanswerskbaWithQuestionAnswerListWithoutkbaSubmitAnswerResponse() {
 		// with que answer from input without return code and with no
 		// kbaSubmitAnswerResponse
@@ -198,8 +199,8 @@ public class OEBOTest {
 			e.printStackTrace();
 		}
 	}
-
-	@Test
+*/
+/*	@Test
 	public void testSubmitanswerskbaWithQuestionAnswerListkbaSubmitAnswerResponseSsnVerifyDate() {
 		// kbaSubmitAnswerResponse with SsnVerifyDate
 		KbaAnswerRequest request = new KbaAnswerRequest();
@@ -238,7 +239,8 @@ public class OEBOTest {
 			e.printStackTrace();
 		}
 	}
-
+	*/
+/*
 	@Test
 	public void testSubmitanswerskbaWithKbareasonAndVerificationAssessmentInKbaResponse() {
 		// kba reasonlist and verification assessment list
@@ -307,8 +309,8 @@ public class OEBOTest {
 			e.printStackTrace();
 		}
 	}
-
-	@Test
+*/
+/*	@Test
 	public void testSubmitanswerskbaWithQuestionAnswerListkbaSubmitAnswerResponseDlVerifyDate() {
 		// kbaSubmitAnswerResponse with DlVerifyDate
 		KbaAnswerRequest request = new KbaAnswerRequest();
@@ -339,7 +341,7 @@ public class OEBOTest {
 			e.printStackTrace();
 		}
 	}
-
+*/
 	@Test
 	public void testSubmitanswerskbaWithException() {
 		// Exception

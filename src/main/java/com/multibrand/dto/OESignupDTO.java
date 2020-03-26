@@ -1,6 +1,7 @@
 package com.multibrand.dto;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
@@ -163,7 +164,7 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	private String kbaSuggestionFlag;
 	
 	private String posidSNRO;
-	
+	private LinkedHashSet<String> errorSet = new LinkedHashSet<>();
 	public OESignupDTO() {
 		
 	}
@@ -185,6 +186,11 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		String pdfCaptureFlag;
 		String agentUpResponse;
 		String kbaTransactionKey;
+		
+		String prospectId;
+		String prospectBpNumber;
+		String prospectPreapprovalStatus;
+		
 		
 		public String getPdfCaptureFlag() {
 			return pdfCaptureFlag;
@@ -1411,6 +1417,41 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	public void setPosidSNRO(String posidSNRO) {
 		this.posidSNRO = posidSNRO;
 	}
+
+	public LinkedHashSet<String> getErrorSet() {
+		return errorSet;
+	}
+
+	public void setErrorSet(LinkedHashSet<String> errorSet) {
+		this.errorSet = errorSet;
+	}
+
+	public String getProspectId() {
+		return prospectId;
+	}
+
+	public void setProspectId(String prospectId) {
+		this.prospectId = prospectId;
+	}
+
+	public String getProspectBpNumber() {
+		return prospectBpNumber;
+	}
+
+	public void setProspectBpNumber(String prospectBpNumber) {
+		this.prospectBpNumber = prospectBpNumber;
+	}
+
+	public String getProspectPreapprovalStatus() {
+		return prospectPreapprovalStatus;
+	}
+
+	public void setProspectPreapprovalStatus(String prospectPreapprovalStatus) {
+		this.prospectPreapprovalStatus = prospectPreapprovalStatus;
+	}
+
+
+	
 	
 	
 }

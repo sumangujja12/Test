@@ -704,6 +704,8 @@ public interface Constants {
 	public static final String STATUS_ACTIVE = "ACTIVE";
 	public static final int PUSH_2 = 2;
 	public static final int PUSH_4 = 4;
+	public static final int PUSH_7 = 7;
+	public static final int PUSH_9 = 9;
 	
 	public static final String ENV_UPDATE_CRM_ASYNC_DELAY_MS="env.updatecrm.async.delay.ms";
 	public static final String METHOD_UPDATE_CONTACT_ASYNC="updateContactInfoWithAsyncDelay";
@@ -1329,7 +1331,7 @@ public interface Constants {
     
     //New Sales APIs - To be used by all channels and brands
     public static final String API_OFFERS = "offers";
-    public static final String API_POSID= "identity";
+    public static final String API_IDENTITY= "identity";
     public static final String API_AVAILABLE_DATES= "available-dates";
     public static final String API_CHECK_CREDIT= "check-credit";
     public static final String API_CREDIT_DATA= "credit-data";
@@ -1344,6 +1346,7 @@ public interface Constants {
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
     public static final String RETRY_NOT_ALLOWED_TXT = "Retry of KBA Answers is not allowed on same transactionKey. Please rerun the getKBAQuestions API to generate a new transactionKey";
     public static final String NO_PROSPECT_MATCH_FOUND = "NO_PROSPECT_MATCH_FOUND";
+    public static final String NO_PROSPECT_MATCH_FOUND_TEXT = "msg_prospect_match_not_found";
     public static final String HTTP_BAD_REQUEST  = "BAD_REQUEST";
     public static final String CHANNEL_WEB = "WEB";
     public static final String CHANNEL_AA = "AA";
@@ -1377,5 +1380,19 @@ public interface Constants {
 	public static final String SYMBOL_DOLLAR = "$";
 	public static final String SYMBOL_CENTS = "¢";
 
-   
+	public static final String CREDFREEZE = "CREDFREEZE";
+	public static final String CCSD = "CCSD";
+	public static final String TRANSACTIONTYPE_N = "N";
+	public static final String PBSD = "PBSD";
+	public static final String HOLD_DNP  = "DNP";
+	   
+	
+	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission.flag";
+	public static final String POSID_HOLD_MSG_TXT="msg_posid_hold";
+	public static final String MESSAGE_CODE_NO_MATCH_FOUND = "NO_MATCH_FOUND";
+	
+	public static final String PROSPECT_PREAPPROVAL_FLAG_PASS= "P";
+	public static final String PROSPECT_MISMATCH= "PROSPECT_MISMATCH";
+	public static final String PROSPECT_MISMATCH_TEXT = "msg_prospect_mismatch";
+	
 }

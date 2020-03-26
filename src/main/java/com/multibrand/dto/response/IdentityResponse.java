@@ -1,18 +1,14 @@
-package com.multibrand.vo.response;
-
+package com.multibrand.dto.response;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.multibrand.vo.response.GenericResponse;
 
-@XmlRootElement(name="PerformPosIdandBpMatchResponse")
+@XmlRootElement(name="IdentityResponse")
+public class IdentityResponse extends  SalesBaseResponse {
 
-public class PerformPosIdandBpMatchResponse extends GenericResponse {
-
-	private String posidDLDate;
-	
+	private String posidDLDate;	
 	private String posidSSNDate;
-	
-
 	private String trackingId;
 	private String tokenizedSSN;
 	private String tokenizedTDL;
@@ -28,9 +24,6 @@ public class PerformPosIdandBpMatchResponse extends GenericResponse {
 	private String guid;
 	private String pendingBalanceAmount;
 	private String bpMatchScenarioId;
-	
-	
-	
 	
 	public String getPosidDLDate() {
 		return posidDLDate;
@@ -133,8 +126,7 @@ public class PerformPosIdandBpMatchResponse extends GenericResponse {
 	}
 	public void setBpMatchScenarioId(String bpMatchScenarioId) {
 		this.bpMatchScenarioId = bpMatchScenarioId;
-	}
+	}	
 	
-
 	
 }

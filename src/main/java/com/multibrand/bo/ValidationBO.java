@@ -2,9 +2,11 @@ package com.multibrand.bo;
 
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -155,7 +157,7 @@ public class ValidationBO extends BaseBO {
 	 * @return {@link com.multibrand.vo.response.PerformPosIdandBpMatchResponse PerformPosIdandBpMatchResponse}
 	 */
 	public com.multibrand.vo.response.PerformPosIdandBpMatchResponse validatePosId(
-			PerformPosIdAndBpMatchRequest performPosIdBpRequest,OESignupDTO oESignupDTO)
+			PerformPosIdAndBpMatchRequest performPosIdBpRequest,OESignupDTO oESignupDTO, ServiceLocationResponse serviceLoationResponse)
 	{
 		logger.debug(" START *******ValidationBO:: validatePosID API**********");
 		logger.debug("inside validatePosId:: tracking id from Form Parameters is :: "+performPosIdBpRequest.getTrackingId());
@@ -168,15 +170,15 @@ public class ValidationBO extends BaseBO {
 		String messageCode=null;
 		String errorCd=null;
 		String recentCallMade=null;
+		LinkedHashSet<String> serviceLocationResponseerrorList = new LinkedHashSet<>();
+		
 		com.multibrand.vo.response.PerformPosIdandBpMatchResponse response= new com.multibrand.vo.response.PerformPosIdandBpMatchResponse();
 		BPMatchDTO bpMatchDTO=new BPMatchDTO();
 		/*
 		 * setting tokenized values into response
 		 */
-		response.setTokenizedSSN(performPosIdBpRequest.getTokenSSN());
-		response.setTokenizedTDL(performPosIdBpRequest.getTokenTDL());
-
-		
+		response.setTokenizedSSN(performPosIdBpRequest.getTokenizedSSN());
+		response.setTokenizedTDL(performPosIdBpRequest.getTokenizedTDL());
 
 		//isValidDate will confirm if DOB got processed properly into desired format
 		/*boolean isValidDate=true;
@@ -210,35 +212,44 @@ public class ValidationBO extends BaseBO {
 		else if (StringUtils.isNumeric(performPosIdBpRequest.getTrackingId())){
 			logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
 					+ "Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: tracking number is numeric ");
+			
 			List<Map<String, String>> personIdAndRetryCountResponse =oeBO.getPersonIdAndRetryCountByTrackingNo(performPosIdBpRequest.getTrackingId());
 			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
 
-			personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
-			logger.debug("inside validatePosId::personIdAndRetryCountResponse.get(0) "+personIdAndRetryCountResponse.get(0));
-
-			if(StringUtils.isNotBlank(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT))){
-				retryCount=	Integer.parseInt(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT));
+			if(null!=serviceLoationResponse 
+					&& serviceLoationResponse.getPersonResponse() != null
+					)
+			{
+				
+				retryCount=	Integer.parseInt(serviceLoationResponse.getPersonResponse().getRetryCount());
+				personId = serviceLoationResponse.getPersonResponse().getPersonId();
 				logger.debug("inside validatePosId:: Tracking number :: "+performPosIdBpRequest.getTrackingId()+""
-						+ " retry count for database is :: "+retryCount);
+						+ " retry count from database is :: "+retryCount);
 
 				/*
-				 * Step 4: Check the retry count value if greater than 2 then dont process and return FAILURE
+				 * Step 4: Check the retry count value if greater than 2 then 
+				 * continue as PASS and assess POSIDHOLD (when Togglz is ON)
+				 * or hardstop (when TOGGLZ is OFF)
 				 */
-				if(retryCount>=2)
+				if(retryCount>2)
 				{
 					logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
-										
-					ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
-					response.setGuID(serviceLoationResponse.getGuid());
-
-					response.setStatusCode(STATUS_CODE_STOP);
-					messageCode=POSID_FAIL_MAX;
+					//need to change toggle name
+					boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
+					if(posidHoldAllowed){
+						response.setStatusCode(STATUS_CODE_CONTINUE);
+						messageCode=POSID_FAIL_MAX;
+						response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+					}else{
+						response.setStatusCode(STATUS_CODE_STOP);
+						messageCode=POSID_FAIL_MAX;
+						response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					}					
 					response.setMessageCode(messageCode);
 					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 					response.setRetryCount(Integer.toString(retryCount));
-					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 					response.setTrackingId(performPosIdBpRequest.getTrackingId());
 					return response;
 				}
@@ -266,6 +277,15 @@ public class ValidationBO extends BaseBO {
 				+ " "+performPosIdBpRequest.getAffiliateId() +":: retry Count is ::"+retryCount);
 		ValidatePosIdKBAResponse validatePosIdKBAResponse= new ValidatePosIdKBAResponse();
 		try{
+			
+			if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
+			    
+				if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+				}
+				}
+			
 			/*
 			 * Step 5: Make validatePosId call
 			 */
@@ -313,14 +333,25 @@ public class ValidationBO extends BaseBO {
 				 */
 				Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
 				performBpMatchResponse=oeBO.performBpMatch(response,errorCd,messageCode, performPosIdBpRequest.getFirstName(),
-						performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenTDL(), performPosIdBpRequest.getMaidenName(),
+						performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenizedTDL(), performPosIdBpRequest.getMaidenName(),
 						performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getServStreetAptNum(), performPosIdBpRequest.getServCity(),
 						performPosIdBpRequest.getServState(), performPosIdBpRequest.getServStreetName(), performPosIdBpRequest.getServStreetNum(),
-						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenSSN(),performPosIdBpRequest.getBrandId());	
+						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenizedSSN(),performPosIdBpRequest.getBrandId());	
 
 				response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 				messageCode=(String)performBpMatchResponse.get("messageCode");
 				errorCd=(String)performBpMatchResponse.get("errorCd");
+				if(StringUtils.isEmpty(errorCd)){
+					serviceLocationResponseerrorList.remove(BP_RESTRICT);
+					serviceLocationResponseerrorList.remove(BPSD);
+						serviceLocationResponseerrorList.remove(POSIDHOLD);
+					
+				}else{
+					serviceLocationResponseerrorList.remove(POSIDHOLD);
+					LinkedHashSet<String> errorCdSet = (LinkedHashSet<String>) performBpMatchResponse.get("errorCdSet");
+					serviceLocationResponseerrorList.addAll(errorCdSet);
+				}
+				
 				bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 
 				logger.debug("inside validatePosId:: status code after bpmatch call is:: "+response.getStatusCode());
@@ -333,27 +364,33 @@ public class ValidationBO extends BaseBO {
 					(StringUtils.isBlank( validatePosIdKBAResponse.getStrErroMessage()) 
 							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
 			{
-				if(retryCount!=2){
+				if(retryCount<=2){
 					response.setStatusCode(STATUS_CODE_ASK);
 					messageCode=POSID_FAIL;
 					response.setMessageCode(messageCode);
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 					posidStatus=POSID_FLAG_NO;
+					errorCd=POSIDHOLD;
 				}
 				else{
 					response.setStatusCode(STATUS_CODE_STOP);
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					errorCd=POSIDHOLD;
 				}
+				serviceLocationResponseerrorList.remove(BP_RESTRICT);
+				serviceLocationResponseerrorList.remove(BPSD);
+				serviceLocationResponseerrorList.add(errorCd);
 			}
 			else
 			{ 
-				if(retryCount!=2){
+				if(retryCount<=2){
 					response.setStatusCode(STATUS_CODE_ASK);
 					messageCode=POSID_FAIL;
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 					response.setMessageCode(messageCode);
+					errorCd=POSIDHOLD;
 				}
 				else{
 					logger.debug("inside com.multibrand.bo:: validatePosId ::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
@@ -362,7 +399,11 @@ public class ValidationBO extends BaseBO {
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					errorCd=POSIDHOLD;
 				}
+				serviceLocationResponseerrorList.remove(BP_RESTRICT);
+				serviceLocationResponseerrorList.remove(BPSD);
+				serviceLocationResponseerrorList.add(errorCd);
 			}
 
 			//setting retrycount in response:
@@ -378,14 +419,17 @@ public class ValidationBO extends BaseBO {
 			response.setStatusCode(STATUS_CODE_ASK);
 			response.setMessageCode(POSID_FAIL);
 			messageCode=POSID_FAIL;
+			serviceLocationResponseerrorList.remove(BP_RESTRICT);
+			serviceLocationResponseerrorList.remove(BPSD);
+			serviceLocationResponseerrorList.add(POSIDHOLD);
 			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 			logger.error("inside com.multibrand.bo:: validatePosId :: Exception making Posid REST Call", e);
 			throw new OAMException(200, e.getMessage(), response);
 		}
 		finally{
-
+			oESignupDTO.setErrorCdList(StringUtils.join(serviceLocationResponseerrorList,SYMBOL_PIPE));
 			if (retryCount==0)
-			{	
+			{
 				try{//making addperson call if its 1st try
 					logger.debug("inside com.multibrand.bo:: validatePosId ::making add person call and retrycount is 0");
 					AddPersonRequest addPersonRequest= new AddPersonRequest();
@@ -401,13 +445,13 @@ public class ValidationBO extends BaseBO {
 						logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making addservicelocation call now");
 						AddServiceLocationRequest addServiceLocation =new AddServiceLocationRequest();						
 						String guid= addServiceLocation.getGuid();											
-						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade,oESignupDTO);
+						createAddServiceLocationRequest(addServiceLocation, performPosIdBpRequest, personId, messageCode, errorCd,recentCallMade,oESignupDTO, bpMatchDTO);
 						performPosIdBpRequest.setTrackingId(oeBO.addServiceLocation(addServiceLocation));
 						//checking if addServiceLocation call was successful
 						if(StringUtils.isNotBlank(performPosIdBpRequest.getTrackingId()))
 						{
 							response.setTrackingId(performPosIdBpRequest.getTrackingId());
-							response.setGuID(guid);
+							response.setGuid(guid);
 							logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +"::"
 									+ " tracking id after servicelocation call is :: "+performPosIdBpRequest.getTrackingId());
 						}
@@ -437,8 +481,8 @@ public class ValidationBO extends BaseBO {
 							+ ""+performPosIdBpRequest.getAffiliateId() +"::Exception while making addperson and addserviceLocation call :: ", e);
 				}
 			}else{
-				ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
-				response.setGuID(serviceLoationResponse.getGuid());
+				//ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+				response.setGuid(serviceLoationResponse.getGuid());
 			}
 
 			response.setTrackingId(performPosIdBpRequest.getTrackingId());
@@ -449,16 +493,16 @@ public class ValidationBO extends BaseBO {
 			//Checking if person Id is present then only make updatePerson call
 			if(StringUtils.isNotBlank(personId))
 			{
-				logger.debug("inside com.multibrand.bo:: validatePosId ::Person Id available so making updatePerson call");
+				logger.info("inside com.multibrand.bo:: validatePosId ::Person Id available so making updatePerson call");
 				UpdatePersonRequest updatePerson = new UpdatePersonRequest();
-				createUpdatePersonRequest(updatePerson, posidPii, performPosIdBpRequest, personId, posidStatus, posIdDate, retryCount);
+				createUpdatePersonRequest(updatePerson, posidPii, performPosIdBpRequest, personId, posidStatus, posIdDate, retryCount, oESignupDTO);
 
-				logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
+				logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
 						+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +"::"
 								+ " retry count after increment which is sent to db is :: "+retryCountStr);
 
 				String updatePersonErrorCode=oeBO.updatePerson(updatePerson);
-				logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+""
+				logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+""
 						+ " :: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+":: errorCode is :: "+updatePersonErrorCode);
 			}
 			else{
@@ -656,8 +700,8 @@ public class ValidationBO extends BaseBO {
 		addPersonRequest.setFirstName(performPosIdBpRequest.getFirstName());
 		addPersonRequest.setMaidenName(performPosIdBpRequest.getMaidenName());
 		addPersonRequest.setMiddleName(performPosIdBpRequest.getMiddleName());
-		addPersonRequest.setIdNumber(performPosIdBpRequest.getTokenTDL());
-		addPersonRequest.setSsn(performPosIdBpRequest.getTokenSSN());
+		addPersonRequest.setIdNumber(performPosIdBpRequest.getTokenizedTDL());
+		addPersonRequest.setSsn(performPosIdBpRequest.getTokenizedSSN());
 		addPersonRequest.setPosIdStatus(posidStatus);
 		//logic for mktpref
 		if(StringUtils.isNotBlank(performPosIdBpRequest.getMktPref()) && 
@@ -689,7 +733,7 @@ public class ValidationBO extends BaseBO {
 	 */
 	private void createAddServiceLocationRequest(AddServiceLocationRequest addServiceLocation,
 			PerformPosIdAndBpMatchRequest performPosIdBpRequest, String personId,
-			String messageCode,String errorCd,String recentCallMade,OESignupDTO oESignupDTO)
+			String messageCode,String errorCd,String recentCallMade,OESignupDTO oESignupDTO, BPMatchDTO bpMatchDTO)
 	{
 		/*if(StringUtils.isNotBlank(performPosIdBpRequest.getTransactionType()) && 
 				performPosIdBpRequest.getTransactionType().equalsIgnoreCase(MVI))
@@ -735,7 +779,10 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setVendorCode(oESignupDTO.getVendorCode());
 		addServiceLocation.setVendorName(oESignupDTO.getVendorName());
 		addServiceLocation.setTlpReportApiStatus("");
-		addServiceLocation.setErrorCdList("");
+		if(StringUtils.isNotBlank(oESignupDTO.getErrorCdList())){
+			addServiceLocation.setErrorCdList(oESignupDTO.getErrorCdList());
+		}else{
+		addServiceLocation.setErrorCdList("");}
 		addServiceLocation.setSystemNotes("");
 		//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		addServiceLocation.setEntryPoint(performPosIdBpRequest.getEntryPoint());
@@ -764,10 +811,18 @@ public class ValidationBO extends BaseBO {
 		addServiceLocation.setDeviceLatitude(EMPTY);
 		addServiceLocation.setDeviceLongitude(EMPTY);
 		addServiceLocation.setDeviceAccuracy(EMPTY);
-		addServiceLocation.setPendingBalAmount(EMPTY);
-		addServiceLocation.setPastServiceCa(EMPTY);
+		//addServiceLocation.setPendingBalAmount(EMPTY);
+		//addServiceLocation.setPastServiceCa(EMPTY);
 		addServiceLocation.setKbaSuggestionFlag(oESignupDTO.getKbaSuggestionFlag());
 		addServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		addServiceLocation.setBpMatchScenarioId(bpMatchDTO.getBpMatchScenarioId());
+		if(bpMatchDTO.getPendingBalanceAmount() != null){
+			addServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+			addServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
+		}else{
+			addServiceLocation.setPendingBalAmount(EMPTY);
+			addServiceLocation.setPastServiceCa(EMPTY);
+		}
 		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 	}
@@ -831,7 +886,10 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setVendorCode(oESignupDTO.getVendorCode());
 		updateServiceLocation.setVendorName(oESignupDTO.getVendorName());
 		updateServiceLocation.setTlpReportApiStatus("");
-		updateServiceLocation.setErrorCdList("");
+		if(StringUtils.isNotBlank(oESignupDTO.getErrorCdList())){
+			updateServiceLocation.setErrorCdList(oESignupDTO.getErrorCdList());
+		}else{
+			updateServiceLocation.setErrorCdList("");}
 		updateServiceLocation.setSystemNotes("");
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
@@ -855,22 +913,29 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setChannel(performPosIdBpRequest.getChannelType());
 		// End || 13644  Product Backlog Item 13644: Introduce Channel Type in Sales APIs || atiwari || 24/01/2020
 		//START TBD - Set value
-		updateServiceLocation.setProspectPreapprovedFlag(EMPTY);
-		updateServiceLocation.setProspectPartnerId(EMPTY);
+		updateServiceLocation.setProspectPreapprovedFlag(oESignupDTO.getProspectPreapprovalStatus());
+		updateServiceLocation.setProspectPartnerId(oESignupDTO.getProspectBpNumber());
 		updateServiceLocation.setBpNameMatchCode(EMPTY);
 		updateServiceLocation.setDeviceLatitude(EMPTY);
 		updateServiceLocation.setDeviceLongitude(EMPTY);
 		updateServiceLocation.setDeviceAccuracy(EMPTY);
-		updateServiceLocation.setPendingBalAmount(EMPTY);
-		updateServiceLocation.setPastServiceCa(EMPTY);
 		updateServiceLocation.setKbaSuggestionFlag(EMPTY);
 		updateServiceLocation.setPosidSNRO(oESignupDTO.getPosidSNRO());
+		if(bpMatchDTO.getPendingBalanceAmount() != null){
+			updateServiceLocation.setPendingBalAmount(String.valueOf(bpMatchDTO.getPendingBalanceAmount()));
+			updateServiceLocation.setPastServiceCa(bpMatchDTO.getPastServiceCANumber());
+		}else{
+			updateServiceLocation.setPendingBalAmount(EMPTY);
+			updateServiceLocation.setPastServiceCa(EMPTY);
+		}
+
+		updateServiceLocation.setBpMatchScenarioId(bpMatchDTO.getBpMatchScenarioId());
 		///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 	}
 
 
 	private void createUpdatePersonRequest(UpdatePersonRequest updatePerson,String posidPii,
-			PerformPosIdAndBpMatchRequest performPosIdBpRequest,String personId, String posidStatus, String posIdDate,int retryCount  )
+			PerformPosIdAndBpMatchRequest performPosIdBpRequest,String personId, String posidStatus, String posIdDate,int retryCount, OESignupDTO oeSignupDTO )
 	{
 		updatePerson.setIdType(posidPii);
 		updatePerson.setPersonId(personId.trim());
@@ -879,13 +944,13 @@ public class ValidationBO extends BaseBO {
 		updatePerson.setFirstName(performPosIdBpRequest.getFirstName());
 		updatePerson.setMaidenName(performPosIdBpRequest.getMaidenName());
 		updatePerson.setMiddleName(performPosIdBpRequest.getMiddleName());
-		updatePerson.setIdNumber(performPosIdBpRequest.getTokenTDL());
+		updatePerson.setIdNumber(performPosIdBpRequest.getTokenizedTDL());
 		//logic for mktpref
 		if(StringUtils.isNotBlank(performPosIdBpRequest.getMktPref()) && performPosIdBpRequest.getMktPref().equalsIgnoreCase("Y"))
 			updatePerson.setEmailOptionRps(X_VALUE);
 		else
 			updatePerson.setEmailOptionRps(O_VALUE);
-		updatePerson.setSsn(performPosIdBpRequest.getTokenSSN());
+		updatePerson.setSsn(performPosIdBpRequest.getTokenizedSSN());
 		updatePerson.setPosIdStatus(posidStatus);
 		updatePerson.setLastName(performPosIdBpRequest.getLastName());
 
@@ -901,6 +966,10 @@ public class ValidationBO extends BaseBO {
 		retryCountStr=Integer.toString(retryCount);
 		updatePerson.setRetryCount(retryCountStr.trim());
 		updatePerson.setTrackingId(performPosIdBpRequest.getTrackingId());
+		updatePerson.setCredLevelNum(oeSignupDTO.getPerson().getCreditBucket());
+		updatePerson.setCredScoreNum(oeSignupDTO.getPerson().getCreditScore());
+		updatePerson.setCredSourceNum(oeSignupDTO.getPerson().getCreditSource());
+		updatePerson.setCreditScoreDate(oeSignupDTO.getPerson().getCreditScoreDate());
 	}
 	
 	
@@ -1008,10 +1077,10 @@ public class ValidationBO extends BaseBO {
 	public ValidatePosIdKBAResponse validatePosIdOldCSSCall(PerformPosIdAndBpMatchRequest performPosIdBpRequest) throws Exception  
 	{
 		ValidatePosIdKBAResponse validatePosIdKBAResponse = new ValidatePosIdKBAResponse();		
-		ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenTDL(),
+		ValidatePosIdRequest validatePosIdReq= validateRequestHandler.createPosIdRequest(performPosIdBpRequest.getDobForPosId(), performPosIdBpRequest.getTokenizedTDL(),
 				performPosIdBpRequest.getCompanyCode(),
 				performPosIdBpRequest.getMaidenName(),performPosIdBpRequest.getFirstName(), performPosIdBpRequest.getLastName(),
-				performPosIdBpRequest.getTokenSSN(), performPosIdBpRequest.getMiddleName());
+				performPosIdBpRequest.getTokenizedSSN(), performPosIdBpRequest.getMiddleName());
 		ValidatePosIdResponse validatePosIdResponse=validationService.validatePosId(validatePosIdReq);
 		validatePosIdKBAResponse.setExSsnVerifydate(POSID_BLANK_DATE);
 		validatePosIdKBAResponse.setExDlVerifydate(POSID_BLANK_DATE);

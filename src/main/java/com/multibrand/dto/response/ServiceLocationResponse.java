@@ -71,6 +71,7 @@ public class ServiceLocationResponse implements Serializable {
 	private String offerCellTrackCodeSelected;
 	private String billingAddressOverrideFlag;
 	private String errorCode;
+	private String errorCdlist;
 	private String promoType;
 	private String promoValue;
 	private String dwellingType;
@@ -158,6 +159,11 @@ public class ServiceLocationResponse implements Serializable {
 			String vendorName;
 			String tlpReportApiStatus;
     private String posidSNRO;
+    
+    private String bpMatchScenarioId;
+    private String prospectId;
+    private String prospectPreapprovalFlag;
+    private String prospectPartnerId;
 			
 			
 			public String getAgentID() {
@@ -2272,6 +2278,49 @@ public class ServiceLocationResponse implements Serializable {
 
 	public void setPosidSNRO(String posidSNRO) {
 		this.posidSNRO = posidSNRO;
+	}
+
+	public String getErrorCdlist() {
+		return errorCdlist;
+	}
+
+	public void setErrorCdlist(String errorCdlist) {
+		this.errorCdlist = errorCdlist;
+	}
+	
+	
+
+	public String getBpMatchScenarioId() {
+		return bpMatchScenarioId;
+	}
+
+	public void setBpMatchScenarioId(String bpMatchScenarioId) {
+		this.bpMatchScenarioId = bpMatchScenarioId;
+	}
+	
+	public String getProspectId() {
+		return prospectId;
+	}
+
+	public void setProspectId(String prospectId) {
+		this.prospectId = prospectId;
+	}
+	
+
+	public String getProspectPreapprovalFlag() {
+		return prospectPreapprovalFlag;
+	}
+
+	public void setProspectPreapprovalFlag(String prospectPreapprovalFlag) {
+		this.prospectPreapprovalFlag = prospectPreapprovalFlag;
+	}
+
+	public String getProspectPartnerId() {
+		return prospectPartnerId;
+	}
+
+	public void setProspectPartnerId(String prospectPartnerId) {
+		this.prospectPartnerId = prospectPartnerId;
 	}
 
 	@Override
