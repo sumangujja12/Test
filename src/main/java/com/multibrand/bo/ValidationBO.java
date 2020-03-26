@@ -222,6 +222,7 @@ public class ValidationBO extends BaseBO {
 			{
 				
 				retryCount=	Integer.parseInt(serviceLoationResponse.getPersonResponse().getRetryCount());
+				personId = serviceLoationResponse.getPersonResponse().getPersonId();
 				logger.debug("inside validatePosId:: Tracking number :: "+performPosIdBpRequest.getTrackingId()+""
 						+ " retry count from database is :: "+retryCount);
 
