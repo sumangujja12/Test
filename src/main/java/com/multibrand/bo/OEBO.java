@@ -5672,12 +5672,16 @@ return esidResponse;
 public ProspectDataResponse getProspectData(ProspectDataRequest request) {
 	
 	ProspectDataResponse response = new ProspectDataResponse();
-	ProspectRequest prospectRequest = new ProspectRequest();
-	prospectRequest.setCompanyCode(request.getCompanyCode());
-	prospectRequest.setLastfourdigitSSN(request.getLastfourdigitSSN());
-	prospectRequest.setProspectId(request.getProspectID());
-	ProspectResponse prospectResponse = oeService.getProspectData(prospectRequest);
-	if (prospectResponse != null && prospectResponse.getStatusCode().equalsIgnoreCase(S_VALUE)){
+	ProspectResponse prospectResponse = null;
+	
+	if(StringUtils.isNotBlank(request.getLastfourdigitSSN())){
+		ProspectRequest prospectRequest = new ProspectRequest();
+		prospectRequest.setCompanyCode(request.getCompanyCode());
+		prospectRequest.setLastfourdigitSSN(request.getLastfourdigitSSN());
+		prospectRequest.setProspectId(request.getProspectID());
+		prospectResponse=oeService.getProspectData(prospectRequest);
+	}
+	if (prospectResponse != null && StringUtils.equalsIgnoreCase(prospectResponse.getStatusCode(), S_VALUE)){
 		response.setProspectBpID(prospectResponse.getPartner());
 		response.setProspectBpIDType(prospectResponse.getBpType());
 		response.setProspectCreditBucket(prospectResponse.getCreditBucket());
@@ -5894,8 +5898,6 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		Map<String, Object> getPosIdTokenResponse = null;
 		OESignupDTO oESignupDTO = new OESignupDTO();
 		ServiceLocationResponse serviceLoationResponse = null;
-		// Start Validating DOB- Jsingh1
-		//Checking if DOB lies in Valid age Range (18-100)
 			try{
 				if(StringUtils.isNotEmpty(request.getTrackingId())){
 					if(StringUtils.isNotEmpty(request.getGuid())){
@@ -5930,31 +5932,21 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							request.getBillStreetName());
 				}
 				if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,request.getAffiliateId())){
-					mandatoryParamList.put("agentId",
+					mandatoryParamList.put("agentID",
 							request.getAgentID());
 				}
-				mandatoryParamCheckResponse = CommonUtil
-				.checkMandatoryParam(mandatoryParamList);
-				resultCode = (String) mandatoryParamCheckResponse
-				.get("resultCode");
+				mandatoryParamCheckResponse = CommonUtil.checkMandatoryParam(mandatoryParamList);
+				resultCode = (String) mandatoryParamCheckResponse.get("resultCode");
 	
-				if (StringUtils.isNotBlank(resultCode)
-				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
-	
-					errorDesc = (String) mandatoryParamCheckResponse
-					.get("errorDesc");
-					
+				if (StringUtils.isNotBlank(resultCode)	&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+					errorDesc = (String) mandatoryParamCheckResponse.get("errorDesc");
 					if (StringUtils.isNotBlank(errorDesc)) {
-						response = CommonUtil.buildNotValidResponse(resultCode,
-						errorDesc);
+						response = CommonUtil.buildNotValidResponse(resultCode,	errorDesc);
 					} else {
-						response  = CommonUtil.buildNotValidResponse(errorDesc,
-						Constants.STATUS_CODE_ASK);
+						response  = CommonUtil.buildNotValidResponse(errorDesc,	Constants.STATUS_CODE_ASK);
 					}
 					logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
-				
 					return response;
-					
 				}
 				
 				isValidAge=validationBO.getValidAge(dobForPosId);
@@ -6137,10 +6129,8 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     	 ProspectDataRequest prospectRequest = new ProspectDataRequest();
     	 prospectRequest.setCompanyCode(posidBPMatchRequest.getCompanyCode());
     	 String tokenizedSSN = posidBPMatchRequest.getTokenizedSSN();
-    	 prospectRequest.setLastfourdigitSSN(tokenizedSSN.substring(tokenizedSSN.length()-4));
+    	 if(StringUtils.isNotBlank(tokenizedSSN)) prospectRequest.setLastfourdigitSSN(tokenizedSSN.substring(tokenizedSSN.length()-4));
     	 prospectRequest.setProspectID(posidBPMatchRequest.getProspectId());
-    	 
-    	
     	 
     	 ProspectDataResponse prospectDataResponse = getProspectData(prospectRequest);
     	 

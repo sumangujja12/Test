@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,7 +42,6 @@ import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
-import com.multibrand.request.validation.ValidateSalesAPI;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.SalesTokenRequest;
