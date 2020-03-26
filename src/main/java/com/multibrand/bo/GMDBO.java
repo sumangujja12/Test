@@ -761,9 +761,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad((oeSignUpDTO.getOfferCode()), 8, "0"));
 		submitEnrollRequest.setStrProductPriceCode(EMPTY);
 		submitEnrollRequest.setStrIncentiveCode(EMPTY);
-		submitEnrollRequest.setStrmarketSegment(EMPTY);
+		submitEnrollRequest.setStrmarketSegment("RS");
 
-		String DepositAmt = oeSignUpDTO.getPaymentAmount();
+		String DepositAmt = EMPTY;
 		if (logger.isDebugEnabled()) {
 			logger.debug("EnrollmentService creating submitEnrollmentRequest,DepositAmt is ::{}" , DepositAmt);
 		}
