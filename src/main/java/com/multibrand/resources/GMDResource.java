@@ -34,22 +34,6 @@ import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
  * @author RPendur1
  *
  */
-/**
- * @author RPendur1
- *
- */
-/**
- * @author RPendur1
- *
- */
-/**
- * @author RPendur1
- *
- */
-/**
- * @author RPendur1
- *
- */
 @Component
 @Path("gmdResource")
 public class GMDResource extends BaseResource {

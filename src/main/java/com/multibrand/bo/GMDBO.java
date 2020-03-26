@@ -19,6 +19,10 @@ import com.google.gson.Gson;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.OetdspRequest;
+import com.multibrand.domain.PpdCreateRequest;
+import com.multibrand.domain.PpdCreateResponse;
+import com.multibrand.domain.SSDomain;
+import com.multibrand.domain.SSDomainPortBindingStub;
 import com.multibrand.domain.SubmitEnrollRequest;
 import com.multibrand.domain.SubmitEnrollResponse;
 import com.multibrand.domain.TdspByESIDResponse;
@@ -489,6 +493,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			if (StringUtils.isNotBlank(response.getErrorCode())) {
 				if (StringUtils.isNotBlank(response.getContractAccountNumber())
 						&& StringUtils.isNotBlank(response.getBusinessPartnerNumber())) {
+					
+					this.prepayDocCreate(response, enrollmentRequest);
 					this.updateContactInformation(response, enrollmentRequest);
 				}
 			}
@@ -962,4 +968,93 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		return null;
 	}
+	
+	/**
+	 * @param enrollmentRequest
+	 * @return
+	 */
+	public String prepayDocCreate(GMDEnrollmentResponse response, GMDEnrollmentRequest enrollmentRequest) {
+		
+		PpdCreateResponse pPDCreateResponse=new PpdCreateResponse(); 
+		String createPrepayDocOutput = EMPTY;
+		try{
+
+			logger.debug("SubmitEnrollment :: inside function in prepayDocCreate");
+		
+		SSDomain proxyClient = getSSDomainProxyClient();
+		PpdCreateRequest pPDCreateRequest = createPrepayDocCreateRequest(response, enrollmentRequest);
+		
+		pPDCreateResponse = proxyClient.prepayDocCreate(pPDCreateRequest);
+		
+		String prepayDocId = pPDCreateResponse.getPrepayDocID();
+	    logger.info("inside EnrollmentService :: inside prepayDocCreate Call ::prapayDocId created is {}");
+	    if (prepayDocId != null && (!prepayDocId.equals("") && Long.parseLong(prepayDocId) != 0))
+	        {
+	            createPrepayDocOutput="curlaction";
+	            
+	            /*try{
+					UpdateAlertPrefRequest updateAlertPrefRequest = enrollmentService.createUpdateAlertPrefRequest(oeSignUpDTO);
+					asyncHelper.asychUpdatePrepayAlertPreferences(updateAlertPrefRequest);
+					
+				}
+				catch(Exception e)
+				{
+					logger.error(oeSignUpDTO.printOETrackingID()+"inside EnrollmentHelper::inside SubmitEnrollment()::Exception occured during call UpdateAlertPref",e);
+					if(StringUtils.isBlank(errorVariable) && !(isCriticalExceptionHappen)){
+					errorVariable=EXCEPTION_IN_UPDATE_ALERT_PREFERENCE;}
+                 }*/
+	            
+	        }
+	    else{
+	            String errorCode = pPDCreateResponse.getErrorCode();
+	            createPrepayDocOutput="errorCode";
+	            logger.info("errorCode in prepayDocCreate call is ::{}",errorCode);
+	       }
+		 
+		}
+		catch(Exception e)
+		{
+			pPDCreateResponse.setErrorCode("MSG_ERR_SUBMIT_ENROLLMENT");
+			pPDCreateResponse.setErrorMessage(e.getMessage());
+			logger.error("inside enrollmentService:: in prepayDocCreate() ::prepayDocCreate Call Failed with error ::{}",e);
+			
+		}
+		
+		return createPrepayDocOutput;
+	}	
+	
+	
+	/**
+	 * @param enrollmentRequest
+	 * @return
+	 */
+public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse response, GMDEnrollmentRequest enrollmentRequest) {
+		
+		logger.debug("{} inside EnrollmentHelper :: inside createPrepayDocTxn()");
+		String srvcStartDate;
+		PpdCreateRequest pPDCreateRequest = new PpdCreateRequest();
+		pPDCreateRequest.setBrandName(enrollmentRequest.getBrandName());
+		pPDCreateRequest.setCompanyCode(enrollmentRequest.getCompanyCode());
+		pPDCreateRequest.setContractAccountNumber(response.getContractAccountNumber());
+		
+		if(StringUtils.isNotBlank(enrollmentRequest.getServiceStartDate())) {
+			srvcStartDate = enrollmentRequest.getServiceStartDate();
+		} else{
+			SimpleDateFormat sdfDate = new SimpleDateFormat(MM_dd_yyyy);
+			Calendar cal = Calendar.getInstance();
+			srvcStartDate=sdfDate.format(cal.getTime());
+		}
+		
+		pPDCreateRequest.setServiceStartDate(srvcStartDate);
+		
+		pPDCreateRequest.setStatus("0001");
+		
+		pPDCreateRequest.setTollTagStartDate(srvcStartDate);
+		pPDCreateRequest.setTollTagEndDate(INDEFINITE_END_DATE);		   
+		return pPDCreateRequest;
+	}	
+	
+	protected SSDomain getSSDomainProxyClient()throws Exception {
+		return (SSDomain) getServiceProxy(SSDomainPortBindingStub.class, SS_SERVICE_ENDPOINT_URL);
+	}	
 }

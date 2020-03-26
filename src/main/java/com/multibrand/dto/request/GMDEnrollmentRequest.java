@@ -54,6 +54,10 @@ public class GMDEnrollmentRequest implements FormEntityRequest, Serializable {
 	private String recentCallMade ="";
 	private String cvvNumber ="";
 	private String mobileNumber ="";
+	private String serviceStartDate  ="";
+	
+	
+	
 	/**
 	 * @return the transactionId
 	 */
@@ -617,7 +621,22 @@ public class GMDEnrollmentRequest implements FormEntityRequest, Serializable {
 	 */
 	public void setMobileNumber(String mobileNumber) {
 		this.mobileNumber = mobileNumber;
+	}	
+	
+	
+	/**
+	 * @return the serviceStartDate
+	 */
+	public String getServiceStartDate() {
+		return serviceStartDate;
 	}
+	/**
+	 * @param serviceStartDate the serviceStartDate to set
+	 */
+	public void setServiceStartDate(String serviceStartDate) {
+		this.serviceStartDate = serviceStartDate;
+	}
+	
 	
 	@Override
 	public String toString() {
