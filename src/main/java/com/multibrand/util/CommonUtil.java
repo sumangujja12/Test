@@ -39,6 +39,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
@@ -2049,4 +2050,35 @@ public class CommonUtil implements Constants {
 	    }
 	    return updatedContentMsg;
 	  }
+	
+	/**
+	 * Returns Street Number from given full Street Address
+	 * 
+	 * @param fullStreetAdress
+	 * @return String - Street Name from given full Street Address
+	 * 
+	 * */
+	public static String stripStreetNum(String fullStreetAdress) {
+		if (null != fullStreetAdress) {
+			return RegExUtils.replacePattern(fullStreetAdress,"\\s*([0-9]*)\\s*.*", "$1");
+		} else {
+			return EMPTY;
+		}
+	}
+
+	/**
+	 * Returns Street Name from given full Street Address
+	 * 
+	 * @param fullStreetAdress
+	 * @return String - Street Name from given full Street Address
+	 */
+	public static String stripStreetName(String fullStreetAdress) {
+		if (null != fullStreetAdress) {
+			return RegExUtils.replacePattern(fullStreetAdress,"\\s*[0-9]*\\s*(.*)", "$1");
+		} else {
+			return EMPTY;
+		}
+	}
+	
+	
 }

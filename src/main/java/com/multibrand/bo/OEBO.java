@@ -2654,7 +2654,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			if ((esidResponse != null)
 					&& (StringUtils.isBlank(esidResponse.getStrErrCode()))
 					&& (StringUtils.isNotBlank(esidResponse.getStrESIID()))) {
-				logger.debug("OEBO.getESIDInfo() GETTING ESID SUCCESSFUL:"+ esidResponse.getStrErrCode()+ " :: " + esidResponse.getStrESIID());
+				logger.info("OEBO.getESIDInfo() GETTING ESID SUCCESSFUL:"+ esidResponse.getStrErrCode()+ " :: " + esidResponse.getStrESIID());
 				esidDO.setEsidNumber(esidResponse.getStrESIID());
 				if (esidResponse.getStrESIID().equalsIgnoreCase(NESID)
 						|| esidResponse.getStrESIID().equalsIgnoreCase(MESID)
@@ -2744,7 +2744,7 @@ public class OEBO extends OeBoHelper implements Constants{
 
 			if (StringUtils.isNotBlank(servStreetNum)
 					&& StringUtils.isNotBlank(servStreetName)) {
-				logger.debug("OEBO.getESIDAndCalendarDates() street address entered! getting ESID info");
+				logger.info("OEBO.getESIDAndCalendarDates() street address entered! getting ESID info");
 				
 				if(StringUtils.isEmpty(esid)) {
 					esidDo = getESIDInfo(serviceAddressDO, companyCode);
