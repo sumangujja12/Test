@@ -8,7 +8,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.util.Constants;
-import com.multibrand.vo.response.GenericResponse;
 
 @Aspect
 @Component
