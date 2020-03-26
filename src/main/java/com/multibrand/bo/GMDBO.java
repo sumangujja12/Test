@@ -490,13 +490,11 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		try {
 			// 1. Call online enrollment submission to CCS.
 			response = this.submitOnlineEnrollment(enrollmentRequest);
-			if (StringUtils.isNotBlank(response.getErrorCode())) {
-				if (StringUtils.isNotBlank(response.getContractAccountNumber())
-						&& StringUtils.isNotBlank(response.getBusinessPartnerNumber())) {
-					
-					this.prepayDocCreate(response, enrollmentRequest);
-					this.updateContactInformation(response, enrollmentRequest);
-				}
+			if (StringUtils.isNotBlank(response.getContractAccountNumber())
+					&& StringUtils.isNotBlank(response.getBusinessPartnerNumber())) {
+				
+				this.prepayDocCreate(response, enrollmentRequest);
+				this.updateContactInformation(response, enrollmentRequest);
 			}
 
 		} catch (RemoteException e) {
