@@ -1390,4 +1390,9 @@ public interface Constants {
 	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission.flag";
 	public static final String POSID_HOLD_MSG_TXT="msg_posid_hold";
 	public static final String MESSAGE_CODE_NO_MATCH_FOUND = "NO_MATCH_FOUND";
+	
+	public static final String PROSPECT_PREAPPROVAL_FLAG_PASS= "P";
+	public static final String PROSPECT_MISMATCH= "PROSPECT_MISMATCH";
+	public static final String PROSPECT_MISMATCH_TEXT = "msg_prospect_mismatch";
+	
 }

@@ -147,7 +147,10 @@ public class EnrollmentDataResponseRowMapper implements RowMapper<ServiceLocatio
 		dataRow.setVendorName(rs.getString("vendor_name"));
 		dataRow.setTlpReportApiStatus(rs.getString("tlp_report_api_status"));
 		dataRow.setPosidSNRO(rs.getString("posid_snro"));
-		dataRow.setBpMatchScenarioId("bpmatch_scenario_id");
+		dataRow.setBpMatchScenarioId(rs.getString("bpmatch_scenario_id"));
+		dataRow.setProspectId(rs.getString("prospect_id"));
+		dataRow.setProspectPartnerId(rs.getString("prospect_partner_id"));														 
+		dataRow.setProspectPreapprovalFlag(rs.getString("prospect_preapproved_flag"));
 		
 		
 		PersonResponse personResponse = new PersonResponse();
