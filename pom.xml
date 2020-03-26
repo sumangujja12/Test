@@ -1021,7 +1021,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-			<version>13</version>
+			<version>17</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
