@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
+import com.multibrand.util.CommonUtil;
+
 public class ServiceLocationResponse implements Serializable {
 
 	/**
@@ -487,6 +489,9 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the servStreetNum
 	 */
 	public String getServStreetNum() {
+		if(StringUtils.isEmpty(servStreetNum)) {
+			servStreetNum = CommonUtil.stripStreetNum(servAddressLine1);
+		}
 		return servStreetNum;
 	}
 
@@ -502,6 +507,9 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the servStreetName
 	 */
 	public String getServStreetName() {
+		if(StringUtils.isEmpty(servStreetName)) {
+			servStreetName = CommonUtil.stripStreetName(servAddressLine1);
+		}
 		return servStreetName;
 	}
 
@@ -517,6 +525,9 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the servStreetAptNum
 	 */
 	public String getServStreetAptNum() {
+		if(StringUtils.isEmpty(servStreetAptNum)) {
+			servStreetAptNum = servAddressLine2;
+		}
 		return servStreetAptNum;
 	}
 
