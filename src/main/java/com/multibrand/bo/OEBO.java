@@ -2071,10 +2071,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 				}
 
-				if(StringUtils.isNotEmpty(creditCheckRequest.getProspectId()) 
+				if(StringUtils.isNotEmpty(serviceLoationResponse.getProspectId()) 
 						&& StringUtils.equalsIgnoreCase(serviceLoationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  )){
-					logger.info("Prospect Id 111:"+creditCheckRequest.getProspectId());
-					response =  constructCreditCheckResponseForProspect(creditCheckRequest.getProspectId(), serviceLoationResponse );
+					response =  constructCreditCheckResponseForProspect(serviceLoationResponse );
 					return response;
 				}
 			
@@ -2315,7 +2314,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			Assert.notNull(
 					creditScoreRequest.getTrackingNum(),
 					"trackingId must not be null.");
-			if( !isPropectCreditCheckExecuted(creditCheckRequest.getProspectId(), serviceLoationResponse)) {
+			if( !isPropectCreditCheckExecuted( serviceLoationResponse)) {
 				UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 	
 				requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
@@ -6157,28 +6156,22 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     	 
     	return prospectDataResponse;
     }
-     private NewCreditScoreResponse constructCreditCheckResponseForProspect(String prospectId, ServiceLocationResponse serviceLocationResponse){
+     private NewCreditScoreResponse constructCreditCheckResponseForProspect ( ServiceLocationResponse serviceLocationResponse){
     	 NewCreditScoreResponse response = new NewCreditScoreResponse();
-    	 if(!StringUtils.equals(prospectId, serviceLocationResponse.getProspectId())){
-    		 response.setStatusCode(Constants.STATUS_CODE_STOP);
-    		 response.setMessageCode(PROSPECT_MISMATCH);
-    		 response.setMessageText(msgSource.getMessage(PROSPECT_MISMATCH_TEXT));
-    		 return response;
-    	 }else{
+
     		 response.setDepositAmount(ZERO);
     		 response.setDepositReasonText(EMPTY);
     		 response.setCreditAgency(serviceLocationResponse.getPersonResponse().getCredSourceNum());
     		 response.setDepositDueText(EMPTY);
     		 response.setResultCode(RESULT_CODE_SUCCESS);
    			 response.setStatusCode(STATUS_CODE_CONTINUE);
-    	 }
+    	
     	 
     	 return response;
      }
      
-     private boolean isPropectCreditCheckExecuted(String prospectId, ServiceLocationResponse serviceLocationResponse){
-    	 return StringUtils.isNotEmpty(prospectId) && (!StringUtils.equals(prospectId, serviceLocationResponse.getProspectId()) 
-    			 || (StringUtils.equalsIgnoreCase(serviceLocationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  )));
+     private boolean isPropectCreditCheckExecuted(ServiceLocationResponse serviceLocationResponse){
+    	 return StringUtils.isNotEmpty(serviceLocationResponse.getProspectId()) && ( StringUtils.equalsIgnoreCase(serviceLocationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  ));
      }
 }
 	
