@@ -707,6 +707,7 @@ public interface Constants {
 	
 	public static final String ENV_UPDATE_CRM_ASYNC_DELAY_MS="env.updatecrm.async.delay.ms";
 	public static final String METHOD_UPDATE_CONTACT_ASYNC="updateContactInfoWithAsyncDelay";
+	public static final String METHOD_PREPAY_ALERT_TO_CRM="updateAlertPreferences";
 	
 	public static final String LOCALE_LANGUAGE_CODE_PARAM = "languageCode";
 	public static final String LOCALE_LANGUAGE_CODE_EN_US = "en_US";

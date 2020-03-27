@@ -10,13 +10,16 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.domain.AlertPrefDTO;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.OetdspRequest;
 import com.multibrand.domain.PpdCreateRequest;
@@ -26,6 +29,7 @@ import com.multibrand.domain.SSDomainPortBindingStub;
 import com.multibrand.domain.SubmitEnrollRequest;
 import com.multibrand.domain.SubmitEnrollResponse;
 import com.multibrand.domain.TdspByESIDResponse;
+import com.multibrand.domain.UpdateAlertPrefRequest;
 import com.multibrand.domain.UpdateContactRequest;
 import com.multibrand.domain.UpdateContactRequestAttNamValPairMapEntry;
 import com.multibrand.domain.UpdatePhoneDO;
@@ -977,7 +981,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		String createPrepayDocOutput = EMPTY;
 		try{
 
-			logger.debug("SubmitEnrollment :: inside function in prepayDocCreate");
+			logger.info("SubmitEnrollment :: inside function in prepayDocCreate");
 		
 		SSDomain proxyClient = getSSDomainProxyClient();
 		PpdCreateRequest pPDCreateRequest = createPrepayDocCreateRequest(response, enrollmentRequest);
@@ -990,17 +994,16 @@ public class GMDBO extends BaseAbstractService implements Constants {
 	        {
 	            createPrepayDocOutput="curlaction";
 	            
-	            /*try{
-					UpdateAlertPrefRequest updateAlertPrefRequest = enrollmentService.createUpdateAlertPrefRequest(oeSignUpDTO);
+	            try{
+					UpdateAlertPrefRequest updateAlertPrefRequest = createUpdateAlertPrefRequest(response, enrollmentRequest);
 					asyncHelper.asychUpdatePrepayAlertPreferences(updateAlertPrefRequest);
 					
 				}
 				catch(Exception e)
 				{
-					logger.error(oeSignUpDTO.printOETrackingID()+"inside EnrollmentHelper::inside SubmitEnrollment()::Exception occured during call UpdateAlertPref",e);
-					if(StringUtils.isBlank(errorVariable) && !(isCriticalExceptionHappen)){
-					errorVariable=EXCEPTION_IN_UPDATE_ALERT_PREFERENCE;}
-                 }*/
+					logger.error("inside EnrollmentHelper::inside SubmitEnrollment()::Exception occured during call UpdateAlertPref",e);
+					
+                 }
 	            
 	        }
 	    else{
@@ -1050,7 +1053,108 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		pPDCreateRequest.setTollTagStartDate(srvcStartDate);
 		pPDCreateRequest.setTollTagEndDate(INDEFINITE_END_DATE);		   
 		return pPDCreateRequest;
-	}	
+	}
+
+	/**
+	 * Method createUpdateAlertPrefRequest.
+	 * 
+	 * @param enrollmentRequest
+	 *            GMDEnrollmentRequest
+	 * @return UpdateAlertPrefRequest
+	 */
+	public UpdateAlertPrefRequest createUpdateAlertPrefRequest(GMDEnrollmentResponse response, GMDEnrollmentRequest enrollmentRequest) {
+
+		String lowAcctBalEmailVal = EMPTY;
+		String payReceivedEmailVal = EMPTY;
+		String weeklyBalEmailVal = EMPTY;
+		String lowAcctBalSmsVal = EMPTY;
+		String payReceivedSmsVal = EMPTY;
+		String weeklyBalSmsVal = EMPTY;
+		String lowAcctBalPhoneVal = EMPTY;
+		String payReceivedPhoneVal = EMPTY;
+		String weeklyBalPhoneVal = EMPTY;
+
+			lowAcctBalEmailVal =  "";
+			payReceivedEmailVal ="";
+			weeklyBalEmailVal =  "";
+
+			lowAcctBalSmsVal =  "";
+			payReceivedSmsVal = "";
+			weeklyBalSmsVal =  "";
+
+			lowAcctBalPhoneVal =  "";
+			payReceivedPhoneVal =  "";
+			weeklyBalPhoneVal =  "";
+
+
+		String strLowAcctBal = lowAcctBalEmailVal + lowAcctBalSmsVal + lowAcctBalPhoneVal;
+		String strPayReceived = payReceivedEmailVal + payReceivedSmsVal + payReceivedPhoneVal;
+		String strWeeklySum = weeklyBalEmailVal + weeklyBalSmsVal + weeklyBalPhoneVal;
+
+
+		UpdateAlertPrefRequest updateAlertPrefRequest = new UpdateAlertPrefRequest();
+		AlertPrefDTO[] unSubscribeRequests = null;
+		updateAlertPrefRequest.setStrBPNunber(response.getBusinessPartnerNumber());
+
+		updateAlertPrefRequest.setStrCANumber(response.getContractAccountNumber());
+
+		updateAlertPrefRequest
+				.setStrCompanyCode(appConstMessageSource.getMessage(Constants.PROP_COMPANY_CODE, null, null));
+
+		String strCONumber = EMPTY;
+		String esid = EMPTY;
+
+		updateAlertPrefRequest.setStrCONumber(strCONumber);
+		updateAlertPrefRequest.setStrESID(esid);
+		String strRequestType = TWO;
+		updateAlertPrefRequest.setStrRequestType(strRequestType);
+		updateAlertPrefRequest.setStrSubscriberId(PREPAY);
+		updateAlertPrefRequest.setUnSubscribeRequests(unSubscribeRequests); // unSubscribeRequests
+																			// are
+																			// set
+																			// to
+																			// null.
+		AlertPrefDTO lowAccBalDTO = null;
+		AlertPrefDTO payReceivedDTO = null;
+		AlertPrefDTO weeklySumDTO = null;
+		List<AlertPrefDTO> subscribeRequestList = new ArrayList<>();
+		if (!StringUtils.isEmpty(strLowAcctBal)) {
+			lowAccBalDTO = new AlertPrefDTO();
+			lowAccBalDTO.setStrEventId(BAL_ALERT);
+			lowAccBalDTO.setStrParamName(COMM_PREF);
+			lowAccBalDTO.setStrParamValue(strLowAcctBal);
+			subscribeRequestList.add(lowAccBalDTO);
+		}
+
+		if (!StringUtils.isEmpty(strPayReceived)) {
+			payReceivedDTO = new AlertPrefDTO();
+			payReceivedDTO.setStrEventId(LOW_ALERT);
+			payReceivedDTO.setStrParamName(COMM_PREF);
+			payReceivedDTO.setStrParamValue(strPayReceived);
+			subscribeRequestList.add(payReceivedDTO);
+		}
+		if (!StringUtils.isEmpty(strWeeklySum)) {
+			weeklySumDTO = new AlertPrefDTO();
+			weeklySumDTO.setStrEventId(PAY_ALERT);
+			weeklySumDTO.setStrParamName(COMM_PREF);
+			weeklySumDTO.setStrParamValue(strWeeklySum);
+			subscribeRequestList.add(weeklySumDTO);
+		}
+		int len = subscribeRequestList.size();
+		AlertPrefDTO[] alert = new AlertPrefDTO[len];
+		for (int i = 0; i < len; i++) {
+			alert[i] = subscribeRequestList.get(i);
+
+			logger.debug("Value of the parameter in AlertPrefDTO: "
+					+ alert[i].getStrParamValue());
+
+		}
+		updateAlertPrefRequest.setSubscribeRequests(alert);
+
+		return updateAlertPrefRequest;
+
+	}
+
 	
 	protected SSDomain getSSDomainProxyClient()throws Exception {
 		return (SSDomain) getServiceProxy(SSDomainPortBindingStub.class, SS_SERVICE_ENDPOINT_URL);
