@@ -268,8 +268,6 @@ public class LoggerAspect {
 
 			} catch (Exception ex) {
 				logger.info("System Exception: " + ex.getMessage());
-				logger.error("ERROR LOG:", ex);
-				logger.error("ERROR LOG in the generic error display process:");
 			}
 		}
 		logger.info("###########END- getErrorDisplay -###########");
