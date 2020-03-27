@@ -10,9 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.helper.OeBoHelper;
+import com.multibrand.domain.ProspectRequest;
+import com.multibrand.domain.ProspectResponse;
 import com.multibrand.dto.request.AffiliateOfferRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
+import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -26,6 +29,8 @@ import com.multibrand.util.Token;
 import com.multibrand.vo.request.SalesTokenRequest;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GenericResponse;
+import com.multibrand.vo.response.ProspectDataInternalResponse;
+import com.multibrand.vo.response.ProspectDataResponse;
 import com.multibrand.vo.response.SalesEsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.vo.response.TokenizedResponse;
@@ -169,7 +174,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 		return tokenizedResponse;
 	}
 
-
 	public SalesOfferResponse getSalesOffers(SalesOfferRequest request, String sessionId) {
 		AffiliateOfferRequest affiliateOfferRequest = new AffiliateOfferRequest();
 		SalesOfferResponse salesOfferResponse = new SalesOfferResponse();
@@ -183,4 +187,22 @@ public class SalesBO extends OeBoHelper implements Constants {
 		}	
 		return salesOfferResponse;
 	}
+
+	public SalesBaseResponse getProspectData(ProspectDataRequest request) {
+		ProspectDataResponse prospectDataExternalResponse = null;
+		try {
+			ProspectDataInternalResponse prospectDataInternalResponse = oeBO.getProspectData(request);
+			if(StringUtils.equals(CHANNEL_AA, request.getChannelType()) || StringUtils.equals(CHANNEL_AFF, request.getChannelType())){
+				prospectDataExternalResponse = new ProspectDataResponse();
+				BeanUtils.copyProperties(prospectDataInternalResponse, prospectDataExternalResponse);
+				return prospectDataExternalResponse;
+			}else{
+				return prospectDataInternalResponse;
+			}
+		} catch (Exception e) {
+			logger.error("Exception in SalesBO.getSalesOffers()", e);
+			throw e;
+		}	
+	}
+
 }

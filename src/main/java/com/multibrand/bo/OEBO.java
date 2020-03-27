@@ -161,7 +161,7 @@ import com.multibrand.vo.response.OfferPriceWraperDO;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.POWOfferDO;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
-import com.multibrand.vo.response.ProspectDataResponse;
+import com.multibrand.vo.response.ProspectDataInternalResponse;
 import com.multibrand.vo.response.SegmentedFlagDO;
 import com.multibrand.vo.response.ServiceAddressDO;
 import com.multibrand.vo.response.TDSPChargeDO;
@@ -4266,9 +4266,9 @@ public class OEBO extends OeBoHelper implements Constants{
     		}else if(allInclusiveDateList.size() > 0){
     			
     			if(StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
-    				if(StringUtils.isBlank(response.getEsid())|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
-    						for (int i = 0; i < PUSH_7; i++)
-    		    				allInclusiveDateList.remove(0);
+    				if(StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
+    					for (int i = 0; i < PUSH_7; i++)
+    		    			allInclusiveDateList.remove(0);
     				}else if(StringUtils.equals(holdType,POSIDHOLD))
     				{
 						for (int i = 0; i < PUSH_2; i++)
@@ -4279,7 +4279,6 @@ public class OEBO extends OeBoHelper implements Constants{
 		    				allInclusiveDateList.remove(0);
 					}
     			}else{
-    				
     				if(StringUtils.isBlank(response.getEsid())){
 						for (int i = 0; i < PUSH_9; i++)
 		    				allInclusiveDateList.remove(0);
@@ -5679,9 +5678,9 @@ return esidResponse;
  * @param companyCode
  * @return com.multibrand.vo.response.ProspectDataResponse
  */
-public ProspectDataResponse getProspectData(ProspectDataRequest request) {
+public ProspectDataInternalResponse getProspectData(ProspectDataRequest request) {
 	
-	ProspectDataResponse response = new ProspectDataResponse();
+	ProspectDataInternalResponse response = new ProspectDataInternalResponse();
 	ProspectResponse prospectResponse = null;
 	
 	if(StringUtils.isNotBlank(request.getLastfourdigitSSN())){
@@ -5708,7 +5707,6 @@ public ProspectDataResponse getProspectData(ProspectDataRequest request) {
 	}
 	return response;
 	}
-
 
 /**
  * 
@@ -6044,7 +6042,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
 						if(StringUtils.isNotEmpty(request.getProspectId())) {
-							ProspectDataResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
+							ProspectDataInternalResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
 						
 							if(StringUtils.equals(prospectResponse.getStatusCode(), STATUS_CODE_STOP) ) {
 								response = Response.status(Response.Status.OK).entity(prospectResponse)
@@ -6133,7 +6131,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return errorCd;
 	}
 
-     public ProspectDataResponse validateProspectDetails(PerformPosIdAndBpMatchRequest posidBPMatchRequest, OESignupDTO oeSignupDTO){
+     public ProspectDataInternalResponse validateProspectDetails(PerformPosIdAndBpMatchRequest posidBPMatchRequest, OESignupDTO oeSignupDTO){
    
     	 
     	 ProspectDataRequest prospectRequest = new ProspectDataRequest();
@@ -6142,7 +6140,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     	 if(StringUtils.isNotBlank(tokenizedSSN)) prospectRequest.setLastfourdigitSSN(tokenizedSSN.substring(tokenizedSSN.length()-4));
     	 prospectRequest.setProspectID(posidBPMatchRequest.getProspectId());
     	 
-    	 ProspectDataResponse prospectDataResponse = getProspectData(prospectRequest);
+    	 ProspectDataInternalResponse prospectDataResponse = getProspectData(prospectRequest);
     	 
     	 logger.info("Prospect validation Response "+prospectDataResponse);
     	 

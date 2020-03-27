@@ -1,6 +1,5 @@
 package com.multibrand.dto.response;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
