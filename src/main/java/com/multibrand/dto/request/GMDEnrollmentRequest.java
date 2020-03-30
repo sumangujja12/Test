@@ -36,14 +36,14 @@ public class GMDEnrollmentRequest implements FormEntityRequest, Serializable {
 	private String serviceAddressStreetNumber = "";
 	private String serviceAddressStreetName = "";
 	private String serviceAddressAptNumber = "";
-	private String serviceAdressCity = "";
+	private String serviceAddressCity = "";
 	private String serviceAddressState = "";
 	private String serviceAddressZipCode = "";
 	private String billingAddressStreetNumber = "";
 	private String billingAddressStreetName = "";
 	private String billingAddressAptNumber = "";
 	private String billingAddressCity = "";
-	private String billingAdressState = "";
+	private String billingAddressState = "";
 	private String billingAddressZipCode = "";
 	private String billingAddressPoBox = "";
 	private String offerCode = "";
@@ -382,17 +382,18 @@ public class GMDEnrollmentRequest implements FormEntityRequest, Serializable {
 	public void setServiceAddressAptNumber(String serviceAddressAptNumber) {
 		this.serviceAddressAptNumber = serviceAddressAptNumber;
 	}
+
 	/**
-	 * @return the serviceAdressCity
+	 * @return the serviceAddressCity
 	 */
-	public String getServiceAdressCity() {
-		return serviceAdressCity;
+	public String getServiceAddressCity() {
+		return serviceAddressCity;
 	}
 	/**
-	 * @param serviceAdressCity the serviceAdressCity to set
+	 * @param serviceAddressCity the serviceAddressCity to set
 	 */
-	public void setServiceAdressCity(String serviceAdressCity) {
-		this.serviceAdressCity = serviceAdressCity;
+	public void setServiceAddressCity(String serviceAddressCity) {
+		this.serviceAddressCity = serviceAddressCity;
 	}
 	/**
 	 * @return the serviceAddressState
@@ -465,18 +466,18 @@ public class GMDEnrollmentRequest implements FormEntityRequest, Serializable {
 	 */
 	public void setBillingAddressCity(String billingAddressCity) {
 		this.billingAddressCity = billingAddressCity;
+	}	
+	/**
+	 * @return the billingAddressState
+	 */
+	public String getBillingAddressState() {
+		return billingAddressState;
 	}
 	/**
-	 * @return the billingAdressState
+	 * @param billingAddressState the billingAddressState to set
 	 */
-	public String getBillingAdressState() {
-		return billingAdressState;
-	}
-	/**
-	 * @param billingAdressState the billingAdressState to set
-	 */
-	public void setBillingAdressState(String billingAdressState) {
-		this.billingAdressState = billingAdressState;
+	public void setBillingAddressState(String billingAddressState) {
+		this.billingAddressState = billingAddressState;
 	}
 	/**
 	 * @return the billingAddressZipCode

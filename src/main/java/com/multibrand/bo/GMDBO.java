@@ -595,7 +595,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		} else {
 			submitEnrollRequest.setStrBPPOBoxCountry(COUNTRY_US);
-			submitEnrollRequest.setStrBPPOBoxRegion(oeSignUpDTO.getBillingAdressState());
+			submitEnrollRequest.setStrBPPOBoxRegion(oeSignUpDTO.getBillingAddressState());
 			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressZipCode()))
 				submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddressZipCode());
 			else
@@ -629,7 +629,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrNotifyAddress(notifyAddress);
 
 		submitEnrollRequest.setStrNotifyCity(oeSignUpDTO.getBillingAddressCity());
-		submitEnrollRequest.setStrNotifyState(oeSignUpDTO.getBillingAdressState());
+		submitEnrollRequest.setStrNotifyState(oeSignUpDTO.getBillingAddressState());
 		submitEnrollRequest.setStrNotifyZip(oeSignUpDTO.getBillingAddressZipCode());
 
 		startSvrcDate = CommonUtil.formatDateForNrgws(CommonUtil.getCurrentDateFormatted(MMddyyyy));
@@ -725,7 +725,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		// Hardcoded as per Vishal Email dated on 04/09/2015
 		submitEnrollRequest.setStrBPFileTestStatus(FLAG_C);
 
-		submitEnrollRequest.setStrBPRegion(oeSignUpDTO.getBillingAdressState());
+		submitEnrollRequest.setStrBPRegion(oeSignUpDTO.getBillingAddressState());
 		submitEnrollRequest.setStrBPAptNum(oeSignUpDTO.getBillingAddressAptNumber());
 		submitEnrollRequest.setStrBPCityPostalCode(oeSignUpDTO.getBillingAddressZipCode());
 		submitEnrollRequest.setStrBPCity(oeSignUpDTO.getBillingAddressCity());
@@ -752,14 +752,14 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		if (logger.isDebugEnabled()) {
 			logger.debug("EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getServiceAddress()() is ::{}"
 					+ oeSignUpDTO.getServiceAddressAptNumber() + oeSignUpDTO.getBillingAddressStreetName()
-					+ oeSignUpDTO.getServiceAddressStreetNumber() + oeSignUpDTO.getServiceAdressCity()
+					+ oeSignUpDTO.getServiceAddressStreetNumber() + oeSignUpDTO.getServiceAddressCity()
 					+ oeSignUpDTO.getServiceAddressZipCode());
 		}
 
 		submitEnrollRequest.setStrSvrcStreet(oeSignUpDTO.getBillingAddressStreetName());
 		submitEnrollRequest.setStrSvrcAptNum(oeSignUpDTO.getServiceAddressAptNumber());
 		submitEnrollRequest.setStrSvrcHouseNum(oeSignUpDTO.getServiceAddressStreetNumber());
-		submitEnrollRequest.setStrSvrcCity(oeSignUpDTO.getServiceAdressCity());
+		submitEnrollRequest.setStrSvrcCity(oeSignUpDTO.getServiceAddressCity());
 		submitEnrollRequest.setStrSvrcZip(oeSignUpDTO.getServiceAddressZipCode());
 		submitEnrollRequest.setStrBPPOSidDLDate(EMPTY);
 		submitEnrollRequest.setStrBPPosPOSidSSNDate(EMPTY);
