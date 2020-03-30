@@ -3515,6 +3515,11 @@ public class OEBO extends OeBoHelper implements Constants{
 						scenarioDesc= "Past service BPMatch-BPSD";
 					}
 				} else {
+									
+					if(StringUtils.isEmpty(bpMatchDto.getMatchedPartnerID())) {
+						scenario = "7";
+						scenarioDesc= "Multiple BPMatch - BPSD";
+					}
 					response.setBpMatchFlag(BPSD);
 				}
 			}
