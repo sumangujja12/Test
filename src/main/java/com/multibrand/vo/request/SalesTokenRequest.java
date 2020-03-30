@@ -5,6 +5,7 @@ import javax.ws.rs.QueryParam;
 import org.hibernate.validator.constraints.NotBlank;
 import com.multibrand.dto.request.SalesBaseRequest;
 import com.multibrand.request.validation.ActionCode;
+import com.multibrand.request.validation.RepetitiveDigitCheck;
 
 public class SalesTokenRequest extends SalesBaseRequest {
 	
@@ -20,6 +21,7 @@ public class SalesTokenRequest extends SalesBaseRequest {
 	
 	@QueryParam(value = "numToBeTokenized")
 	@NotBlank
+	@RepetitiveDigitCheck
 	private String numToBeTokenized;
 	
 	/**
