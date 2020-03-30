@@ -52,6 +52,6 @@ public class CommonUtilTest {
 	@Test
 	public void testInvalidGetChannelTypeForTogglz(){
 		String channelType = CommonUtil.getChannelTypeForTogglz("TEST");
-		assertEquals(channelType, Constants.CHANNEL_WEB);
+		assertEquals(channelType, Constants.CHANNEL_AFF);
 	}
 }
