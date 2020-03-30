@@ -48,7 +48,6 @@ import com.multibrand.vo.request.SalesTokenRequest;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
-import com.multibrand.vo.response.ProspectDataInternalResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;

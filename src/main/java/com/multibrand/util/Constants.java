@@ -104,7 +104,7 @@ public interface Constants {
 	
 	public static final String COMPANY_NAME_RELIANT = "Reliant";
 	public static final String COMPANY_NAME_GME = "Green Mountain";
-	public static final String COMPANY_NAME_PENNYWISE = "Pennywise";
+	public static final String COMPANY_NAME_PENNYWISE = "Discount Power";
 	public static final String COMPANY_NAME_CIRRO = "Cirro";
 	public static final String COMPANY_NAME_EE = "Everything Energy";
 	
@@ -124,7 +124,7 @@ public interface Constants {
 	
 	public static final String BRAND_NAME_RELIANT = "Reliant";
 	public static final String BRAND_NAME_GME = "Green Mountain";
-	public static final String BRAND_NAME_PENNYWISE = "Pennywise";
+	public static final String BRAND_NAME_PENNYWISE = "Discount Power";
 	public static final String BRAND_NAME_CIRRO = "Cirro";
 	public static final String BRAND_NAME_EE = "Everything Energy";
 	
@@ -1387,7 +1387,7 @@ public interface Constants {
 	public static final String HOLD_DNP  = "DNP";
 	   
 	
-	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission.flag";
+	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission";
 	public static final String POSID_HOLD_MSG_TXT="msg_posid_hold";
 	public static final String MESSAGE_CODE_NO_MATCH_FOUND = "NO_MATCH_FOUND";
 	
