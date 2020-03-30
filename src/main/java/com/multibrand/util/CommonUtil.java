@@ -2021,7 +2021,7 @@ public class CommonUtil implements Constants {
 	}
 	
 	public static String getChannelTypeForTogglz(String channelType){
-		String channel = CHANNEL_WEB;
+		String channel = CHANNEL_AFF;
 		if(channelType == null){
 			channelType = StringUtils.EMPTY;
 		}
@@ -2029,8 +2029,8 @@ public class CommonUtil implements Constants {
 			case CHANNEL_AA:
 				channel = CHANNEL_AA;
 					break;
-			case CHANNEL_AFF:
-				channel = CHANNEL_AFF;
+			case CHANNEL_WEB:
+				channel = CHANNEL_WEB;
 					break;			
 			default:
 				break;

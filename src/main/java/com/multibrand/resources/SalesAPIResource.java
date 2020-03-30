@@ -48,7 +48,7 @@ import com.multibrand.vo.request.SalesTokenRequest;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
-import com.multibrand.vo.response.ProspectDataResponse;
+import com.multibrand.vo.response.ProspectDataInternalResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
@@ -420,7 +420,7 @@ public class SalesAPIResource extends BaseResource {
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
-			ProspectDataResponse prospectDataResponse = oeBO.getProspectData(request);
+			SalesBaseResponse prospectDataResponse = salesBO.getProspectData(request);
 			Response.Status status = prospectDataResponse.getHttpStatus() != null ? prospectDataResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(prospectDataResponse).build();
 		} catch (Exception e) {

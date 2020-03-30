@@ -161,7 +161,7 @@ import com.multibrand.vo.response.OfferPriceWraperDO;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.POWOfferDO;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
-import com.multibrand.vo.response.ProspectDataResponse;
+import com.multibrand.vo.response.ProspectDataInternalResponse;
 import com.multibrand.vo.response.SegmentedFlagDO;
 import com.multibrand.vo.response.ServiceAddressDO;
 import com.multibrand.vo.response.TDSPChargeDO;
@@ -2071,10 +2071,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 				}
 
-				if(StringUtils.isNotEmpty(creditCheckRequest.getProspectId()) 
+				if(StringUtils.isNotEmpty(serviceLoationResponse.getProspectId()) 
 						&& StringUtils.equalsIgnoreCase(serviceLoationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  )){
-					logger.info("Prospect Id 111:"+creditCheckRequest.getProspectId());
-					response =  constructCreditCheckResponseForProspect(creditCheckRequest.getProspectId(), serviceLoationResponse );
+					response =  constructCreditCheckResponseForProspect(serviceLoationResponse );
 					return response;
 				}
 			
@@ -2315,7 +2314,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			Assert.notNull(
 					creditScoreRequest.getTrackingNum(),
 					"trackingId must not be null.");
-			if( !isPropectCreditCheckExecuted(creditCheckRequest.getProspectId(), serviceLoationResponse)) {
+			if( !isPropectCreditCheckExecuted( serviceLoationResponse)) {
 				UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 	
 				requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
@@ -3516,6 +3515,11 @@ public class OEBO extends OeBoHelper implements Constants{
 						scenarioDesc= "Past service BPMatch-BPSD";
 					}
 				} else {
+									
+					if(StringUtils.isEmpty(bpMatchDto.getMatchedPartnerID())) {
+						scenario = "7";
+						scenarioDesc= "Multiple BPMatch - BPSD";
+					}
 					response.setBpMatchFlag(BPSD);
 				}
 			}
@@ -4266,9 +4270,9 @@ public class OEBO extends OeBoHelper implements Constants{
     		}else if(allInclusiveDateList.size() > 0){
     			
     			if(StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
-    				if(StringUtils.isBlank(response.getEsid())|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
-    						for (int i = 0; i < PUSH_7; i++)
-    		    				allInclusiveDateList.remove(0);
+    				if(StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
+    					for (int i = 0; i < PUSH_7; i++)
+    		    			allInclusiveDateList.remove(0);
     				}else if(StringUtils.equals(holdType,POSIDHOLD))
     				{
 						for (int i = 0; i < PUSH_2; i++)
@@ -4279,7 +4283,6 @@ public class OEBO extends OeBoHelper implements Constants{
 		    				allInclusiveDateList.remove(0);
 					}
     			}else{
-    				
     				if(StringUtils.isBlank(response.getEsid())){
 						for (int i = 0; i < PUSH_9; i++)
 		    				allInclusiveDateList.remove(0);
@@ -5679,9 +5682,9 @@ return esidResponse;
  * @param companyCode
  * @return com.multibrand.vo.response.ProspectDataResponse
  */
-public ProspectDataResponse getProspectData(ProspectDataRequest request) {
+public ProspectDataInternalResponse getProspectData(ProspectDataRequest request) {
 	
-	ProspectDataResponse response = new ProspectDataResponse();
+	ProspectDataInternalResponse response = new ProspectDataInternalResponse();
 	ProspectResponse prospectResponse = null;
 	
 	if(StringUtils.isNotBlank(request.getLastfourdigitSSN())){
@@ -5708,7 +5711,6 @@ public ProspectDataResponse getProspectData(ProspectDataRequest request) {
 	}
 	return response;
 	}
-
 
 /**
  * 
@@ -6044,7 +6046,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
 						if(StringUtils.isNotEmpty(request.getProspectId())) {
-							ProspectDataResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
+							ProspectDataInternalResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
 						
 							if(StringUtils.equals(prospectResponse.getStatusCode(), STATUS_CODE_STOP) ) {
 								response = Response.status(Response.Status.OK).entity(prospectResponse)
@@ -6133,7 +6135,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return errorCd;
 	}
 
-     public ProspectDataResponse validateProspectDetails(PerformPosIdAndBpMatchRequest posidBPMatchRequest, OESignupDTO oeSignupDTO){
+     public ProspectDataInternalResponse validateProspectDetails(PerformPosIdAndBpMatchRequest posidBPMatchRequest, OESignupDTO oeSignupDTO){
    
     	 
     	 ProspectDataRequest prospectRequest = new ProspectDataRequest();
@@ -6142,7 +6144,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     	 if(StringUtils.isNotBlank(tokenizedSSN)) prospectRequest.setLastfourdigitSSN(tokenizedSSN.substring(tokenizedSSN.length()-4));
     	 prospectRequest.setProspectID(posidBPMatchRequest.getProspectId());
     	 
-    	 ProspectDataResponse prospectDataResponse = getProspectData(prospectRequest);
+    	 ProspectDataInternalResponse prospectDataResponse = getProspectData(prospectRequest);
     	 
     	 logger.info("Prospect validation Response "+prospectDataResponse);
     	 
@@ -6159,28 +6161,22 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     	 
     	return prospectDataResponse;
     }
-     private NewCreditScoreResponse constructCreditCheckResponseForProspect(String prospectId, ServiceLocationResponse serviceLocationResponse){
+     private NewCreditScoreResponse constructCreditCheckResponseForProspect ( ServiceLocationResponse serviceLocationResponse){
     	 NewCreditScoreResponse response = new NewCreditScoreResponse();
-    	 if(!StringUtils.equals(prospectId, serviceLocationResponse.getProspectId())){
-    		 response.setStatusCode(Constants.STATUS_CODE_STOP);
-    		 response.setMessageCode(PROSPECT_MISMATCH);
-    		 response.setMessageText(msgSource.getMessage(PROSPECT_MISMATCH_TEXT));
-    		 return response;
-    	 }else{
+
     		 response.setDepositAmount(ZERO);
     		 response.setDepositReasonText(EMPTY);
     		 response.setCreditAgency(serviceLocationResponse.getPersonResponse().getCredSourceNum());
     		 response.setDepositDueText(EMPTY);
     		 response.setResultCode(RESULT_CODE_SUCCESS);
    			 response.setStatusCode(STATUS_CODE_CONTINUE);
-    	 }
+    	
     	 
     	 return response;
      }
      
-     private boolean isPropectCreditCheckExecuted(String prospectId, ServiceLocationResponse serviceLocationResponse){
-    	 return StringUtils.isNotEmpty(prospectId) && (!StringUtils.equals(prospectId, serviceLocationResponse.getProspectId()) 
-    			 || (StringUtils.equalsIgnoreCase(serviceLocationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  )));
+     private boolean isPropectCreditCheckExecuted(ServiceLocationResponse serviceLocationResponse){
+    	 return StringUtils.isNotEmpty(serviceLocationResponse.getProspectId()) && ( StringUtils.equalsIgnoreCase(serviceLocationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  ));
      }
 }
 	

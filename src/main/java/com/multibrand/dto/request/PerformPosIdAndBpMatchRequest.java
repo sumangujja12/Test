@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.RepetitiveDigitCheck;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidDateTime;
 import com.multibrand.util.CommonUtil;
@@ -36,7 +37,9 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "must be in MMddyyyy format",messageCode="INVALID_DOB",messageCodeText="INVALID_DOB")
 	String dob;
 	
+	@RepetitiveDigitCheck
 	String tdl;
+	@RepetitiveDigitCheck
 	String ssn ;
 	
 	@Length(max = 40,groups = SizeConstraint.class)
