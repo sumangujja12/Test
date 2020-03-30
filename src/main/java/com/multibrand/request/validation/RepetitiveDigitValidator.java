@@ -15,8 +15,8 @@ public class RepetitiveDigitValidator implements
 			ConstraintValidator<RepetitiveDigitCheck, String>, Constants{
 	
 	Pattern pattern=null;
-	Matcher matcher=null;
-	String regex ="^(?:(?!\0+|\1+|\2+|\3+|\4+))\\d{9}$";
+	Matcher matcher=null; 
+	String regex = "^([0]){9}$|^([1]){9}$|^([2]){9}$|^([3]){9}$|^([4]){9}$|^([5]){9}$|^([6]){9}$|^([7]){9}$|^([8]){9}$|^([9]){9}$";
 	    
     @Override
 	public boolean isValid(String number, ConstraintValidatorContext arg1) {
