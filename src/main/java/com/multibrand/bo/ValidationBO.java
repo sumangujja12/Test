@@ -241,7 +241,10 @@ public class ValidationBO extends BaseBO {
 					if(posidHoldAllowed){
 						response.setStatusCode(STATUS_CODE_CONTINUE);
 						messageCode=POSID_FAIL_MAX;
-						response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+						//response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+						response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+								new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
+								CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
 					}else{
 						response.setStatusCode(STATUS_CODE_STOP);
 						messageCode=POSID_FAIL_MAX;
