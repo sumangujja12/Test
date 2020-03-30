@@ -7,7 +7,9 @@ import java.util.regex.Pattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
- 
+
+import org.apache.commons.lang.StringUtils;
+
 import com.multibrand.util.Constants;
 
 
@@ -20,7 +22,9 @@ public class RepetitiveDigitValidator implements
 	    
     @Override
 	public boolean isValid(String number, ConstraintValidatorContext arg1) {
-    	
+    	if(number == null){
+    		number = StringUtils.EMPTY;
+    	}
     	pattern = Pattern.compile(regex);
 		matcher = pattern.matcher(number);
 		//System.out.println(number+"  : "+matcher.matches());
