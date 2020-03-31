@@ -129,7 +129,7 @@ public class GMDResource extends BaseResource {
 	public Response submitEnrollment(GMDEnrollmentRequest enrollmentRequest) {
 		Response response = null;
 		// Start Submit enrollment call
-		GMDEnrollmentResponse enrollmentResponse = gmdBO.submitEnrollment(enrollmentRequest);
+		GMDEnrollmentResponse enrollmentResponse = gmdBO.submitEnrollment(enrollmentRequest, httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
 		return response;
 	}

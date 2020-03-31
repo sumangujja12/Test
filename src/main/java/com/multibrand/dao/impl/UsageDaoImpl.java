@@ -716,7 +716,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 						
 			
 		}		
-} catch(Exception e) {
+		} catch(Exception e) {
 			
 		}
 

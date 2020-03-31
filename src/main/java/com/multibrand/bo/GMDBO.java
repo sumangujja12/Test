@@ -38,6 +38,7 @@ import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.exception.NRGException;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.AsyncHelper;
+import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.service.AddressService;
 import com.multibrand.service.BaseAbstractService;
@@ -81,7 +82,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 	@Autowired
 	private OEProxy oeProxy;
-
+	@Autowired
+	private UtilityLoggerHelper utilityloggerHelper;
 
 	@Autowired
 	private AsyncHelper asyncHelper;
@@ -478,12 +480,14 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		logger.debug("End:" + METHOD_NAME);
 	}
 
-	public GMDEnrollmentResponse submitEnrollment(GMDEnrollmentRequest enrollmentRequest) {
+	public GMDEnrollmentResponse submitEnrollment(GMDEnrollmentRequest enrollmentRequest, String sessionId) {
 		String methodName = "OEBO: submitEnrollment(..)";
 		logger.debug("Start:{}" + methodName);
 
 		GMDEnrollmentResponse response = new GMDEnrollmentResponse();
 
+		long startTime = CommonUtil.getStartTime();
+		
 		if (StringUtils.isBlank(enrollmentRequest.getPromoCode())) { // If Promo code is passed empty
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -515,7 +519,11 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		 * 
 		 */
 		finally {
-
+			utilityloggerHelper.logTransaction("getGMDsubmitEnrollment", false,
+					enrollmentRequest, response,
+					response.getResultDescription(),
+					CommonUtil.getElapsedTime(startTime), "", sessionId,
+					enrollmentRequest.getCompanyCode());
 		}
 
 		logger.debug("END:{}" , methodName);
