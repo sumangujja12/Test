@@ -95,7 +95,7 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = offerResponse.getHttpStatus() != null ? offerResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(offerResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			// Not logging Offer API calls - vsood
@@ -132,7 +132,7 @@ public class SalesAPIResource extends BaseResource {
 			response = salesBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
 			logger.error(e);
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			
    		}finally{
    			try {
@@ -153,9 +153,10 @@ public class SalesAPIResource extends BaseResource {
 		Response response = null;
 		try{
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-			response = salesBO.getSalesESIDAndCalendarDates(request,httpRequest);
+			SalesBaseResponse salesBaseResponse = salesBO.getSalesESIDAndCalendarDates(request,httpRequest);
+			response=Response.status(Response.Status.BAD_REQUEST).entity(salesBaseResponse).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_AVAILABLE_DATES, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -224,7 +225,7 @@ public class SalesAPIResource extends BaseResource {
 			}
 			logger.debug("END ******* performCreditCheck API**********");
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_CHECK_CREDIT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -324,7 +325,7 @@ public class SalesAPIResource extends BaseResource {
 				httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(uccResp).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_CREDIT_DATA, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -344,7 +345,7 @@ public class SalesAPIResource extends BaseResource {
 	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
 	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
 	    } catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_SUBMIT_ENROLLMENT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -363,7 +364,7 @@ public class SalesAPIResource extends BaseResource {
         	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestions(request);
             response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
@@ -383,7 +384,7 @@ public class SalesAPIResource extends BaseResource {
 			KbaAnswerResponse kbaAnsweresponse = oeBO.submitKBAAnswers(request);
 			response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_KBA_RESULT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -403,7 +404,7 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = tokenizedResponse.getHttpStatus() != null ? tokenizedResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(tokenizedResponse).build();
 		}catch(Exception e){ 
-			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
 			logger.error(e.fillInStackTrace());
 		}finally{
 			// Commented purposefully and should not log transaction.
@@ -423,7 +424,7 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = prospectDataResponse.getHttpStatus() != null ? prospectDataResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(prospectDataResponse).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
@@ -442,7 +443,7 @@ public class SalesAPIResource extends BaseResource {
 			EsidResponse getEsiidResponse = oeBO.getESIDDetails(request);
 			response = Response.status(Response.Status.OK).entity(getEsiidResponse).build();
 		}catch (Exception e) {
-	   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+	   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
 	   			logger.error(e.fillInStackTrace());
 	   	}finally{
 	   			utilityloggerHelper.logSalesAPITransaction(API_ESID, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
@@ -462,7 +463,7 @@ public class SalesAPIResource extends BaseResource {
         	Response.Status status = getKBAQuestionsResponse.getHttpStatus() != null ? getKBAQuestionsResponse.getHttpStatus() :Response.Status.OK;
             response = Response.status(status).entity(getKBAQuestionsResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(KBA_OE, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);

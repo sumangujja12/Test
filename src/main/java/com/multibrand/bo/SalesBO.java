@@ -77,13 +77,13 @@ public class SalesBO extends OeBoHelper implements Constants {
 	 * @return
 	 * @throws Exception
 	 */
-	public Response getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidCalendarRequest, HttpServletRequest httpRequest) throws Exception {
+	public SalesBaseResponse getSalesESIDAndCalendarDates(SalesEsidCalendarRequest salesEsidCalendarRequest, HttpServletRequest httpRequest) throws Exception {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspCalendarResponse = new SalesEsidInfoTdspCalendarResponse();
 		String bpMatchFlag= null;
 		String error="";
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		Response response = null;
+		SalesBaseResponse response = null;
 		try{
 			serviceLoationResponse=oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),salesEsidCalendarRequest.getGuid() );
 			if (null!= serviceLoationResponse){
@@ -121,7 +121,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				
 					    
 			    BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);	
-			    response = Response.status(salesEsidInfoTdspCalendarResponse.getHttpStatus()).entity(salesEsidInfoTdspCalendarResponse).build();
+			    response = salesEsidInfoTdspCalendarResponse;
 			}else{
 				response =salesEsidInfoTdspCalendarResponse.populateInvalidTrackingAndGuidResponse();
 			}

@@ -4251,7 +4251,7 @@ public class OEBO extends OeBoHelper implements Constants{
     		}
 */
     		
-    		if (allInclusiveDateList.size() > 0	&& (StringUtils.equals(transactionType,TRANSACTIONTYPE_N)))
+    		if (allInclusiveDateList.size() > 0	&& ((StringUtils.equals(transactionType,TRANSACTIONTYPE_N)) || (StringUtils.equals(transactionType,MVI))))
     		{
     			
 					if(StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON) ||StringUtils.isBlank(response.getEsid()) 
