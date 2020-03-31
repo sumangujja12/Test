@@ -477,13 +477,10 @@ public class HistoryResource
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getZoneIdByEsiId(@FormParam("esid") String esid, @FormParam("companyCode") String companyCode) {
 		Response response = null;
-		logger.info("START-[HistoryResourse-getZoneIdByESIID]");
 		GMDZoneByEsiIdResponseVO gmdZoneByEsiIdResponse = historyBO.getZoneIdByEsiId(esid, companyCode,
 				httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(gmdZoneByEsiIdResponse).build();
-		logger.info("END-[HistoryResourse-getZoneIdByESIID]");
 		return response;
-
 	}
 
 	/**
@@ -503,13 +500,10 @@ public class HistoryResource
 			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
 			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
 		Response response = null;
-		logger.info("START-[HistoryResourse-getGMDPrice]");
 		HourlyPriceResponse hourlyPriceResponse = historyBO.getGMDPrice(accountNumber, contractId, esid, curDate,
 				httpRequest.getSession(true).getId(), companyCode);
 		response = Response.status(200).entity(hourlyPriceResponse).build();
-		logger.info("END-[HistoryResourse-getGMDPrice]");
 		return response;
 
 	}
-
 }

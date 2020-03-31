@@ -83,15 +83,11 @@ public class UsageHelper
 	 * @return
 	 */
 	public GMDZoneByEsiIdResponseVO getZoneIdByEsiId(
-			UsageRequestVO request, String companyCode, String sessionId)
-	{
-		logger.info(" START getZoneIdByEsiId Method");
+			UsageRequestVO request, String companyCode, String sessionId) {
 		return usageDAOImpl.getZoneInformFromDB(request, companyCode, sessionId);
 	}
 	
-	public DailyHourlyPriceResponseVO getGMDPriceFromDB(UsageRequestVO request,String sessionId, String companyCode)
-	{
-		logger.info(" START getGMDPriceFromDB Method");
+	public DailyHourlyPriceResponseVO getGMDPriceFromDB(UsageRequestVO request,String sessionId, String companyCode) {
 		return usageDAOImpl.getGMDPriceFromDB(request,sessionId, companyCode);
 	}	
 }
