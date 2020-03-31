@@ -19,6 +19,7 @@ import com.multibrand.vo.response.gmd.Breakdown;
 import com.multibrand.vo.response.gmd.Costs;
 import com.multibrand.vo.response.gmd.Current;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
+import com.multibrand.vo.response.gmd.GMDReturnCharge;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
@@ -29,9 +30,11 @@ import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
 import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT;
 import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT_Service;
+import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZetGmdInvdate;
 import com.nrg.cxfstubs.gmdstatement.ZetGmdStmt;
+import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
 
 /**
  * 
@@ -98,9 +101,13 @@ public class GMDService extends BaseAbstractService {
           ZetGmdInvdate zetGmdInvdate = new ZetGmdInvdate();
           ZesGmdStmt zesGmdStmt = new ZesGmdStmt();
           ZetGmdStmt zetGmdStmt = new ZetGmdStmt();
+          ZettGmdRetchr zettGmdRetchr = new ZettGmdRetchr();
 
          Holder<ZetGmdInvdate>  holderZetGmdInvdate = new Holder<>();
          holderZetGmdInvdate.value = zetGmdInvdate;
+         
+         Holder<ZettGmdRetchr>  holderZettGmdRetchr = new Holder<>();
+         holderZettGmdRetchr.value = zettGmdRetchr;
          
          Holder<ZesGmdStmt>  holderZesGmdStmt = new Holder<>();
          holderZesGmdStmt.value = zesGmdStmt;
@@ -110,9 +117,9 @@ public class GMDService extends BaseAbstractService {
 		
 		try{
 			
-			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderZetGmdInvdate, holderZesGmdStmt, holderZetGmdStmt);
+			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderZetGmdInvdate, holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
 						
-			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt);
+			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderZettGmdRetchr);
 			
 			double rate = handleRateResponse(holderZetGmdStmt);
 			
@@ -246,6 +253,26 @@ public class GMDService extends BaseAbstractService {
 		return response;
 
 	}
+	
+	private List<GMDReturnCharge> getReturnCharge(Holder<ZettGmdRetchr> holderZettGmdRetchr) {
+		
+		List<GMDReturnCharge> gmdReturnChargeList = new ArrayList<>();
+				
+		for (ZesGmdRetchr zesGmdRetchr : holderZettGmdRetchr.value.getItem()) {
+			
+			GMDReturnCharge gmdReturnCharge = new GMDReturnCharge();
+			
+			gmdReturnCharge.setBillingDate(zesGmdRetchr.getBillDate());
+			gmdReturnCharge.setInvoiceNumber(zesGmdRetchr.getInvoice());
+			gmdReturnCharge.setReturnChrg(zesGmdRetchr.getRetChrg());
+			
+			gmdReturnChargeList.add(gmdReturnCharge);
+		}
+		
+		
+		return gmdReturnChargeList;
+	} 
+	
 
 	private List<PredictedSeries> getProjectedPrice(Holder<TEPROFVALUES> exTepProfValues) {
 		
@@ -294,7 +321,7 @@ public class GMDService extends BaseAbstractService {
 		return current;
 	}
 	
-	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt) {
+	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt, Holder<ZettGmdRetchr> holderZettGmdRetchr) {
 
 		GMDStatementBreakDownResponse response = new GMDStatementBreakDownResponse();
 
@@ -306,6 +333,8 @@ public class GMDService extends BaseAbstractService {
 		
 		List<Breakdown> breakdown = new ArrayList<>();
 		
+		List<GMDReturnCharge> gmdReturnChargeList = getReturnCharge(holderZettGmdRetchr);
+		
 		breakdown.add(wholeSaleitemBreakDown(zesGmdStmt, WHOLESALE_ELECTRICITY));
 		
 		breakdown.add(tduDeliveryitemBreakDown(zesGmdStmt, TDU_DELIVERY_CHARGES));
@@ -315,12 +344,13 @@ public class GMDService extends BaseAbstractService {
 		
 		
 		response.setBreakdown(breakdown);
-		
+		response.setReturnCharge(gmdReturnChargeList);
 
 		return response;
 
 	}
 
+	
 	private Breakdown wholeSaleitemBreakDown(ZesGmdStmt zesGmdStmt, String group) {
 		Breakdown wholesaleElecBreakDown = new Breakdown();
 		

@@ -18,9 +18,7 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
     private BigDecimal totalUsage;
     private BigDecimal totalCost;
     private List<Breakdown> breakdown;
-    
-
-
+    private List<GMDReturnCharge> returnCharge;
     
     
 	/**
@@ -70,5 +68,17 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
 	 */
 	public void setBreakdown(List<Breakdown> breakdown) {
 		this.breakdown = breakdown;
+	}
+	/**
+	 * @return the returnCharge
+	 */
+	public List<GMDReturnCharge> getReturnCharge() {
+		return returnCharge;
+	}
+	/**
+	 * @param returnCharge the returnCharge to set
+	 */
+	public void setReturnCharge(List<GMDReturnCharge> returnCharge) {
+		this.returnCharge = returnCharge;
 	}
 }
