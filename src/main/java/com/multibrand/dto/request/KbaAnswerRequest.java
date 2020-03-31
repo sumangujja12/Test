@@ -11,13 +11,12 @@ import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.response.KbaAnswerResponse;
 
 
-public class KbaAnswerRequest extends BaseAffiliateRequest{
+public class KbaAnswerRequest extends SalesOERequest{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String transactionKey;
-	private String trackingId;
 	private List<KBAQuestionAnswerVO> questionList; 
 	private String returnCode;
 	private String returnMessage;
@@ -83,14 +82,6 @@ public class KbaAnswerRequest extends BaseAffiliateRequest{
 
 	public void setStrErrMessage(String strErrMessage) {
 		this.strErrMessage = strErrMessage;
-	}
-
-	public String getTrackingId() {
-		return trackingId;
-	}
-
-	public void setTrackingId(String trackingId) {
-		this.trackingId = trackingId;
 	}
 
 	public String getTransactionKey() {

@@ -58,7 +58,7 @@ import com.sun.jersey.api.core.InjectParam;
  * @author NRG Energy
  */
 @Component
-@Path("/sales")
+@Path("/"+Constants.SALES_API_BASE_PATH)
 public class SalesAPIResource extends BaseResource {
 	
 	/**
@@ -458,8 +458,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
-    	   
-        	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestionsWithinOE(request);
+        	SalesBaseResponse getKBAQuestionsResponse = oeBO.getKBAQuestionsWithinOE(request);
         	Response.Status status = getKBAQuestionsResponse.getHttpStatus() != null ? getKBAQuestionsResponse.getHttpStatus() :Response.Status.OK;
             response = Response.status(status).entity(getKBAQuestionsResponse).build();
    		} catch (Exception e) {

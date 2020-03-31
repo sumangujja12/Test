@@ -190,7 +190,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 	
 	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, SalesBaseRequest request, Response response, long responseTime, String trackingId, String caNumber) {
 		LoggingVO logVO = new LoggingVO();	
-		logVO.setTransactionType(apiName);
+		logVO.setTransactionType(Constants.SALES_API_BASE_PATH+"/"+apiName);
 		logVO.setCompanyCode(request.getCompanyCode());
 		logVO.setRequestData(request);
 		logVO.setResponseData(response);
