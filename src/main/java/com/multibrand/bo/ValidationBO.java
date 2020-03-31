@@ -186,7 +186,7 @@ public class ValidationBO extends BaseBO {
 			isValidDate=false;
 		logger.info("inside validatePosId:: is valid date is :: "+isValidDate);*/
 
-
+		boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
 
 		/*
 		 * Processing preferredLanguage
@@ -237,14 +237,30 @@ public class ValidationBO extends BaseBO {
 							+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count is ::"
 							+ ""+retryCount+" so POSID_FAIL_MAX message set");
 					//need to change toggle name
-					boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
+					
 					if(posidHoldAllowed){
 						response.setStatusCode(STATUS_CODE_CONTINUE);
-						messageCode=POSID_FAIL_MAX;
-						//response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
-						response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
-								new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
-								CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+						messageCode=POSIDHOLD;
+						//response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));					
+						
+						Map<String,Object> performBpMatchResponse = processBPMatch(performPosIdBpRequest, oESignupDTO, serviceLoationResponse, response,errorCd,messageCode, serviceLocationResponseerrorList );
+
+						response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
+						messageCode=(String)performBpMatchResponse.get("messageCode");
+						errorCd=(String)performBpMatchResponse.get("errorCd");	
+						bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
+						logger.info("Settting message for hold scenario 1 "+messageCode);
+						if(StringUtils.equals(messageCode, POSIDHOLD)){
+							messageCode=POSIDHOLD;
+							response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+									new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
+									CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+							logger.info("Settting message for hold scenario 2 ");
+						}
+						logger.info("inside validatePosId retry max :: status code after bpmatch call is:: "+response.getStatusCode());
+						logger.info("inside validatePosId retry max :: errorcd after bpmatch is :: "+response.getErrorCode());
+						logger.info("inside validatePosId retry max :: messagecode is after bpmatch ::"+response.getMessageCode());
+						
 					}else{
 						response.setStatusCode(STATUS_CODE_STOP);
 						messageCode=POSID_FAIL_MAX;
@@ -254,6 +270,7 @@ public class ValidationBO extends BaseBO {
 					response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 					response.setRetryCount(Integer.toString(retryCount));
 					response.setTrackingId(performPosIdBpRequest.getTrackingId());
+					logger.info("Settting message for hold scenario 3 "+response.getMessageText());
 					return response;
 				}
 
@@ -334,27 +351,14 @@ public class ValidationBO extends BaseBO {
 				/*
 				 * Step 6: Make BpMatch call
 				 */
-				Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
-				performBpMatchResponse=oeBO.performBpMatch(response,errorCd,messageCode, performPosIdBpRequest.getFirstName(),
-						performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenizedTDL(), performPosIdBpRequest.getMaidenName(),
-						performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getServStreetAptNum(), performPosIdBpRequest.getServCity(),
-						performPosIdBpRequest.getServState(), performPosIdBpRequest.getServStreetName(), performPosIdBpRequest.getServStreetNum(),
-						performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenizedSSN(),performPosIdBpRequest.getBrandId());	
+				
+								
+				Map<String,Object> performBpMatchResponse = processBPMatch(performPosIdBpRequest, oESignupDTO, serviceLoationResponse, response,errorCd,messageCode, serviceLocationResponseerrorList );
+				
 
 				response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 				messageCode=(String)performBpMatchResponse.get("messageCode");
-				errorCd=(String)performBpMatchResponse.get("errorCd");
-				if(StringUtils.isEmpty(errorCd)){
-					serviceLocationResponseerrorList.remove(BP_RESTRICT);
-					serviceLocationResponseerrorList.remove(BPSD);
-						serviceLocationResponseerrorList.remove(POSIDHOLD);
-					
-				}else{
-					serviceLocationResponseerrorList.remove(POSIDHOLD);
-					LinkedHashSet<String> errorCdSet = (LinkedHashSet<String>) performBpMatchResponse.get("errorCdSet");
-					serviceLocationResponseerrorList.addAll(errorCdSet);
-				}
-				
+				errorCd=(String)performBpMatchResponse.get("errorCd");	
 				bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 
 				logger.debug("inside validatePosId:: status code after bpmatch call is:: "+response.getStatusCode());
@@ -374,17 +378,45 @@ public class ValidationBO extends BaseBO {
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 					posidStatus=POSID_FLAG_NO;
 					errorCd=POSIDHOLD;
+					serviceLocationResponseerrorList.remove(BP_RESTRICT);
+					serviceLocationResponseerrorList.remove(BPSD);
+					serviceLocationResponseerrorList.add(errorCd);
 				}
 				else{
-					response.setStatusCode(STATUS_CODE_STOP);
-					messageCode=POSID_FAIL_MAX;
-					response.setMessageCode(messageCode);
-					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-					errorCd=POSIDHOLD;
+					if(posidHoldAllowed){
+						errorCd=POSIDHOLD;
+						serviceLocationResponseerrorList.add(errorCd);
+						messageCode = POSIDHOLD;
+						Map<String,Object> performBpMatchResponse = processBPMatch(performPosIdBpRequest, oESignupDTO, serviceLoationResponse, response,errorCd,messageCode, serviceLocationResponseerrorList );
+
+						response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
+						messageCode=(String)performBpMatchResponse.get("messageCode");
+						errorCd=(String)performBpMatchResponse.get("errorCd");	
+						bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
+						if(StringUtils.equals(messageCode, POSIDHOLD)){
+							messageCode = POSIDHOLD;
+							response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+									new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
+									CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+						}
+					
+						response.setMessageCode(messageCode);
+						logger.debug("inside validatePosId failed :: status code after bpmatch call is:: "+response.getStatusCode());
+						logger.debug("inside validatePosId failed:: errorcd after bpmatch is :: "+response.getErrorCode());
+						logger.debug("inside validatePosId failed:: messagecode is after bpmatch ::"+response.getMessageCode());
+						
+					}else{
+						response.setStatusCode(STATUS_CODE_STOP);
+						messageCode=POSID_FAIL_MAX;
+						response.setMessageCode(messageCode);
+						response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+						errorCd=POSIDHOLD;
+						serviceLocationResponseerrorList.remove(BP_RESTRICT);
+						serviceLocationResponseerrorList.remove(BPSD);
+						serviceLocationResponseerrorList.add(errorCd);
+					}
 				}
-				serviceLocationResponseerrorList.remove(BP_RESTRICT);
-				serviceLocationResponseerrorList.remove(BPSD);
-				serviceLocationResponseerrorList.add(errorCd);
+				
 			}
 			else
 			{ 
@@ -1099,5 +1131,36 @@ public class ValidationBO extends BaseBO {
 		}
 		
 		return validatePosIdKBAResponse;
+	}
+	
+	private Map<String,Object> processBPMatch(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
+												OESignupDTO oESignupDTO, 
+												ServiceLocationResponse serviceLoationResponse,
+												PerformPosIdandBpMatchResponse response,
+												String errorCd,
+												String messageCode,
+												LinkedHashSet<String> serviceLocationResponseerrorList){
+	
+		Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
+		performBpMatchResponse=oeBO.performBpMatch(response,errorCd,messageCode, performPosIdBpRequest.getFirstName(),
+				performPosIdBpRequest.getLastName(),performPosIdBpRequest.getTokenizedTDL(), performPosIdBpRequest.getMaidenName(),
+				performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getServStreetAptNum(), performPosIdBpRequest.getServCity(),
+				performPosIdBpRequest.getServState(), performPosIdBpRequest.getServStreetName(), performPosIdBpRequest.getServStreetNum(),
+				performPosIdBpRequest.getServZipCode(), performPosIdBpRequest.getTokenizedSSN(),performPosIdBpRequest.getBrandId());	
+	
+		//response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
+		messageCode=(String)performBpMatchResponse.get("messageCode");
+		errorCd=(String)performBpMatchResponse.get("errorCd");
+		if(StringUtils.isEmpty(errorCd)){
+			serviceLocationResponseerrorList.remove(BP_RESTRICT);
+			serviceLocationResponseerrorList.remove(BPSD);
+				serviceLocationResponseerrorList.remove(POSIDHOLD);
+			
+		}else{
+			serviceLocationResponseerrorList.remove(POSIDHOLD);
+			LinkedHashSet<String> errorCdSet = (LinkedHashSet<String>) performBpMatchResponse.get("errorCdSet");
+			serviceLocationResponseerrorList.addAll(errorCdSet);
+		}
+		return performBpMatchResponse;
 	}
 }
