@@ -8,7 +8,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 
 @XmlRootElement
-public class SalesBaseResponse extends Response implements Constants  {
+public class SalesBaseResponse implements Constants  {
 
 	private String errorCode = "";
 	private String errorDescription = "";
@@ -67,7 +67,6 @@ public class SalesBaseResponse extends Response implements Constants  {
 		this.messageText=messageText;
 		this.statusCode=STATUS_CODE_STOP;
 		this.httpStatus=Response.Status.INTERNAL_SERVER_ERROR;
-		SalesBaseResponse.status(httpStatus).entity(this).build();
 		return this;
 	}
 	
@@ -76,23 +75,7 @@ public class SalesBaseResponse extends Response implements Constants  {
 		this.errorDescription="Invalid trackingId / guid";
 		this.statusCode=STATUS_CODE_STOP;
 		this.httpStatus=Response.Status.BAD_REQUEST;
-		SalesBaseResponse.status(httpStatus).entity(this).build();
 		return this;
 		
-	}
-	@Override
-	public Object getEntity() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public int getStatus() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	@Override
-	public MultivaluedMap<String, Object> getMetadata() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
