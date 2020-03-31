@@ -5345,9 +5345,9 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 	kbaQuestionRequest.setLastName(request.getLastName());
 	kbaQuestionRequest.setMiddleName(request.getMiddleName());	
 	kbaQuestionRequest.setDob(request.getDob());
-	kbaQuestionRequest.setTokenizedSSN(request.getTokenSSN());		
-	if(StringUtils.isNotEmpty(request.getTokenTDL())){
-        kbaQuestionRequest.setTokenizedDrl(request.getTokenTDL());        
+	kbaQuestionRequest.setTokenizedSSN(request.gettokenizedSSN());		
+	if(StringUtils.isNotEmpty(request.getTokenizedTDL())){
+        kbaQuestionRequest.setTokenizedDrl(request.getTokenizedTDL());        
         kbaQuestionRequest.setDlrState(request.getDrivingLicenseState());
     } 
 	
@@ -5717,7 +5717,7 @@ public ProspectDataInternalResponse getProspectData(ProspectDataRequest request)
  * @param getOEKBAQuestionsRequest
  * @return
  */
-public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) {
+public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) {
 	
 	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
 	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
@@ -5726,51 +5726,20 @@ public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest 
 	try {
 					
 		if(!StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_CIRRO))
-		{  //If Tdsp Code & Esid are passed empty
+		{  
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Company code "+getOEKBAQuestionsRequest.getCompanyCode()+" is currently not supported");		
 			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
+			response.setErrorDescription("Company code "+getOEKBAQuestionsRequest.getCompanyCode()+" is currently not supported");
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;			
 		}	
 		
-		if(StringUtils.isEmpty(getOEKBAQuestionsRequest.getTrackingId()))
-		{  //If Tdsp Code & Esid are passed empty
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("TrackingId is empty");
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-			return response;	
+		serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
+		if(null !=serviceLocationResponse && StringUtils.isNotEmpty(serviceLocationResponse.getTrackingId())){
+			kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
+		}else {		
+			return response.populateInvalidTrackingAndGuidResponse();
 		}
-		
-		if(StringUtils.isEmpty(getOEKBAQuestionsRequest.getGuid()))
-		{  //If Tdsp Code & Esid are passed empty
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Guid is empty");
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-			return response;	
-		}
-		
-		 serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
-			if(null !=serviceLocationResponse && StringUtils.isNotEmpty(serviceLocationResponse.getTrackingId())){
-				kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
-			}else {		
-				response.setStatusCode(STATUS_CODE_STOP);
-				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-				response.setResultDescription("Data not found for Given input");
-				response.setErrorCode(HTTP_BAD_REQUEST);
-				response.setErrorDescription(response.getResultDescription());
-				response.setHttpStatus(Response.Status.BAD_REQUEST);	
-				return response;
-			}
-		
 		
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
 		 response = createKBAQuestionResposne(kbaQuestionResponse);
@@ -5784,20 +5753,15 @@ public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest 
 		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 	} finally {
 		try{
-				// Making Update Servicelocation call now
 				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
 						&& StringUtils.isNotEmpty(getOEKBAQuestionsRequest.getTrackingId())){
 				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
 				updateServiceLocationRequest.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
 				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
 				this.updateServiceLocation(updateServiceLocationRequest);
-				response.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
-				
-				
 			}
 		}catch(Exception e){
 			response.setStatusCode(STATUS_CODE_STOP);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			logger.error("Tracking Number ::"+getOEKBAQuestionsRequest.getTrackingId()+"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
 		}
 		

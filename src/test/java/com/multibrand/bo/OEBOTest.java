@@ -367,7 +367,7 @@ public class OEBOTest {
 	@Test
 	public void testGetKBAQuestionsWithTokenDLWithQuestionList(){
 		GetKBAQuestionsRequest request = getRequestForGetKBAQuestionsRequest();
-		request.setTokenTDL("543546");
+		request.setTokenizedTDL("543546");
 		request.setDrivingLicenseState("TX");
 		//request.setTrackingId("34444");
 		KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
@@ -475,7 +475,7 @@ public class OEBOTest {
 		@Test
 		public void testGetKBAQuestionsWithTokenDLWithOutAnswerList(){
 			GetKBAQuestionsRequest request = getRequestForGetKBAQuestionsRequest();
-			request.setTokenTDL("543546");
+			request.setTokenizedTDL("543546");
 			request.setDrivingLicenseState("TX");
 			//request.setTrackingId("34444");
 			KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
@@ -515,7 +515,7 @@ public class OEBOTest {
 		request.setLastName("xyz");
 		request.setMiddleName("A");
 		request.setDob("23092019");
-		request.setTokenSSN("234234");
+		request.setTokenizedSSN("234234");
 		//request.setTokenTDL("543546");
 		//request.setDrivingLicenseState("TX");
 		request.setPhoneNum("4534656566");

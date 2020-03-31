@@ -123,8 +123,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 			    BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);	
 			    response = Response.status(salesEsidInfoTdspCalendarResponse.getHttpStatus()).entity(salesEsidInfoTdspCalendarResponse).build();
 			}else{
-				SalesBaseResponse salesBaseResponse =salesEsidInfoTdspCalendarResponse.populateInvalidTrackingAndGuidResponse();
-				response = Response.status(salesBaseResponse.getHttpStatus()).entity(salesBaseResponse).build();
+				response =salesEsidInfoTdspCalendarResponse.populateInvalidTrackingAndGuidResponse();
 			}
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch"+ e.getMessage());

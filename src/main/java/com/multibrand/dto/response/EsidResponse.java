@@ -2,9 +2,6 @@ package com.multibrand.dto.response;
 
 import java.io.Serializable;
 import java.util.List;
-
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
 import com.multibrand.vo.request.ESIDData;
 
 public class EsidResponse extends SalesBaseResponse implements Serializable {
@@ -20,10 +17,4 @@ public class EsidResponse extends SalesBaseResponse implements Serializable {
 	public void setEsidList(List<ESIDData> esidList) {
 		this.esidList = esidList;
 	}
-
-	public String toString(){
-		return ReflectionToStringBuilder.toString(this,
-				ToStringStyle.SHORT_PREFIX_STYLE);
-	}
-
 }
