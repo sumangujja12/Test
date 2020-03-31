@@ -14,9 +14,6 @@ import com.multibrand.request.validation.ValidDateTime;
 
 public class IdentityRequest extends SalesBaseRequest {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1068351198219357955L;
 
 	@NotBlank(groups = BasicConstraint.class)
