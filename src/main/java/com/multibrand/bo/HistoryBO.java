@@ -1422,7 +1422,7 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 		usageRequestVO.setCurDtInd(curDate);
 
 		DailyHourlyPriceResponseVO usageResp = null;
-		HourlyPriceResponse hourlyPriceResponse = null;
+		HourlyPriceResponse hourlyPriceResponse = new HourlyPriceResponse();
 
 		try {
 
@@ -1439,6 +1439,9 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 				
 				logger.info(" END of the getUsage() Helpermethod");
 				return hourlyPriceResponse;
+			} else {
+				hourlyPriceResponse.setResultCode(RESULT_CODE_THREE);
+				hourlyPriceResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
 
 		} catch (Exception e) {
