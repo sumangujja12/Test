@@ -6,6 +6,7 @@ import javax.ws.rs.QueryParam;
 
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.request.validation.ChannelType;
@@ -32,7 +33,7 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 	private String channelType;
 	
 	@QueryParam(value = "companyCode")
-	@NotBlank
+	@NotEmpty
 	@Length(max = 4, groups = SizeConstraint.class)
 	@ValidateCompanyCode
 	private String companyCode;
