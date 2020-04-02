@@ -2649,7 +2649,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 								}
 								onlinePayIdforAutoPay =  String.valueOf(count+1);
 								paymentMethodB = new PaymentMethodB();
-								if(adr[0].getPayment().equalsIgnoreCase("G"))
+								if(adr[0].getPayment().equalsIgnoreCase("G") || adr[0].getPayment().equalsIgnoreCase("K"))
 								{
 									paymentMethodCC.setIsAllowed(NCCAFlag);
 									paymentMethodCC.setIsRegisteredWithAutopay(FLAG_TRUE);
