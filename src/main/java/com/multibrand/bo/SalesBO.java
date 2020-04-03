@@ -1,5 +1,8 @@
 package com.multibrand.bo;
 
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -10,17 +13,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.helper.OeBoHelper;
-import com.multibrand.domain.ProspectRequest;
-import com.multibrand.domain.ProspectResponse;
 import com.multibrand.dto.request.AffiliateOfferRequest;
+import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+import com.multibrand.dto.request.SalesEnrollmentRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
+import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.util.Constants;
@@ -33,10 +38,6 @@ import com.multibrand.vo.response.ProspectDataInternalResponse;
 import com.multibrand.vo.response.ProspectDataResponse;
 import com.multibrand.vo.response.SalesEsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
-import com.multibrand.vo.response.TokenizedResponse;
-
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 
 
 @Component
@@ -202,6 +203,74 @@ public class SalesBO extends OeBoHelper implements Constants {
 			logger.error("Exception in SalesBO.getSalesOffers()", e);
 			throw e;
 		}	
+	}
+	
+	/**
+	 * @author Asingh
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	public SalesEnrollmentResponse getSalesSubmitEnrollment(SalesEnrollmentRequest enrollmentRequest) throws Exception {
+		ServiceLocationResponse serviceLoationResponse = null;
+		//Response response = null;
+		SalesEnrollmentResponse salesEnrollmentresponse = new SalesEnrollmentResponse();
+		try{
+			serviceLoationResponse=oeBO.getEnrollmentData(enrollmentRequest.getTrackingId(),enrollmentRequest.getGuid());
+			if(null!= serviceLoationResponse){
+				EnrollmentRequest request = new EnrollmentRequest();
+				request.setChannelType(serviceLoationResponse.getSignupChannelCode());//
+				request.setAffiliateId(serviceLoationResponse.getAffiliateId());
+                request.setCompanyCode(serviceLoationResponse.getCompanyCode());
+                request.setBrandId(serviceLoationResponse.getBrandId());
+                request.setEbillFlag(enrollmentRequest.getEbillFlag());
+                request.setBpMatchFlag(serviceLoationResponse.getBpMatchNoCcsResponse());//
+                request.setMviDate(serviceLoationResponse.getServiceStartDate());
+                request.setTransactionType(serviceLoationResponse.getServiceRequestTypeCode());//
+                request.setTdspCodeCCS(serviceLoationResponse.getTdspCode());
+                //request.setOfferDate("");offerTime
+                request.setSwitchHoldFlag(serviceLoationResponse.getSwitchHoldStatus());//
+                request.setOfferCode(enrollmentRequest.getOfferCode());
+                request.setPromoCode(enrollmentRequest.getPromoCode());
+                request.setCampaignCode(enrollmentRequest.getCampaignCode());
+                request.setProductPriceCode(enrollmentRequest.getProductPriceCode());
+                request.setIncentiveCode(enrollmentRequest.getIncentiveCode());
+                request.setMarketSegment(enrollmentRequest.getMarketSegment());
+                request.setSapOfferTagline(serviceLoationResponse.getOfferCodeTitle());
+                //Billing address
+                request.setBillStreetName(serviceLoationResponse.getBillStreetName());
+                request.setBillStreetNum(serviceLoationResponse.getBillStreetNum());
+                request.setBillStreetAptNum(serviceLoationResponse.getBillStreetAptNum());
+                request.setBillCity(serviceLoationResponse.getBillCity());
+                request.setBillState(serviceLoationResponse.getBillState());
+                request.setBillZipCode(serviceLoationResponse.getBillZipCode());
+                request.setBillPOBox(serviceLoationResponse.getBillPoBox());
+                
+                //Service address
+                request.setServStreetName(serviceLoationResponse.getServStreetName());
+                request.setServStreetNum(serviceLoationResponse.getServStreetNum());
+                request.setServStreetAptNum(serviceLoationResponse.getServStreetAptNum());
+                request.setServCity(serviceLoationResponse.getServCity());
+                request.setServState(serviceLoationResponse.getServState());
+                request.setServZipCode(serviceLoationResponse.getServZipCode());
+                
+                request.setReferralId(serviceLoationResponse.getReferralId());
+                request.setEsid(serviceLoationResponse.getEsid());
+                
+				EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
+				BeanUtils.copyProperties(enrollmentResponse, salesEnrollmentresponse);	
+			}else{
+				salesEnrollmentresponse.populateInvalidTrackingAndGuidResponse();
+			}
+				
+		   // response = salesEnrollmentresponse;
+			
+		} catch (Exception e) {
+			logger.error("Exception in SalesBO.performPosidAndBpMatch"+ e.getMessage());
+			throw e;
+		}
+		
+		return salesEnrollmentresponse;
 	}
 
 }
