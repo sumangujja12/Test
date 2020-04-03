@@ -1342,6 +1342,7 @@ public interface Constants {
     public static final String API_TOKEN = "token";
     public static final String API_PROSPECT = "prospect";
     public static final String API_ESID = "esid";
+    public static final String API_RECHECK_CREDIT= "recheck-credit";
     
     //Submit new KBA Answers API
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";

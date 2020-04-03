@@ -13,9 +13,12 @@ import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.dto.request.AffiliateOfferRequest;
+import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+import com.multibrand.dto.request.SalesCreditCheckRequest;
+import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -23,14 +26,17 @@ import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.Constants;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.util.Token;
 import com.multibrand.vo.request.SalesTokenRequest;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GenericResponse;
+import com.multibrand.vo.response.NewCreditScoreResponse;
 import com.multibrand.vo.response.ProspectDataInternalResponse;
 import com.multibrand.vo.response.ProspectDataResponse;
+import com.multibrand.vo.response.SalesCreditCheckResponse;
 import com.multibrand.vo.response.SalesEsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.vo.response.TokenizedResponse;
@@ -49,6 +55,9 @@ public class SalesBO extends OeBoHelper implements Constants {
 	
 	@Context
 	private HttpServletRequest httpRequest;
+	
+	@Autowired
+	OERequestHandler oeRequestHandler;
 
 	
 	public Response performPosidAndBpMatch(IdentityRequest request) throws Exception {
@@ -202,6 +211,84 @@ public class SalesBO extends OeBoHelper implements Constants {
 			logger.error("Exception in SalesBO.getSalesOffers()", e);
 			throw e;
 		}	
+	}
+	
+	public SalesBaseResponse  performCreditCheck(SalesCreditCheckRequest request){
+		
+		SalesCreditCheckResponse salesCreditCheckResponse = new SalesCreditCheckResponse();
+		
+		NewCreditScoreResponse newCreditScoreResponse = new NewCreditScoreResponse();
+		ServiceLocationResponse serviceLocationResponse = null;
+		SalesBaseResponse response = null;
+		try{
+			serviceLocationResponse=oeBO.getEnrollmentData(request.getTrackingId(),request.getGuid() );
+			if (null!= serviceLocationResponse){
+				
+				if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
+					if(StringUtils.isEmpty(request.getMviDate())) {
+						response = salesCreditCheckResponse;
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						response.setErrorCode(HTTP_BAD_REQUEST);
+						response.setErrorDescription("mviDate may not be Empty for Move-In");
+						response.setHttpStatus(Response.Status.BAD_REQUEST);
+						return response;
+					}
+				}
+				
+				CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditCheckRequest(request, serviceLocationResponse);
+				newCreditScoreResponse =  oeBO
+				.performCreditCheck(oeRequestHandler
+						.createNewCreditScoreRequest(creditCheckRequest),
+						creditCheckRequest);
+				BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
+				response= 	salesCreditCheckResponse;			
+			}else{
+				response =salesCreditCheckResponse.populateInvalidTrackingAndGuidResponse();
+			}
+		} catch (Exception e) {
+			logger.error("Exception in SalesBO.performCreditCheck()", e);
+			throw e; 
+		}	
+		return response;
+	}
+	
+	public SalesBaseResponse  performCreditReCheck(SalesCreditReCheckRequest request){
+		
+		SalesCreditCheckResponse salesCreditCheckResponse = new SalesCreditCheckResponse();
+		
+		NewCreditScoreResponse newCreditScoreResponse = new NewCreditScoreResponse();
+		ServiceLocationResponse serviceLocationResponse = null;
+		SalesBaseResponse response = null;
+		try{
+			serviceLocationResponse=oeBO.getEnrollmentData(request.getTrackingId(),request.getGuid() );
+			if (null!= serviceLocationResponse){
+				
+				if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
+					if(StringUtils.isEmpty(request.getMviDate())) {
+						response = salesCreditCheckResponse;
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						response.setErrorCode(HTTP_BAD_REQUEST);
+						response.setErrorDescription("mviDate may not be Empty for Move-In");
+						response.setHttpStatus(Response.Status.BAD_REQUEST);
+						return response;
+					}
+				}
+				
+				CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditReCheckRequest(request, serviceLocationResponse);
+				newCreditScoreResponse =  oeBO
+				.performCreditCheck(oeRequestHandler
+						.createNewCreditScoreRequest(creditCheckRequest),
+						creditCheckRequest);
+				BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
+				response= 	salesCreditCheckResponse;			
+			}else{
+				response =salesCreditCheckResponse.populateInvalidTrackingAndGuidResponse();
+			}
+		} catch (Exception e) {
+			logger.error("Exception in SalesBO.performCreditCheck()", e);
+			throw e; 
+		}	
+		return response;
 	}
 
 }

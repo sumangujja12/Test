@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,10 +29,16 @@ import com.multibrand.dto.PersonDTO;
 import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
+import com.multibrand.dto.request.SalesCreditCheckRequest;
+import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.SizeConstraint;
+import com.multibrand.request.validation.ValidDateTime;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
@@ -1286,4 +1295,48 @@ public class OERequestHandler implements Constants {
 		oeSignupDTO.setCreditCheck(creditCheck);
 	}
 	
+	public CreditCheckRequest createCreditCheckRequest(SalesCreditCheckRequest salesCreditCheckRequest,
+								ServiceLocationResponse serviceLocationResponse) {
+
+		CreditCheckRequest creditCheckRequest = new CreditCheckRequest();
+		BeanUtils.copyProperties(salesCreditCheckRequest, creditCheckRequest);
+		creditCheckRequest.setFirstName(serviceLocationResponse.getPersonResponse().getFirstName());
+		creditCheckRequest.setLastName(serviceLocationResponse.getPersonResponse().getLastName());
+		creditCheckRequest.setTokenizedSSN(serviceLocationResponse.getPersonResponse().getSsn());
+		
+		String transactionType = StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)? SWI : MVI;
+		creditCheckRequest.setTransactionType(transactionType);
+		creditCheckRequest.setEsid(serviceLocationResponse.getEsid());
+		creditCheckRequest.setServStreetNum(serviceLocationResponse.getServStreetNum());
+		creditCheckRequest.setServStreetName(serviceLocationResponse.getServStreetName());
+		creditCheckRequest.setServStreetAptNum(serviceLocationResponse.getServStreetAptNum());
+		creditCheckRequest.setServCity(serviceLocationResponse.getServCity());
+		creditCheckRequest.setServState(serviceLocationResponse.getServState());
+		creditCheckRequest.setServZipCode(serviceLocationResponse.getServZipCode());
+
+		creditCheckRequest.setBillStreetNum(serviceLocationResponse.getBillStreetNum());
+		creditCheckRequest.setBillStreetName(serviceLocationResponse.getBillStreetName());
+		creditCheckRequest.setBillStreetAptNum(serviceLocationResponse.getBillStreetAptNum());
+		creditCheckRequest.setBillCity(serviceLocationResponse.getBillCity());
+		creditCheckRequest.setBillState(serviceLocationResponse.getBillState());
+		creditCheckRequest.setBillZipCode(serviceLocationResponse.getBillZipCode());
+		creditCheckRequest.setBillPOBox(serviceLocationResponse.getBillPoBox());
+
+		
+		if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getErrorCode(),BPSD)) {
+			creditCheckRequest.setMatchedBP(serviceLocationResponse.getMatchedPartnerId());
+		}else{
+			creditCheckRequest.setBpMatchFlag(BPSD);
+		}
+		
+
+		return creditCheckRequest;
+	}
+	
+	public CreditCheckRequest createCreditReCheckRequest(SalesCreditReCheckRequest salesCreditReCheckRequest,
+			ServiceLocationResponse serviceLocationResponse) {
+		CreditCheckRequest creditCheckRequest = createCreditCheckRequest(salesCreditReCheckRequest, serviceLocationResponse);
+		creditCheckRequest.setTokenizedSSN(salesCreditReCheckRequest.getTokenizedSSN());
+		return creditCheckRequest;
+	}
 }

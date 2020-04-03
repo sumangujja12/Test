@@ -649,6 +649,9 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the billStreetNum
 	 */
 	public String getBillStreetNum() {
+		if(StringUtils.isEmpty(billStreetNum)) {
+			billStreetNum = CommonUtil.stripStreetNum(billAddressLine1);
+		}
 		return billStreetNum;
 	}
 
@@ -664,6 +667,9 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the billStreetName
 	 */
 	public String getBillStreetName() {
+		if(StringUtils.isEmpty(billStreetName)) {
+			billStreetName = CommonUtil.stripStreetName(billAddressLine1);
+		}
 		return billStreetName;
 	}
 

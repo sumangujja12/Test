@@ -30,6 +30,8 @@ import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+import com.multibrand.dto.request.SalesCreditCheckRequest;
+import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
@@ -168,62 +170,39 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(CreditCheckRequest request) throws OEException {
+	public Response performCreditCheck(SalesCreditCheckRequest request) throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
-			HashMap<String, Object> mandatoryParamList = new HashMap<String, Object>();
 	
-			if (StringUtils.isBlank(request.getBillStreetNum())
-					&& StringUtils.isBlank(request.getBillStreetName())) {
-				// Either Billing PO box or Billing Street num/name should be
-				// supplied
-				mandatoryParamList.put("billPOBox",
-						request.getBillPOBox());
-			} else {
-				mandatoryParamList.put("billStreetNum",
-						request.getBillStreetNum());
-				mandatoryParamList.put("billStreetName",
-						request.getBillStreetName());
-			}
-	
-			if (StringUtils.isBlank(request.getLanguageCode()))
-				request
-						.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-	
-			HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil
-					.checkMandatoryParam(mandatoryParamList);
-	
-			String resultCode = (String) mandatoryParamCheckResponse
-					.get("resultCode");
-	
-			logger.debug("inside performCreditCheck:: resultcode is :: "+resultCode);
-			
-			if (StringUtils.isNotBlank(request.getBpMatchFlag())
-					&& request.getBpMatchFlag().equalsIgnoreCase(BPSD))
-				request.setMatchedBP(EMPTY);
-	
-			if (StringUtils.isNotBlank(resultCode)
-					&& resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
-				NewCreditScoreResponse newCreditScoreResponse = oeBO
-						.performCreditCheck(oeRequestHandler
-								.createNewCreditScoreRequest(request),
-								request);
+			SalesBaseResponse newCreditScoreResponse = salesBO
+						.performCreditCheck(request);
 				response = Response.status(Response.Status.OK)
 						.entity(newCreditScoreResponse).build();
-			} else {
-				String errorDesc = (String) mandatoryParamCheckResponse
-						.get("errorDesc");
-				if (StringUtils.isNotBlank(errorDesc)) {
-					response = CommonUtil.buildNotValidResponse(resultCode,
-							errorDesc);
-				} else {
-					response = CommonUtil.buildNotValidResponse(errorDesc,
-							Constants.STATUS_CODE_ASK);
-				}
-				logger.debug("Inside performCreditCheck:: errorDesc is " + errorDesc);
-			}
-			logger.debug("END ******* performCreditCheck API**********");
+			
+		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_CHECK_CREDIT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   		}
+		return response;
+	}
+	
+	@POST
+	@Path(API_RECHECK_CREDIT)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response performCreditRecheck(SalesCreditReCheckRequest request) throws OEException {
+		long startTime = CommonUtil.getStartTime();
+		Response response = null;
+		try{
+	
+			SalesBaseResponse newCreditScoreResponse = salesBO
+						.performCreditReCheck(request);
+				response = Response.status(Response.Status.OK)
+						.entity(newCreditScoreResponse).build();
+			
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
