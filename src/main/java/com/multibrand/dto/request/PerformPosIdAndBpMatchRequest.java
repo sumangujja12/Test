@@ -10,6 +10,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.RepetitiveDigitCheck;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidDateTime;
 import com.multibrand.util.CommonUtil;
@@ -36,7 +37,9 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "must be in MMddyyyy format",messageCode="INVALID_DOB",messageCodeText="INVALID_DOB")
 	String dob;
 	
+	@RepetitiveDigitCheck
 	String tdl;
+	@RepetitiveDigitCheck
 	String ssn ;
 	
 	@Length(max = 40,groups = SizeConstraint.class)
@@ -103,10 +106,12 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	@Length(max = 25, groups = SizeConstraint.class)
 	String billPOBox;
 	String preferredLanguage;
-	String tokenTDL;
 	
 	@Length(max = 20, groups = SizeConstraint.class)
-	String tokenSSN;
+	String tokenizedTDL;
+	
+	@Length(max = 20, groups = SizeConstraint.class)
+	String tokenizedSSN;
 	String dobForPosId;
 	
 	//START : OE :Sprint61 :US21009 :Kdeshmu1
@@ -141,7 +146,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	String locationName;
 	
 	String guid;
-	String prospectid;
 	String noid;
 	String etf;
 	
@@ -241,22 +245,22 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	public void setDobForPosId(String dobForPosId) {
 		this.dobForPosId = dobForPosId;
 	}
+	
 
-	@Length(max = 20, groups = SizeConstraint.class)
-	public String getTokenTDL() {
-		return tokenTDL;
+	public String getTokenizedTDL() {
+		return tokenizedTDL;
 	}
 
-	public void setTokenTDL(String tokenTDL) {
-		this.tokenTDL = tokenTDL;
+	public void setTokenizedTDL(String tokenizedTDL) {
+		this.tokenizedTDL = tokenizedTDL;
 	}
 
-	public String getTokenSSN() {
-		return tokenSSN;
+	public String getTokenizedSSN() {
+		return tokenizedSSN;
 	}
 
-	public void setTokenSSN(String tokenSSN) {
-		this.tokenSSN = tokenSSN;
+	public void setTokenizedSSN(String tokenizedSSN) {
+		this.tokenizedSSN = tokenizedSSN;
 	}
 
 	public String getLastName() {
@@ -525,13 +529,6 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	}
 	
 
-	public String getProspectid() {
-		return prospectid;
-	}
-
-	public void setProspectid(String prospectid) {
-		this.prospectid = prospectid;
-	}
 
 	public String getNoid() {
 		return noid;

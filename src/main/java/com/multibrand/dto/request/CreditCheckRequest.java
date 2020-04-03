@@ -99,6 +99,8 @@ public class CreditCheckRequest extends BaseAffiliateRequest {
 
 	@Length(max = 4, groups = SizeConstraint.class)
 	private String bpMatchFlag;
+	
+
 	/**
 	 * @return the trackingId
 	 */
@@ -381,6 +383,8 @@ public class CreditCheckRequest extends BaseAffiliateRequest {
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
+	
 
 	@Override
 	public String toString() {

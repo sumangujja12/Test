@@ -555,7 +555,7 @@ public class OeBoHelper extends BaseBO {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(BPSD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
-
+			oeSignUpDTO.getErrorSet().add(BPSD);
 			return;
 		}
 		
@@ -566,6 +566,7 @@ public class OeBoHelper extends BaseBO {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(NESID);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
+			oeSignUpDTO.getErrorSet().add(NESID);
 		}
 		
 		// Switch Hold ON and Move IN case
@@ -575,6 +576,7 @@ public class OeBoHelper extends BaseBO {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(SWHOLD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
+			oeSignUpDTO.getErrorSet().add(SWHOLD);
 		}
 		
 		// END. Code cleanup merging and tweaking
@@ -652,7 +654,7 @@ public class OeBoHelper extends BaseBO {
 	 * @author jyogapa1 (Jenith)
 	 */
 	protected Boolean allowSubmitEnrollment(OESignupDTO oeSignUpDTO,
-			EnrollmentResponse response) {
+			EnrollmentResponse response, int retryCount, boolean posidHoldAllowed) {
 		String METHOD_NAME = "OEBOHelper: allowSubmitEnrollment(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
@@ -663,7 +665,13 @@ public class OeBoHelper extends BaseBO {
 
 			allowSubmit = false;
 		}
+		
+		
+		if (!posidHoldAllowed && retryCount>=3) {
+			allowSubmit = false;
+		}
 
+		
 		logger.debug("End:" + METHOD_NAME);
 
 		return allowSubmit;

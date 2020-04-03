@@ -59,9 +59,9 @@ public class ValidationRequestHandler implements Constants {
 		validatePosIdKBARequest.setMiddleInitial(performPosIdBpRequest.getMiddleName());
 		String dob = DateUtil.getFormattedDate(DATE_FORMAT, Constants.MMddyyyy, performPosIdBpRequest.getDob());
 		validatePosIdKBARequest.setDob(dob);
-		validatePosIdKBARequest.setTokenizedSSN(performPosIdBpRequest.getTokenSSN());		
-		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTokenTDL())){
-			validatePosIdKBARequest.setTokenizedDrl(performPosIdBpRequest.getTokenTDL());        
+		validatePosIdKBARequest.setTokenizedSSN(performPosIdBpRequest.getTokenizedSSN());		
+		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTokenizedTDL())){
+			validatePosIdKBARequest.setTokenizedDrl(performPosIdBpRequest.getTokenizedTDL());        
 			validatePosIdKBARequest.setDlrState(DRL_STATE_TX);
 	    } 
 		

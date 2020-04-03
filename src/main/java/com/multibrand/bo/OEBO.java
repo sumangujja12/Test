@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,7 +41,6 @@ import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
-import com.multibrand.domain.AddressDTO;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.CampEnvironmentOutData;
@@ -102,6 +102,7 @@ import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
+import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -116,6 +117,7 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.PersonResponse;
+import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -149,7 +151,6 @@ import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
-import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
@@ -160,7 +161,7 @@ import com.multibrand.vo.response.OfferPriceWraperDO;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.POWOfferDO;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
-import com.multibrand.vo.response.ProspectDataResponse;
+import com.multibrand.vo.response.ProspectDataInternalResponse;
 import com.multibrand.vo.response.SegmentedFlagDO;
 import com.multibrand.vo.response.ServiceAddressDO;
 import com.multibrand.vo.response.TDSPChargeDO;
@@ -1880,7 +1881,10 @@ public class OEBO extends OeBoHelper implements Constants{
 		EnrollmentResponse response =  new EnrollmentResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
 		OESignupDTO oeSignUpDTO = null;
-		
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		int retryCount=0;
+		String personId=null;
+		ServiceLocationResponse serviceLoationResponse =null;
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -1890,6 +1894,28 @@ public class OEBO extends OeBoHelper implements Constants{
 		}
 		
 		try {
+			
+			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
+		    serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
+			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			}
+
+			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
+			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
+
+			personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
+			logger.debug("inside validatePosId::personIdAndRetryCountResponse.get(0) "+personIdAndRetryCountResponse.get(0));
+
+			if(StringUtils.isNotBlank(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT))){
+				retryCount=	Integer.parseInt(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT));
+			}
+			
+			boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,enrollmentRequest.getChannelType());
+			
+			
 			// Create SignupDTO from the enrollment API request.
 			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest);
 			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
@@ -1897,7 +1923,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			// Do the input normalization/sanitization
 			this.initNormalization(oeSignUpDTO);
 			logger.info("oeSignUpDTO : "+oeSignUpDTO);
-			if (allowSubmitEnrollment(oeSignUpDTO, response)) {
+			if (allowSubmitEnrollment(oeSignUpDTO, response, retryCount, posidHoldAllowed)) {
 	
 				// Populate all Pre-requisite input for enrollment
 				this.initPrerequisites(oeSignUpDTO);
@@ -1972,6 +1998,26 @@ public class OEBO extends OeBoHelper implements Constants{
 		 * 
 		 */
 		finally {
+			if(oeSignUpDTO.getErrorSet().isEmpty()){
+				serviceLocationResponseErrorList.remove(BPSD);
+				serviceLocationResponseErrorList.remove(NESID);
+				serviceLocationResponseErrorList.remove(SWHOLD);
+			}else{
+				for(String errorCode :oeSignUpDTO.getErrorSet()){
+					if(errorCode.equalsIgnoreCase(BPSD)){
+						serviceLocationResponseErrorList.remove(NESID);
+						serviceLocationResponseErrorList.remove(SWHOLD);
+					}else if(errorCode.equalsIgnoreCase(NESID)){
+						serviceLocationResponseErrorList.remove(BPSD);
+						serviceLocationResponseErrorList.remove(SWHOLD);
+					}else if(errorCode.equalsIgnoreCase(SWHOLD)){
+						serviceLocationResponseErrorList.remove(BPSD);
+						serviceLocationResponseErrorList.remove(NESID);
+					}
+				}
+				serviceLocationResponseErrorList.addAll(oeSignUpDTO.getErrorSet());
+			}
+			oeSignUpDTO.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
 			// Calls 7, 8 and 9 are executed here.
 			// Save Person and Location details in database.
 			this.updatePersonAndServiceLocation(oeSignUpDTO);
@@ -1998,8 +2044,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		String affiliateId = creditCheckRequest.getAffiliateId();
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
-		
-
+		String errorCd=null;
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		ServiceLocationResponse serviceLoationResponse =null;
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: performCreditCheck(..)";
 
@@ -2017,6 +2064,21 @@ public class OEBO extends OeBoHelper implements Constants{
 
 		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = null;
 		try {
+			if(StringUtils.isNotEmpty(creditCheckRequest.getTrackingId())){
+			    serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
+				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+				}
+
+				if(StringUtils.isNotEmpty(serviceLoationResponse.getProspectId()) 
+						&& StringUtils.equalsIgnoreCase(serviceLoationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  )){
+					response =  constructCreditCheckResponseForProspect(serviceLoationResponse );
+					return response;
+				}
+			
+			}
+			
 			// getNewCreditScore from NRGWS OEDomain via [OE proxy layer]
 			newCreditScoreResponse = oeProxy
 					.getNewCreditScore(creditScoreRequest);
@@ -2086,6 +2148,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					response.setMessageText(msgSource.getMessage(TEXT_FREEZE_CREDIT_CHECK, 
 							new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
 							CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));		
+					errorCd = CREDFREEZE;
+					serviceLocationResponseErrorList.remove(CCSD);
+					serviceLocationResponseErrorList.add(errorCd);
 			} 
 			
 			else if(StringUtils.isNotEmpty(zesNotifyHold)&& FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold)){  
@@ -2219,6 +2284,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 		} catch (RemoteException e) {
 			logger.error(e);
+			errorCd = CCSD;
+			serviceLocationResponseErrorList.remove(CREDFREEZE);
+			serviceLocationResponseErrorList.add(errorCd);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -2231,6 +2299,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setDepositReasonText(EMPTY);
 		} catch (Exception e) {
 			logger.error("ERROR:" + METHOD_NAME, e);
+			errorCd = CCSD;
+			serviceLocationResponseErrorList.remove(CREDFREEZE);
+			serviceLocationResponseErrorList.add(errorCd);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 			response.setStatusCode(STATUS_CODE_STOP);
@@ -2243,124 +2314,128 @@ public class OEBO extends OeBoHelper implements Constants{
 			Assert.notNull(
 					creditScoreRequest.getTrackingNum(),
 					"trackingId must not be null.");
-			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
-
-			if (StringUtils.isNotEmpty(creditScoreRequest.getTrackingNum()))
+			if( !isPropectCreditCheckExecuted( serviceLoationResponse)) {
+				UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+	
+				requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+				
+				requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
+				
 				requestData.setTrackingId(creditScoreRequest.getTrackingNum());
-			requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
-
-			String personId = getPersonIdByTrackingNo(requestData
-					.getTrackingId());
-
-			// Update service location and person table only when a valid person
-			// id
-			// is returned from getPersonIdByTrackingNo
-
-			if (StringUtils.isNotEmpty(personId)) {
-				if (StringUtils.isNotBlank(response.getMessageCode()))
-					requestData.setMessageCode(response.getMessageCode());
-
-				/* Setting service addresses */
-				requestData.setRecentCallMade(CREDIT_CHECK);
-				requestData.setServStreetNum(creditCheckRequest
-						.getServStreetNum());
-				requestData.setServStreetName(creditCheckRequest
-						.getServStreetName());
-				if (StringUtils.isNotEmpty(creditCheckRequest
-						.getServStreetAptNum()))
-					requestData.setServStreetAptNum(creditCheckRequest
-							.getServStreetAptNum());
-				requestData.setServCity(creditCheckRequest.getServCity());
-				requestData.setServState(creditCheckRequest.getServState());
-				requestData.setServZipCode(creditCheckRequest
-						.getServZipCode());
-
-				requestData.setAffiliateId(affiliateId);
-				if (StringUtils
-						.isNotEmpty(creditScoreRequest.getStrOfferCode()))
-					requestData.setOfferCode(creditScoreRequest
-							.getStrOfferCode());
-
-				/* Setting billing addresses */
-				requestData.setBillStreetNum(creditCheckRequest
-						.getBillStreetNum());
-				requestData.setBillStreetName(creditCheckRequest
-						.getBillStreetName());
-				if (StringUtils.isNotEmpty(creditCheckRequest
-						.getBillStreetAptNum()))
-					requestData.setBillStreetAptNum(creditCheckRequest
-							.getBillStreetAptNum());
-				if (StringUtils.isNotEmpty(creditCheckRequest.getBillCity()))
-					requestData
-							.setBillCity(creditCheckRequest.getBillCity());
-				requestData.setBillState(creditCheckRequest.getBillState());
-				requestData.setBillZipCode(creditCheckRequest
-						.getBillZipCode());
-				requestData.setBillPoBox(creditCheckRequest.getBillPOBox());
-				requestData.setServiceStartDate(creditCheckRequest.getMviDate());
-				
-				if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
-					requestData.setPayCode(YES);	
-					requestData.setDepositCode(DEPOSIT_OWED);
-					requestData.setDepositAmount(response.getDepositAmount());
+	
+				String personId = getPersonIdByTrackingNo(requestData
+						.getTrackingId());
+	
+				// Update service location and person table only when a valid person
+				// id
+				// is returned from getPersonIdByTrackingNo
+	
+				if (StringUtils.isNotEmpty(personId)) {
+					if (StringUtils.isNotBlank(response.getMessageCode()))
+						requestData.setMessageCode(response.getMessageCode());
+	
+					/* Setting service addresses */
+					requestData.setRecentCallMade(CREDIT_CHECK);
+					requestData.setServStreetNum(creditCheckRequest
+							.getServStreetNum());
+					requestData.setServStreetName(creditCheckRequest
+							.getServStreetName());
+					if (StringUtils.isNotEmpty(creditCheckRequest
+							.getServStreetAptNum()))
+						requestData.setServStreetAptNum(creditCheckRequest
+								.getServStreetAptNum());
+					requestData.setServCity(creditCheckRequest.getServCity());
+					requestData.setServState(creditCheckRequest.getServState());
+					requestData.setServZipCode(creditCheckRequest
+							.getServZipCode());
+	
+					requestData.setAffiliateId(affiliateId);
+					if (StringUtils
+							.isNotEmpty(creditScoreRequest.getStrOfferCode()))
+						requestData.setOfferCode(creditScoreRequest
+								.getStrOfferCode());
+	
+					/* Setting billing addresses */
+					requestData.setBillStreetNum(creditCheckRequest
+							.getBillStreetNum());
+					requestData.setBillStreetName(creditCheckRequest
+							.getBillStreetName());
+					if (StringUtils.isNotEmpty(creditCheckRequest
+							.getBillStreetAptNum()))
+						requestData.setBillStreetAptNum(creditCheckRequest
+								.getBillStreetAptNum());
+					if (StringUtils.isNotEmpty(creditCheckRequest.getBillCity()))
+						requestData
+								.setBillCity(creditCheckRequest.getBillCity());
+					requestData.setBillState(creditCheckRequest.getBillState());
+					requestData.setBillZipCode(creditCheckRequest
+							.getBillZipCode());
+					requestData.setBillPoBox(creditCheckRequest.getBillPOBox());
+					requestData.setServiceStartDate(creditCheckRequest.getMviDate());
 					
-				} else {					
-					requestData.setPayCode(FLAG_NO);
-					requestData.setDepositCode(DEPOSIT_NONE);
-					requestData.setDepositAmount(ZERO);
-				}
-				
-
-				/* Updating service location affiliate table */
-				
-				String errorCode = this.updateServiceLocation(requestData);
-				if (StringUtils.isNotBlank(errorCode))
-					logger.debug("Finished processing updateServiceLocation, errorCode = "
-							+ errorCode);
-
-				UpdatePersonRequest requestDataPerson = new UpdatePersonRequest();
-				/* Updating person affiliate table */
-				errorCode = EMPTY;
-				requestDataPerson.setPersonId(personId);
-				// requestDataPerson.setLanguageCode(locale);
-				requestDataPerson.setFirstName(creditScoreRequest
-						.getStrFirstName());
-				requestDataPerson.setLastName(creditScoreRequest
-						.getStrLastName());
-				if (StringUtils.isNotBlank(creditScoreRequest.getStrSSN()))
-					requestDataPerson.setSsn(creditScoreRequest.getStrSSN());
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditBucket()))
-					requestDataPerson.setCredLevelNum(newCreditScoreResponse
-							.getStrCreditBucket());
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditSource()))
-					requestDataPerson.setCredSourceNum(newCreditScoreResponse
-							.getStrCreditSource());
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditScore()))
-					requestDataPerson.setCredScoreNum(newCreditScoreResponse
-							.getStrCreditScore());
-				requestDataPerson.setAdvActionData(StringUtils.removeEnd(
-						creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
-
-
-				if(StringUtils.isNotBlank(response.getDepositAmount())) {
+					if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
+						requestData.setPayCode(YES);	
+						requestData.setDepositCode(DEPOSIT_OWED);
+						requestData.setDepositAmount(response.getDepositAmount());
+						
+					} else {					
+						requestData.setPayCode(FLAG_NO);
+						requestData.setDepositCode(DEPOSIT_NONE);
+						requestData.setDepositAmount(ZERO);
+					}
+					
+	
+					/* Updating service location affiliate table */
+					
+					String errorCode = this.updateServiceLocation(requestData);
+					if (StringUtils.isNotBlank(errorCode))
+						logger.debug("Finished processing updateServiceLocation, errorCode = "
+								+ errorCode);
+	
+					UpdatePersonRequest requestDataPerson = new UpdatePersonRequest();
+					/* Updating person affiliate table */
+					errorCode = EMPTY;
+					requestDataPerson.setPersonId(personId);
+					// requestDataPerson.setLanguageCode(locale);
+					requestDataPerson.setFirstName(creditScoreRequest
+							.getStrFirstName());
+					requestDataPerson.setLastName(creditScoreRequest
+							.getStrLastName());
+					if (StringUtils.isNotBlank(creditScoreRequest.getStrSSN()))
+						requestDataPerson.setSsn(creditScoreRequest.getStrSSN());
 					if (StringUtils.isNotBlank(newCreditScoreResponse
-							.getStrDepositHold()) 
-							&& newCreditScoreResponse.getStrDepositHold()
-									.equalsIgnoreCase(YES))
-						requestDataPerson.setCredStatusCode(HOLD);
-					else
-						requestDataPerson.setCredStatusCode(NOTICE);
-				} else {
-					requestDataPerson.setCredStatusCode(RELEASE);	
+							.getStrCreditBucket()))
+						requestDataPerson.setCredLevelNum(newCreditScoreResponse
+								.getStrCreditBucket());
+					if (StringUtils.isNotBlank(newCreditScoreResponse
+							.getStrCreditSource()))
+						requestDataPerson.setCredSourceNum(newCreditScoreResponse
+								.getStrCreditSource());
+					if (StringUtils.isNotBlank(newCreditScoreResponse
+							.getStrCreditScore()))
+						requestDataPerson.setCredScoreNum(newCreditScoreResponse
+								.getStrCreditScore());
+					requestDataPerson.setAdvActionData(StringUtils.removeEnd(
+							creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
+	
+	
+					if(StringUtils.isNotBlank(response.getDepositAmount())) {
+						if (StringUtils.isNotBlank(newCreditScoreResponse
+								.getStrDepositHold()) 
+								&& newCreditScoreResponse.getStrDepositHold()
+										.equalsIgnoreCase(YES))
+							requestDataPerson.setCredStatusCode(HOLD);
+						else
+							requestDataPerson.setCredStatusCode(NOTICE);
+					} else {
+						requestDataPerson.setCredStatusCode(RELEASE);	
+					}
+	
+					errorCode = this.updatePerson(requestDataPerson);
+					if (StringUtils.isNotBlank(errorCode))
+						logger.debug("Finished processing updateServiceLocation, errorCode = "
+								+ errorCode);
 				}
-
-				errorCode = this.updatePerson(requestDataPerson);
-				if (StringUtils.isNotBlank(errorCode))
-					logger.debug("Finished processing updateServiceLocation, errorCode = "
-							+ errorCode);
 			}
 		}
 
@@ -2578,7 +2653,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			if ((esidResponse != null)
 					&& (StringUtils.isBlank(esidResponse.getStrErrCode()))
 					&& (StringUtils.isNotBlank(esidResponse.getStrESIID()))) {
-				logger.debug("OEBO.getESIDInfo() GETTING ESID SUCCESSFUL:"+ esidResponse.getStrErrCode()+ " :: " + esidResponse.getStrESIID());
+				logger.info("OEBO.getESIDInfo() GETTING ESID SUCCESSFUL:"+ esidResponse.getStrErrCode()+ " :: " + esidResponse.getStrESIID());
 				esidDO.setEsidNumber(esidResponse.getStrESIID());
 				if (esidResponse.getStrESIID().equalsIgnoreCase(NESID)
 						|| esidResponse.getStrESIID().equalsIgnoreCase(MESID)
@@ -2620,7 +2695,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			String companyCode, String affiliateId, String brandId, String servStreetNum,
 			String servStreetName, String servStreetAptNum, String servZipCode,
 			String tdspCodeCCS, String transactionType, String trackingId, String bpMatchFlag,
-			String locale, String esid,String sessionId) throws OAMException {
+			String locale, String esid,String sessionId,String holdType) throws OAMException {
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
@@ -2630,7 +2705,10 @@ public class OEBO extends OeBoHelper implements Constants{
 		AddressDO serviceAddressDO = new AddressDO();
 		
 		Locale localeObj = null;
-
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		ServiceLocationResponse serviceLoationResponse =null;
+		
+		
 		if (locale.equalsIgnoreCase(S))
 			localeObj = new Locale("es", "US");
 		else 
@@ -2640,7 +2718,15 @@ public class OEBO extends OeBoHelper implements Constants{
 		response.setMeterType(EMPTY);
 		response.setSwitchHoldFlag(EMPTY);
 		
-	    try {
+		try {
+			if(StringUtils.isNotEmpty(trackingId)){
+		    serviceLoationResponse=getEnrollmentData(trackingId);
+			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			}
+	    	
 			serviceAddressDO.setStrStreetNum(servStreetNum);
 			serviceAddressDO.setStrStreetName(servStreetName);
 			serviceAddressDO.setStrApartNum(servStreetAptNum);
@@ -2657,7 +2743,7 @@ public class OEBO extends OeBoHelper implements Constants{
 
 			if (StringUtils.isNotBlank(servStreetNum)
 					&& StringUtils.isNotBlank(servStreetName)) {
-				logger.debug("OEBO.getESIDAndCalendarDates() street address entered! getting ESID info");
+				logger.info("OEBO.getESIDAndCalendarDates() street address entered! getting ESID info");
 				
 				if(StringUtils.isEmpty(esid)) {
 					esidDo = getESIDInfo(serviceAddressDO, companyCode);
@@ -2702,8 +2788,14 @@ public class OEBO extends OeBoHelper implements Constants{
 							response.setMessageCode(strESIDNumber);
 							if (MESID.equalsIgnoreCase(strESIDNumber)) {
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_MESID));
+								serviceLocationResponseErrorList.add(MESID);
+								serviceLocationResponseErrorList.remove(NESID);
+								serviceLocationResponseErrorList.remove(NRESID);
 							} else if (NESID.equalsIgnoreCase(strESIDNumber)) {
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
+								serviceLocationResponseErrorList.add(NESID);
+								serviceLocationResponseErrorList.remove(MESID);
+								serviceLocationResponseErrorList.remove(NRESID);
 							}
 							response.setTdspCode(EMPTY);
 							response.setAvailableDates(EMPTY);
@@ -2713,9 +2805,22 @@ public class OEBO extends OeBoHelper implements Constants{
 								response.setStatusCode(STATUS_CODE_STOP);
 								response.setMessageCode(strESIDNumber);
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NRESID));
+								serviceLocationResponseErrorList.add(NRESID);
+								serviceLocationResponseErrorList.remove(MESID);
+								serviceLocationResponseErrorList.remove(NESID);
 						} else {
 							response.setEsid(strESIDNumber);
-						}					
+							serviceLocationResponseErrorList.remove(MESID);
+							serviceLocationResponseErrorList.remove(NESID);
+							serviceLocationResponseErrorList.remove(NRESID);
+						//	serviceLocationResponseErrorList.add(strESIDNumber);
+							
+						}	
+						
+					}else{
+						serviceLocationResponseErrorList.remove(MESID);
+						serviceLocationResponseErrorList.remove(NESID);
+						serviceLocationResponseErrorList.remove(NRESID);
 					}
 					// Switch Hold ON scenario for SWI
 					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
@@ -2772,12 +2877,12 @@ public class OEBO extends OeBoHelper implements Constants{
 				}//else return response;
 			} 
 			// GET tdsp calendar dates
-			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj);
+			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType);
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
 			e.printStackTrace();
 			response.setResultCode(RESULT_CODE_SUCCESS);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION + ": " + e.getMessage());
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setMessageCode(EMPTY);
 			response.setMessageText(EMPTY);
@@ -2785,7 +2890,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		finally {
 			// Call update service location
 			this.updateServiceLocation(companyCode, affiliateId, trackingId, 
-					serviceAddressDO, esidDo, response,esid);
+					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
 		}
 	    
 	  //Default to EMPTY if statusflag is "OFF"
@@ -2812,6 +2917,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		List<TDSPDO> tdspDOList = new ArrayList<TDSPDO>();
 
 		try {
+			
+			
 			serviceAddressDO.setStrStreetNum(request.getServStreetNum());
 			serviceAddressDO.setStrStreetName(request.getServStreetName());
 			serviceAddressDO.setStrApartNum(request.getServStreetAptNum());
@@ -3041,7 +3148,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		for(TDSPDO tdspDo : tdspDataList)
 		{
 			try {
-				this.getTdspDates(request.getCompanyCode(), sessionId, transactionType, tdspDo.getTdspCodeCCS(), StringUtils.EMPTY, esidDo, calendarResp, new Locale(CommonUtil.localeCode(request.getLanguageCode())));
+				this.getTdspDates(request.getCompanyCode(), sessionId, transactionType, tdspDo.getTdspCodeCCS(), StringUtils.EMPTY, esidDo, calendarResp, new Locale(CommonUtil.localeCode(request.getLanguageCode())),null);
 				tdspDo.setAvailableDates(calendarResp.getAvailableDates());
 				tdspDo.setTdspFee(calendarResp.getTdspFee());
 			} catch (Exception e) {
@@ -3250,11 +3357,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		Map<String,Object> performBpMatchResponse=new HashMap<String, Object>();
 		com.multibrand.dto.BPMatchDTO bpMatchDto=new com.multibrand.dto.BPMatchDTO();
 		String addressMatchBPId=null;
-		
+		LinkedHashSet<String> errorCdSet = new LinkedHashSet<>();
+		String scenario = "5";
+		String scenarioDesc= "No BPMatch";
 		try{
 			BpMatchCCSRequest bpMatchReq= oeRequestHandler.createBpmatchRequest(firstName, lastName, tdl, maidenName, companyCode, servStreetAptNum, servCity, servState, servStreetName, servStreetNum, servZipCode, ssn);
 			BpMatchCCSResponse bpmatchResponse= oeService.getBPMatchStatusFromCCS(bpMatchReq);
-
+            
 			if(bpmatchResponse!=null){
 				 addressMatchBPId = bpmatchResponse.getAddressMatchBpId();
 			}
@@ -3262,15 +3371,22 @@ public class OEBO extends OeBoHelper implements Constants{
 			//Mapping BpMatch call response to method response
 			if(null != bpmatchResponse.getBpPastServiceHistoryDTO()){
 				bpMatchDto.setMatchedPartnerID(bpmatchResponse.getBpPastServiceHistoryDTO().getMatchedPartnerId());
-				response.setMatchedBP(bpmatchResponse.getBpPastServiceHistoryDTO().getMatchedPartnerId());}
+				response.setMatchedBP(bpmatchResponse.getBpPastServiceHistoryDTO().getMatchedPartnerId());
+				if(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO() != null){
+					populatePastServiceHistory(response, bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO());
+				}
+			}
 			
 			//Mapping BpMatch call response to method response for address matched BpId
 			if(!StringUtils.isEmpty(bpmatchResponse.getAddressMatchBpId())) {
 				bpMatchDto.setMatchedPartnerID(bpmatchResponse.getAddressMatchBpId());
 				response.setMatchedBP(bpmatchResponse.getAddressMatchBpId());
 				response.setBpMatchFlag(StringUtils.EMPTY);
+				scenario = "4";
+				scenarioDesc= "Exact BPMatch";
 			}
 
+		
 			/**** CASE 0: CCS returns the restricted flag as X show hard stop[ page enrollment and proceed further with the OE flow. 
 			 *****/
 			//Start US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
@@ -3280,6 +3396,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setMessageCode(BP_RESTRICTION);
 				response.setStatusCode(STATUS_CODE_STOP);
 				response.setMessageText(getAllBrandResponseMessage(companyCode, brandID, BP_RESTRICTION_TEXT_MESSAGE, ""));
+				errorCdSet.add(errorCd);
+				scenario = "6";
+				scenarioDesc= "BP fraud";
 			}
 			//END US23696 || Recognize BP Restrictions In Affiliate API || kdeshmukh || 15/12/2019
 			//NO BPMATCH FLAG
@@ -3287,6 +3406,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug(" CCS returns the flag NO_BPMATCH as true");
 				errorCd = EMPTY;
 				response.setBpMatchFlag(EMPTY);
+				scenario = "5";
+				scenarioDesc= "No BPMatch";
+				
 			}						
 			
 			//Past Balance:
@@ -3295,10 +3417,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setBpMatchFlag(BPSD);
 			errorCd=BPSD;
 			response.setMessageCode(PAST_BALANCE);
+			bpMatchDto.setPendingBalanceAmount(bpmatchResponse.getPendingBalanceAmount());
+			bpMatchDto.setPastServiceCANumber(bpmatchResponse.getPastServiceCANumber());
 			messageCode=PAST_BALANCE;
-			response.setStatusCode(STATUS_CODE_STOP);
+			response.setStatusCode(STATUS_CODE_ASK);
 			response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_BALANCE_MSG_TXT));
-			
+			errorCdSet.add(PBSD);
+			scenario = "1";
+			scenarioDesc= "Uncollected Balance";
+			response.setPendingBalanceAmount(String.valueOf(bpmatchResponse.getPendingBalanceAmount()));
 			}
 
 			//Current Customer
@@ -3324,6 +3451,8 @@ public class OEBO extends OeBoHelper implements Constants{
 							bpmatchResponse.getBpActiveCustomerDTO().getActiveAddressDTO().getStrZip());
 				}
 				response.setMessageText(msgSource.getMessage(BP_MATCH_CURRENT_CUSTOMER_MSG_TXT)+" "+currentCustomer);
+				scenario = "3";
+				scenarioDesc= "Existing Customer - BPSD";
 			}
 			
 			//exact match in ccs
@@ -3343,6 +3472,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					{
 						response.setBpMatchFlag(BPSD);
 						errorCd=BPSD;
+						errorCdSet.add(errorCd);
+						
 						logger.debug("inside performBpMatch:: just bpsd scenario");
 					}
 	
@@ -3364,16 +3495,14 @@ public class OEBO extends OeBoHelper implements Constants{
 						response.setMessageCode(PAST_SERVICE_HISTORY);
 						messageCode=PAST_SERVICE_HISTORY;
 						String pastHistoryAddress=null;
+						errorCdSet.add(errorCd);
 						
 						logger.debug("inside performBpMatch:: past service history scenario");
 						
 						if(null!=bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO()){
-							response.setExistingCity(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrCity());
-							response.setExistingState(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrState());
-							response.setExistingStreetAddress(CommonUtil.getAddressLine1(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrStreetNum(),
-											bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrStreetName()));
-							response.setExistingZip(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrZip());
-							response.setExistingAptNum(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrUnitNumber());
+							
+							populatePastServiceHistory(response, bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO());
+							
 							//pass past history address in message text
 							pastHistoryAddress=CommonUtil.getCompleteAddress(bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrUnitNumber(),
 									bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrStreetNum(),
@@ -3382,8 +3511,15 @@ public class OEBO extends OeBoHelper implements Constants{
 									bpmatchResponse.getBpPastServiceHistoryDTO().getPastAddressDTO().getStrZip());
 						}	
 						response.setMessageText(msgSource.getMessage(BP_MATCH_PAST_SERVICE_HISTORY_MSG_TXT)+" "+pastHistoryAddress);
+						scenario = "2";
+						scenarioDesc= "Past service BPMatch-BPSD";
 					}
 				} else {
+									
+					if(StringUtils.isEmpty(bpMatchDto.getMatchedPartnerID())) {
+						scenario = "7";
+						scenarioDesc= "Multiple BPMatch - BPSD";
+					}
 					response.setBpMatchFlag(BPSD);
 				}
 			}
@@ -3395,12 +3531,13 @@ public class OEBO extends OeBoHelper implements Constants{
 				errorCd=BPSD;
 				response.setStatusCode(STATUS_CODE_CONTINUE);
 				response.setResultDescription("BPMATCH CALL FAILED and continuing with BPSD flow");
-
+				errorCdSet.add(errorCd);
 			}
 			
 			bpMatchDto=populateBPMatchDTOFromBpMatchCCSResponse(bpMatchDto, bpmatchResponse);
 			
-			
+			bpMatchDto.setBpMatchScenarioId(scenario);
+			response.setBpMatchScenarioId(scenario);
 		}
 		catch(Exception e)
 		{
@@ -3409,14 +3546,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			errorCd=BPSD;
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setResultDescription("BPMATCH CALL FAILED and continuing with error :: "+e.getMessage());
-			
+			errorCdSet.add(errorCd);
 		}
 		finally{
-
 			performBpMatchResponse.put("response", response);
 			performBpMatchResponse.put("messageCode", messageCode);
 			performBpMatchResponse.put("errorCd", errorCd);
-			performBpMatchResponse.put("bpMatchDTO", bpMatchDto);}
+			performBpMatchResponse.put("bpMatchDTO", bpMatchDto);
+			performBpMatchResponse.put("errorCdSet", errorCdSet);	
+		}
 
 		return performBpMatchResponse;
 	}
@@ -3520,10 +3658,13 @@ public class OEBO extends OeBoHelper implements Constants{
 			{  //If DL & SSN are passed empty
 				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 				tokenResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-				tokenResponse.setResultDescription("DL and SSN are empty");
+				tokenResponse.setResultDescription("Both DL and SSN are empty");
+				tokenResponse.setErrorCode("MISSING_PII");
+				tokenResponse.setErrorDescription("Both DL and SSN are empty");
+				tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 				getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+
 				return getPosIdTokenResponse;
-				
 			}
 			if(StringUtils.isNotBlank(ssn))
 			{   logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: setting ssn action ");
@@ -3916,7 +4057,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void updateServiceLocation(String companyCode, String affiliateId, String trackingId, 
 			AddressDO serviceAddressDO, ESIDDO esidDo,
-			EsidInfoTdspCalendarResponse response,String requestEsidNumber) {
+			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist) {
 		logger.debug("Processing updateServiceLocation ...");
 		Assert.notNull(Integer.parseInt(trackingId),
 				"trackingId must not be null.");
@@ -3975,6 +4116,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			if (StringUtils.isNotEmpty(response.getSwitchHoldFlag()))
 				requestData.setSwitchHoldStatus(response.getSwitchHoldFlag());
 
+			if(StringUtils.isNotEmpty(errorCdlist))
+				requestData.setErrorCdList(errorCdlist);
+			
 			/* Updating service location affiliate table */
 			String errorCode = this.updateServiceLocation(requestData);
 			if (StringUtils.isNotBlank(errorCode))
@@ -3998,7 +4142,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void getTdspDates(String companyCode, String trackingId,
 			String transactionType, String tdspCodeCCS, String bpMatchFlag,
-			ESIDDO esidDo, EsidInfoTdspCalendarResponse response, Locale locale) throws Exception {
+			ESIDDO esidDo, EsidInfoTdspCalendarResponse response, Locale locale,String holdType) throws Exception {
 		String METHOD_NAME = "OEBO: getTdspDates(..)";
 
 		logger.debug("Start:" + METHOD_NAME);
@@ -4089,7 +4233,7 @@ public class OEBO extends OeBoHelper implements Constants{
     			allInclusiveDateList.remove(df2.format(c.getTime()));
     		}
     		//END  : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-    		if (allInclusiveDateList.size() > 0 // List still has data
+    		/*if (allInclusiveDateList.size() > 0 // List still has data
     				&& (StringUtils.isBlank(response.getEsid()) // Blank ESID means no ESID found
     						|| StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) // Switch Hold Status On
     						|| (StringUtils.equals(bpMatchFlag,BPSD))) // BPSD true
@@ -4105,7 +4249,51 @@ public class OEBO extends OeBoHelper implements Constants{
     			for (int i = 0; i < PUSH_2; i++)
     				allInclusiveDateList.remove(0);
     		}
-
+*/
+    		
+    		if (allInclusiveDateList.size() > 0	&& ((StringUtils.equals(transactionType,TRANSACTIONTYPE_N)) || (StringUtils.equals(transactionType,MVI))))
+    		{
+    			
+					if(StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON) ||StringUtils.isBlank(response.getEsid()) 
+							|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)) 
+					{
+						for (int i = 0; i < PUSH_4; i++)
+		    				allInclusiveDateList.remove(0);
+					}else if(StringUtils.equals(holdType,POSIDHOLD)){
+						for (int i = 0; i < PUSH_2; i++)
+		    				allInclusiveDateList.remove(0);
+					}else if(!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
+						for (int i = 0; i < PUSH_2; i++)
+		    				allInclusiveDateList.remove(0);
+					}
+						
+    		}else if(allInclusiveDateList.size() > 0){
+    			
+    			if(StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
+    				if(StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
+    					for (int i = 0; i < PUSH_7; i++)
+    		    			allInclusiveDateList.remove(0);
+    				}else if(StringUtils.equals(holdType,POSIDHOLD))
+    				{
+						for (int i = 0; i < PUSH_2; i++)
+		    				allInclusiveDateList.remove(0);
+					}else if(StringUtils.equals(holdType,HOLD_DNP))
+    				{
+						for (int i = 0; i < PUSH_4; i++)
+		    				allInclusiveDateList.remove(0);
+					}
+    			}else{
+    				if(StringUtils.isBlank(response.getEsid())){
+						for (int i = 0; i < PUSH_9; i++)
+		    				allInclusiveDateList.remove(0);
+					}else 
+					{
+						for (int i = 0; i < PUSH_7; i++)
+		    				allInclusiveDateList.remove(0);
+					}
+    			}
+    			
+    		}
     		String availableDates = StringUtils.join(allInclusiveDateList, SEMI_COLON);
     		availableDatesNoFwdSlash = StringUtils.replace(availableDates, FWD_SLASH , EMPTY);
     	}
@@ -4178,9 +4366,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setOfferDate(DateUtil.getCurrentDateFormatted(MMddyyyy));
 			response.setOfferTime(DateUtil.getCurrentDateFormatted(TIME_FORMAT));
 			response.setResultDescription(response.getMessageText());	
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			response.setHttpStatus(Response.Status.OK);
 			return response;
 		}
 		
@@ -4201,9 +4387,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				response.setResultCode(Constants.RESULT_CODE_SUCCESS );
 				response.setResultDescription("Failed -"+offerResponse.getStrErrorCode());
 				response = constructMainFields(response,offerResponse);
-				response.setErrorCode(HTTP_BAD_REQUEST);
-				response.setErrorDescription(response.getResultDescription());
-				response.setHttpStatus(Response.Status.BAD_REQUEST);
+				response.setHttpStatus(Response.Status.OK);
 				return response;
 			} else {
 				offerResponse = getOffers(request.getLanguageCode(),
@@ -5161,9 +5345,9 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 	kbaQuestionRequest.setLastName(request.getLastName());
 	kbaQuestionRequest.setMiddleName(request.getMiddleName());	
 	kbaQuestionRequest.setDob(request.getDob());
-	kbaQuestionRequest.setTokenizedSSN(request.getTokenSSN());		
-	if(StringUtils.isNotEmpty(request.getTokenTDL())){
-        kbaQuestionRequest.setTokenizedDrl(request.getTokenTDL());        
+	kbaQuestionRequest.setTokenizedSSN(request.gettokenizedSSN());		
+	if(StringUtils.isNotEmpty(request.getTokenizedTDL())){
+        kbaQuestionRequest.setTokenizedDrl(request.getTokenizedTDL());        
         kbaQuestionRequest.setDlrState(request.getDrivingLicenseState());
     } 
 	
@@ -5181,7 +5365,7 @@ private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest reque
 	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
 	
 	
-	AddressDTO serviceAddressDTO = new AddressDTO();
+	com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
 	serviceAddressDTO.setStrStreetNum(request.getServStreetNum());
 	serviceAddressDTO.setStrStreetName(request.getServStreetName());		
 	serviceAddressDTO.setStrUnitNumber(request.getServStreetAptNum());
@@ -5253,9 +5437,17 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
-	//KbaSubmitAnswerResponse kbaSubmitAnswerResponse = new KbaSubmitAnswerResponse();
+	LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+	ServiceLocationResponse serviceLoationResponse=null;
 	try{
-
+		if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
+	    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+		serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+		}
+		}
+		
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
 		logger.info("KBAHelper.submitKBAAnswer questionAnswerList"+questionAnswerList);
 		request.setTransactionKey(kbaAnswerRequest.getTransactionKey());
@@ -5292,7 +5484,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
 							kbaSubmitAnswerResponse.getSsnVerifyDate());
 					response.setSsnVerifyDate(validatedDate);
-					
+					serviceLocationResponseErrorList.remove(POSIDHOLD);
 					
 				} else if(null != kbaSubmitAnswerResponse 
 						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getDlVerifyDate()) 
@@ -5301,11 +5493,12 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
 							kbaSubmitAnswerResponse.getDlVerifyDate());
 					response.setDrivingLicenceVerifyDate(validatedDate);
-					
+					serviceLocationResponseErrorList.remove(POSIDHOLD);
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
 					response.setMessageCode(POSID_FAIL_MAX);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					serviceLocationResponseErrorList.add(POSIDHOLD);
 				}
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
@@ -5313,6 +5506,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
 						response.setErrorCode(RETRY_NOT_ALLOWED);
 						response.setErrorDescription(RETRY_NOT_ALLOWED_TXT);
+						serviceLocationResponseErrorList.add(POSIDHOLD);
 					}
 				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
 				}
@@ -5321,6 +5515,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 				response.setStatusCode(STATUS_CODE_CONTINUE);
 				response.setMessageCode(POSID_FAIL_MAX);
 				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+				serviceLocationResponseErrorList.add(POSIDHOLD);
 			}
 		}else{
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
@@ -5328,6 +5523,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setMessageCode(POSID_FAIL_MAX);
 			response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+			serviceLocationResponseErrorList.add(POSIDHOLD);
 		}
 		//update kba_api
 		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
@@ -5344,6 +5540,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
              requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
              //update RECENT_MSG_CD
              requestData.setMessageCode(response.getMessageCode());
+             requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
             this.updateServiceLocation(requestData);
         }
 	}catch(Exception e){
@@ -5478,77 +5675,41 @@ return esidResponse;
 }
 
 /**
- * Start ;ADO :Sprint 4 :: To get Prospect Data
+ * Start ADO :Sprint 4 :: To get Prospect Data
  * @author Kdeshmu1
  * @param prospectId
  * @param lastFourDigitSsn
  * @param companyCode
  * @return com.multibrand.vo.response.ProspectDataResponse
  */
-public ProspectDataResponse getProspectData(String prospectId, String  lastFourDigitSsn,String companyCode) {
+public ProspectDataInternalResponse getProspectData(ProspectDataRequest request) {
 	
-	ProspectDataResponse response = new ProspectDataResponse();
-		
-	if(StringUtils.isBlank(prospectId))
-		{  
-		response.setStatusCode(Constants.STATUS_CODE_STOP);
-		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-		response.setResultDescription("ProspectID may not be Empty");
-		response.setErrorCode(HTTP_BAD_REQUEST);
-		response.setErrorDescription(response.getResultDescription());
-		response.setHttpStatus(Response.Status.BAD_REQUEST);
-		return response;
-		}
-	if( StringUtils.isBlank(lastFourDigitSsn))
-	{  
-		response.setStatusCode(Constants.STATUS_CODE_STOP);
-		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-		response.setResultDescription("last4SSN may not be Empty");
-		response.setErrorCode(HTTP_BAD_REQUEST);
-		response.setErrorDescription(response.getResultDescription());
-		response.setHttpStatus(Response.Status.BAD_REQUEST);
-		return response;
-	}
-		
-	try {
+	ProspectDataInternalResponse response = new ProspectDataInternalResponse();
+	ProspectResponse prospectResponse = null;
+	
+	if(StringUtils.isNotBlank(request.getLastfourdigitSSN())){
 		ProspectRequest prospectRequest = new ProspectRequest();
-		prospectRequest.setCompanyCode(companyCode);
-		prospectRequest.setLastfourdigitSSN(lastFourDigitSsn);
-		prospectRequest.setProspectId(prospectId);
-		
-		ProspectResponse prospectResponse = oeService.getProspectData(prospectRequest);
-		
-		if (prospectResponse != null && prospectResponse.getStatusCode().equalsIgnoreCase(S_VALUE)){
-			response.setProspectBpID(prospectResponse.getPartner());
-			response.setProspectBpIDType(prospectResponse.getBpType());
-			response.setProspectCreditBucket(prospectResponse.getCreditBucket());
-			response.setProspectCreditScore(prospectResponse.getCreditScore());
-			response.setProspectCreditScoreDate(prospectResponse.getCreditDate());
-			response.setProspectCreditSource(prospectResponse.getCreditSource());
-			response.setProspectPreApprovalFlag(prospectResponse.getCreditSegmentIndicator());
-			response.setStatusCode(Constants.STATUS_CODE_CONTINUE);
-			response.setResultCode(RESULT_CODE_SUCCESS);
-		}else{
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setMessageCode(NO_PROSPECT_MATCH_FOUND);
-			if(prospectResponse != null){
-				response.setMessageText(prospectResponse.getErrorMessage());//Jay to confirm the msg
-			}
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-		}
-		
-	} catch (Exception e) {
-		response.setStatusCode(Constants.STATUS_CODE_STOP);
-		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-		response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-		response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
-		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
-		logger.error("Exception in getting Prospect Details: ", e);
+		prospectRequest.setCompanyCode(request.getCompanyCode());
+		prospectRequest.setLastfourdigitSSN(request.getLastfourdigitSSN());
+		prospectRequest.setProspectId(request.getProspectID());
+		prospectResponse=oeService.getProspectData(prospectRequest);
 	}
-	logger.info("ProspectDataResponse : ResultCode : "+response.getResultCode());
+	if (prospectResponse != null && StringUtils.equalsIgnoreCase(prospectResponse.getStatusCode(), S_VALUE)){
+		response.setProspectBpID(prospectResponse.getPartner());
+		response.setProspectBpIDType(prospectResponse.getBpType());
+		response.setProspectCreditBucket(prospectResponse.getCreditBucket());
+		response.setProspectCreditScore(prospectResponse.getCreditScore());
+		response.setProspectCreditScoreDate(prospectResponse.getCreditDate());
+		response.setProspectCreditSource(prospectResponse.getCreditSource());
+		response.setProspectPreApprovalFlag(prospectResponse.getCreditSegmentIndicator());
+		response.setStatusCode(Constants.STATUS_CODE_CONTINUE);
+	}else{
+		response.setStatusCode(Constants.STATUS_CODE_STOP);
+		response.setMessageCode(NO_PROSPECT_MATCH_FOUND);
+		response.setMessageText(msgSource.getMessage(NO_PROSPECT_MATCH_FOUND_TEXT));
+		response.setHttpStatus(Response.Status.OK);
+	}
 	return response;
-	
 	}
 
 /**
@@ -5556,7 +5717,7 @@ public ProspectDataResponse getProspectData(String prospectId, String  lastFourD
  * @param getOEKBAQuestionsRequest
  * @return
  */
-public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) {
+public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) {
 	
 	GetKBAQuestionsResponse response = new GetKBAQuestionsResponse();
 	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
@@ -5565,51 +5726,20 @@ public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest 
 	try {
 					
 		if(!StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_CIRRO))
-		{  //If Tdsp Code & Esid are passed empty
+		{  
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Company code "+getOEKBAQuestionsRequest.getCompanyCode()+" is currently not supported");		
 			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
+			response.setErrorDescription("Company code "+getOEKBAQuestionsRequest.getCompanyCode()+" is currently not supported");
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;			
 		}	
 		
-		if(StringUtils.isEmpty(getOEKBAQuestionsRequest.getTrackingId()))
-		{  //If Tdsp Code & Esid are passed empty
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("TrackingId is empty");
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-			return response;	
+		serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
+		if(null !=serviceLocationResponse && StringUtils.isNotEmpty(serviceLocationResponse.getTrackingId())){
+			kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
+		}else {		
+			return response.populateInvalidTrackingAndGuidResponse();
 		}
-		
-		if(StringUtils.isEmpty(getOEKBAQuestionsRequest.getGuid()))
-		{  //If Tdsp Code & Esid are passed empty
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Guid is empty");
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-			return response;	
-		}
-		
-		 serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
-			if(null !=serviceLocationResponse && StringUtils.isNotEmpty(serviceLocationResponse.getTrackingId())){
-				kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
-			}else {		
-				response.setStatusCode(STATUS_CODE_STOP);
-				response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-				response.setResultDescription("Data not found for Given input");
-				response.setErrorCode(HTTP_BAD_REQUEST);
-				response.setErrorDescription(response.getResultDescription());
-				response.setHttpStatus(Response.Status.BAD_REQUEST);	
-				return response;
-			}
-		
 		
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
 		 response = createKBAQuestionResposne(kbaQuestionResponse);
@@ -5623,20 +5753,15 @@ public GetKBAQuestionsResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest 
 		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 	} finally {
 		try{
-				// Making Update Servicelocation call now
 				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
 						&& StringUtils.isNotEmpty(getOEKBAQuestionsRequest.getTrackingId())){
 				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
 				updateServiceLocationRequest.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
 				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
 				this.updateServiceLocation(updateServiceLocationRequest);
-				response.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
-				
-				
 			}
 		}catch(Exception e){
 			response.setStatusCode(STATUS_CODE_STOP);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			logger.error("Tracking Number ::"+getOEKBAQuestionsRequest.getTrackingId()+"::Exception while making getKBaQuestion-updateserviceLocation call :: ", e);
 		}
 		
@@ -5688,7 +5813,7 @@ private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serv
 	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
 	
 	
-	AddressDTO serviceAddressDTO = new AddressDTO();
+	com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
 	String streetNum = serviceLocationResponse.getServAddressLine1().substring(0, serviceLocationResponse.getServAddressLine1().indexOf(" "));
 	String streetName = serviceLocationResponse.getServAddressLine1().substring(serviceLocationResponse.getServAddressLine1().indexOf(" "));
 	
@@ -5700,7 +5825,7 @@ private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serv
 	serviceAddressDTO.setStrZip(serviceLocationResponse.getServZipCode());
 	
 	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
-	kbaQuestionRequest.setPosidUniqueKey("");
+	kbaQuestionRequest.setPosidUniqueKey(serviceLocationResponse.getPosidSNRO());
 	
 	return kbaQuestionRequest;
 }
@@ -5748,29 +5873,16 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
 		OESignupDTO oESignupDTO = new OESignupDTO();
-		// Start Validating DOB- Jsingh1
-		//Checking if DOB lies in Valid age Range (18-100)
+		ServiceLocationResponse serviceLoationResponse = null;
 			try{
-				
 				if(StringUtils.isNotEmpty(request.getTrackingId())){
-					ServiceLocationResponse serviceLoationResponse = null;
 					if(StringUtils.isNotEmpty(request.getGuid())){
 						 serviceLoationResponse=getEnrollmentData(request.getTrackingId(),request.getGuid() );
 					}else{
 						 serviceLoationResponse=getEnrollmentData(request.getTrackingId() );
 					}					
-					if(serviceLoationResponse == null){
-						PerformPosIdandBpMatchResponse bpMatchResponse = new PerformPosIdandBpMatchResponse();
-						bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-						bpMatchResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-						if(StringUtils.isNotEmpty(request.getGuid())){
-							bpMatchResponse.setResultDescription("Invalid trackingId or guid");
-						}else{
-							bpMatchResponse.setResultDescription("Invalid trackingId");
-						}						
-						bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-						bpMatchResponse.setErrorDescription(bpMatchResponse.getResultDescription());					
-						response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+					if(serviceLoationResponse == null){					
+						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateInvalidTrackingAndGuidResponse()).build();
 						return response;
 					}
 				}
@@ -5796,31 +5908,21 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							request.getBillStreetName());
 				}
 				if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,request.getAffiliateId())){
-					mandatoryParamList.put("agentId",
+					mandatoryParamList.put("agentID",
 							request.getAgentID());
 				}
-				mandatoryParamCheckResponse = CommonUtil
-				.checkMandatoryParam(mandatoryParamList);
-				resultCode = (String) mandatoryParamCheckResponse
-				.get("resultCode");
+				mandatoryParamCheckResponse = CommonUtil.checkMandatoryParam(mandatoryParamList);
+				resultCode = (String) mandatoryParamCheckResponse.get("resultCode");
 	
-				if (StringUtils.isNotBlank(resultCode)
-				&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
-	
-					errorDesc = (String) mandatoryParamCheckResponse
-					.get("errorDesc");
-					
+				if (StringUtils.isNotBlank(resultCode)	&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+					errorDesc = (String) mandatoryParamCheckResponse.get("errorDesc");
 					if (StringUtils.isNotBlank(errorDesc)) {
-						response = CommonUtil.buildNotValidResponse(resultCode,
-						errorDesc);
+						response = CommonUtil.buildNotValidResponse(resultCode,	errorDesc);
 					} else {
-						response  = CommonUtil.buildNotValidResponse(errorDesc,
-						Constants.STATUS_CODE_ASK);
+						response  = CommonUtil.buildNotValidResponse(errorDesc,	Constants.STATUS_CODE_ASK);
 					}
 					logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
-				
 					return response;
-					
 				}
 				
 				isValidAge=validationBO.getValidAge(dobForPosId);
@@ -5831,7 +5933,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(request.getAffiliateId(),
 							request.getTrackingId());				
 					
-					response = Response.status(200).entity(validPosIdResponse)
+					response = Response.status(400).entity(validPosIdResponse)
 							.build();
 					return response;
 				}
@@ -5844,7 +5946,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(request.getAgentID(),
 								request.getTrackingId());				
 						
-						response = Response.status(200).entity(validPosIdResponse)
+						response = Response.status(400).entity(validPosIdResponse)
 								.build();
 						return response;
 					}else{
@@ -5873,18 +5975,31 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					.localeCode(request.getLanguageCode()));
 			logger.info("inside validatePosId::after local change languageCode langauge is :: "
 					+ request.getLanguageCode());
-			
-			getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
-					request.getTdl(), request.getSsn(),
-					request.getAffiliateId(),
-					request.getTrackingId());
+						
+			if(StringUtils.isNotEmpty(request.getTokenizedSSN()) || StringUtils.isNotEmpty(request.getTokenizedTDL()) ) {				
+				String tokenValue = StringUtils.isNotEmpty(request.getTokenizedSSN()) ? request.getTokenizedSSN() : request.getTokenizedTDL();
+				logger.info("inside tokenValue  :: "+tokenValue);
+				tokenResponse.setReturnToken(tokenValue);
+				tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
+				getPosIdTokenResponse.put("tokenSSN", request.getTokenizedSSN());				
+				getPosIdTokenResponse.put("tokenTdl", request.getTokenizedTDL());												
+				getPosIdTokenResponse.put("tokenResponse",tokenResponse);
+							
+				
+			}else {			
+				getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
+						request.getTdl(), request.getSsn(),
+						request.getAffiliateId(),
+						request.getTrackingId());
+				
+			}
 			
 			if (getPosIdTokenResponse != null) {
 				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
 						.get("tokenResponse");
-				request.setTokenTDL((String) getPosIdTokenResponse
+				request.setTokenizedTDL((String) getPosIdTokenResponse
 						.get("tokenTdl"));
-				request.setTokenSSN((String) getPosIdTokenResponse
+				request.setTokenizedSSN((String) getPosIdTokenResponse
 						.get("tokenSSN"));
 	
 				if (tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
@@ -5894,8 +6009,18 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							+ ":: got token back."+tokenResponse.getReturnToken());
 					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
+						if(StringUtils.isNotEmpty(request.getProspectId())) {
+							ProspectDataInternalResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
+						
+							if(StringUtils.equals(prospectResponse.getStatusCode(), STATUS_CODE_STOP) ) {
+								response = Response.status(Response.Status.OK).entity(prospectResponse)
+										.build();
+								return response;
+							}
+						}
+						
 						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-								.validatePosId(request,oESignupDTO );
+								.validatePosId(request,oESignupDTO, serviceLoationResponse);
 						response = Response.status(200).entity(validPosIdResponse)
 								.build();
 						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
@@ -5930,7 +6055,8 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 				} else if (tokenResponse.getResultCode().equals(
 				Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
 	
-					response = Response.status(200).entity(tokenResponse).build();
+					response = Response.status(tokenResponse.getHttpStatus()).entity(tokenResponse).build();
+					logger.info("It is coming here ");
 					return response;
 				} else {
 					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -5939,7 +6065,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 					tokenResponse
 							.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-					response = Response.status(200).entity(tokenResponse).build();
+					response = Response.status(500).entity(tokenResponse).build();
 					return response;
 				}
 			} else {
@@ -5949,13 +6075,78 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
 				tokenResponse
 						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-				response = Response.status(200).entity(tokenResponse).build();
+				response = Response.status(500).entity(tokenResponse).build();
 				return response;
 			}		
 	   return response;
 	}
+	
+	private void populatePastServiceHistory(PerformPosIdandBpMatchResponse response, com.multibrand.domain.AddressDTO activeAddressDTO) {
+		response.setExistingCity(activeAddressDTO.getStrCity());
+		response.setExistingState(activeAddressDTO.getStrState());
+		response.setExistingStreetAddress(CommonUtil.getAddressLine1(activeAddressDTO.getStrStreetNum(),
+				activeAddressDTO.getStrStreetName()));
+		response.setExistingZip(activeAddressDTO.getStrZip());
+		response.setExistingAptNum(activeAddressDTO.getStrUnitNumber());
+
+	}
+	
+
+public boolean updateErrorCodeinSLA(String TrackingId, String guid, String errorCode , String errorCDList) throws Exception {
+		logger.debug("Entering >> updateServiceLocation");
+		boolean errorCd = serviceLocationDAO.updateErrorCodeinSLA(TrackingId,guid,errorCode,errorCDList);
+		logger.debug("Exiting << updateServiceLocation");
+		return errorCd;
+	}
+
+     public ProspectDataInternalResponse validateProspectDetails(PerformPosIdAndBpMatchRequest posidBPMatchRequest, OESignupDTO oeSignupDTO){
+   
+    	 
+    	 ProspectDataRequest prospectRequest = new ProspectDataRequest();
+    	 prospectRequest.setCompanyCode(posidBPMatchRequest.getCompanyCode());
+    	 String tokenizedSSN = posidBPMatchRequest.getTokenizedSSN();
+    	 if(StringUtils.isNotBlank(tokenizedSSN)) prospectRequest.setLastfourdigitSSN(tokenizedSSN.substring(tokenizedSSN.length()-4));
+    	 prospectRequest.setProspectID(posidBPMatchRequest.getProspectId());
+    	 
+    	 ProspectDataInternalResponse prospectDataResponse = getProspectData(prospectRequest);
+    	 
+    	 logger.info("Prospect validation Response "+prospectDataResponse);
+    	 
+    	 if(StringUtils.equalsIgnoreCase(prospectDataResponse.getStatusCode(), STATUS_CODE_CONTINUE)){
+    		 oeSignupDTO.setProspectId(posidBPMatchRequest.getProspectId());
+    		 oeSignupDTO.setProspectBpNumber(prospectDataResponse.getProspectBpID());
+    		 oeSignupDTO.setProspectPreapprovalStatus(prospectDataResponse.getProspectPreApprovalFlag()); 
+    		 oeSignupDTO.getPerson().setCreditBucket(prospectDataResponse.getProspectCreditBucket());
+    		 oeSignupDTO.getPerson().setCreditScore(prospectDataResponse.getProspectCreditScore());
+    		 oeSignupDTO.getPerson().setCreditScoreDate(DateUtil.getFormattedDate("MMddyyyy", "MM/dd/yyyy", prospectDataResponse.getProspectCreditScoreDate()));
+    		 oeSignupDTO.getPerson().setCreditSource(prospectDataResponse.getProspectCreditSource());
+    		 
+    	 } 
+    	 
+    	return prospectDataResponse;
+    }
+     private NewCreditScoreResponse constructCreditCheckResponseForProspect ( ServiceLocationResponse serviceLocationResponse){
+    	 NewCreditScoreResponse response = new NewCreditScoreResponse();
+
+    		 response.setDepositAmount(ZERO);
+    		 response.setDepositReasonText(EMPTY);
+    		 response.setCreditAgency(serviceLocationResponse.getPersonResponse().getCredSourceNum());
+    		 response.setDepositDueText(EMPTY);
+    		 response.setResultCode(RESULT_CODE_SUCCESS);
+   			 response.setStatusCode(STATUS_CODE_CONTINUE);
+    	
+    	 
+    	 return response;
+     }
+     
+     private boolean isPropectCreditCheckExecuted(ServiceLocationResponse serviceLocationResponse){
+    	 return StringUtils.isNotEmpty(serviceLocationResponse.getProspectId()) && ( StringUtils.equalsIgnoreCase(serviceLocationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  ));
+     }
+}
+	
+	
 
 	
-}
+
 
 	

@@ -22,5 +22,6 @@ public interface ServiceLocationDao {
 
 	public ServiceLocationResponse getServiceLocation(String trackingId);
 	public ServiceLocationResponse getEnrollmentData(String trackingId,String guid);
+	public boolean updateErrorCodeinSLA(String TrackingId, String guid, String errorCode , String errorCDList) throws Exception;
 
 }

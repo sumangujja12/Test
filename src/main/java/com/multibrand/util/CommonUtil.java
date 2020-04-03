@@ -39,6 +39,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
@@ -437,6 +438,23 @@ public class CommonUtil implements Constants {
 				+ ccNo.substring(ccNo.length() - 4, ccNo.length());
 	}
 
+	/**
+	 * replace all characters in input string no. with '*' leaving last 4
+	 * characters as it is
+	 * 
+	 * @param rawData
+	 * @return
+	 */
+	public static String maskPIIData(String rawData) {
+		if(null!=rawData && rawData.length()>4){
+			String replaceCharSequence = rawData.substring(0, rawData.length() - 4);
+			replaceCharSequence = replaceCharSequence.replaceAll("(?s).", "*");
+			return replaceCharSequence	+ rawData.substring(rawData.length() - 4, rawData.length());
+		}else{
+			return rawData;
+		}
+	}
+	
 	/**
 	 * replace all characters in Credit card no. with '*' leaving last 4
 	 * characters as it is
@@ -2003,7 +2021,7 @@ public class CommonUtil implements Constants {
 	}
 	
 	public static String getChannelTypeForTogglz(String channelType){
-		String channel = CHANNEL_WEB;
+		String channel = CHANNEL_AFF;
 		if(channelType == null){
 			channelType = StringUtils.EMPTY;
 		}
@@ -2011,8 +2029,8 @@ public class CommonUtil implements Constants {
 			case CHANNEL_AA:
 				channel = CHANNEL_AA;
 					break;
-			case CHANNEL_AFF:
-				channel = CHANNEL_AFF;
+			case CHANNEL_WEB:
+				channel = CHANNEL_WEB;
 					break;			
 			default:
 				break;
@@ -2032,4 +2050,35 @@ public class CommonUtil implements Constants {
 	    }
 	    return updatedContentMsg;
 	  }
+	
+	/**
+	 * Returns Street Number from given full Street Address
+	 * 
+	 * @param fullStreetAdress
+	 * @return String - Street Name from given full Street Address
+	 * 
+	 * */
+	public static String stripStreetNum(String fullStreetAdress) {
+		if (null != fullStreetAdress) {
+			return RegExUtils.replacePattern(fullStreetAdress,"\\s*([0-9]*)\\s*.*", "$1");
+		} else {
+			return EMPTY;
+		}
+	}
+
+	/**
+	 * Returns Street Name from given full Street Address
+	 * 
+	 * @param fullStreetAdress
+	 * @return String - Street Name from given full Street Address
+	 */
+	public static String stripStreetName(String fullStreetAdress) {
+		if (null != fullStreetAdress) {
+			return RegExUtils.replacePattern(fullStreetAdress,"\\s*[0-9]*\\s*(.*)", "$1");
+		} else {
+			return EMPTY;
+		}
+	}
+	
+	
 }

@@ -135,6 +135,7 @@ public interface DBConstants {
 	public static final String in_guid_id = "in_guid_id";
 	public static final String in_offer_cell_trk_cd_selected = "in_offer_cell_trk_cd_selected";
 	public static final String in_error_cd = "in_error_cd";
+	public static final String in_error_cd_list = "in_error_cd_list";
 	public static final String in_promo_value = "in_promo_value";
 	public static final String in_dwelling_type = "in_dwelling_type";
 	public static final String in_recent_page_accessed = "in_recent_page_accessed";
@@ -379,5 +380,7 @@ public interface DBConstants {
 	public static final String in_aptno = "in_aptno";
 	public static final String OUT_CURR_GET_ESI = "get_esi";
 	//END || PBI 15786: Update ESID Call || atiwari
+	
+	public static final String OE_UPDATE_ERROR_SLA_QUERY = "db.choice.reliant.updateerrorinsla";
 
 }

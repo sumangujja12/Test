@@ -2,18 +2,14 @@
 package com.multibrand.resources;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -21,47 +17,38 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.OEBO;
-import com.multibrand.bo.ValidationBO;
-import com.multibrand.dto.OESignupDTO;
-import com.multibrand.dto.request.AffiliateOfferRequest;
+import com.multibrand.bo.SalesBO;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
-import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
+import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
-import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+import com.multibrand.dto.request.SalesEsidCalendarRequest;
+import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
-import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.dto.response.IdentityResponse;
+import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
-import com.multibrand.request.validation.BasicConstraint;
-import com.multibrand.request.validation.SizeConstraint;
-import com.multibrand.request.validation.ValidateGetMapppingRequestParam;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
-import com.multibrand.vo.request.TokenRequestVO;
-import com.multibrand.vo.response.AgentDetailsResponse;
-import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
-import com.multibrand.vo.response.GenericResponse;
+import com.multibrand.vo.request.SalesTokenRequest;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.NewCreditScoreResponse;
-import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
-import com.multibrand.vo.response.ProspectDataResponse;
-import com.multibrand.vo.response.TokenizedResponse;
+import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
 
@@ -71,7 +58,7 @@ import com.sun.jersey.api.core.InjectParam;
  * @author NRG Energy
  */
 @Component
-@Path("/sales")
+@Path("/"+Constants.SALES_API_BASE_PATH)
 public class SalesAPIResource extends BaseResource {
 	
 	/**
@@ -79,17 +66,12 @@ public class SalesAPIResource extends BaseResource {
 	 */
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
-	// ~Autowire entries
 	@Autowired
 	OERequestHandler oeRequestHandler;
 
 	/** Object of oeBO class. */
 	@Autowired
 	private OEBO oeBO;
-
-	/** Object of ValidationBO class. */
-	@Autowired
-	private ValidationBO validationBO;
 
 	@Context
 	private HttpServletRequest httpRequest;
@@ -100,17 +82,20 @@ public class SalesAPIResource extends BaseResource {
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 	
+	@Autowired
+	private SalesBO salesBO;
+	
 	@GET
 	@Path(API_OFFERS)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getAffiliateOffers(@InjectParam AffiliateOfferRequest request ) {			
+	public Response getAffiliateOffers(@InjectParam SalesOfferRequest request ) {			
 		Response response=null;
 		try{						
-			AffiliateOfferResponse offerResponse = oeBO.getAffiliateOffers(request,	httpRequest.getSession(true).getId());
+			SalesOfferResponse offerResponse = salesBO.getSalesOffers(request,	httpRequest.getSession(true).getId());
 			Response.Status status = offerResponse.getHttpStatus() != null ? offerResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(offerResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			// Not logging Offer API calls - vsood
@@ -120,52 +105,38 @@ public class SalesAPIResource extends BaseResource {
 	}
 
 	@POST
-	@Path(API_POSID)
+	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performPosidAndBpMatch(
-			@Valid PerformPosIdAndBpMatchRequest request) {
+	public Response performPosidAndBpMatch(IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		
 		try{
 			
-			if(StringUtils.isNotEmpty(request.getGuid())){
-				if(StringUtils.isEmpty(request.getTrackingId())){
-					PerformPosIdandBpMatchResponse bpMatchResponse = new PerformPosIdandBpMatchResponse();
-					bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-					bpMatchResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-					bpMatchResponse.setResultDescription("trackingNumber may not be Empty");
-					bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-					bpMatchResponse.setErrorDescription(bpMatchResponse.getResultDescription());					
-					response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
-					return response;
-				}
+			if(StringUtils.isNotEmpty(request.getGuid()) && StringUtils.isEmpty(request.getTrackingId())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("trackingId cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
+			} else if(StringUtils.isNotEmpty(request.getTrackingId()) && StringUtils.isEmpty(request.getGuid())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("guid cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
 			}
-			
-			if(StringUtils.isNotEmpty(request.getTrackingId())){
-				if(StringUtils.isEmpty(request.getGuid())){
-					PerformPosIdandBpMatchResponse bpMatchResponse = new PerformPosIdandBpMatchResponse();
-					bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-					bpMatchResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-					bpMatchResponse.setResultDescription("guid may not be Empty");
-					bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-					bpMatchResponse.setErrorDescription(bpMatchResponse.getResultDescription());					
-					response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
-					return response;
-				}
-			}
-			
-			response = oeBO.performPosidAndBpMatch(request);
+			response = salesBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
 			logger.error(e);
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			
    		}finally{
    			try {
-   				request.setSsn(StringUtils.EMPTY);
-   				request.setTdl(StringUtils.EMPTY);
-   				utilityloggerHelper.logSalesAPITransaction(API_POSID, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   				utilityloggerHelper.logSalesAPITransaction(API_IDENTITY, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
    			} catch(Exception en){
    				logger.error("Exception utilityloggerHelper.logSalesAPITransaction ",en);
    			}
@@ -177,30 +148,15 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_AVAILABLE_DATES)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDAndCalendarDates(
-			@Valid EsidCalendarRequest request) {
+	public Response getESIDAndCalendarDates(SalesEsidCalendarRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
-					.getESIDAndCalendarDates(request.getCompanyCode(),
-							request.getAffiliateId(),
-							request.getBrandId(),
-							request.getServStreetNum(),
-							request.getServStreetName(),
-							request.getServStreetAptNum(),
-							request.getServZipCode(),
-							request.getTdspCodeCCS(),
-							request.getTransactionType(),
-							request.getTrackingId(),
-							request.getBpMatchFlag(),
-							request.getLanguageCode(),
-							request.getEsid(),
-							httpRequest.getSession(true).getId());
-				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
+			SalesBaseResponse salesBaseResponse = salesBO.getSalesESIDAndCalendarDates(request,httpRequest);
+			response=Response.status(Response.Status.BAD_REQUEST).entity(salesBaseResponse).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_AVAILABLE_DATES, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -212,8 +168,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(
-			@Valid CreditCheckRequest request) throws OEException {
+	public Response performCreditCheck(CreditCheckRequest request) throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -270,7 +225,7 @@ public class SalesAPIResource extends BaseResource {
 			}
 			logger.debug("END ******* performCreditCheck API**********");
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_CHECK_CREDIT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -282,7 +237,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CREDIT_DATA)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitUCCData(@Valid UCCDataRequest request) {
+	public Response submitUCCData(UCCDataRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		String errorDesc = null;
@@ -370,7 +325,7 @@ public class SalesAPIResource extends BaseResource {
 				httpRequest.getSession(true).getId());
 		response = Response.status(Response.Status.OK).entity(uccResp).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_CREDIT_DATA, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -382,7 +337,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_SUBMIT_ENROLLMENT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(@Valid EnrollmentRequest request)
+	public Response submitEnrollment(EnrollmentRequest request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
@@ -390,7 +345,7 @@ public class SalesAPIResource extends BaseResource {
 	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
 	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
 	    } catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_SUBMIT_ENROLLMENT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -402,14 +357,14 @@ public class SalesAPIResource extends BaseResource {
     @Path(API_GET_KBA_QUESTIONS)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest request) {
+    public Response getKBAQuestions(GetKBAQuestionsRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
         	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestions(request);
             response = Response.status(Response.Status.OK).entity(getKBAQuestionsResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
@@ -421,7 +376,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_KBA_RESULT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitKBAAnswers(@Valid KbaAnswerRequest request) throws Exception {
+	public Response submitKBAAnswers(KbaAnswerRequest request) throws Exception {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
 		
@@ -429,7 +384,7 @@ public class SalesAPIResource extends BaseResource {
 			KbaAnswerResponse kbaAnsweresponse = oeBO.submitKBAAnswers(request);
 			response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_KBA_RESULT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
@@ -437,28 +392,19 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
-	/**
-	 * START :OE ADO SPrint4 : Tokenization API
-	 * @author Asingh
-	 * @param actionCode
-	 * @param numToBeTokenized
-	 * @return
-	 */
 	@GET
 	@Path(API_TOKEN)	
 	@Produces({ MediaType.APPLICATION_JSON })
-	@ValidateGetMapppingRequestParam
-	public Response getTokenResponse(@InjectParam TokenRequestVO request) throws Exception {
+	public Response getTokenResponse(@InjectParam SalesTokenRequest request) throws Exception {
 		Response response=null;
-		long startTime = CommonUtil.getStartTime();
 		try{
 			request.setActionCode(request.getActionCode());
 			request.setNumToBeTokenized(request.getNumToBeTokenized());
-			TokenizedResponse tokenizedResponse = oeBO.getTokenResponse(request);
+			SalesTokenResponse tokenizedResponse = salesBO.getTokenResponse(request);
 			Response.Status status = tokenizedResponse.getHttpStatus() != null ? tokenizedResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(tokenizedResponse).build();
 		}catch(Exception e){ 
-			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
 			logger.error(e.fillInStackTrace());
 		}finally{
 			// Commented purposefully and should not log transaction.
@@ -470,23 +416,15 @@ public class SalesAPIResource extends BaseResource {
 	@GET
 	@Path(API_PROSPECT)
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getProspectData(@QueryParam(value = "prospectID")   String prospectID,
-			@QueryParam(value = "last4SSN")   String lastFourSSN,
-			@QueryParam(value = "companyCode")   String companyCode,
-			@QueryParam(value = "languageCode")   String languageCode) {
+	public Response getProspectData(@InjectParam ProspectDataRequest request) {
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
-		ProspectDataRequest request = null;
 		try{
-			request = new ProspectDataRequest();
-			request.setCompanyCode(companyCode);
-			request.setProspectID(prospectID);
-			request.setLastfourdigitSSN(lastFourSSN);
-		ProspectDataResponse prospectDataResponse = oeBO.getProspectData(prospectID,lastFourSSN,companyCode);
-		Response.Status status = prospectDataResponse.getHttpStatus() != null ? prospectDataResponse.getHttpStatus() :Response.Status.OK;
-		response = Response.status(status).entity(prospectDataResponse).build();
+			SalesBaseResponse prospectDataResponse = salesBO.getProspectData(request);
+			Response.Status status = prospectDataResponse.getHttpStatus() != null ? prospectDataResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(prospectDataResponse).build();
 		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(languageCode))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
@@ -498,14 +436,14 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDDetails(@Valid EsidRequest request){
+	public Response getESIDDetails(EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
 			EsidResponse getEsiidResponse = oeBO.getESIDDetails(request);
 			response = Response.status(Response.Status.OK).entity(getEsiidResponse).build();
 		}catch (Exception e) {
-	   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+	   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
 	   			logger.error(e.fillInStackTrace());
 	   	}finally{
 	   			utilityloggerHelper.logSalesAPITransaction(API_ESID, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
@@ -517,16 +455,15 @@ public class SalesAPIResource extends BaseResource {
     @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestionsWithinOE(@Valid GetOEKBAQuestionsRequest request){
+    public Response getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest request){
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
-    	   
-        	GetKBAQuestionsResponse getKBAQuestionsResponse = oeBO.getKBAQuestionsWithinOE(request);
+        	SalesBaseResponse getKBAQuestionsResponse = oeBO.getKBAQuestionsWithinOE(request);
         	Response.Status status = getKBAQuestionsResponse.getHttpStatus() != null ? getKBAQuestionsResponse.getHttpStatus() :Response.Status.OK;
             response = Response.status(status).entity(getKBAQuestionsResponse).build();
    		} catch (Exception e) {
-   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).setGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(KBA_OE, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);

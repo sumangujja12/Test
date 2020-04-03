@@ -17,6 +17,6 @@ import java.lang.annotation.Target;
  */
 @Target({ METHOD, FIELD, CONSTRUCTOR, PARAMETER })
 @Retention(RUNTIME)
-public @interface ValidateGetMapppingRequestParam {
+public @interface ValidateSalesAPI {
 }
 

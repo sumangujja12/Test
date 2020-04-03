@@ -1,7 +1,5 @@
 package com.multibrand.dto.request;
 
-import java.io.Serializable;
-
 import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Email;
@@ -13,11 +11,8 @@ import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.SizeConstraint;
 
 
-public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Serializable {
+public class GetKBAQuestionsRequest extends SalesBaseRequest {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 40, groups = SizeConstraint.class)
@@ -67,10 +62,10 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	String servZipCode;
 	
 	@Length(max = 25, groups = SizeConstraint.class)
-	String tokenTDL;
+	String tokenizedTDL;
 	
 	@Length(max = 20, groups = SizeConstraint.class)
-	String tokenSSN;
+	String tokenizedSSN;
 	
 	private String drivingLicenseState;
 	private String esid;
@@ -185,17 +180,17 @@ public class GetKBAQuestionsRequest extends BaseAffiliateRequest implements Seri
 	public void setServZipCode(String servZipCode) {
 		this.servZipCode = servZipCode;
 	}
-	public String getTokenTDL() {
-		return tokenTDL;
+	public String getTokenizedTDL() {
+		return tokenizedTDL;
 	}
-	public void setTokenTDL(String tokenTDL) {
-		this.tokenTDL = tokenTDL;
+	public void setTokenizedTDL(String tokenizedTDL) {
+		this.tokenizedTDL = tokenizedTDL;
 	}
-	public String getTokenSSN() {
-		return tokenSSN;
+	public String gettokenizedSSN() {
+		return tokenizedSSN;
 	}
-	public void setTokenSSN(String tokenSSN) {
-		this.tokenSSN = tokenSSN;
+	public void setTokenizedSSN(String tokenizedSSN) {
+		this.tokenizedSSN = tokenizedSSN;
 	}
 	public String getEsid() {
 		return esid;
