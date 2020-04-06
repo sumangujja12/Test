@@ -1873,7 +1873,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 * 
 	 * @author Jenith (jyogapa1)
 	 */
-	public EnrollmentResponse submitEnrollment(EnrollmentRequest enrollmentRequest)
+	public EnrollmentResponse submitEnrollment(EnrollmentRequest enrollmentRequest,ServiceLocationResponse serviceLoationResponse)
 			throws OEException {
 		String METHOD_NAME = "OEBO: submitEnrollment(..)";
 		logger.debug("Start:" + METHOD_NAME);
@@ -1884,23 +1884,20 @@ public class OEBO extends OeBoHelper implements Constants{
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		int retryCount=0;
 		String personId=null;
-		ServiceLocationResponse serviceLoationResponse =null;
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
 			response.setResultDescription("promoCode may not be Empty");
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;	
 		}
 		
 		try {
 			
-			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
-		    serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-			}
 			}
 
 			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
@@ -1987,10 +1984,12 @@ public class OEBO extends OeBoHelper implements Constants{
 			logger.error(e);
 			this.handleSubmitEnrollmentError(oeSignUpDTO, e);
 			handleServiceException(response, METHOD_NAME, e);
+			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
 
 		} catch (Exception e) {
 			logger.error(e);
 			this.handleSubmitEnrollmentError(oeSignUpDTO, e);
+			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
 		} 
 		/**
 		 * The Below given finally always runs in all scenarios and in case
