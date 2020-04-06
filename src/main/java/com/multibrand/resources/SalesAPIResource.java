@@ -30,8 +30,12 @@ import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+
 import com.multibrand.dto.request.SalesCreditCheckRequest;
 import com.multibrand.dto.request.SalesCreditReCheckRequest;
+
+import com.multibrand.dto.request.SalesEnrollmentRequest;
+
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
@@ -39,6 +43,7 @@ import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
@@ -316,13 +321,14 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_SUBMIT_ENROLLMENT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(EnrollmentRequest request)
+	public Response submitEnrollment(SalesEnrollmentRequest request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
-	    try{
-	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
-	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
+		try{
+	    	SalesEnrollmentResponse salesEnrollmentResponse = salesBO.getSalesSubmitEnrollment(request);
+	    	Response.Status status = salesEnrollmentResponse.getHttpStatus() != null ? salesEnrollmentResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(salesEnrollmentResponse).build();
 	    } catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
