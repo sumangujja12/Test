@@ -2746,6 +2746,12 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				if(StringUtils.isEmpty(esid)) {
 					esidDo = getESIDInfo(serviceAddressDO, companyCode);
+					if(esidDo.isEsidBlocked()){
+						response.setMessageCode(ESID_RESTRICTION);
+						response.setMessageText(getAllBrandResponseMessage(companyCode, brandId, ESID_RESTRICTION_TEXT_MESSAGE, locale));
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						return response;
+					}
 				}else {
 					EsidProfileResponse esidProfileResponse = this.addressService.getESIDProfile(esid,companyCode);
 					esidDo = setESIDDTO(esidProfileResponse);
@@ -4299,6 +4305,7 @@ public class OEBO extends OeBoHelper implements Constants{
     	
     	response.setAvailableDates(availableDatesNoFwdSlash);
     	response.setTdspCode(tdspCodeCCS);
+    	transactionType = StringUtils.equals(transactionType, TRANSACTIONTYPE_N) ? MVI :(StringUtils.equals(transactionType, TRANSACTIONTYPE_S) ? SWI: transactionType) ;
     	if (StringUtils.isNotEmpty(tdspCodeCCS)	&& StringUtils.isNotEmpty(transactionType))
     	{
     		String keyForTdspFee = EMPTY;
