@@ -3,6 +3,7 @@
  */
 package com.multibrand.dto.response;
 
+import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.multibrand.vo.response.GenericResponse;
@@ -23,7 +24,8 @@ public class EnrollmentResponse extends GenericResponse {
 	private String caNumber = null;
 	private String checkDigit = null;
 	private String bpid = null;
-
+	private Response.Status httpStatus;
+	
 	public EnrollmentResponse() {
 		super();
 	}
@@ -101,6 +103,14 @@ public class EnrollmentResponse extends GenericResponse {
 	 */
 	public void setBpid(String bpid) {
 		this.bpid = bpid;
+	}
+
+	public Response.Status getHttpStatus() {
+		return httpStatus;
+	}
+
+	public void setHttpStatus(Response.Status httpStatus) {
+		this.httpStatus = httpStatus;
 	}
 
 }

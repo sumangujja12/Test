@@ -344,21 +344,6 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
-	    	if(StringUtils.isNotEmpty(request.getGuid()) && StringUtils.isEmpty(request.getTrackingId())){
-	    		SalesEnrollmentResponse salesEnrollmentResponse = new SalesEnrollmentResponse();
-	    		salesEnrollmentResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-	    		salesEnrollmentResponse.setErrorCode(HTTP_BAD_REQUEST);
-	    		salesEnrollmentResponse.setErrorDescription("trackingId cannot be empty");					
-				response=Response.status(Response.Status.BAD_REQUEST).entity(salesEnrollmentResponse).build();
-				return response;
-			} else if(StringUtils.isNotEmpty(request.getTrackingId()) && StringUtils.isEmpty(request.getGuid())){
-				SalesEnrollmentResponse salesEnrollmentResponse = new SalesEnrollmentResponse();
-				salesEnrollmentResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-				salesEnrollmentResponse.setErrorCode(HTTP_BAD_REQUEST);
-				salesEnrollmentResponse.setErrorDescription("guid cannot be empty");					
-				response=Response.status(Response.Status.BAD_REQUEST).entity(salesEnrollmentResponse).build();
-				return response;
-			}
 	    	SalesEnrollmentResponse salesEnrollmentResponse = salesBO.getSalesSubmitEnrollment(request);
 	    	Response.Status status = salesEnrollmentResponse.getHttpStatus() != null ? salesEnrollmentResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(salesEnrollmentResponse).build();
