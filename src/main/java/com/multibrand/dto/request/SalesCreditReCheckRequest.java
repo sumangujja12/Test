@@ -20,7 +20,7 @@ public class SalesCreditReCheckRequest extends SalesCreditCheckRequest {
 	private static final long serialVersionUID = 1518355435519472437L;
 	
 
-
+	@NotEmpty
 	@Length(max = 20, groups = SizeConstraint.class)
 	private String tokenizedSSN;
 

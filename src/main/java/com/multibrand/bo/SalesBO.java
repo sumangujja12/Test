@@ -227,7 +227,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 						response = salesCreditCheckResponse;
 						response.setStatusCode(Constants.STATUS_CODE_STOP);
 						response.setErrorCode(HTTP_BAD_REQUEST);
-						response.setErrorDescription("mviDate may not be Empty for Move-In");
+						response.setErrorDescription("mviDate is required for move-in");
 						response.setHttpStatus(Response.Status.BAD_REQUEST);
 						return response;
 					}
@@ -266,7 +266,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 						response = salesCreditCheckResponse;
 						response.setStatusCode(Constants.STATUS_CODE_STOP);
 						response.setErrorCode(HTTP_BAD_REQUEST);
-						response.setErrorDescription("mviDate may not be Empty for Move-In");
+						response.setErrorDescription("mviDate is required for move-in");
 						response.setHttpStatus(Response.Status.BAD_REQUEST);
 						return response;
 					}
