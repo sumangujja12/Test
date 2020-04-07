@@ -2041,14 +2041,13 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	public NewCreditScoreResponse performCreditCheck(
 			NewCreditScoreRequest creditScoreRequest, 
-			CreditCheckRequest creditCheckRequest) throws OAMException {
+			CreditCheckRequest creditCheckRequest, ServiceLocationResponse serviceLoationResponse) throws OAMException {
 
 		String affiliateId = creditCheckRequest.getAffiliateId();
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
 		String errorCd=null;
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		ServiceLocationResponse serviceLoationResponse =null;
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: performCreditCheck(..)";
 
@@ -2067,7 +2066,10 @@ public class OEBO extends OeBoHelper implements Constants{
 		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = null;
 		try {
 			if(StringUtils.isNotEmpty(creditCheckRequest.getTrackingId())){
-			    serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
+				if(serviceLoationResponse == null){
+					serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
+				}
+				
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
@@ -2697,7 +2699,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			String companyCode, String affiliateId, String brandId, String servStreetNum,
 			String servStreetName, String servStreetAptNum, String servZipCode,
 			String tdspCodeCCS, String transactionType, String trackingId, String bpMatchFlag,
-			String locale, String esid,String sessionId,String holdType) throws OAMException {
+			String locale, String esid,String sessionId,String holdType,
+			ServiceLocationResponse serviceLoationResponse  ) throws OAMException {
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
@@ -2708,7 +2711,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		Locale localeObj = null;
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		ServiceLocationResponse serviceLoationResponse =null;
+
 		
 		
 		if (locale.equalsIgnoreCase(S))
@@ -2722,7 +2725,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		try {
 			if(StringUtils.isNotEmpty(trackingId)){
-		    serviceLoationResponse=getEnrollmentData(trackingId);
+				if(serviceLoationResponse == null){
+					serviceLoationResponse=getEnrollmentData(trackingId);
+				}
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));

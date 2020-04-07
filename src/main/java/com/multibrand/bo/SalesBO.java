@@ -125,7 +125,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 						serviceLoationResponse.getServZipCode(), serviceLoationResponse.getTdspCode(),
 						serviceLoationResponse.getServiceRequestTypeCode(), salesEsidCalendarRequest.getTrackingId(),
 						bpMatchFlag, salesEsidCalendarRequest.getLanguageCode(), serviceLoationResponse.getEsid(),
-						httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode());
+						httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse);
 
 				BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);
 				response = salesEsidInfoTdspCalendarResponse;
@@ -237,7 +237,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				newCreditScoreResponse =  oeBO
 				.performCreditCheck(oeRequestHandler
 						.createNewCreditScoreRequest(creditCheckRequest),
-						creditCheckRequest);
+						creditCheckRequest, serviceLocationResponse);
 				BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
 				response= 	salesCreditCheckResponse;			
 			}else{
@@ -276,7 +276,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				newCreditScoreResponse =  oeBO
 				.performCreditCheck(oeRequestHandler
 						.createNewCreditScoreRequest(creditCheckRequest),
-						creditCheckRequest);
+						creditCheckRequest, serviceLocationResponse);
 				BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
 				response= 	salesCreditCheckResponse;			
 			}else{
