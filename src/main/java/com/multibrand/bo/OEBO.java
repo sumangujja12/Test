@@ -2754,6 +2754,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				if(StringUtils.isEmpty(esid)) {
 					esidDo = getESIDInfo(serviceAddressDO, companyCode);
+					tdspCodeCCS = (this.appConstMessageSource.getMessage(esidDo.getEsidTDSP(), null, null));
 					if(esidDo.isEsidBlocked()){
 						serviceLocationResponseErrorList.add(HOLD_DNP);
 						holdType=HOLD_DNP;
