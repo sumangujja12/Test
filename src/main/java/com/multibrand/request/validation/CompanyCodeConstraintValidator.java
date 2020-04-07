@@ -24,7 +24,7 @@ ConstraintValidator<ValidateCompanyCode, String>, Constants{
 		if(value==null) {
 			return false;
 		}else {
-			return companyCodeList.contains(value);
+			return companyCodeList.contains(value.trim());
 		}
 	}
 
