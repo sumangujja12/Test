@@ -66,7 +66,7 @@ public class BaseBO implements Constants {
 				.trim(message) : StringUtils.EMPTY;
 
 		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-		response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION + ":" + e.getMessage());
+		response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 
 		if (shouldThrow) {
 			if (e instanceof ServiceException) {
