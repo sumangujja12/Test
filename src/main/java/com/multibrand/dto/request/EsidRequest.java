@@ -5,7 +5,8 @@ import java.io.Serializable;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 
 
@@ -16,11 +17,11 @@ public class EsidRequest extends SalesBaseRequest implements Serializable {
 	 */
 	private static final long serialVersionUID = -8518551731038329899L;
 	
-	@NotBlank
+	@NotEmpty
 	private String servStreet;
-	@NotBlank
+	@NotEmpty
 	private String servZipCode;
-	@NotBlank
+	@NotEmpty
 	private String servCity;
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
