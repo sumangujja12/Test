@@ -355,7 +355,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				request.setReferralId(serviceLoationResponse.getReferralId());
 				request.setEsid(serviceLoationResponse.getEsid());
 
-				EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request,serviceLoationResponse);
+				EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
 				BeanUtils.copyProperties(enrollmentResponse, salesEnrollmentresponse);
 			} else {
 				salesEnrollmentresponse.populateInvalidTrackingAndGuidResponse();

@@ -825,8 +825,7 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
-	    	ServiceLocationResponse serviceLoationResponse = oeBO.getEnrollmentData(request.getTrackingId());
-	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request,serviceLoationResponse);
+	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
 	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
 	    } catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
