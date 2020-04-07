@@ -2103,12 +2103,10 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 			}
 
-			if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
-					.round(newCreditScoreResponse.getStrDepositAmt()
-							.floatValue())>0)) {
-				response.setCreditFactorsText(creditFactorsText.toString().split(
+
+			response.setCreditFactorsText(creditFactorsText.toString().split(
 					String.valueOf(SEMI_COLON)));
-			}
+		
 			if(newCreditScoreResponse.getStrDepositAmt() != null) {
 				response.setDepositAmount(String.valueOf((Math
 					.round(newCreditScoreResponse.getStrDepositAmt()
@@ -2119,13 +2117,12 @@ public class OEBO extends OeBoHelper implements Constants{
 	 	
 /*Setting the CreditAgency info From zestNotifyHold*/	
 			 CompanyMsgText.CREDIT_AGENCY_ENUM creditAgencyEnum=null;
-			if((newCreditScoreResponse.getZesSecrtyNotifHold() != null)&&(newCreditScoreResponse.getZesSecrtyNotifHold().length > 0 )&& (newCreditScoreResponse.getZesSecrtyNotifHold()[0].getCrAgency()!=null)){
-				response.setCreditAgency(newCreditScoreResponse.getZesSecrtyNotifHold()[0].getCrAgency());
-				 creditAgencyEnum = CompanyMsgText.CREDIT_AGENCY_ENUM.valueOf(newCreditScoreResponse.getZesSecrtyNotifHold()[0].getCrAgency());
-			}
-			else{
-				response.setCreditAgency(EMPTY);
-			}
+			
+			  response.setCreditAgency(newCreditScoreResponse.getStrCreditSource());
+			  if(StringUtils.isNotEmpty(newCreditScoreResponse.getStrCreditSource())) {
+				  creditAgencyEnum = CompanyMsgText.CREDIT_AGENCY_ENUM.valueOf(newCreditScoreResponse.getStrCreditSource());
+			  }
+			
 			
 			
 /*Setting the MscCode  to Freeze or Fraud and Status code to Stop or Continue */
