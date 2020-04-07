@@ -2750,20 +2750,16 @@ public class OEBO extends OeBoHelper implements Constants{
 				if(StringUtils.isEmpty(esid)) {
 					esidDo = getESIDInfo(serviceAddressDO, companyCode);
 					if(esidDo.isEsidBlocked()){
-						response.setMessageCode(ESID_RESTRICTION);
-						response.setMessageText(getAllBrandResponseMessage(companyCode, brandId, ESID_RESTRICTION_TEXT_MESSAGE, locale));
-						response.setStatusCode(Constants.STATUS_CODE_STOP);
-						return response;
+						serviceLocationResponseErrorList.add(HOLD_DNP);
+						holdType=HOLD_DNP;
 					}
 				}else {
 					EsidProfileResponse esidProfileResponse = this.addressService.getESIDProfile(esid,companyCode);
 					esidDo = setESIDDTO(esidProfileResponse);
 					//Start || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 					if(esidDo.isEsidBlocked()){
-						response.setMessageCode(ESID_RESTRICTION);
-						response.setMessageText(getAllBrandResponseMessage(companyCode, brandId, ESID_RESTRICTION_TEXT_MESSAGE, locale));
-						response.setStatusCode(Constants.STATUS_CODE_STOP);
-						return response;
+						serviceLocationResponseErrorList.add(HOLD_DNP);
+						holdType=HOLD_DNP;
 					}
 					//END || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 					TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(esid,companyCode,sessionId);
@@ -2771,7 +2767,9 @@ public class OEBO extends OeBoHelper implements Constants{
 						String tdspCodeCCSForEsid = tdspByESIDResponse.getServiceId();
 						esidDo.setEsidTDSP(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."
 										+ tdspCodeCCSForEsid, null, null));						
-						logger.info("TDSP Code:"+esidDo.getEsidTDSP());
+						logger.info("TDSP Code :"+esidDo.getEsidTDSP());
+						response.setTdspCode(tdspCodeCCSForEsid);
+						tdspCodeCCS = tdspCodeCCSForEsid;
 					} else {
 						response.setMessageCode(AREA_NOT_SERVICED);
 						response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
@@ -2785,7 +2783,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				{
 					response.setMeterType(esidDo.getMeterType());
 					response.setSwitchHoldFlag(esidDo.getSwitchHoldStatus());
-					response.setTdspCode(tdspCodeCCS); 
+					if(StringUtils.isNotEmpty(tdspCodeCCS)){
+						response.setTdspCode(tdspCodeCCS); 
+					}
 					if(StringUtils.isNotBlank(esidDo.getEsidNumber())) {
 						String strESIDNumber = esidDo.getEsidNumber();
 						if (strESIDNumber.equalsIgnoreCase(MESID) || strESIDNumber.equalsIgnoreCase(NESID))
