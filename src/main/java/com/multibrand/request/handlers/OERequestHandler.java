@@ -873,13 +873,15 @@ public class OERequestHandler implements Constants {
 				for (String factStr : factorsKeyList) {
 					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStr:: "+factStr);
 					factStrArray = factStr.split("\\"+DOT);
-					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray:: "+factStrArray);
-					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray.length:: "+factStrArray.length);
-					logger.debug(oeSignUpDTO.printOETrackingID()+"Inside EnrollmentService :: createSubmitEnrollRequest : factStrArray :: " + factStrArray[1] + " **** "
-							+ factStrArray[0] + "****" + factStrArray[2]);
-					arrayFactors[factCnt] = new FactorDetailDO(factStrArray[2], "",
-							"", "", factStrArray[0], factStrArray[1]);
-					factCnt++;
+					if(factStrArray.length >=3){
+						logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray:: "+factStrArray);
+						logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray.length:: "+factStrArray.length);
+						logger.debug(oeSignUpDTO.printOETrackingID()+"Inside EnrollmentService :: createSubmitEnrollRequest : factStrArray :: " + factStrArray[1] + " **** "
+								+ factStrArray[0] + "****" + factStrArray[2]);
+						arrayFactors[factCnt] = new FactorDetailDO(factStrArray[2], "",
+								"", "", factStrArray[0], factStrArray[1]);
+						factCnt++;
+					}
 				}
 				submitEnrollRequest.setArrayFactors(arrayFactors);
 			}
