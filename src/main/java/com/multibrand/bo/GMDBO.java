@@ -1073,9 +1073,9 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	 */
 	public UpdateAlertPrefRequest createUpdateAlertPrefRequest(GMDEnrollmentResponse response, GMDEnrollmentRequest enrollmentRequest) {
 
-		String lowAcctBalEmailVal = YES;
-		String payReceivedEmailVal = YES;
-		String weeklyBalEmailVal = YES;
+		String lowAcctBalEmailVal = "E";
+		String payReceivedEmailVal = "E";
+		String weeklyBalEmailVal = "E";
 		String lowAcctBalSmsVal = EMPTY;
 		String payReceivedSmsVal = EMPTY;
 		String weeklyBalSmsVal = EMPTY;
@@ -1083,6 +1083,8 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		String payReceivedPhoneVal = EMPTY;
 		String weeklyBalPhoneVal = EMPTY;
 
+		
+		
 		
 		String strLowAcctBal = lowAcctBalEmailVal + lowAcctBalSmsVal + lowAcctBalPhoneVal;
 		String strPayReceived = payReceivedEmailVal + payReceivedSmsVal + payReceivedPhoneVal;
