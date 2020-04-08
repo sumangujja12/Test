@@ -1083,19 +1083,7 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		String payReceivedPhoneVal = EMPTY;
 		String weeklyBalPhoneVal = EMPTY;
 
-			lowAcctBalEmailVal =  "";
-			payReceivedEmailVal ="";
-			weeklyBalEmailVal =  "";
-
-			lowAcctBalSmsVal =  "";
-			payReceivedSmsVal = "";
-			weeklyBalSmsVal =  "";
-
-			lowAcctBalPhoneVal =  "";
-			payReceivedPhoneVal =  "";
-			weeklyBalPhoneVal =  "";
-
-
+		
 		String strLowAcctBal = lowAcctBalEmailVal + lowAcctBalSmsVal + lowAcctBalPhoneVal;
 		String strPayReceived = payReceivedEmailVal + payReceivedSmsVal + payReceivedPhoneVal;
 		String strWeeklySum = weeklyBalEmailVal + weeklyBalSmsVal + weeklyBalPhoneVal;
