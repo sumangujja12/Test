@@ -488,6 +488,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		long startTime = CommonUtil.getStartTime();
 		
+		
 		if (StringUtils.isBlank(enrollmentRequest.getPromoCode())) { // If Promo code is passed empty
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -859,7 +860,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		enrollmentRequest.setRecentCallMade(CALL_NAME_SUBMIT_ENROLLMENT);
 
 		SubmitEnrollRequest submitEnrollRequest = createSubmitEnrollRequest(enrollmentRequest);
-
+		submitEnrollRequest.setBypassPosId(FLAG_X);//This is fo only GMD application
 		Gson gson = new Gson();
 		logger.info("Before submitting JSON:{}", gson.toJson(submitEnrollRequest));
 		SubmitEnrollResponse submitEnrollResponse = oeProxy.submitEnrollment(submitEnrollRequest);
@@ -1002,7 +1003,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 	        {
 	            createPrepayDocOutput="curlaction";
 	            
-	            try{
+	            try {
 					UpdateAlertPrefRequest updateAlertPrefRequest = createUpdateAlertPrefRequest(response, enrollmentRequest);
 					asyncHelper.asychUpdatePrepayAlertPreferences(updateAlertPrefRequest);
 					
@@ -1072,9 +1073,9 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	 */
 	public UpdateAlertPrefRequest createUpdateAlertPrefRequest(GMDEnrollmentResponse response, GMDEnrollmentRequest enrollmentRequest) {
 
-		String lowAcctBalEmailVal = EMPTY;
-		String payReceivedEmailVal = EMPTY;
-		String weeklyBalEmailVal = EMPTY;
+		String lowAcctBalEmailVal = YES;
+		String payReceivedEmailVal = YES;
+		String weeklyBalEmailVal = YES;
 		String lowAcctBalSmsVal = EMPTY;
 		String payReceivedSmsVal = EMPTY;
 		String weeklyBalSmsVal = EMPTY;
