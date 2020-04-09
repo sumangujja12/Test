@@ -1398,5 +1398,7 @@ public interface Constants {
 	public static final String PROSPECT_MISMATCH_TEXT = "msg_prospect_mismatch";
 	
 	public static final String TRANSACTIONTYPE_S = "S";
+	public static final String RESIDENTIAL = "RESIDENTIAL";
+	public static final String ACTIVE = "ACTIVE";
 	
 }

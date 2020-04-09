@@ -2745,13 +2745,17 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug("OEBO.getESIDAndCalendarDates() State From ZIP: " + serviceAddressDO.getStrState());
 			}
 
-			if (StringUtils.isNotBlank(servStreetNum)
-					&& StringUtils.isNotBlank(servStreetName)) {
+			if (StringUtils.isNotBlank(servStreetName)) {
 				logger.info("OEBO.getESIDAndCalendarDates() street address entered! getting ESID info");
 				
 				if(StringUtils.isEmpty(esid)) {
-					esidDo = getESIDInfo(serviceAddressDO, companyCode);
-					tdspCodeCCS = (this.appConstMessageSource.getMessage(esidDo.getEsidTDSP(), null, null));
+					esidDo = getNewESIDInfo(serviceAddressDO, companyCode);
+					if(StringUtils.isEmpty(esidDo.getEsidNumber())) {
+						esidDo.setEsidNumber(NESID);
+					}
+					if(StringUtils.isNotEmpty(esidDo.getEsidTDSP())) {
+						tdspCodeCCS = (this.appConstMessageSource.getMessage(esidDo.getEsidTDSP(), null, null));
+					}
 					if(esidDo.isEsidBlocked()){
 						serviceLocationResponseErrorList.add(HOLD_DNP);
 						holdType=HOLD_DNP;
@@ -2781,14 +2785,36 @@ public class OEBO extends OeBoHelper implements Constants{
 						return response;
 					}
 				}
-
+				logger.info("ESid esidDo *************  :"+esidDo);
 				if (esidDo != null)
 				{
 					response.setMeterType(esidDo.getMeterType());
 					response.setSwitchHoldFlag(esidDo.getSwitchHoldStatus());
+					
 					if(StringUtils.isNotEmpty(tdspCodeCCS)){
 						response.setTdspCode(tdspCodeCCS); 
+					}else {
+						response.setEsid(EMPTY);
+						response.setResultCode(RESULT_CODE_SUCCESS);
+						response.setStatusCode(STATUS_CODE_STOP);
+						response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
+						response.setMessageCode(esidDo.getEsidNumber());
+						return response;
 					}
+					transactionType = StringUtils.equals(transactionType, TRANSACTIONTYPE_N) ? MVI :(StringUtils.equals(transactionType, TRANSACTIONTYPE_S) ? SWI: transactionType) ;
+					if(StringUtils.equalsIgnoreCase(esidDo.getSwitchHoldStatus(), ON) 
+							&& (StringUtils.equalsIgnoreCase(esidDo.getSwitchHoldStatus(), SWI))){
+						response.setEsid(esidDo.getEsidNumber());
+						response.setResultCode(RESULT_CODE_SUCCESS);
+						response.setStatusCode(STATUS_CODE_STOP);
+						response.setMessageText(msgSource.getMessage(MESSAGE_CODE_SWITCH_HOLD));
+						response.setMessageCode(MESSAGE_CODE_SWITCH_HOLD);
+						return response;
+					}
+					
+					
+					logger.info("ESid Number *************  :"+esidDo.getEsidNumber());
+					logger.info("tdsp Code "+tdspCodeCCS);
 					if(StringUtils.isNotBlank(esidDo.getEsidNumber())) {
 						String strESIDNumber = esidDo.getEsidNumber();
 						if (strESIDNumber.equalsIgnoreCase(MESID) || strESIDNumber.equalsIgnoreCase(NESID))
@@ -4266,7 +4292,8 @@ public class OEBO extends OeBoHelper implements Constants{
     		{
     			
 					if(StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON) ||StringUtils.isBlank(response.getEsid()) 
-							|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)) 
+							|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)
+							|| StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), NESID) || StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), MESID)) 
 					{
 						for (int i = 0; i < PUSH_4; i++)
 		    				allInclusiveDateList.remove(0);
@@ -4288,7 +4315,8 @@ public class OEBO extends OeBoHelper implements Constants{
     				{
 						for (int i = 0; i < PUSH_2; i++)
 		    				allInclusiveDateList.remove(0);
-					}else if(StringUtils.equals(holdType,HOLD_DNP))
+					}else if(StringUtils.equals(holdType,HOLD_DNP) || StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), NESID) 
+							|| StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), MESID) )
     				{
 						for (int i = 0; i < PUSH_4; i++)
 		    				allInclusiveDateList.remove(0);
@@ -6154,6 +6182,65 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
      private boolean isPropectCreditCheckExecuted(ServiceLocationResponse serviceLocationResponse){
     	 return StringUtils.isNotEmpty(serviceLocationResponse.getProspectId()) && ( StringUtils.equalsIgnoreCase(serviceLocationResponse.getProspectPreapprovalFlag(), PROSPECT_PREAPPROVAL_FLAG_PASS  ));
      }
+     
+     public ESIDDO getNewESIDInfo(AddressDO serviceAddressDO,
+ 			String companyCode) {
+ 		logger.info("OEBO.getESIDInfo() start");
+
+ 		ESIDDO esidDO = new ESIDDO();
+ 		EsidProfileResponse esidProfileResponse = null;
+ 		if (StringUtils.isNotBlank(serviceAddressDO.getStrStreetName())) {
+ 			AddressValidateResponse addressResponse = null;
+ 			try {
+ 				addressResponse = this.addressService
+ 						.performTrilliumCleanup(serviceAddressDO);
+ 				serviceAddressDO.setTrilliumMatchStatus(addressResponse
+ 						.getMatchStatusFlag());
+ 			} catch (Exception e) {
+ 				logger.error("OEBO.getESIDInfo(): Exception in addressService.performTrilliumCleanup():", e);
+ 				serviceAddressDO.setTrilliumMatchStatus(NO_MATCH);
+ 			}
+ 			logger.debug("OEBO.getESIDInfo() Trillium cleanup status: "+serviceAddressDO.getTrilliumMatchStatus());
+ 			if ((addressResponse != null)
+ 					&& (serviceAddressDO.getTrilliumMatchStatus() != null)
+ 					&& (!NO_MATCH.equals(serviceAddressDO.getTrilliumMatchStatus()))
+ 					) {
+ 				serviceAddressDO = handleAddressValidateResponse(addressResponse);
+ 				serviceAddressDO.setTrilliumMatchStatus(addressResponse
+ 						.getMatchStatusFlag());
+ 				serviceAddressDO.setTrilliumCallStatus(addressResponse
+ 						.getStatusValue());
+ 			}
+ 		}
+
+ 		try {
+ 			EsidResponse esidResponse = this.addressService.getNewESIDInfo(serviceAddressDO, companyCode);
+
+ 			if (esidResponse != null) {
+ 				logger.info("OEBO.getESIDInfo() GETTING ESID SUCCESSFUL:"+ esidResponse);
+ 				if(esidResponse.getEsidList().size() == 0) {
+ 					esidDO.setEsidNumber(NESID);
+ 					esidDO.setEsidTDSP(addressService.getTDSPDetailsFromZip(serviceAddressDO.getStrZip(), companyCode));
+ 					logger.info("Zip code : "+serviceAddressDO.getStrZip()+"Tdsp Code :"+esidDO.getEsidTDSP());
+ 				}else if(esidResponse.getEsidList().size() >1) {
+ 					esidDO.setEsidNumber(MESID);
+ 					esidDO.setEsidTDSP(esidResponse.getEsidList().get(0).getEsidTDSP());
+ 				} else {
+ 					esidDO.setEsidNumber(esidResponse.getEsidList().get(0).getEsidNumber());
+ 					esidProfileResponse = this.addressService.getESIDProfile(esidDO.getEsidNumber(),companyCode);
+ 					esidDO = setESIDDTO(esidProfileResponse);
+ 					esidDO.setEsidTDSP(esidResponse.getEsidList().get(0).getEsidTDSP());
+ 				}
+ 					
+ 					logger.debug("OEBO.getESIDInfo() ESID PROFILE SUCESSFUL");
+ 				} 
+ 		} catch (ServiceException localServiceException) {
+ 			logger.error("ServiceException in OEBO.getESIDInfo():"
+ 					, localServiceException);
+ 		}
+ 		return esidDO;
+ 	}
+     
 }
 	
 	
