@@ -41,6 +41,7 @@ import com.multibrand.vo.response.WsEnrollmentResponse;
 import com.multibrand.vo.response.WsServiceResponse;
 import com.multibrand.vo.response.WseEligiblityStatusResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
 import com.multibrand.vo.response.profileResponse.UpdateLanguageResponse;
@@ -667,5 +668,23 @@ public class ProfileResource {
 		return response;
 	}
 	
+	@POST
+	@Path("submitPaymentExtension")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+
+	public Response submitPaymentExtension(@FormParam("contractAccountNumber") String accountNumber,
+			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
+			@FormParam("bussinessPartnerNumber") String bpNumber, @FormParam("paymentExtDate") String paymentExtDate) {
+		Response response = null;
+		logger.info("Start-[ProfileResource-validatePassword]");
+		PaymentExtensionResponse paymentExtensionResponse = profileBO.submitPaymentExtension(accountNumber, companyCode,
+				brandName, bpNumber, paymentExtDate, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(paymentExtensionResponse).build();
+		logger.info("End-[ProfileResource-validatePassword]");
+		return response;
+
+	}
+
 }	
 	

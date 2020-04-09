@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+import javax.ws.rs.FormParam;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.dao.ProfileDAO;
 import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AllAccountDetailsRequest;
+import com.multibrand.domain.AllAccountDetailsResponse;
 import com.multibrand.domain.ChangeUsrNameRequest;
 import com.multibrand.domain.ChangeUsrNameResponse;
 import com.multibrand.domain.CirroStructureCallRequest;
@@ -27,9 +30,13 @@ import com.multibrand.domain.ContractAccountDO;
 import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
+import com.multibrand.domain.DisconnectionNoticeResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.LanguageUpdateRequest;
 import com.multibrand.domain.LanguageUpdateResponse;
+import com.multibrand.domain.PaymentExtensionRHSRequest;
+import com.multibrand.domain.PaymentExtensionSubmitRequest;
+import com.multibrand.domain.PaymentExtensionSubmitResponse;
 import com.multibrand.domain.ProfileResponse;
 import com.multibrand.domain.UpdateAddressRequest;
 import com.multibrand.domain.UpdateContactRequest;
@@ -85,6 +92,7 @@ import com.multibrand.vo.response.WseEsenseEligibility;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
 import com.multibrand.vo.response.profileResponse.UpdateLanguageResponse;
@@ -2174,6 +2182,45 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		}
 		logger.info("End - [ProfileBO - validatePassword]");
 		return passwordValidityResponse;
+	}
+	
+	public PaymentExtensionResponse submitPaymentExtension(String accountNumber, String companyCode, String brandName,
+			String bpNumber,  String paymentExtDate, String sessionId) {
+		logger.info("Start - [ProfileBO - PaymentExtension]");
+		AllAccountDetailsRequest request = new AllAccountDetailsRequest();
+		PaymentExtensionResponse response = new PaymentExtensionResponse();
+		PaymentExtensionSubmitRequest paymentExtensionSubmitReq = new PaymentExtensionSubmitRequest();
+		request.setPaymentExtensionSubmitReq(paymentExtensionSubmitReq);
+		paymentExtensionSubmitReq.setBpNumber(bpNumber);
+		paymentExtensionSubmitReq.setContractAcctNum(accountNumber);
+		paymentExtensionSubmitReq.setPaymentExtDate(paymentExtDate);
+		
+		AllAccountDetailsResponse ccsAllAlertsResponse = null;
+		try {
+			ccsAllAlertsResponse = profileService.getAllAccountDetailsParallel(request, sessionId);
+		} catch (RemoteException e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::" +e);
+			return response;
+		}
+		PaymentExtensionSubmitResponse paymentExtensionSubmitResponse = ccsAllAlertsResponse.getPaymentExtensionSubmitRes();
+		if (paymentExtensionSubmitResponse != null
+				&& StringUtils.isNotBlank(paymentExtensionSubmitResponse.getReturnCode())) {
+			if (StringUtils.isNotBlank(paymentExtensionSubmitResponse.getReturnCode())
+					&& StringUtils.equalsIgnoreCase("00", paymentExtensionSubmitResponse.getReturnCode())) {
+				response.setPaymentExtension(true);
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+			} else {
+				response.setPaymentExtension(false);
+				response.setResultCode(RESULT_CODE_CCS_ERROR);
+				response.setResultDescription("Fail to update the Extension Date");
+			}
+		} 
+		
+		logger.info("END - [ProfileBO - PaymentExtension]");
+		return response;
 	}
 	
 }
