@@ -10,7 +10,6 @@ import java.util.Map;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
-import javax.ws.rs.FormParam;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -30,11 +29,9 @@ import com.multibrand.domain.ContractAccountDO;
 import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
-import com.multibrand.domain.DisconnectionNoticeResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.LanguageUpdateRequest;
 import com.multibrand.domain.LanguageUpdateResponse;
-import com.multibrand.domain.PaymentExtensionRHSRequest;
 import com.multibrand.domain.PaymentExtensionSubmitRequest;
 import com.multibrand.domain.PaymentExtensionSubmitResponse;
 import com.multibrand.domain.ProfileResponse;
@@ -54,7 +51,6 @@ import com.multibrand.helper.BPAccountContractPayHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.LDAPHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
-import com.multibrand.proxy.ProfileProxy;
 import com.multibrand.service.LDAPService;
 import com.multibrand.service.ProfileService;
 import com.multibrand.service.TOSService;
