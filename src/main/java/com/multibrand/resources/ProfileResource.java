@@ -677,11 +677,11 @@ public class ProfileResource {
 			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
 			@FormParam("bussinessPartnerNumber") String bpNumber, @FormParam("paymentExtDate") String paymentExtDate) {
 		Response response = null;
-		logger.info("Start-[ProfileResource-validatePassword]");
+		logger.info("Start-[ProfileResource-submitPaymentExtension]");
 		PaymentExtensionResponse paymentExtensionResponse = profileBO.submitPaymentExtension(accountNumber, companyCode,
 				brandName, bpNumber, paymentExtDate, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(paymentExtensionResponse).build();
-		logger.info("End-[ProfileResource-validatePassword]");
+		logger.info("End-[ProfileResource-submitPaymentExtension]");
 		return response;
 
 	}
