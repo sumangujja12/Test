@@ -22,7 +22,6 @@ public class SalesOfferRequest extends SalesBaseRequest {
 	
 	/** The promo code. */
 	@QueryParam(value = "promoCode")
-	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String promoCode;
 
