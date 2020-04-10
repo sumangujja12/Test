@@ -3719,7 +3719,10 @@ public class OEBO extends OeBoHelper implements Constants{
 					logger.debug("inside performPosidAndBpMatch:: isValidSSN is "+isValidSSN);
 					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 					tokenResponse.setResultDescription("SSN: in incorrect format");
-					tokenResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+					tokenResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );		
+					tokenResponse.setErrorCode("INVALID_PII");
+					tokenResponse.setErrorDescription(tokenResponse.getResultDescription());
+					tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 					logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+":: affiliateId ::"+affiliateId+" SSN in invalid format");
 					getPosIdTokenResponse.put("tokenResponse", tokenResponse);
 					return getPosIdTokenResponse;
@@ -3746,7 +3749,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 					tokenResponse.setResultDescription("TDL:  in incorrect format");
 					tokenResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-					
+					tokenResponse.setErrorCode("INVALID_PII");
+					tokenResponse.setErrorDescription(tokenResponse.getResultDescription());
+					tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 					logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+":: affiliateId ::"+affiliateId+" TDL in invalid format");
 					getPosIdTokenResponse.put("tokenResponse", tokenResponse);
 					return getPosIdTokenResponse;
@@ -6096,7 +6101,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 				Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
 	
 					response = Response.status(tokenResponse.getHttpStatus()).entity(tokenResponse).build();
-					logger.info("It is coming here ");
+				
 					return response;
 				} else {
 					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
