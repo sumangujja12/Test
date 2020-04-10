@@ -5,6 +5,7 @@ import com.multibrand.vo.response.GenericResponse;
 public class PaymentExtensionResponse extends GenericResponse {
 	
 	private boolean isPaymentExtension = false;
+	
 
 	/**
 	 * @return the isPaymentExtension
@@ -19,8 +20,5 @@ public class PaymentExtensionResponse extends GenericResponse {
 	public void setPaymentExtension(boolean isPaymentExtension) {
 		this.isPaymentExtension = isPaymentExtension;
 	}
-	
-	
-	
 
 }

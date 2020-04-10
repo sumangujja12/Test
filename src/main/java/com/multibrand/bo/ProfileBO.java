@@ -32,6 +32,8 @@ import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.LanguageUpdateRequest;
 import com.multibrand.domain.LanguageUpdateResponse;
+import com.multibrand.domain.PayExtEligibleRequest;
+import com.multibrand.domain.PayExtEligibleResponse;
 import com.multibrand.domain.PaymentExtensionSubmitRequest;
 import com.multibrand.domain.PaymentExtensionSubmitResponse;
 import com.multibrand.domain.ProfileResponse;
@@ -52,6 +54,7 @@ import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.LDAPHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.service.LDAPService;
+import com.multibrand.service.PaymentService;
 import com.multibrand.service.ProfileService;
 import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
@@ -88,6 +91,7 @@ import com.multibrand.vo.response.WseEsenseEligibility;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
 import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
@@ -127,7 +131,10 @@ public class ProfileBO extends BaseBO {
 	
 	@Autowired
 	protected EnvMessageReader envMessageReader;
-
+	
+	@Autowired
+	private PaymentService paymentService;
+	
 	
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
@@ -2203,8 +2210,7 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		PaymentExtensionSubmitResponse paymentExtensionSubmitResponse = ccsAllAlertsResponse.getPaymentExtensionSubmitRes();
 		if (paymentExtensionSubmitResponse != null
 				&& StringUtils.isNotBlank(paymentExtensionSubmitResponse.getReturnCode())) {
-			if (StringUtils.isNotBlank(paymentExtensionSubmitResponse.getReturnCode())
-					&& StringUtils.equalsIgnoreCase("00", paymentExtensionSubmitResponse.getReturnCode())) {
+			if (StringUtils.equalsIgnoreCase("00", paymentExtensionSubmitResponse.getReturnCode())) {
 				response.setPaymentExtension(true);
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
@@ -2213,9 +2219,59 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
 				response.setResultDescription("Fail to update the Extension Date");
 			}
-		} 
+		} else {
+			
+		}
 		
 		logger.info("END - [ProfileBO - PaymentExtension]");
+		return response;
+	}
+	
+	
+	public PaymentExtensionCheckResponse getPaymentExtensionCheck(String accountNumber, String companyCode, String brandName, String sessionId) {
+		logger.info("Start - [ProfileBO - getPaymentExtensionCheck]");
+		PaymentExtensionCheckResponse response = new PaymentExtensionCheckResponse();
+		PayExtEligibleResponse payExtEligibleResponse = null;
+		PayExtEligibleRequest request = new PayExtEligibleRequest();
+		request.setBrandId(brandName);
+		request.setCompanyCode(companyCode);
+		request.setContAccount(accountNumber);
+		
+		try {
+			payExtEligibleResponse = paymentService.getPayExtEligibleResponse(request, sessionId);
+		} catch (RemoteException e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::" +e);
+			return response;
+		}
+		
+		if (payExtEligibleResponse != null
+				&& StringUtils.isNotBlank(payExtEligibleResponse.getPayExtCode())) {
+			response.setPayExtDueAmt(payExtEligibleResponse.getPayExtDueAmt());
+			response.setPayExtnActive(payExtEligibleResponse.getPayExtnActive());
+			response.setPayExtPend(payExtEligibleResponse.getPayExtPend());
+			if (StringUtils.equalsIgnoreCase("00", payExtEligibleResponse.getPayExtCode())
+					&& StringUtils.equalsIgnoreCase(Constants.YES, payExtEligibleResponse.getPayExtnEligible())) {
+				response.setPaymentExtension(true);
+				response.setPaymentExtensionDate(payExtEligibleResponse.getPayExtDiffDate());
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+			} else {
+				response.setPaymentExtension(false);
+				response.setResultCode(RESULT_CODE_NO_DATA);
+				response.setResultDescription("Extension Date not available");
+				response.setErrorCode(payExtEligibleResponse.getErrorCode());
+				response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+			}
+		} else if(payExtEligibleResponse != null) {
+			response.setResultCode(RESULT_CODE_CCS_ERROR);
+			response.setResultDescription("Failed to get the Extension Date or not available");
+			response.setResultCode(RESULT_CODE_CCS_ERROR);
+			response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+		}
+		
+		logger.info("END - [ProfileBO - getPaymentExtensionCheck]");
 		return response;
 	}
 	

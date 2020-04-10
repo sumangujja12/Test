@@ -41,6 +41,7 @@ import com.multibrand.vo.response.WsEnrollmentResponse;
 import com.multibrand.vo.response.WsServiceResponse;
 import com.multibrand.vo.response.WseEligiblityStatusResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
 import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
@@ -672,7 +673,6 @@ public class ProfileResource {
 	@Path("submitPaymentExtension")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-
 	public Response submitPaymentExtension(@FormParam("contractAccountNumber") String accountNumber,
 			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
 			@FormParam("bussinessPartnerNumber") String bpNumber, @FormParam("paymentExtDate") String paymentExtDate) {
@@ -683,8 +683,25 @@ public class ProfileResource {
 		response = Response.status(200).entity(paymentExtensionResponse).build();
 		logger.info("End-[ProfileResource-submitPaymentExtension]");
 		return response;
-
 	}
+	
+	@POST
+	@Path("payExtEligibilityCheck")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getPaymentExtensionCheck(@FormParam("contractAccountNumber") String accountNumber,
+			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
+		Response response = null;
+		logger.info("Start-[ProfileResource-getPaymentExtensionCheck]");
+		PaymentExtensionCheckResponse paymentExtensionResponse = profileBO.getPaymentExtensionCheck(accountNumber,
+				companyCode, brandName, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(paymentExtensionResponse).build();
+		logger.info("End-[ProfileResource-getPaymentExtensionCheck]");
+		return response;
+		
+	}
+	
+	
 
 }	
 	

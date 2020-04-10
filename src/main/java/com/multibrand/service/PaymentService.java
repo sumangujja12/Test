@@ -23,6 +23,8 @@ import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.PayByBankResponse;
 import com.multibrand.domain.PayByCCRequest;
 import com.multibrand.domain.PayByCCResponse;
+import com.multibrand.domain.PayExtEligibleRequest;
+import com.multibrand.domain.PayExtEligibleResponse;
 import com.multibrand.domain.PaymentDomain;
 import com.multibrand.domain.PaymentDomainPortBindingStub;
 import com.multibrand.domain.ScheduleOtccPaymentRequest;
@@ -459,6 +461,39 @@ public class PaymentService extends BaseAbstractService {
 		BankPaymentInstitutionResponse response = proxy.getBankPaymentInstitution(routingNumber);
 		
 		logger.info("PaymentService.getBankPaymentInstitution..end");
+		return response;
+	}
+	
+	
+	public PayExtEligibleResponse getPayExtEligibleResponse(PayExtEligibleRequest request, String sessionId) throws RemoteException {
+		logger.info("PaymentService.getPayExtEligibleResponse :: START");
+		
+		PaymentDomain proxy = getPaymentDomainProxy();
+		long startTime = CommonUtil.getStartTime();
+		PayExtEligibleResponse response = null;
+		
+		try{
+		response= proxy.payExtEligibilityCheck(request);
+		
+		utilityloggerHelper.logTransaction("getPayExtEligibleResponse", false, request,response, response.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+		if(logger.isDebugEnabled()){
+			logger.debug(XmlUtil.pojoToXML(request));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		}catch(RemoteException ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getPayExtEligibleResponse", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}catch(Exception ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getPayExtEligibleResponse", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}
+		logger.info("PaymentService.editCancelOTCCPayment :: END");
 		return response;
 	}
 		
