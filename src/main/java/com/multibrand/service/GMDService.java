@@ -1,17 +1,19 @@
 package com.multibrand.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -21,6 +23,8 @@ import com.multibrand.vo.response.gmd.Current;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDReturnCharge;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.HourlyPrice;
+import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
 import com.multibrand.vo.response.gmd.Pricing;
@@ -35,6 +39,7 @@ import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZetGmdInvdate;
 import com.nrg.cxfstubs.gmdstatement.ZetGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
+
 
 /**
  * 
@@ -150,7 +155,7 @@ public class GMDService extends BaseAbstractService {
 	 * @throws Exception 
 	 */
 	public GMDPricingResponse getGMDPriceDetails(String accountNumber, String contractId, String companyCode,
-			String esiId,String sessionId) throws NRGException {
+			String esiId,String sessionId, HourlyPriceResponse response) throws NRGException {
 		
 		logger.info("GMDService.getGMDPriceDetails::::::::::::::::::::START");
 		
@@ -198,7 +203,7 @@ public class GMDService extends BaseAbstractService {
 		try{
 			
 			stub.zEISUGETGMDPRICE(companyCode, accountNumber, esiId, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage, exTepProfValues,exZone);
-			gmdPricingResp = handleGMDCurrentPriceResponse(exTepProfValues, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage );
+			gmdPricingResp = handleGMDCurrentPriceResponse(exTepProfValues, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage, response );
 			
 		}catch(Exception ex){
 			utilityloggerHelper.logTransaction("getGMDPriceDetails", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -234,7 +239,7 @@ public class GMDService extends BaseAbstractService {
 	}	
 	
 	private GMDPricingResponse handleGMDCurrentPriceResponse( Holder<TEPROFVALUES> exTepProfValues, Holder<String> exCurrentDate,
-			Holder<BigDecimal> exCurrentPrice,  Holder<XMLGregorianCalendar> exCurrentTime, Holder<String> exErrorMessage) {
+			Holder<BigDecimal> exCurrentPrice,  Holder<XMLGregorianCalendar> exCurrentTime, Holder<String> exErrorMessage, HourlyPriceResponse hourlyPriceResponse) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
 		GMDPricingResponse response = new GMDPricingResponse();
 	
@@ -242,7 +247,7 @@ public class GMDService extends BaseAbstractService {
 		Current currentPrice = getGMDCurrentPrice(exCurrentPrice, exCurrentDate, exCurrentTime );
 		
 		List<PredictedSeries> predictedSeriesList = getProjectedPrice(exTepProfValues);
-		List<PastSeries> pastSeriesList = getPastPrice(exTepProfValues);
+		List<PastSeries> pastSeriesList = getPastPrice(hourlyPriceResponse);
 
 		pricing.setCurrent(currentPrice);
 		pricing.setPredictedSeries(predictedSeriesList);
@@ -283,7 +288,7 @@ public class GMDService extends BaseAbstractService {
 			PredictedSeries predictedSeries = new PredictedSeries();
 			
 			predictedSeries.setPrice(epROFVALUE.getPROFVALUE());
-			predictedSeries.setTime(epROFVALUE.getPROFDATE()+"T" +epROFVALUE.getPROFTIME()+".000Z");
+			predictedSeries.setTime(epROFVALUE.getPROFDATE()+"T" +epROFVALUE.getPROFTIME()+".000");
 			
 			predictedSeriesList.add(predictedSeries);
 		}
@@ -292,18 +297,31 @@ public class GMDService extends BaseAbstractService {
 		return predictedSeriesList;
 	} 
 	
-	private List<PastSeries> getPastPrice(Holder<TEPROFVALUES> exTepProfValues) {
+	private List<PastSeries> getPastPrice(HourlyPriceResponse response) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+		
 		
 		List<PastSeries> pastSeriesList = new ArrayList<>();
 		
-		for (EPROFVALUE epROFVALUE : exTepProfValues.value.getItem()) {
+		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		
+		for (HourlyPrice hourlyPrice : response.getHourlyPriceList()) {
 			
-			PastSeries pastSeries = new PastSeries();
 			
-			pastSeries.setPrice(epROFVALUE.getPROFVALUE());
-			pastSeries.setTime(epROFVALUE.getPROFDATE()+"T" +epROFVALUE.getPROFTIME()+".000Z");
+			for (int i = cal.get(Calendar.HOUR_OF_DAY) ; i > 0 ;i--) {
+				
+				String methodName = "getPriceHr"+StringUtils.leftPad(String.valueOf(i), 2, '0');
+				
+				String price = (String) getMethodRun(hourlyPrice, methodName);
+
+				PastSeries pastSeries = new PastSeries();
+				
+				pastSeries.setPrice(new BigDecimal(price));
+				pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
+				
+				pastSeriesList.add(pastSeries);
 			
-			pastSeriesList.add(pastSeries);
+			}
 		}
 		
 		
@@ -316,7 +334,7 @@ public class GMDService extends BaseAbstractService {
 		Current current = new Current();
 		current.setPrice(exCurrentPrice.value);
 		
-		current.setLastUpdated(exCurrentDate.value+"T" +exCurrentTime.value+".000Z");
+		current.setLastUpdated(exCurrentDate.value+"T" +exCurrentTime.value+".000");
 		
 		return current;
 	}
@@ -432,4 +450,14 @@ public class GMDService extends BaseAbstractService {
 		return gmdTaxesBreakDown;
 	}	
 	
+	private Object getMethodRun(Object obj, String methodName)
+			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		
+		Method method = obj.getClass().getDeclaredMethod(methodName);
+		
+		method.setAccessible(true);
+		
+		return method.invoke(obj, null);
+
+	}
 }

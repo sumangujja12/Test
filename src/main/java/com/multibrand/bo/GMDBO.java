@@ -52,6 +52,7 @@ import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 
 /**
  * This BO class is to handle all the GMD Related API calls.
@@ -66,6 +67,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 	@Autowired
 	BillingBO billingBO;
+	
+	@Autowired
+	private HistoryBO historyBO;
 
 	@Autowired
 	OEService oeService;
@@ -113,7 +117,12 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		GMDPricingResponse gmdPricingResp = new GMDPricingResponse();
 
 		try {
-			gmdPricingResp = gmdService.getGMDPriceDetails(accountNumber, contractId, companyCode, esiId, sessionId);
+				
+			String currentDate = this.envMessageReader.getMessage(GMD_PRICE_IRW_DATE);
+			
+			HourlyPriceResponse response = historyBO.getGMDPrice(accountNumber, contractId, esiId, currentDate, sessionId, companyCode);
+			
+			gmdPricingResp = gmdService.getGMDPriceDetails(accountNumber, contractId, companyCode, esiId, sessionId, response);
 
 		} catch (NRGException e) {
 			logger.error("Exception occured in getGMDPriceDetails :{}", e);

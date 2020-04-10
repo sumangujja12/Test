@@ -1400,5 +1400,6 @@ public interface Constants {
   
    public static final String WHOLESALE_ELECTRICITY = "Wholesale Electricity";
    public static final String INDEFINITE_END_DATE = "12/31/9999";
-      
+   
+   public static final String GMD_PRICE_IRW_DATE = "gmd_price-current_date";   
 }
