@@ -2220,7 +2220,9 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 				response.setResultDescription("Fail to update the Extension Date");
 			}
 		} else {
-			
+			response.setPaymentExtension(false);
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
 		}
 		
 		logger.info("END - [ProfileBO - PaymentExtension]");
