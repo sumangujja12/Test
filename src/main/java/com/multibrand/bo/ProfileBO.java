@@ -2217,7 +2217,8 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 			} else {
 				response.setPaymentExtension(false);
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
-				response.setResultDescription("Fail to update the Extension Date");
+				response.setResultDescription("Fail to update the Extension Date, Please check error code");
+				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
 			}
 		} else {
 			response.setPaymentExtension(false);
