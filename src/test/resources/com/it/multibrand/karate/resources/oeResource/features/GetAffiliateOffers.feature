@@ -2,8 +2,8 @@
  Feature: Get Affiliate Offer funtionality
  
  Background:
-  * url  BASE_SERVER_URL
-  * json getaffilateofferrequest = read('classpath:com/it/multibrand/karate/affiliateoffers/GetAffiliateOffers.json')
+  * url  BASE_SERVER_URL_1
+  * json getaffilateofferrequest = read('classpath:com/it/multibrand/karate/resources/oeResource/requestBody/GetAffiliateOffers.json')
 
 @validMVIPromo
    Scenario: Validate Affilaite offers call response using a valid promocode for MVI

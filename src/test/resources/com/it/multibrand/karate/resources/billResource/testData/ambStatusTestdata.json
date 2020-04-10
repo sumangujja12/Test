@@ -1,0 +1,22 @@
+[
+  {
+    "scenario": "One",
+    "bpNum": "0000017774",
+    "accountNum": "000000011155",
+    "coId": "0046379097",
+    "coCode": "",
+    "brName": "",
+    "abActive": "No",
+    "abEligible": "No"
+  },
+  {
+    "scenario": "Two",
+    "bpNum": "0000069275",
+    "accountNum": "000000039626",
+    "coId": "0024857422",
+    "coCode": "",
+    "brName": "",
+    "abActive": "No",
+    "abEligible": "Yes"
+  }
+]

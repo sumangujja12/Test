@@ -2,9 +2,9 @@
  Feature: Get KBA Questions functionality
  
  Background:
-  * url  BASE_SERVER_URL
-	* json getkbaQuestionsRequest = read('classpath:com/it/multibrand/karate/kba/GetKBAQuestions.json')
-  * json getkbaQuestionsData = read('classpath:com/it/multibrand/karate/kba/GetKBAQuestionsTestData.json')
+  * url  BASE_SERVER_URL_1
+	* json getkbaQuestionsRequest = read('classpath:com/it/multibrand/karate/resources/oeResource/requestBody/GetKBAQuestions.json')
+  * json getkbaQuestionsData = read('classpath:com/it/multibrand/karate/resources/oeResource/testData/GetKBAQuestionsTestData.json')
 
    Scenario Outline:
    	# English & Spanish

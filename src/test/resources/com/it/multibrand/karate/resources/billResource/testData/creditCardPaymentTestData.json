@@ -1,0 +1,28 @@
+[
+	{
+		"customerType": "Postpay",
+		"email": "",
+		"companyCode": "",
+		"brandName": "",
+		"accountNumber": "000000039626",
+		"bpid": "0000069275",
+		"ccNumber": "T401200750923407777",
+		"expirationDate": "",
+		"billingZip": "77042",
+		"paymentAmount": "",
+		"emailTypeId": ""
+	},
+	{
+		"customerType": "Prepay",
+		"email": "",
+		"companyCode": "",
+		"brandName": "",
+		"accountNumber": "000006203277",
+		"bpid": "0004568069",
+		"ccNumber": "T539607758124541902",
+		"expirationDate": "",
+		"billingZip": "77042",
+		"paymentAmount": "",
+		"emailTypeId": ""
+	}
+]

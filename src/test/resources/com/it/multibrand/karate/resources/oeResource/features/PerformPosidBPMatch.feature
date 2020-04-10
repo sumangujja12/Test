@@ -1,8 +1,8 @@
  Feature: Perform Posid BP Match funtionality
  
  Background:
-  * url  BASE_SERVER_URL
-  * json posidbpmatchrequest = read('classpath:com/it/multibrand/karate/posidbpmatch/PerformPosidBPMatch.json')
+  * url  BASE_SERVER_URL_1
+  * json posidbpmatchrequest = read('classpath:com/it/multibrand/karate/resources/oeResource/requestBody/PerformPosidBPMatch.json')
 
 @validPosid
    Scenario: Validate Posid with valid Posid test data

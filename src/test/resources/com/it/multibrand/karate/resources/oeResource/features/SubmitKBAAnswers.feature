@@ -2,9 +2,9 @@
  Feature: Submit KBA Answers functionality
  
  Background:
-  * url  BASE_SERVER_URL
-	* json submitkbaAnswersRequest = read('classpath:com/it/multibrand/karate/kba/SubmitKBAAnswers.json')
-  * json submitkbaAnswersData = read('classpath:com/it/multibrand/karate/kba/SubmitKBAAnswersTestData.json')
+  * url  BASE_SERVER_URL_1
+	* json submitkbaAnswersRequest = read('classpath:com/it/multibrand/karate/resources/oeResource/requestBody/SubmitKBAAnswers.json')
+  * json submitkbaAnswersData = read('classpath:com/it/multibrand/karate/resources/oeResource/testData/SubmitKBAAnswersTestData.json')
 
    Scenario Outline:
    # English & Spanish

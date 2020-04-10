@@ -3,8 +3,8 @@
 Feature: Get ESID Details
 
 Background:
-  * url  BASE_SERVER_URL
-	* json getesiddetailsrequest = read('classpath:com/it/multibrand/karate/esiddetails/GetESIDDetails.json')
+  * url  BASE_SERVER_URL_1
+	* json getesiddetailsrequest = read('classpath:com/it/multibrand/karate/resources/oeResource/requestBody/GetESIDDetails.json')
  
  	Scenario: Get ESID detail response using a valid address
     Given path  '/NRGREST/rest/oeResource/esiidDetails'

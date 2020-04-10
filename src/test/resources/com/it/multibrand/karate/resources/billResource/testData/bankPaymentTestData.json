@@ -1,0 +1,28 @@
+[
+	{
+		"customerType": "Postpay",
+		"email": "",
+		"companyCode": "",
+		"brandName": "",
+		"accountNumber": "000008161755",
+		"bpid": "0005778974",
+		"bankAccountNumber": "AF03PWRI-016",
+		"bankRoutingNumber": "122105278",
+		"paymentDate": "",
+		"paymentAmount": "",
+		"emailTypeId": ""
+	},
+	{
+		"customerType": "Prepay",
+		"email": "",
+		"companyCode": "",
+		"brandName": "",
+		"accountNumber": "000070054801",
+		"bpid": "0002449970",
+		"bankAccountNumber": "98XDZRGX-018",
+		"bankRoutingNumber": "122105278",
+		"paymentDate": "",
+		"paymentAmount": "",
+		"emailTypeId": ""
+	}
+]

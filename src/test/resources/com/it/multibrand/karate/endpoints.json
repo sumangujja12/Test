@@ -1,0 +1,11 @@
+{
+	"billResource": {
+		"AMB_CHECK_ENDPOINT": "/NRGREST/rest/billResource/ambEligibilityCheck",
+		"SUBMIT_CC_PAYMENT_ENDPOINT": "/NRGREST/rest/billResource/submitCCPayment",
+		"SUBMIT_BANK_PAYMENT_ENDPOINT": "/NRGREST/rest/billResource/submitBankPayment",
+		"GET_AR_BALANCE_ENDPOINT": "/NRGREST/rest/billResource/getBalance"
+	},
+	"profileResource": {
+		"SMART_METER_CHECK_ENDPOINT": "/NRGREST/rest/profile/smartMeterCheck"
+	}
+}
