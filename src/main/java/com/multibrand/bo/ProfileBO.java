@@ -61,6 +61,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnvMessageReader;
 import com.multibrand.util.XmlUtil;
+import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.SecondaryNameUpdateReqVO;
 import com.multibrand.vo.request.ValidateUserNameRequest;
 import com.multibrand.vo.response.AcctValidationResponse;
@@ -2187,16 +2188,16 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		return passwordValidityResponse;
 	}
 	
-	public PaymentExtensionResponse submitPaymentExtension(String accountNumber, String companyCode, String brandName,
-			String bpNumber,  String paymentExtDate, String sessionId) {
+	public PaymentExtensionResponse submitPaymentExtension(com.multibrand.vo.request.PaymentExtensionSubmitRequest payRequest, String sessionId) {
 		logger.info("Start - [ProfileBO - PaymentExtension]");
 		AllAccountDetailsRequest request = new AllAccountDetailsRequest();
 		PaymentExtensionResponse response = new PaymentExtensionResponse();
 		PaymentExtensionSubmitRequest paymentExtensionSubmitReq = new PaymentExtensionSubmitRequest();
 		request.setPaymentExtensionSubmitReq(paymentExtensionSubmitReq);
-		paymentExtensionSubmitReq.setBpNumber(bpNumber);
-		paymentExtensionSubmitReq.setContractAcctNum(accountNumber);
-		paymentExtensionSubmitReq.setPaymentExtDate(paymentExtDate);
+		paymentExtensionSubmitReq.setBpNumber(payRequest.getBusinessPartnerNumber());
+		paymentExtensionSubmitReq.setContractAcctNum(payRequest.getContractAccountNumber());
+		paymentExtensionSubmitReq.setPaymentExtDate(payRequest.getPaymentExtDate());
+		
 		
 		AllAccountDetailsResponse ccsAllAlertsResponse = null;
 		try {
@@ -2214,10 +2215,20 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 				response.setPaymentExtension(true);
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
+			} else if(StringUtils.equalsIgnoreCase("03", paymentExtensionSubmitResponse.getReturnCode())) {
+				response.setPaymentExtension(false);
+				response.setResultCode(RESULT_CODE_ACCOUNT_ALREADY);
+				response.setResultDescription("03 - May be already updated!!!, Please check error code");
+				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
+			} else if(StringUtils.equalsIgnoreCase("02", paymentExtensionSubmitResponse.getReturnCode())) {
+				response.setPaymentExtension(false);
+				response.setResultCode(CCS_ERETURN_CODE_UPDATE_ERROR);
+				response.setResultDescription(CCS_ERETURN_CODE_UPDATE_ERROR_RESULT_DESCRIPTION);
+				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
 			} else {
 				response.setPaymentExtension(false);
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
-				response.setResultDescription("Fail to update the Extension Date, Please check error code");
+				response.setResultDescription("Failed to Update the Extension Date or not available");
 				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
 			}
 		} else {
@@ -2231,14 +2242,15 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 	}
 	
 	
-	public PaymentExtensionCheckResponse getPaymentExtensionCheck(String accountNumber, String companyCode, String brandName, String sessionId) {
+	public PaymentExtensionCheckResponse getPaymentExtensionCheck(PaymentExtensionRequest payRequest, String sessionId) {
 		logger.info("Start - [ProfileBO - getPaymentExtensionCheck]");
 		PaymentExtensionCheckResponse response = new PaymentExtensionCheckResponse();
 		PayExtEligibleResponse payExtEligibleResponse = null;
 		PayExtEligibleRequest request = new PayExtEligibleRequest();
-		request.setBrandId(brandName);
-		request.setCompanyCode(companyCode);
-		request.setContAccount(accountNumber);
+		request.setBrandId(payRequest.getBrandName());
+		request.setCompanyCode(payRequest.getCompanyCode());
+		request.setContAccount(payRequest.getContractAccountNumber());
+		request.setPmtextBypassElg(this.appConstMessageSource.getMessage(Constants.PAYMENTEXTENSION_BYPASS_ELIGIBLE_FLAG, null, null));
 		
 		try {
 			payExtEligibleResponse = paymentService.getPayExtEligibleResponse(request, sessionId);
@@ -2255,7 +2267,8 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 			response.setPayExtnActive(payExtEligibleResponse.getPayExtnActive());
 			response.setPayExtPend(payExtEligibleResponse.getPayExtPend());
 			if (StringUtils.equalsIgnoreCase("00", payExtEligibleResponse.getPayExtCode())
-					&& StringUtils.equalsIgnoreCase(Constants.YES, payExtEligibleResponse.getPayExtnEligible())) {
+					&& StringUtils.equalsIgnoreCase(Constants.YES, payExtEligibleResponse.getPayExtnEligible())
+					&& StringUtils.equalsIgnoreCase("NO", payExtEligibleResponse.getPayExtnActive())) {
 				response.setPaymentExtension(true);
 				response.setPaymentExtensionDate(payExtEligibleResponse.getPayExtDiffDate());
 				response.setResultCode(RESULT_CODE_SUCCESS);

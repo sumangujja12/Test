@@ -1,6 +1,7 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 import com.multibrand.bo.ProfileBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.helper.ProfileHelper;
+import com.multibrand.vo.request.PaymentExtensionRequest;
+import com.multibrand.vo.request.PaymentExtensionSubmitRequest;
 import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.AcctValidationResponse;
 import com.multibrand.vo.response.ChangeUsernameResponse;
@@ -673,13 +676,10 @@ public class ProfileResource {
 	@Path("submitPaymentExtension")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response submitPaymentExtension(@FormParam("contractAccountNumber") String accountNumber,
-			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
-			@FormParam("bussinessPartnerNumber") String bpNumber, @FormParam("paymentExtDate") String paymentExtDate) {
+	public Response submitPaymentExtension(@Valid PaymentExtensionSubmitRequest request) {
 		Response response = null;
 		logger.info("Start-[ProfileResource-submitPaymentExtension]");
-		PaymentExtensionResponse paymentExtensionResponse = profileBO.submitPaymentExtension(accountNumber, companyCode,
-				brandName, bpNumber, paymentExtDate, httpRequest.getSession(true).getId());
+		PaymentExtensionResponse paymentExtensionResponse = profileBO.submitPaymentExtension(request, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(paymentExtensionResponse).build();
 		logger.info("End-[ProfileResource-submitPaymentExtension]");
 		return response;
@@ -689,12 +689,10 @@ public class ProfileResource {
 	@Path("payExtEligibilityCheck")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getPaymentExtensionCheck(@FormParam("contractAccountNumber") String accountNumber,
-			@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName) {
+	public Response getPaymentExtensionCheck(@Valid PaymentExtensionRequest request) {
 		Response response = null;
 		logger.info("Start-[ProfileResource-getPaymentExtensionCheck]");
-		PaymentExtensionCheckResponse paymentExtensionResponse = profileBO.getPaymentExtensionCheck(accountNumber,
-				companyCode, brandName, httpRequest.getSession(true).getId());
+		PaymentExtensionCheckResponse paymentExtensionResponse = profileBO.getPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(paymentExtensionResponse).build();
 		logger.info("End-[ProfileResource-getPaymentExtensionCheck]");
 		return response;
