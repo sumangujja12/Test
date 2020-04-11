@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1885,6 +1886,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		int retryCount=0;
 		String personId=null;
+		String errorCdArray[] = null; 
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -1898,9 +1900,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
 			    serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-			}
+        	}
 			}
 			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
 			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
@@ -1926,8 +1928,21 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 				// Populate all Pre-requisite input for enrollment
 				this.initPrerequisites(oeSignUpDTO);
-				// 1. Call online enrollment submission to CCS.
-				this.submitOnlineEnrollment(oeSignUpDTO);
+				
+				// do not submit enrollment to sap if BPSD/PBSD
+				if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
+					if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
+						oeSignUpDTO.setReqStatusCd(FLAG_N);
+						oeSignUpDTO.setErrorCode(BPSD);
+					} else {
+						// 1. Call online enrollment submission to CCS.
+						this.submitOnlineEnrollment(oeSignUpDTO, serviceLoationResponse);
+					}
+
+				} else {
+					// 1. Call online enrollment submission to CCS.
+					this.submitOnlineEnrollment(oeSignUpDTO, serviceLoationResponse);
+				}
 			
 
 				// TODO 2. Out of scope of Phase I. Leave as TBD in code
