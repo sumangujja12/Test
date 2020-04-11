@@ -20,6 +20,7 @@ import com.multibrand.domain.UpdateContactRequestAttNamValPairMapEntry;
 import com.multibrand.domain.UpdatePhoneDO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.response.EnrollmentResponse;
+import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.proxy.OEProxy;
@@ -275,7 +276,7 @@ public class OeBoHelper extends BaseBO {
 	 * @param oeSignUpDTO
 	 * @throws Exception
 	 */
-	protected void submitOnlineEnrollment(OESignupDTO oeSignUpDTO)
+	protected void submitOnlineEnrollment(OESignupDTO oeSignUpDTO, ServiceLocationResponse serviceLoationResponse)
 			throws Exception {
 
 		String errorCode = null;
@@ -296,7 +297,7 @@ public class OeBoHelper extends BaseBO {
 			oeSignUpDTO.setRecentCallMade(CALL_NAME_SUBMIT_ENROLLMENT);
 			
 			SubmitEnrollRequest submitEnrollRequest = oeRequestHandler
-					.createSubmitEnrollRequest(oeSignUpDTO);
+					.createSubmitEnrollRequest(oeSignUpDTO, serviceLoationResponse);
 
 			SubmitEnrollResponse submitEnrollResponse = oeProxy
 					.submitEnrollment(submitEnrollRequest);

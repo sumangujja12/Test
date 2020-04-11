@@ -266,7 +266,9 @@ public class OERequestHandler implements Constants {
 	 *            OESignupDTO
 	 * @return SubmitEnrollRequest
 	 */
-	public SubmitEnrollRequest createSubmitEnrollRequest(OESignupDTO oeSignUpDTO) {
+
+	public SubmitEnrollRequest createSubmitEnrollRequest(OESignupDTO oeSignUpDTO, ServiceLocationResponse serviceLoationResponse) {
+
 		if (logger.isDebugEnabled()) {
 			logger.debug(oeSignUpDTO.printOETrackingID()
 					+ "enrollmentService SubmitEnrollment creating request:: inside createSubmitEnrollRequest");
@@ -749,24 +751,32 @@ public class OERequestHandler implements Constants {
 				enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + SWITCHHOLD;
 		}
 
-		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
-			String[] errorCdArray = oeSignUpDTO.getErrorCdList().split("\\|");
-			for (String holdtype : errorCdArray) {
-				if (holdtype.equalsIgnoreCase(POSIDHOLD)) {
+
+		if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
+			String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split("\\|");
+			for (String holdType : errorCdArray) {
+				if (StringUtils.equalsIgnoreCase(holdType, POSIDHOLD)) {
 					if (EMPTY.equals(enrollmentHoldType))
 						enrollmentHoldType = POSID;
 					else
 						enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + POSID;
 				}
 
-				if (holdtype.equalsIgnoreCase(HOLD_DNP)) {
+				if (StringUtils.equalsIgnoreCase(holdType, HOLD_DNP)) {
 					if (EMPTY.equals(enrollmentHoldType))
 						enrollmentHoldType = HOLD_DNP;
+
 					else
+
 						enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + HOLD_DNP;
 				}
+
+				if (StringUtils.equalsIgnoreCase(holdType, NESID) || StringUtils.equalsIgnoreCase(holdType, MESID)) {
+					oeSignUpDTO.setReqStatusCd(FLAG_N);
+				}
+				
 			}
-		}
+    }
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(oeSignUpDTO.printOETrackingID()

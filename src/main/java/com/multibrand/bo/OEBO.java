@@ -27,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1901,8 +1902,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 				errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-                oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
-			}
+				}
 			}
 			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
 			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
@@ -1929,25 +1929,22 @@ public class OEBO extends OeBoHelper implements Constants{
 				// Populate all Pre-requisite input for enrollment
 				this.initPrerequisites(oeSignUpDTO);
 				
-				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-					for (String holdtype : errorCdArray) {
-						if (holdtype.equalsIgnoreCase(BPSD) || holdtype.equalsIgnoreCase(PBSD)) {
-							oeSignUpDTO.setReqStatusCd(FLAG_N);
-							oeSignUpDTO.setErrorCode(BPSD);
-					
-						}else if(holdtype.equalsIgnoreCase(POSIDHOLD) || holdtype.equalsIgnoreCase(SWHOLD) || holdtype.equalsIgnoreCase(HOLD_DNP) || holdtype.equalsIgnoreCase(PPYHOLD)){
-							// 1. Call online enrollment submission to CCS.
-							this.submitOnlineEnrollment(oeSignUpDTO);
-						}else if(holdtype.equalsIgnoreCase(NESID) || holdtype.equalsIgnoreCase(MESID)){
-							this.submitOnlineEnrollment(oeSignUpDTO);
-							oeSignUpDTO.setReqStatusCd(FLAG_N);
-						}
 
+				// do not submit enrollment to sap if BPSD/PBSD
+				if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
+					if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
+						oeSignUpDTO.setReqStatusCd(FLAG_N);
+						oeSignUpDTO.setErrorCode(BPSD);
+					} else {
+						// 1. Call online enrollment submission to CCS.
+						this.submitOnlineEnrollment(oeSignUpDTO, serviceLoationResponse);
 					}
-				}else{
-				// 1. Call online enrollment submission to CCS.
-				this.submitOnlineEnrollment(oeSignUpDTO);
+
+				} else {
+					// 1. Call online enrollment submission to CCS.
+					this.submitOnlineEnrollment(oeSignUpDTO, serviceLoationResponse);
 				}
+
 			
 
 				// TODO 2. Out of scope of Phase I. Leave as TBD in code
