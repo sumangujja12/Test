@@ -1885,6 +1885,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		int retryCount=0;
 		String personId=null;
+		String errorCdArray[] = null; 
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -1898,8 +1899,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
 			    serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+                oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
 			}
 			}
 			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
@@ -1926,8 +1928,26 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 				// Populate all Pre-requisite input for enrollment
 				this.initPrerequisites(oeSignUpDTO);
+				
+				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+					for (String holdtype : errorCdArray) {
+						if (holdtype.equalsIgnoreCase(BPSD) || holdtype.equalsIgnoreCase(PBSD)) {
+							oeSignUpDTO.setReqStatusCd(FLAG_N);
+							oeSignUpDTO.setErrorCode(BPSD);
+					
+						}else if(holdtype.equalsIgnoreCase(POSIDHOLD) || holdtype.equalsIgnoreCase(SWHOLD) || holdtype.equalsIgnoreCase(HOLD_DNP) || holdtype.equalsIgnoreCase(PPYHOLD)){
+							// 1. Call online enrollment submission to CCS.
+							this.submitOnlineEnrollment(oeSignUpDTO);
+						}else if(holdtype.equalsIgnoreCase(NESID) || holdtype.equalsIgnoreCase(MESID)){
+							this.submitOnlineEnrollment(oeSignUpDTO);
+							oeSignUpDTO.setReqStatusCd(FLAG_N);
+						}
+
+					}
+				}else{
 				// 1. Call online enrollment submission to CCS.
 				this.submitOnlineEnrollment(oeSignUpDTO);
+				}
 			
 
 				// TODO 2. Out of scope of Phase I. Leave as TBD in code

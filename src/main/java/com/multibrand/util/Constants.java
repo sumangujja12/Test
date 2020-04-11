@@ -1336,7 +1336,7 @@ public interface Constants {
     public static final String API_AVAILABLE_DATES= "available-dates";
     public static final String API_CHECK_CREDIT= "check-credit";
     public static final String API_CREDIT_DATA= "credit-data";
-    public static final String API_SUBMIT_ENROLLMENT= "enrollment";
+    public static final String API_SUBMIT_ENROLLMENT= "enroll";
     public static final String API_GET_KBA_QUESTIONS = "kba-questions";
     public static final String API_KBA_RESULT = "kba-result";
     public static final String API_TOKEN = "token";
@@ -1398,5 +1398,6 @@ public interface Constants {
 	public static final String PROSPECT_MISMATCH_TEXT = "msg_prospect_mismatch";
 	
 	public static final String TRANSACTIONTYPE_S = "S";
+	public static final String POSID  = "POSID";
 	
 }
