@@ -50,9 +50,9 @@ import com.multibrand.vo.response.billingResponse.AddressDO;
 
 @Component
 public class OERequestHandler implements Constants {
-	
+
 	LoggerUtil logger = LoggerUtil.getInstance("NRGREST_LOGGER");
-	
+
 	@Autowired
 	OEBO oeBo;
 
@@ -80,13 +80,12 @@ public class OERequestHandler implements Constants {
 
 		return request;
 	}
-	
 
 	/**
 	 * 
 	 * @Jenith
 	 * 
-	 * Creates update service location request.
+	 * 		Creates update service location request.
 	 * 
 	 * 
 	 * @return
@@ -100,34 +99,33 @@ public class OERequestHandler implements Constants {
 		request.setCompanyCode(oeSignupDTO.getCompanyCode());
 		request.setTrackingId(oeSignupDTO.getTrackingNumber());
 		request.setServiceRequestTypeCode(oeSignupDTO.getServiceReqTypeCd());
-		if (BPSD.equalsIgnoreCase(oeSignupDTO.getErrorCode())
-				|| NESID.equalsIgnoreCase(oeSignupDTO.getErrorCode())) {
+		if (BPSD.equalsIgnoreCase(oeSignupDTO.getErrorCode()) || NESID.equalsIgnoreCase(oeSignupDTO.getErrorCode())) {
 			request.setRequestStatusCode(FLAG_N);
 		} else {
 			request.setRequestStatusCode(oeSignupDTO.getReqStatusCd());
 		}
 		request.setErrorCode(oeSignupDTO.getErrorCode());
-		if(StringUtils.isNotEmpty(oeSignupDTO.getErrorCdList())){
+		if (StringUtils.isNotEmpty(oeSignupDTO.getErrorCdList())) {
 			request.setErrorCdList(oeSignupDTO.getErrorCdList());
 		}
 		request.setServiceZipOverrideFlag(oeSignupDTO.getServiceZipOverrideFlag());
 		request.setFrequentFlyerNumber(oeSignupDTO.getFrequentFlyerNumber());
-		
+
 		request.setPersonId(oeSignupDTO.getPerson().getPersonID());
-		
-		//set esid number in the service location table
-		if(oeSignupDTO.getEsid() != null) {
-			logger.info("Esid Number::: "+oeSignupDTO.getEsid().getEsidNumber());
+
+		// set esid number in the service location table
+		if (oeSignupDTO.getEsid() != null) {
+			logger.info("Esid Number::: " + oeSignupDTO.getEsid().getEsidNumber());
 			request.setEsid(oeSignupDTO.getEsid().getEsidNumber());
 		}
-		
+
 		request.setServStreetNum(oeSignupDTO.getServiceAddress().getStreetNum());
 		request.setServStreetName(oeSignupDTO.getServiceAddress().getStreetName());
 		request.setServStreetAptNum(oeSignupDTO.getServiceAddress().getUnitNum());
 		request.setServCity(oeSignupDTO.getServiceAddress().getCity());
 		request.setServState(oeSignupDTO.getServiceAddress().getState());
 		request.setServZipCode(oeSignupDTO.getServiceAddress().getZipcode());
-		
+
 		request.setBillStreetNum(oeSignupDTO.getBillingAddress().getStreetNum());
 		request.setBillStreetName(oeSignupDTO.getBillingAddress().getStreetName());
 		request.setBillStreetAptNum(oeSignupDTO.getBillingAddress().getUnitNum());
@@ -135,16 +133,16 @@ public class OERequestHandler implements Constants {
 		request.setBillState(oeSignupDTO.getBillingAddress().getState());
 		request.setBillZipCode(oeSignupDTO.getBillingAddress().getZipcode());
 		request.setBillPoBox(oeSignupDTO.getBillingAddress().getPoBox());
-		
+
 		request.setMailStreetNum(oeSignupDTO.getBillingAddress().getStreetNum());
 		request.setMailStreetName(oeSignupDTO.getBillingAddress().getStreetName());
 		request.setMailStreetAptNum(oeSignupDTO.getBillingAddress().getUnitNum());
 		request.setMailCity(oeSignupDTO.getBillingAddress().getCity());
 		request.setMailState(oeSignupDTO.getBillingAddress().getState());
 		request.setMailZipCode(oeSignupDTO.getBillingAddress().getZipcode());
-		
-		logger.info("Mailing Address Zip Code : "+oeSignupDTO.getBillingAddress().getZipcode());
-		
+
+		logger.info("Mailing Address Zip Code : " + oeSignupDTO.getBillingAddress().getZipcode());
+
 		request.setOfferCode(oeSignupDTO.getSelectedOffer().getOfferCode());
 		request.setOfferCodeTitle(oeSignupDTO.getSelectedOffer().getOfferCodeTitle());
 		request.setOfferCellTrackCodeSelected(oeSignupDTO.getSelectedOffer().getOfferCellTrackCodeSelected());
@@ -152,25 +150,24 @@ public class OERequestHandler implements Constants {
 		request.setPlanName(oeSignupDTO.getSelectedOffer().getPlanName());
 
 		request.setRecentCallMade(oeSignupDTO.getRecentCallMade());
-		
+
 		// Setting fields to fix Defect #56:
 		request.setContractAccountNum(oeSignupDTO.getContractAccountNum());
 		request.setServiceStartDate(oeSignupDTO.getServiceStartDate());
 		request.setCaCheckDigit(oeSignupDTO.getCheckDigit());
 		// Setting fields to fix Defect #57:
-		request.setPromoCodeEntered(oeSignupDTO.getSelectedOffer()
-				.getOfferCellTrackCodeSelected());
-		
+		request.setPromoCodeEntered(oeSignupDTO.getSelectedOffer().getOfferCellTrackCodeSelected());
+
 		// Fixed for Defect #67
 		request.setReferralId(oeSignupDTO.getReferralID());
-		
+
 		// Fixed for Defect #61
-		if(!StringUtils.equals(ZERO, oeSignupDTO.getCreditCheck().getDepositAmount())) {
-			request.setPayCode(YES);	
+		if (!StringUtils.equals(ZERO, oeSignupDTO.getCreditCheck().getDepositAmount())) {
+			request.setPayCode(YES);
 			request.setDepositCode(DEPOSIT_OWED);
 			request.setDepositAmount(oeSignupDTO.getCreditCheck().getDepositAmount());
-			
-		} else {					
+
+		} else {
 			request.setPayCode(FLAG_NO);
 			request.setDepositCode(DEPOSIT_NONE);
 			request.setDepositAmount(ZERO);
@@ -182,12 +179,12 @@ public class OERequestHandler implements Constants {
 		request.setCampaignCd(oeSignupDTO.getCampaignCd());
 		return request;
 	}
-	
+
 	/**
 	 * 
 	 * @Jenith
 	 * 
-	 * Creates update person request.
+	 * 		Creates update person request.
 	 * 
 	 * 
 	 * @return
@@ -202,14 +199,14 @@ public class OERequestHandler implements Constants {
 		request.setEmail(oeSignupDTO.getPerson().getEmailAddress());
 		request.setLanguageCode(oeSignupDTO.getPerson().getLanguagePref());
 		request.setPhoneNum(oeSignupDTO.getPerson().getPhoneNumber());
-		
+
 		// Setting fields to fix Defect #57:
 		request.setIdocNumber(oeSignupDTO.getIdocNumber());
 		request.setBusinessPartnerId(oeSignupDTO.getBusinessPartnerID());
 
 		return request;
 	}
-	
+
 	/**
 	 * 
 	 * 
@@ -224,9 +221,8 @@ public class OERequestHandler implements Constants {
 	 * @return
 	 */
 	@Deprecated
-	private OESignupVO createOeSignupVo(String locale, String servStreetNum,
-			String servStreetName, String servStreetAptNum, String servCity,
-			String servZipCode, Integer esidCount, String esid) {
+	private OESignupVO createOeSignupVo(String locale, String servStreetNum, String servStreetName,
+			String servStreetAptNum, String servCity, String servZipCode, Integer esidCount, String esid) {
 
 		OESignupVO oeSignupVO = new OESignupVO();
 
@@ -253,27 +249,31 @@ public class OERequestHandler implements Constants {
 		return oeSignupVO;
 	}
 
-	public TokenRequestVO createTokenRequest(
-			String actionCode, String numToBeTokenized) {
+	public TokenRequestVO createTokenRequest(String actionCode, String numToBeTokenized) {
 
 		TokenRequestVO request = new TokenRequestVO();
 
 		request.setActionCode(actionCode);
 		request.setNumToBeTokenized(numToBeTokenized);
-		
+
 		return request;
-	}   
+	}
 
 	/**
 	 * Method createSubmitEnrollRequest.
-	 * @param oeSignUpDTO OESignupDTO
+	 * 
+	 * @param oeSignUpDTO
+	 *            OESignupDTO
 	 * @return SubmitEnrollRequest
 	 */
-	public SubmitEnrollRequest createSubmitEnrollRequest(
-			 OESignupDTO oeSignUpDTO) {
+
+	public SubmitEnrollRequest createSubmitEnrollRequest(OESignupDTO oeSignUpDTO, ServiceLocationResponse serviceLoationResponse) {
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"enrollmentService SubmitEnrollment creating request:: inside createSubmitEnrollRequest");}
-		
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "enrollmentService SubmitEnrollment creating request:: inside createSubmitEnrollRequest");
+		}
+
 		String bpFullName = EMPTY;
 		String enrollmentType = EMPTY;
 		String contactText = EMPTY;
@@ -287,9 +287,9 @@ public class OERequestHandler implements Constants {
 		String depositCode = EMPTY;
 		String agreementNumber = EMPTY;
 		String enrollmentHoldType = EMPTY;
-		
-		
-		//oeSignUpDTO = prepareAdditionalEnrollmentRequestInfo(request, oeSignUpDTO); //VSOOD: COMMENTED FOR CLEANUP
+
+		// oeSignUpDTO = prepareAdditionalEnrollmentRequestInfo(request,
+		// oeSignUpDTO); //VSOOD: COMMENTED FOR CLEANUP
 		SubmitEnrollRequest submitEnrollRequest = new SubmitEnrollRequest();
 		submitEnrollRequest.setStrBPType(BPTYPE);
 		submitEnrollRequest.setStrBPGroup(BPGROUP);
@@ -297,52 +297,49 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest.setStrBPMiddleInitial(oeSignUpDTO.getPerson().getMiddleName());
 		submitEnrollRequest.setStrBPMaidenName(oeSignUpDTO.getPerson().getMaidenName());
 		submitEnrollRequest.setStrBPLastName(oeSignUpDTO.getPerson().getLastName());
-		
+
 		String personDobFormatted = CommonUtil.formatDateForNrgws(oeSignUpDTO.getPerson().getDateOfBirth());
 		submitEnrollRequest.setStrBPDOB(personDobFormatted);
 
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"enrollmentService SubmitEnrollment creating request:: checking for FullName");}
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "enrollmentService SubmitEnrollment creating request:: checking for FullName");
+		}
 
 		if ((oeSignUpDTO.getPerson().getMiddleName() != null)) {
-			bpFullName = oeSignUpDTO.getPerson().getFirstName() + " "
-					+ oeSignUpDTO.getPerson().getMiddleName() + " "
+			bpFullName = oeSignUpDTO.getPerson().getFirstName() + " " + oeSignUpDTO.getPerson().getMiddleName() + " "
 					+ oeSignUpDTO.getPerson().getLastName();
 
 		} else {
-			bpFullName = oeSignUpDTO.getPerson().getFirstName() + " "
-					+ oeSignUpDTO.getPerson().getLastName();
+			bpFullName = oeSignUpDTO.getPerson().getFirstName() + " " + oeSignUpDTO.getPerson().getLastName();
 		}
-		
-		logger.debug(oeSignUpDTO.printOETrackingID()+"enrollmentService:createSubmitEnrollment::passed PersonDTO");
-		
+
+		logger.debug(oeSignUpDTO.printOETrackingID() + "enrollmentService:createSubmitEnrollment::passed PersonDTO");
+
 		/**
-		 * Setting Account name for Recurring Request Procedure
-		 * should be necessarily no more than 34 in Length 
+		 * Setting Account name for Recurring Request Procedure should be
+		 * necessarily no more than 34 in Length
+		 * 
 		 * @Jsingh1
 		 */
-		oeSignUpDTO.setAccountName(bpFullName.length() > 34 ? bpFullName
-				.substring(0, 34).toUpperCase() : bpFullName
-				.toUpperCase());
-		
+		oeSignUpDTO.setAccountName(
+				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
 
 		submitEnrollRequest.setStrBPFullName(bpFullName);
-		submitEnrollRequest
-				.setStrNotifyName(bpFullName.length() > 34 ? bpFullName
-						.substring(0, 34).toUpperCase() : bpFullName
-						.toUpperCase());
-		submitEnrollRequest.setStrCAName(bpFullName.length() > 34 ? bpFullName
-				.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
+		submitEnrollRequest.setStrNotifyName(
+				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
+		submitEnrollRequest.setStrCAName(
+				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"submitEnrollment request :: Name is " + bpFullName);}
+			logger.debug(oeSignUpDTO.printOETrackingID() + "submitEnrollment request :: Name is " + bpFullName);
+		}
 
-		submitEnrollRequest.setStrCampaignCode(oeSignUpDTO
-				.getSelectedOffer().getCampaignCode());
+		submitEnrollRequest.setStrCampaignCode(oeSignUpDTO.getSelectedOffer().getCampaignCode());
 		// START test logs
 		if (oeSignUpDTO.getBillingAddress() != null) {
-			logger.info(oeSignUpDTO.printOETrackingID()+"billingAddressDTO is not null");
+			logger.info(oeSignUpDTO.printOETrackingID() + "billingAddressDTO is not null");
 			if ((oeSignUpDTO.getBillingAddress().getStreetAddress()) == null) {
-				logger.info(oeSignUpDTO.printOETrackingID()+"StreetAddress is null");
+				logger.info(oeSignUpDTO.printOETrackingID() + "StreetAddress is null");
 			}
 		}
 		// END test logs
@@ -350,43 +347,34 @@ public class OERequestHandler implements Constants {
 		if ((oeSignUpDTO.getBillingAddress().getStreetAddress()) != null)
 
 		{
-			submitEnrollRequest.setStrBPStreet(oeSignUpDTO
-					.getBillingAddress().getStreetName());
-			submitEnrollRequest.setStrBPHouseNum(oeSignUpDTO
-					.getBillingAddress().getStreetNum());
+			submitEnrollRequest.setStrBPStreet(oeSignUpDTO.getBillingAddress().getStreetName());
+			submitEnrollRequest.setStrBPHouseNum(oeSignUpDTO.getBillingAddress().getStreetNum());
 
 		} else {
 			submitEnrollRequest.setStrBPPOBoxCountry(COUNTRY_US);
-			submitEnrollRequest.setStrBPPOBoxRegion(oeSignUpDTO
-					.getBillingAddress().getState());
-			if(StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getZipcodeComplete()))
+			submitEnrollRequest.setStrBPPOBoxRegion(oeSignUpDTO.getBillingAddress().getState());
+			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getZipcodeComplete()))
 				submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddress().getZipcodeComplete());
 			else
 				submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddress().getZipcode());
-			submitEnrollRequest.setStrBPPOBox(oeSignUpDTO
-					.getBillingAddress().getPoBox());
+			submitEnrollRequest.setStrBPPOBox(oeSignUpDTO.getBillingAddress().getPoBox());
 		}
 
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"creating SubmitEnrollmentRequest in enrollmentService:: passed the null check for Billing Address");}
-		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress()
-				.getStreetAddress())) {
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "creating SubmitEnrollmentRequest in enrollmentService:: passed the null check for Billing Address");
+		}
+		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getStreetAddress())) {
 
-			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress()
-					.getUnitNum())) {
-				notifyAddress = oeSignUpDTO.getBillingAddress()
-						.getStreetAddress()
-						+ ", APT "
+			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getUnitNum())) {
+				notifyAddress = oeSignUpDTO.getBillingAddress().getStreetAddress() + ", APT "
 						+ oeSignUpDTO.getBillingAddress().getUnitNum();
 			} else {
-				notifyAddress = oeSignUpDTO.getBillingAddress()
-						.getStreetAddress();
+				notifyAddress = oeSignUpDTO.getBillingAddress().getStreetAddress();
 			}
-		} else if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress()
-				.getPoBox())) {
+		} else if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getPoBox())) {
 
-			notifyAddress = "P.O.Box "
-					+ oeSignUpDTO.getBillingAddress().getPoBox();
+			notifyAddress = "P.O.Box " + oeSignUpDTO.getBillingAddress().getPoBox();
 
 		} else {
 			notifyAddress = "";
@@ -394,18 +382,18 @@ public class OERequestHandler implements Constants {
 
 		submitEnrollRequest.setStrNotifyAddress(notifyAddress);
 
-		submitEnrollRequest.setStrNotifyCity(oeSignUpDTO.getBillingAddress()
-				.getCity());
-		submitEnrollRequest.setStrNotifyState(oeSignUpDTO
-				.getBillingAddress().getState());
-		if(StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getZipcodeComplete()))
+		submitEnrollRequest.setStrNotifyCity(oeSignUpDTO.getBillingAddress().getCity());
+		submitEnrollRequest.setStrNotifyState(oeSignUpDTO.getBillingAddress().getState());
+		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getZipcodeComplete()))
 			submitEnrollRequest.setStrNotifyZip(oeSignUpDTO.getBillingAddress().getZipcodeComplete());
 		else
 			submitEnrollRequest.setStrNotifyZip(oeSignUpDTO.getBillingAddress().getZipcode());
 		startSvrcDate = CommonUtil.formatDateForNrgws(oeSignUpDTO.getServiceStartDate());
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"enrollmentService: createSubmitEnrollmentRequest :: billing address zipcode is:"
-				+ oeSignUpDTO.getBillingAddress().getZipcodeComplete());}
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "enrollmentService: createSubmitEnrollmentRequest :: billing address zipcode is:"
+					+ oeSignUpDTO.getBillingAddress().getZipcodeComplete());
+		}
 
 		if ("".equals(startSvrcDate)) {
 			specialReadDate = "";
@@ -418,42 +406,45 @@ public class OERequestHandler implements Constants {
 		}
 
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,specialReadDate is ::"
-				+ specialReadDate);
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,moveInDate is ::"
-				+ moveInDate);}
-		//Start: Selected Date Switch Contact Log update for OE - Dipika Pethaperumal
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,specialReadDate is ::" + specialReadDate);
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,moveInDate is ::" + moveInDate);
+		}
+		// Start: Selected Date Switch Contact Log update for OE - Dipika
+		// Pethaperumal
 		if (StringUtils.isNotBlank(oeSignUpDTO.getServiceReqTypeCd())
 				&& SWI.equalsIgnoreCase(oeSignUpDTO.getServiceReqTypeCd())) {
-					
+
 			enrollmentType = SWITCH;
-					
-			if(StringUtils.isNotBlank(startSvrcDate)){
+
+			if (StringUtils.isNotBlank(startSvrcDate)) {
 				contactText = "Selected Date Switch." + startSvrcDate + ".Web.";
+			} else {
+				contactText = "Standard Switch. Web.";
 			}
-			else{
-		        contactText = "Standard Switch. Web.";
-			}
-		//End: Selected Date Switch Contact Log update for OE - Dipika Pethaperumal
-		} else if(StringUtils.isNotBlank(oeSignUpDTO.getServiceReqTypeCd())
+			// End: Selected Date Switch Contact Log update for OE - Dipika
+			// Pethaperumal
+		} else if (StringUtils.isNotBlank(oeSignUpDTO.getServiceReqTypeCd())
 				&& MVI.equalsIgnoreCase(oeSignUpDTO.getServiceReqTypeCd())) {
 			enrollmentType = MOVEIN;
 			contactText = "Move in " + startSvrcDate + ".Web.";
 		}
-		
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,contactText is ::"
-				+ contactText);}
-		
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,contactText is ::" + contactText);
+		}
+
 		submitEnrollRequest.setStrEnrollmentType(enrollmentType);
-		
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::"
-				+ enrollmentType);}
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::" + enrollmentType);
+		}
 
 		if (oeSignUpDTO.getPerson().getLanguagePref() != null) {
-			if ((oeSignUpDTO.getPerson().getLanguagePref())
-					.equalsIgnoreCase(ES)) {
+			if ((oeSignUpDTO.getPerson().getLanguagePref()).equalsIgnoreCase(ES)) {
 				submitEnrollRequest.setStrlanguagePref(S);
 			}
 
@@ -468,27 +459,26 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest.setStrBPEmail(oeSignUpDTO.getPerson().getEmailAddress());
 		// Fixed for Defect #91
 		submitEnrollRequest.setStrBPHomeTelNum(oeSignUpDTO.getPerson().getPhoneNumber());
-		submitEnrollRequest.setStrSSN(oeSignUpDTO.getPerson()
-				.getTokenizedSSN());
-		
+		submitEnrollRequest.setStrSSN(oeSignUpDTO.getPerson().getTokenizedSSN());
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,CreditCheckDTO is ::"
-				+ oeSignUpDTO.getCreditCheck());}
-		
-		submitEnrollRequest.setStrCreditBucket(oeSignUpDTO.getCreditCheck()
-				.getCreditBucket());
-		submitEnrollRequest.setStrCreditBureauSource(oeSignUpDTO
-				.getCreditCheck().getCreditScoreNum());
-		submitEnrollRequest.setStrDLNum(oeSignUpDTO.getPerson()
-				.getTokenizedDL());
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,CreditCheckDTO is ::"
+					+ oeSignUpDTO.getCreditCheck());
+		}
+
+		submitEnrollRequest.setStrCreditBucket(oeSignUpDTO.getCreditCheck().getCreditBucket());
+		submitEnrollRequest.setStrCreditBureauSource(oeSignUpDTO.getCreditCheck().getCreditScoreNum());
+		submitEnrollRequest.setStrDLNum(oeSignUpDTO.getPerson().getTokenizedDL());
 		//
-		//Fix for INC0078321: Web enrollments are tying themselves to 1 installation when NO ESID IS FOUND
-		//if (StringUtils.isNotBlank(oeSignUpDTO.getEsidNumber())) {
+		// Fix for INC0078321: Web enrollments are tying themselves to 1
+		// installation when NO ESID IS FOUND
+		// if (StringUtils.isNotBlank(oeSignUpDTO.getEsidNumber())) {
 		//
-		// Fixes for QC Project Online Affiliates: Defect ID 22: ESID not being submitted on submit enrollment call
-		if (null != oeSignUpDTO.getEsid()
-				&& StringUtils.isNotBlank(oeSignUpDTO.getEsid().getEsidNumber())) {
-			
+		// Fixes for QC Project Online Affiliates: Defect ID 22: ESID not being
+		// submitted on submit enrollment call
+		if (null != oeSignUpDTO.getEsid() && StringUtils.isNotBlank(oeSignUpDTO.getEsid().getEsidNumber())) {
+
 			pointOfDeliveryId = oeSignUpDTO.getEsid().getEsidNumber();
 		} else {
 			pointOfDeliveryId = ESIDNOTFOUND;
@@ -498,97 +488,98 @@ public class OERequestHandler implements Constants {
 		 * 
 		 * @JSINGH1@lntinfotech
 		 */
-		
-		// START Default to system date and time if Offer Date/Offer Time are blank. Added by Jenith on 04/16/2015
+
+		// START Default to system date and time if Offer Date/Offer Time are
+		// blank. Added by Jenith on 04/16/2015
 		String offerDateFormatted = null;
-		String offerTimeFormatted  = null;
-		
+		String offerTimeFormatted = null;
+
 		if (StringUtils.isBlank(oeSignUpDTO.getOfferDate())) {
 			offerDateFormatted = DateUtil.getCurrentDateFormatted(MM_dd_yyyy);
 		} else {
-			offerDateFormatted = CommonUtil.formatDateForNrgws(oeSignUpDTO
-					.getOfferDate());
+			offerDateFormatted = CommonUtil.formatDateForNrgws(oeSignUpDTO.getOfferDate());
 		}
-		
+
 		if (StringUtils.isBlank(oeSignUpDTO.getOfferTime())) {
-			offerTimeFormatted  = DateUtil.getCurrentDateFormatted(TIME_FORMAT);
+			offerTimeFormatted = DateUtil.getCurrentDateFormatted(TIME_FORMAT);
 		} else {
-			offerTimeFormatted  = oeSignUpDTO.getOfferTime();
+			offerTimeFormatted = oeSignUpDTO.getOfferTime();
 		}
-		
-		// END Default to system date and time if Offer Date/Offer Time are blank. Added by Jenith on 04/16/2015
-		
+
+		// END Default to system date and time if Offer Date/Offer Time are
+		// blank. Added by Jenith on 04/16/2015
+
 		submitEnrollRequest.setStrPointOfDeliveryID(pointOfDeliveryId);
 		submitEnrollRequest.setStrEnrollmentDate(offerDateFormatted);
-		submitEnrollRequest.setStrEnrollmentTime(offerTimeFormatted );
+		submitEnrollRequest.setStrEnrollmentTime(offerTimeFormatted);
 		submitEnrollRequest.setStrCACreadtionDate(offerDateFormatted);
 		submitEnrollRequest.setStrOrgCreditRatingDate(offerDateFormatted);
-		submitEnrollRequest.setStrCCSOrgCreditAgency(oeSignUpDTO
-				.getCreditCheck().getCreditSourceNum());
-		submitEnrollRequest.setStrBPOrgCreditScore(oeSignUpDTO
-				.getCreditCheck().getCreditScoreNum());
-		
-		/*if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getBillingAddOverrideFlag() is ::"
-				+ oeSignUpDTO.getBillingAddOverrideFlag());}
-		
-		if (null!=oeSignUpDTO.getBillingAddOverrideFlag() && oeSignUpDTO.getBillingAddOverrideFlag().equalsIgnoreCase(N_VALUE)) {
-			submitEnrollRequest.setStrBPFileTestStatus(D_VALUE);
-		} else {
-			submitEnrollRequest.setStrBPFileTestStatus(FLAG_C);
-		}*/
-		
+		submitEnrollRequest.setStrCCSOrgCreditAgency(oeSignUpDTO.getCreditCheck().getCreditSourceNum());
+		submitEnrollRequest.setStrBPOrgCreditScore(oeSignUpDTO.getCreditCheck().getCreditScoreNum());
+
+		/*
+		 * if (logger.isDebugEnabled()) {
+		 * logger.debug(oeSignUpDTO.printOETrackingID()
+		 * +"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getBillingAddOverrideFlag() is ::"
+		 * + oeSignUpDTO.getBillingAddOverrideFlag());}
+		 * 
+		 * if (null!=oeSignUpDTO.getBillingAddOverrideFlag() &&
+		 * oeSignUpDTO.getBillingAddOverrideFlag().equalsIgnoreCase(N_VALUE)) {
+		 * submitEnrollRequest.setStrBPFileTestStatus(D_VALUE); } else {
+		 * submitEnrollRequest.setStrBPFileTestStatus(FLAG_C); }
+		 */
+
 		// Hardcoded as per Vishal Email dated on 04/09/2015
 		submitEnrollRequest.setStrBPFileTestStatus(FLAG_C);
-		
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getBillingAddress() is ::"
-				+ oeSignUpDTO.getBillingAddress());}
-		submitEnrollRequest.setStrBPRegion(oeSignUpDTO.getBillingAddress()
-				.getState());
-		submitEnrollRequest.setStrBPAptNum(oeSignUpDTO.getBillingAddress()
-				.getUnitNum());
-		if(StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getZipcodeComplete()))
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getBillingAddress() is ::"
+					+ oeSignUpDTO.getBillingAddress());
+		}
+		submitEnrollRequest.setStrBPRegion(oeSignUpDTO.getBillingAddress().getState());
+		submitEnrollRequest.setStrBPAptNum(oeSignUpDTO.getBillingAddress().getUnitNum());
+		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddress().getZipcodeComplete()))
 			submitEnrollRequest.setStrBPCityPostalCode(oeSignUpDTO.getBillingAddress().getZipcodeComplete());
 		else
 			submitEnrollRequest.setStrBPCityPostalCode(oeSignUpDTO.getBillingAddress().getZipcode());
-		submitEnrollRequest.setStrBPCity(oeSignUpDTO.getBillingAddress()
-				.getCity());
+		submitEnrollRequest.setStrBPCity(oeSignUpDTO.getBillingAddress().getCity());
 
-		submitEnrollRequest.setStrPromotionCode(oeSignUpDTO
-				.getSelectedOffer().getOfferCellTrackCodeSelected());
+		submitEnrollRequest.setStrPromotionCode(oeSignUpDTO.getSelectedOffer().getOfferCellTrackCodeSelected());
 
-		agreementNumber= oeSignUpDTO.getAgreementNumber();
+		agreementNumber = oeSignUpDTO.getAgreementNumber();
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,agreementNumber() is ::"
-				+ agreementNumber);}
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,agreementNumber() is ::" + agreementNumber);
+		}
 		submitEnrollRequest.setStrAgreementNumber(agreementNumber);
-		
-		/*if (null!=oeSignUpDTO.getServiceAddressOverrideFlag() && oeSignUpDTO.getServiceAddressOverrideFlag().equalsIgnoreCase(FLAG_NO)) {
-			submitEnrollRequest.setStrSvrcFileTestStatus(D_VALUE);
-		} else {
-			submitEnrollRequest.setStrSvrcFileTestStatus(FLAG_C);
-		}*/
-		
+
+		/*
+		 * if (null!=oeSignUpDTO.getServiceAddressOverrideFlag() &&
+		 * oeSignUpDTO.getServiceAddressOverrideFlag().equalsIgnoreCase(FLAG_NO)
+		 * ) { submitEnrollRequest.setStrSvrcFileTestStatus(D_VALUE); } else {
+		 * submitEnrollRequest.setStrSvrcFileTestStatus(FLAG_C); }
+		 */
+
 		submitEnrollRequest.setStrSvrcFileTestStatus(FLAG_C);
-		
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getPerson()() is ::"
-				+ oeSignUpDTO.getPerson());}
-		
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getPerson()() is ::"
+					+ oeSignUpDTO.getPerson());
+		}
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getServiceAddress()() is ::"
-				+ oeSignUpDTO.getServiceAddress());}
-		
-		submitEnrollRequest.setStrSvrcStreet(oeSignUpDTO.getServiceAddress()
-				.getStreetName());
-		submitEnrollRequest.setStrSvrcAptNum(oeSignUpDTO.getServiceAddress()
-				.getUnitNum());
-		submitEnrollRequest.setStrSvrcHouseNum(oeSignUpDTO
-				.getServiceAddress().getStreetNum());
-		submitEnrollRequest.setStrSvrcCity(oeSignUpDTO.getServiceAddress()
-				.getCity());
-		if(StringUtils.isNotBlank(oeSignUpDTO.getServiceAddress().getZipcodeComplete()))
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getServiceAddress()() is ::"
+					+ oeSignUpDTO.getServiceAddress());
+		}
+
+		submitEnrollRequest.setStrSvrcStreet(oeSignUpDTO.getServiceAddress().getStreetName());
+		submitEnrollRequest.setStrSvrcAptNum(oeSignUpDTO.getServiceAddress().getUnitNum());
+		submitEnrollRequest.setStrSvrcHouseNum(oeSignUpDTO.getServiceAddress().getStreetNum());
+		submitEnrollRequest.setStrSvrcCity(oeSignUpDTO.getServiceAddress().getCity());
+		if (StringUtils.isNotBlank(oeSignUpDTO.getServiceAddress().getZipcodeComplete()))
 			submitEnrollRequest.setStrSvrcZip(oeSignUpDTO.getServiceAddress().getZipcodeComplete());
 		else
 			submitEnrollRequest.setStrSvrcZip(oeSignUpDTO.getServiceAddress().getZipcode());
@@ -598,54 +589,63 @@ public class OERequestHandler implements Constants {
 		} else {
 			submitEnrollRequest.setStrBPPOSidDLDate(EMPTY);
 		}
-		logger.info("PosidDLDate:"+oeSignUpDTO.getPerson().getPosidDLDate());
+		logger.info("PosidDLDate:" + oeSignUpDTO.getPerson().getPosidDLDate());
 		if (oeSignUpDTO.getPerson().getPosidSSNDate() != null) {
 			String posidSSNDateFormatted = CommonUtil.formatDateForNrgws(oeSignUpDTO.getPerson().getPosidSSNDate());
 			submitEnrollRequest.setStrBPPosPOSidSSNDate(posidSSNDateFormatted);
 		} else {
 			submitEnrollRequest.setStrBPPosPOSidSSNDate(EMPTY);
 		}
-		logger.info("PosidSSNDate:"+oeSignUpDTO.getPerson().getPosidSSNDate());
+		logger.info("PosidSSNDate:" + oeSignUpDTO.getPerson().getPosidSSNDate());
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrOfferCode() is ::"
-				+ oeSignUpDTO.getSelectedOffer().getOfferCode());
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrProductPriceCode() is ::"
-				+ oeSignUpDTO.getSelectedOffer().getProductPriceCode()+". However passing as blank");
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrIncentiveCode() is ::"
-				+ oeSignUpDTO.getSelectedOffer().getIncentiveCode());
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrMarketSegment() is ::"
-				+ oeSignUpDTO.getSelectedOffer().getMarketSegment());}
-		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad(
-				(oeSignUpDTO.getSelectedOffer().getOfferCode()), 8, "0"));
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrOfferCode() is ::"
+					+ oeSignUpDTO.getSelectedOffer().getOfferCode());
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrProductPriceCode() is ::"
+					+ oeSignUpDTO.getSelectedOffer().getProductPriceCode() + ". However passing as blank");
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrIncentiveCode() is ::"
+					+ oeSignUpDTO.getSelectedOffer().getIncentiveCode());
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrMarketSegment() is ::"
+					+ oeSignUpDTO.getSelectedOffer().getMarketSegment());
+		}
+		submitEnrollRequest.setStrOfferSequenceNumber(
+				StringUtils.leftPad((oeSignUpDTO.getSelectedOffer().getOfferCode()), 8, "0"));
 
 		if (oeSignUpDTO.getSelectedOffer() != null) {
-			//Passing blank value for StrProductPriceCode since the one returned from CCS was more than 7 characters long 
+			// Passing blank value for StrProductPriceCode since the one
+			// returned from CCS was more than 7 characters long
 			// and field restriction in CCS is 7 characters.
-			//submitEnrollRequest.setStrProductPriceCode(oeSignUpDTO.getSelectedOffer().getStrProductPriceCode());
+			// submitEnrollRequest.setStrProductPriceCode(oeSignUpDTO.getSelectedOffer().getStrProductPriceCode());
 			submitEnrollRequest.setStrProductPriceCode(EMPTY);
-			submitEnrollRequest.setStrIncentiveCode(oeSignUpDTO
-					.getSelectedOffer().getIncentiveCode());
-			submitEnrollRequest.setStrmarketSegment(oeSignUpDTO
-					.getSelectedOffer().getMarketSegment());
+			submitEnrollRequest.setStrIncentiveCode(oeSignUpDTO.getSelectedOffer().getIncentiveCode());
+			submitEnrollRequest.setStrmarketSegment(oeSignUpDTO.getSelectedOffer().getMarketSegment());
 		} else {
-			logger.debug(oeSignUpDTO.printOETrackingID()+"inside EnrollmentService ::createSubmitEnrollmentrequest ::seleceted OfferDTO is null");
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "inside EnrollmentService ::createSubmitEnrollmentrequest ::seleceted OfferDTO is null");
 		}
-		
+
 		String DepositAmt = oeSignUpDTO.getCreditCheck().getDepositAmount();
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,DepositAmt is ::"+ DepositAmt);}
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,DepositAmt is ::" + DepositAmt);
+		}
 		// txtPayAmt replaced with DepositAmt
-		if((null==oeSignUpDTO.getSelectedOffer().getOfferCategory() 
+		if ((null == oeSignUpDTO.getSelectedOffer().getOfferCategory()
 				|| !OFFER_CATEGORY_PREPAY.equals(oeSignUpDTO.getSelectedOffer().getOfferCategory()))
 				&& StringUtils.isNotBlank(DepositAmt)) {
 
 			requestedAmount = DepositAmt;
-			contactText += "$" + DepositAmt + " Deposit." + "Agr#"
-					+ agreementNumber;
-			
+			contactText += "$" + DepositAmt + " Deposit." + "Agr#" + agreementNumber;
+
 			if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,getDepositHold is ::"+ oeSignUpDTO.getCreditCheck().getDepositHold());}
-			
+				logger.debug(oeSignUpDTO.printOETrackingID()
+						+ "EnrollmentService creating submitEnrollmentRequest,getDepositHold is ::"
+						+ oeSignUpDTO.getCreditCheck().getDepositHold());
+			}
+
 			if (StringUtils.equals(DepositAmt, "0")) {
 				depositCode = FLAG_B;
 			} else {
@@ -658,13 +658,14 @@ public class OERequestHandler implements Constants {
 			contactText += "No Deposit." + "Agr#" + agreementNumber;
 
 		}
-		
+
 		contactText = contactText + CommonUtil.printAffiliateId(oeSignUpDTO);
-		
+
 		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,contactText is ::"+ contactText);
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,contactText is ::" + contactText);
 		}
-		
+
 		submitEnrollRequest.setStrContactText(contactText);
 
 		/*
@@ -690,9 +691,15 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest.setStrSvrcTimeZone(TIMEZONE);
 		submitEnrollRequest.setStrSvrcAddressType(ADDRESS_TYPE);
 		submitEnrollRequest.setStrBPInfoRelease(EMPTY);
-		
-		submitEnrollRequest.setStrCompanyCode(oeSignUpDTO.getCompanyCode()); //Fixed prod issue of hardcoded company code
-		
+
+		submitEnrollRequest.setStrCompanyCode(oeSignUpDTO.getCompanyCode()); // Fixed
+																				// prod
+																				// issue
+																				// of
+																				// hardcoded
+																				// company
+																				// code
+
 		submitEnrollRequest.setStrPaymentTerms(EMPTY);
 		submitEnrollRequest.setStrValidToDate(EMPTY);
 		submitEnrollRequest.setStrValidFromDate(EMPTY);
@@ -700,52 +707,82 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest.setStrDLCountry(COUNTRY_US);
 		submitEnrollRequest.setStrSvrcRegion(TX);
 		submitEnrollRequest.setStrCACreationUser(CHANNEL);
-		submitEnrollRequest.setStrPaperlessFlag(FLAG_N); //For Reliant we never set to paperless
+		submitEnrollRequest.setStrPaperlessFlag(FLAG_N); // For Reliant we never
+															// set to paperless
 
-		if(null!=oeSignUpDTO.getSelectedOffer().getOfferCategory() && OFFER_CATEGORY_PREPAY.equals(oeSignUpDTO.getSelectedOffer().getOfferCategory())) {
-			if(EMPTY.equals(enrollmentHoldType))
-				enrollmentHoldType=PPYHOLD;
+		if (null != oeSignUpDTO.getSelectedOffer().getOfferCategory()
+				&& OFFER_CATEGORY_PREPAY.equals(oeSignUpDTO.getSelectedOffer().getOfferCategory())) {
+			if (EMPTY.equals(enrollmentHoldType))
+				enrollmentHoldType = PPYHOLD;
 			else
-				enrollmentHoldType=enrollmentHoldType+SYMBOL_COMMA+PPYHOLD;
+				enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + PPYHOLD;
 		}
 
 		/*
 		 * CONVERT ALL String to BIGDECIMAL for all values using BIGDECIMAL in
 		 * webservice end and passing STRING in frontend
+		 * 
 		 * @Jsingh1@lntinfotech
 		 */
-		if (null!=oeSignUpDTO.getCreditCheck() && null!=oeSignUpDTO.getCreditCheck().getSecurityMethod() && oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(SURETY_BOND)) {
+		if (null != oeSignUpDTO.getCreditCheck() && null != oeSignUpDTO.getCreditCheck().getSecurityMethod()
+				&& oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(SURETY_BOND)) {
 			reasonSEcurityDeposit = Z1; // z1 for account activation fee
 
-			BigDecimal activation_fee = new BigDecimal(oeSignUpDTO
-					.getCreditCheck().getActivationFee());
+			BigDecimal activation_fee = new BigDecimal(oeSignUpDTO.getCreditCheck().getActivationFee());
 			submitEnrollRequest.setCustFee(activation_fee);
 
-			BigDecimal bond_Price = new BigDecimal(oeSignUpDTO
-					.getCreditCheck().getBondPrice());
+			BigDecimal bond_Price = new BigDecimal(oeSignUpDTO.getCreditCheck().getBondPrice());
 			submitEnrollRequest.setBondPrice(bond_Price);
 
-			submitEnrollRequest.setAcctSecStatus(oeSignUpDTO
-					.getCreditCheck().getAccSecStatus());
+			submitEnrollRequest.setAcctSecStatus(oeSignUpDTO.getCreditCheck().getAccSecStatus());
 			depositCode = N_VALUE;
-			if ((oeSignUpDTO.getCreditCheck().getIsPayUpfront())
-					.equalsIgnoreCase(FLAG_X)) {
-				if(EMPTY.equals(enrollmentHoldType))
-					enrollmentHoldType=ACCSECHOLD;
+			if ((oeSignUpDTO.getCreditCheck().getIsPayUpfront()).equalsIgnoreCase(FLAG_X)) {
+				if (EMPTY.equals(enrollmentHoldType))
+					enrollmentHoldType = ACCSECHOLD;
 				else
-					enrollmentHoldType=enrollmentHoldType+SYMBOL_COMMA+ACCSECHOLD;
+					enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + ACCSECHOLD;
 			}
 		}
 
-		if (MOVEIN.equals(enrollmentType)
-				&& ON.equals(oeSignUpDTO.getSwitchHoldStatus())) {
-			if(EMPTY.equals(enrollmentHoldType))
-				enrollmentHoldType=SWITCHHOLD;
+		if (MOVEIN.equals(enrollmentType) && ON.equals(oeSignUpDTO.getSwitchHoldStatus())) {
+			if (EMPTY.equals(enrollmentHoldType))
+				enrollmentHoldType = SWITCHHOLD;
 			else
-				enrollmentHoldType=enrollmentHoldType+SYMBOL_COMMA+SWITCHHOLD;
+				enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + SWITCHHOLD;
 		}
+
+
+		if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
+			String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split("\\|");
+			for (String holdType : errorCdArray) {
+				if (StringUtils.equalsIgnoreCase(holdType, POSIDHOLD)) {
+					if (EMPTY.equals(enrollmentHoldType))
+						enrollmentHoldType = POSID;
+					else
+						enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + POSID;
+				}
+
+				if (StringUtils.equalsIgnoreCase(holdType, HOLD_DNP)) {
+					if (EMPTY.equals(enrollmentHoldType))
+						enrollmentHoldType = HOLD_DNP;
+
+					else
+
+						enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + HOLD_DNP;
+				}
+
+				if (StringUtils.equalsIgnoreCase(holdType, NESID) || StringUtils.equalsIgnoreCase(holdType, MESID)) {
+					oeSignUpDTO.setReqStatusCd(FLAG_N);
+				}
+				
+			}
+    }
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"EnrollmentService creating submitEnrollmentRequest,enrollmentHoldType is ::"+ enrollmentHoldType);}
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,enrollmentHoldType is ::"
+					+ enrollmentHoldType);
+		}
 		submitEnrollRequest.setStrEnrollmentHoldType(enrollmentHoldType);
 		BigDecimal reqAmt = null;
 		if (StringUtils.isNotBlank(requestedAmount)) {
@@ -765,7 +802,7 @@ public class OERequestHandler implements Constants {
 		 * 
 		 * @Jsingh1@lntinfotech
 		 */
-		if(oeSignUpDTO.isPriorityMovein())
+		if (oeSignUpDTO.isPriorityMovein())
 			submitEnrollRequest.setStrPriorityMovinFlag("Y");
 		else
 			submitEnrollRequest.setStrPriorityMovinFlag("N");
@@ -779,8 +816,7 @@ public class OERequestHandler implements Constants {
 		 */
 		if (oeSignUpDTO.getBpMatch() != null) {
 			if ((oeSignUpDTO.getBpMatch().getMatchedPartnerID()) != null) {
-				submitEnrollRequest.setStrBPNumber(oeSignUpDTO.getBpMatch()
-						.getMatchedPartnerID());
+				submitEnrollRequest.setStrBPNumber(oeSignUpDTO.getBpMatch().getMatchedPartnerID());
 			}
 		}
 		/*
@@ -796,163 +832,173 @@ public class OERequestHandler implements Constants {
 			String lastName = oeSignUpDTO.getPerson().getLastName();
 			oeSignUpDTO.setFrequentFlyerLastName(lastName);
 		}
-		
+
 		/*
-		 * Checking for conditions for OffercategoryLookup
-		 * for setting values for frequentflyer names and freqFlyerNo
+		 * Checking for conditions for OffercategoryLookup for setting values
+		 * for frequentflyer names and freqFlyerNo
+		 * 
 		 * @Jsingh1
 		 */
-		if(null!=oeSignUpDTO.getSelectedOffer().getOfferCategory() && OFFER_CATEGORY_PREPAY.equals(oeSignUpDTO.getSelectedOffer().getOfferCategory()))
-		{
+		if (null != oeSignUpDTO.getSelectedOffer().getOfferCategory()
+				&& OFFER_CATEGORY_PREPAY.equals(oeSignUpDTO.getSelectedOffer().getOfferCategory())) {
 			submitEnrollRequest.setStrFreqFlyerFirstName(EMPTY);
 			submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
 			submitEnrollRequest.setStrFreqFlyerNo(EMPTY);
-			
-		}
-		else{
-			String offerCategory=oeSignUpDTO.getSelectedOffer().getOfferCategory();
-			
-			if(StringUtils.isNotBlank(oeSignUpDTO.getSelectedOffer().getOfferCategory()))
-			{
-				
-				
-			if((offerCategory.equalsIgnoreCase(OFFER_CATEGORY_UNITED)) || offerCategory.equalsIgnoreCase(OFFER_CATEGORY_AA) || offerCategory.equalsIgnoreCase(OFFER_CATEGORY_SOUTHWEST))
-			{
-				submitEnrollRequest.setStrFreqFlyerFirstName(oeSignUpDTO
-					.getFrequentFlyerFirstName());
-				submitEnrollRequest.setStrFreqFlyerLastName(oeSignUpDTO
-					.getFrequentFlyerLastName());
 
-					if (oeSignUpDTO.getFrequentFlyerNumber() != null) 
-					{
-							submitEnrollRequest.setStrFreqFlyerNo(oeSignUpDTO
-						.getFrequentFlyerNumber());
+		} else {
+			String offerCategory = oeSignUpDTO.getSelectedOffer().getOfferCategory();
+
+			if (StringUtils.isNotBlank(oeSignUpDTO.getSelectedOffer().getOfferCategory())) {
+
+				if ((offerCategory.equalsIgnoreCase(OFFER_CATEGORY_UNITED))
+						|| offerCategory.equalsIgnoreCase(OFFER_CATEGORY_AA)
+						|| offerCategory.equalsIgnoreCase(OFFER_CATEGORY_SOUTHWEST)) {
+					submitEnrollRequest.setStrFreqFlyerFirstName(oeSignUpDTO.getFrequentFlyerFirstName());
+					submitEnrollRequest.setStrFreqFlyerLastName(oeSignUpDTO.getFrequentFlyerLastName());
+
+					if (oeSignUpDTO.getFrequentFlyerNumber() != null) {
+						submitEnrollRequest.setStrFreqFlyerNo(oeSignUpDTO.getFrequentFlyerNumber());
 					}
-					if (oeSignUpDTO.getFrequentFlyerNumber() == null) 
-					{
+					if (oeSignUpDTO.getFrequentFlyerNumber() == null) {
 						submitEnrollRequest.setStrFreqFlyerNo(EMPTY);
 					}
-			}
-			else if(offerCategory.equalsIgnoreCase("MC"))
-			{
-				submitEnrollRequest.setStrFreqFlyerFirstName(EMPTY);
-				submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
-				submitEnrollRequest.setStrFreqFlyerNo(oeSignUpDTO.getRealtorID());
+				} else if (offerCategory.equalsIgnoreCase("MC")) {
+					submitEnrollRequest.setStrFreqFlyerFirstName(EMPTY);
+					submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
+					submitEnrollRequest.setStrFreqFlyerNo(oeSignUpDTO.getRealtorID());
 
-			}
-			else if (offerCategory.equalsIgnoreCase("CEP"))
-			{
-				submitEnrollRequest.setStrFreqFlyerFirstName(EMPTY);
-				submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
-				submitEnrollRequest.setStrFreqFlyerNo(oeSignUpDTO.getCid());
-			}
-			}
-			else
-			{
+				} else if (offerCategory.equalsIgnoreCase("CEP")) {
+					submitEnrollRequest.setStrFreqFlyerFirstName(EMPTY);
+					submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
+					submitEnrollRequest.setStrFreqFlyerNo(oeSignUpDTO.getCid());
+				}
+			} else {
 				submitEnrollRequest.setStrFreqFlyerFirstName(EMPTY);
 				submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
 				submitEnrollRequest.setStrFreqFlyerNo(EMPTY);
 			}
-		
+
 		}
-		
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"Inside EnrollmentService :: createSubmitEnrollRequest : getFactorsKey :: " + oeSignUpDTO.getCreditCheck().getFactorsKey());}
-		
-		try{
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "Inside EnrollmentService :: createSubmitEnrollRequest : getFactorsKey :: "
+					+ oeSignUpDTO.getCreditCheck().getFactorsKey());
+		}
+
+		try {
 			FactorDetailDO[] arrayFactors = {};
 			List<String> factorsKeyList = oeSignUpDTO.getCreditCheck().getFactorsKey();
 			if (null != factorsKeyList && factorsKeyList.size() > 0) {
 				int factCnt = 0;
 				String[] factStrArray = null;
-				/*String[] FactorKey = (oeSignUpDTO.getCreditCheck()
-						.getFactorsKey()).split(",");*/
-				logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factorsKeyList.size():: "+factorsKeyList.size());
+				/*
+				 * String[] FactorKey = (oeSignUpDTO.getCreditCheck()
+				 * .getFactorsKey()).split(",");
+				 */
+				logger.debug(oeSignUpDTO.printOETrackingID()
+						+ "createSubmitEnrollRequest: KEY FACTORS: factorsKeyList.size():: " + factorsKeyList.size());
 				arrayFactors = new FactorDetailDO[factorsKeyList.size()];
-				logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: arrayFactors:: "+arrayFactors);
+				logger.debug(oeSignUpDTO.printOETrackingID() + "createSubmitEnrollRequest: KEY FACTORS: arrayFactors:: "
+						+ arrayFactors);
 				for (String factStr : factorsKeyList) {
-					logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStr:: "+factStr);
-					factStrArray = factStr.split("\\"+DOT);
-					if(factStrArray.length >=3){
-						logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray:: "+factStrArray);
-						logger.debug(oeSignUpDTO.printOETrackingID()+"createSubmitEnrollRequest: KEY FACTORS: factStrArray.length:: "+factStrArray.length);
-						logger.debug(oeSignUpDTO.printOETrackingID()+"Inside EnrollmentService :: createSubmitEnrollRequest : factStrArray :: " + factStrArray[1] + " **** "
-								+ factStrArray[0] + "****" + factStrArray[2]);
-						arrayFactors[factCnt] = new FactorDetailDO(factStrArray[2], "",
-								"", "", factStrArray[0], factStrArray[1]);
+					logger.debug(oeSignUpDTO.printOETrackingID() + "createSubmitEnrollRequest: KEY FACTORS: factStr:: "
+							+ factStr);
+					factStrArray = factStr.split("\\" + DOT);
+					if (factStrArray.length >= 3) {
+						logger.debug(oeSignUpDTO.printOETrackingID()
+								+ "createSubmitEnrollRequest: KEY FACTORS: factStrArray:: " + factStrArray);
+						logger.debug(oeSignUpDTO.printOETrackingID()
+								+ "createSubmitEnrollRequest: KEY FACTORS: factStrArray.length:: "
+								+ factStrArray.length);
+						logger.debug(oeSignUpDTO.printOETrackingID()
+								+ "Inside EnrollmentService :: createSubmitEnrollRequest : factStrArray :: "
+								+ factStrArray[1] + " **** " + factStrArray[0] + "****" + factStrArray[2]);
+						arrayFactors[factCnt] = new FactorDetailDO(factStrArray[2], "", "", "", factStrArray[0],
+								factStrArray[1]);
 						factCnt++;
 					}
 				}
 				submitEnrollRequest.setArrayFactors(arrayFactors);
 			}
-		}catch(Exception ex){
-			logger.error(oeSignUpDTO.printOETrackingID()+"Error in createSubmitEnrollRequest - getting Key Factors: Skipping and Continuing",ex);
+		} catch (Exception ex) {
+			logger.error(oeSignUpDTO.printOETrackingID()
+					+ "Error in createSubmitEnrollRequest - getting Key Factors: Skipping and Continuing", ex);
 		}
-		
+
 		if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: value of WebTSDP is ::"
-				+ oeSignUpDTO.getTdspCode());}
+			logger.debug(oeSignUpDTO.printOETrackingID() + "submitEnrollmentRequest: value of WebTSDP is ::"
+					+ oeSignUpDTO.getTdspCode());
+		}
 		submitEnrollRequest.setStrWebTsdp(oeSignUpDTO.getTdspCode());
-		//START : OE :Sprint62 :US21019 :Kdeshmu1
+		// START : OE :Sprint62 :US21019 :Kdeshmu1
 		submitEnrollRequest.setStrAgentId(oeSignUpDTO.getAgentID());
-		//END : OE :Sprint62 :US21019 :Kdeshmu1
-		
-		//if (logger.isDebugEnabled()) {
-		logger.info(oeSignUpDTO.printOETrackingID()+"submitEnrollmentRequest: returning submitEnrollRequest ::"+submitEnrollRequest.toString());//}
+		// END : OE :Sprint62 :US21019 :Kdeshmu1
+
+		// if (logger.isDebugEnabled()) {
+		logger.info(oeSignUpDTO.printOETrackingID() + "submitEnrollmentRequest: returning submitEnrollRequest ::"
+				+ submitEnrollRequest.toString());// }
 		return submitEnrollRequest;
 	}
-	
+
 	/**
 	 * Method createUpdateAlertPrefRequest.
-	 * @param oeSignupDTO OESignupDTO
+	 * 
+	 * @param oeSignupDTO
+	 *            OESignupDTO
 	 * @return UpdateAlertPrefRequest
 	 */
-	public UpdateAlertPrefRequest createUpdateAlertPrefRequest(
-			OESignupDTO oeSignupDTO) {
+	public UpdateAlertPrefRequest createUpdateAlertPrefRequest(OESignupDTO oeSignupDTO) {
 
-		logger.info(oeSignupDTO.printOETrackingID()+"EnrollmentService:: inside function createUpdateAlertPrefRequest");
-		
-		
-		String lowAcctBalEmailVal=EMPTY;
-		String payReceivedEmailVal=EMPTY;
-		String weeklyBalEmailVal=EMPTY;
-		String lowAcctBalSmsVal=EMPTY;
-		String payReceivedSmsVal=EMPTY;
-		String weeklyBalSmsVal=EMPTY;
-		String lowAcctBalPhoneVal=EMPTY;
-		String payReceivedPhoneVal=EMPTY;
-		String weeklyBalPhoneVal=EMPTY;
-		
+		logger.info(
+				oeSignupDTO.printOETrackingID() + "EnrollmentService:: inside function createUpdateAlertPrefRequest");
 
-		//loop to avoid Null Pointer 
-		if(null!=oeSignupDTO.getPerson().getContactPrefDTO())
-		{
-			logger.debug(oeSignupDTO.printOETrackingID()+"Inside EnrollmentService :: inside CreateUpdateAlertPref Request :: ContactAlertPrefDTO is not NUll");
-		
-		
-		 lowAcctBalEmailVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getLowActBalEmail()) ? "E" : "";
-		 payReceivedEmailVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getPayReceivedEmail()) ? "E" : "";
-		 weeklyBalEmailVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getWeeklyBalEmail()) ? "E" : "";
+		String lowAcctBalEmailVal = EMPTY;
+		String payReceivedEmailVal = EMPTY;
+		String weeklyBalEmailVal = EMPTY;
+		String lowAcctBalSmsVal = EMPTY;
+		String payReceivedSmsVal = EMPTY;
+		String weeklyBalSmsVal = EMPTY;
+		String lowAcctBalPhoneVal = EMPTY;
+		String payReceivedPhoneVal = EMPTY;
+		String weeklyBalPhoneVal = EMPTY;
 
-		 lowAcctBalSmsVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getLowActBalSMS()) ? "S": "";
-		 payReceivedSmsVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getPayReceivedSMS()) ? "S" : "";
-		 weeklyBalSmsVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getWeeklyBalSMS()) ? "S": "";
+		// loop to avoid Null Pointer
+		if (null != oeSignupDTO.getPerson().getContactPrefDTO()) {
+			logger.debug(oeSignupDTO.printOETrackingID()
+					+ "Inside EnrollmentService :: inside CreateUpdateAlertPref Request :: ContactAlertPrefDTO is not NUll");
 
-		 lowAcctBalPhoneVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getLowActBalPhone()) ? "O" : "";
-		 payReceivedPhoneVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getPayReceivedPhone()) ? "O" : "";
-		 weeklyBalPhoneVal = FLAG_YES_PROFILE.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getWeeklyBalPhone()) ? "O" : "";
+			lowAcctBalEmailVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getLowActBalEmail()) ? "E" : "";
+			payReceivedEmailVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getPayReceivedEmail()) ? "E" : "";
+			weeklyBalEmailVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getWeeklyBalEmail()) ? "E" : "";
+
+			lowAcctBalSmsVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getLowActBalSMS()) ? "S" : "";
+			payReceivedSmsVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getPayReceivedSMS()) ? "S" : "";
+			weeklyBalSmsVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getWeeklyBalSMS()) ? "S" : "";
+
+			lowAcctBalPhoneVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getLowActBalPhone()) ? "O" : "";
+			payReceivedPhoneVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getPayReceivedPhone()) ? "O" : "";
+			weeklyBalPhoneVal = FLAG_YES_PROFILE
+					.equalsIgnoreCase(oeSignupDTO.getPerson().getContactPrefDTO().getWeeklyBalPhone()) ? "O" : "";
 
 		}
-		
-		String strLowAcctBal = lowAcctBalEmailVal + lowAcctBalSmsVal+ lowAcctBalPhoneVal;
-		String strPayReceived = payReceivedEmailVal + payReceivedSmsVal+ payReceivedPhoneVal;
-		String strWeeklySum = weeklyBalEmailVal + weeklyBalSmsVal+ weeklyBalPhoneVal;
 
-		if(logger.isDebugEnabled())
-		{
-			logger.debug(oeSignupDTO.printOETrackingID()+"for Low account balance we have"+strLowAcctBal);
-			logger.debug(oeSignupDTO.printOETrackingID()+"for Pat Received options we have"+strLowAcctBal);
-			logger.debug(oeSignupDTO.printOETrackingID()+"for Weekly Summary Options we have"+strLowAcctBal);
+		String strLowAcctBal = lowAcctBalEmailVal + lowAcctBalSmsVal + lowAcctBalPhoneVal;
+		String strPayReceived = payReceivedEmailVal + payReceivedSmsVal + payReceivedPhoneVal;
+		String strWeeklySum = weeklyBalEmailVal + weeklyBalSmsVal + weeklyBalPhoneVal;
+
+		if (logger.isDebugEnabled()) {
+			logger.debug(oeSignupDTO.printOETrackingID() + "for Low account balance we have" + strLowAcctBal);
+			logger.debug(oeSignupDTO.printOETrackingID() + "for Pat Received options we have" + strLowAcctBal);
+			logger.debug(oeSignupDTO.printOETrackingID() + "for Weekly Summary Options we have" + strLowAcctBal);
 		}
 		UpdateAlertPrefRequest updateAlertPrefRequest = new UpdateAlertPrefRequest();
 		AlertPrefDTO[] unSubscribeRequests = null;
@@ -961,12 +1007,12 @@ public class OERequestHandler implements Constants {
 		updateAlertPrefRequest.setStrCANumber(oeSignupDTO.getContractAccountNum());
 
 		// TODO
-		//updateAlertPrefRequest.setStrCompanyCode(appConstMessageSource.getMessage(Constants.PROP_COMPANY_CODE, null, null));
+		// updateAlertPrefRequest.setStrCompanyCode(appConstMessageSource.getMessage(Constants.PROP_COMPANY_CODE,
+		// null, null));
 
 		String strCONumber = EMPTY;
-		String esid=EMPTY;
-		
-		
+		String esid = EMPTY;
+
 		updateAlertPrefRequest.setStrCONumber(strCONumber);
 		updateAlertPrefRequest.setStrESID(esid);
 		String strRequestType = TWO;
@@ -1006,9 +1052,9 @@ public class OERequestHandler implements Constants {
 		int len = subscribeRequestList.size();
 		AlertPrefDTO[] alert = new AlertPrefDTO[len];
 		for (int i = 0; i < len; i++) {
-			alert[i] = subscribeRequestList.get(i);			
+			alert[i] = subscribeRequestList.get(i);
 			if (logger.isDebugEnabled()) {
-				logger.debug(oeSignupDTO.printOETrackingID()+"Value of the parameter in AlertPrefDTO: "
+				logger.debug(oeSignupDTO.printOETrackingID() + "Value of the parameter in AlertPrefDTO: "
 						+ alert[i].getStrParamValue());
 			}
 
@@ -1018,14 +1064,14 @@ public class OERequestHandler implements Constants {
 		return updateAlertPrefRequest;
 
 	}
-	
+
 	public NewCreditScoreRequest createNewCreditScoreRequest(CreditCheckRequest creditCheckRequest) {
-		
+
 		NewCreditScoreRequest creditScoreRequest = new NewCreditScoreRequest();
-		
+
 		creditScoreRequest.setTrackingNum(creditCheckRequest.getTrackingId());
-		if (StringUtils.isNotEmpty(creditCheckRequest.getBillPOBox())) { 
-			//Overwrite Billing Addr with Serv Addr if billPOBox is provided			
+		if (StringUtils.isNotEmpty(creditCheckRequest.getBillPOBox())) {
+			// Overwrite Billing Addr with Serv Addr if billPOBox is provided
 			creditScoreRequest.setStrBillAptNum(creditCheckRequest.getServStreetAptNum());
 			creditScoreRequest.setStrBillCity(creditCheckRequest.getServCity());
 			creditScoreRequest.setStrBillCountry(COUNTRY_US);
@@ -1061,7 +1107,8 @@ public class OERequestHandler implements Constants {
 		creditScoreRequest.setStrLastName(creditCheckRequest.getLastName());
 		if (StringUtils.isNotBlank(creditCheckRequest.getMviDate()))
 			creditScoreRequest.setStrMoveinDate(CommonUtil.formatDateForNrgws(creditCheckRequest.getMviDate()));
-		else creditScoreRequest.setStrMoveinDate(CommonUtil.formatDateForNrgws(HISTORICAL_DATE));
+		else
+			creditScoreRequest.setStrMoveinDate(CommonUtil.formatDateForNrgws(HISTORICAL_DATE));
 		creditScoreRequest.setStrOfferCode(creditCheckRequest.getOfferCode());
 		creditScoreRequest.setStrSSN(creditCheckRequest.getTokenizedSSN());
 		creditScoreRequest.setStrSVRcAptNum(creditCheckRequest.getServStreetAptNum());
@@ -1073,12 +1120,11 @@ public class OERequestHandler implements Constants {
 		creditScoreRequest.setStrSVRcStreetNum(creditCheckRequest.getServStreetNum());
 		return creditScoreRequest;
 	}
-	
-	public BpMatchCCSRequest createBpmatchRequest(String firstName,String lastName,String tdl,String maidenName,
-			String companyCode,String servStreetAptNum,String servCity,String servState,String servStreetName,
-			String servStreetNum,String servZipCode,String ssn )
-	{
-		BpMatchCCSRequest bpMatchReq= new BpMatchCCSRequest();
+
+	public BpMatchCCSRequest createBpmatchRequest(String firstName, String lastName, String tdl, String maidenName,
+			String companyCode, String servStreetAptNum, String servCity, String servState, String servStreetName,
+			String servStreetNum, String servZipCode, String ssn) {
+		BpMatchCCSRequest bpMatchReq = new BpMatchCCSRequest();
 		bpMatchReq.setStrFirstName(firstName);
 		bpMatchReq.setStrLastName(lastName);
 		bpMatchReq.setStrLicenceNo(tdl);
@@ -1095,7 +1141,7 @@ public class OERequestHandler implements Constants {
 		bpMatchReq.setStrServiceZip(servZipCode);
 		return bpMatchReq;
 	}
-	
+
 	/**
 	 * 
 	 * Populate OESignupDTO from the API minimal/trimmed input request object.
@@ -1107,7 +1153,7 @@ public class OERequestHandler implements Constants {
 	public OESignupDTO createOeSignupDtoByMinimal(EnrollmentRequest enrollmentRequest) {
 
 		OESignupDTO oeSignupDTO = new OESignupDTO();
-		
+
 		// First level data
 		oeSignupDTO.setAffiliateId(enrollmentRequest.getAffiliateId());
 		oeSignupDTO.setCompanyCode(enrollmentRequest.getCompanyCode());
@@ -1130,9 +1176,9 @@ public class OERequestHandler implements Constants {
 		selectedOffer.setIncentiveCode(enrollmentRequest.getIncentiveCode());
 		selectedOffer.setMarketSegment(enrollmentRequest.getMarketSegment());
 		selectedOffer.setOfferCodeTitle(enrollmentRequest.getSapOfferTagline());
-		
+
 		oeSignupDTO.setSelectedOffer(selectedOffer);
-		
+
 		// Billing address
 		AddressDTO billingAddress = new AddressDTO();
 		billingAddress.setStreetName(enrollmentRequest.getBillStreetName());
@@ -1141,11 +1187,11 @@ public class OERequestHandler implements Constants {
 		billingAddress.setCity(enrollmentRequest.getBillCity());
 		billingAddress.setState(enrollmentRequest.getBillState());
 		billingAddress.setZipcodeComplete(enrollmentRequest.getBillZipCode());
-		billingAddress.setZipcode(enrollmentRequest.getBillZipCode());				
+		billingAddress.setZipcode(enrollmentRequest.getBillZipCode());
 		billingAddress.setPoBox(enrollmentRequest.getBillPOBox());
-		
+
 		oeSignupDTO.setBillingAddress(billingAddress);
-		
+
 		// Service address
 		AddressDTO serviceAddress = new AddressDTO();
 		serviceAddress.setStreetName(enrollmentRequest.getServStreetName());
@@ -1154,51 +1200,48 @@ public class OERequestHandler implements Constants {
 		serviceAddress.setCity(enrollmentRequest.getServCity());
 		serviceAddress.setState(enrollmentRequest.getServState());
 		serviceAddress.setZipcodeComplete(enrollmentRequest.getServZipCode());
-		
+
 		oeSignupDTO.setServiceAddress(serviceAddress);
-		
+
 		// Fixed for Defect #67:
 		oeSignupDTO.setReferralID(enrollmentRequest.getReferralId());
-		
+
 		// ESIID
 		ESIDDTO esid = new ESIDDTO();
 		esid.setEsidNumber(enrollmentRequest.getEsid());
-		
+
 		oeSignupDTO.setEsid(esid);
-		
-				
+
 		// Read Person, BP and Credit information from tables
 		this.readPersonBpCreditData(oeSignupDTO, enrollmentRequest);
-		
+
 		return oeSignupDTO;
 	}
-	
+
 	/**
-	 * Populates person and credit data at OESignupDTO from service_location_affiliate and
-	 * person_affiliate tables.
+	 * Populates person and credit data at OESignupDTO from
+	 * service_location_affiliate and person_affiliate tables.
 	 * 
 	 * 
 	 * @param oeSignupDTO
 	 * @param enrollmentRequest
 	 */
-	private void readPersonBpCreditData(OESignupDTO oeSignupDTO,
-			EnrollmentRequest enrollmentRequest) {
+	private void readPersonBpCreditData(OESignupDTO oeSignupDTO, EnrollmentRequest enrollmentRequest) {
 
 		// Get enrollment data from person and service location affiliates
 		// tables
-		ServiceLocationResponse servLocResponse = oeBo
-				.getEnrollmentData(enrollmentRequest.getTrackingId());
+		ServiceLocationResponse servLocResponse = oeBo.getEnrollmentData(enrollmentRequest.getTrackingId());
 
 		if (servLocResponse != null) {
 			// Bp match
 			BPMatchDTO bpMatch = new BPMatchDTO();
-			
+
 			// matchedBP
 			bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
 
 			// set bp match
 			oeSignupDTO.setBpMatch(bpMatch);
-			//START : OE :Sprint62 :US21019 :Kdeshmu1
+			// START : OE :Sprint62 :US21019 :Kdeshmu1
 			oeSignupDTO.setAgentID(servLocResponse.getAgentID());
 			oeSignupDTO.setAgentType(servLocResponse.getAgentType());
 			oeSignupDTO.setAgentFirstName(servLocResponse.getAgentFirstName());
@@ -1208,15 +1251,14 @@ public class OERequestHandler implements Constants {
 			oeSignupDTO.setTlpReportApiStatus(servLocResponse.getTlpReportApiStatus());
 			oeSignupDTO.getSelectedOffer().setOfferTeaser(servLocResponse.getOfferCodeTitle());
 			oeSignupDTO.getSelectedOffer().setPlanName(servLocResponse.getPlanName());
-			//END : OE :Sprint62 :US21019 :Kdeshmu1
+			// END : OE :Sprint62 :US21019 :Kdeshmu1
 			// read person_affiliate table response
 			PersonResponse personResponse = servLocResponse.getPersonResponse();
 
 			if (personResponse != null) {
 
 				// mkt pref
-				oeSignupDTO.setEmailSubscription(personResponse
-						.getEmailOptionRps());
+				oeSignupDTO.setEmailSubscription(personResponse.getEmailOptionRps());
 
 				// person information
 				this.populatePerson(oeSignupDTO, personResponse);
@@ -1226,22 +1268,20 @@ public class OERequestHandler implements Constants {
 			}
 
 			// credit deposit amount
-			oeSignupDTO.getCreditCheck().setDepositAmount(
-					servLocResponse.getDepositAmount());
+			oeSignupDTO.getCreditCheck().setDepositAmount(servLocResponse.getDepositAmount());
 		}
 	}
-	
+
 	/**
 	 * Sets person data from Person response (table).
 	 * 
 	 * @param oeSignupDTO
 	 * @param personResponse
 	 */
-	private void populatePerson(OESignupDTO oeSignupDTO,
-			PersonResponse personResponse) {
+	private void populatePerson(OESignupDTO oeSignupDTO, PersonResponse personResponse) {
 		// Person data
 		PersonDTO person = new PersonDTO();
-		
+
 		person.setStateOfIssue(TX);
 		person.setFirstName(personResponse.getFirstName());
 		person.setMiddleName(personResponse.getMiddleName());
@@ -1279,8 +1319,7 @@ public class OERequestHandler implements Constants {
 	 * @param oeSignupDTO
 	 * @param personResponse
 	 */
-	private void populateCreditInfo(OESignupDTO oeSignupDTO,
-			PersonResponse personResponse) {
+	private void populateCreditInfo(OESignupDTO oeSignupDTO, PersonResponse personResponse) {
 		// Credit data
 		CreditCheckDTO creditCheck = new CreditCheckDTO();
 
@@ -1289,24 +1328,24 @@ public class OERequestHandler implements Constants {
 		creditCheck.setCreditScoreNum(personResponse.getCredScoreNum());
 
 		if (StringUtils.isNotBlank(personResponse.getAdvActionData())) {
-			creditCheck.setFactorsKey(CommonUtil.convertAsList(DELIMETER_COMMA,
-					personResponse.getAdvActionData()));
+			creditCheck.setFactorsKey(CommonUtil.convertAsList(DELIMETER_COMMA, personResponse.getAdvActionData()));
 		}
 
 		// set credit check
 		oeSignupDTO.setCreditCheck(creditCheck);
 	}
-	
+
 	public CreditCheckRequest createCreditCheckRequest(SalesCreditCheckRequest salesCreditCheckRequest,
-								ServiceLocationResponse serviceLocationResponse) {
+			ServiceLocationResponse serviceLocationResponse) {
 
 		CreditCheckRequest creditCheckRequest = new CreditCheckRequest();
 		BeanUtils.copyProperties(salesCreditCheckRequest, creditCheckRequest);
 		creditCheckRequest.setFirstName(serviceLocationResponse.getPersonResponse().getFirstName());
 		creditCheckRequest.setLastName(serviceLocationResponse.getPersonResponse().getLastName());
 		creditCheckRequest.setTokenizedSSN(serviceLocationResponse.getPersonResponse().getSsn());
-		
-		String transactionType = StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)? SWI : MVI;
+
+		String transactionType = StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)
+				? SWI : MVI;
 		creditCheckRequest.setTransactionType(transactionType);
 		creditCheckRequest.setEsid(serviceLocationResponse.getEsid());
 		creditCheckRequest.setServStreetNum(serviceLocationResponse.getServStreetNum());
@@ -1324,20 +1363,19 @@ public class OERequestHandler implements Constants {
 		creditCheckRequest.setBillZipCode(serviceLocationResponse.getBillZipCode());
 		creditCheckRequest.setBillPOBox(serviceLocationResponse.getBillPoBox());
 
-		
-		if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getErrorCode(),BPSD)) {
+		if (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getErrorCode(), BPSD)) {
 			creditCheckRequest.setMatchedBP(serviceLocationResponse.getMatchedPartnerId());
-		}else{
+		} else {
 			creditCheckRequest.setBpMatchFlag(BPSD);
 		}
-		
 
 		return creditCheckRequest;
 	}
-	
+
 	public CreditCheckRequest createCreditReCheckRequest(SalesCreditReCheckRequest salesCreditReCheckRequest,
 			ServiceLocationResponse serviceLocationResponse) {
-		CreditCheckRequest creditCheckRequest = createCreditCheckRequest(salesCreditReCheckRequest, serviceLocationResponse);
+		CreditCheckRequest creditCheckRequest = createCreditCheckRequest(salesCreditReCheckRequest,
+				serviceLocationResponse);
 		creditCheckRequest.setTokenizedSSN(salesCreditReCheckRequest.getTokenizedSSN());
 		return creditCheckRequest;
 	}
