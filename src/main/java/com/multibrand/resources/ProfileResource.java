@@ -1,7 +1,6 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -10,17 +9,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.bo.ProfileBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.helper.ProfileHelper;
-import com.multibrand.vo.request.PaymentExtensionRequest;
-import com.multibrand.vo.request.PaymentExtensionSubmitRequest;
 import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.AcctValidationResponse;
 import com.multibrand.vo.response.ChangeUsernameResponse;
@@ -44,8 +39,6 @@ import com.multibrand.vo.response.WsEnrollmentResponse;
 import com.multibrand.vo.response.WsServiceResponse;
 import com.multibrand.vo.response.WseEligiblityStatusResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
-import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
-import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
 import com.multibrand.vo.response.profileResponse.UpdateLanguageResponse;
@@ -671,35 +664,5 @@ public class ProfileResource {
 		logger.info("End-[ProfileResource-validatePassword]");
 		return response;
 	}
-	
-	@POST
-	@Path("submitPaymentExtension")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response submitPaymentExtension(@Valid PaymentExtensionSubmitRequest request) {
-		Response response = null;
-		logger.info("Start-[ProfileResource-submitPaymentExtension]");
-		PaymentExtensionResponse paymentExtensionResponse = profileBO.submitPaymentExtension(request, httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(paymentExtensionResponse).build();
-		logger.info("End-[ProfileResource-submitPaymentExtension]");
-		return response;
-	}
-	
-	@POST
-	@Path("payExtEligibilityCheck")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getPaymentExtensionCheck(@Valid PaymentExtensionRequest request) {
-		Response response = null;
-		logger.info("Start-[ProfileResource-getPaymentExtensionCheck]");
-		PaymentExtensionCheckResponse paymentExtensionResponse = profileBO.getPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(paymentExtensionResponse).build();
-		logger.info("End-[ProfileResource-getPaymentExtensionCheck]");
-		return response;
-		
-	}
-	
-	
-
 }	
 	

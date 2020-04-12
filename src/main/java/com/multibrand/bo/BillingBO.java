@@ -29,6 +29,8 @@ import com.multibrand.dao.BillDAO;
 import com.multibrand.domain.ActEbillRequest;
 import com.multibrand.domain.ActEbillResponse;
 import com.multibrand.domain.AddressDO;
+import com.multibrand.domain.AllAccountDetailsRequest;
+import com.multibrand.domain.AllAccountDetailsResponse;
 import com.multibrand.domain.AmbCheckRequest;
 import com.multibrand.domain.AmbCheckResponse;
 import com.multibrand.domain.AmbOutputTab;
@@ -46,6 +48,10 @@ import com.multibrand.domain.DeActEbillRequest;
 import com.multibrand.domain.DeActEbillResponse;
 import com.multibrand.domain.GetArRequest;
 import com.multibrand.domain.PayByBankRequest;
+import com.multibrand.domain.PayExtEligibleRequest;
+import com.multibrand.domain.PayExtEligibleResponse;
+import com.multibrand.domain.PaymentExtensionSubmitRequest;
+import com.multibrand.domain.PaymentExtensionSubmitResponse;
 import com.multibrand.domain.ProfileResponse;
 import com.multibrand.domain.ProgramStatus;
 import com.multibrand.domain.ScheduleOtccPaymentRequest;
@@ -75,6 +81,7 @@ import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
 import com.multibrand.vo.request.AvgTempRequestVO;
+import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.ProjectedBillRequestVO;
 import com.multibrand.vo.request.RetroPopupRequestVO;
 import com.multibrand.vo.request.SaveAMBSingupRequestVO;
@@ -127,6 +134,8 @@ import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse
 import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 
 
 /**
@@ -3474,6 +3483,107 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		return eligible;
 	}
 	
+	public PaymentExtensionResponse submitPaymentExtension(com.multibrand.vo.request.PaymentExtensionSubmitRequest payRequest, String sessionId) {
+		logger.info("Start - [ProfileBO - PaymentExtension]");
+		AllAccountDetailsRequest request = new AllAccountDetailsRequest();
+		PaymentExtensionResponse response = new PaymentExtensionResponse();
+		PaymentExtensionSubmitRequest paymentExtensionSubmitReq = new PaymentExtensionSubmitRequest();
+		request.setPaymentExtensionSubmitReq(paymentExtensionSubmitReq);
+		paymentExtensionSubmitReq.setBpNumber(payRequest.getBusinessPartnerNumber());
+		paymentExtensionSubmitReq.setContractAcctNum(payRequest.getContractAccountNumber());
+		paymentExtensionSubmitReq.setPaymentExtDate(payRequest.getPaymentExtDate());
+		
+		
+		AllAccountDetailsResponse ccsAllAlertsResponse = null;
+		try {
+			ccsAllAlertsResponse = profileService.getAllAccountDetailsParallel(request, sessionId);
+		} catch (RemoteException e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::{}" ,e);
+			return response;
+		}
+		PaymentExtensionSubmitResponse paymentExtensionSubmitResponse = ccsAllAlertsResponse.getPaymentExtensionSubmitRes();
+		if (paymentExtensionSubmitResponse != null
+				&& StringUtils.isNotBlank(paymentExtensionSubmitResponse.getReturnCode())) {
+			if (StringUtils.equalsIgnoreCase("00", paymentExtensionSubmitResponse.getReturnCode())) {
+				response.setPaymentExtension(true);
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+			} else if(StringUtils.equalsIgnoreCase("03", paymentExtensionSubmitResponse.getReturnCode())) {
+				response.setPaymentExtension(false);
+				response.setResultCode(RESULT_CODE_ACCOUNT_ALREADY);
+				response.setResultDescription("03 - May be already updated!!!, Please check error code");
+				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
+			} else if(StringUtils.equalsIgnoreCase("02", paymentExtensionSubmitResponse.getReturnCode())) {
+				response.setPaymentExtension(false);
+				response.setResultCode(CCS_ERETURN_CODE_UPDATE_ERROR);
+				response.setResultDescription(CCS_ERETURN_CODE_UPDATE_ERROR_RESULT_DESCRIPTION);
+				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
+			} else {
+				response.setPaymentExtension(false);
+				response.setResultCode(RESULT_CODE_CCS_ERROR);
+				response.setResultDescription("Failed to Update the Extension Date or not available");
+				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
+			}
+		} else {
+			response.setPaymentExtension(false);
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
+		}
+		
+		logger.info("END - [ProfileBO - PaymentExtension]");
+		return response;
+	}
+	
+	
+	public PaymentExtensionCheckResponse getPaymentExtensionCheck(PaymentExtensionRequest payRequest, String sessionId) {
+		logger.info("Start - [ProfileBO - getPaymentExtensionCheck]");
+		PaymentExtensionCheckResponse response = new PaymentExtensionCheckResponse();
+		PayExtEligibleResponse payExtEligibleResponse = null;
+		PayExtEligibleRequest request = new PayExtEligibleRequest();
+		request.setBrandId(payRequest.getBrandName());
+		request.setCompanyCode(payRequest.getCompanyCode());
+		request.setContAccount(payRequest.getContractAccountNumber());
+		request.setPmtextBypassElg(this.appConstMessageSource.getMessage(Constants.PAYMENTEXTENSION_BYPASS_ELIGIBLE_FLAG, null, null));
+		
+		try {
+			payExtEligibleResponse = paymentService.getPayExtEligibleResponse(request, sessionId);
+		} catch (RemoteException e) {
+			response.setPaymentExtension(false);
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::{}" ,e);
+			return response;
+		}
+		
+		if (payExtEligibleResponse != null
+				&& StringUtils.isNotBlank(payExtEligibleResponse.getPayExtCode())) {
+			response.setPayExtDueAmt(payExtEligibleResponse.getPayExtDueAmt());
+			response.setPayExtnActive(payExtEligibleResponse.getPayExtnActive());
+			response.setPayExtPend(payExtEligibleResponse.getPayExtPend());
+			if (StringUtils.equalsIgnoreCase("00", payExtEligibleResponse.getPayExtCode())
+					&& StringUtils.equalsIgnoreCase(Constants.YES, payExtEligibleResponse.getPayExtnEligible())
+					&& StringUtils.equalsIgnoreCase("NO", payExtEligibleResponse.getPayExtnActive())) {
+				response.setPaymentExtension(true);
+				response.setPaymentExtensionDate(payExtEligibleResponse.getPayExtDiffDate());
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+			} else {
+				response.setPaymentExtension(false);
+				response.setErrorCode(payExtEligibleResponse.getErrorCode());
+				response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+			}
+		} else if(payExtEligibleResponse != null) {
+			response.setResultCode(RESULT_CODE_CCS_ERROR);
+			response.setResultDescription("Failed to get the Extension Date or not available");
+			response.setResultCode(RESULT_CODE_CCS_ERROR);
+			response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+		}
+		
+		logger.info("END - [ProfileBO - getPaymentExtensionCheck]");
+		return response;
+	}
 	
 
 }
