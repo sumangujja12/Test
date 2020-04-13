@@ -171,7 +171,8 @@ public class SalesAPIResource extends BaseResource {
 	
 			SalesBaseResponse newCreditScoreResponse = salesBO
 						.performCreditCheck(request);
-				response = Response.status(Response.Status.OK)
+			Response.Status status = newCreditScoreResponse.getHttpStatus() != null ? newCreditScoreResponse.getHttpStatus() :Response.Status.OK;
+				response = Response.status(status)
 						.entity(newCreditScoreResponse).build();
 			
 		} catch (Exception e) {
@@ -194,7 +195,8 @@ public class SalesAPIResource extends BaseResource {
 	
 			SalesBaseResponse newCreditScoreResponse = salesBO
 						.performCreditReCheck(request);
-				response = Response.status(Response.Status.OK)
+			Response.Status status = newCreditScoreResponse.getHttpStatus() != null ? newCreditScoreResponse.getHttpStatus() :Response.Status.OK;
+				response = Response.status(status)
 						.entity(newCreditScoreResponse).build();
 			
 		} catch (Exception e) {
