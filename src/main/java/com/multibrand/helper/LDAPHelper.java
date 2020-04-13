@@ -479,6 +479,9 @@ public class LDAPHelper extends BaseAbstractService{
 				if(attrib.getID().equals(Constants.LDAP_UNIQUEID_ATTRIBUTE)){
 					response.setUserUniqueID(attrib.get().toString());
 				}
+				if(attrib.getID().equals(Constants.LDAP_EMAIL_ATTRIBUTE)){
+					response.setEmailID(attrib.get().toString());
+				}
 				logger.info(attrib.getID() + " : " + attrib.get().toString());
 				ctx.close();
 			}
