@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -276,7 +277,7 @@ public class OeBoHelper extends BaseBO {
 	 * @param oeSignUpDTO
 	 * @throws Exception
 	 */
-	protected void submitOnlineEnrollment(OESignupDTO oeSignUpDTO, ServiceLocationResponse serviceLoationResponse)
+	protected void submitOnlineEnrollment(OESignupDTO oeSignUpDTO)
 			throws Exception {
 
 		String errorCode = null;
@@ -297,7 +298,7 @@ public class OeBoHelper extends BaseBO {
 			oeSignUpDTO.setRecentCallMade(CALL_NAME_SUBMIT_ENROLLMENT);
 			
 			SubmitEnrollRequest submitEnrollRequest = oeRequestHandler
-					.createSubmitEnrollRequest(oeSignUpDTO, serviceLoationResponse);
+					.createSubmitEnrollRequest(oeSignUpDTO);
 
 			SubmitEnrollResponse submitEnrollResponse = oeProxy
 					.submitEnrollment(submitEnrollRequest);
@@ -551,24 +552,36 @@ public class OeBoHelper extends BaseBO {
 		String METHOD_NAME = "OEBOHelper: updateEnrollmentStatus(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
+		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
+			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split("\\|");	
+		   if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
+			   oeSignUpDTO.setErrorCode(BPSD);
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			}
+		   
+		   if (ArrayUtils.contains(errorCdArray, NESID) || ArrayUtils.contains(errorCdArray, MESID)) {
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			}
+		}
+		
 		// START. Code cleanup merging and tweaking. Added by Jenith on 06/24/2015
-		if (oeSignUpDTO.isBpMatchFlag()) {
+		/*if (oeSignUpDTO.isBpMatchFlag()) {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(BPSD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
 			oeSignUpDTO.getErrorSet().add(BPSD);
 			return;
-		}
+		}*/
 		
 		
-		if (oeSignUpDTO.getEsid() == null
+/*		if (oeSignUpDTO.getEsid() == null
 				|| (StringUtils.isBlank(oeSignUpDTO.getEsid().getEsidNumber()))) {
 
 			// Update for service location
 			oeSignUpDTO.setErrorCode(NESID);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
 			oeSignUpDTO.getErrorSet().add(NESID);
-		}
+		}*/
 		
 		// Switch Hold ON and Move IN case
 		if (StringUtils.equalsIgnoreCase(oeSignUpDTO.getServiceReqTypeCd(), MVI)
@@ -661,11 +674,19 @@ public class OeBoHelper extends BaseBO {
 
 		Boolean allowSubmit = true;
 
-		if (StringUtils.equals(oeSignUpDTO.getBpMatchText(), BPSD)) {
+		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
+			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split("\\|");	
+		   if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
+			   oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
+			   allowSubmit = false;
+			}
+		}
+
+		/*if (StringUtils.equals(oeSignUpDTO.getBpMatchText(), BPSD)) {
 			oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
 
 			allowSubmit = false;
-		}
+		}*/
 		
 		
 		if (!posidHoldAllowed && retryCount>=3) {

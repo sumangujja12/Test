@@ -41,6 +41,7 @@ public class OeBoHelperTest {
 	public void testAllowSubmitEnrollmentNegativeForBPMatch(){
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		oeSignUpDTO.setBpMatchText(Constants.BPSD);
+		oeSignUpDTO.setErrorCdList("BPSD");
 		Assert.assertFalse(oeBoHelper.allowSubmitEnrollment(oeSignUpDTO, null , 1, true));
 	}
 	@Test
