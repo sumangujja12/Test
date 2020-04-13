@@ -267,7 +267,7 @@ public class OERequestHandler implements Constants {
 	 * @return SubmitEnrollRequest
 	 */
 
-	public SubmitEnrollRequest createSubmitEnrollRequest(OESignupDTO oeSignUpDTO, ServiceLocationResponse serviceLoationResponse) {
+	public SubmitEnrollRequest createSubmitEnrollRequest(OESignupDTO oeSignUpDTO) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug(oeSignUpDTO.printOETrackingID()
@@ -752,8 +752,8 @@ public class OERequestHandler implements Constants {
 		}
 
 
-		if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
-			String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split("\\|");
+		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
+			String[] errorCdArray = oeSignUpDTO.getErrorCdList().split("\\|");
 			for (String holdType : errorCdArray) {
 				if (StringUtils.equalsIgnoreCase(holdType, POSIDHOLD)) {
 					if (EMPTY.equals(enrollmentHoldType))
@@ -771,10 +771,6 @@ public class OERequestHandler implements Constants {
 						enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + HOLD_DNP;
 				}
 
-				if (StringUtils.equalsIgnoreCase(holdType, NESID) || StringUtils.equalsIgnoreCase(holdType, MESID)) {
-					oeSignUpDTO.setReqStatusCd(FLAG_N);
-				}
-				
 			}
     }
 
@@ -1150,9 +1146,9 @@ public class OERequestHandler implements Constants {
 	 * @param enrollmentRequest
 	 * @return
 	 */
-	public OESignupDTO createOeSignupDtoByMinimal(EnrollmentRequest enrollmentRequest) {
+	public OESignupDTO createOeSignupDtoByMinimal(EnrollmentRequest enrollmentRequest, OESignupDTO oeSignupDTO) {
 
-		OESignupDTO oeSignupDTO = new OESignupDTO();
+		//OESignupDTO oeSignupDTO = new OESignupDTO();
 
 		// First level data
 		oeSignupDTO.setAffiliateId(enrollmentRequest.getAffiliateId());

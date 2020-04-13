@@ -1882,7 +1882,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		EnrollmentResponse response =  new EnrollmentResponse();
 		ServiceLocationResponse serviceLoationResponse = new ServiceLocationResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
-		OESignupDTO oeSignUpDTO = null;
+		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		int retryCount=0;
 		String personId=null;
@@ -1902,6 +1902,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 				errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+				oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
 				}
 			}
 			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
@@ -1918,7 +1919,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			
 			// Create SignupDTO from the enrollment API request.
-			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest);
+			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest, oeSignUpDTO);
 			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
 			
 			// Do the input normalization/sanitization
@@ -1929,23 +1930,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				// Populate all Pre-requisite input for enrollment
 				this.initPrerequisites(oeSignUpDTO);
 				
-
-				// do not submit enrollment to sap if BPSD/PBSD
-				if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
-					if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
-						oeSignUpDTO.setReqStatusCd(FLAG_N);
-						oeSignUpDTO.setErrorCode(BPSD);
-					} else {
-						// 1. Call online enrollment submission to CCS.
-						this.submitOnlineEnrollment(oeSignUpDTO, serviceLoationResponse);
-					}
-
-				} else {
-					// 1. Call online enrollment submission to CCS.
-					this.submitOnlineEnrollment(oeSignUpDTO, serviceLoationResponse);
-				}
-
-			
+              	this.submitOnlineEnrollment(oeSignUpDTO);
 
 				// TODO 2. Out of scope of Phase I. Leave as TBD in code
 				// depositPayment();
