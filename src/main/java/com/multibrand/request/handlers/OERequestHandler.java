@@ -1343,7 +1343,8 @@ public class OERequestHandler implements Constants {
 		String transactionType = StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)
 				? SWI : MVI;
 		creditCheckRequest.setTransactionType(transactionType);
-		creditCheckRequest.setEsid(serviceLocationResponse.getEsid());
+		String esid = StringUtils.isEmpty(serviceLocationResponse.getEsid()) ? EMPTY : serviceLocationResponse.getEsid();
+		creditCheckRequest.setEsid(esid);
 		creditCheckRequest.setServStreetNum(serviceLocationResponse.getServStreetNum());
 		creditCheckRequest.setServStreetName(serviceLocationResponse.getServStreetName());
 		creditCheckRequest.setServStreetAptNum(serviceLocationResponse.getServStreetAptNum());

@@ -2072,6 +2072,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
 				}
 				
+			
+				
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
@@ -2088,6 +2090,18 @@ public class OEBO extends OeBoHelper implements Constants{
 			// getNewCreditScore from NRGWS OEDomain via [OE proxy layer]
 			newCreditScoreResponse = oeProxy
 					.getNewCreditScore(creditScoreRequest);
+			
+			
+			if(StringUtils.isNotEmpty(newCreditScoreResponse.getStrErrCode())) {
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
+				response.setStatusCode(STATUS_CODE_STOP);
+				response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+				response.setMessageText(this.msgSource.getMessage(
+						MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
+				response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+				return response;
+			}
 			
 			StringBuilder creditFactorsText = new StringBuilder(EMPTY);
 
@@ -2296,6 +2310,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
 			response.setMessageText(this.msgSource.getMessage(
 					MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
+			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (NoSuchMessageException e) {
 			logger.error("inside performCreditCheck:: exception occured ::", e);
@@ -2311,6 +2326,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
 			response.setMessageText(this.msgSource.getMessage(
 					MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
+			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
 			throw new OAMException(200, e.getMessage(), response);
 		} finally {
 			logger.debug("Processing updateServiceLocation ...");
