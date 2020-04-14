@@ -2655,7 +2655,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 									paymentMethodCC.setIsRegisteredWithAutopay(FLAG_TRUE);
 									paymentMethodCC.setNameOnAccount(accountDetailsResponse.getContractAccountDO().getCAName());
 									paymentMethodCC.setCreditCardExpYear(adr[0].getExpDate().substring(0, 4));
-									paymentMethodCC.setCreditCardExpMonth(adr[0].getExpDate().substring(5, 6));
+									paymentMethodCC.setCreditCardExpMonth(adr[0].getExpDate().substring(4, 6));
 									paymentMethodCC.setCreditCardType(adr[0].getCardType());
 									paymentMethodCC.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_CC);
 									paymentMethodCC.setPaymentMethodToken(adr[0].getCardNumber());
