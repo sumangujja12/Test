@@ -360,16 +360,23 @@ public class AddressService extends BaseAbstractService
 
 			
 			if(esidResponse != null && esidResponse.getEsidList() != null){
+				
+				
 				Iterator<ESIDData> itr =  esidResponse.getEsidList().iterator();
 				
 				while (itr.hasNext()) { 
 					ESIDData esidData = itr.next(); 
 					if (!esidStatusValidation(esidData.getPremiseType(), esidData.getEsidStatus())) { 
-						itr.remove(); 
+						
+						if(!StringUtils.equalsIgnoreCase(esidData.getPremiseType(), RESIDENTIAL)&& esidResponse.getEsidList().size() == 1) {
+							esidData.setEsidNumber(NRESID);
+						} else{
+							itr.remove(); 
+						}
 					} 
 				}
 				
-				logger.info("esidResponse 1 "+ReflectionToStringBuilder.toString(esidResponse,
+				logger.info("esidResponse  "+ReflectionToStringBuilder.toString(esidResponse,
 						ToStringStyle.MULTI_LINE_STYLE));
 			}
 			
