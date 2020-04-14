@@ -2651,13 +2651,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 								paymentMethodB = new PaymentMethodB();
 								if(adr[0].getPayment().equalsIgnoreCase("G"))
 								{
-									String expMonth = StringUtils.leftPad(adr[0].getExpDate().substring(5, 6), 2, '0');
-									
+																	
 									paymentMethodCC.setIsAllowed(NCCAFlag);
 									paymentMethodCC.setIsRegisteredWithAutopay(FLAG_TRUE);
 									paymentMethodCC.setNameOnAccount(accountDetailsResponse.getContractAccountDO().getCAName());
 									paymentMethodCC.setCreditCardExpYear(adr[0].getExpDate().substring(0, 4));
-									paymentMethodCC.setCreditCardExpMonth(expMonth);
+									paymentMethodCC.setCreditCardExpMonth(adr[0].getExpDate().substring(4, 6));
 									paymentMethodCC.setCreditCardType(adr[0].getCardType());
 									paymentMethodCC.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_CC);
 									paymentMethodCC.setPaymentMethodToken(adr[0].getCardNumber());
