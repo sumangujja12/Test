@@ -497,14 +497,6 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		long startTime = CommonUtil.getStartTime();
 		
-		
-		if (StringUtils.isBlank(enrollmentRequest.getPromoCode())) { // If Promo code is passed empty
-			response.setStatusCode(STATUS_CODE_STOP);
-			response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-			response.setErrorDescription("promoCode may not be Empty");
-			return response;
-		}
-
 		try {
 			// 1. Call online enrollment submission to CCS.
 			response = this.submitOnlineEnrollment(enrollmentRequest);
@@ -782,7 +774,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrBPPOSidDLDate(EMPTY);
 		submitEnrollRequest.setStrBPPosPOSidSSNDate(EMPTY);
 
-		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad((oeSignUpDTO.getOfferCode()), 8, "0"));
+		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad((this.appConstMessageSource
+				.getMessage("gmd.offer.web.equivalent." + oeSignUpDTO.getTdspCode(), null, null)), 8, "0"));
 		submitEnrollRequest.setStrProductPriceCode(EMPTY);
 		submitEnrollRequest.setStrIncentiveCode(EMPTY);
 		submitEnrollRequest.setStrmarketSegment("RS");
