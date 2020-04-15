@@ -571,7 +571,6 @@ public class OeBoHelper extends BaseBO {
 			// Update for service location
 			oeSignUpDTO.setErrorCode(SWHOLD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
-			oeSignUpDTO.getErrorSet().add(SWHOLD);
 		}
 		
 		// END. Code cleanup merging and tweaking

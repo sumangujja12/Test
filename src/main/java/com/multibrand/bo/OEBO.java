@@ -1885,8 +1885,6 @@ public class OEBO extends OeBoHelper implements Constants{
 		EnrollmentResponse response =  new EnrollmentResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
-		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		String errorCdArray[] = null; 
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum = null;
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
@@ -1903,8 +1901,6 @@ public class OEBO extends OeBoHelper implements Constants{
 					serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
 				}
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-				errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
-				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 				oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
 				}
 			}
@@ -2000,26 +1996,6 @@ public class OEBO extends OeBoHelper implements Constants{
 		 * 
 		 */
 		finally {
-			if(oeSignUpDTO.getErrorSet().isEmpty()){
-				serviceLocationResponseErrorList.remove(BPSD);
-				serviceLocationResponseErrorList.remove(NESID);
-				serviceLocationResponseErrorList.remove(SWHOLD);
-			}else{
-				for(String errorCode :oeSignUpDTO.getErrorSet()){
-					if(errorCode.equalsIgnoreCase(BPSD)){
-						serviceLocationResponseErrorList.remove(NESID);
-						serviceLocationResponseErrorList.remove(SWHOLD);
-					}else if(errorCode.equalsIgnoreCase(NESID)){
-						serviceLocationResponseErrorList.remove(BPSD);
-						serviceLocationResponseErrorList.remove(SWHOLD);
-					}else if(errorCode.equalsIgnoreCase(SWHOLD)){
-						serviceLocationResponseErrorList.remove(BPSD);
-						serviceLocationResponseErrorList.remove(NESID);
-					}
-				}
-				serviceLocationResponseErrorList.addAll(oeSignUpDTO.getErrorSet());
-			}
-			oeSignUpDTO.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
 			// Calls 7, 8 and 9 are executed here.
 			// Save Person and Location details in database.
 			this.updatePersonAndServiceLocation(oeSignUpDTO);

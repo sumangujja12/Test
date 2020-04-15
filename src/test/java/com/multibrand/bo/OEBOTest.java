@@ -20,6 +20,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import com.multibrand.domain.KbaQuestionDTO;
+import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.ServiceLocationDao;
@@ -33,13 +34,19 @@ import com.multibrand.domain.KbaResponseOutputDTO;
 import com.multibrand.domain.KbaResponseReasonDTO;
 import com.multibrand.domain.KbaSubmitAnswerRequest;
 import com.multibrand.domain.KbaSubmitAnswerResponse;
-
+import com.multibrand.dto.AddressDTO;
+import com.multibrand.dto.ESIDDTO;
 import com.multibrand.dto.KBASubmitResultsDTO;
+import com.multibrand.dto.OESignupDTO;
+import com.multibrand.dto.OfferDTO;
+import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
+import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.service.OEService;
+import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.LoggerUtil;
 
@@ -48,10 +55,15 @@ import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.multibrand.vo.request.ESIDData;
+import com.multibrand.vo.request.EnrollmentReportDataRequest;
+import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.exception.OEException;
+import com.multibrand.request.handlers.OERequestHandler;
 
 @Test(singleThreaded = true)
-public class OEBOTest {
+public class OEBOTest implements Constants{
 
 	@InjectMocks
 	private OEBO oebo;
@@ -76,7 +88,21 @@ public class OEBOTest {
 
 	@Spy
 	ReloadableResourceBundleMessageSource viewResolverMessageSource = new ReloadableResourceBundleMessageSource();
-
+	
+	@Mock
+	private OERequestHandler oeRequestHandler;
+	
+	@Spy
+	OESignupDTO oeSignUpDTO = new OESignupDTO();
+	
+	@Mock
+	private OeBoHelper oeBoHelper;
+	
+	@Mock
+	private BaseBO baseBO;
+	
+	@Mock
+	private CommonUtil commonUtil;
 	
 	@BeforeClass
 	public void init() {
@@ -93,8 +119,9 @@ public class OEBOTest {
 	// FOR JUNIT
 
 	
-	  /*@Before public void init()
-	  { MockitoAnnotations.initMocks(this); }*/
+	 /* @Before public void init()
+	  { 
+		  MockitoAnnotations.initMocks(this); }*/
 	 
 /*
 	@Test
@@ -582,4 +609,28 @@ public class OEBOTest {
 		esidResponse.setEsidList(esidList);
 		return esidResponse;
 	}
+	
+	/*@Test
+	public void testSubmitEnrollmentCheckFraudulentActivityForDuplicateEnroll() throws OEException{
+		EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
+		//OESignupDTO oeSignUpDTO = createOeSignupDTORequest();
+		oeSignUpDTO.setReqStatusCd(FLAG_N);
+		oeSignUpDTO.setAffiliateId("270519");
+		oeSignUpDTO.setTdspCodeCCS("D0001");
+		oeSignUpDTO.setTrackingNumber("10000016");
+		ServiceLocationResponse serviceLoationResponse=new ServiceLocationResponse();
+		serviceLoationResponse.setRequestStatusCode(FLAG_N);
+		EnrollmentResponse response =  new EnrollmentResponse();
+		UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
+		UpdatePersonRequest updatePersonRequest = new UpdatePersonRequest();
+		EnrollmentReportDataRequest enrollReportDataReq = new EnrollmentReportDataRequest();
+		when(serviceLocationDAO.getServiceLocation(enrollmentRequest.getTrackingId())).thenReturn(serviceLoationResponse);
+		when(oeRequestHandler.createOeSignupDtoByMinimal(Matchers.any(EnrollmentRequest.class), Matchers.any(OESignupDTO.class),Matchers.any(ServiceLocationResponse.class))).thenReturn(oeSignUpDTO);
+		when(oeService.createAndCallServiceReturnStatus(enrollReportDataReq, REST_IOT_ENROLLMENT_REPORT_DATA_SUBMIT_URL, IOT_ENROLLMENT_REPORT_DATA_SUBMIT_REST_TIME_OUT_IN_SEC)).thenReturn("");
+		when(oeRequestHandler.createUpdateServiceLocationRequest(oeSignUpDTO)).thenReturn(updateServiceLocationRequest);
+		when(oeRequestHandler.createUpdatePersonRequest(oeSignUpDTO)).thenReturn(updatePersonRequest);
+		response=oebo.submitEnrollment(enrollmentRequest, serviceLoationResponse);
+		Assert.assertEquals(response.getStatusCode(), STATUS_CODE_CONTINUE);
+	}*/
+		
 }
