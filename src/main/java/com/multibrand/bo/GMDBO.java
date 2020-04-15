@@ -806,9 +806,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrPaymentTerms(EMPTY);
 		submitEnrollRequest.setStrValidToDate(EMPTY);
 		submitEnrollRequest.setStrValidFromDate(EMPTY);
-		submitEnrollRequest.setStrDLRegion(TX);
-		submitEnrollRequest.setStrDLCountry(COUNTRY_US);
-		submitEnrollRequest.setStrSvrcRegion(TX);
+		submitEnrollRequest.setStrDLRegion(EMPTY);
+		submitEnrollRequest.setStrDLCountry(EMPTY);
+		submitEnrollRequest.setStrSvrcRegion(EMPTY);
 		submitEnrollRequest.setStrCACreationUser(CHANNEL);
 		submitEnrollRequest.setStrPaperlessFlag(FLAG_N); // For Reliant we never set to paperless
 		enrollmentHoldType = PPYHOLD;
