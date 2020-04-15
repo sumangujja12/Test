@@ -279,7 +279,7 @@ public class ProfileBO extends BaseBO {
 		    if(billingZipCodeValidation&&((CommonUtil.trimZipCode(billingAddressResp.getStrZip())).equalsIgnoreCase(zip.trim()))){
 		    	response.setUserName(userName);
 		  	
-		    	logger.info("User Email id"+emailID);		
+		    	logger.info("User Email id{}", emailID);		
 		    
 		       if(LDAPEmailValidation&&EMAIL_VERIFIED){
 				HashMap<String, String> templateProperties = new HashMap<String, String>();
@@ -660,8 +660,10 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		// Get EMail.
 		String emailAddress = this.getEmailAddress(caNumber, bpNumber, companyCode, sessionId);
 
-		// Set Email in response.
-		userResponse.setEmailID(emailAddress);
+		// Set Email in response only when it is not empty
+		if (org.apache.commons.lang3.StringUtils.isNotBlank(emailAddress)) {
+			userResponse.setEmailID(emailAddress);
+		}
 
 		// Set success code in response.
 		userResponse.setResultCode(RESULT_CODE_SUCCESS);
