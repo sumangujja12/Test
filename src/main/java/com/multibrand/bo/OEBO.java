@@ -2862,11 +2862,12 @@ public class OEBO extends OeBoHelper implements Constants{
 								response.setEsid(EMPTY);
 								response.setResultCode(RESULT_CODE_SUCCESS);
 								response.setStatusCode(STATUS_CODE_STOP);
-								response.setMessageCode(strESIDNumber);
+								response.setMessageCode(MESSAGE_CODE_BUSINESS_METER);
 								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NRESID));
 								serviceLocationResponseErrorList.add(NRESID);
 								serviceLocationResponseErrorList.remove(MESID);
 								serviceLocationResponseErrorList.remove(NESID);
+								return response;
 						} else {
 							response.setEsid(strESIDNumber);
 							serviceLocationResponseErrorList.remove(MESID);
