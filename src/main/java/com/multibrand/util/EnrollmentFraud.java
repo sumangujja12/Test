@@ -27,7 +27,7 @@ public static enum ENROLLMENT_FRAUD_ENUM {
 		}
 
 
-		public void setFraudErrorCode(String fraudErrorCode) {
+		private void setFraudErrorCode(String fraudErrorCode) {
 			this.fraudErrorCode = fraudErrorCode;
 		}
 
@@ -37,7 +37,7 @@ public static enum ENROLLMENT_FRAUD_ENUM {
 		}
 
 
-		public void setFraudErrorMessage(String fraudErrorMessage) {
+		private void setFraudErrorMessage(String fraudErrorMessage) {
 			this.fraudErrorMessage = fraudErrorMessage;
 		}
 
@@ -47,7 +47,7 @@ public static enum ENROLLMENT_FRAUD_ENUM {
 		}
 
 
-		public void setFraudSystemNotes(String fraudSystemNotes) {
+		private void setFraudSystemNotes(String fraudSystemNotes) {
 			this.fraudSystemNotes = fraudSystemNotes;
 		}
 
