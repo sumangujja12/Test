@@ -31,6 +31,7 @@ import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.SalesCreditCheckRequest;
 import com.multibrand.dto.request.SalesCreditReCheckRequest;
+import com.multibrand.dto.request.SalesEnrollmentRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.PersonResponse;
@@ -177,6 +178,7 @@ public class OERequestHandler implements Constants {
 		request.setAgentUpResponse(oeSignupDTO.getAgentUpResponse());
 		request.setTpv_status(oeSignupDTO.getTpvStatus());
 		request.setCampaignCd(oeSignupDTO.getCampaignCd());
+		request.setSystemNotes(oeSignupDTO.getSystemNotes());
 		return request;
 	}
 
@@ -1144,9 +1146,10 @@ public class OERequestHandler implements Constants {
 	 * 
 	 * 
 	 * @param enrollmentRequest
+	 * @param serviceLoationResponse 
 	 * @return
 	 */
-	public OESignupDTO createOeSignupDtoByMinimal(EnrollmentRequest enrollmentRequest, OESignupDTO oeSignupDTO) {
+	public OESignupDTO createOeSignupDtoByMinimal(EnrollmentRequest enrollmentRequest, OESignupDTO oeSignupDTO, ServiceLocationResponse serviceLoationResponse) {
 
 		//OESignupDTO oeSignupDTO = new OESignupDTO();
 
@@ -1163,6 +1166,7 @@ public class OERequestHandler implements Constants {
 		oeSignupDTO.setOfferDate(enrollmentRequest.getOfferDate());
 		oeSignupDTO.setOfferTime(enrollmentRequest.getOfferTime());
 		oeSignupDTO.setSwitchHoldStatus(enrollmentRequest.getSwitchHoldFlag());
+		oeSignupDTO.setReqStatusCd(serviceLoationResponse.getRequestStatusCode());
 		// Offer data
 		OfferDTO selectedOffer = new OfferDTO();
 		selectedOffer.setCampaignCode(enrollmentRequest.getCampaignCode());
@@ -1375,5 +1379,59 @@ public class OERequestHandler implements Constants {
 				serviceLocationResponse);
 		creditCheckRequest.setTokenizedSSN(salesCreditReCheckRequest.getTokenizedSSN());
 		return creditCheckRequest;
+	}
+
+	public EnrollmentRequest createSubmitEnrollmentRequest(SalesEnrollmentRequest enrollmentRequest, ServiceLocationResponse serviceLoationResponse) {
+		EnrollmentRequest request = new EnrollmentRequest();
+		request.setChannelType(enrollmentRequest.getChannelType());
+		request.setAffiliateId(enrollmentRequest.getAffiliateId());
+		request.setCompanyCode(enrollmentRequest.getCompanyCode());
+		request.setBrandId(enrollmentRequest.getBrandId());
+		request.setEbillFlag(enrollmentRequest.getEbillFlag());
+		request.setLanguageCode(enrollmentRequest.getLanguageCode());
+		request.setTrackingId(enrollmentRequest.getTrackingId());
+
+		if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
+			String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
+			for (String holdtype : errorCdArray) {
+				if (holdtype.equalsIgnoreCase(BPSD) || holdtype.equalsIgnoreCase(PBSD)) {
+					request.setBpMatchFlag(BPSD);
+				}
+
+				if (holdtype.equalsIgnoreCase(SWITCHHOLD)) {
+					request.setSwitchHoldFlag(ON);
+				}
+			}
+		}
+		request.setMviDate(serviceLoationResponse.getServiceStartDate());
+		request.setTransactionType(serviceLoationResponse.getServiceRequestTypeCode());
+		request.setTdspCodeCCS(serviceLoationResponse.getTdspCode());
+		request.setOfferCode(enrollmentRequest.getOfferCode());
+		request.setPromoCode(enrollmentRequest.getPromoCode());
+		request.setCampaignCode(enrollmentRequest.getCampaignCode());
+		request.setProductPriceCode(enrollmentRequest.getProductPriceCode());
+		request.setIncentiveCode(enrollmentRequest.getIncentiveCode());
+		request.setMarketSegment(enrollmentRequest.getMarketSegment());
+		request.setSapOfferTagline(serviceLoationResponse.getOfferCodeTitle());
+		// Billing address
+		request.setBillStreetName(serviceLoationResponse.getBillStreetName());
+		request.setBillStreetNum(serviceLoationResponse.getBillStreetNum());
+		request.setBillStreetAptNum(serviceLoationResponse.getBillStreetAptNum());
+		request.setBillCity(serviceLoationResponse.getBillCity());
+		request.setBillState(serviceLoationResponse.getBillState());
+		request.setBillZipCode(serviceLoationResponse.getBillZipCode());
+		request.setBillPOBox(serviceLoationResponse.getBillPoBox());
+
+		// Service address
+		request.setServStreetName(serviceLoationResponse.getServStreetName());
+		request.setServStreetNum(serviceLoationResponse.getServStreetNum());
+		request.setServStreetAptNum(serviceLoationResponse.getServStreetAptNum());
+		request.setServCity(serviceLoationResponse.getServCity());
+		request.setServState(serviceLoationResponse.getServState());
+		request.setServZipCode(serviceLoationResponse.getServZipCode());
+
+		request.setReferralId(serviceLoationResponse.getReferralId());
+		request.setEsid(serviceLoationResponse.getEsid());
+		return request;
 	}
 }

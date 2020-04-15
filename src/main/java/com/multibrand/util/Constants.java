@@ -1403,6 +1403,7 @@ public interface Constants {
 	public static final String ACTIVE = "ACTIVE";
 
 	public static final String POSID  = "POSID";
-
 	
+	public static final String ERROR_CD_LIST_SPLIT_PATTERN = "\\|";
+	public static final String ERROR_CD_ENROLLMENT_NOT_ALLOWED = "ENROLLMENT_NOT_ALLOWED";
 }

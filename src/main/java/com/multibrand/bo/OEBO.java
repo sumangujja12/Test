@@ -19,6 +19,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -138,6 +139,7 @@ import com.multibrand.util.CommonUtil.validationFormatEnum;
 import com.multibrand.util.CompanyMsgText;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
+import com.multibrand.util.EnrollmentFraud.ENROLLMENT_FRAUD_ENUM;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.util.TogglzUtil;
 import com.multibrand.util.Token;
@@ -1873,20 +1875,19 @@ public class OEBO extends OeBoHelper implements Constants{
 	 *             if the enrollment call contains any error or failed.
 	 * 
 	 * @author Jenith (jyogapa1)
+	 * @param serviceLoationResponse2 
 	 */
-	public EnrollmentResponse submitEnrollment(EnrollmentRequest enrollmentRequest)
+	public EnrollmentResponse submitEnrollment(EnrollmentRequest enrollmentRequest, ServiceLocationResponse serviceLoationResponse)
 			throws OEException {
 		String METHOD_NAME = "OEBO: submitEnrollment(..)";
 		logger.debug("Start:" + METHOD_NAME);
 		
 		EnrollmentResponse response =  new EnrollmentResponse();
-		ServiceLocationResponse serviceLoationResponse = new ServiceLocationResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		int retryCount=0;
-		String personId=null;
 		String errorCdArray[] = null; 
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum = null;
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -1898,92 +1899,89 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		try {
 			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
-			    serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
+				if(serviceLoationResponse == null){
+					serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
+				}
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-				errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 				oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
 				}
 			}
-			List<Map<String, String>> personIdAndRetryCountResponse =getPersonIdAndRetryCountByTrackingNo(enrollmentRequest.getTrackingId());
-			logger.info("personIdAndRetryCountResponse "+personIdAndRetryCountResponse);
-
-			personId=personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_PERSON_ID);
-			logger.debug("inside validatePosId::personIdAndRetryCountResponse.get(0) "+personIdAndRetryCountResponse.get(0));
-
-			if(StringUtils.isNotBlank(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT))){
-				retryCount=	Integer.parseInt(personIdAndRetryCountResponse.get(0).get(Constants.PERSON_AFFILIATE_RETRY_COUNT));
-			}
-			
-			boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,enrollmentRequest.getChannelType());
-			
-			
+				
 			// Create SignupDTO from the enrollment API request.
-			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest, oeSignUpDTO);
+			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest, oeSignUpDTO,serviceLoationResponse);
+			
 			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
 			
 			// Do the input normalization/sanitization
 			this.initNormalization(oeSignUpDTO);
-			logger.info("oeSignUpDTO : "+oeSignUpDTO);
-			if (allowSubmitEnrollment(oeSignUpDTO, response, retryCount, posidHoldAllowed)) {
-	
-				// Populate all Pre-requisite input for enrollment
-				this.initPrerequisites(oeSignUpDTO);
-				
-              	this.submitOnlineEnrollment(oeSignUpDTO);
-
-				// TODO 2. Out of scope of Phase I. Leave as TBD in code
-				// depositPayment();
-
-				// TODO 3. Out of scope of Phase I. Leave as TBD in code
-				// submitAutoPay();
-
-				if (oeSignUpDTO.isEnrolled()) {
-
-					// 4. Call activate EBill.
-					this.activateEbill(oeSignUpDTO);
-
-					// 5. Call update contact information.
-					this.updateContact(oeSignUpDTO);
-
-					// TODO 6. - Out of scope of Phase I. Leave as TBD in code
-					// sendConfirmationEmail();
-					if (StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId())) {
-						
-						if((StringUtils.isNotBlank(oeSignUpDTO.getContractAccountNum()))
-								&& (StringUtils.isNotBlank(oeSignUpDTO.getBusinessPartnerID()))) {
-							UpdateCRMAgentInfoResponse updateResponse = oeService.updateCRMAgentInfo(oeSignUpDTO);
-							logger.info(oeSignUpDTO.printOETrackingID()+" Agent CRM Update Status for CA : "+oeSignUpDTO.getContractAccountNum()+" Response Code : "+updateResponse.getResponseCode()+ " Msg : "+updateResponse.getResponseMsg());
-							if(StringUtils.equalsIgnoreCase(updateResponse.getResponseCode(), S_VALUE)){
-								oeSignUpDTO.setCcsAgentUpdateStatus(UPDATE_AGENT_SUCCESS_FLAG);
-							} else{
-								oeSignUpDTO.setCcsAgentUpdateStatus(UPDATE_AGENT_ERROR_FLAG);
-							}
-						} else {
-							logger.info(oeSignUpDTO.printOETrackingID() + " Agent  :"
-									+ oeSignUpDTO.getAgentID()
-									+ " is not updated in CRM because CA :" + oeSignUpDTO.getContractAccountNum()
-									+ " BPNumber :" + oeSignUpDTO.getBusinessPartnerID());
-						}
-				} else {
-					logger.debug(oeSignUpDTO.printOETrackingID()+" There is no agent information to Update ");
-				}
+			logger.debug("oeSignUpDTO : "+oeSignUpDTO);
+			
+			// Check for any fraudulent activity in Enrollment Submission and block enrollment
+			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType());
+			if(null==enrollmentFraudEnum){
+				if (allowEnrollmentSubmissionToCCS(oeSignUpDTO, response)) {
+		
+					// Populate all Pre-requisite input for enrollment
+					this.initPrerequisites(oeSignUpDTO);
 					
+	              	this.submitOnlineEnrollment(oeSignUpDTO);
+	
+					// TODO 2. Out of scope of Phase I. Leave as TBD in code
+					// depositPayment();
+	
+					// TODO 3. Out of scope of Phase I. Leave as TBD in code
+					// submitAutoPay();
+	
+					if (oeSignUpDTO.isEnrolled()) {
+	
+						// 4. Call activate EBill.
+						this.activateEbill(oeSignUpDTO);
+	
+						// 5. Call update contact information.
+						this.updateContact(oeSignUpDTO);
+	
+						// TODO 6. - Out of scope of Phase I. Leave as TBD in code
+						// sendConfirmationEmail();
+						if (StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId())) {
+							
+							if((StringUtils.isNotBlank(oeSignUpDTO.getContractAccountNum()))
+									&& (StringUtils.isNotBlank(oeSignUpDTO.getBusinessPartnerID()))) {
+								UpdateCRMAgentInfoResponse updateResponse = oeService.updateCRMAgentInfo(oeSignUpDTO);
+								logger.info(oeSignUpDTO.printOETrackingID()+" Agent CRM Update Status for CA : "+oeSignUpDTO.getContractAccountNum()+" Response Code : "+updateResponse.getResponseCode()+ " Msg : "+updateResponse.getResponseMsg());
+								if(StringUtils.equalsIgnoreCase(updateResponse.getResponseCode(), S_VALUE)){
+									oeSignUpDTO.setCcsAgentUpdateStatus(UPDATE_AGENT_SUCCESS_FLAG);
+								} else{
+									oeSignUpDTO.setCcsAgentUpdateStatus(UPDATE_AGENT_ERROR_FLAG);
+								}
+							} else {
+								logger.info(oeSignUpDTO.printOETrackingID() + " Agent  :"
+										+ oeSignUpDTO.getAgentID()
+										+ " is not updated in CRM because CA :" + oeSignUpDTO.getContractAccountNum()
+										+ " BPNumber :" + oeSignUpDTO.getBusinessPartnerID());
+							}
+					} else {
+						logger.debug(oeSignUpDTO.printOETrackingID()+" There is no agent information to Update ");
+					}
+						
+					}
 				}
+				
+				// Update errorCode, reqStatusCD
+				this.updateEnrollmentStatus(oeSignUpDTO);
+				//Send date to TLP
+				//START : OE :Sprint62 :US21019 :Kdeshmu1
+				if(!StringUtils.equalsIgnoreCase(I_VALUE,oeSignUpDTO.getReqStatusCd()) && 
+						StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId()))
+				{
+					String tlpReportApiStatus = sendReliantEnrollmentDataToTLP (oeSignUpDTO);
+					oeSignUpDTO.setTlpReportApiStatus(tlpReportApiStatus);
+				}
+				//END : OE :Sprint62 :US21019 :Kdeshmu1
+			}else{
+				oeSignUpDTO.setSystemNotes(enrollmentFraudEnum.getFraudSystemNotes());
 			}
-			
-			// Update errorCode, reqStatusCD
-			this.updateEnrollmentStatus(oeSignUpDTO);
-			//Send date to TLP
-			//START : OE :Sprint62 :US21019 :Kdeshmu1
-			if(!StringUtils.equalsIgnoreCase(I_VALUE,oeSignUpDTO.getReqStatusCd()) && 
-					StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId()))
-			{
-				String tlpReportApiStatus = sendReliantEnrollmentDataToTLP (oeSignUpDTO);
-				oeSignUpDTO.setTlpReportApiStatus(tlpReportApiStatus);
-			}
-			//END : OE :Sprint62 :US21019 :Kdeshmu1
-			
 		} catch (RemoteException e) {
 			logger.error(e);
 			this.handleSubmitEnrollmentError(oeSignUpDTO, e);
@@ -2025,14 +2023,41 @@ public class OEBO extends OeBoHelper implements Constants{
 			// Calls 7, 8 and 9 are executed here.
 			// Save Person and Location details in database.
 			this.updatePersonAndServiceLocation(oeSignUpDTO);
+			// populate enrollment response for output.
+			this.setEnrollmentResponse(response, oeSignUpDTO, enrollmentFraudEnum);
 		}
-		
-		// populate enrollment response for output.
-		this.setEnrollmentResponse(response, oeSignUpDTO);
 		
 		logger.debug("END:" + METHOD_NAME);
 				
 		return response;
+	}
+
+	private ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType) {
+		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
+		logger.debug("Start:" + METHOD_NAME);
+		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,channelType);
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		String errorCdList=oeSignUpDTO.getErrorCdList();
+		if(!StringUtils.equals(oeSignUpDTO.getReqStatusCd(), I_VALUE)){
+			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DUPLICATE_ENROLLMENT");
+		}
+		else if (StringUtils.isNotBlank(errorCdList)) {
+			String errorCdArray[] =errorCdList.split(ERROR_CD_LIST_SPLIT_PATTERN);	
+		    if(!isPosidHoldAllowed && ArrayUtils.contains(errorCdArray, POSIDHOLD)){
+		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("POSID_HOLD");
+			}
+		    else if(ArrayUtils.contains(errorCdArray, BP_RESTRICT)){
+		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("RESTRICTED_BP");
+			}
+		    else if(ArrayUtils.contains(errorCdArray, SWHOLD) && StringUtils.equals(oeSignUpDTO.getServiceReqTypeCd(), SWI)){
+		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("SWITCH_HOLD");
+			}else if(ArrayUtils.contains(errorCdArray, CREDFREEZE)){
+				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
+			}
+		}
+		
+		logger.debug("End:" + METHOD_NAME);
+		return enrollmentFraudEnum;
 	}
 
 	/**
@@ -2075,7 +2100,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 				
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 				}
 
@@ -2525,13 +2550,24 @@ public class OEBO extends OeBoHelper implements Constants{
 	 * 
 	 * @param enrollmentResponse
 	 * @param oeSignUpDTO
+	 * @param enrollmentFraudEnum 
 	 */
 	private void setEnrollmentResponse(EnrollmentResponse enrollmentResponse,
-			OESignupDTO oeSignUpDTO) {
+			OESignupDTO oeSignUpDTO, ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum) {
 		// TODO Set error code if any. (Reliant code base)
 		// this.setErrorCode(oeSignUpDTO);
 
-		if (BPSD.equalsIgnoreCase(oeSignUpDTO.getErrorCode())) {
+		if(null!=enrollmentFraudEnum){
+			enrollmentResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			enrollmentResponse.setResultDescription(enrollmentFraudEnum.getFraudErrorMessage());
+			enrollmentResponse.setStatusCode(STATUS_CODE_STOP);
+			enrollmentResponse.setMessageCode(StringUtils.EMPTY);
+			enrollmentResponse.setMessageText(StringUtils.EMPTY);
+			enrollmentResponse.setErrorCode(enrollmentFraudEnum.getFraudErrorCode());
+			enrollmentResponse.setErrorDescription(enrollmentFraudEnum.getFraudErrorMessage());
+			enrollmentResponse.setHttpStatus(Status.BAD_REQUEST);
+		}
+		else if (BPSD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()) || PBSD.equalsIgnoreCase(oeSignUpDTO.getErrorCode())) {
 
 			enrollmentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			enrollmentResponse.setResultDescription(msgSource
@@ -2545,9 +2581,12 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setIdocNumber(StringUtils.EMPTY);
 			enrollmentResponse.setCaNumber(StringUtils.EMPTY);
 			enrollmentResponse.setCheckDigit(StringUtils.EMPTY);
-			enrollmentResponse.setBpid(StringUtils.EMPTY);
-
-		} else if (NESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())||(SWHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))||(StringUtils.isBlank(oeSignUpDTO.getErrorCode()))) {
+			enrollmentResponse.setBpid(StringUtils.EMPTY); 
+			enrollmentResponse.setHttpStatus(Status.OK);
+		} else if (NESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
+				||(SWHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
+				|| CCSERR.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
+				||(StringUtils.isBlank(oeSignUpDTO.getErrorCode()))) {
 
 			enrollmentResponse.setResultCode(RESULT_CODE_SUCCESS);
 			enrollmentResponse.setResultDescription(StringUtils.EMPTY);
@@ -2567,7 +2606,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					oeSignUpDTO.getCheckDigit(), StringUtils.EMPTY));
 			enrollmentResponse.setBpid(StringUtils.defaultIfEmpty(
 					oeSignUpDTO.getBusinessPartnerID(), StringUtils.EMPTY));
-
+			enrollmentResponse.setHttpStatus(Status.OK);
 		} 
 		else {
 			// set error code if any in response
@@ -2575,20 +2614,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setResultDescription("Enrollment Call Failed with error: "+oeSignUpDTO.getErrorCode());
 			enrollmentResponse.setStatusCode(STATUS_CODE_STOP);
 			enrollmentResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
-			enrollmentResponse
-					.setMessageText(getMessage(SUBMIT_ENROLLMENT_TECHNICAL_ERROR_MSG));
+			enrollmentResponse.setMessageText(getMessage(SUBMIT_ENROLLMENT_TECHNICAL_ERROR_MSG));
+			enrollmentResponse.setHttpStatus(Status.INTERNAL_SERVER_ERROR);
 
-			// Added for error cases also:
-			/*enrollmentResponse.setTrackingId(StringUtils.defaultIfEmpty(
-					oeSignUpDTO.getTrackingNumber(), StringUtils.EMPTY)); */
-			enrollmentResponse.setIdocNumber(StringUtils.defaultIfEmpty(
-					oeSignUpDTO.getIdocNumber(), StringUtils.EMPTY));
-			enrollmentResponse.setCaNumber(StringUtils.defaultIfEmpty(
-					oeSignUpDTO.getContractAccountNum(), StringUtils.EMPTY));
-			enrollmentResponse.setCheckDigit(StringUtils.defaultIfEmpty(
-					oeSignUpDTO.getCheckDigit(), StringUtils.EMPTY));
-			enrollmentResponse.setBpid(StringUtils.defaultIfEmpty(
-					oeSignUpDTO.getBusinessPartnerID(), StringUtils.EMPTY));
 		}
 		// Set OE Signup DTO in the response
 		// enrollmentResponse.setOeSignupDTO(oeSignUpDTO);
@@ -2744,7 +2772,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					serviceLoationResponse=getEnrollmentData(trackingId);
 				}
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 			}
 			}
@@ -2821,7 +2849,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					}
 					transactionType = StringUtils.equals(transactionType, TRANSACTIONTYPE_N) ? MVI :(StringUtils.equals(transactionType, TRANSACTIONTYPE_S) ? SWI: transactionType) ;
 					if(StringUtils.equalsIgnoreCase(esidDo.getSwitchHoldStatus(), ON) 
-							&& (StringUtils.equalsIgnoreCase(esidDo.getSwitchHoldStatus(), SWI))){
+							&& (StringUtils.equalsIgnoreCase(transactionType, SWI))){
 						response.setEsid(esidDo.getEsidNumber());
 						response.setResultCode(RESULT_CODE_SUCCESS);
 						response.setStatusCode(STATUS_CODE_STOP);
@@ -5506,7 +5534,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 		if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
 	    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
 		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 		serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 		}
 		}
