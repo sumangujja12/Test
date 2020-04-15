@@ -1166,7 +1166,8 @@ public class OERequestHandler implements Constants {
 		oeSignupDTO.setOfferDate(enrollmentRequest.getOfferDate());
 		oeSignupDTO.setOfferTime(enrollmentRequest.getOfferTime());
 		oeSignupDTO.setSwitchHoldStatus(enrollmentRequest.getSwitchHoldFlag());
-		oeSignupDTO.setReqStatusCd(serviceLoationResponse.getRequestStatusCode());
+		if(serviceLoationResponse != null){
+		oeSignupDTO.setReqStatusCd(serviceLoationResponse.getRequestStatusCode());}
 		// Offer data
 		OfferDTO selectedOffer = new OfferDTO();
 		selectedOffer.setCampaignCode(enrollmentRequest.getCampaignCode());
