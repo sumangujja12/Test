@@ -217,7 +217,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
-	    	SalesEnrollmentResponse salesEnrollmentResponse = salesBO.getSalesSubmitEnrollment(request);
+	    	SalesEnrollmentResponse salesEnrollmentResponse = salesBO.submitEnrollment(request);
 	    	Response.Status status = salesEnrollmentResponse.getHttpStatus() != null ? salesEnrollmentResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(salesEnrollmentResponse).build();
 	    } catch (Exception e) {

@@ -104,7 +104,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
 						&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), "Y"))) {
 					if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
-						String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split("\\|");
+						String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 
 						serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
 						serviceLocationResponseErrorList.remove(BPSD);
@@ -296,66 +296,14 @@ public class SalesBO extends OeBoHelper implements Constants {
 	 * @return
 	 * @throws Exception
 	 */
-	public SalesEnrollmentResponse getSalesSubmitEnrollment(SalesEnrollmentRequest enrollmentRequest) throws Exception {
+	public SalesEnrollmentResponse submitEnrollment(SalesEnrollmentRequest enrollmentRequest) throws Exception {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEnrollmentResponse salesEnrollmentresponse = new SalesEnrollmentResponse();
 		try {
-			serviceLoationResponse = oeBO.getEnrollmentData(enrollmentRequest.getTrackingId(),
-					enrollmentRequest.getGuid());
+			serviceLoationResponse = oeBO.getEnrollmentData(enrollmentRequest.getTrackingId(),enrollmentRequest.getGuid());
 			if (null != serviceLoationResponse) {
-				EnrollmentRequest request = new EnrollmentRequest();
-				request.setChannelType(enrollmentRequest.getChannelType());
-				request.setAffiliateId(enrollmentRequest.getAffiliateId());
-				request.setCompanyCode(enrollmentRequest.getCompanyCode());
-				request.setBrandId(enrollmentRequest.getBrandId());
-				request.setEbillFlag(enrollmentRequest.getEbillFlag());
-				request.setLanguageCode(enrollmentRequest.getLanguageCode());
-				request.setTrackingId(enrollmentRequest.getTrackingId());
-
-				if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
-					String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split("\\|");
-					for (String holdtype : errorCdArray) {
-						if (holdtype.equalsIgnoreCase(BPSD) || holdtype.equalsIgnoreCase(BP_RESTRICT)) {
-							request.setBpMatchFlag(holdtype);
-						}
-
-						if (holdtype.equalsIgnoreCase(SWITCHHOLD)) {
-							request.setSwitchHoldFlag(ON);
-						}
-					}
-				}
-				request.setMviDate(serviceLoationResponse.getServiceStartDate());
-				request.setTransactionType(serviceLoationResponse.getServiceRequestTypeCode());
-				request.setTdspCodeCCS(serviceLoationResponse.getTdspCode());
-				// request.setSwitchHoldFlag(serviceLoationResponse.getSwitchHoldStatus());//
-				request.setOfferCode(enrollmentRequest.getOfferCode());
-				request.setPromoCode(enrollmentRequest.getPromoCode());
-				request.setCampaignCode(enrollmentRequest.getCampaignCode());
-				request.setProductPriceCode(enrollmentRequest.getProductPriceCode());
-				request.setIncentiveCode(enrollmentRequest.getIncentiveCode());
-				request.setMarketSegment(enrollmentRequest.getMarketSegment());
-				request.setSapOfferTagline(serviceLoationResponse.getOfferCodeTitle());
-				// Billing address
-				request.setBillStreetName(serviceLoationResponse.getBillStreetName());
-				request.setBillStreetNum(serviceLoationResponse.getBillStreetNum());
-				request.setBillStreetAptNum(serviceLoationResponse.getBillStreetAptNum());
-				request.setBillCity(serviceLoationResponse.getBillCity());
-				request.setBillState(serviceLoationResponse.getBillState());
-				request.setBillZipCode(serviceLoationResponse.getBillZipCode());
-				request.setBillPOBox(serviceLoationResponse.getBillPoBox());
-
-				// Service address
-				request.setServStreetName(serviceLoationResponse.getServStreetName());
-				request.setServStreetNum(serviceLoationResponse.getServStreetNum());
-				request.setServStreetAptNum(serviceLoationResponse.getServStreetAptNum());
-				request.setServCity(serviceLoationResponse.getServCity());
-				request.setServState(serviceLoationResponse.getServState());
-				request.setServZipCode(serviceLoationResponse.getServZipCode());
-
-				request.setReferralId(serviceLoationResponse.getReferralId());
-				request.setEsid(serviceLoationResponse.getEsid());
-
-				EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
+				EnrollmentRequest request = oeRequestHandler.createSubmitEnrollmentRequest(enrollmentRequest, serviceLoationResponse);
+				EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request, serviceLoationResponse);
 				BeanUtils.copyProperties(enrollmentResponse, salesEnrollmentresponse);
 			} else {
 				salesEnrollmentresponse.populateInvalidTrackingAndGuidResponse();
@@ -369,5 +317,4 @@ public class SalesBO extends OeBoHelper implements Constants {
 		return salesEnrollmentresponse;
 
 	}
-
 }

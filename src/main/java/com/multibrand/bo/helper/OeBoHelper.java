@@ -553,7 +553,7 @@ public class OeBoHelper extends BaseBO {
 		logger.debug("Start:" + METHOD_NAME);
 
 		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
-			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split("\\|");	
+			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split(ERROR_CD_LIST_SPLIT_PATTERN);	
 		   if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
 			   oeSignUpDTO.setErrorCode(BPSD);
 			   oeSignUpDTO.setReqStatusCd(FLAG_N);
@@ -563,25 +563,6 @@ public class OeBoHelper extends BaseBO {
 			   oeSignUpDTO.setReqStatusCd(FLAG_N);
 			}
 		}
-		
-		// START. Code cleanup merging and tweaking. Added by Jenith on 06/24/2015
-		/*if (oeSignUpDTO.isBpMatchFlag()) {
-			// Update for service location
-			oeSignUpDTO.setErrorCode(BPSD);
-			oeSignUpDTO.setReqStatusCd(FLAG_N);
-			oeSignUpDTO.getErrorSet().add(BPSD);
-			return;
-		}*/
-		
-		
-/*		if (oeSignUpDTO.getEsid() == null
-				|| (StringUtils.isBlank(oeSignUpDTO.getEsid().getEsidNumber()))) {
-
-			// Update for service location
-			oeSignUpDTO.setErrorCode(NESID);
-			oeSignUpDTO.setReqStatusCd(FLAG_N);
-			oeSignUpDTO.getErrorSet().add(NESID);
-		}*/
 		
 		// Switch Hold ON and Move IN case
 		if (StringUtils.equalsIgnoreCase(oeSignUpDTO.getServiceReqTypeCd(), MVI)
@@ -659,43 +640,21 @@ public class OeBoHelper extends BaseBO {
 		oeSignUpDTO.setErrorCode(errorCode);
 	}
 
-	/**
-	 * This method determines if the Submit Enrollment calls should be proceed.
-	 * 
-	 * Case 1. If bpMatchFlag value in API request is passed as BPSD.
-	 *
-	 * 
-	 * @author jyogapa1 (Jenith)
-	 */
-	protected Boolean allowSubmitEnrollment(OESignupDTO oeSignUpDTO,
-			EnrollmentResponse response, int retryCount, boolean posidHoldAllowed) {
+	protected Boolean allowEnrollmentSubmissionToCCS(OESignupDTO oeSignUpDTO,
+			EnrollmentResponse response) {
 		String METHOD_NAME = "OEBOHelper: allowSubmitEnrollment(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
 		Boolean allowSubmit = true;
 
 		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
-			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split("\\|");	
+			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split(ERROR_CD_LIST_SPLIT_PATTERN);	
 		   if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
 			   oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
 			   allowSubmit = false;
-			}
+		   }
 		}
-
-		/*if (StringUtils.equals(oeSignUpDTO.getBpMatchText(), BPSD)) {
-			oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
-
-			allowSubmit = false;
-		}*/
-		
-		
-		if (!posidHoldAllowed && retryCount>=3) {
-			allowSubmit = false;
-		}
-
-		
 		logger.debug("End:" + METHOD_NAME);
-
 		return allowSubmit;
 	}
 	
