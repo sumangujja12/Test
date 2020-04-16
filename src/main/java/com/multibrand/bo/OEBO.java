@@ -2863,7 +2863,7 @@ public class OEBO extends OeBoHelper implements Constants{
 								response.setResultCode(RESULT_CODE_SUCCESS);
 								response.setStatusCode(STATUS_CODE_STOP);
 								response.setMessageCode(MESSAGE_CODE_BUSINESS_METER);
-								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NRESID));
+								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_BUSINESS_METER));
 								serviceLocationResponseErrorList.add(NRESID);
 								serviceLocationResponseErrorList.remove(MESID);
 								serviceLocationResponseErrorList.remove(NESID);
