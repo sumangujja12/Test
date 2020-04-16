@@ -68,7 +68,7 @@ public class GMDService extends BaseAbstractService {
 	public GMDStatementBreakDownResponse getGMDStatementDetails(String accountNumber, String companyCode, 
 			String esiId, String year, String month ,String sessionId) throws NRGException {
 		
-		logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::START");
+		logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::START"); 
 				
 		GMDStatementBreakDownResponse gmdStatementBreakDownResp = new GMDStatementBreakDownResponse();
 		
