@@ -110,7 +110,6 @@ public class IdentityRequest extends SalesBaseRequest {
 
 	String prospectId;
 	String tabletId;
-	String abandonedEnrollStatFlag;
 	String etfFlag;
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
@@ -128,7 +127,8 @@ public class IdentityRequest extends SalesBaseRequest {
 	
 	String guid;
 	String noid;
-	String etf;
+
+
 	public String getLastName() {
 		return lastName;
 	}
@@ -316,12 +316,7 @@ public class IdentityRequest extends SalesBaseRequest {
 	public void setTabletId(String tabletId) {
 		this.tabletId = tabletId;
 	}
-	public String getAbandonedEnrollStatFlag() {
-		return abandonedEnrollStatFlag;
-	}
-	public void setAbandonedEnrollStatFlag(String abandonedEnrollStatFlag) {
-		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
-	}
+
 	public String getEtfFlag() {
 		return etfFlag;
 	}
@@ -364,10 +359,5 @@ public class IdentityRequest extends SalesBaseRequest {
 	public void setNoid(String noid) {
 		this.noid = noid;
 	}
-	public String getEtf() {
-		return etf;
-	}
-	public void setEtf(String etf) {
-		this.etf = etf;
-	}	
+	
 }

@@ -2195,8 +2195,12 @@ public class OEBO extends OeBoHelper implements Constants{
 							localeObj));
 				}
 			} else if (StringUtils.isEmpty(creditCheckRequest.getMviDate())) {
+				if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
+						.round(newCreditScoreResponse.getStrDepositAmt()
+								.floatValue())>0)) {
 				response.setDepositDueText(msgSource
 						.getMessage(MESSAGE_CODE_CREDIT_CHECK_EMPTY_MVI_DATE));
+				}
 			} else {
 				response.setDepositDueText(EMPTY);
 			}
@@ -4389,53 +4393,15 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	public AffiliateOfferResponse getAffiliateOffers(AffiliateOfferRequest request, String sessionId) {
 		
-		AffiliateOfferResponse response = new AffiliateOfferResponse();
+		AffiliateOfferResponse response = null;
 		
 		boolean isReactiveOffersEnabled = togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_DEFAULT_REACTIVE_OFFER, request.getChannelType());
 		
-	if(StringUtils.isBlank(request.getPromoCode()) && !isReactiveOffersEnabled)
-		{  //If Promo code is passed empty
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("promoCode may not be Empty");
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-			return response;	
-		}
-		
-		if(StringUtils.isBlank(request.getTdspCodeCCS()) && StringUtils.isBlank(request.getEsid()))
-		{  //If Tdsp Code & Esid are passed empty
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Tdsp Code and Esid are empty");
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-			return response;	
-		}
-		
-		if(!StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_CIRRO))
-		{  //If Tdsp Code & Esid are passed empty
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");		
-			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription(response.getResultDescription());
-			response.setHttpStatus(Response.Status.BAD_REQUEST);
-			return response;			
-		}
-		
-		if(StringUtils.isNotBlank(request.getTdspCodeCCS()) && !isServicedTDSPCode(request.getTdspCodeCCS())) {
-			response.setMessageCode(AREA_NOT_SERVICED);
-			response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(request.getLanguageCode())));
-			response.setStatusCode(Constants.STATUS_CODE_STOP);
-			response.setResultCode(Constants.RESULT_CODE_SUCCESS );
-			response.setOfferDate(DateUtil.getCurrentDateFormatted(MMddyyyy));
-			response.setOfferTime(DateUtil.getCurrentDateFormatted(TIME_FORMAT));
-			response.setResultDescription(response.getMessageText());	
-			response.setHttpStatus(Response.Status.OK);
+		response = affiliateOfferMandatoryCheck(request, isReactiveOffersEnabled);
+		if(response != null) {
 			return response;
+		} else {
+			response = new AffiliateOfferResponse();
 		}
 		
 		OfferResponse offerResponse = getOffers(request.getLanguageCode(),
@@ -5930,13 +5896,6 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 	public Response performPosidAndBpMatch(
 			@Valid PerformPosIdAndBpMatchRequest request) {		
 		Response response = null;
-		String dobForPosId=null;
-		HashMap<String, Object> mandatoryParamList = null;
-		HashMap<String, Object> mandatoryParamCheckResponse = null;
-		String resultCode = null;
-		String errorDesc = null;
-		boolean isValidAge = false;
-		AgentDetailsResponse agentDetailsResponse;
 		OEBO oeBo = null;
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
@@ -5954,78 +5913,10 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						return response;
 					}
 				}
-				
-				logger.info("inside performPosidAndBpMatch:: formatting DOB to Posid acceptable format");
-				
-				dobForPosId=CommonUtil.formatDateForNrgws(request.getDob());
-				request.setDobForPosId(dobForPosId);
-				
-				logger.info("inside performPosidAndBpMatch:: dob for posid call is:: "+dobForPosId);
-				
-				mandatoryParamList = new HashMap<String, Object>();
-	
-				if (StringUtils.isBlank(request.getBillStreetNum())
-						&& StringUtils.isBlank(request.getBillStreetName())) {
-					// Either Billing PO box or Billing Street num/name should be supplied
-					mandatoryParamList.put("billPOBox",
-							request.getBillPOBox());
-				} else {
-					mandatoryParamList.put("billStreetNum",
-							request.getBillStreetNum());
-					mandatoryParamList.put("billStreetName",
-							request.getBillStreetName());
-				}
-				if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,request.getAffiliateId())){
-					mandatoryParamList.put("agentID",
-							request.getAgentID());
-				}
-				mandatoryParamCheckResponse = CommonUtil.checkMandatoryParam(mandatoryParamList);
-				resultCode = (String) mandatoryParamCheckResponse.get("resultCode");
-	
-				if (StringUtils.isNotBlank(resultCode)	&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
-					errorDesc = (String) mandatoryParamCheckResponse.get("errorDesc");
-					if (StringUtils.isNotBlank(errorDesc)) {
-						response = CommonUtil.buildNotValidResponse(resultCode,	errorDesc);
-					} else {
-						response  = CommonUtil.buildNotValidResponse(errorDesc,	Constants.STATUS_CODE_ASK);
-					}
-					logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
+								
+				response = checkBillingAddressAgentIdAge(request, oESignupDTO);
+				if(response != null)
 					return response;
-				}
-				
-				isValidAge=validationBO.getValidAge(dobForPosId);
-				if( !isValidAge )
-				{
-					logger.info("inside performPosidAndBpMatch::Invalid Age: Prospect must be at least 18 years old but not "
-							+ "over 100 years old or invalid date format");
-					PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(request.getAffiliateId(),
-							request.getTrackingId());				
-					
-					response = Response.status(400).entity(validPosIdResponse)
-							.build();
-					return response;
-				}
-				//START : OE :Sprint61 :US21009 :Kdeshmu1
-				if(StringUtils.isNotBlank(request.getAgentID())){
-					agentDetailsResponse=validationBO.validateAgentID(request.getAgentID());
-					if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
-					{
-						logger.info("Agent Id is not valid");
-						PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(request.getAgentID(),
-								request.getTrackingId());				
-						
-						response = Response.status(400).entity(validPosIdResponse)
-								.build();
-						return response;
-					}else{
-						oESignupDTO.setAgentID(request.getAgentID());
-						oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
-						oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
-						oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
-						oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
-						oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
-					}
-				}//END : OE :Sprint61 :US21009 :Kdeshmu1  
 				
 			}
 			catch(Exception e)
@@ -6268,6 +6159,142 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
  		}
  		return esidDO;
  	}
+     
+     private AffiliateOfferResponse affiliateOfferMandatoryCheck(AffiliateOfferRequest request, boolean isReactiveOffersEnabled) {
+    	 
+    	 AffiliateOfferResponse response = null;
+    	  		
+ 	if(StringUtils.isBlank(request.getPromoCode()) && !isReactiveOffersEnabled)
+ 		{  //If Promo code is passed empty
+ 			response = new AffiliateOfferResponse();
+ 			response.setStatusCode(Constants.STATUS_CODE_STOP);
+ 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+ 			response.setResultDescription("promoCode may not be Empty");
+ 			response.setErrorCode(HTTP_BAD_REQUEST);
+ 			response.setErrorDescription(response.getResultDescription());
+ 			response.setHttpStatus(Response.Status.BAD_REQUEST);
+ 			return response;	
+ 		}
+ 		
+ 		if(StringUtils.isBlank(request.getTdspCodeCCS()) && StringUtils.isBlank(request.getEsid()))
+ 		{  //If Tdsp Code & Esid are passed empty
+ 			response = new AffiliateOfferResponse();
+ 			response.setStatusCode(Constants.STATUS_CODE_STOP);
+ 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+ 			response.setResultDescription("Tdsp Code and Esid are empty");
+ 			response.setErrorCode(HTTP_BAD_REQUEST);
+ 			response.setErrorDescription(response.getResultDescription());
+ 			response.setHttpStatus(Response.Status.BAD_REQUEST);
+ 			return response;	
+ 		}
+ 		
+ 		if(!StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_CIRRO))
+ 		{  //If Tdsp Code & Esid are passed empty
+ 			response = new AffiliateOfferResponse();
+ 			response.setStatusCode(Constants.STATUS_CODE_STOP);
+ 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+ 			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");		
+ 			response.setErrorCode(HTTP_BAD_REQUEST);
+ 			response.setErrorDescription(response.getResultDescription());
+ 			response.setHttpStatus(Response.Status.BAD_REQUEST);
+ 			return response;			
+ 		}
+ 		
+ 		if(StringUtils.isNotBlank(request.getTdspCodeCCS()) && !isServicedTDSPCode(request.getTdspCodeCCS())) {
+ 			response = new AffiliateOfferResponse();
+ 			response.setMessageCode(AREA_NOT_SERVICED);
+ 			response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(request.getLanguageCode())));
+ 			response.setStatusCode(Constants.STATUS_CODE_STOP);
+ 			response.setResultCode(Constants.RESULT_CODE_SUCCESS );
+ 			response.setOfferDate(DateUtil.getCurrentDateFormatted(MMddyyyy));
+ 			response.setOfferTime(DateUtil.getCurrentDateFormatted(TIME_FORMAT));
+ 			response.setResultDescription(response.getMessageText());	
+ 			response.setHttpStatus(Response.Status.OK);
+ 			return response;
+ 		}
+ 		
+ 		return response;
+     }
+     
+     
+     public Response checkBillingAddressAgentIdAge(PerformPosIdAndBpMatchRequest request, OESignupDTO oESignupDTO){
+    	 
+    	logger.info("inside performPosidAndBpMatch:: formatting DOB to Posid acceptable format");
+    	 
+    	String dobForPosId=CommonUtil.formatDateForNrgws(request.getDob());
+		request.setDobForPosId(dobForPosId);
+			
+		logger.info("inside performPosidAndBpMatch:: dob for posid call is:: "+dobForPosId);
+			
+    	Response response = null;
+     
+    	HashMap mandatoryParamList = new HashMap<String, Object>();
+ 	
+		if (StringUtils.isBlank(request.getBillStreetNum())
+				&& StringUtils.isBlank(request.getBillStreetName())) {
+			// Either Billing PO box or Billing Street num/name should be supplied
+			mandatoryParamList.put("billPOBox",
+					request.getBillPOBox());
+		} else {
+			mandatoryParamList.put("billStreetNum",
+					request.getBillStreetNum());
+			mandatoryParamList.put("billStreetName",
+					request.getBillStreetName());
+		}
+		if(StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,request.getAffiliateId())){
+			mandatoryParamList.put("agentID",
+					request.getAgentID());
+		}
+		HashMap<String, Object> mandatoryParamCheckResponse = CommonUtil.checkMandatoryParam(mandatoryParamList);
+		String resultCode = (String) mandatoryParamCheckResponse.get("resultCode");
+
+		if (StringUtils.isNotBlank(resultCode)	&& !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+			String errorDesc = (String) mandatoryParamCheckResponse.get("errorDesc");
+			if (StringUtils.isNotBlank(errorDesc)) {
+				response = CommonUtil.buildNotValidResponse(resultCode,	errorDesc);
+			} else {
+				response  = CommonUtil.buildNotValidResponse(errorDesc,	Constants.STATUS_CODE_ASK);
+			}			
+			logger.info("Inside performCreditCheck:: errorDesc is " + errorDesc);
+			return response;
+		}
+		
+		boolean isValidAge=validationBO.getValidAge(dobForPosId);
+		if( !isValidAge )
+		{
+			logger.info("inside performPosidAndBpMatch::Invalid Age: Prospect must be at least 18 years old but not "
+					+ "over 100 years old or invalid date format");
+			PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidDOBResponse(request.getAffiliateId(),
+					request.getTrackingId());				
+			
+			response = Response.status(400).entity(validPosIdResponse)
+					.build();
+			return response;
+		}
+		//START : OE :Sprint61 :US21009 :Kdeshmu1
+		if(StringUtils.isNotBlank(request.getAgentID())){
+			AgentDetailsResponse agentDetailsResponse=validationBO.validateAgentID(request.getAgentID());
+			if(!RESULT_CODE_SUCCESS.equalsIgnoreCase(agentDetailsResponse.getResultCode()))
+			{
+				logger.info("Agent Id is not valid");
+				PerformPosIdandBpMatchResponse validPosIdResponse= validationBO.getInvalidAgentIDResponse(request.getAgentID(),
+						request.getTrackingId());				
+				
+				response = Response.status(400).entity(validPosIdResponse)
+						.build();
+				return response;
+			}else{
+				oESignupDTO.setAgentID(request.getAgentID());
+				oESignupDTO.setAgentFirstName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentFirstName());
+				oESignupDTO.setAgentLastName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentLastName());
+				oESignupDTO.setAgentType(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentType());
+				oESignupDTO.setVendorCode(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorCode());
+				oESignupDTO.setVendorName(agentDetailsResponse.getAgentDetailsResponseOutData().getResult().get(0).getAgentVendorName());
+			}
+		}//
+		
+		 return response;
+     }
      
 }
 	

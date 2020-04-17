@@ -1347,6 +1347,10 @@ public class OERequestHandler implements Constants {
 
 		String transactionType = StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)
 				? SWI : MVI;
+		
+		if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)&& StringUtils.isEmpty(creditCheckRequest.getMviDate())){
+			creditCheckRequest.setMviDate(serviceLocationResponse.getServiceStartDate());
+		}
 		creditCheckRequest.setTransactionType(transactionType);
 		String esid = StringUtils.isEmpty(serviceLocationResponse.getEsid()) ? EMPTY : serviceLocationResponse.getEsid();
 		creditCheckRequest.setEsid(esid);
