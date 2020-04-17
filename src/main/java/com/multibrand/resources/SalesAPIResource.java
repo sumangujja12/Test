@@ -110,21 +110,6 @@ public class SalesAPIResource extends BaseResource {
 		
 		try{
 			
-			if(StringUtils.isNotEmpty(request.getGuid()) && StringUtils.isEmpty(request.getTrackingId())){
-				IdentityResponse bpMatchResponse = new IdentityResponse();
-				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-				bpMatchResponse.setErrorDescription("trackingId cannot be empty");					
-				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
-				return response;
-			} else if(StringUtils.isNotEmpty(request.getTrackingId()) && StringUtils.isEmpty(request.getGuid())){
-				IdentityResponse bpMatchResponse = new IdentityResponse();
-				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
-				bpMatchResponse.setErrorDescription("guid cannot be empty");					
-				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
-				return response;
-			}
 			response = salesBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
 			logger.error(e);

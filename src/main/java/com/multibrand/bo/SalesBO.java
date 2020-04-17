@@ -68,6 +68,23 @@ public class SalesBO extends OeBoHelper implements Constants {
 		PerformPosIdAndBpMatchRequest performPosidAndBPMatchRequest = new PerformPosIdAndBpMatchRequest();
 		Response response = null;
 		try {
+			
+			if(StringUtils.isNotEmpty(request.getGuid()) && StringUtils.isEmpty(request.getTrackingId())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("trackingId cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
+			} else if(StringUtils.isNotEmpty(request.getTrackingId()) && StringUtils.isEmpty(request.getGuid())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("guid cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
+			}
+			
 			BeanUtils.copyProperties(request, performPosidAndBPMatchRequest);
 			response = oeBO.performPosidAndBpMatch(performPosidAndBPMatchRequest);
 			if (response.getEntity() instanceof GenericResponse) {
@@ -261,16 +278,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 			serviceLocationResponse=oeBO.getEnrollmentData(request.getTrackingId(),request.getGuid() );
 			if (null!= serviceLocationResponse){
 				
-				if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
-					if(StringUtils.isEmpty(request.getMviDate())) {
-						response = salesCreditCheckResponse;
-						response.setStatusCode(Constants.STATUS_CODE_STOP);
-						response.setErrorCode(HTTP_BAD_REQUEST);
-						response.setErrorDescription("mviDate is required for move-in");
-						response.setHttpStatus(Response.Status.BAD_REQUEST);
-						return response;
-					}
-				}
+
 				
 				CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditReCheckRequest(request, serviceLocationResponse);
 				newCreditScoreResponse =  oeBO
