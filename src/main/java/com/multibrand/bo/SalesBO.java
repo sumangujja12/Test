@@ -278,7 +278,16 @@ public class SalesBO extends OeBoHelper implements Constants {
 			serviceLocationResponse=oeBO.getEnrollmentData(request.getTrackingId(),request.getGuid() );
 			if (null!= serviceLocationResponse){
 				
-
+				if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
+					if(StringUtils.isEmpty(request.getMviDate())) {
+						response = salesCreditCheckResponse;
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						response.setErrorCode(HTTP_BAD_REQUEST);
+						response.setErrorDescription("mviDate is required for move-in");
+						response.setHttpStatus(Response.Status.BAD_REQUEST);
+						return response;
+					}
+				}
 				
 				CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditReCheckRequest(request, serviceLocationResponse);
 				newCreditScoreResponse =  oeBO
