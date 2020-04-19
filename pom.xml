@@ -973,7 +973,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-payment-domain</artifactId>
-			<version>9-SNAPSHOT</version> 
+			<version>9</version> 
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
