@@ -1395,5 +1395,7 @@ public interface Constants {
 	public static final String PROSPECT_PREAPPROVAL_FLAG_PASS= "P";
 	public static final String PROSPECT_MISMATCH= "PROSPECT_MISMATCH";
 	public static final String PROSPECT_MISMATCH_TEXT = "msg_prospect_mismatch";
+	public static final String CCS_UPDATE_ERROR="SAP Update failed";
+	public static final String PAYMENTEXTENSION_BYPASS_ELIGIBLE_FLAG ="paymentextension.bypass.eligible.flag";
 	
 }
