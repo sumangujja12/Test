@@ -68,6 +68,7 @@ import com.multibrand.vo.response.historyResponse.xi.MTGetIntervalDataResponse;
 import com.multibrand.vo.response.historyResponse.xi.MTGetPaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.xi.Row;
 import com.multibrand.vo.response.historyResponse.xi.RowIntervalResponse;
+import com.multibrand.vo.response.HourlyUsage;
 
 /**
  * 
@@ -1352,6 +1353,11 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 		Set<DailyResponseVO> weeklyUsageDummy = new LinkedHashSet<DailyResponseVO>(dummyData.values());
 		return weeklyUsageDummy;
 	}
+	
+	 public List<HourlyUsage> getWeeklyUsageByHuorlyDetails(String esiId, String contractId, String fromDate , String toDate)
+	    {
+	        return usageHelper.getWeeklyUsageByHuorlyDetails(esiId, contractId, fromDate , toDate);
+	    }
 	
 	/**
 	 * 
