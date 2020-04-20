@@ -2,8 +2,8 @@ package com.multibrand.helper;
 
 import javax.annotation.Resource;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dao.UsageDAO;
@@ -17,6 +17,8 @@ import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
+import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 
 @Component
 public class UsageHelper
@@ -74,4 +76,18 @@ public class UsageHelper
 		logger.info(" START getDailyWeeklyUsageDetails Method");
 		return usageDAOImpl.getSmartMeterUsageHistory(requestVO, companyCode, sessionId);
 	}
+	
+	/**
+	 * This will call the Usage DAO for the getZoneIdByEsiId
+	 * @param request
+	 * @return
+	 */
+	public GMDZoneByEsiIdResponseVO getZoneIdByEsiId(
+			UsageRequestVO request, String companyCode, String sessionId) {
+		return usageDAOImpl.getZoneInformFromDB(request, companyCode, sessionId);
+	}
+	
+	public DailyHourlyPriceResponseVO getGMDPriceFromDB(UsageRequestVO request,String sessionId, String companyCode) {
+		return usageDAOImpl.getGMDPriceFromDB(request,sessionId, companyCode);
+	}	
 }

@@ -709,6 +709,7 @@ public interface Constants {
 	
 	public static final String ENV_UPDATE_CRM_ASYNC_DELAY_MS="env.updatecrm.async.delay.ms";
 	public static final String METHOD_UPDATE_CONTACT_ASYNC="updateContactInfoWithAsyncDelay";
+	public static final String METHOD_PREPAY_ALERT_TO_CRM="updateAlertPreferences";
 	
 	public static final String LOCALE_LANGUAGE_CODE_PARAM = "languageCode";
 	public static final String LOCALE_LANGUAGE_CODE_EN_US = "en_US";
@@ -1397,5 +1398,29 @@ public interface Constants {
 	public static final String PROSPECT_MISMATCH_TEXT = "msg_prospect_mismatch";
 	public static final String CCS_UPDATE_ERROR="SAP Update failed";
 	public static final String PAYMENTEXTENSION_BYPASS_ELIGIBLE_FLAG ="paymentextension.bypass.eligible.flag";
+
+//***************** GMD APP APIs *************************    
+   public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
+   public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
+   
+   public static final String GMD_STATEMENT_ENDPOINT_URL_JNDINAME = "CCS_GMD_STMT";
+   public static final String GMD_PRICET_ENDPOINT_URL_JNDINAME = "CCS_PRICE_STMT";
+   
+   public static final String SOLAR_FEE = "Solar Fee";
+   public static final String ANCILLARY_SERVICES = "Ancillary Services";
+   public static final String ELECTRICITY_USAGE = "Electricity Usage";
+   
+   public static final String QUALITY_OTHER_CREDIT = "Quality Other Credit";
+   
+   
+   public static final String TDU_DELIVERY_CHARGES = "TDU Delivery Charges";
+   
+   public static final String GMD_MEMBERSHIP = " GMD Membership";
+   public static final String  TAXES_FEES = " Taxes & Fees";
+  
+   public static final String WHOLESALE_ELECTRICITY = "Wholesale Electricity";
+   public static final String INDEFINITE_END_DATE = "12/31/9999";
+   
+   public static final String GMD_PRICE_IRW_DATE = "gmd_price_current_date";   
 	
 }

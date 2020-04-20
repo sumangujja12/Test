@@ -20,6 +20,8 @@ import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
+import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.historyResponse.BillPaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.GetConsumptionHistoryResponse;
 import com.multibrand.vo.response.historyResponse.IntervalDataResponse;
@@ -462,5 +464,46 @@ public class HistoryResource
 		response = Response.status(200).entity(weeklyUsageSummary).build();
 		return response;
 	}
+	
+	/**
+	 * 
+	 * @param esid
+	 * @param companyCode
+	 * @return
+	 */
+	@POST
+	@Path("/getZoneIdByESIID")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getZoneIdByEsiId(@FormParam("esid") String esid, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		GMDZoneByEsiIdResponseVO gmdZoneByEsiIdResponse = historyBO.getZoneIdByEsiId(esid, companyCode,
+				httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(gmdZoneByEsiIdResponse).build();
+		return response;
+	}
 
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param currentDate
+	 * @param companyCode
+	 * @return
+	 */
+	@POST
+	@Path("/getGMDPrice")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getGMDPrice(@FormParam("accountNumber") String accountNumber,
+			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
+			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		HourlyPriceResponse hourlyPriceResponse = historyBO.getGMDPrice(accountNumber, contractId, esid, curDate,
+				httpRequest.getSession(true).getId(), companyCode);
+		response = Response.status(200).entity(hourlyPriceResponse).build();
+		return response;
+
+	}
 }

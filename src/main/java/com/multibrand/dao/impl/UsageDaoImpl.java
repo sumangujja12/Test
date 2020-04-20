@@ -6,8 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import oracle.jdbc.OracleTypes;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +17,12 @@ import com.multibrand.dao.ResultObject;
 import com.multibrand.dao.UsageDAO;
 import com.multibrand.dao.mapper.DailyUsageRowMapper;
 import com.multibrand.dao.mapper.DailyWeeklyUsageRowMapper;
+import com.multibrand.dao.mapper.GMDHourlyPriceRowMapper;
 import com.multibrand.dao.mapper.HourlyUsageRowMapper;
 import com.multibrand.dao.mapper.MonthlyUsageRowMapper;
 import com.multibrand.dao.mapper.SmartMeterUsageRowMapper;
 import com.multibrand.dao.mapper.WeeklyUsageRowMapper;
+import com.multibrand.dao.mapper.ZoneRowMapper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.manager.BaseStoredProcedure;
 import com.multibrand.manager.StoredProcedureManager;
@@ -46,6 +46,12 @@ import com.multibrand.vo.response.SmartMeterUsageHistory;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponse;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
+import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
+import com.multibrand.vo.response.gmd.HourlyPrice;
+import com.multibrand.vo.response.gmd.Zone;
+
+import oracle.jdbc.OracleTypes;
 
 
 @Component("usageDao")
@@ -554,6 +560,181 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 	}
 */
 	
+	/**
+	 * This method getGMDPriceFromDB of the smart meter for predefined date.
+	 * 
+	 */
+	@Override
+	public DailyHourlyPriceResponseVO getGMDPriceFromDB(UsageRequestVO request, String sessionId, String companyCode) {
+		
+		logger.info("Inside getGMDPriceFromDB in UsageDaoImpl");
+		long startTime = CommonUtil.getStartTime();
+		
+		DailyHourlyPriceResponseVO response = new DailyHourlyPriceResponseVO();
+		logger.info("ca in the request is{} ", request.getContractAcctId());
+		logger.info("esiid in the request is {}", request.getEsiId());
+		logger.info("co in the request is {}", request.getContractId());
+		
+		Map<String, Object> inParams = new LinkedHashMap<>();
+		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<>();
+		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<>();
+		
+		BaseStoredProcedure storedProc = null;
+		
+		inParamsTypeMap.put(ESIID_IN_V,OracleTypes.VARCHAR );
+		inParamsTypeMap.put(CONTRACT_ID_IN_V,OracleTypes.VARCHAR );
+		inParamsTypeMap.put(CONTRACT_ACT_ID_IN_V, OracleTypes.VARCHAR);
+		inParamsTypeMap.put(CUR_DT_IN_V,OracleTypes.DATE);
+		
+       
+		inParams.put(ESIID_IN_V,request.getEsiId() );
+		inParams.put(CONTRACT_ID_IN_V,"" );
+		inParams.put(CONTRACT_ACT_ID_IN_V, "");
+		if (request.getCurDtInd() != null && !request.getCurDtInd().equals("")) {
+			inParams.put(CUR_DT_IN_V, CommonUtil.getSqlDate(
+					request.getCurDtInd(), Constants.DT_FMT_REQUEST));
+		} else {
+			inParams.put(CUR_DT_IN_V, "");
+		}
+		
+		
+		outParamsTypeMap.put(PRICE_OUT_REC, new ResultObject(
+				OracleTypes.CURSOR, new GMDHourlyPriceRowMapper()));
+		
+		
+		
+		outParamsTypeMap.put(RET_TYP_OUT_V, new ResultObject(OracleTypes.VARCHAR));
+		
+		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
+		storedProc = storedProcedure
+				.createStoredProcedure(smartJdbcTemplate, GMDSMART_PRICE_PROC,
+						inParams, inParamsTypeMap, outParamsTypeMap);
+		
+		// START (TIME LOG)
+		long entryTime;
+		long elapsedTime;
+		entryTime = System.currentTimeMillis();
+		
+		Map<String, Object> storedProcResult = storedProc.execute();
+
+			
+		// Elapsed time in minutes (TIME LOG)
+		elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
+		String elapsedTimeDisp = elapsedTime > 0 ? elapsedTime + " seconds."
+				: "less than a second.";
+		logger.info(GMDSMART_PRICE_PROC + "-{}" , elapsedTimeDisp);
+
+		// END (TIME LOG)
+		
+		if (storedProcResult != null
+				&& (storedProcResult.get(RET_TYP_OUT_V) == null || storedProcResult
+						.get(RET_TYP_OUT_V).equals(""))) {
+			
+			List<HourlyPrice> storeResponseList = (List<HourlyPrice>)  storedProcResult
+					.get(PRICE_OUT_REC);
+			if (storeResponseList != null) {
+				response.setHourlyPriceList(storeResponseList);
+			}
+						
+			
+		}		
 	
+		utilityloggerHelper.logTransaction("getGMDPriceFromDB", false,
+				request, response, "", CommonUtil.getElapsedTime(startTime),
+				"", sessionId, companyCode);
+		if(logger.isDebugEnabled()){
+			logger.debug(XmlUtil.pojoToXML(request));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		logger.info("Exiting getGMDPriceFromDB in UsageDaoImpl");
+		return response;
+	}	
+	
+	/**
+	 * This method getZoneInformFromDB of the smart meter for predefined date.
+	 * 
+	 */
+	@Override
+	public GMDZoneByEsiIdResponseVO getZoneInformFromDB(UsageRequestVO request, String sessionId, String companyCode) {
+		
+		logger.info("Inside getZoneInformFromDB in UsageDaoImpl");
+		long startTime = CommonUtil.getStartTime();
+		
+		GMDZoneByEsiIdResponseVO response = new GMDZoneByEsiIdResponseVO();
+		logger.info("ca in the request is{} ", request.getContractAcctId());
+		logger.info("esiid in the request is {}", request.getEsiId());
+		logger.info("co in the request is {}", request.getContractId());
+		
+		Map<String, Object> inParams = new LinkedHashMap<>();
+		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<>();
+		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<>();
+		
+		BaseStoredProcedure storedProc = null;
+		
+		inParamsTypeMap.put(ESIID_IN_V,OracleTypes.VARCHAR );
+				
+       
+		inParams.put(ESIID_IN_V,request.getEsiId() );
+		
+		
+		outParamsTypeMap.put(ZONE_OUT_REC, new ResultObject(
+				OracleTypes.CURSOR, new ZoneRowMapper()));
+		
+		
+		outParamsTypeMap.put(RET_TYP_OUT_V, new ResultObject(OracleTypes.VARCHAR));
+		
+		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
+		storedProc = storedProcedure
+				.createStoredProcedure(smartJdbcTemplate, GMDSMART_ZONE_PROC,
+						inParams, inParamsTypeMap, outParamsTypeMap);
+		
+		// START (TIME LOG)
+		long entryTime;
+		long elapsedTime;
+		entryTime = System.currentTimeMillis();
+		try {
+			Map<String, Object> storedProcResult = storedProc.execute();
+		
+			
+		// Elapsed time in minutes (TIME LOG)
+		elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
+		String elapsedTimeDisp = elapsedTime > 0 ? elapsedTime + " seconds."
+				: "less than a second.";
+		logger.info(GMDSMART_ZONE_PROC + "-{}" , elapsedTimeDisp);
+
+		// END (TIME LOG)
+		
+		if (storedProcResult != null
+				&& (storedProcResult.get(RET_TYP_OUT_V) == null || storedProcResult
+						.get(RET_TYP_OUT_V).equals(""))) {
+			
+			List<Zone> storeResponseList = (List<Zone>)storedProcResult
+					.get(ZONE_OUT_REC);
+			if (storeResponseList != null) {
+				response.setZoneList(storeResponseList);
+			}
+						
+			
+		}		
+		} catch(Exception e) {
+			
+		}
+
+		utilityloggerHelper.logTransaction("getZoneInformFromDB", false,
+				request, response, "", CommonUtil.getElapsedTime(startTime),
+				"", sessionId, companyCode);
+		if(logger.isDebugEnabled()){
+			logger.debug(XmlUtil.pojoToXML(request));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		logger.info("Exiting getZoneInformFromDB in UsageDaoImpl");
+		return response;
+	}	
+	
+	public static void main(String args[]) {
+		
+		System.out.println(CommonUtil.getSqlDate(
+				"01/01/2018", Constants.DT_FMT_REQUEST));
+	}
 	}
 
