@@ -3,8 +3,6 @@ package com.multibrand.util;
 import java.util.Arrays;
 import java.util.List;
 
-import com.multibrand.bo.gm;
-
 public interface Constants {
 
 	public static final String ENV_PROPERTIES_FILE = "classpath:properties/environment";
