@@ -3,8 +3,10 @@ package com.multibrand.resources;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -14,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.GMDBO;
@@ -22,6 +26,7 @@ import com.multibrand.dto.request.GMDEsidCalendarRequest;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
+import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 
@@ -47,7 +52,9 @@ public class GMDResource extends BaseResource {
 	@Autowired
 	private GMDBO gmdBO;
 	
-	
+	@Autowired
+	@Qualifier("appConstMessageSource")
+	protected ReloadableResourceBundleMessageSource appConstMessageSource;
 	
 	/**
 	 * This service is to provide GMD Statement details from CCS Service
@@ -133,4 +140,19 @@ public class GMDResource extends BaseResource {
 		response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
 		return response;
 	}
+	
+	@GET
+	@Path("/{tdspCode}")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getGMDOfferDocs(@PathParam("tdspCode") String tdspCode) {
+		Response response = null;
+
+		GMDOfferResponse gmdOfferResponse = gmdBO.getGMDOfferDocs(tdspCode, httpRequest.getSession(true).getId());
+		
+		response = Response.status(Response.Status.OK).entity(gmdOfferResponse).build();
+		return response;
+	}	
+	
+		
 }	

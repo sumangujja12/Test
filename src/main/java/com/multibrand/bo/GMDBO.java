@@ -50,6 +50,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
+import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
@@ -1156,6 +1157,21 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 
 	}
 
+	public GMDOfferResponse getGMDOfferDocs(String tdspCode, String sessionId) {
+		String methodName = "OEBO: getGMDOfferDocs(..)";
+		logger.debug("Start:{}" , methodName);
+		
+		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
+		
+		GMDOfferResponse gmdOfferResponse = new GMDOfferResponse();
+		
+		gmdOfferResponse.setStrEFLDocID(baseURL+"/files/"+this.appConstMessageSource
+		.getMessage("gmd.offer.efl.equivalent." + tdspCode, null, null));
+		
+		logger.debug("End:{}" , methodName);
+		return gmdOfferResponse;
+		
+	}
 	
 	protected SSDomain getSSDomainProxyClient()throws Exception {
 		return (SSDomain) getServiceProxy(SSDomainPortBindingStub.class, SS_SERVICE_ENDPOINT_URL);
