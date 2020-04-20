@@ -319,6 +319,7 @@ public class ValidationBO extends BaseBO {
 						serviceLocationResponseerrorList, bpMatchDTO, 
 						validatePosIdKBAResponse, posidHoldAllowed, retryCount);
 				posidStatus = oESignupDTO.getPosidStatus();
+				errorCd=POSIDHOLD;
 			}
 			else
 			{ 

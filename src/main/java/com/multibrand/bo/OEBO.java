@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -2941,6 +2942,12 @@ public class OEBO extends OeBoHelper implements Constants{
 				}//else return response;
 			} 
 			// GET tdsp calendar dates
+			if(StringUtils.isEmpty(holdType)&& serviceLocationResponseErrorList.size()>0){
+				Iterator<String> iter = serviceLocationResponseErrorList.iterator();
+				if(iter.hasNext()){
+					holdType = iter.next();
+				}
+			}
 			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType);
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
