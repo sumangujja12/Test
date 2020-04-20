@@ -179,6 +179,7 @@ public class OERequestHandler implements Constants {
 		request.setTpv_status(oeSignupDTO.getTpvStatus());
 		request.setCampaignCd(oeSignupDTO.getCampaignCd());
 		request.setSystemNotes(oeSignupDTO.getSystemNotes());
+		request.setCallExecuted(oeSignupDTO.getCallExecuted());
 		return request;
 	}
 
@@ -1364,13 +1365,13 @@ public class OERequestHandler implements Constants {
 		creditCheckRequest.setBillState(serviceLocationResponse.getBillState());
 		creditCheckRequest.setBillZipCode(serviceLocationResponse.getBillZipCode());
 		creditCheckRequest.setBillPOBox(serviceLocationResponse.getBillPoBox());
-
+		creditCheckRequest.setCallExecuted(salesCreditCheckRequest.getCallExecuted());
 		if (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getErrorCode(), BPSD)) {
 			creditCheckRequest.setMatchedBP(serviceLocationResponse.getMatchedPartnerId());
 		} else {
 			creditCheckRequest.setBpMatchFlag(BPSD);
 		}
-
+		creditCheckRequest.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(salesCreditCheckRequest.getCallExecuted(),serviceLocationResponse.getCallExecutedFromDB()));
 		return creditCheckRequest;
 	}
 
@@ -1433,6 +1434,7 @@ public class OERequestHandler implements Constants {
 
 		request.setReferralId(serviceLoationResponse.getReferralId());
 		request.setEsid(serviceLoationResponse.getEsid());
+		request.setCallExecuted(enrollmentRequest.getCallExecuted());
 		return request;
 	}
 }

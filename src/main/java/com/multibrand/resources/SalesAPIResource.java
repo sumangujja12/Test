@@ -109,6 +109,22 @@ public class SalesAPIResource extends BaseResource {
 		Response response = null;
 		
 		try{
+			request.setCallExecuted(API_IDENTITY);
+			if(StringUtils.isNotEmpty(request.getGuid()) && StringUtils.isEmpty(request.getTrackingId())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("trackingId cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
+			} else if(StringUtils.isNotEmpty(request.getTrackingId()) && StringUtils.isEmpty(request.getGuid())){
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("guid cannot be empty");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
+			}
 			
 			response = salesBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
@@ -133,6 +149,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
+			request.setCallExecuted(API_AVAILABLE_DATES);
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
 			SalesBaseResponse salesBaseResponse = salesBO.getSalesESIDAndCalendarDates(request,httpRequest);
 			response=Response.status(Response.Status.OK).entity(salesBaseResponse).build();
@@ -153,7 +170,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
-	
+			request.setCallExecuted(API_CHECK_CREDIT);
 			SalesBaseResponse newCreditScoreResponse = salesBO
 						.performCreditCheck(request);
 			Response.Status status = newCreditScoreResponse.getHttpStatus() != null ? newCreditScoreResponse.getHttpStatus() :Response.Status.OK;
@@ -177,7 +194,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
-	
+			request.setCallExecuted(API_RECHECK_CREDIT);
 			SalesBaseResponse newCreditScoreResponse = salesBO
 						.performCreditReCheck(request);
 			Response.Status status = newCreditScoreResponse.getHttpStatus() != null ? newCreditScoreResponse.getHttpStatus() :Response.Status.OK;
@@ -202,6 +219,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
+			request.setCallExecuted(API_SUBMIT_ENROLLMENT);
 	    	SalesEnrollmentResponse salesEnrollmentResponse = salesBO.submitEnrollment(request);
 	    	Response.Status status = salesEnrollmentResponse.getHttpStatus() != null ? salesEnrollmentResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(salesEnrollmentResponse).build();

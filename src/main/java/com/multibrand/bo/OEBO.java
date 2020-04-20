@@ -1916,7 +1916,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			logger.debug("oeSignUpDTO : "+oeSignUpDTO);
 			
 			// Check for any fraudulent activity in Enrollment Submission and block enrollment
-			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType());
+			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType(),serviceLoationResponse.getCallExecutedFromDB());
 			if(null==enrollmentFraudEnum){
 				if (allowEnrollmentSubmissionToCCS(oeSignUpDTO, response)) {
 		
@@ -1976,6 +1976,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					oeSignUpDTO.setTlpReportApiStatus(tlpReportApiStatus);
 				}
 				//END : OE :Sprint62 :US21019 :Kdeshmu1
+				oeSignUpDTO.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(enrollmentRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
 			}else{
 				oeSignUpDTO.setSystemNotes(enrollmentFraudEnum.getFraudSystemNotes());
 			}
@@ -2009,7 +2010,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		return response;
 	}
 
-	private ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType) {
+	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType,String ApiCallExecuted) {
 		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
 		logger.debug("Start:" + METHOD_NAME);
 		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,channelType);
@@ -2032,7 +2033,9 @@ public class OEBO extends OeBoHelper implements Constants{
 				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
 			}
 		}
-		
+		if(!CommonUtil.callExecutedList(ApiCallExecuted)){
+			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CALL_SKIP");
+		}
 		logger.debug("End:" + METHOD_NAME);
 		return enrollmentFraudEnum;
 	}
@@ -2408,7 +2411,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						requestData.setDepositCode(DEPOSIT_NONE);
 						requestData.setDepositAmount(ZERO);
 					}
-					
+					requestData.setCallExecuted(creditCheckRequest.getCallExecuted());
 	
 					/* Updating service location affiliate table */
 					
@@ -2724,7 +2727,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			String servStreetName, String servStreetAptNum, String servZipCode,
 			String tdspCodeCCS, String transactionType, String trackingId, String bpMatchFlag,
 			String locale, String esid,String sessionId,String holdType,
-			ServiceLocationResponse serviceLoationResponse  ) throws OAMException {
+			ServiceLocationResponse serviceLoationResponse,String callExecutedStrForDB  ) throws OAMException {
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
@@ -2962,7 +2965,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		finally {
 			// Call update service location
 			this.updateServiceLocation(companyCode, affiliateId, trackingId, 
-					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE),callExecutedStrForDB);
 		}
 	    
 	  //Default to EMPTY if statusflag is "OFF"
@@ -4134,7 +4137,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void updateServiceLocation(String companyCode, String affiliateId, String trackingId, 
 			AddressDO serviceAddressDO, ESIDDO esidDo,
-			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist) {
+			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist, String callExecutedStrForDB) {
 		logger.debug("Processing updateServiceLocation ...");
 		Assert.notNull(Integer.parseInt(trackingId),
 				"trackingId must not be null.");
@@ -4195,7 +4198,7 @@ public class OEBO extends OeBoHelper implements Constants{
 
 			if(StringUtils.isNotEmpty(errorCdlist))
 				requestData.setErrorCdList(errorCdlist);
-			
+			requestData.setCallExecuted(callExecutedStrForDB);
 			/* Updating service location affiliate table */
 			String errorCode = this.updateServiceLocation(requestData);
 			if (StringUtils.isNotBlank(errorCode))

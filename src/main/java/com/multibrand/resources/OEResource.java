@@ -618,6 +618,7 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
+			request.setCallExecuted(API_LEGACY_GET_ESID_AND_CALENDAR_DATES);
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
 			//START : OE : Sprint 6 : Update Calendar dates call	
 			ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(request.getTrackingId() );
@@ -638,7 +639,7 @@ public class OEResource extends BaseResource {
 							request.getEsid(),
 							httpRequest.getSession(true).getId(),
 							serviceLoationResponse.getErrorCode(),
-							null
+							null, null
 							);
 				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
 		} catch (Exception e) {
@@ -658,6 +659,7 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
+			request.setCallExecuted(API_LEGACY_PERFORM_CREDIT_CHECK);
 			HashMap<String, Object> mandatoryParamList = new HashMap<String, Object>();
 	
 			if (StringUtils.isBlank(request.getBillStreetNum())
@@ -731,6 +733,7 @@ public class OEResource extends BaseResource {
 		
 		mandatoryParamList = new HashMap<String, Object>();
 		try{
+			request.setCallExecuted(API_LEGACY_SUBMIT_UCC_DATA);
 			// Either Billing PO box or Billing Street num/name should be supplied
 			mandatoryParamList.put("firstName",
 					request.getFirstName());

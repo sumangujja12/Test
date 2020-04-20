@@ -477,8 +477,10 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 		private String posidSNRO;
 		@ProcedureInParameter(name = "in_bpmatch_scenario_id", parameterIndex = 158)
 		private String bpMatchScenarioId;
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 159)
-	private String outErrorCode;
+		@ProcedureInParameter(name = "in_call_executed", parameterIndex = 159)
+		private String callExecuted;
+		@ProcedureOutParameter(name = "out_error_code", parameterIndex = 160)
+		private String outErrorCode;
 
 	
 	
@@ -2825,6 +2827,20 @@ public class UpdateServiceLocationRequest implements FormEntityRequest,
 
 	public void setPosidSNRO(String posidSNRO) {
 		this.posidSNRO = posidSNRO;
+	}
+
+	/**
+	 * @return the callExecuted
+	 */
+	public String getCallExecuted() {
+		return callExecuted;
+	}
+
+	/**
+	 * @param callExecuted the callExecuted to set
+	 */
+	public void setCallExecuted(String callExecuted) {
+		this.callExecuted = callExecuted;
 	}
 	
 	

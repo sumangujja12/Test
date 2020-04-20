@@ -44,6 +44,8 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 	@QueryParam(value = "languageCode")
 	@Length(max = 1, groups = SizeConstraint.class)
 	private String languageCode = null;
+	
+	private String callExecuted;
 
 	public String getAffiliateId() {
 		return affiliateId;
@@ -85,6 +87,20 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 		this.languageCode = languageCode;
 	}	
 	
+	/**
+	 * @return the callExecuted
+	 */
+	public String getCallExecuted() {
+		return callExecuted;
+	}
+
+	/**
+	 * @param callExecuted the callExecuted to set
+	 */
+	public void setCallExecuted(String callExecuted) {
+		this.callExecuted = callExecuted;
+	}
+
 	@Override
 	public String toString() {
 		return CommonUtil.doRender(this);
