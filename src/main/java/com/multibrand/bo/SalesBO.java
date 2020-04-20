@@ -37,6 +37,7 @@ import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.request.handlers.OERequestHandler;
+import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.util.Token;
@@ -97,6 +98,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 		String error = "";
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		SalesBaseResponse response = null;
+		String callExecutedStrForDB="";
 		try {
 			serviceLoationResponse = oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),
 					salesEsidCalendarRequest.getGuid());
@@ -118,6 +120,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 						&& (!StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), "Y"))) {
 					bpMatchFlag = BPSD;
 				}
+				callExecutedStrForDB = CommonUtil.getPipeSeperatedCallExecutedParamForDB(salesEsidCalendarRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB());
 				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO.getESIDAndCalendarDates(
 						salesEsidCalendarRequest.getCompanyCode(), salesEsidCalendarRequest.getAffiliateId(),
 						salesEsidCalendarRequest.getBrandId(), serviceLoationResponse.getServStreetNum(),
@@ -125,7 +128,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 						serviceLoationResponse.getServZipCode(), serviceLoationResponse.getTdspCode(),
 						serviceLoationResponse.getServiceRequestTypeCode(), salesEsidCalendarRequest.getTrackingId(),
 						bpMatchFlag, salesEsidCalendarRequest.getLanguageCode(), serviceLoationResponse.getEsid(),
-						httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse);
+						httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,callExecutedStrForDB);
 
 				BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);
 				response = salesEsidInfoTdspCalendarResponse;
@@ -146,7 +149,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 
 		SalesTokenResponse tokenizedResponse = new SalesTokenResponse();
 		String returnToken = null;
-
 		if (StringUtils.isBlank(request.getActionCode())
 				|| (!request.getActionCode().equalsIgnoreCase(Token.getCreditCardAction())
 						&& !request.getActionCode().equalsIgnoreCase(Token.getBankAccountAction())

@@ -166,7 +166,7 @@ public class ServiceLocationResponse implements Serializable {
     private String prospectId;
     private String prospectPreapprovalFlag;
     private String prospectPartnerId;
-			
+    private String callExecutedFromDB;			
 			
 			public String getAgentID() {
 				return agentID;
@@ -2338,6 +2338,15 @@ public class ServiceLocationResponse implements Serializable {
 
 	public void setProspectPartnerId(String prospectPartnerId) {
 		this.prospectPartnerId = prospectPartnerId;
+	}
+
+
+	public String getCallExecutedFromDB() {
+		return callExecutedFromDB;
+	}
+
+	public void setCallExecutedFromDB(String callExecutedFromDB) {
+		this.callExecutedFromDB = callExecutedFromDB;
 	}
 
 	@Override

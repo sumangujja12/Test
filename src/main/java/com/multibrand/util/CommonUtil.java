@@ -65,6 +65,8 @@ import com.multibrand.vo.response.WebHookResponse;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
+import bsh.StringUtil;
+
 @Component
 public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
@@ -2078,6 +2080,47 @@ public class CommonUtil implements Constants {
 		} else {
 			return EMPTY;
 		}
+	}
+	
+	public static boolean callExecutedList(String callExecutedFromDB){
+		boolean flag = false;
+		String[] callExecutedArr = null;
+		List<String> callExecutedList = new ArrayList<String>();
+		List<String> completeAPICallList = new ArrayList<String>();;
+		try{
+			completeAPICallList = new ArrayList<>(Arrays.asList(allValidAPICalls));
+			if(StringUtils.isNotBlank(callExecutedFromDB)){
+				callExecutedArr = callExecutedFromDB.split(ERROR_CD_LIST_SPLIT_PATTERN);
+				callExecutedList = new ArrayList<String>(Arrays.asList(callExecutedArr));
+			}
+			// java 8 predicate Solution
+			//flag = completeAPICallList.stream().anyMatch(str -> callExecutedList.contains(str));
+		 for (String checkAPICalls: completeAPICallList) { // java 7 Solution
+	            if (callExecutedList.contains(checkAPICalls)) {
+	            	flag=true;
+	                break;
+	            }
+	     }
+		}catch(Exception ex){
+			logger.error(ex.getMessage());
+		}
+		return flag;
+	}
+	
+	public static String getPipeSeperatedCallExecutedParamForDB(String currentApiCall, String callExecutedFromDB){
+		String callExecutedStrForDB = StringUtils.EMPTY;
+		String[] callExecutedArr = null;
+		List<String> callExecutedList = new ArrayList<>();
+		try{
+			if(StringUtils.isNotBlank(callExecutedFromDB))
+				callExecutedArr = callExecutedFromDB.split(ERROR_CD_LIST_SPLIT_PATTERN);
+			callExecutedList = new ArrayList<String>(Arrays.asList(callExecutedArr));
+			callExecutedList.add(currentApiCall);
+			callExecutedStrForDB = StringUtils.join(callExecutedList,SYMBOL_PIPE);
+		}catch(Exception ex){
+			logger.error(ex.getMessage());
+		}
+		return callExecutedStrForDB;
 	}
 	
 	

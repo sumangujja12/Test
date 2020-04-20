@@ -8,8 +8,10 @@ public static enum ENROLLMENT_FRAUD_ENUM {
 		POSID_HOLD(ERROR_CD_ENROLLMENT_NOT_ALLOWED, "POSID Hold Submission not allowed","POSIDHOLD_FRAUD" ),
 		RESTRICTED_BP(ERROR_CD_ENROLLMENT_NOT_ALLOWED, "Restricted BP Submission not allowed","RESTRICTED_BP_FRAUD"),
 		SWITCH_HOLD(ERROR_CD_ENROLLMENT_NOT_ALLOWED, "Switch Hold Submission not allowed for Switch Transaction","SWITCH_HOLD_FRAUD"),
-		CREDIT_FREEZE(ERROR_CD_ENROLLMENT_NOT_ALLOWED, "Credit Freeze / Fraud Submission not allowed","CREDIT_FREEZE_FRAUD");
-
+		CREDIT_FREEZE(ERROR_CD_ENROLLMENT_NOT_ALLOWED, "Credit Freeze / Fraud Submission not allowed","CREDIT_FREEZE_FRAUD"),
+		// Need to change this message
+		CALL_SKIP(ERROR_CD_ENROLLMENT_NOT_ALLOWED,"Donot Skip call ", "API_CALL_SKIP");
+	
 		private String fraudErrorCode;	
 		private String fraudErrorMessage;
 		private String fraudSystemNotes;

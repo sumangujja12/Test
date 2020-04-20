@@ -548,6 +548,8 @@ public class ValidationBO extends BaseBO {
 					+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making updtaeservicelocation call now");
 			//Making Update Servicelocation call now
 			UpdateServiceLocationRequest updateServiceLocation= new UpdateServiceLocationRequest();
+			if(null!=serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getCallExecutedFromDB()))
+				updateServiceLocation.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(performPosIdBpRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
 			createUpdateServiceLocationRequest(updateServiceLocation, performPosIdBpRequest, personId,
 					messageCode, errorCd,bpMatchDTO,recentCallMade,oESignupDTO);
 			String updateSrvLocationErrorCode=oeBO.updateServiceLocation(updateServiceLocation);
@@ -754,7 +756,7 @@ public class ValidationBO extends BaseBO {
 		addPersonRequest.setPosIdDate(posIdDateAdd);
 		addPersonRequest.setIdStateOfIssue(TX);
 		addPersonRequest.setPhoneNum(performPosIdBpRequest.getPhoneNum());
-		addPersonRequest.setLanguageCode(performPosIdBpRequest.getPreferredLanguage());	
+		addPersonRequest.setLanguageCode(performPosIdBpRequest.getPreferredLanguage()); 
 	}
 
 	/**
@@ -860,6 +862,7 @@ public class ValidationBO extends BaseBO {
 		}
 		//END TBD - Set value
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
+		addServiceLocation.setCallExecuted(performPosIdBpRequest.getCallExecuted());
 	}
 
 

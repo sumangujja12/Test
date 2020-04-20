@@ -190,7 +190,7 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		String prospectId;
 		String prospectBpNumber;
 		String prospectPreapprovalStatus;
-		
+		private String callExecuted;
 		
 		public String getPdfCaptureFlag() {
 			return pdfCaptureFlag;
@@ -1448,6 +1448,20 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 
 	public void setProspectPreapprovalStatus(String prospectPreapprovalStatus) {
 		this.prospectPreapprovalStatus = prospectPreapprovalStatus;
+	}
+
+	/**
+	 * @return the callExecuted
+	 */
+	public String getCallExecuted() {
+		return callExecuted;
+	}
+
+	/**
+	 * @param callExecuted the callExecuted to set
+	 */
+	public void setCallExecuted(String callExecuted) {
+		this.callExecuted = callExecuted;
 	}
 
 
