@@ -8,12 +8,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -33,6 +36,7 @@ import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
 import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT;
+import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT_Service;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZetGmdInvdate;
@@ -85,15 +89,15 @@ public class GMDService extends BaseAbstractService {
 
 		
 		//Start : Added for Redbull CXF upgrade by IJ
-		URL url = com.nrg.cxfstubs.gmdstatement.Service.class.getResource("Z_E_ISU_GET_GMD_STMT.wsdl");
+		URL url = ZEISUGETGMDSTMT_Service.class.getResource("Z_E_ISU_GET_GMD_STMT.wsdl");
         if (url == null) {
-            java.util.logging.Logger.getLogger(com.nrg.cxfstubs.gmdstatement.Service.class.getName())
+            java.util.logging.Logger.getLogger(ZEISUGETGMDSTMT_Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
                      "Can not initialize the default wsdl from {0}", "Z_E_ISU_GET_GMD_STMT.wsdl");
         }
-        com.nrg.cxfstubs.gmdstatement.Service gmdStatementService = new com.nrg.cxfstubs.gmdstatement.Service(url);
+        ZEISUGETGMDSTMT_Service gmdStatementService = new ZEISUGETGMDSTMT_Service(url);
 		
-		ZEISUGETGMDSTMT stub = gmdStatementService.getBinding();
+		ZEISUGETGMDSTMT stub = gmdStatementService.getZEISUGETGMDSTMT();
 		 BindingProvider binding = (BindingProvider)stub;
 	    
 	        binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  this.envMessageReader.getMessage(CCS_USER_NAME));
