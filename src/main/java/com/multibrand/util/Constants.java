@@ -3,6 +3,8 @@ package com.multibrand.util;
 import java.util.Arrays;
 import java.util.List;
 
+import com.multibrand.bo.gm;
+
 public interface Constants {
 
 	public static final String ENV_PROPERTIES_FILE = "classpath:properties/environment";
@@ -1184,6 +1186,9 @@ public interface Constants {
 	 public static final String ACCOUNT_ALREADY_ENROLLED = "Account already enrolled";
 	 
 	 public static final String GME_BASE_URL = "gm.base.url";
+	 public static final String GME_PROD_BASE_URL = "gm.prod.base.url";
+	 
+	 
 	 public static final String IMG_URL = "<img src=\"{0}\"/>";
 	 public static final String INVALID_REQUEST = "Please provide valid request for {0}";
 	 public static final String CONTRACT_ID ="contractId";

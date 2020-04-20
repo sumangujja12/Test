@@ -5,6 +5,7 @@ public class GMDOfferResponse {
 	  private String strEFLDocID = "";
 	  private String strYRAACDocID = "";
 	  private String strTOSDocID = "";
+	  private String strPrepayDisID = "";
 	/**
 	 * @return the strEFLDocID
 	 */
@@ -40,5 +41,17 @@ public class GMDOfferResponse {
 	 */
 	public void setStrTOSDocID(String strTOSDocID) {
 		this.strTOSDocID = strTOSDocID;
-	}	  
+	}
+	/**
+	 * @return the strPrepayDisID
+	 */
+	public String getStrPrepayDisID() {
+		return strPrepayDisID;
+	}
+	/**
+	 * @param strPrepayDisID the strPrepayDisID to set
+	 */
+	public void setStrPrepayDisID(String strPrepayDisID) {
+		this.strPrepayDisID = strPrepayDisID;
+	}
 }

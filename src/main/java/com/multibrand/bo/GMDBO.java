@@ -1162,11 +1162,24 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		logger.debug("Start:{}" , methodName);
 		
 		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
+		String baseProdURL= envMessageReader.getMessage(Constants.GME_PROD_BASE_URL);
+		
 		
 		GMDOfferResponse gmdOfferResponse = new GMDOfferResponse();
 		
 		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+"/files/"+this.appConstMessageSource
 		.getMessage("gmd.offer.efl.equivalent." + tdspCode, null, null));
+		
+		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+"/files/"+this.appConstMessageSource
+		.getMessage("gmd.offer.tos.equivalent." + tdspCode, null, null));
+		
+		gmdOfferResponse.setStrYRAACDocID(baseProdURL.trim()+"/files/"+this.appConstMessageSource
+		.getMessage("gmd.offer.yraac.equivalent." + tdspCode, null, null));	
+		
+		gmdOfferResponse.setStrPrepayDisID(baseProdURL.trim()+"/files/"+this.appConstMessageSource
+		.getMessage("gmd.offer.predis.equivalent." + tdspCode, null, null));			
+		
+		
 		
 		logger.debug("End:{}" , methodName);
 		return gmdOfferResponse;

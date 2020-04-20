@@ -164,7 +164,8 @@ pw.prodoffer.schema.id=63
 pw.prodbonus.schema.id=TODO
 gm.prodoffer.schema.id =6969
 gm.prodbonus.schema.id=TODO
-gm.base.url=https://stg-signup.greenmountain.com 
+gm.base.url=https://stg-signup.greenmountain.com
+gm.prod.base.url=https://signup.greenmountain.com
 RetroAmbPercentageValue=10
 contractAccountNumberRetro=000010474734
 #//START : GMD APIS
