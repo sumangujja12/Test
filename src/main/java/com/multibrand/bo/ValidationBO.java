@@ -1120,7 +1120,8 @@ public class ValidationBO extends BaseBO {
 		response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 		messageCode=(String)performBpMatchResponse.get("messageCode");
 		errorCd=(String)performBpMatchResponse.get("errorCd");	
-		bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
+		BPMatchDTO returnedBpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
+		BeanUtils.copyProperties(returnedBpMatchDTO, bpMatchDTO);
 
 		logger.debug("inside validatePosId:: status code after bpmatch call is:: "+response.getStatusCode());
 		logger.debug("inside validatePosId:: errorcd after bpmatch is :: "+response.getErrorCode());
@@ -1167,7 +1168,8 @@ public class ValidationBO extends BaseBO {
 				response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 				messageCode=(String)performBpMatchResponse.get("messageCode");
 				errorCd=(String)performBpMatchResponse.get("errorCd");	
-				bpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
+				BPMatchDTO returnedBpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
+				BeanUtils.copyProperties(returnedBpMatchDTO, bpMatchDTO);
 				if(StringUtils.equals(messageCode, POSIDHOLD)){
 					messageCode = POSIDHOLD;
 					response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
