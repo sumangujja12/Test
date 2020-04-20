@@ -2948,6 +2948,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					holdType = iter.next();
 				}
 			}
+			logger.info("Tracking Number :"+trackingId +" ESID CalendarDates call Hold Type :"+holdType);
 			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType);
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
