@@ -142,7 +142,7 @@ public class GMDResource extends BaseResource {
 	}
 	
 	@GET
-	@Path("/{tdspCode}")
+	@Path("/gmdOfferDocs/{tdspCode}")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getGMDOfferDocs(@PathParam("tdspCode") String tdspCode) {

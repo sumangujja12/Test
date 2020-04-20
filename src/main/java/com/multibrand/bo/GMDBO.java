@@ -1165,7 +1165,7 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		
 		GMDOfferResponse gmdOfferResponse = new GMDOfferResponse();
 		
-		gmdOfferResponse.setStrEFLDocID(baseURL+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+"/files/"+this.appConstMessageSource
 		.getMessage("gmd.offer.efl.equivalent." + tdspCode, null, null));
 		
 		logger.debug("End:{}" , methodName);
