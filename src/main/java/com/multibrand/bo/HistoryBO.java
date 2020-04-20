@@ -1419,7 +1419,9 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 		usageRequestVO.setContractAcctId(accountNumber);
 		usageRequestVO.setContractId(contractId);
 		usageRequestVO.setEsiId(esid);
-		usageRequestVO.setCurDtInd(curDate);
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(Constants.MM_dd_yyyy);		
+		usageRequestVO.setCurDtInd(formatter.format(date));
 
 		DailyHourlyPriceResponseVO usageResp = null;
 		HourlyPriceResponse hourlyPriceResponse = new HourlyPriceResponse();

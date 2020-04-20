@@ -4,16 +4,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -316,7 +320,11 @@ public class GMDService extends BaseAbstractService {
 
 				PastSeries pastSeries = new PastSeries();
 				
-				pastSeries.setPrice(new BigDecimal(price));
+				if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
+					pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
+				} else {
+					pastSeries.setPrice(new BigDecimal(0.00));
+				}
 				pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
 				
 				pastSeriesList.add(pastSeries);
@@ -450,14 +458,17 @@ public class GMDService extends BaseAbstractService {
 		return gmdTaxesBreakDown;
 	}	
 	
-	private Object getMethodRun(Object obj, String methodName)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	private Object getMethodRun(Object obj, String methodName) {
 		
-		Method method = obj.getClass().getDeclaredMethod(methodName);
+		try {
+			Method method = obj.getClass().getDeclaredMethod(methodName);
 		
-		method.setAccessible(true);
-		
-		return method.invoke(obj, null);
+			method.setAccessible(true);
+			return method.invoke(obj, null);
+		} catch(IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
+			logger.error("Exception getMethodRun {} ",ex);
+		}
+		return 0.0;
 
 	}
 }
