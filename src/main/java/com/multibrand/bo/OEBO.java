@@ -2187,6 +2187,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			}
 			else{
 				response.setStatusCode(STATUS_CODE_CONTINUE);
+				serviceLocationResponseErrorList.remove(CCSD);
+				serviceLocationResponseErrorList.remove(CREDFREEZE);
 			}
 			
 			if (StringUtils.isNotEmpty(creditCheckRequest.getMviDate())
