@@ -89,7 +89,7 @@ public class GMDService extends BaseAbstractService {
 
 		
 		//Start : Added for Redbull CXF upgrade by IJ
-		URL url = ZEISUGETGMDSTMT_Service.class.getResource("Z_E_ISU_GET_GMD_STMT.wsdl");
+		URL url =  ZEISUGETGMDSTMT_Service.class.getResource("Z_E_ISU_GET_GMD_STMT.wsdl");
         if (url == null) {
             java.util.logging.Logger.getLogger(ZEISUGETGMDSTMT_Service.class.getName())
                 .log(java.util.logging.Level.INFO, 
@@ -110,12 +110,15 @@ public class GMDService extends BaseAbstractService {
           ZesGmdStmt zesGmdStmt = new ZesGmdStmt();
           ZetGmdStmt zetGmdStmt = new ZetGmdStmt();
           ZettGmdRetchr zettGmdRetchr = new ZettGmdRetchr();
+         
 
          Holder<ZetGmdInvdate>  holderZetGmdInvdate = new Holder<>();
          holderZetGmdInvdate.value = zetGmdInvdate;
          
-         Holder<ZettGmdRetchr>  holderZettGmdRetchr = new Holder<>();
-         holderZettGmdRetchr.value = zettGmdRetchr;
+         Holder<ZettGmdRetchr> holderZettGmdRetchr =  new Holder<>();
+         
+         
+         Holder<BigDecimal> holderAvgPrice = new Holder<>(); 
          
          Holder<ZesGmdStmt>  holderZesGmdStmt = new Holder<>();
          holderZesGmdStmt.value = zesGmdStmt;
@@ -125,9 +128,9 @@ public class GMDService extends BaseAbstractService {
 		
 		try{
 			
-			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderZetGmdInvdate, holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
+			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderAvgPrice, holderZetGmdInvdate, holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
 						
-			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderZettGmdRetchr);
+			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderAvgPrice, holderZettGmdRetchr);
 			
 			double rate = handleRateResponse(holderZetGmdStmt);
 			
@@ -346,7 +349,7 @@ public class GMDService extends BaseAbstractService {
 		return current;
 	}
 	
-	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt, Holder<ZettGmdRetchr> holderZettGmdRetchr) {
+	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr) {
 
 		GMDStatementBreakDownResponse response = new GMDStatementBreakDownResponse();
 
@@ -355,6 +358,8 @@ public class GMDService extends BaseAbstractService {
 		
 		response.setTotalCost(zesGmdStmt.getUseChrg());
 		response.setTotalUsage(zesGmdStmt.getCusage());
+		
+		response.setAvgPrice(holderAvgPrice !=null ? holderAvgPrice.value : null);
 		
 		List<Breakdown> breakdown = new ArrayList<>();
 		
@@ -369,7 +374,7 @@ public class GMDService extends BaseAbstractService {
 		
 		
 		response.setBreakdown(breakdown);
-		response.setReturnCharge(gmdReturnChargeList);
+		response.setReturnCharge(gmdReturnChargeList);		
 
 		return response;
 
