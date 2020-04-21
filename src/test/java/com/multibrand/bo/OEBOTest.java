@@ -48,8 +48,9 @@ import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.service.OEService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.EnrollmentFraud.ENROLLMENT_FRAUD_ENUM;
 import com.multibrand.util.LoggerUtil;
-
+import com.multibrand.util.TogglzUtil;
 import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
@@ -104,6 +105,10 @@ public class OEBOTest implements Constants{
 	@Mock
 	private CommonUtil commonUtil;
 	
+	@Mock
+	private TogglzUtil togglzUtil;
+
+	
 	@BeforeClass
 	public void init() {
 		MockitoAnnotations.initMocks(this);
@@ -117,11 +122,14 @@ public class OEBOTest implements Constants{
 	}
 
 	// FOR JUNIT
-
 	
-	 /* @Before public void init()
+	 /* @Before
+	  public void init()
 	  { 
-		  MockitoAnnotations.initMocks(this); }*/
+		  MockitoAnnotations.initMocks(this);
+		  when(logger.isDebugEnabled()).thenReturn(true);
+		  
+	  }*/
 	 
 /*
 	@Test
@@ -610,27 +618,63 @@ public class OEBOTest implements Constants{
 		return esidResponse;
 	}
 	
-	/*@Test
-	public void testSubmitEnrollmentCheckFraudulentActivityForDuplicateEnroll() throws OEException{
-		EnrollmentRequest enrollmentRequest = new EnrollmentRequest();
-		//OESignupDTO oeSignUpDTO = createOeSignupDTORequest();
-		oeSignUpDTO.setReqStatusCd(FLAG_N);
-		oeSignUpDTO.setAffiliateId("270519");
-		oeSignUpDTO.setTdspCodeCCS("D0001");
-		oeSignUpDTO.setTrackingNumber("10000016");
-		ServiceLocationResponse serviceLoationResponse=new ServiceLocationResponse();
-		serviceLoationResponse.setRequestStatusCode(FLAG_N);
-		EnrollmentResponse response =  new EnrollmentResponse();
-		UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
-		UpdatePersonRequest updatePersonRequest = new UpdatePersonRequest();
-		EnrollmentReportDataRequest enrollReportDataReq = new EnrollmentReportDataRequest();
-		when(serviceLocationDAO.getServiceLocation(enrollmentRequest.getTrackingId())).thenReturn(serviceLoationResponse);
-		when(oeRequestHandler.createOeSignupDtoByMinimal(Matchers.any(EnrollmentRequest.class), Matchers.any(OESignupDTO.class),Matchers.any(ServiceLocationResponse.class))).thenReturn(oeSignUpDTO);
-		when(oeService.createAndCallServiceReturnStatus(enrollReportDataReq, REST_IOT_ENROLLMENT_REPORT_DATA_SUBMIT_URL, IOT_ENROLLMENT_REPORT_DATA_SUBMIT_REST_TIME_OUT_IN_SEC)).thenReturn("");
-		when(oeRequestHandler.createUpdateServiceLocationRequest(oeSignUpDTO)).thenReturn(updateServiceLocationRequest);
-		when(oeRequestHandler.createUpdatePersonRequest(oeSignUpDTO)).thenReturn(updatePersonRequest);
-		response=oebo.submitEnrollment(enrollmentRequest, serviceLoationResponse);
-		Assert.assertEquals(response.getStatusCode(), STATUS_CODE_CONTINUE);
-	}*/
+	@Test
+	public void testCheckFraudulentActivityForDuplicateEnrollment() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(S_VALUE);
+	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","check-credit");
+		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), MESSAGE_CODE_DUPLICATE_SUBMISSION);
+	}
+	
+	@Test
+	public void testCheckFraudulentActivityWithPOSIDHOLD() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(I_VALUE);
+		oeSignUpDTO.setErrorCdList(POSIDHOLD);
+	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(false);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","performCreditCheck");
+		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
+	}
+	
+	@Test
+	public void testCheckFraudulentActivityWithBPRestrict() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(I_VALUE);
+		oeSignUpDTO.setErrorCdList(BP_RESTRICT);
+	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","performCreditCheck");
+		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "RESTRICTED_BP_FRAUD");
+	}
+	
+	@Test
+	public void testCheckFraudulentActivityWithSWHOLD() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(I_VALUE);
+		oeSignUpDTO.setErrorCdList(SWHOLD);
+		oeSignUpDTO.setServiceReqTypeCd(SWI);
+	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","getESIDAndCalendarDates");
+		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
+	}
+	
+	@Test
+	public void testCheckFraudulentActivityWithCreditFreeze() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(I_VALUE);
+		oeSignUpDTO.setErrorCdList(CREDFREEZE);
+		when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","check-credit");
+		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "CREDIT_FREEZE_FRAUD");
+	}
+	
+	@Test
+	public void testCheckFraudulentActivityForCallSkip() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(I_VALUE);
+	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","");
+		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "API_CALL_SKIP");
+	}
 		
 }

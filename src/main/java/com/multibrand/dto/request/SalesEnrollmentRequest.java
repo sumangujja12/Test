@@ -1,19 +1,40 @@
 package com.multibrand.dto.request;
 
+import org.hibernate.validator.constraints.Length;
+
 import com.multibrand.request.validation.NotEmpty;
+import com.multibrand.request.validation.SizeConstraint;
 
 public class SalesEnrollmentRequest extends SalesOERequest{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String offerCode;
 	@NotEmpty
+	@Length(min= 8, max = 8, groups = SizeConstraint.class)
+	private String offerCode;
+	
+	@NotEmpty
+	@Length(max = 10, groups = SizeConstraint.class)
 	private String promoCode;
+	
+	@NotEmpty
+	@Length(max = 10, groups = SizeConstraint.class)
 	private String campaignCode;
+	
+	@NotEmpty
+	@Length(max = 10, groups = SizeConstraint.class)
 	private String productPriceCode;
+	
+	@NotEmpty
+	@Length(max = 15, groups = SizeConstraint.class)
 	private String incentiveCode;
+	
+	@NotEmpty
+	@Length(max = 2, groups = SizeConstraint.class)
 	private String marketSegment;
+	
+	@Length(max = 1, groups = SizeConstraint.class)
 	private String ebillFlag;
 	
 
