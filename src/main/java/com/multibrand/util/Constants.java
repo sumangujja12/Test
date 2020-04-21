@@ -726,6 +726,8 @@ public interface Constants {
 	public static final String TOKEN_SERVER_DOWN_MSG_TXT="msg_token_server_down";
 	public static final String POSID_FAIL="POSID_FAIL";
 	public static final String PAST_BALANCE="PAST_BALANCE";
+	public static final String POSID_PASTDUE="POSID_PASTDUE";
+	public static final String POSID_PASTSERVICE="POSID_PASTSERVICE";
 	public static final String CURRENT_CUSTOMER="CURRENT_CUSTOMER";
 	public static final String TOKEN_SERVER_DOWN="TOKEN_SERVER_DOWN";
 	public static final String PAST_SERVICE_HISTORY="PAST_SERVICE_HISTORY";
@@ -1391,6 +1393,8 @@ public interface Constants {
 	
 	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission";
 	public static final String POSID_HOLD_MSG_TXT="msg_posid_hold";
+	public static final String POSID_PASTDUE_MSG_TXT="msg_posid_pastdue";
+	public static final String POSID_PASTSERVICE_MSG_TXT="msg_posid_past_history";
 	public static final String MESSAGE_CODE_NO_MATCH_FOUND = "NO_MATCH_FOUND";
 	
 	public static final String PROSPECT_PREAPPROVAL_FLAG_PASS= "P";

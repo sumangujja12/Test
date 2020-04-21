@@ -2181,6 +2181,9 @@ public class OEBO extends OeBoHelper implements Constants{
 						response.setMessageText(msgSource.getMessage(TEXT_FRAUD_CREDIT_CHECK, 
 								new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
 								CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));	
+						errorCd = CREDFREEZE;
+						serviceLocationResponseErrorList.remove(CCSD);
+						serviceLocationResponseErrorList.add(errorCd);
 			}
 			else{
 				response.setStatusCode(STATUS_CODE_CONTINUE);
@@ -2789,6 +2792,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					if(esidDo.isEsidBlocked()){
 						serviceLocationResponseErrorList.add(HOLD_DNP);
 						holdType=HOLD_DNP;
+					}else{
+						serviceLocationResponseErrorList.remove(HOLD_DNP);
 					}
 				}else {
 					EsidProfileResponse esidProfileResponse = this.addressService.getESIDProfile(esid,companyCode);
@@ -2797,6 +2802,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					if(esidDo.isEsidBlocked()){
 						serviceLocationResponseErrorList.add(HOLD_DNP);
 						holdType=HOLD_DNP;
+					}else{
+						serviceLocationResponseErrorList.remove(HOLD_DNP);
 					}
 					//END || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari || 15/12/2019
 					TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(esid,companyCode,sessionId);
@@ -2839,7 +2846,11 @@ public class OEBO extends OeBoHelper implements Constants{
 						response.setStatusCode(STATUS_CODE_STOP);
 						response.setMessageText(msgSource.getMessage(MESSAGE_CODE_SWITCH_HOLD));
 						response.setMessageCode(MESSAGE_CODE_SWITCH_HOLD);
+						serviceLocationResponseErrorList.add(SWHOLD);
+						
 						return response;
+					}else{
+						serviceLocationResponseErrorList.remove(SWHOLD);
 					}
 					
 					
@@ -2902,6 +2913,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						response.setTdspFee(EMPTY);
 						response.setMessageCode(MESSAGE_CODE_SWITCH_HOLD);
 						response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_SWITCH_HOLD, null, localeObj));
+						serviceLocationResponseErrorList.add(SWHOLD);
 						return response;
 					}else if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_MOVE_IN)
 							&& StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) {
@@ -2912,6 +2924,8 @@ public class OEBO extends OeBoHelper implements Constants{
 						String messageCodeText = getMessageCodeTextForNotifySwitchHold(
 								brandId, companyCode);
 						response.setMessageText(messageCodeText);
+					}else{
+						serviceLocationResponseErrorList.remove(SWHOLD);
 					}
 					
 					// ESID Active in company scenario (ESID active)
