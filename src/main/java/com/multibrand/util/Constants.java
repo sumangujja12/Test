@@ -1411,5 +1411,6 @@ public interface Constants {
 	public static final String ERROR_CD_LIST_SPLIT_PATTERN = "\\|";
 	public static final String ERROR_CD_ENROLLMENT_NOT_ALLOWED = "ENROLLMENT_NOT_ALLOWED";
 	
-	public static final String[] allValidAPICalls = {"check-credit", "submitUCCData", "recheck-credit","performCreditCheck","available-dates","getESIDAndCalendarDates"};
+	public static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
+	public static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
 }

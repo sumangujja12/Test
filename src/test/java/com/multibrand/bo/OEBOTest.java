@@ -669,12 +669,26 @@ public class OEBOTest implements Constants{
 	}
 	
 	@Test
-	public void testCheckFraudulentActivityForCallSkip() throws OEException{
+	public void testIsMandatoryCallExecutedForCreditApiCheck(){
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
-		oeSignUpDTO.setReqStatusCd(I_VALUE);
-	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","");
-		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "API_CALL_SKIP");
+		String callExecutedFromDB = "identity|available-dates";
+		enrollmentFraudEnum = oebo.isMandatoryCallExecuted(callExecutedFromDB);
+		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "CREDIT_API_SKIPPED");
+	}
+	@Test
+	public void testIsMandatoryCallExecutedForDateApiCheck(){
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		String callExecutedFromDB = "identity|check-credit|submitUCCData";
+		enrollmentFraudEnum = oebo.isMandatoryCallExecuted(callExecutedFromDB);
+		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "DATES_API_SKIPPED");
+	}
+	
+	@Test
+	public void testIsMandatoryCallExecuted_NoSkip(){
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		String callExecutedFromDB = "identity|check-credit|submitUCCData|available-dates";
+		enrollmentFraudEnum = oebo.isMandatoryCallExecuted(callExecutedFromDB);
+		Assert.assertEquals(enrollmentFraudEnum, null);
 	}
 		
 }
