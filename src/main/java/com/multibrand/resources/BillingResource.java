@@ -1259,7 +1259,7 @@ public class BillingResource {
 	@Path("dppEligibilityCheck")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response getPaymentExtensionCheck(@Valid DPPEligibilityCheckRequest request) {
+	public Response getDppExtensionCheck(@Valid DPPEligibilityCheckRequest request) {
 		Response response = null;
 		logger.info("Start-[ProfileResource-getPaymentExtensionCheck]");
 		DPPExtensionCheckResponse paymentExtensionResponse = billingBO.getDPPPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
