@@ -22,7 +22,7 @@ public class PaymentExtensionSubmitRequest implements FormEntityRequest, Seriali
 	@NotBlank(groups = BasicConstraint.class)
 	private String paymentExtDate ="";
 	@Length(max = 10, groups = SizeConstraint.class)
-	private String businessPartnerNumber;
+	private String bussinessPartnerNumber;
 	@NotBlank(groups = BasicConstraint.class)
 
 	/**
@@ -82,17 +82,17 @@ public class PaymentExtensionSubmitRequest implements FormEntityRequest, Seriali
 	}
 
 	/**
-	 * @return the businessPartnerNumber
+	 * @return the bussinessPartnerNumber
 	 */
-	public String getBusinessPartnerNumber() {
-		return businessPartnerNumber;
+	public String getBussinessPartnerNumber() {
+		return bussinessPartnerNumber;
 	}
 
 	/**
-	 * @param businessPartnerNumber the businessPartnerNumber to set
+	 * @param bussinessPartnerNumber the bussinessPartnerNumber to set
 	 */
-	public void setBusinessPartnerNumber(String businessPartnerNumber) {
-		this.businessPartnerNumber = businessPartnerNumber;
+	public void setBussinessPartnerNumber(String bussinessPartnerNumber) {
+		this.bussinessPartnerNumber = bussinessPartnerNumber;
 	}
 
 	/**
