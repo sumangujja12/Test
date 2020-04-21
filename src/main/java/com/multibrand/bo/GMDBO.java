@@ -550,7 +550,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		String contactText = EMPTY;
 		String moveInDate = EMPTY;
 		String specialReadDate = EMPTY;
-		String startSvrcDate = EMPTY;
+		String startSvrcDate = oeSignUpDTO.getServiceStartDate();
 		String notifyAddress = EMPTY;
 		String pointOfDeliveryId = EMPTY;
 		String requestedAmount = EMPTY;
@@ -643,8 +643,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrNotifyState(oeSignUpDTO.getBillingAddressState());
 		submitEnrollRequest.setStrNotifyZip(oeSignUpDTO.getBillingAddressZipCode());
 
-		startSvrcDate = CommonUtil.formatDateForNrgws(CommonUtil.getCurrentDateFormatted(MMddyyyy));
-		moveInDate = startSvrcDate;
+		//startSvrcDate = CommonUtil.formatDateForNrgws(CommonUtil.getCurrentDateFormatted(MMddyyyy));
+		moveInDate = oeSignUpDTO.getServiceStartDate();
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("EnrollmentService creating submitEnrollmentRequest,moveInDate is ::{}" , moveInDate);
