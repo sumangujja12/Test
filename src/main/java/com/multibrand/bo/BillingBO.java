@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -44,6 +45,9 @@ import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.DeActEbillRequest;
 import com.multibrand.domain.DeActEbillResponse;
+import com.multibrand.domain.DppDueDateAmountDO;
+import com.multibrand.domain.DppEligibleRequest;
+import com.multibrand.domain.DppEligibleResponse;
 import com.multibrand.domain.GetArRequest;
 import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.ProfileResponse;
@@ -75,6 +79,8 @@ import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
 import com.multibrand.vo.request.AvgTempRequestVO;
+import com.multibrand.vo.request.DPPEligibilityCheckRequest;
+import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.ProjectedBillRequestVO;
 import com.multibrand.vo.request.RetroPopupRequestVO;
 import com.multibrand.vo.request.SaveAMBSingupRequestVO;
@@ -106,6 +112,8 @@ import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
 import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.ContractDOSort;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
+import com.multibrand.vo.response.billingResponse.DPPExtensionCheckResponse;
+import com.multibrand.vo.response.billingResponse.DppValueVO;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
 import com.multibrand.vo.response.billingResponse.GMEContractDO;
@@ -123,7 +131,6 @@ import com.multibrand.vo.response.billingResponse.ScheduleOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
-
 import com.multibrand.vo.response.historyResponse.PaymentDO;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
@@ -3472,6 +3479,72 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 		logger.info("isRetroAmbEligible {} - eligible {}", accountNumber, eligible);
 		return eligible;
+	}
+	
+	
+	public DPPExtensionCheckResponse getDPPPaymentExtensionCheck(DPPEligibilityCheckRequest payRequest, String sessionId) {
+		logger.info("Start - [BillingBO - getDPPPaymentExtensionCheck]");
+		DPPExtensionCheckResponse response = new DPPExtensionCheckResponse();
+		DppEligibleResponse payExtEligibleResponse = null;
+		DppEligibleRequest request = new DppEligibleRequest();
+		request.setBrandId(payRequest.getBrandName());
+		request.setCompanyCode(payRequest.getCompanyCode());
+		request.setContAccount(payRequest.getContractAccountNumber());
+		request.setDppBypassElg(this.appConstMessageSource.getMessage(Constants.DPP_BYPASS_ELIGIBLE_FLAG, null, null));
+		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
+		
+		try {
+			payExtEligibleResponse = paymentService.getDPPExtEligibleResponse(request, sessionId);
+		} catch (RemoteException e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::" +e);
+			return response;
+		}
+		
+		if (payExtEligibleResponse != null
+				&& StringUtils.isNotBlank(payExtEligibleResponse.getDppReturnCode())) {
+		
+			if (StringUtils.equalsIgnoreCase("00", payExtEligibleResponse.getDppReturnCode())
+					&& StringUtils.equalsIgnoreCase(Constants.YES, payExtEligibleResponse.getDpplanEligible())
+					&& StringUtils.equalsIgnoreCase("NO", payExtEligibleResponse.getDpplanActive())) {
+				response.setPaymentExtension(true);
+				DppDueDateAmountDO [] dppDueAmountDoList = payExtEligibleResponse.getDppDueDateAmountDoList();
+				List<DppValueVO> dppList = new LinkedList<DppValueVO>();
+				response.setDdpValue(dppList);
+				response.setDpplanActive(payExtEligibleResponse.getDpplanActive());
+				response.setDpplanEligible(payExtEligibleResponse.getDpplanEligible());
+				response.setDppplanPending(payExtEligibleResponse.getDppplanPending());
+				response.setAmount(StringUtils.trim(payExtEligibleResponse.getAmount()));
+				response.setDppDescription(payExtEligibleResponse.getDppDes());
+				if(dppDueAmountDoList != null) {
+					for(DppDueDateAmountDO dppDueDateAmountDO : dppDueAmountDoList) {
+						DppValueVO dppValueVO = new DppValueVO();
+						dppValueVO.setDppAmountDue(StringUtils.trim(dppDueDateAmountDO.getDppAmountDue()));
+						dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
+								Constants.yyyyMMdd, dppDueDateAmountDO.getDppDueDate()));
+						dppList.add(dppValueVO);
+					}
+				}
+				
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+			} else {
+				response.setPaymentExtension(false);
+				response.setResultCode(RESULT_CODE_NO_DATA);
+				response.setResultDescription("Extension Date not available");
+				response.setErrorCode(payExtEligibleResponse.getErrorCode());
+				response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+			}
+		} else if(payExtEligibleResponse != null) {
+			response.setResultCode(RESULT_CODE_CCS_ERROR);
+			response.setResultDescription("Failed to get the Extension Date or not available");
+			response.setResultCode(RESULT_CODE_CCS_ERROR);
+			response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+		}
+		
+		logger.info("END - [BillingBO - getDPPPaymentExtensionCheck]");
+		return response;
 	}
 	
 	

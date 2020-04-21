@@ -47,6 +47,7 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
+import com.multibrand.vo.request.DPPEligibilityCheckRequest;
 import com.multibrand.vo.request.RetroPopupRequestVO;
 import com.multibrand.vo.request.SaveAMBSingupRequestVO;
 import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
@@ -66,6 +67,7 @@ import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.BillInfoResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
+import com.multibrand.vo.response.billingResponse.DPPExtensionCheckResponse;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
@@ -1214,6 +1216,21 @@ public class BillingResource {
 		CheckSwapEligibilityResponse checkSwapEligibilityResponse = billingBO.checkSwapEligibility(accountNumber,companyCode,brandName, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(checkSwapEligibilityResponse).build();
 				
+		return response;
+		
+	}
+	
+	
+	@POST
+	@Path("dppEligibilityCheck")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getPaymentExtensionCheck(@Valid DPPEligibilityCheckRequest request) {
+		Response response = null;
+		logger.info("Start-[ProfileResource-getPaymentExtensionCheck]");
+		DPPExtensionCheckResponse paymentExtensionResponse = billingBO.getDPPPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(paymentExtensionResponse).build();
+		logger.info("End-[ProfileResource-getPaymentExtensionCheck]");
 		return response;
 		
 	}
