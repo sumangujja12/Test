@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -2097,5 +2098,14 @@ public class CommonUtil implements Constants {
 		return callExecutedStrForDB;
 	}
 	
-	
+	public static LinkedHashSet<String> getErrorCodeListFromPipeSeparatedString(String errorCdStr){
+		LinkedHashSet<String> serviceLocationResponseErrorList = null;
+		if(StringUtils.isNotBlank(errorCdStr)){
+			String[] errorCdArray =errorCdStr.split(ERROR_CD_LIST_SPLIT_PATTERN);
+			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+		} else {
+			serviceLocationResponseErrorList = new LinkedHashSet<>();
+		}
+		return serviceLocationResponseErrorList;		
+	}
 }
