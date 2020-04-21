@@ -765,7 +765,10 @@ public class ValidationBO extends BaseBO {
 		updateServiceLocation.setBrandId(performPosIdBpRequest.getBrandId());
 		logger.debug("inside validatePosId:: inside update request the message code is ::"+messageCode);
 		updateServiceLocation.setMessageCode(messageCode);
-		updateServiceLocation.setErrorCode(errorCd);
+		if(StringUtils.isNotBlank(errorCd)){
+			updateServiceLocation.setErrorCode(errorCd);
+		}else{
+			updateServiceLocation.setErrorCode("$blank$");}
 		updateServiceLocation.setRecentCallMade(recentCallMade);
 		//bpmatch response update
 		updateServiceLocation.setPendingBalanceFlag(bpMatchDTO.getPendingBalanceFlag());
@@ -786,7 +789,8 @@ public class ValidationBO extends BaseBO {
 		if(StringUtils.isNotBlank(oESignupDTO.getErrorCdList())){
 			updateServiceLocation.setErrorCdList(oESignupDTO.getErrorCdList());
 		}else{
-			updateServiceLocation.setErrorCdList("");}
+			updateServiceLocation.setErrorCdList("$blank$");}
+
 		updateServiceLocation.setSystemNotes("");
 		//END : OE :Sprint61 :US21009 :Kdeshmu1
 		///Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
