@@ -618,7 +618,7 @@ public class OEBOTest implements Constants{
 		return esidResponse;
 	}
 	
-	@Test
+	/*@Test
 	public void testCheckFraudulentActivityForDuplicateEnrollment() throws OEException{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		oeSignUpDTO.setReqStatusCd(S_VALUE);
@@ -626,7 +626,7 @@ public class OEBOTest implements Constants{
 	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","check-credit");
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), MESSAGE_CODE_DUPLICATE_SUBMISSION);
 	}
-	
+	*/
 	@Test
 	public void testCheckFraudulentActivityWithPOSIDHOLD() throws OEException{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
@@ -637,7 +637,7 @@ public class OEBOTest implements Constants{
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
-	@Test
+	/*@Test
 	public void testCheckFraudulentActivityWithBPRestrict() throws OEException{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		oeSignUpDTO.setReqStatusCd(I_VALUE);
@@ -645,7 +645,7 @@ public class OEBOTest implements Constants{
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
 	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","performCreditCheck");
 		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "RESTRICTED_BP_FRAUD");
-	}
+	}*/
 	
 	@Test
 	public void testCheckFraudulentActivityWithSWHOLD() throws OEException{
@@ -658,6 +658,7 @@ public class OEBOTest implements Constants{
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
+	/*
 	@Test
 	public void testCheckFraudulentActivityWithCreditFreeze() throws OEException{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
@@ -667,7 +668,7 @@ public class OEBOTest implements Constants{
 	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","check-credit");
 		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "CREDIT_FREEZE_FRAUD");
 	}
-	
+	*/
 	@Test
 	public void testIsMandatoryCallExecutedForCreditApiCheck(){
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
