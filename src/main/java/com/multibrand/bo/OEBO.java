@@ -254,6 +254,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	protected static final List<String> OFFER_CATEGORY_LIST_CONSERVATION = Arrays.asList(CONSERVATION_CATEGORY,OFFER_CATEGORY_NESTCONS,OFFER_CATEGORY_NESTCAMCONS,OFFER_CATEGORY_CONSAPT,OFFER_CATEGORY_NESTTSTATECONS);    
 	protected static final List<String> OFFER_CATEGORY_LIST_TRULYFREEWKND = Arrays.asList(OFFER_CATEGORY_TRULY_FREE_WEEKENDS,OFFER_CATEGORY_NESTTRUFREEWKND,OFFER_CATEGORY_NESTCAMTRUFREEWKND,OFFER_CATEGORY_NESTSTATETRUFREEWKND);
 	
+	public static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
+	public static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
+	
 	/**
 	 * Method to return Company Code + Brand Id specific offers based on TDSP code or address or esid
 	 * @param locale
@@ -2092,8 +2095,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			}
 			
 		}catch(Exception ex){
-			ex.printStackTrace();
-			System.out.println(ex);
+			logger.error("Exception in OEBO.isMandatoryCallExecuted", ex);
+			
 		}
 		return enrollmentFraudEnum;
 	}
@@ -2817,26 +2820,12 @@ public class OEBO extends OeBoHelper implements Constants{
 			if(StringUtils.isNotEmpty(trackingId)){
 				if(serviceLoationResponse == null){
 					serviceLoationResponse=getEnrollmentData(trackingId);
+					holdType = serviceLoationResponse.getErrorCode();
 				}
-			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-			String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
-			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-			}
+			serviceLocationResponseErrorList = CommonUtil.getErrorCodeListFromPipeSeparatedString(serviceLoationResponse.getErrorCdlist());
 			}
 	    	
-			serviceAddressDO.setStrStreetNum(servStreetNum);
-			serviceAddressDO.setStrStreetName(servStreetName);
-			serviceAddressDO.setStrApartNum(servStreetAptNum);
-			serviceAddressDO.setStrZip(CommonUtil.trimZipCode(servZipCode));
-			List<Map<String, Object>> cityStateList = null;
-			cityStateList = this.addressService.getCityStateFromZip(CommonUtil.trimZipCode(servZipCode));
-
-			for (Map<String, Object> cityStateMap : cityStateList) {
-				serviceAddressDO.setStrCity((String) cityStateMap.get(CITY));
-				serviceAddressDO.setStrState((String) cityStateMap.get(STATE));
-				logger.debug("OEBO.getESIDAndCalendarDates() City From ZIP: " + serviceAddressDO.getStrCity());
-				logger.debug("OEBO.getESIDAndCalendarDates() State From ZIP: " + serviceAddressDO.getStrState());
-			}
+			constructServiceAddressDO(serviceAddressDO, servStreetNum, servStreetName, servStreetAptNum,servZipCode );
 
 			if (StringUtils.isNotBlank(servStreetName)) {
 				logger.info("OEBO.getESIDAndCalendarDates() street address entered! getting ESID info");
@@ -2891,22 +2880,13 @@ public class OEBO extends OeBoHelper implements Constants{
 					if(StringUtils.isNotEmpty(tdspCodeCCS)){
 						response.setTdspCode(tdspCodeCCS); 
 					}else {
-						response.setEsid(EMPTY);
-						response.setResultCode(RESULT_CODE_SUCCESS);
-						response.setStatusCode(STATUS_CODE_STOP);
-						response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
-						response.setMessageCode(esidDo.getEsidNumber());
+						populateTDSPCodeNotFoundResponse(response, esidDo);
 						return response;
 					}
 					transactionType = StringUtils.equals(transactionType, TRANSACTIONTYPE_N) ? MVI :(StringUtils.equals(transactionType, TRANSACTIONTYPE_S) ? SWI: transactionType) ;
 					if(StringUtils.equalsIgnoreCase(esidDo.getSwitchHoldStatus(), ON) 
 							&& (StringUtils.equalsIgnoreCase(transactionType, SWI))){
-						response.setEsid(esidDo.getEsidNumber());
-						response.setResultCode(RESULT_CODE_SUCCESS);
-						response.setStatusCode(STATUS_CODE_STOP);
-						response.setMessageText(msgSource.getMessage(MESSAGE_CODE_SWITCH_HOLD));
-						response.setMessageCode(MESSAGE_CODE_SWITCH_HOLD);
-						serviceLocationResponseErrorList.add(SWHOLD);
+						populateSwitchHoldResponse(response, esidDo, serviceLocationResponseErrorList);
 						
 						return response;
 					}else{
@@ -2920,33 +2900,10 @@ public class OEBO extends OeBoHelper implements Constants{
 						String strESIDNumber = esidDo.getEsidNumber();
 						if (strESIDNumber.equalsIgnoreCase(MESID) || strESIDNumber.equalsIgnoreCase(NESID))
 						{
-							response.setEsid(EMPTY);
-							response.setResultCode(RESULT_CODE_SUCCESS);
-							response.setStatusCode(STATUS_CODE_CONTINUE);
-							response.setMessageCode(strESIDNumber);
-							if (MESID.equalsIgnoreCase(strESIDNumber)) {
-								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_MESID));
-								serviceLocationResponseErrorList.add(MESID);
-								serviceLocationResponseErrorList.remove(NESID);
-								serviceLocationResponseErrorList.remove(NRESID);
-							} else if (NESID.equalsIgnoreCase(strESIDNumber)) {
-								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
-								serviceLocationResponseErrorList.add(NESID);
-								serviceLocationResponseErrorList.remove(MESID);
-								serviceLocationResponseErrorList.remove(NRESID);
-							}
-							response.setTdspCode(EMPTY);
-							response.setAvailableDates(EMPTY);
+							populateMESIDNESIDResponse(response, strESIDNumber,serviceLocationResponseErrorList );
 						} else if (strESIDNumber.equalsIgnoreCase(NRESID)) {
-								response.setEsid(EMPTY);
-								response.setResultCode(RESULT_CODE_SUCCESS);
-								response.setStatusCode(STATUS_CODE_STOP);
-								response.setMessageCode(MESSAGE_CODE_BUSINESS_METER);
-								response.setMessageText(msgSource.getMessage(MESSAGE_CODE_BUSINESS_METER));
-								serviceLocationResponseErrorList.add(NRESID);
-								serviceLocationResponseErrorList.remove(MESID);
-								serviceLocationResponseErrorList.remove(NESID);
-								return response;
+							populateBusinessMeterResponse(response, serviceLocationResponseErrorList, localeObj);
+							return response;
 						} else {
 							response.setEsid(strESIDNumber);
 							serviceLocationResponseErrorList.remove(MESID);
@@ -2961,29 +2918,11 @@ public class OEBO extends OeBoHelper implements Constants{
 						serviceLocationResponseErrorList.remove(NESID);
 						serviceLocationResponseErrorList.remove(NRESID);
 					}
-					// Switch Hold ON scenario for SWI
-					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
+			
+					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_MOVE_IN)
 							&& StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) {
-						logger.debug("ERROR:" + METHOD_NAME);
-						response.setResultCode(RESULT_CODE_SUCCESS);
-						//response.setResultDescription(RESULT_DESCRIPTION_SWITCH_HOLD);
-						response.setStatusCode(STATUS_CODE_STOP);
-						response.setAvailableDates(EMPTY);
-						response.setSwitchHoldFlag(SWITCH_HOLD_STATUS_ON);
-						response.setTdspFee(EMPTY);
-						response.setMessageCode(MESSAGE_CODE_SWITCH_HOLD);
-						response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_SWITCH_HOLD, null, localeObj));
-						serviceLocationResponseErrorList.add(SWHOLD);
-						return response;
-					}else if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_MOVE_IN)
-							&& StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) {
-						response.setResultCode(RESULT_CODE_SUCCESS);
-						response.setStatusCode(STATUS_CODE_CONTINUE);
-						response.setSwitchHoldFlag(SWITCH_HOLD_STATUS_ON);
-						response.setMessageCode(MESSAGE_CODE_NOTIFY_SWITCH_HOLD);
-						String messageCodeText = getMessageCodeTextForNotifySwitchHold(
-								brandId, companyCode);
-						response.setMessageText(messageCodeText);
+						
+						populateSwitchHoldResponseForMovein(response, companyCode,brandId );
 					}else{
 						serviceLocationResponseErrorList.remove(SWHOLD);
 					}
@@ -2992,28 +2931,15 @@ public class OEBO extends OeBoHelper implements Constants{
 					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
 							&& (StringUtils.isNotEmpty(esidDo.getEsidStatus())					
 									&& esidDo.getEsidStatus().equalsIgnoreCase(STATUS_ACTIVE))) {
-						logger.debug("ERROR:" + METHOD_NAME);
-						response.setResultCode(RESULT_CODE_SUCCESS);
-						//response.setResultDescription(RESULT_DESCRIPTION_ACTIVE_ESID);
-						response.setStatusCode(STATUS_CODE_STOP);
-						response.setAvailableDates(EMPTY);
-						response.setTdspFee(EMPTY);
-						response.setMessageCode(MESSAGE_CODE_ESID_ACTIVE);
-						response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_ESID_ACTIVE, null, localeObj));
+						
+						populateSwitchActiveAddressResponse(response,localeObj );
 						return response;
 					}
 
 					// Non-Residential scenario (Business meter scenario)
 					if (StringUtils.isNotEmpty(esidDo.getPremiseType())
 									&& !esidDo.getPremiseType().equalsIgnoreCase(RESI)) {
-						logger.debug("ERROR:" + METHOD_NAME);
-						response.setResultCode(RESULT_CODE_SUCCESS);
-						//response.setResultDescription(RESULT_DESCRIPTION_BUSINESS_METER);
-						response.setStatusCode(STATUS_CODE_STOP);
-						response.setAvailableDates(EMPTY);
-						response.setTdspFee(EMPTY);
-						response.setMessageCode(MESSAGE_CODE_BUSINESS_METER);
-						response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_BUSINESS_METER, null, localeObj));
+						populateBusinessMeterResponse(response, serviceLocationResponseErrorList, localeObj);
 						return response;
 					}
 				}//else return response;
@@ -3029,7 +2955,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType);
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
-			e.printStackTrace();
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			response.setStatusCode(STATUS_CODE_CONTINUE);
@@ -6381,6 +6306,98 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		 return response;
      }
      
+    private void constructServiceAddressDO(AddressDO serviceAddressDO, String servStreetNum,
+    										String servStreetName, String servStreetAptNum, String servZipCode ) {	
+		serviceAddressDO.setStrStreetNum(servStreetNum);
+		serviceAddressDO.setStrStreetName(servStreetName);
+		serviceAddressDO.setStrApartNum(servStreetAptNum);
+		serviceAddressDO.setStrZip(CommonUtil.trimZipCode(servZipCode));
+		List<Map<String, Object>> cityStateList = null;
+		cityStateList = this.addressService.getCityStateFromZip(CommonUtil.trimZipCode(servZipCode));
+
+		for (Map<String, Object> cityStateMap : cityStateList) {
+			serviceAddressDO.setStrCity((String) cityStateMap.get(CITY));
+			serviceAddressDO.setStrState((String) cityStateMap.get(STATE));
+			logger.debug("OEBO.getESIDAndCalendarDates() City From ZIP: " + serviceAddressDO.getStrCity());
+			logger.debug("OEBO.getESIDAndCalendarDates() State From ZIP: " + serviceAddressDO.getStrState());
+		}
+     }
+    
+    private void populateTDSPCodeNotFoundResponse(EsidInfoTdspCalendarResponse response, ESIDDO esidDo)
+    {
+		response.setEsid(EMPTY);
+		response.setResultCode(RESULT_CODE_SUCCESS);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
+		response.setMessageCode(esidDo.getEsidNumber());
+    }
+    
+    private void populateSwitchHoldResponse(EsidInfoTdspCalendarResponse response, ESIDDO esidDo, 
+    		LinkedHashSet<String> serviceLocationResponseErrorList)
+    {
+    	response.setEsid(esidDo.getEsidNumber());
+		response.setResultCode(RESULT_CODE_SUCCESS);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setMessageText(msgSource.getMessage(MESSAGE_CODE_SWITCH_HOLD));
+		response.setMessageCode(MESSAGE_CODE_SWITCH_HOLD);
+		serviceLocationResponseErrorList.add(SWHOLD);
+    }
+    
+    private void populateMESIDNESIDResponse(EsidInfoTdspCalendarResponse response, String strESIDNumber,
+    		LinkedHashSet<String> serviceLocationResponseErrorList) {
+		response.setEsid(EMPTY);
+		response.setResultCode(RESULT_CODE_SUCCESS);
+		response.setStatusCode(STATUS_CODE_CONTINUE);
+		response.setMessageCode(strESIDNumber);
+		if (MESID.equalsIgnoreCase(strESIDNumber)) {
+			response.setMessageText(msgSource.getMessage(MESSAGE_CODE_MESID));
+			serviceLocationResponseErrorList.add(MESID);
+			serviceLocationResponseErrorList.remove(NESID);
+			serviceLocationResponseErrorList.remove(NRESID);
+		} else if (NESID.equalsIgnoreCase(strESIDNumber)) {
+			response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
+			serviceLocationResponseErrorList.add(NESID);
+			serviceLocationResponseErrorList.remove(MESID);
+			serviceLocationResponseErrorList.remove(NRESID);
+		}
+		response.setTdspCode(EMPTY);
+		response.setAvailableDates(EMPTY);
+    }
+    
+    private void populateBusinessMeterResponse(EsidInfoTdspCalendarResponse response,
+    		LinkedHashSet<String> serviceLocationResponseErrorList, Locale localeObj) {
+    	response.setEsid(EMPTY);
+		response.setResultCode(RESULT_CODE_SUCCESS);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setMessageCode(MESSAGE_CODE_BUSINESS_METER);
+		response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_BUSINESS_METER, null, localeObj));
+		serviceLocationResponseErrorList.add(NRESID);
+		serviceLocationResponseErrorList.remove(MESID);
+		serviceLocationResponseErrorList.remove(NESID);
+    }
+    
+    private void populateSwitchHoldResponseForMovein(EsidInfoTdspCalendarResponse response,
+    		String companyCode, String brandId ){
+    	
+    	response.setResultCode(RESULT_CODE_SUCCESS);
+		response.setStatusCode(STATUS_CODE_CONTINUE);
+		response.setSwitchHoldFlag(SWITCH_HOLD_STATUS_ON);
+		response.setMessageCode(MESSAGE_CODE_NOTIFY_SWITCH_HOLD);
+		String messageCodeText = getMessageCodeTextForNotifySwitchHold(
+				brandId, companyCode);
+		response.setMessageText(messageCodeText);
+    }
+    
+    private void populateSwitchActiveAddressResponse(EsidInfoTdspCalendarResponse response, Locale localeObj){
+    	
+		response.setResultCode(RESULT_CODE_SUCCESS);
+		//response.setResultDescription(RESULT_DESCRIPTION_ACTIVE_ESID);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setAvailableDates(EMPTY);
+		response.setTdspFee(EMPTY);
+		response.setMessageCode(MESSAGE_CODE_ESID_ACTIVE);
+		response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_ESID_ACTIVE, null, localeObj));
+    }
 }
 	
 	

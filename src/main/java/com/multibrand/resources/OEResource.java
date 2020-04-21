@@ -621,9 +621,6 @@ public class OEResource extends BaseResource {
 		try{
 			request.setCallExecuted(API_LEGACY_GET_ESID_AND_CALENDAR_DATES);
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-			//START : OE : Sprint 6 : Update Calendar dates call	
-			ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(request.getTrackingId() );
-			//END : OE : Sprint 6 : Update Calendar dates call	
 				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
 					.getESIDAndCalendarDates(request.getCompanyCode(),
 							request.getAffiliateId(),
@@ -639,7 +636,7 @@ public class OEResource extends BaseResource {
 							request.getLanguageCode(),
 							request.getEsid(),
 							httpRequest.getSession(true).getId(),
-							serviceLoationResponse.getErrorCode(),
+							null,
 							null, null
 							);
 				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();

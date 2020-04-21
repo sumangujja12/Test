@@ -112,31 +112,14 @@ public class SalesBO extends OeBoHelper implements Constants {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspCalendarResponse = new SalesEsidInfoTdspCalendarResponse();
 		String bpMatchFlag = null;
-		String error = "";
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		SalesBaseResponse response = null;
-		String callExecutedStrForDB="";
+		String callExecutedStrForDB=EMPTY;
 		try {
 			serviceLoationResponse = oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),
 					salesEsidCalendarRequest.getGuid());
 			if (null != serviceLoationResponse) {
-				if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
-						&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
-					if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
-						String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
-
-						serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-						serviceLocationResponseErrorList.remove(BPSD);
-					}
-
-					boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidCalendarRequest.getTrackingId(),
-							salesEsidCalendarRequest.getGuid(), error,
-							StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
-
-				} else if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
-						&& (!StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
-					bpMatchFlag = BPSD;
-				}
+				bpMatchFlag = extractBpMatchFlag(salesEsidCalendarRequest,serviceLoationResponse,serviceLocationResponseErrorList );
 				callExecutedStrForDB = CommonUtil.getPipeSeperatedCallExecutedParamForDB(salesEsidCalendarRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB());
 				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO.getESIDAndCalendarDates(
 						salesEsidCalendarRequest.getCompanyCode(), salesEsidCalendarRequest.getAffiliateId(),
@@ -159,7 +142,34 @@ public class SalesBO extends OeBoHelper implements Constants {
 
 		return response;
 	}
+	
+	private String extractBpMatchFlag(SalesEsidCalendarRequest salesEsidCalendarRequest, 
+			ServiceLocationResponse serviceLoationResponse, 
+			LinkedHashSet<String> serviceLocationResponseErrorList ) throws Exception {
+		String bpMatchFlag = null;
+		if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
+				&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
+			if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
+				String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 
+				LinkedHashSet<String> serviceLocationResponseErrorListTemp = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+				BeanUtils.copyProperties(serviceLocationResponseErrorListTemp, serviceLocationResponseErrorList);
+				serviceLocationResponseErrorList.remove(BPSD);
+			}
+
+			boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidCalendarRequest.getTrackingId(),
+					salesEsidCalendarRequest.getGuid(), StringUtils.EMPTY,
+					StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
+
+		} else if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
+				&& (!StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
+			bpMatchFlag = BPSD;
+		}
+		
+		return bpMatchFlag;
+		
+	}
+	
 	public SalesTokenResponse getTokenResponse(SalesTokenRequest request) {
 
 		logger.debug("getTokenResponse :::::::: Start");
