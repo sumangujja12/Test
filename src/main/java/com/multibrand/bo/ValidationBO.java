@@ -202,6 +202,14 @@ public class ValidationBO extends BaseBO {
 				+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: preferred language is"
 						+ " "+performPosIdBpRequest.getPreferredLanguage());
 
+		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
+		    
+			if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+		}
+		
 		/*
 		 * Step 2: Check if we have a Tracking Number in the call 
 		 */
@@ -262,14 +270,7 @@ public class ValidationBO extends BaseBO {
 		ValidatePosIdKBAResponse validatePosIdKBAResponse= new ValidatePosIdKBAResponse();
 		try{
 			
-			if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
-			    
-				if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
-					serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-				}
-			}
-			
+				
 			/*
 			 * Step 5: Make validatePosId call
 			 */
@@ -294,7 +295,7 @@ public class ValidationBO extends BaseBO {
 				logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 						+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID SUCCESSFULLY CONDUCTED");
 				posidStatus=POSID_FLAG_YES;
-		
+				serviceLocationResponseerrorList.remove(POSIDHOLD);
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
 								
 				processPosidPassResponse( performPosIdBpRequest, 
@@ -359,7 +360,7 @@ public class ValidationBO extends BaseBO {
 			messageCode=POSID_FAIL;
 			serviceLocationResponseerrorList.remove(BP_RESTRICT);
 			serviceLocationResponseerrorList.remove(BPSD);
-			serviceLocationResponseerrorList.add(POSIDHOLD);
+			serviceLocationResponseerrorList.remove(POSIDHOLD);
 			response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 			logger.error("inside com.multibrand.bo:: validatePosId :: Exception making Posid REST Call", e);
 			throw new OAMException(200, e.getMessage(), response);
@@ -1015,10 +1016,10 @@ public class ValidationBO extends BaseBO {
 		if(StringUtils.isEmpty(errorCd)){
 			serviceLocationResponseerrorList.remove(BP_RESTRICT);
 			serviceLocationResponseerrorList.remove(BPSD);
-				serviceLocationResponseerrorList.remove(POSIDHOLD);
+				
 			
 		}else{
-			serviceLocationResponseerrorList.remove(POSIDHOLD);
+			
 			LinkedHashSet<String> errorCdSet = (LinkedHashSet<String>) performBpMatchResponse.get("errorCdSet");
 			serviceLocationResponseerrorList.addAll(errorCdSet);
 		}
@@ -1045,7 +1046,7 @@ public class ValidationBO extends BaseBO {
 		if(posidHoldAllowed){
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			messageCode=POSIDHOLD;
-			//response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));					
+			serviceLocationResponseerrorList.add(POSIDHOLD);				
 			
 			Map<String,Object> performBpMatchResponse = processBPMatch(performPosIdBpRequest, oESignupDTO, serviceLoationResponse, response,errorCd,messageCode, serviceLocationResponseerrorList );
 
@@ -1055,13 +1056,9 @@ public class ValidationBO extends BaseBO {
 			BPMatchDTO returnedBpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 			BeanUtils.copyProperties(returnedBpMatchDTO, bpMatchDTO);
 			logger.info("Settting message for hold scenario 1 "+messageCode);
-			if(StringUtils.equals(messageCode, POSIDHOLD)){
-				messageCode=POSIDHOLD;
-				response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
-						new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
-						CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
-				logger.info("Settting message for hold scenario 2 ");
-			}
+			
+			setMessageCodeForBPMatchScenario(messageCode,response,performPosIdBpRequest);
+			
 			logger.info("inside validatePosId retry max :: status code after bpmatch call is:: "+response.getStatusCode());
 			logger.info("inside validatePosId retry max :: errorcd after bpmatch is :: "+response.getErrorCode());
 			logger.info("inside validatePosId retry max :: messagecode is after bpmatch ::"+response.getMessageCode());
@@ -1071,7 +1068,7 @@ public class ValidationBO extends BaseBO {
 			messageCode=POSID_FAIL_MAX;
 			response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 		}					
-		response.setMessageCode(messageCode);
+		//response.setMessageCode(messageCode);
 		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setRetryCount(Integer.toString(retryCount));
 		response.setTrackingId(performPosIdBpRequest.getTrackingId());
@@ -1174,14 +1171,10 @@ public class ValidationBO extends BaseBO {
 				errorCd=(String)performBpMatchResponse.get("errorCd");	
 				BPMatchDTO returnedBpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 				BeanUtils.copyProperties(returnedBpMatchDTO, bpMatchDTO);
-				if(StringUtils.equals(messageCode, POSIDHOLD)){
-					messageCode = POSIDHOLD;
-					response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
-							new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
-							CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
-				}
+				
+				setMessageCodeForBPMatchScenario(messageCode,response,performPosIdBpRequest);
 			
-				response.setMessageCode(messageCode);
+				//response.setMessageCode(messageCode);
 				logger.debug("inside validatePosId failed :: status code after bpmatch call is:: "+response.getStatusCode());
 				logger.debug("inside validatePosId failed:: errorcd after bpmatch is :: "+response.getErrorCode());
 				logger.debug("inside validatePosId failed:: messagecode is after bpmatch ::"+response.getMessageCode());
@@ -1266,5 +1259,36 @@ public class ValidationBO extends BaseBO {
 			logger.error("Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "
 					+ ""+performPosIdBpRequest.getAffiliateId() +"::Exception while making addperson and addserviceLocation call :: ", e);
 		}
+	}
+	
+	/**
+	 * @author Kdeshmu1
+	 * @param messageCode
+	 * @param response
+	 * @param performPosIdBpRequest
+	 * @return
+	 */
+	private void setMessageCodeForBPMatchScenario(String messageCode,PerformPosIdandBpMatchResponse response,PerformPosIdAndBpMatchRequest performPosIdBpRequest)
+	{
+		if(StringUtils.equals(messageCode, POSIDHOLD)){
+			response.setMessageCode(POSIDHOLD);
+			response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+					new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
+					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+		}
+		else if(StringUtils.equals(messageCode, PAST_BALANCE)){
+			response.setMessageCode(POSID_PASTDUE);
+			response.setMessageText(msgSource.getMessage(POSID_PASTDUE_MSG_TXT,
+					new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
+					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+		}
+		else if(StringUtils.equals(messageCode, PAST_SERVICE_HISTORY)) {
+			response.setMessageCode(POSID_PASTSERVICE);
+			response.setMessageText(msgSource.getMessage(POSID_PASTSERVICE_MSG_TXT,
+					new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
+					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+			
+		}
+		
 	}
 }
