@@ -3496,7 +3496,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		PaymentExtensionResponse response = new PaymentExtensionResponse();
 		PaymentExtensionSubmitRequest paymentExtensionSubmitReq = new PaymentExtensionSubmitRequest();
 		request.setPaymentExtensionSubmitReq(paymentExtensionSubmitReq);
-		paymentExtensionSubmitReq.setBpNumber(payRequest.getBusinessPartnerNumber());
+		paymentExtensionSubmitReq.setBpNumber(payRequest.getBussinessPartnerNumber());
 		paymentExtensionSubmitReq.setContractAcctNum(payRequest.getContractAccountNumber());
 		paymentExtensionSubmitReq.setPaymentExtDate(payRequest.getPaymentExtDate());
 		
