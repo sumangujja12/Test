@@ -121,7 +121,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 					salesEsidCalendarRequest.getGuid());
 			if (null != serviceLoationResponse) {
 				if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
-						&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), "Y"))) {
+						&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
 					if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
 						String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 
@@ -134,7 +134,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 							StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
 
 				} else if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
-						&& (!StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), "Y"))) {
+						&& (!StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
 					bpMatchFlag = BPSD;
 				}
 				callExecutedStrForDB = CommonUtil.getPipeSeperatedCallExecutedParamForDB(salesEsidCalendarRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB());
