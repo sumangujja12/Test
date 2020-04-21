@@ -65,7 +65,6 @@ import com.multibrand.vo.response.WebHookResponse;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-import bsh.StringUtil;
 
 @Component
 public class CommonUtil implements Constants {
