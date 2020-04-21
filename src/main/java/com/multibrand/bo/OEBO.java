@@ -2010,12 +2010,16 @@ public class OEBO extends OeBoHelper implements Constants{
 		return response;
 	}
 
-	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType,String ApiCallExecuted) {
+	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType,String apiCallExecuted) {
 		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
 		logger.debug("Start:" + METHOD_NAME);
 		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,channelType);
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		String errorCdList=oeSignUpDTO.getErrorCdList();
+		enrollmentFraudEnum = isMandatoryCallExecuted(apiCallExecuted);
+		if(null!=enrollmentFraudEnum){
+			return enrollmentFraudEnum;
+		}
 		if(!StringUtils.equals(oeSignUpDTO.getReqStatusCd(), I_VALUE)){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DUPLICATE_ENROLLMENT");
 		}
@@ -2033,10 +2037,64 @@ public class OEBO extends OeBoHelper implements Constants{
 				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
 			}
 		}
-		if(!CommonUtil.callExecutedList(ApiCallExecuted)){
-			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CALL_SKIP");
-		}
 		logger.debug("End:" + METHOD_NAME);
+		return enrollmentFraudEnum;
+	}
+	
+	public ENROLLMENT_FRAUD_ENUM isMandatoryCallExecuted(String callExecutedFromDB){
+		boolean creditFlag = false;
+		boolean dateFlag = false;
+		String[] callExecutedArr = null;
+		List<String> creditApiCallList = new ArrayList<String>();
+		List<String> dateApiCallList = new ArrayList<String>();
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		try{
+			if(StringUtils.isNotBlank(callExecutedFromDB)){
+				callExecutedArr = callExecutedFromDB.split(ERROR_CD_LIST_SPLIT_PATTERN);
+			}else{
+				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CALL_SKIP");
+				return enrollmentFraudEnum;
+			}
+			List<String> callExecutedList = new ArrayList<String>(Arrays.asList(callExecutedArr));
+			creditApiCallList = new ArrayList<>(Arrays.asList(allCreditAPICalls));
+			dateApiCallList = new ArrayList<>(Arrays.asList(allDatesAPICalls));
+			
+			// java 8 predicate Solution
+			/*flag = creditApiCallList.stream().anyMatch(creditAPICalls -> callExecutedList.contains(creditAPICalls));
+			if(!flag){
+				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CALL_SKIP");
+				return enrollmentFraudEnum;
+			}
+			flag = dateApiCallList.stream().anyMatch(dateAPICalls -> callExecutedList.contains(dateAPICalls));
+			if(!flag){
+				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DATE_CALL_SKIP");
+				return enrollmentFraudEnum;
+			}*/
+			for(String creditAPICalls: creditApiCallList){
+				if(callExecutedList.contains(creditAPICalls)){
+					creditFlag=true;
+					break;
+				}
+			}
+			if(!creditFlag){
+				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CALL_SKIP");
+				return enrollmentFraudEnum;
+			}
+			for(String dateAPICalls: dateApiCallList){
+				if(callExecutedList.contains(dateAPICalls)){
+					dateFlag=true;
+					break;
+				}
+			}
+			if(!dateFlag){
+				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DATE_CALL_SKIP");
+				return enrollmentFraudEnum;
+			}
+			
+		}catch(Exception ex){
+			ex.printStackTrace();
+			System.out.println(ex);
+		}
 		return enrollmentFraudEnum;
 	}
 
@@ -2187,6 +2245,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			}
 			else{
 				response.setStatusCode(STATUS_CODE_CONTINUE);
+				serviceLocationResponseErrorList.remove(CCSD);
+				serviceLocationResponseErrorList.remove(CREDFREEZE);
 			}
 			
 			if (StringUtils.isNotEmpty(creditCheckRequest.getMviDate())

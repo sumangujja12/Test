@@ -600,6 +600,7 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;		
 		try{
+			request.setCallExecuted(API_LEGACY_PERFORM_POSID_AND_BPMATCH);
 			response = oeBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
@@ -829,6 +830,7 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
+			request.setCallExecuted(API_LEGACY_SUBMIT_ENROLLMENT);
 	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request, null);
 	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
 	    } catch (Exception e) {
