@@ -254,8 +254,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	protected static final List<String> OFFER_CATEGORY_LIST_CONSERVATION = Arrays.asList(CONSERVATION_CATEGORY,OFFER_CATEGORY_NESTCONS,OFFER_CATEGORY_NESTCAMCONS,OFFER_CATEGORY_CONSAPT,OFFER_CATEGORY_NESTTSTATECONS);    
 	protected static final List<String> OFFER_CATEGORY_LIST_TRULYFREEWKND = Arrays.asList(OFFER_CATEGORY_TRULY_FREE_WEEKENDS,OFFER_CATEGORY_NESTTRUFREEWKND,OFFER_CATEGORY_NESTCAMTRUFREEWKND,OFFER_CATEGORY_NESTSTATETRUFREEWKND);
 	
-	public static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
-	public static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
+	protected static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
+	protected static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
 	
 	/**
 	 * Method to return Company Code + Brand Id specific offers based on TDSP code or address or esid
@@ -4236,22 +4236,14 @@ public class OEBO extends OeBoHelper implements Constants{
 				&& StringUtils.isNotEmpty(internaltdspCodeCCS))
 			&& !tdspCodeCCS.equalsIgnoreCase(internaltdspCodeCCS))
 		{
-			logger.debug("ERROR:" + METHOD_NAME);
-			response.setResultCode(RESULT_CODE_SUCCESS);
-			//response.setResultDescription(RESULT_DESCRIPTION_TDSP_MISMATCH);
-			response.setStatusCode(STATUS_CODE_STOP);
-			response.setErrorCode(TDSPSD);
-			response.setTdspCode(internaltdspCodeCCS);
-			response.setAvailableDates(EMPTY);
-			response.setTdspFee(EMPTY);
-			response.setMessageCode(MESSAGE_CODE_TDSP_MISMATCH);
-			response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_TDSP_MISMATCH, null, locale));
+			
+			populateTDSPMismatchResponse(response, locale, internaltdspCodeCCS);
 			return;
 		}
 
     	OetdspRequest request = new OetdspRequest();
     	DateFormat df = new SimpleDateFormat(MM_dd_yyyy);
-		Calendar c = Calendar.getInstance();
+    	Calendar c = Calendar.getInstance();
 		request.setTdsp(tdspCodeCCS);
 		request.setStartDate(df.format(c.getTime()));
 		request.setEndDate(df.format(DateUtils.addDays(c.getTime(), 59)));
@@ -4260,7 +4252,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		if(StringUtils.isNotEmpty(esidDo.getEsidNumber())){
 			request.setEsiid(esidDo.getEsidNumber());
 		}else{
-			request.setEsiid("");
+			request.setEsiid(EMPTY);
 		}
 		//END : ALT Channel : Sprint6 :US7569 :Kdeshmu1
 		// Get calendar specific days for tdspCodeCCS
@@ -4286,95 +4278,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	   		//	If there is no exception, then check meter type.
 	   		//  If meterType='AMSR' then first available date is today, for all other meter Types, push out the date by 2 days.
     		
-    		Calendar c2 = Calendar.getInstance();
-    		c2.set(Calendar.HOUR_OF_DAY, 14);
-    		c2.set(Calendar.MINUTE, 00);
-    		c2.set(Calendar.SECOND, 00);
-    		c2.set(Calendar.MILLISECOND, 00);
-    		DateFormat df2 = new SimpleDateFormat(MM_dd_yyyy);
-    		//START : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-    		/**if (c.getTimeInMillis() > c2.getTimeInMillis())
-    			allInclusiveDateList.remove(df2.format(c.getTime()));**/
-    		
-    		Calendar c3 = Calendar.getInstance();
-    		c3.set(Calendar.HOUR_OF_DAY, 17);
-    		c3.set(Calendar.MINUTE, 00);
-    		c3.set(Calendar.SECOND, 00);
-    		c3.set(Calendar.MILLISECOND, 00);
-    		
-    		if (c.getTimeInMillis() > c3.getTimeInMillis()&& (StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
-    		{
-    			allInclusiveDateList.remove(df2.format(c.getTime()));
-    		}
-    		
-    		else if(c.getTimeInMillis() > c2.getTimeInMillis()&& (!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
-    		{
-    			allInclusiveDateList.remove(df2.format(c.getTime()));
-    		}
-    		//END  : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-    		/*if (allInclusiveDateList.size() > 0 // List still has data
-    				&& (StringUtils.isBlank(response.getEsid()) // Blank ESID means no ESID found
-    						|| StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) // Switch Hold Status On
-    						|| (StringUtils.equals(bpMatchFlag,BPSD))) // BPSD true
-    		{
-    			// Remove first 4 available dates
-    			for (int i = 0; i < PUSH_4; i++)
-    				allInclusiveDateList.remove(0);
-
-    		} else if (allInclusiveDateList.size() > 0 // List still has data
-    				&& !StringUtils.equals(response.getMeterType(), METER_TYPE_AMSR)) // Meter type != AMSR
-    		{
-    			// Remove first 2 available dates
-    			for (int i = 0; i < PUSH_2; i++)
-    				allInclusiveDateList.remove(0);
-    		}
-*/
-    		
-    		if (allInclusiveDateList.size() > 0	&& ((StringUtils.equals(transactionType,TRANSACTIONTYPE_N)) || (StringUtils.equals(transactionType,MVI))))
-    		{
-    			
-					if(StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON) ||StringUtils.isBlank(response.getEsid()) 
-							|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)
-							|| StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), NESID) || StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), MESID)) 
-					{
-						for (int i = 0; i < PUSH_4; i++)
-		    				allInclusiveDateList.remove(0);
-					}else if(StringUtils.equals(holdType,POSIDHOLD)){
-						for (int i = 0; i < PUSH_2; i++)
-		    				allInclusiveDateList.remove(0);
-					}else if(!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
-						for (int i = 0; i < PUSH_2; i++)
-		    				allInclusiveDateList.remove(0);
-					}
-						
-    		}else if(allInclusiveDateList.size() > 0){
-    			
-    			if(StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
-    				if(StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
-    					for (int i = 0; i < PUSH_7; i++)
-    		    			allInclusiveDateList.remove(0);
-    				}else if(StringUtils.equals(holdType,POSIDHOLD))
-    				{
-						for (int i = 0; i < PUSH_2; i++)
-		    				allInclusiveDateList.remove(0);
-					}else if(StringUtils.equals(holdType,HOLD_DNP) || StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), NESID) 
-							|| StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), MESID) )
-    				{
-						for (int i = 0; i < PUSH_4; i++)
-		    				allInclusiveDateList.remove(0);
-					}
-    			}else{
-    				if(StringUtils.isBlank(response.getEsid())){
-						for (int i = 0; i < PUSH_9; i++)
-		    				allInclusiveDateList.remove(0);
-					}else 
-					{
-						for (int i = 0; i < PUSH_7; i++)
-		    				allInclusiveDateList.remove(0);
-					}
-    			}
-    			
-    		}
+    		processTdspCalendarDatesforHoldsLogic(allInclusiveDateList,response,transactionType, holdType, bpMatchFlag, esidDo, c );
     		String availableDates = StringUtils.join(allInclusiveDateList, SEMI_COLON);
     		availableDatesNoFwdSlash = StringUtils.replace(availableDates, FWD_SLASH , EMPTY);
     	}
@@ -6397,6 +6301,97 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		response.setTdspFee(EMPTY);
 		response.setMessageCode(MESSAGE_CODE_ESID_ACTIVE);
 		response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_ESID_ACTIVE, null, localeObj));
+    }
+    
+    private void populateTDSPMismatchResponse(EsidInfoTdspCalendarResponse response, Locale locale, String internaltdspCodeCCS){
+    	
+    	response.setResultCode(RESULT_CODE_SUCCESS);
+		//response.setResultDescription(RESULT_DESCRIPTION_TDSP_MISMATCH);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setErrorCode(TDSPSD);
+		response.setTdspCode(internaltdspCodeCCS);
+		response.setAvailableDates(EMPTY);
+		response.setTdspFee(EMPTY);
+		response.setMessageCode(MESSAGE_CODE_TDSP_MISMATCH);
+		response.setMessageText(this.msgSource.getMessage(MESSAGE_CODE_TDSP_MISMATCH, null, locale));
+    }
+    
+    private void processTdspCalendarDatesforHoldsLogic(List<String> allInclusiveDateList, 
+    				EsidInfoTdspCalendarResponse response, String transactionType,
+    				String holdType, String bpMatchFlag, ESIDDO esidDo, Calendar c)
+    {
+    	Calendar c2 = Calendar.getInstance();
+		c2.set(Calendar.HOUR_OF_DAY, 14);
+		c2.set(Calendar.MINUTE, 00);
+		c2.set(Calendar.SECOND, 00);
+		c2.set(Calendar.MILLISECOND, 00);
+		DateFormat df2 = new SimpleDateFormat(MM_dd_yyyy);
+		//START : ALT Channel : Sprint6 :US7569 :Kdeshmu1
+		/**if (c.getTimeInMillis() > c2.getTimeInMillis())
+			allInclusiveDateList.remove(df2.format(c.getTime()));**/
+		
+		Calendar c3 = Calendar.getInstance();
+		c3.set(Calendar.HOUR_OF_DAY, 17);
+		c3.set(Calendar.MINUTE, 00);
+		c3.set(Calendar.SECOND, 00);
+		c3.set(Calendar.MILLISECOND, 00);
+		
+		if (c.getTimeInMillis() > c3.getTimeInMillis()&& (StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
+		{
+			allInclusiveDateList.remove(df2.format(c.getTime()));
+		}
+		
+		else if(c.getTimeInMillis() > c2.getTimeInMillis()&& (!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
+		{
+			allInclusiveDateList.remove(df2.format(c.getTime()));
+		}
+		//END  : ALT Channel : Sprint6 :US7569 :Kdeshmu1
+		
+		if (allInclusiveDateList.size() > 0	&& ((StringUtils.equals(transactionType,TRANSACTIONTYPE_N)) || (StringUtils.equals(transactionType,MVI))))
+		{
+			
+				if(StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON) ||StringUtils.isBlank(response.getEsid()) 
+						|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)
+						|| StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), NESID) || StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), MESID)) 
+				{
+					for (int i = 0; i < PUSH_4; i++)
+	    				allInclusiveDateList.remove(0);
+				}else if(StringUtils.equals(holdType,POSIDHOLD)){
+					for (int i = 0; i < PUSH_2; i++)
+	    				allInclusiveDateList.remove(0);
+				}else if(!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
+					for (int i = 0; i < PUSH_2; i++)
+	    				allInclusiveDateList.remove(0);
+				}
+					
+		}else if(allInclusiveDateList.size() > 0){
+			
+			if(StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
+				if(StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
+					for (int i = 0; i < PUSH_7; i++)
+		    			allInclusiveDateList.remove(0);
+				}else if(StringUtils.equals(holdType,POSIDHOLD))
+				{
+					for (int i = 0; i < PUSH_2; i++)
+	    				allInclusiveDateList.remove(0);
+				}else if(StringUtils.equals(holdType,HOLD_DNP) || StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), NESID) 
+						|| StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), MESID) )
+				{
+					for (int i = 0; i < PUSH_4; i++)
+	    				allInclusiveDateList.remove(0);
+				}
+			}else{
+				if(StringUtils.isBlank(response.getEsid())){
+					for (int i = 0; i < PUSH_9; i++)
+	    				allInclusiveDateList.remove(0);
+				}else 
+				{
+					for (int i = 0; i < PUSH_7; i++)
+	    				allInclusiveDateList.remove(0);
+				}
+			}
+			
+		}
     }
 }
 	
