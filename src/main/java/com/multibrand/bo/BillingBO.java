@@ -80,6 +80,7 @@ import com.multibrand.thread.AMBMailServiceWorker;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
+import com.multibrand.util.EmailConstants;
 import com.multibrand.util.JavaBeanUtil;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
@@ -3521,7 +3522,17 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					
 					if ( GME_RES_COMPANY_CODE.equalsIgnoreCase(payRequest.getCompanyCode())) {
 					
-						emailHelper.sendMail(payRequest.getEmail(), "", PAYMTXTN_EMAIL_EN_US, templateProps, payRequest.getCompanyCode());
+						
+						String paymenyExtExternalID = payRequest.getLanguageCode().equalsIgnoreCase(EmailConstants.EN_EMAIL_ENGLISH) ? GME_PAYMTXTN_EMAIL_EN_US : GME_PAYMTXTN_EMAIL_ES_US;
+						
+						
+						emailHelper.sendMail(payRequest.getEmail(), "", paymenyExtExternalID, templateProps, payRequest.getCompanyCode());
+					} else if ( CIRRO_COMPANY_CODE.equalsIgnoreCase(payRequest.getCompanyCode()) 
+							&& !payRequest.getBrandName().equals(CIRRO_BRAND_NAME)) {
+						
+						String paymenyExtExternalID = payRequest.getLanguageCode().equalsIgnoreCase(EmailConstants.EN_EMAIL_ENGLISH) ? DP_PAYMTXTN_EMAIL_EN_US : DP_PAYMTXTN_EMAIL_ES_US;
+						
+						 emailHelper.sendMail(payRequest.getEmail(), "", paymenyExtExternalID, templateProps, payRequest.getCompanyCode());
 					}
 									
 					
@@ -3680,13 +3691,15 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	private HashMap<String, String> createPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
 	
-		HashMap<String, String> templateProps = new HashMap();
+		HashMap<String, String> templateProps = new HashMap<String, String>();
 		
 		templateProps.put(ACCOUNT_NAME, request.getContractAccountName());
 		templateProps.put(ACCOUNT_NUMBER, request.getContractAccountNumber());
 		templateProps.put(CHECK_DIGIT, request.getCheckDigit());	
 		templateProps.put(DUE_AMOUNT, request.getPayExtDueAmt());
 		templateProps.put(EXTENSION_DATE, request.getPaymentExtDate());
+		templateProps.put(EmailConstants.CURRENT_YEAR, String.valueOf(DateUtil.getCurrentYear()));
+		
 		return templateProps;
 	}	
 }

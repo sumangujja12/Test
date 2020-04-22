@@ -41,7 +41,9 @@ public class PaymentExtensionSubmitRequest implements FormEntityRequest, Seriali
 	@NotBlank(groups = BasicConstraint.class)
 	private String payExtDueAmt ="";
 	
-
+	@NotBlank(groups = BasicConstraint.class)
+	private String languageCode ="";
+	
 	/**
 	 * @return the companyCode
 	 */
@@ -167,6 +169,21 @@ public class PaymentExtensionSubmitRequest implements FormEntityRequest, Seriali
 	 */
 	public void setPayExtDueAmt(String payExtDueAmt) {
 		this.payExtDueAmt = payExtDueAmt;
+	}
+
+	
+	/**
+	 * @return the languageCode
+	 */
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
+	/**
+	 * @param languageCode the languageCode to set
+	 */
+	public void setLanguageCode(String languageCode) {
+		this.languageCode = languageCode;
 	}
 
 	/**

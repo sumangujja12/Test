@@ -1403,7 +1403,10 @@ public interface Constants {
 	 public static final String DUE_AMOUNT = "dueAmount";
 	 public static final String EXTENSION_DATE = "extensionDate";
 	 
-	 public static final String PAYMTXTN_EMAIL_EN_US ="GME.PAYMTXTN.EMAIL.EN_US"; 
+	 public static final String GME_PAYMTXTN_EMAIL_EN_US ="GME.PAYMTXTN.EMAIL.EN_US"; 
+	 public static final String GME_PAYMTXTN_EMAIL_ES_US ="GME.PAYMTXTN.EMAIL.ES_US"; 
 	 
+	 public static final String DP_PAYMTXTN_EMAIL_EN_US ="DP.PAYMTXTN.EMAIL.EN_US"; 
+	 public static final String DP_PAYMTXTN_EMAIL_ES_US ="DP.PAYMTXTN.EMAIL.ES_US"; 	 
 	
 }
