@@ -537,3 +537,4 @@ public interface EmailConstants {
 	public static final String CURRENT_YEAR = "current-year";
 	
 }
+

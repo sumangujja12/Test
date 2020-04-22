@@ -1407,6 +1407,9 @@ public interface Constants {
 	 public static final String GME_PAYMTXTN_EMAIL_ES_US ="GME.PAYMTXTN.EMAIL.ES_US"; 
 	 
 	 public static final String DP_PAYMTXTN_EMAIL_EN_US ="DP.PAYMTXTN.EMAIL.EN_US"; 
-	 public static final String DP_PAYMTXTN_EMAIL_ES_US ="DP.PAYMTXTN.EMAIL.ES_US"; 	 
-	
+	 public static final String DP_PAYMTXTN_EMAIL_ES_US ="DP.PAYMTXTN.EMAIL.ES_US"; 	
+	 public static final String DP_ACCOUNT_NAME="ACCOUNT_NAME";
+	 public static final String DP_ACCOUNT_NUMBER ="CA_NUMBER";
+	 public static final String DP_DUE_AMOUNT = "PAST_DUEAMOUNT";
+	 public static final String DP_EXTENSION_DATE = "EXTENSION_DATE";
 }

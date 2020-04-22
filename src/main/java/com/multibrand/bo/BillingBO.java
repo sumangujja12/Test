@@ -3516,13 +3516,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					response.setResultCode(RESULT_CODE_SUCCESS);
 					response.setResultDescription(MSG_SUCCESS);
 					
-					HashMap<String, String> templateProps = createPaymentExtensionEmailRequest(payRequest , response);
+					
 					
 					logger.info("Sending mail for successful payment Extension EN");
 					
 					if ( GME_RES_COMPANY_CODE.equalsIgnoreCase(payRequest.getCompanyCode())) {
 					
-						
+						HashMap<String, String> templateProps = createGMEPaymentExtensionEmailRequest(payRequest , response);
 						String paymenyExtExternalID = payRequest.getLanguageCode().equalsIgnoreCase(EmailConstants.EN_EMAIL_ENGLISH) ? GME_PAYMTXTN_EMAIL_EN_US : GME_PAYMTXTN_EMAIL_ES_US;
 						
 						
@@ -3530,6 +3530,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					} else if ( CIRRO_COMPANY_CODE.equalsIgnoreCase(payRequest.getCompanyCode()) 
 							&& !payRequest.getBrandName().equals(CIRRO_BRAND_NAME)) {
 						
+						HashMap<String, String> templateProps = createDPPaymentExtensionEmailRequest(payRequest , response);
 						String paymenyExtExternalID = payRequest.getLanguageCode().equalsIgnoreCase(EmailConstants.EN_EMAIL_ENGLISH) ? DP_PAYMTXTN_EMAIL_EN_US : DP_PAYMTXTN_EMAIL_ES_US;
 						
 						 emailHelper.sendMail(payRequest.getEmail(), "", paymenyExtExternalID, templateProps, payRequest.getCompanyCode());
@@ -3689,7 +3690,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		return response;
 	}
 	
-	private HashMap<String, String> createPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
+	private HashMap<String, String> createGMEPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
 	
 		HashMap<String, String> templateProps = new HashMap<String, String>();
 		
@@ -3701,5 +3702,19 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		templateProps.put(EmailConstants.CURRENT_YEAR, String.valueOf(DateUtil.getCurrentYear()));
 		
 		return templateProps;
-	}	
+	}
+	private HashMap<String, String> createDPPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
+		
+		HashMap<String, String> templateProps = new HashMap<String, String>();
+		
+		templateProps.put(DP_ACCOUNT_NAME, request.getContractAccountName());
+		templateProps.put(DP_ACCOUNT_NUMBER, request.getContractAccountNumber());
+		
+			
+		templateProps.put(DP_DUE_AMOUNT, request.getPayExtDueAmt());
+		templateProps.put(DP_EXTENSION_DATE, request.getPaymentExtDate());
+		
+		
+		return templateProps;
+	}		
 }
