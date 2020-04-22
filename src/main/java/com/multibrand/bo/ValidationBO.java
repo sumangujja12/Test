@@ -350,7 +350,9 @@ public class ValidationBO extends BaseBO {
 						
 			response.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());	
 			oESignupDTO.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());
-			
+			if(serviceLocationResponseerrorList.contains(BPSD)) {
+				errorCd = BPSD;
+			}
 
 		}
 		catch(Exception e)
