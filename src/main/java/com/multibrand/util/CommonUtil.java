@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
@@ -2092,6 +2093,9 @@ public class CommonUtil implements Constants {
 			callExecutedList = new ArrayList<String>(Arrays.asList(callExecutedArr));
 			callExecutedList.add(currentApiCall);
 			callExecutedStrForDB = StringUtils.join(callExecutedList,SYMBOL_PIPE);
+			if(StringUtils.isNotBlank(callExecutedStrForDB) && callExecutedStrForDB.getBytes(Charsets.UTF_8).length<=255){
+				callExecutedStrForDB = callExecutedStrForDB.substring(0, 254);
+			}
 		}catch(Exception ex){
 			logger.error(ex.getMessage());
 		}

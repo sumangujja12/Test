@@ -108,6 +108,7 @@ public class OEBOTest implements Constants{
 	@Mock
 	private TogglzUtil togglzUtil;
 
+	String apiCallExecuted = API_CHECK_CREDIT+"|"+API_LEGACY_SUBMIT_UCC_DATA+"|"+API_RECHECK_CREDIT+"|"+API_LEGACY_PERFORM_CREDIT_CHECK+"|"+API_AVAILABLE_DATES+"|"+API_LEGACY_GET_ESID_AND_CALENDAR_DATES;
 	
 	@BeforeClass
 	public void init() {
@@ -623,7 +624,7 @@ public class OEBOTest implements Constants{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		oeSignUpDTO.setReqStatusCd(S_VALUE);
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","check-credit");
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), MESSAGE_CODE_DUPLICATE_SUBMISSION);
 	}
 	
@@ -633,7 +634,7 @@ public class OEBOTest implements Constants{
 		oeSignUpDTO.setReqStatusCd(I_VALUE);
 		oeSignUpDTO.setErrorCdList(POSIDHOLD);
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(false);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","performCreditCheck");
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
@@ -643,7 +644,7 @@ public class OEBOTest implements Constants{
 		oeSignUpDTO.setReqStatusCd(I_VALUE);
 		oeSignUpDTO.setErrorCdList(BP_RESTRICT);
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","performCreditCheck");
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "RESTRICTED_BP_FRAUD");
 	}
 	
@@ -654,7 +655,7 @@ public class OEBOTest implements Constants{
 		oeSignUpDTO.setErrorCdList(SWHOLD);
 		oeSignUpDTO.setServiceReqTypeCd(SWI);
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","getESIDAndCalendarDates");
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
@@ -664,7 +665,7 @@ public class OEBOTest implements Constants{
 		oeSignUpDTO.setReqStatusCd(I_VALUE);
 		oeSignUpDTO.setErrorCdList(CREDFREEZE);
 		when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "","check-credit");
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "CREDIT_FREEZE_FRAUD");
 	}
 	
