@@ -1403,6 +1403,22 @@ public interface Constants {
 	public static final String PAYMENTEXTENSION_BYPASS_ELIGIBLE_FLAG ="paymentextension.bypass.eligible.flag";
 
 //***************** GMD APP APIs *************************    
+	public static final String DPP_BYPASS_ELIGIBLE_FLAG ="dpp.bypass.eligible.flag";
+	public static final String DPP_DEFAULT_FLAG = "dpp.default.flag";
+	
+	 public static final String DUE_AMOUNT = "dueAmount";
+	 public static final String EXTENSION_DATE = "extensionDate";
+	 
+	 public static final String GME_PAYMTXTN_EMAIL_EN_US ="GME.PAYMTXTN.EMAIL.EN_US"; 
+	 public static final String GME_PAYMTXTN_EMAIL_ES_US ="GME.PAYMTXTN.EMAIL.ES_US"; 
+	 
+	 public static final String DP_PAYMTXTN_EMAIL_EN_US ="DP.PAYMTXTN.EMAIL.EN_US"; 
+	 public static final String DP_PAYMTXTN_EMAIL_ES_US ="DP.PAYMTXTN.EMAIL.ES_US"; 	
+	 public static final String DP_ACCOUNT_NAME="ACCOUNT_NAME";
+	 public static final String DP_ACCOUNT_NUMBER ="CA_NUMBER";
+	 public static final String DP_DUE_AMOUNT = "PAST_DUEAMOUNT";
+	 public static final String DP_EXTENSION_DATE = "EXTENSION_DATE";
+//***************** GMD APP APIs *************************    
    public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
    public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
    
