@@ -5483,12 +5483,13 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 		try{
 		if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
 			//update service location affiliate
-			UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+			 UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
              requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
              //update RECENT_MSG_CD
              requestData.setMessageCode(response.getMessageCode());
              requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+             requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
             this.updateServiceLocation(requestData);
         }
 	}catch(Exception e){
@@ -5705,7 +5706,8 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 						&& StringUtils.isNotEmpty(getOEKBAQuestionsRequest.getTrackingId())){
 				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
 				updateServiceLocationRequest.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
-				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());;
+				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());
+				updateServiceLocationRequest.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(getOEKBAQuestionsRequest.getCallExecuted(), serviceLocationResponse.getCallExecutedFromDB()));
 				this.updateServiceLocation(updateServiceLocationRequest);
 			}
 		}catch(Exception e){

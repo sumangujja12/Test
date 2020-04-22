@@ -260,6 +260,7 @@ public class SalesAPIResource extends BaseResource {
 		Response response=null;
 		
 		try{
+			request.setCallExecuted(API_KBA_RESULT);
 			KbaAnswerResponse kbaAnsweresponse = oeBO.submitKBAAnswers(request);
 			response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
    		} catch (Exception e) {
@@ -338,6 +339,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
+    	   	request.setCallExecuted(KBA_OE);
         	SalesBaseResponse getKBAQuestionsResponse = oeBO.getKBAQuestionsWithinOE(request);
         	Response.Status status = getKBAQuestionsResponse.getHttpStatus() != null ? getKBAQuestionsResponse.getHttpStatus() :Response.Status.OK;
             response = Response.status(status).entity(getKBAQuestionsResponse).build();
