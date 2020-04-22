@@ -85,7 +85,6 @@ import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
 import com.multibrand.vo.request.AvgTempRequestVO;
-import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.DPPEligibilityCheckRequest;
 import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.ProjectedBillRequestVO;
@@ -3504,40 +3503,61 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		AllAccountDetailsResponse ccsAllAlertsResponse = null;
 		try {
 			ccsAllAlertsResponse = profileService.getAllAccountDetailsParallel(request, sessionId);
+			
+
+			PaymentExtensionSubmitResponse paymentExtensionSubmitResponse = ccsAllAlertsResponse.getPaymentExtensionSubmitRes();
+			
+			
+			if (paymentExtensionSubmitResponse != null
+					&& StringUtils.isNotBlank(paymentExtensionSubmitResponse.getReturnCode())) {
+				if (StringUtils.equalsIgnoreCase("00", paymentExtensionSubmitResponse.getReturnCode())) {
+					response.setPaymentExtension(true);
+					response.setResultCode(RESULT_CODE_SUCCESS);
+					response.setResultDescription(MSG_SUCCESS);
+					
+					HashMap<String, String> templateProps = createPaymentExtensionEmailRequest(payRequest , response);
+					
+					logger.info("Sending mail for successful payment Extension EN");
+					
+					if ( GME_RES_COMPANY_CODE.equalsIgnoreCase(payRequest.getCompanyCode())) {
+					
+						emailHelper.sendMail(payRequest.getEmail(), "", PAYMTXTN_EMAIL_EN_US, templateProps, payRequest.getCompanyCode());
+					}
+									
+					
+					
+				} else if(StringUtils.equalsIgnoreCase("03", paymentExtensionSubmitResponse.getReturnCode())) {
+					response.setPaymentExtension(false);
+					response.setResultCode(RESULT_CODE_ACCOUNT_ALREADY);
+					response.setResultDescription("03 - May be already updated!!!, Please check error code");
+					response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
+				} else if(StringUtils.equalsIgnoreCase("02", paymentExtensionSubmitResponse.getReturnCode())) {
+					response.setPaymentExtension(false);
+					response.setResultCode(CCS_ERETURN_CODE_UPDATE_ERROR);
+					response.setResultDescription(CCS_ERETURN_CODE_UPDATE_ERROR_RESULT_DESCRIPTION);
+					response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
+				} else {
+					response.setPaymentExtension(false);
+					response.setResultCode(RESULT_CODE_CCS_ERROR);
+					response.setResultDescription("Failed to Update the Extension Date or not available");
+					response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
+				}
+			} else {
+				response.setPaymentExtension(false);
+				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
+			}
+			
+			
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::{}" ,e);
-			return response;
-		}
-		PaymentExtensionSubmitResponse paymentExtensionSubmitResponse = ccsAllAlertsResponse.getPaymentExtensionSubmitRes();
-		if (paymentExtensionSubmitResponse != null
-				&& StringUtils.isNotBlank(paymentExtensionSubmitResponse.getReturnCode())) {
-			if (StringUtils.equalsIgnoreCase("00", paymentExtensionSubmitResponse.getReturnCode())) {
-				response.setPaymentExtension(true);
-				response.setResultCode(RESULT_CODE_SUCCESS);
-				response.setResultDescription(MSG_SUCCESS);
-			} else if(StringUtils.equalsIgnoreCase("03", paymentExtensionSubmitResponse.getReturnCode())) {
-				response.setPaymentExtension(false);
-				response.setResultCode(RESULT_CODE_ACCOUNT_ALREADY);
-				response.setResultDescription("03 - May be already updated!!!, Please check error code");
-				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
-			} else if(StringUtils.equalsIgnoreCase("02", paymentExtensionSubmitResponse.getReturnCode())) {
-				response.setPaymentExtension(false);
-				response.setResultCode(CCS_ERETURN_CODE_UPDATE_ERROR);
-				response.setResultDescription(CCS_ERETURN_CODE_UPDATE_ERROR_RESULT_DESCRIPTION);
-				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
-			} else {
-				response.setPaymentExtension(false);
-				response.setResultCode(RESULT_CODE_CCS_ERROR);
-				response.setResultDescription("Failed to Update the Extension Date or not available");
-				response.setErrorCode(paymentExtensionSubmitResponse.getReturnCode());
-			}
-		} else {
-			response.setPaymentExtension(false);
+		} catch (Exception e) {
+			logger.error("Exception Occured in submitBankPayment : " +e.getStackTrace());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
-		}
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+	  }
 		
 		logger.info("END - [ProfileBO - PaymentExtension]");
 		return response;
@@ -3657,5 +3677,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END - [BillingBO - getDPPPaymentExtensionCheck]");
 		return response;
 	}
-
+	
+	private HashMap<String, String> createPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
+	
+		HashMap<String, String> templateProps = new HashMap();
+		
+		templateProps.put(ACCOUNT_NAME, request.getContractAccountName());
+		templateProps.put(ACCOUNT_NUMBER, request.getContractAccountNumber());
+		templateProps.put(CHECK_DIGIT, request.getCheckDigit());	
+		templateProps.put(DUE_AMOUNT, request.getPayExtDueAmt());
+		templateProps.put(EXTENSION_DATE, request.getPaymentExtDate());
+		return templateProps;
+	}	
 }

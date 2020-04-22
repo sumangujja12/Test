@@ -1400,4 +1400,10 @@ public interface Constants {
 	public static final String DPP_BYPASS_ELIGIBLE_FLAG ="dpp.bypass.eligible.flag";
 	public static final String DPP_DEFAULT_FLAG = "dpp.default.flag";
 	
+	 public static final String DUE_AMOUNT = "dueAmount";
+	 public static final String EXTENSION_DATE = "extensionDate";
+	 
+	 public static final String PAYMTXTN_EMAIL_EN_US ="GME.PAYMTXTN.EMAIL.EN_US"; 
+	 
+	
 }

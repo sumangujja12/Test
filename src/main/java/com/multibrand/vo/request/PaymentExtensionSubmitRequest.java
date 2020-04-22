@@ -13,17 +13,34 @@ import com.multibrand.request.validation.SizeConstraint;
 public class PaymentExtensionSubmitRequest implements FormEntityRequest, Serializable {
 
 	private static final long serialVersionUID = -9054119448214804045L;
+	
 	@NotBlank(groups = BasicConstraint.class)
 	private String companyCode ="";
-	private String brandName ="";
+	
 	@NotBlank(groups = BasicConstraint.class)
+	private String brandName ="";
+	
+	@NotBlank(groups = BasicConstraint.class)
+	private String contractAccountName ="";
+	
 	@Length(max = 12, groups = SizeConstraint.class)
 	private String contractAccountNumber ="";
+	
+	@NotBlank(groups = BasicConstraint.class)
+	private String businessPartnerNumber;
+	
 	@NotBlank(groups = BasicConstraint.class)
 	private String paymentExtDate ="";
-	@Length(max = 10, groups = SizeConstraint.class)
-	private String businessPartnerNumber;
+	
 	@NotBlank(groups = BasicConstraint.class)
+	private String checkDigit;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	private String email;
+	
+	@NotBlank(groups = BasicConstraint.class)
+	private String payExtDueAmt ="";
+	
 
 	/**
 	 * @return the companyCode
@@ -96,13 +113,67 @@ public class PaymentExtensionSubmitRequest implements FormEntityRequest, Seriali
 	}
 
 	/**
+	 * @return the checkDigit
+	 */
+	public String getCheckDigit() {
+		return checkDigit;
+	}
+
+	/**
+	 * @param checkDigit the checkDigit to set
+	 */
+	public void setCheckDigit(String checkDigit) {
+		this.checkDigit = checkDigit;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	
+	/**
+	 * @return the contractAccountName
+	 */
+	public String getContractAccountName() {
+		return contractAccountName;
+	}
+
+	/**
+	 * @param contractAccountName the contractAccountName to set
+	 */
+	public void setContractAccountName(String contractAccountName) {
+		this.contractAccountName = contractAccountName;
+	}
+	
+	/**
+	 * @return the payExtDueAmt
+	 */
+	public String getPayExtDueAmt() {
+		return payExtDueAmt;
+	}
+
+	/**
+	 * @param payExtDueAmt the payExtDueAmt to set
+	 */
+	public void setPayExtDueAmt(String payExtDueAmt) {
+		this.payExtDueAmt = payExtDueAmt;
+	}
+
+	/**
 	 * @return String representation of this request.
 	 */
 	@Override
 	public String toString() {
 		return ReflectionToStringBuilder.toString(this);
 	}
-	
-	
-
 }
