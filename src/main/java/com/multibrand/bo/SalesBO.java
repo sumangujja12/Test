@@ -21,7 +21,7 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
-
+import com.multibrand.dto.request.SalesCleanupAddressRequest;
 import com.multibrand.dto.request.SalesCreditCheckRequest;
 import com.multibrand.dto.request.SalesCreditReCheckRequest;
 
@@ -29,13 +29,16 @@ import com.multibrand.dto.request.SalesEnrollmentRequest;
 
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
+import com.multibrand.dto.request.ValidateAddressRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.dto.response.ValidateAddressResponse;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
@@ -58,6 +61,9 @@ public class SalesBO extends OeBoHelper implements Constants {
 
 	@Autowired
 	private OEBO oeBO;
+	
+	@Autowired
+	private ValidationBO validationBO;
 
 	@Context
 	private HttpServletRequest httpRequest;
@@ -345,5 +351,32 @@ public class SalesBO extends OeBoHelper implements Constants {
 
 		return salesEnrollmentresponse;
 
+	}
+	
+	public SalesCleanupAddressResponse getCleanupAddress(SalesCleanupAddressRequest salesCleanupAddressRequest) throws Exception{
+		SalesCleanupAddressResponse salesCleanupAddressResponse = new SalesCleanupAddressResponse();
+		ValidateAddressRequest validateAddressRequest = new ValidateAddressRequest();
+		try {
+			
+			// Do cleanup address input parameters extra validation errors check
+			if (StringUtils.isNotBlank(salesCleanupAddressRequest.getStreetAddress())
+					&& StringUtils.isNotBlank(salesCleanupAddressRequest.getPoBox())) {
+				salesCleanupAddressResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				salesCleanupAddressResponse.setErrorCode(HTTP_BAD_REQUEST);
+				salesCleanupAddressResponse.setErrorDescription(BILLING_ADDRESS_ERROR_MESSAGE);
+				salesCleanupAddressResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+				return salesCleanupAddressResponse;
+			}
+			BeanUtils.copyProperties(salesCleanupAddressRequest, validateAddressRequest);
+			// Do cleanup address using Trillium
+			ValidateAddressResponse validateAddressResponse = validationBO.validateAddress(validateAddressRequest);
+			BeanUtils.copyProperties(validateAddressResponse, salesCleanupAddressResponse);
+			salesCleanupAddressResponse.setMessageCode(validateAddressResponse.getResultCode());
+			salesCleanupAddressResponse.setMessageText(validateAddressResponse.getResultDescription());
+		} catch (Exception e) {
+			logger.error("Exception in SalesBO.getCleanupAddress()", e);
+			throw e;
+		}
+		return salesCleanupAddressResponse;
 	}
 }

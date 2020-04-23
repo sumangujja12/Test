@@ -26,6 +26,7 @@ import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+import com.multibrand.dto.request.SalesCleanupAddressRequest;
 import com.multibrand.dto.request.SalesCreditCheckRequest;
 import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
@@ -34,6 +35,7 @@ import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.exception.OEException;
@@ -349,5 +351,26 @@ public class SalesAPIResource extends BaseResource {
    		}
        return response;
     }
+	
+	@POST
+	@Path(API_CLEANUP_ADDRESS)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response cleanupAddress(SalesCleanupAddressRequest  request)
+			throws OEException {
+		long startTime = CommonUtil.getStartTime();
+		Response response = null;
+		try{
+			SalesCleanupAddressResponse salesCleanupAddressResponse = salesBO.getCleanupAddress(request);
+	    	Response.Status status = salesCleanupAddressResponse.getHttpStatus() != null ? salesCleanupAddressResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(salesCleanupAddressResponse).build();
+	    } catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+   		}finally{
+   			utilityloggerHelper.logSalesAPITransaction(API_CLEANUP_ADDRESS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   		}
+       return response;
+	}
 
 }
