@@ -2159,43 +2159,13 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			
 			if(StringUtils.isNotEmpty(newCreditScoreResponse.getStrErrCode())) {
-				response.setResultCode(RESULT_CODE_SUCCESS);
-				response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
-				response.setStatusCode(STATUS_CODE_STOP);
-				response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
-				response.setMessageText(this.msgSource.getMessage(
-						MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
-				response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+				constructCreditCheckErrorResponse(response, localeObj);
 				return response;
 			}
 			
-			StringBuilder creditFactorsText = new StringBuilder(EMPTY);
-
-			if (newCreditScoreResponse.getArrayFactors() != null
-					&& newCreditScoreResponse.getArrayFactors().length > 0) {
-				FactorDetailDO[] factorsArray = newCreditScoreResponse
-						.getArrayFactors();
-
-				for (FactorDetailDO factObj : factorsArray) {
-					if (StringUtils.equalsIgnoreCase(locale,factObj.getLanguage())){
-						creditFactor.append(factObj.getSource() + DOT + factObj.getType() + DOT +factObj.getKey_FACTOR() + DELIMETER_COMMA );
-						String key = factObj.getSource() + DOT + factObj.getType()+ DOT + factObj.getKey_FACTOR();
-						creditFactorsText.append(oweRPMFactors.getMessage(key,null, localeObj) + SEMI_COLON);
-					}
-				}
-			}
-
-
-			response.setCreditFactorsText(creditFactorsText.toString().split(
-					String.valueOf(SEMI_COLON)));
-		
-			if(newCreditScoreResponse.getStrDepositAmt() != null) {
-				response.setDepositAmount(String.valueOf((Math
-					.round(newCreditScoreResponse.getStrDepositAmt()
-							.floatValue()))));
-			}
+			populateCreditFactorDepositAmtInResponse(response, newCreditScoreResponse, creditCheckRequest,
+		    		 creditScoreRequest, creditFactor, locale,localeObj  );
 			
-
 	 	
 /*Setting the CreditAgency info From zestNotifyHold*/	
 			 CompanyMsgText.CREDIT_AGENCY_ENUM creditAgencyEnum=null;
@@ -2226,25 +2196,13 @@ public class OEBO extends OeBoHelper implements Constants{
 						}	
 						
 			if ((StringUtils.isNotEmpty(zesNotifyHold) && FREEZE_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold))){
-					response.setMessageCode(MESSAGE_CREDIT_FREEZE);
-					response.setStatusCode(STATUS_CODE_STOP);
-					response.setMessageText(msgSource.getMessage(TEXT_FREEZE_CREDIT_CHECK, 
-							new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
-							CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));		
+					constructCreditFreezeResponse(response, creditAgencyEnum, companyCodeEnum, creditCheckRequest, serviceLocationResponseErrorList);						
 					errorCd = CREDFREEZE;
-					serviceLocationResponseErrorList.remove(CCSD);
-					serviceLocationResponseErrorList.add(errorCd);
 			} 
 			
-			else if(StringUtils.isNotEmpty(zesNotifyHold)&& FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold)){  
-						response.setMessageCode(MESSAGE_CREDIT_FRAUD);
-						response.setStatusCode(STATUS_CODE_STOP);	
-						response.setMessageText(msgSource.getMessage(TEXT_FRAUD_CREDIT_CHECK, 
-								new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
-								CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));	
-						errorCd = CREDFREEZE;
-						serviceLocationResponseErrorList.remove(CCSD);
-						serviceLocationResponseErrorList.add(errorCd);
+			else if(StringUtils.isNotEmpty(zesNotifyHold)&& FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold)){ 
+				constructCreditFraudResponse(response, creditAgencyEnum, companyCodeEnum, creditCheckRequest, serviceLocationResponseErrorList);		
+				errorCd = CREDFREEZE;
 			}
 			else{
 				response.setStatusCode(STATUS_CODE_CONTINUE);
@@ -2252,140 +2210,17 @@ public class OEBO extends OeBoHelper implements Constants{
 				serviceLocationResponseErrorList.remove(CREDFREEZE);
 			}
 			
-			if (StringUtils.isNotEmpty(creditCheckRequest.getMviDate())
-					&& StringUtils.isNotEmpty(newCreditScoreResponse
-							.getStrDepositReason())) {
-				if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
-					.round(newCreditScoreResponse.getStrDepositAmt()
-							.floatValue())>0)) {
-					Object[] inParams = { creditScoreRequest.getStrMoveinDate(),
-							newCreditScoreResponse.getStrDueDate() };
-					response.setDepositDueText(msgSource.getMessage(
-							newCreditScoreResponse.getStrDepositReason(), inParams,
-							localeObj));
-				}
-			} else if (StringUtils.isEmpty(creditCheckRequest.getMviDate())) {
-				if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
-						.round(newCreditScoreResponse.getStrDepositAmt()
-								.floatValue())>0)) {
-				response.setDepositDueText(msgSource
-						.getMessage(MESSAGE_CODE_CREDIT_CHECK_EMPTY_MVI_DATE));
-				}
-			} else {
-				response.setDepositDueText(EMPTY);
-			}
+
 			
 		/*Setting DepositDueText Empty if we have Credit Freeze or Fraud*/	
 
-			if(StringUtils.equals (response.getMessageCode(),MESSAGE_CREDIT_FREEZE)  || StringUtils.equals (response.getMessageCode(),MESSAGE_CREDIT_FRAUD)){
-				response.setDepositDueText(EMPTY);
-			}
+			populateDepositReasonTextInResponse(response, newCreditScoreResponse, creditCheckRequest, localeObj);
 			
-
-			StringBuilder stringBuilder = new StringBuilder();
-			String infoKey = EMPTY;
-			String infoName = EMPTY;
-			DateFormat df = new SimpleDateFormat(MM_dd_yyyy);
-			Calendar c = Calendar.getInstance();
- 
-			String creditScoreHigh = EMPTY;
-			String creditScoreLow = EMPTY;
-
-			if (StringUtils.isNotBlank(newCreditScoreResponse
-					.getStrCreditScoreHigh()))
-				creditScoreHigh = newCreditScoreResponse
-						.getStrCreditScoreHigh();
-			else
-				creditScoreHigh = NINENINETYNINE;
-
-			if (StringUtils.isNotBlank(newCreditScoreResponse
-					.getStrCreditScoreLow()))
-				creditScoreLow = newCreditScoreResponse.getStrCreditScoreLow();
-			else
-				creditScoreLow = ONE;
-			
-				if(StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditSource())){
-					if (newCreditScoreResponse.getStrCreditSource()
-							.equalsIgnoreCase(EQ)){
-						infoKey = EQ_INFO;
-						infoName = EQ_NAME;
-					}
-					else if(newCreditScoreResponse.getStrCreditSource()
-							.equalsIgnoreCase(TU)){
-						infoKey = TU_INFO;
-						infoName = TU_NAME;
-					}
-					
-					String companyCodeName = CommonUtil.getCompanyName(
-							creditCheckRequest.getBrandId(),
-							creditCheckRequest.getCompanyCode()
-							);
-					if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditScore())	&& newCreditScoreResponse.getStrCreditScore()
-									.equalsIgnoreCase(CREDIT_ZERO)) { // Zero credit
-																		// scenario
-						stringBuilder.append("ZERO");
-						stringBuilder.append(UNDERSCORE);
-						stringBuilder.append(creditScoreHigh);
-						stringBuilder.append(UNDERSCORE);
-						stringBuilder.append(creditScoreLow);
-		
-						
-						Object[] inParams = { companyCodeName, df.format(c.getTime()),
-								this.msgSource.getMessage(infoKey, null, localeObj),
-								//newCreditScoreResponse.getStrCreditSource() 
-								this.msgSource.getMessage(infoName, null, localeObj)
-								};
-						if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
-							if(StringUtils.equals(EQ_INFO, infoKey) || StringUtils.equals(TU_INFO, infoKey)){
-							response.setDepositReasonText(StringEscapeUtils
-								.escapeHtml((this.msgSource.getMessage(
-										stringBuilder.toString(), inParams, localeObj))));}
-							else
-								response.setDepositReasonText(this.msgSource.getMessage(DEFAULT_INFO, null, localeObj));
-						}
-						} else { // Non-zero credit scenario
-						stringBuilder.append("NONZERO");
-						stringBuilder.append(UNDERSCORE);
-						stringBuilder.append(creditScoreHigh);
-						stringBuilder.append(UNDERSCORE);
-						stringBuilder.append(creditScoreLow);
-						Object[] inParams = { companyCodeName, df.format(c.getTime()),
-								this.msgSource.getMessage(infoKey, null, localeObj),
-								//newCreditScoreResponse.getStrCreditSource(),
-								this.msgSource.getMessage(infoName, null, localeObj),
-								newCreditScoreResponse.getStrCreditScore(),
-								newCreditScoreResponse.getStrCreditScoreLow(),
-								newCreditScoreResponse.getStrCreditScoreHigh() };												
-						if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
-							if(StringUtils.equals(EQ_INFO, infoKey) || StringUtils.equals(TU_INFO, infoKey)){
-								response.setDepositReasonText(StringEscapeUtils
-										.escapeHtml((this.msgSource.getMessage(
-												stringBuilder.toString(), inParams, localeObj))));}
-							else
-							{response.setDepositReasonText(this.msgSource.getMessage(DEFAULT_INFO, null, localeObj));}
-						}
-					}
-			}
-/*Setting DepositReasonText Empty if we have Credit Freeze or Fraud*/		
-				
-				if(StringUtils.equals (response.getMessageCode(),MESSAGE_CREDIT_FREEZE)  || StringUtils.equals (response.getMessageCode(),MESSAGE_CREDIT_FRAUD)){
-					response.setDepositReasonText(EMPTY);
-				} 
-				
-				
 				
 		} catch (RemoteException e) {
 			logger.error(e);
 			errorCd = CCSD;
-			serviceLocationResponseErrorList.remove(CREDFREEZE);
-			serviceLocationResponseErrorList.add(errorCd);
-			response.setResultCode(RESULT_CODE_SUCCESS);
-			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
-			response.setStatusCode(STATUS_CODE_STOP);
-			response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
-			response.setMessageText(this.msgSource.getMessage(
-					MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
-			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+			constructRemoteExceptionResponse(response, serviceLocationResponseErrorList, localeObj);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (NoSuchMessageException e) {
 			logger.error("inside performCreditCheck:: exception occured ::", e);
@@ -2393,15 +2228,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (Exception e) {
 			logger.error("ERROR:" + METHOD_NAME, e);
 			errorCd = CCSD;
-			serviceLocationResponseErrorList.remove(CREDFREEZE);
-			serviceLocationResponseErrorList.add(errorCd);
-			response.setResultCode(RESULT_CODE_SUCCESS);
-			response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
-			response.setStatusCode(STATUS_CODE_STOP);
-			response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
-			response.setMessageText(this.msgSource.getMessage(
-					MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
-			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+			constructRemoteExceptionResponse(response, serviceLocationResponseErrorList, localeObj);
 			throw new OAMException(200, e.getMessage(), response);
 		} finally {
 			logger.debug("Processing updateServiceLocation ...");
@@ -2409,127 +2236,10 @@ public class OEBO extends OeBoHelper implements Constants{
 					creditScoreRequest.getTrackingNum(),
 					"trackingId must not be null.");
 			if( !isPropectCreditCheckExecuted( serviceLoationResponse)) {
-				UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
-	
-				requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
 				
-				requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
-				
-				requestData.setTrackingId(creditScoreRequest.getTrackingNum());
-	
-				String personId = getPersonIdByTrackingNo(requestData
-						.getTrackingId());
-	
-				// Update service location and person table only when a valid person
-				// id
-				// is returned from getPersonIdByTrackingNo
-	
-				if (StringUtils.isNotEmpty(personId)) {
-					if (StringUtils.isNotBlank(response.getMessageCode()))
-						requestData.setMessageCode(response.getMessageCode());
-	
-					/* Setting service addresses */
-					requestData.setRecentCallMade(CREDIT_CHECK);
-					requestData.setServStreetNum(creditCheckRequest
-							.getServStreetNum());
-					requestData.setServStreetName(creditCheckRequest
-							.getServStreetName());
-					if (StringUtils.isNotEmpty(creditCheckRequest
-							.getServStreetAptNum()))
-						requestData.setServStreetAptNum(creditCheckRequest
-								.getServStreetAptNum());
-					requestData.setServCity(creditCheckRequest.getServCity());
-					requestData.setServState(creditCheckRequest.getServState());
-					requestData.setServZipCode(creditCheckRequest
-							.getServZipCode());
-	
-					requestData.setAffiliateId(affiliateId);
-					if (StringUtils
-							.isNotEmpty(creditScoreRequest.getStrOfferCode()))
-						requestData.setOfferCode(creditScoreRequest
-								.getStrOfferCode());
-	
-					/* Setting billing addresses */
-					requestData.setBillStreetNum(creditCheckRequest
-							.getBillStreetNum());
-					requestData.setBillStreetName(creditCheckRequest
-							.getBillStreetName());
-					if (StringUtils.isNotEmpty(creditCheckRequest
-							.getBillStreetAptNum()))
-						requestData.setBillStreetAptNum(creditCheckRequest
-								.getBillStreetAptNum());
-					if (StringUtils.isNotEmpty(creditCheckRequest.getBillCity()))
-						requestData
-								.setBillCity(creditCheckRequest.getBillCity());
-					requestData.setBillState(creditCheckRequest.getBillState());
-					requestData.setBillZipCode(creditCheckRequest
-							.getBillZipCode());
-					requestData.setBillPoBox(creditCheckRequest.getBillPOBox());
-					requestData.setServiceStartDate(creditCheckRequest.getMviDate());
-					
-					if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
-						requestData.setPayCode(YES);	
-						requestData.setDepositCode(DEPOSIT_OWED);
-						requestData.setDepositAmount(response.getDepositAmount());
-						
-					} else {					
-						requestData.setPayCode(FLAG_NO);
-						requestData.setDepositCode(DEPOSIT_NONE);
-						requestData.setDepositAmount(ZERO);
-					}
-					requestData.setCallExecuted(creditCheckRequest.getCallExecuted());
-	
-					/* Updating service location affiliate table */
-					
-					String errorCode = this.updateServiceLocation(requestData);
-					if (StringUtils.isNotBlank(errorCode))
-						logger.debug("Finished processing updateServiceLocation, errorCode = "
-								+ errorCode);
-	
-					UpdatePersonRequest requestDataPerson = new UpdatePersonRequest();
-					/* Updating person affiliate table */
-					errorCode = EMPTY;
-					requestDataPerson.setPersonId(personId);
-					// requestDataPerson.setLanguageCode(locale);
-					requestDataPerson.setFirstName(creditScoreRequest
-							.getStrFirstName());
-					requestDataPerson.setLastName(creditScoreRequest
-							.getStrLastName());
-					if (StringUtils.isNotBlank(creditScoreRequest.getStrSSN()))
-						requestDataPerson.setSsn(creditScoreRequest.getStrSSN());
-					if (StringUtils.isNotBlank(newCreditScoreResponse
-							.getStrCreditBucket()))
-						requestDataPerson.setCredLevelNum(newCreditScoreResponse
-								.getStrCreditBucket());
-					if (StringUtils.isNotBlank(newCreditScoreResponse
-							.getStrCreditSource()))
-						requestDataPerson.setCredSourceNum(newCreditScoreResponse
-								.getStrCreditSource());
-					if (StringUtils.isNotBlank(newCreditScoreResponse
-							.getStrCreditScore()))
-						requestDataPerson.setCredScoreNum(newCreditScoreResponse
-								.getStrCreditScore());
-					requestDataPerson.setAdvActionData(StringUtils.removeEnd(
-							creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
-	
-	
-					if(StringUtils.isNotBlank(response.getDepositAmount())) {
-						if (StringUtils.isNotBlank(newCreditScoreResponse
-								.getStrDepositHold()) 
-								&& newCreditScoreResponse.getStrDepositHold()
-										.equalsIgnoreCase(YES))
-							requestDataPerson.setCredStatusCode(HOLD);
-						else
-							requestDataPerson.setCredStatusCode(NOTICE);
-					} else {
-						requestDataPerson.setCredStatusCode(RELEASE);	
-					}
-	
-					errorCode = this.updatePerson(requestDataPerson);
-					if (StringUtils.isNotBlank(errorCode))
-						logger.debug("Finished processing updateServiceLocation, errorCode = "
-								+ errorCode);
-				}
+				updateServiceLocationAndPersonForCreditCheck(response, newCreditScoreResponse, 
+						creditCheckRequest, creditScoreRequest, serviceLocationResponseErrorList, 
+						creditFactor, serviceLoationResponse);
 			}
 		}
 
@@ -6393,6 +6103,348 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				}
 			}
 			
+		}
+    }
+    
+    private void constructCreditCheckErrorResponse(NewCreditScoreResponse response, Locale localeObj){
+    	
+		response.setResultCode(RESULT_CODE_SUCCESS);
+		response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+		response.setMessageText(this.msgSource.getMessage(
+				MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
+		response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+		
+    }
+    
+    private void populateCreditFactorDepositAmtInResponse(NewCreditScoreResponse response,
+    		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse,
+    		CreditCheckRequest creditCheckRequest,
+    		NewCreditScoreRequest creditScoreRequest, 
+    		StringBuilder creditFactor,
+    		String locale,
+    		Locale localeObj
+    		){
+    	
+    	StringBuilder creditFactorsText = new StringBuilder(EMPTY);
+
+		if (newCreditScoreResponse.getArrayFactors() != null
+				&& newCreditScoreResponse.getArrayFactors().length > 0) {
+			FactorDetailDO[] factorsArray = newCreditScoreResponse
+					.getArrayFactors();
+
+			for (FactorDetailDO factObj : factorsArray) {
+				if (StringUtils.equalsIgnoreCase(locale,factObj.getLanguage())){
+					creditFactor.append(factObj.getSource() + DOT + factObj.getType() + DOT +factObj.getKey_FACTOR() + DELIMETER_COMMA );
+					String key = factObj.getSource() + DOT + factObj.getType()+ DOT + factObj.getKey_FACTOR();
+					creditFactorsText.append(oweRPMFactors.getMessage(key,null, localeObj) + SEMI_COLON);
+				}
+			}
+		}
+
+
+		response.setCreditFactorsText(creditFactorsText.toString().split(
+				String.valueOf(SEMI_COLON)));
+		
+
+		if(newCreditScoreResponse.getStrDepositAmt() != null) {
+			response.setDepositAmount(String.valueOf((Math
+				.round(newCreditScoreResponse.getStrDepositAmt()
+						.floatValue()))));
+		}
+		
+		if (StringUtils.isNotEmpty(creditCheckRequest.getMviDate())
+				&& StringUtils.isNotEmpty(newCreditScoreResponse
+						.getStrDepositReason())) {
+			if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
+				.round(newCreditScoreResponse.getStrDepositAmt()
+						.floatValue())>0)) {
+				Object[] inParams = { creditScoreRequest.getStrMoveinDate(),
+						newCreditScoreResponse.getStrDueDate() };
+				response.setDepositDueText(msgSource.getMessage(
+						newCreditScoreResponse.getStrDepositReason(), inParams,
+						localeObj));
+			}
+		} else if (StringUtils.isEmpty(creditCheckRequest.getMviDate())) {
+			if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
+					.round(newCreditScoreResponse.getStrDepositAmt()
+							.floatValue())>0)) {
+			response.setDepositDueText(msgSource
+					.getMessage(MESSAGE_CODE_CREDIT_CHECK_EMPTY_MVI_DATE));
+			}
+		} else {
+			response.setDepositDueText(EMPTY);
+		}
+    }
+    
+    private void constructCreditFreezeResponse(NewCreditScoreResponse response,
+    		CompanyMsgText.CREDIT_AGENCY_ENUM creditAgencyEnum,
+    		CompanyMsgText.COMPANY_CODE_ENUM companyCodeEnum,
+    		CreditCheckRequest creditCheckRequest,
+    		LinkedHashSet<String> serviceLocationResponseErrorList){
+    	
+    	response.setMessageCode(MESSAGE_CREDIT_FREEZE);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setMessageText(msgSource.getMessage(TEXT_FREEZE_CREDIT_CHECK, 
+				new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
+				CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));		
+		serviceLocationResponseErrorList.remove(CCSD);
+		serviceLocationResponseErrorList.add(CREDFREEZE);
+    	
+    }
+    private void constructCreditFraudResponse(NewCreditScoreResponse response,
+    		CompanyMsgText.CREDIT_AGENCY_ENUM creditAgencyEnum,
+    		CompanyMsgText.COMPANY_CODE_ENUM companyCodeEnum,
+    		CreditCheckRequest creditCheckRequest,
+    		LinkedHashSet<String> serviceLocationResponseErrorList){
+    response.setMessageCode(MESSAGE_CREDIT_FRAUD);
+	response.setStatusCode(STATUS_CODE_STOP);	
+	response.setMessageText(msgSource.getMessage(TEXT_FRAUD_CREDIT_CHECK, 
+			new String[] {creditAgencyEnum.getName(),creditAgencyEnum.getPhoneNumber(),companyCodeEnum.getMultiCompanyEmail(),companyCodeEnum.getMultiCompanyPhoneNumber()},
+			CommonUtil.localeCode(creditCheckRequest.getLanguageCode()) ));	
+	serviceLocationResponseErrorList.remove(CCSD);
+	serviceLocationResponseErrorList.add(CREDFREEZE);
+    }
+    
+    private void populateDepositReasonTextInResponse(NewCreditScoreResponse response,
+    		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse,
+    		CreditCheckRequest creditCheckRequest,
+    		Locale localeObj){
+    	
+    	StringBuilder stringBuilder = new StringBuilder();
+		String infoKey = EMPTY;
+		String infoName = EMPTY;
+		DateFormat df = new SimpleDateFormat(MM_dd_yyyy);
+		Calendar c = Calendar.getInstance();
+
+		String creditScoreHigh = EMPTY;
+		String creditScoreLow = EMPTY;
+
+		if (StringUtils.isNotBlank(newCreditScoreResponse
+				.getStrCreditScoreHigh()))
+			creditScoreHigh = newCreditScoreResponse
+					.getStrCreditScoreHigh();
+		else
+			creditScoreHigh = NINENINETYNINE;
+
+		if (StringUtils.isNotBlank(newCreditScoreResponse
+				.getStrCreditScoreLow()))
+			creditScoreLow = newCreditScoreResponse.getStrCreditScoreLow();
+		else
+			creditScoreLow = ONE;
+		
+			if(StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditSource())){
+				if (newCreditScoreResponse.getStrCreditSource()
+						.equalsIgnoreCase(EQ)){
+					infoKey = EQ_INFO;
+					infoName = EQ_NAME;
+				}
+				else if(newCreditScoreResponse.getStrCreditSource()
+						.equalsIgnoreCase(TU)){
+					infoKey = TU_INFO;
+					infoName = TU_NAME;
+				}
+				
+				String companyCodeName = CommonUtil.getCompanyName(
+						creditCheckRequest.getBrandId(),
+						creditCheckRequest.getCompanyCode()
+						);
+				if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditScore())	&& newCreditScoreResponse.getStrCreditScore()
+								.equalsIgnoreCase(CREDIT_ZERO)) { // Zero credit
+																	// scenario
+					stringBuilder.append("ZERO");
+					stringBuilder.append(UNDERSCORE);
+					stringBuilder.append(creditScoreHigh);
+					stringBuilder.append(UNDERSCORE);
+					stringBuilder.append(creditScoreLow);
+	
+					
+					Object[] inParams = { companyCodeName, df.format(c.getTime()),
+							this.msgSource.getMessage(infoKey, null, localeObj),
+							//newCreditScoreResponse.getStrCreditSource() 
+							this.msgSource.getMessage(infoName, null, localeObj)
+							};
+					if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
+						if(StringUtils.equals(EQ_INFO, infoKey) || StringUtils.equals(TU_INFO, infoKey)){
+						response.setDepositReasonText(StringEscapeUtils
+							.escapeHtml((this.msgSource.getMessage(
+									stringBuilder.toString(), inParams, localeObj))));}
+						else
+							response.setDepositReasonText(this.msgSource.getMessage(DEFAULT_INFO, null, localeObj));
+					}
+					} else { // Non-zero credit scenario
+					stringBuilder.append("NONZERO");
+					stringBuilder.append(UNDERSCORE);
+					stringBuilder.append(creditScoreHigh);
+					stringBuilder.append(UNDERSCORE);
+					stringBuilder.append(creditScoreLow);
+					Object[] inParams = { companyCodeName, df.format(c.getTime()),
+							this.msgSource.getMessage(infoKey, null, localeObj),
+							//newCreditScoreResponse.getStrCreditSource(),
+							this.msgSource.getMessage(infoName, null, localeObj),
+							newCreditScoreResponse.getStrCreditScore(),
+							newCreditScoreResponse.getStrCreditScoreLow(),
+							newCreditScoreResponse.getStrCreditScoreHigh() };												
+					if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
+						if(StringUtils.equals(EQ_INFO, infoKey) || StringUtils.equals(TU_INFO, infoKey)){
+							response.setDepositReasonText(StringEscapeUtils
+									.escapeHtml((this.msgSource.getMessage(
+											stringBuilder.toString(), inParams, localeObj))));}
+						else
+						{response.setDepositReasonText(this.msgSource.getMessage(DEFAULT_INFO, null, localeObj));}
+					}
+				}
+		}
+/*Setting DepositReasonText Empty if we have Credit Freeze or Fraud*/		
+			
+			if(StringUtils.equals (response.getMessageCode(),MESSAGE_CREDIT_FREEZE)  || StringUtils.equals (response.getMessageCode(),MESSAGE_CREDIT_FRAUD)){
+				response.setDepositReasonText(EMPTY);
+			}
+    	
+    }
+    
+    private void constructRemoteExceptionResponse(NewCreditScoreResponse response,
+    		LinkedHashSet<String> serviceLocationResponseErrorList, Locale localeObj )
+    {
+    	serviceLocationResponseErrorList.remove(CREDFREEZE);
+		serviceLocationResponseErrorList.add(CCSD);
+		response.setResultCode(RESULT_CODE_SUCCESS);
+		response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
+		response.setStatusCode(STATUS_CODE_STOP);
+		response.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+		response.setMessageText(this.msgSource.getMessage(
+				MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj));
+		response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+    }
+    
+    private void updateServiceLocationAndPersonForCreditCheck(NewCreditScoreResponse response,
+    		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse,
+    		CreditCheckRequest creditCheckRequest,
+    		NewCreditScoreRequest creditScoreRequest,
+    		LinkedHashSet<String> serviceLocationResponseErrorList,
+    		StringBuilder creditFactor,
+    		ServiceLocationResponse serviceLoationResponse){
+    	
+		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+		
+		requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+		
+		requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
+		
+		requestData.setTrackingId(creditScoreRequest.getTrackingNum());
+
+		String personId = serviceLoationResponse.getPersonResponse().getPersonId();
+
+		// Update service location and person table only when a valid person
+		// id
+		// is returned from getPersonIdByTrackingNo
+
+		if (StringUtils.isNotEmpty(personId)) {
+			if (StringUtils.isNotBlank(response.getMessageCode()))
+				requestData.setMessageCode(response.getMessageCode());
+
+			/* Setting service addresses */
+			requestData.setRecentCallMade(CREDIT_CHECK);
+			requestData.setServStreetNum(creditCheckRequest
+					.getServStreetNum());
+			requestData.setServStreetName(creditCheckRequest
+					.getServStreetName());
+			if (StringUtils.isNotEmpty(creditCheckRequest
+					.getServStreetAptNum()))
+				requestData.setServStreetAptNum(creditCheckRequest
+						.getServStreetAptNum());
+			requestData.setServCity(creditCheckRequest.getServCity());
+			requestData.setServState(creditCheckRequest.getServState());
+			requestData.setServZipCode(creditCheckRequest
+					.getServZipCode());
+
+			requestData.setAffiliateId(creditCheckRequest.getAffiliateId());
+			if (StringUtils
+					.isNotEmpty(creditScoreRequest.getStrOfferCode()))
+				requestData.setOfferCode(creditScoreRequest
+						.getStrOfferCode());
+
+			/* Setting billing addresses */
+			requestData.setBillStreetNum(creditCheckRequest
+					.getBillStreetNum());
+			requestData.setBillStreetName(creditCheckRequest
+					.getBillStreetName());
+			if (StringUtils.isNotEmpty(creditCheckRequest
+					.getBillStreetAptNum()))
+				requestData.setBillStreetAptNum(creditCheckRequest
+						.getBillStreetAptNum());
+			if (StringUtils.isNotEmpty(creditCheckRequest.getBillCity()))
+				requestData
+						.setBillCity(creditCheckRequest.getBillCity());
+			requestData.setBillState(creditCheckRequest.getBillState());
+			requestData.setBillZipCode(creditCheckRequest
+					.getBillZipCode());
+			requestData.setBillPoBox(creditCheckRequest.getBillPOBox());
+			requestData.setServiceStartDate(creditCheckRequest.getMviDate());
+			
+			if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
+				requestData.setPayCode(YES);	
+				requestData.setDepositCode(DEPOSIT_OWED);
+				requestData.setDepositAmount(response.getDepositAmount());
+				
+			} else {					
+				requestData.setPayCode(FLAG_NO);
+				requestData.setDepositCode(DEPOSIT_NONE);
+				requestData.setDepositAmount(ZERO);
+			}
+			requestData.setCallExecuted(creditCheckRequest.getCallExecuted());
+
+			/* Updating service location affiliate table */
+			
+			String errorCode = this.updateServiceLocation(requestData);
+			if (StringUtils.isNotBlank(errorCode))
+				logger.debug("Finished processing updateServiceLocation, errorCode = "
+						+ errorCode);
+
+			UpdatePersonRequest requestDataPerson = new UpdatePersonRequest();
+			/* Updating person affiliate table */
+			errorCode = EMPTY;
+			requestDataPerson.setPersonId(personId);
+			// requestDataPerson.setLanguageCode(locale);
+			requestDataPerson.setFirstName(creditScoreRequest
+					.getStrFirstName());
+			requestDataPerson.setLastName(creditScoreRequest
+					.getStrLastName());
+			if (StringUtils.isNotBlank(creditScoreRequest.getStrSSN()))
+				requestDataPerson.setSsn(creditScoreRequest.getStrSSN());
+			if (StringUtils.isNotBlank(newCreditScoreResponse
+					.getStrCreditBucket()))
+				requestDataPerson.setCredLevelNum(newCreditScoreResponse
+						.getStrCreditBucket());
+			if (StringUtils.isNotBlank(newCreditScoreResponse
+					.getStrCreditSource()))
+				requestDataPerson.setCredSourceNum(newCreditScoreResponse
+						.getStrCreditSource());
+			if (StringUtils.isNotBlank(newCreditScoreResponse
+					.getStrCreditScore()))
+				requestDataPerson.setCredScoreNum(newCreditScoreResponse
+						.getStrCreditScore());
+			requestDataPerson.setAdvActionData(StringUtils.removeEnd(
+					creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
+
+
+			if(StringUtils.isNotBlank(response.getDepositAmount())) {
+				if (StringUtils.isNotBlank(newCreditScoreResponse
+						.getStrDepositHold()) 
+						&& newCreditScoreResponse.getStrDepositHold()
+								.equalsIgnoreCase(YES))
+					requestDataPerson.setCredStatusCode(HOLD);
+				else
+					requestDataPerson.setCredStatusCode(NOTICE);
+			} else {
+				requestDataPerson.setCredStatusCode(RELEASE);	
+			}
+
+			errorCode = this.updatePerson(requestDataPerson);
+			if (StringUtils.isNotBlank(errorCode))
+				logger.debug("Finished processing updateServiceLocation, errorCode = "
+						+ errorCode);
 		}
     }
 }
