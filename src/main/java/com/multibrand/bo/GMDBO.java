@@ -1122,7 +1122,7 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		List<AlertPrefDTO> subscribeRequestList = new ArrayList<>();
 		if (!StringUtils.isEmpty(strLowAcctBal)) {
 			lowAccBalDTO = new AlertPrefDTO();
-			lowAccBalDTO.setStrEventId(BAL_ALERT);
+			lowAccBalDTO.setStrEventId(GME_BAL_ALERT);
 			lowAccBalDTO.setStrParamName(COMM_PREF);
 			lowAccBalDTO.setStrParamValue(strLowAcctBal);
 			subscribeRequestList.add(lowAccBalDTO);
