@@ -19,10 +19,14 @@ import com.multibrand.domain.CancelOtccPaymentResp;
 import com.multibrand.domain.CancelPaymentRequest;
 import com.multibrand.domain.CancelPaymentResponse;
 import com.multibrand.domain.CancelSchdOtccPaymetReq;
+import com.multibrand.domain.DppEligibleRequest;
+import com.multibrand.domain.DppEligibleResponse;
 import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.PayByBankResponse;
 import com.multibrand.domain.PayByCCRequest;
 import com.multibrand.domain.PayByCCResponse;
+import com.multibrand.domain.PayExtEligibleRequest;
+import com.multibrand.domain.PayExtEligibleResponse;
 import com.multibrand.domain.PaymentDomain;
 import com.multibrand.domain.PaymentDomainPortBindingStub;
 import com.multibrand.domain.ScheduleOtccPaymentRequest;
@@ -459,6 +463,72 @@ public class PaymentService extends BaseAbstractService {
 		BankPaymentInstitutionResponse response = proxy.getBankPaymentInstitution(routingNumber);
 		
 		logger.info("PaymentService.getBankPaymentInstitution..end");
+		return response;
+	}
+	
+	
+	public PayExtEligibleResponse getPayExtEligibleResponse(PayExtEligibleRequest request, String sessionId) throws RemoteException {
+		logger.info("PaymentService.getPayExtEligibleResponse :: START");
+		
+		PaymentDomain proxy = getPaymentDomainProxy();
+		long startTime = CommonUtil.getStartTime();
+		PayExtEligibleResponse response = null;
+		
+		try{
+		response= proxy.payExtEligibilityCheck(request);
+		
+		utilityloggerHelper.logTransaction("getPayExtEligibleResponse", false, request,response, response.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+		if(logger.isDebugEnabled()){
+			logger.debug(XmlUtil.pojoToXML(request));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		}catch(RemoteException ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getPayExtEligibleResponse", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}catch(Exception ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getPayExtEligibleResponse", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}
+		logger.info("PaymentService.getPayExtEligibleResponse :: END");
+		return response;
+	}
+	
+	
+	public DppEligibleResponse getDPPExtEligibleResponse(DppEligibleRequest request, String sessionId) throws RemoteException {
+		logger.info("PaymentService.getDPPExtEligibleResponse :: START");
+		
+		PaymentDomain proxy = getPaymentDomainProxy();
+		long startTime = CommonUtil.getStartTime();
+		DppEligibleResponse response = null;
+		
+		try{
+		response= proxy.dppEligibilityCheck(request);
+		
+		utilityloggerHelper.logTransaction("getDPPExtEligibleResponse", false, request,response, response.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+		if(logger.isDebugEnabled()){
+			logger.debug(XmlUtil.pojoToXML(request));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		}catch(RemoteException ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getDPPExtEligibleResponse", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}catch(Exception ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getDPPExtEligibleResponse", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}
+		logger.info("PaymentService.getDPPExtEligibleResponse :: END");
 		return response;
 	}
 		

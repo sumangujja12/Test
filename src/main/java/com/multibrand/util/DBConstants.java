@@ -69,11 +69,18 @@ public interface DBConstants {
 	public static String CUR_WK_IN_IN_V = "cur_wk_in_in_v";
 	public static String WK_OUT_REC = "wk_out_rec";
 	public static String WK_PCT_OUT_REC = "wk_pct_out_rec";
+	
+	public static String PRICE_OUT_REC = "price_out_rec";
+	public static String ZONE_OUT_REC = "zone_id_out_v";
+	
 
 	public static String PROJECTEDBILL_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_BILPRD_GME";
 	public static String MONTHLYUSAGE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_MNTHLY_USG_GME";
 	public static String WEEKLYUSAGE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_WSE_GME";
 	public static String DAILYWEEKLYUSAGE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_DLYWKY_USG_GME";
+	
+	public static String GMDSMART_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_SMART_RTP_PRICE";
+	public static String GMDSMART_ZONE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_ZONE_ID";
 	// END : OAM :KD
 
 	// START OERedesign Phase 2

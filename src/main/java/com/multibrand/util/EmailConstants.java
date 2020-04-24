@@ -532,4 +532,9 @@ public interface EmailConstants {
 	//Email Us
 	public static final String EMAILUS_SEND_TO_EMAIL="services@reliant.com";
 
+	public static final String EN_EMAIL_ENGLISH = "EN";
+	public static final String ES_EMAIL_ENGLISH = "ES";
+	public static final String CURRENT_YEAR = "current-year";
+	
 }
+

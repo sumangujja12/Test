@@ -5,7 +5,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -13,10 +12,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.logging.log4j.Logger;
+
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.domain.ConsumptionHistory;
 import com.multibrand.domain.GetUsageHistoryRequest;
 import com.multibrand.domain.UsageHistoryDO;
@@ -50,6 +51,9 @@ import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageHistory;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
+import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
+import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.historyResponse.BillPaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.ConsumptionHistoryDO;
 import com.multibrand.vo.response.historyResponse.GetConsumptionHistoryResponse;
@@ -64,6 +68,7 @@ import com.multibrand.vo.response.historyResponse.xi.MTGetIntervalDataResponse;
 import com.multibrand.vo.response.historyResponse.xi.MTGetPaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.xi.Row;
 import com.multibrand.vo.response.historyResponse.xi.RowIntervalResponse;
+import com.multibrand.vo.response.HourlyUsage;
 
 /**
  * 
@@ -1349,5 +1354,113 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 		return weeklyUsageDummy;
 	}
 	
+	 public List<HourlyUsage> getWeeklyUsageByHuorlyDetails(String esiId, String contractId, String fromDate , String toDate)
+	    {
+	        return usageHelper.getWeeklyUsageByHuorlyDetails(esiId, contractId, fromDate , toDate);
+	    }
+	
+	/**
+	 * 
+	 * @param esid
+	 * @param companyCode
+	 * @param sessionId
+	 * @return
+	 */
+	public GMDZoneByEsiIdResponseVO getZoneIdByEsiId(String esid, String companyCode, String sessionId) {
+		logger.info("START-[HistoryBO-getZoneIdByEsiId]");
+
+		UsageRequestVO usageRequestVO = new UsageRequestVO();
+		usageRequestVO.setEsiId(esid);
+		GMDZoneByEsiIdResponseVO response = null;
+
+		try {
+
+			response = usageHelper.getZoneIdByEsiId(usageRequestVO, companyCode, sessionId);
+
+			logger.info(" Exiting from the DAO Layer-[HistoryBO-getZoneIdByEsiId]");
+
+			if (response != null) {
+
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+
+			} else {
+				response = new GMDZoneByEsiIdResponseVO();
+				response.setResultCode(RESULT_CODE_NO_DATA);
+				response.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+			}
+
+		} catch (Exception e) {
+
+			logger.info(" Exeception Occured in the getZoneIdByEsiId" + e.getMessage());
+
+			logger.error(e.getMessage());
+			logger.error(e.getCause());
+			logger.error(" Error {}", e.getMessage());
+
+			response = new GMDZoneByEsiIdResponseVO();
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), response);
+		}
+
+		return response;
+	}
+	
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param currentDate
+	 * @param companyCode
+	 * @return
+	 * @throws OAMException
+	 */
+	public HourlyPriceResponse getGMDPrice(String accountNumber, String contractId, String esid, String curDate,
+			String sessionId, String companyCode) throws OAMException {
+
+		logger.info(" START of the getGMDPrice() Helpermethod");
+		UsageRequestVO usageRequestVO = new UsageRequestVO();
+		usageRequestVO.setContractAcctId(accountNumber);
+		usageRequestVO.setContractId(contractId);
+		usageRequestVO.setEsiId(esid);
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(Constants.MM_dd_yyyy);		
+		usageRequestVO.setCurDtInd(formatter.format(date));
+
+		DailyHourlyPriceResponseVO usageResp = null;
+		HourlyPriceResponse hourlyPriceResponse = new HourlyPriceResponse();
+
+		try {
+
+			usageResp = usageHelper.getGMDPriceFromDB(usageRequestVO, sessionId, companyCode);
+
+			if (usageResp != null && usageResp.getHourlyPriceList() != null
+					&& !usageResp.getHourlyPriceList().isEmpty()) {
+
+				hourlyPriceResponse = new HourlyPriceResponse();
+
+				hourlyPriceResponse.setResultCode(RESULT_CODE_SUCCESS);
+				hourlyPriceResponse.setResultDescription(MSG_SUCCESS);
+				hourlyPriceResponse.setHourlyPriceList(usageResp.getHourlyPriceList());
+				
+				logger.info(" END of the getUsage() Helpermethod");
+				return hourlyPriceResponse;
+			} else {
+				hourlyPriceResponse.setResultCode(RESULT_CODE_THREE);
+				hourlyPriceResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+			}
+
+		} catch (Exception e) {
+			logger.error(" Error {}", e.getMessage());
+			hourlyPriceResponse = new HourlyPriceResponse();
+			hourlyPriceResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			hourlyPriceResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), hourlyPriceResponse);
+
+		}
+		return hourlyPriceResponse;
+	}
 }
 	

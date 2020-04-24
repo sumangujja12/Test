@@ -1865,5 +1865,45 @@ public class ProfileService extends BaseAbstractService {
 		return response;
 	}	
 	
+	
+	/**
+	 * @author SMarimuthu
+	 * @param allAlertsRequest
+	 * @param sessionId
+	 * @return
+	 * @throws RemoteException
+	 */
+	public AllAccountDetailsResponse getAllAccountDetailsParallel(AllAccountDetailsRequest allAccountRequest, String sessionId) throws RemoteException {
+
+		ProfileDomain proxy = getProfileDomainProxy();
+
+		long startTime = CommonUtil.getStartTime();
+		AllAccountDetailsResponse response = null;
+		try {
+			response = proxy.getAllAccountDetailsInParallel(allAccountRequest);
+		} catch (RemoteException ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAccountRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAccountRequest));
+			throw ex;
+		} catch (Exception ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAccountRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAccountRequest));
+			throw ex;
+		}
+		utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, response, response.getErrorMessage(),
+				CommonUtil.getElapsedTime(startTime), "", sessionId, allAccountRequest.getCompanyCode());
+		if (logger.isDebugEnabled()) {
+			logger.debug(XmlUtil.pojoToXML(allAccountRequest));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		return response;
+	}	
+	
 
 }

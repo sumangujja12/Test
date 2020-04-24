@@ -150,7 +150,7 @@ public class ProfileProxy extends BaseProxy {
 		try {
 
 			// Call NRGWS ProfileDomain.updateContactInfo web service call
-			response = profileDomainPortProxy.updateAlertPreferences(request);
+			response = getProfileDomainProxy().updateAlertPreferences(request);
 
 		} catch (RemoteException re) {
 			logger.error(METHOD_NAME

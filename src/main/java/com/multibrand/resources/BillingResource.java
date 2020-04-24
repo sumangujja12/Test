@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,7 +20,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -36,8 +34,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.bo.BillingBO;
+import com.multibrand.bo.ProfileBO;
 import com.multibrand.dto.request.BillCourtesyCreditActivityRequest;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.resources.requestHandlers.BillingRequestHandler;
@@ -47,6 +45,9 @@ import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
+import com.multibrand.vo.request.PaymentExtensionRequest;
+import com.multibrand.vo.request.PaymentExtensionSubmitRequest;
+import com.multibrand.vo.request.DPPEligibilityCheckRequest;
 import com.multibrand.vo.request.RetroPopupRequestVO;
 import com.multibrand.vo.request.SaveAMBSingupRequestVO;
 import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
@@ -66,6 +67,7 @@ import com.multibrand.vo.response.billingResponse.BankInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.BillInfoResponse;
 import com.multibrand.vo.response.billingResponse.CcInfoUpdateResponse;
 import com.multibrand.vo.response.billingResponse.CheckSwapEligibilityResponse;
+import com.multibrand.vo.response.billingResponse.DPPExtensionCheckResponse;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetArResponse;
@@ -78,6 +80,8 @@ import com.multibrand.vo.response.billingResponse.StoreUpdatePayAccountResponse;
 import com.multibrand.vo.response.billingResponse.UpdateInvoiceDeliveryResponse;
 import com.multibrand.vo.response.billingResponse.UpdatePaperFreeBillingResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 
 
 /** This Resource is to handle all the Billing Related API calls.
@@ -92,6 +96,11 @@ public class BillingResource {
 	
 	@Context 
 	private HttpServletRequest httpRequest;
+	
+	/** Object of ProfileBO class. */
+	@Autowired
+	private ProfileBO profileBO;
+
 	
 	/** Object of BillingBO class. */
 	@Autowired
@@ -1218,4 +1227,46 @@ public class BillingResource {
 		
 	}
 
+	@POST
+	@Path("submitPaymentExtension")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response submitPaymentExtension(@Valid PaymentExtensionSubmitRequest request) {
+		Response response = null;
+		logger.info("Start-[BillingResource-submitPaymentExtension]");
+		PaymentExtensionResponse paymentExtensionResponse = billingBO.submitPaymentExtension(request, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(paymentExtensionResponse).build();
+		logger.info("End-[BillingResource-submitPaymentExtension]");
+		return response;
+	}
+	
+	@POST
+	@Path("paymentExtEligibilityCheck")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getPaymentExtensionCheck(@Valid PaymentExtensionRequest request) {
+		Response response = null;
+		logger.info("Start-[BillingResource-paymentExtEligibilityCheck]");
+		PaymentExtensionCheckResponse paymentExtensionResponse = billingBO.getPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(paymentExtensionResponse).build();
+		logger.info("End-[BillingResource-paymentExtEligibilityCheck]");
+		return response;
+		
+	}
+	
+	
+	@POST
+	@Path("dppEligibilityCheck")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	public Response getDppExtensionCheck(@Valid DPPEligibilityCheckRequest request) {
+		Response response = null;
+		logger.info("Start-[ProfileResource-getPaymentExtensionCheck]");
+		DPPExtensionCheckResponse paymentExtensionResponse = billingBO.getDPPPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(paymentExtensionResponse).build();
+		logger.info("End-[ProfileResource-getPaymentExtensionCheck]");
+		return response;
+		
+	}
+	
 }	

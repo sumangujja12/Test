@@ -41,7 +41,7 @@ import com.multibrand.web.i18n.WebI18nMessageSource;
 @Service
 public class BaseAbstractService implements Constants{
 	
-	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	protected Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
 	@Autowired
 	protected EnvMessageReader envMessageReader;
