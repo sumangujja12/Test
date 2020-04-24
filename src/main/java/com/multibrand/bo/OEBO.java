@@ -1914,13 +1914,16 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
 			
-			// Do the input normalization/sanitization
-			this.initNormalization(oeSignUpDTO);
-			logger.debug("oeSignUpDTO : "+oeSignUpDTO);
+		
 			
 			// Check for any fraudulent activity in Enrollment Submission and block enrollment
 			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType(),serviceLoationResponse.getCallExecutedFromDB());
 			if(null==enrollmentFraudEnum){
+				
+				// Do the input normalization/sanitization
+				this.initNormalization(oeSignUpDTO);
+				logger.debug("oeSignUpDTO : "+oeSignUpDTO);
+				
 				if (allowEnrollmentSubmissionToCCS(oeSignUpDTO, response)) {
 		
 					// Populate all Pre-requisite input for enrollment
