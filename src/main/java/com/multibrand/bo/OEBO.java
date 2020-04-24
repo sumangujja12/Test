@@ -2239,7 +2239,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				updateServiceLocationAndPersonForCreditCheck(response, newCreditScoreResponse, 
 						creditCheckRequest, creditScoreRequest, serviceLocationResponseErrorList, 
-						creditFactor, serviceLoationResponse);
+						creditFactor, serviceLoationResponse,errorCd);
 			}
 		}
 
@@ -3896,8 +3896,13 @@ public class OEBO extends OeBoHelper implements Constants{
 			requestData.setServState(serviceAddressDO.getStrState());
 			requestData.setServZipCode(serviceAddressDO.getStrZip());
 
-			if (StringUtils.isNotEmpty(response.getErrorCode()))
+
+			if(StringUtils.isNotBlank(response.getErrorCode())){
 				requestData.setErrorCode(response.getErrorCode());
+			}else{
+				requestData.setErrorCode("$blank$");
+			}
+			
 			if (StringUtils.isNotEmpty(response.getTdspCode()))
 				requestData.setTdspCode(response.getTdspCode());
 			requestData.setAffiliateId(affiliateId);
@@ -3905,8 +3910,12 @@ public class OEBO extends OeBoHelper implements Constants{
 			if (StringUtils.isNotEmpty(response.getSwitchHoldFlag()))
 				requestData.setSwitchHoldStatus(response.getSwitchHoldFlag());
 
-			if(StringUtils.isNotEmpty(errorCdlist))
+			
+			if(StringUtils.isNotBlank(errorCdlist)){
 				requestData.setErrorCdList(errorCdlist);
+			}else{
+				requestData.setErrorCdList("$blank$");
+			}
 			requestData.setCallExecuted(callExecutedStrForDB);
 			/* Updating service location affiliate table */
 			String errorCode = this.updateServiceLocation(requestData);
@@ -5097,13 +5106,20 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
 	LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 	ServiceLocationResponse serviceLoationResponse=null;
+	String errorCode = "";
+	LinkedHashSet<String>  systemNotesList=new LinkedHashSet<>();
 	try{
 		if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
-	    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
-		if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
-		serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-		}
+		    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
+				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			if(StringUtils.isNotBlank(serviceLoationResponse.getSystemNotes())){
+				String[] systemNotesArray =serviceLoationResponse.getSystemNotes().split(ERROR_CD_LIST_SPLIT_PATTERN);
+				systemNotesList = new LinkedHashSet<>(Arrays.asList(systemNotesArray));
+		
+			}
 		}
 		
 		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
@@ -5142,6 +5158,10 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
 							kbaSubmitAnswerResponse.getSsnVerifyDate());
 					response.setSsnVerifyDate(validatedDate);
+					
+					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
+						systemNotesList.add(KBA_LIFT_POSIDHOLD);
+					}
 					serviceLocationResponseErrorList.remove(POSIDHOLD);
 					
 				} else if(null != kbaSubmitAnswerResponse 
@@ -5151,12 +5171,17 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
 							kbaSubmitAnswerResponse.getDlVerifyDate());
 					response.setDrivingLicenceVerifyDate(validatedDate);
+					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
+						systemNotesList.add(KBA_LIFT_POSIDHOLD);
+					}
 					serviceLocationResponseErrorList.remove(POSIDHOLD);
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
-					response.setMessageCode(POSID_FAIL_MAX);
-					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+					response.setMessageCode(POSIDHOLD);
+					response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
 					serviceLocationResponseErrorList.add(POSIDHOLD);
+					errorCode = POSIDHOLD;
+					systemNotesList.add(KBA_SET_POSIDHOLD);
 				}
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
@@ -5164,24 +5189,28 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
 						response.setErrorCode(RETRY_NOT_ALLOWED);
 						response.setErrorDescription(RETRY_NOT_ALLOWED_TXT);
-						serviceLocationResponseErrorList.add(POSIDHOLD);
+					
 					}
 				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
 				}
 			} else{
 				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
 				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setMessageCode(POSID_FAIL_MAX);
-				response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+				response.setMessageCode(POSIDHOLD);
+				response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
 				serviceLocationResponseErrorList.add(POSIDHOLD);
+				errorCode = POSIDHOLD;
+				systemNotesList.add(KBA_SET_POSIDHOLD);
 			}
 		}else{
 			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
 			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
-			response.setMessageCode(POSID_FAIL_MAX);
-			response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+			response.setMessageCode(POSIDHOLD);
+			response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
 			serviceLocationResponseErrorList.add(POSIDHOLD);
+			errorCode = POSIDHOLD;
+			systemNotesList.add(KBA_SET_POSIDHOLD);
 		}
 		//update kba_api
 		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
@@ -5197,8 +5226,16 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
              requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
              requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
              //update RECENT_MSG_CD
+             if(StringUtils.isNotBlank(errorCode)){
+            	 requestData.setErrorCode(errorCode);
+     		}else{
+     			requestData.setErrorCode("$blank$");}
              requestData.setMessageCode(response.getMessageCode());
-             requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+             if(StringUtils.isNotBlank(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE))){
+            	 requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+     		}else{
+     			requestData.setErrorCdList("$blank$");}
+             requestData.setSystemNotes(StringUtils.join(systemNotesList,SYMBOL_PIPE));
              requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
             this.updateServiceLocation(requestData);
         }
@@ -5511,7 +5548,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		response.setQuestions(questions);
 	} else {
 		response.setStatusCode(STATUS_CODE_CONTINUE);
-		response.setMessageCode(POSID_FAIL);
+		response.setMessageCode(POSIDHOLD);
 		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
 
 
@@ -6324,11 +6361,20 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     		NewCreditScoreRequest creditScoreRequest,
     		LinkedHashSet<String> serviceLocationResponseErrorList,
     		StringBuilder creditFactor,
-    		ServiceLocationResponse serviceLoationResponse){
+    		ServiceLocationResponse serviceLoationResponse,String errorCd){
     	
 		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 		
-		requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+		
+		if(StringUtils.isNotBlank(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE))){
+			requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+		}else{
+			requestData.setErrorCdList("$blank$");}
+		
+		if(StringUtils.isNotBlank(errorCd)){
+			requestData.setErrorCode(errorCd);
+		}else{
+			requestData.setErrorCode("$blank$");}
 		
 		requestData.setCompanyCode(creditScoreRequest.getStrCompanyCode());
 		

@@ -458,7 +458,7 @@ public class OEBOTest implements Constants{
 			when(oeService.getKBAQuestionList(Matchers.any(KbaQuestionRequest.class))).thenReturn(kbaQuestionResponse);
 			when(kbaDao.addKbaDetails(Matchers.any(KbaQuestionResponse.class))).thenReturn(true);
 			getKBAQuestionsResponse = oebo.getKBAQuestions(request);
-			Assert.assertEquals(getKBAQuestionsResponse.getMessageCode(), Constants.POSID_FAIL);
+			Assert.assertEquals(getKBAQuestionsResponse.getMessageCode(), Constants.POSIDHOLD);
 		}catch(Exception e){
 			e.printStackTrace();
 		}

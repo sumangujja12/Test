@@ -843,6 +843,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 										dataRow.setProspectId(rs.getString("prospect_id"));
 										dataRow.setProspectPartnerId(rs.getString("prospect_partner_id"));														 
 										dataRow.setProspectPreapprovalFlag(rs.getString("prospect_preapproved_flag"));
+										dataRow.setSystemNotes(rs.getString("system_notes"));
+										dataRow.setCallExecutedFromDB(rs.getString("call_executed"));
 										return dataRow;
 									}
 								});
