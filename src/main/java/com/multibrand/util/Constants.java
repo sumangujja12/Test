@@ -1412,5 +1412,8 @@ public interface Constants {
 	public static final String ERROR_CD_LIST_SPLIT_PATTERN = "\\|";
 	public static final String ERROR_CD_ENROLLMENT_NOT_ALLOWED = "ENROLLMENT_NOT_ALLOWED";
 	
+	public static final String KBA_SET_POSIDHOLD  = "KBA sets POSID hold";
+    public static final String KBA_LIFT_POSIDHOLD  = "KBA lifts POSID hold";
+	
 	
 }

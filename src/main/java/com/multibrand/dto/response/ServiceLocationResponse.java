@@ -166,7 +166,17 @@ public class ServiceLocationResponse implements Serializable {
     private String prospectId;
     private String prospectPreapprovalFlag;
     private String prospectPartnerId;
-    private String callExecutedFromDB;			
+    private String callExecutedFromDB;	
+    private String systemNotes;	
+    
+    
+	public String getSystemNotes() {
+		return systemNotes;
+	}
+
+	public void setSystemNotes(String systemNotes) {
+		this.systemNotes = systemNotes;
+	}
 			
 			public String getAgentID() {
 				return agentID;
