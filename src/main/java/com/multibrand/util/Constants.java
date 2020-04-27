@@ -1333,6 +1333,7 @@ public interface Constants {
     
     //New Sales APIs - To be used by all channels and brands
     public static final String SALES_API_BASE_PATH = "sales";
+    public static final String OE_RESOURCE_API_BASE_PATH = "oeResource";
     public static final String API_OFFERS = "offers";
     public static final String API_IDENTITY= "identity";
     public static final String API_AVAILABLE_DATES= "available-dates";
