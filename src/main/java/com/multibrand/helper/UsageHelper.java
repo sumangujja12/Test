@@ -17,6 +17,7 @@ import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.AllTimePriceResponseVO;
 import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
 import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 
@@ -89,5 +90,9 @@ public class UsageHelper
 	
 	public DailyHourlyPriceResponseVO getGMDPriceFromDB(UsageRequestVO request,String sessionId, String companyCode) {
 		return usageDAOImpl.getGMDPriceFromDB(request,sessionId, companyCode);
+	}	
+	
+	public AllTimePriceResponseVO getAllTimePriceFromDB(UsageRequestVO request,String sessionId, String companyCode) {
+		return usageDAOImpl.getAllTimePriceFromDB(request,sessionId, companyCode);
 	}	
 }

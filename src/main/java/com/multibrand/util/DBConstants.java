@@ -72,6 +72,8 @@ public interface DBConstants {
 	
 	public static String PRICE_OUT_REC = "price_out_rec";
 	public static String ZONE_OUT_REC = "zone_id_out_v";
+	public static String AT_PRICE__OUT_REC = "at_price_out_rec";
+	
 	
 
 	public static String PROJECTEDBILL_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_BILPRD_GME";
@@ -81,6 +83,7 @@ public interface DBConstants {
 	
 	public static String GMDSMART_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_SMART_RTP_PRICE";
 	public static String GMDSMART_ZONE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_ZONE_ID";
+	public static String GMDSMART_ALL_TIME_PRICE__PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_ALL_TIME_PRICE";
 	// END : OAM :KD
 
 	// START OERedesign Phase 2

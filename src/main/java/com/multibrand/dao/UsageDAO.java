@@ -10,6 +10,7 @@ import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.AllTimePriceResponseVO;
 import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
 import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 
@@ -22,5 +23,6 @@ public interface UsageDAO
 	public SmartMeterUsageResponseList getSmartMeterUsageHistory(SmartMeterUsageRequestVO requestVO, String companyCode, String sessionId);
 	public DailyHourlyPriceResponseVO getGMDPriceFromDB(UsageRequestVO request, String companyCode, String sessionId);
 	public GMDZoneByEsiIdResponseVO getZoneInformFromDB(UsageRequestVO request, String companyCode, String sessionId);
+	public AllTimePriceResponseVO getAllTimePriceFromDB(UsageRequestVO request, String sessionId, String companyCode);
 	
 }
