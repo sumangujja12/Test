@@ -51,7 +51,6 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
-import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
@@ -77,7 +76,7 @@ import com.multibrand.web.i18n.WebI18nMessageSource;
  * @author NRG Energy
  */
 @Component
-@Path("oeResource")
+@Path("/"+Constants.OE_RESOURCE_API_BASE_PATH)
 public class OEResource extends BaseResource {
 	
 	/**
@@ -637,7 +636,7 @@ public class OEResource extends BaseResource {
 							request.getEsid(),
 							httpRequest.getSession(true).getId(),
 							null,
-							null, null
+							null, API_LEGACY_GET_ESID_AND_CALENDAR_DATES
 							);
 				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
 		} catch (Exception e) {

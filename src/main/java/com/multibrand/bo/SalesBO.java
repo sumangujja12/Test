@@ -120,13 +120,11 @@ public class SalesBO extends OeBoHelper implements Constants {
 		String bpMatchFlag = null;
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		SalesBaseResponse response = null;
-		String callExecutedStrForDB=EMPTY;
 		try {
 			serviceLoationResponse = oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),
 					salesEsidCalendarRequest.getGuid());
 			if (null != serviceLoationResponse) {
 				bpMatchFlag = extractBpMatchFlag(salesEsidCalendarRequest,serviceLoationResponse,serviceLocationResponseErrorList );
-				callExecutedStrForDB = CommonUtil.getPipeSeperatedCallExecutedParamForDB(salesEsidCalendarRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB());
 				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO.getESIDAndCalendarDates(
 						salesEsidCalendarRequest.getCompanyCode(), salesEsidCalendarRequest.getAffiliateId(),
 						salesEsidCalendarRequest.getBrandId(), serviceLoationResponse.getServStreetNum(),
@@ -134,7 +132,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 						serviceLoationResponse.getServZipCode(), serviceLoationResponse.getTdspCode(),
 						serviceLoationResponse.getServiceRequestTypeCode(), salesEsidCalendarRequest.getTrackingId(),
 						bpMatchFlag, salesEsidCalendarRequest.getLanguageCode(), serviceLoationResponse.getEsid(),
-						httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,callExecutedStrForDB);
+						httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,salesEsidCalendarRequest.getCallExecuted());
 
 				BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);
 				response = salesEsidInfoTdspCalendarResponse;

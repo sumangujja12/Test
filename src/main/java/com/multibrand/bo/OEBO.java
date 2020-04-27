@@ -2676,6 +2676,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		}
 		finally {
 			// Call update service location
+			callExecutedStrForDB = CommonUtil.getPipeSeperatedCallExecutedParamForDB(callExecutedStrForDB,serviceLoationResponse.getCallExecutedFromDB());
 			this.updateServiceLocation(companyCode, affiliateId, trackingId, 
 					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE),callExecutedStrForDB);
 		}
@@ -4718,7 +4719,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 					
 		
 					/* Updating service location affiliate table */
-					
+					requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(uccDataRequest.getCallExecuted(),serviceLocationResponse.getCallExecutedFromDB()));
 					String errorCode = this.updateServiceLocation(requestData);
 					if (StringUtils.isNotBlank(errorCode)){
 						logger.debug("Finished processing updateServiceLocation, errorCode = "
@@ -6442,8 +6443,8 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				requestData.setDepositCode(DEPOSIT_NONE);
 				requestData.setDepositAmount(ZERO);
 			}
-			requestData.setCallExecuted(creditCheckRequest.getCallExecuted());
-
+			requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(creditCheckRequest.getCallExecuted(),serviceLoationResponse.getCallExecutedFromDB()));
+			
 			/* Updating service location affiliate table */
 			
 			String errorCode = this.updateServiceLocation(requestData);
