@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.validation.ConstraintValidatorContext;
 import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -130,6 +131,7 @@ import com.multibrand.exception.OEException;
 import com.multibrand.helper.ContentHelper;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.request.handlers.OERequestHandler;
+import com.multibrand.request.validation.CompanyCodeConstraintValidator;
 import com.multibrand.service.AddressService;
 import com.multibrand.service.OEService;
 import com.multibrand.service.OfferService;
@@ -5855,12 +5857,16 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
  			return response;	
  		}
  		
- 		if(!StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_CIRRO))
+ 		if(!CommonUtil.isValidCompanyCode(request.getCompanyCode()))
  		{  //If Tdsp Code & Esid are passed empty
  			response = new AffiliateOfferResponse();
  			response.setStatusCode(Constants.STATUS_CODE_STOP);
  			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
- 			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");		
+ 			if(StringUtils.isBlank(request.getCompanyCode())){
+ 				response.setResultDescription("Company code is required");		
+ 			}else{
+ 				response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");	
+ 			}
  			response.setErrorCode(HTTP_BAD_REQUEST);
  			response.setErrorDescription(response.getResultDescription());
  			response.setHttpStatus(Response.Status.BAD_REQUEST);
