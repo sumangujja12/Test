@@ -636,7 +636,7 @@ public class OEResource extends BaseResource {
 							request.getEsid(),
 							httpRequest.getSession(true).getId(),
 							null,
-							null, null
+							null, API_LEGACY_GET_ESID_AND_CALENDAR_DATES
 							);
 				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
 		} catch (Exception e) {
