@@ -2112,4 +2112,13 @@ public class CommonUtil implements Constants {
 		}
 		return serviceLocationResponseErrorList;		
 	}
+	
+	public static boolean isValidCompanyCode(String value) {
+		List<String> companyCodeList = Arrays.asList(COMPANY_CODE_ARRAY);
+		if(value==null) {
+			return false;
+		}else {
+			return companyCodeList.contains(value.trim());
+		}
+	}
 }
