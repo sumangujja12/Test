@@ -1332,7 +1332,6 @@ public interface Constants {
     public static final String API_LEGACY_SUBMIT_ENROLLMENT= "submitEnrollment";
     
     //New Sales APIs - To be used by all channels and brands
-    public static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
     public static final String SALES_API_BASE_PATH = "sales";
     public static final String OE_RESOURCE_API_BASE_PATH = "oeResource";
     public static final String API_OFFERS = "offers";

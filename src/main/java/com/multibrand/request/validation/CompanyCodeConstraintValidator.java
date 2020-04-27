@@ -16,7 +16,7 @@ ConstraintValidator<ValidateCompanyCode, String>, Constants{
 	
 	@Override
 	public void initialize(ValidateCompanyCode constraintAnnotation) {
-		this.companyCodeList = Arrays.asList(COMPANY_CODE_ARRAY);
+		this.companyCodeList = Arrays.asList(CommonUtil.COMPANY_CODE_ARRAY);
 		
 	}
 	@Override
