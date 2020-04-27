@@ -109,7 +109,6 @@ public class SalesAPIResource extends BaseResource {
 	public Response performPosidAndBpMatch(IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
-		
 		try{
 			request.setCallExecuted(API_IDENTITY);
 			response = salesBO.performPosidAndBpMatch(request);

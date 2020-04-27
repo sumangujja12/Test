@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
+import org.testng.internal.Utils;
 
 import com.multibrand.dto.request.BaseAffiliateRequest;
 import com.multibrand.dto.request.SalesBaseRequest;
@@ -63,7 +64,8 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 			client.setUserLoginID(logvo.getUserId());
 		    client.setUserUniqueID(logvo.getUserUniqueId());
 	    txnLogRequest.setClient(client);}*/
-	    if(StringUtils.contains(logvo.getTransactionType(), OE_RESOURCE_API_BASE_PATH) || StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH)){
+	    if(StringUtils.isNotBlank(logvo.getUserId()) 
+	    		&& (StringUtils.contains(logvo.getTransactionType(), OE_RESOURCE_API_BASE_PATH) || StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
 	    	Client client= new Client();
 	    	client.setUserLoginID(logvo.getUserId());
 	    	if(StringUtils.isNotBlank(logvo.getConfirmationNumber())) 	client.setConfirmationNumber(CommonUtil.generateConfirmationNumber());
