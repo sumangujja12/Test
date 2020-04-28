@@ -1415,6 +1415,9 @@ public interface Constants {
 	
 	public static final String KBA_SET_POSIDHOLD  = "KBA sets POSID hold";
     public static final String KBA_LIFT_POSIDHOLD  = "KBA lifts POSID hold";
+    
+    public static final String DEPOSITHOLD  = "DEPOSITHOLD";
+    
 	
 	
 }

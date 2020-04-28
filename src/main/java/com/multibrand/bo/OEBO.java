@@ -2128,6 +2128,9 @@ public class OEBO extends OeBoHelper implements Constants{
 
 		Locale localeObj = null;
 		StringBuilder creditFactor = new StringBuilder(EMPTY);
+		String errorCodeFromDB = serviceLoationResponse.getErrorCode();
+		String errorCodeFromAPI = "";
+		String[] validErrorCd= {"CREDFREEZE"};
 
 		if (locale.equalsIgnoreCase(S))
 			localeObj = new Locale("es", "US");
@@ -2169,7 +2172,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			}
 			
 			populateCreditFactorDepositAmtInResponse(response, newCreditScoreResponse, creditCheckRequest,
-		    		 creditScoreRequest, creditFactor, locale,localeObj  );
+		    		 creditScoreRequest, creditFactor, locale,localeObj ,serviceLocationResponseErrorList );
 			
 	 	
 /*Setting the CreditAgency info From zestNotifyHold*/	
@@ -2202,12 +2205,12 @@ public class OEBO extends OeBoHelper implements Constants{
 						
 			if ((StringUtils.isNotEmpty(zesNotifyHold) && FREEZE_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold))){
 					constructCreditFreezeResponse(response, creditAgencyEnum, companyCodeEnum, creditCheckRequest, serviceLocationResponseErrorList);						
-					errorCd = CREDFREEZE;
+					errorCodeFromAPI = CREDFREEZE;
 			} 
 			
 			else if(StringUtils.isNotEmpty(zesNotifyHold)&& FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE.contains(zesNotifyHold)){ 
 				constructCreditFraudResponse(response, creditAgencyEnum, companyCodeEnum, creditCheckRequest, serviceLocationResponseErrorList);		
-				errorCd = CREDFREEZE;
+				errorCodeFromAPI = CREDFREEZE;
 			}
 			else{
 				response.setStatusCode(STATUS_CODE_CONTINUE);
@@ -2224,7 +2227,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 		} catch (RemoteException e) {
 			logger.error(e);
-			errorCd = CCSD;
+			errorCodeFromAPI = CCSD;
 			constructRemoteExceptionResponse(response, serviceLocationResponseErrorList, localeObj);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (NoSuchMessageException e) {
@@ -2232,7 +2235,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setDepositReasonText(EMPTY);
 		} catch (Exception e) {
 			logger.error("ERROR:" + METHOD_NAME, e);
-			errorCd = CCSD;
+			errorCodeFromAPI = CCSD;
 			constructRemoteExceptionResponse(response, serviceLocationResponseErrorList, localeObj);
 			throw new OAMException(200, e.getMessage(), response);
 		} finally {
@@ -2240,11 +2243,16 @@ public class OEBO extends OeBoHelper implements Constants{
 			Assert.notNull(
 					creditScoreRequest.getTrackingNum(),
 					"trackingId must not be null.");
+			if((StringUtils.isBlank(errorCodeFromAPI)) && ArrayUtils.contains(validErrorCd, errorCodeFromDB)){
+				errorCodeFromAPI = "";
+			}else if((StringUtils.isBlank(errorCodeFromAPI))){
+				errorCodeFromAPI = errorCodeFromDB;
+			}
 			if( !isPropectCreditCheckExecuted( serviceLoationResponse)) {
 				
 				updateServiceLocationAndPersonForCreditCheck(response, newCreditScoreResponse, 
 						creditCheckRequest, creditScoreRequest, serviceLocationResponseErrorList, 
-						creditFactor, serviceLoationResponse,errorCd);
+						creditFactor, serviceLoationResponse,errorCodeFromAPI);
 			}
 		}
 
@@ -2513,14 +2521,18 @@ public class OEBO extends OeBoHelper implements Constants{
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
 		
+		
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
 		ESIDDO esidDo = new ESIDDO();
 		AddressDO serviceAddressDO = new AddressDO();
 		
 		Locale localeObj = null;
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-
 		
+		String errorCodeFromDB = serviceLoationResponse.getErrorCode();
+		String errorCodeFromAPI = "";
+		String[] validErrorCd= {"NESID","MESID","SWHOLD"};
+
 		
 		if (locale.equalsIgnoreCase(S))
 			localeObj = new Locale("es", "US");
@@ -2602,7 +2614,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					if(StringUtils.equalsIgnoreCase(esidDo.getSwitchHoldStatus(), ON) 
 							&& (StringUtils.equalsIgnoreCase(transactionType, SWI))){
 						populateSwitchHoldResponse(response, esidDo, serviceLocationResponseErrorList);
-						
+						errorCodeFromAPI = SWHOLD;
 						return response;
 					}else{
 						serviceLocationResponseErrorList.remove(SWHOLD);
@@ -2615,7 +2627,8 @@ public class OEBO extends OeBoHelper implements Constants{
 						String strESIDNumber = esidDo.getEsidNumber();
 						if (strESIDNumber.equalsIgnoreCase(MESID) || strESIDNumber.equalsIgnoreCase(NESID))
 						{
-							populateMESIDNESIDResponse(response, strESIDNumber,serviceLocationResponseErrorList );
+							populateMESIDNESIDResponse(response, strESIDNumber,serviceLocationResponseErrorList);
+							errorCodeFromAPI = strESIDNumber;
 						} else if (strESIDNumber.equalsIgnoreCase(NRESID)) {
 							populateBusinessMeterResponse(response, serviceLocationResponseErrorList, localeObj);
 							return response;
@@ -2679,8 +2692,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		finally {
 			// Call update service location
 			callExecutedStrForDB = CommonUtil.getPipeSeperatedCallExecutedParamForDB(callExecutedStrForDB,serviceLoationResponse.getCallExecutedFromDB());
+			if((StringUtils.isBlank(errorCodeFromAPI)) && ArrayUtils.contains(validErrorCd, errorCodeFromDB)){
+				errorCodeFromAPI = "";
+			}else if((StringUtils.isBlank(errorCodeFromAPI))){
+				errorCodeFromAPI = errorCodeFromDB;
+			}
 			this.updateServiceLocation(companyCode, affiliateId, trackingId, 
-					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE),callExecutedStrForDB);
+					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE),callExecutedStrForDB,errorCodeFromAPI);
 		}
 	    
 	  //Default to EMPTY if statusflag is "OFF"
@@ -3852,7 +3870,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void updateServiceLocation(String companyCode, String affiliateId, String trackingId, 
 			AddressDO serviceAddressDO, ESIDDO esidDo,
-			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist, String callExecutedStrForDB) {
+			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist, String callExecutedStrForDB,String errorCodeFromAPI) {
 		logger.debug("Processing updateServiceLocation ...");
 		Assert.notNull(Integer.parseInt(trackingId),
 				"trackingId must not be null.");
@@ -3903,8 +3921,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			requestData.setServZipCode(serviceAddressDO.getStrZip());
 
 
-			if(StringUtils.isNotBlank(response.getErrorCode())){
-				requestData.setErrorCode(response.getErrorCode());
+			if(StringUtils.isNotBlank(errorCodeFromAPI)){
+				requestData.setErrorCode(errorCodeFromAPI);
 			}else{
 				requestData.setErrorCode("$blank$");
 			}
@@ -6017,11 +6035,13 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			serviceLocationResponseErrorList.add(MESID);
 			serviceLocationResponseErrorList.remove(NESID);
 			serviceLocationResponseErrorList.remove(NRESID);
+			
 		} else if (NESID.equalsIgnoreCase(strESIDNumber)) {
 			response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
 			serviceLocationResponseErrorList.add(NESID);
 			serviceLocationResponseErrorList.remove(MESID);
 			serviceLocationResponseErrorList.remove(NRESID);
+			
 		}
 		response.setTdspCode(EMPTY);
 		response.setAvailableDates(EMPTY);
@@ -6171,7 +6191,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     		NewCreditScoreRequest creditScoreRequest, 
     		StringBuilder creditFactor,
     		String locale,
-    		Locale localeObj
+    		Locale localeObj,LinkedHashSet<String> serviceLocationResponseErrorList
     		){
     	
     	StringBuilder creditFactorsText = new StringBuilder(EMPTY);
@@ -6199,6 +6219,13 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			response.setDepositAmount(String.valueOf((Math
 				.round(newCreditScoreResponse.getStrDepositAmt()
 						.floatValue()))));
+		}
+		if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
+				.round(newCreditScoreResponse.getStrDepositAmt()
+						.floatValue())>0)) {
+			serviceLocationResponseErrorList.add(DEPOSITHOLD);
+		}else{
+			serviceLocationResponseErrorList.remove(DEPOSITHOLD);
 		}
 		
 		if (StringUtils.isNotEmpty(creditCheckRequest.getMviDate())
