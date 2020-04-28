@@ -537,9 +537,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		String personDobFormatted = CommonUtil.formatDateForNrgws(oeSignUpDTO.getDateOfBirth());
 		submitEnrollRequest.setStrBPDOB(personDobFormatted);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(" enrollmentService SubmitEnrollment creating request:: checking for FullName");
-		}
+		logger.debug(" enrollmentService SubmitEnrollment creating request:: checking for FullName");
 
 		if ((oeSignUpDTO.getMiddleName() != null)) {
 			bpFullName = oeSignUpDTO.getFirstName() + " " + oeSignUpDTO.getMiddleName() + " "
@@ -556,9 +554,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
 		submitEnrollRequest.setStrCAName(
 				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
-		if (logger.isDebugEnabled()) {
-			logger.debug("submitEnrollment request :: Name is {}" , bpFullName);
-		}
+		
+		logger.debug("submitEnrollment request :: Name is {}" , bpFullName);
 
 		submitEnrollRequest.setStrCampaignCode(oeSignUpDTO.getCampaignCode());
 		// START test logs
@@ -577,10 +574,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		}
 		// END test logs
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(
+		logger.debug(
 					"creating SubmitEnrollmentRequest in enrollmentService:: passed the null check for Billing Address");
-		}
+
 		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressAptNumber())
 				|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetName())
 						|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
@@ -607,9 +603,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		moveInDate = oeSignUpDTO.getServiceStartDate();
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,moveInDate is ::{}" , moveInDate);
-		}
+		logger.debug("EnrollmentService creating submitEnrollmentRequest,moveInDate is ::{}" , moveInDate);
+
 
 		if (StringUtils.isNotBlank(oeSignUpDTO.getTransactionType())
 				&& MVI.equalsIgnoreCase(oeSignUpDTO.getTransactionType())) {
@@ -626,15 +621,13 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			}
 		}		
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,contactText is ::{}" , contactText);
-		}
+		logger.debug("EnrollmentService creating submitEnrollmentRequest,contactText is ::{}" , contactText);
+
 
 		submitEnrollRequest.setStrEnrollmentType(enrollmentType);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::{}" , enrollmentType);
-		}
+		logger.debug("EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::{}" , enrollmentType);
+
 
 		if (oeSignUpDTO.getPreferredLanguageCode() != null) {
 			if ((oeSignUpDTO.getPreferredLanguageCode()).equalsIgnoreCase(ES)) {
@@ -701,25 +694,17 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		 
 		agreementNumber = WEB_PREFIX_OA_GME + StringUtils.leftPad(String.valueOf(timestamp.getTime()).substring(0,10), 15, '0');
-		if (logger.isDebugEnabled()) {
-			logger.debug(
+
+		logger.debug(
 					"EnrollmentService creating submitEnrollmentRequest,agreementNumber() is ::{}" , agreementNumber);
-		}
+		
 		submitEnrollRequest.setStrAgreementNumber(agreementNumber);
 
 		submitEnrollRequest.setStrSvrcFileTestStatus(FLAG_C);
 
-		if (logger.isDebugEnabled()) {
 			logger.debug("EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getPerson()() is ::{}"
 					, oeSignUpDTO.getFirstName());
-		}
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getServiceAddress()() is ::{}"
-					+ oeSignUpDTO.getServiceAddressAptNumber() + oeSignUpDTO.getBillingAddressStreetName()
-					+ oeSignUpDTO.getServiceAddressStreetNumber() + oeSignUpDTO.getServiceAddressCity()
-					+ oeSignUpDTO.getServiceAddressZipCode());
-		}
 
 		submitEnrollRequest.setStrSvrcStreet(oeSignUpDTO.getBillingAddressStreetName());
 		submitEnrollRequest.setStrSvrcAptNum(oeSignUpDTO.getServiceAddressAptNumber());
@@ -774,10 +759,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			else
 				enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + SWITCHHOLD;
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug(
+
+		logger.debug(
 					"EnrollmentService creating submitEnrollmentRequest,enrollmentHoldType is ::{}" , enrollmentHoldType);
-		}
 		submitEnrollRequest.setStrEnrollmentHoldType(enrollmentHoldType);
 		BigDecimal reqAmt = null;
 		if (StringUtils.isNotBlank(requestedAmount)) {
@@ -796,9 +780,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
 		submitEnrollRequest.setStrFreqFlyerNo(EMPTY);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("submitEnrollmentRequest: value of WebTSDP is ::{}" , oeSignUpDTO.getTdspCode());
-		}
+		logger.debug("submitEnrollmentRequest: value of WebTSDP is ::{}" , oeSignUpDTO.getTdspCode());
+
 		submitEnrollRequest.setStrWebTsdp(this.appConstMessageSource
 				.getMessage("ccs.tdsp.web.equivalent." + oeSignUpDTO.getTdspCode(), null, null));
 		submitEnrollRequest.setStrAgentId(EMPTY);
@@ -1052,17 +1035,24 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 																			// set
 																			// to
 																			// null.
+		AlertPrefDTO dailyBalSumDTO = null;
 		AlertPrefDTO lowAccBalDTO = null;
+		AlertPrefDTO tollTagBalDTO = null;
 		AlertPrefDTO payReceivedDTO = null;
 		AlertPrefDTO weeklySumDTO = null;
 		List<AlertPrefDTO> subscribeRequestList = new ArrayList<>();
-		if (!StringUtils.isEmpty(strLowAcctBal)) {
-			lowAccBalDTO = new AlertPrefDTO();
-			lowAccBalDTO.setStrEventId(GME_BAL_ALERT);
-			lowAccBalDTO.setStrParamName(COMM_PREF);
-			lowAccBalDTO.setStrParamValue(strLowAcctBal);
-			subscribeRequestList.add(lowAccBalDTO);
-		}
+		
+		dailyBalSumDTO = new AlertPrefDTO();
+		dailyBalSumDTO.setStrEventId(GME_PP_ALERT_DBA1);
+		dailyBalSumDTO.setStrParamName(COMM_PREF);
+		dailyBalSumDTO.setStrParamValue("E");
+		subscribeRequestList.add(dailyBalSumDTO);
+		
+		tollTagBalDTO = new AlertPrefDTO();
+		tollTagBalDTO.setStrEventId(PP_ALERT4);
+		tollTagBalDTO.setStrParamName(COMM_PREF);
+		tollTagBalDTO.setStrParamValue("E");
+		subscribeRequestList.add(tollTagBalDTO);		
 
 		if (!StringUtils.isEmpty(strPayReceived)) {
 			payReceivedDTO = new AlertPrefDTO();
