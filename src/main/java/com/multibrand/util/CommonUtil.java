@@ -2121,4 +2121,34 @@ public class CommonUtil implements Constants {
 			return companyCodeList.contains(value.trim());
 		}
 	}
+	
+	public static String getTrackingIdFromResponse(Response response){
+		String trackingId = EMPTY;
+		List trackingIdList = response.getMetadata().get(CONST_TRACKING_ID);
+		if(trackingIdList != null && trackingIdList.size()>0){
+			trackingId = (String) trackingIdList.get(0);
+		}
+		return trackingId;
+	}
+	
+	public static String getCompleteAddress(String aptNum,String streetAddr, 
+			String city,String zipCode)
+	{
+		String completeAddress=null;
+		if(StringUtils.isNotEmpty(aptNum))
+		{
+			completeAddress=streetAddr+ ", "+"#"+aptNum;}
+		else 
+		{
+			completeAddress=streetAddr;}
+		
+		if(StringUtils.isNotEmpty(city))
+		{
+			completeAddress=completeAddress+", "+city;
+		}
+		completeAddress=completeAddress+", "+TX;
+		if(StringUtils.isNotEmpty(zipCode))
+			{completeAddress=completeAddress+", "+zipCode;}
+		return completeAddress;
+	}
 }

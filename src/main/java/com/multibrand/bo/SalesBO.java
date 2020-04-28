@@ -99,6 +99,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				IdentityResponse identityResponse = new IdentityResponse();
 				BeanUtils.copyProperties(affiliateResponse, identityResponse);
 				response = Response.status(response.getStatus()).entity(identityResponse).build();
+				response.getMetadata().add(CONST_TRACKING_ID, identityResponse.getTrackingId());
 			}
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch", e);

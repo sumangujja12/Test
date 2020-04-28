@@ -118,7 +118,7 @@ public class SalesAPIResource extends BaseResource {
    			
    		}finally{
    			try {
-   				utilityloggerHelper.logSalesAPITransaction(API_IDENTITY, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   				utilityloggerHelper.logSalesAPITransaction(API_IDENTITY, false, request, response, CommonUtil.getElapsedTime(startTime), CommonUtil.getTrackingIdFromResponse(response), EMPTY);
    			} catch(Exception en){
    				logger.error("Exception utilityloggerHelper.logSalesAPITransaction ",en);
    			}
