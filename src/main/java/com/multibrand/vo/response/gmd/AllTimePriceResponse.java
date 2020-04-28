@@ -1,29 +1,29 @@
 package com.multibrand.vo.response.gmd;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
-
 import com.multibrand.vo.response.GenericResponse;
 
 @XmlRootElement
 @XmlSeeAlso({AllTimePriceResponse.class})
 public class AllTimePriceResponse extends GenericResponse {
 
-	private List<AllTimePrice> allTimePriceList;
+    private BigDecimal avgAllTimePrice;
 
 	/**
-	 * @return the allTimePriceList
+	 * @return the avgAllTimePrice
 	 */
-	public List<AllTimePrice> getAllTimePriceList() {
-		return allTimePriceList;
+	public BigDecimal getAvgAllTimePrice() {
+		return avgAllTimePrice;
 	}
 
 	/**
-	 * @param allTimePriceList the allTimePriceList to set
+	 * @param avgAllTimePrice the avgAllTimePrice to set
 	 */
-	public void setAllTimePriceList(List<AllTimePrice> allTimePriceList) {
-		this.allTimePriceList = allTimePriceList;
+	public void setAvgAllTimePrice(BigDecimal avgAllTimePrice) {
+		this.avgAllTimePrice = avgAllTimePrice;
 	}
+
 }

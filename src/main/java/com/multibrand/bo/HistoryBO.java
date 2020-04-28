@@ -1,5 +1,6 @@
 package com.multibrand.bo;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -1495,7 +1496,7 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 
 				allTimePriceResponse.setResultCode(RESULT_CODE_SUCCESS);
 				allTimePriceResponse.setResultDescription(MSG_SUCCESS);
-				allTimePriceResponse.setAllTimePriceList(allTimePriceResp.getAllTimePriceList());
+				allTimePriceResponse.setAvgAllTimePrice(new BigDecimal(allTimePriceResp.getAllTimePriceList().get(0).getAvgAllTimePrice()));
 				
 				logger.info(" END of the getUsage() Helpermethod");
 				return allTimePriceResponse;
