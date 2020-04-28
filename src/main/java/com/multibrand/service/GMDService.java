@@ -325,7 +325,7 @@ public class GMDService extends BaseAbstractService {
 				if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
 					pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
 				} else {
-					pastSeries.setPrice(new BigDecimal(0.00));
+					pastSeries.setPrice(new BigDecimal("0.00"));
 				}
 				pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
 				
