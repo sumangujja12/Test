@@ -467,7 +467,6 @@ public class GMDService extends BaseAbstractService {
 		try {
 			Method method = obj.getClass().getDeclaredMethod(methodName);
 		
-			method.setAccessible(true);
 			return method.invoke(obj, null);
 		} catch(IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 			logger.error("Exception getMethodRun {} ",ex);

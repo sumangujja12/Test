@@ -1388,11 +1388,11 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 
 		} catch (Exception e) {
 
-			logger.info(" Exeception Occured in the getZoneIdByEsiId" + e.getMessage());
+			logger.info(" Exeception Occured in the getZoneIdByEsiId{}" , e.getMessage());
 
 			logger.error(e.getMessage());
 			logger.error(e.getCause());
-			logger.error(" Error {}", e.getMessage());
+			logger.error(" Error in getZoneIdByEsiId {}", e.getMessage());
 
 			response = new GMDZoneByEsiIdResponseVO();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -1505,7 +1505,7 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 			}
 
 		} catch (Exception e) {
-			logger.error(" Error {}", e.getMessage());
+			logger.error(" Error in getAllTimePrice{}", e.getMessage());
 			allTimePriceResponse = new AllTimePriceResponse();
 			allTimePriceResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			allTimePriceResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);

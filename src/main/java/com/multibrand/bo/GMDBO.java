@@ -139,7 +139,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			String transactionType, String locale, String esid) {
 
 		String methodName = "OEBO: getESIDAndCalendarDates(..)";
-		logger.debug("Start:{}" , methodName);
+		logger.debug("Start in getESIDAndCalendarDates:{}" , methodName);
 
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
 		ESIDDO esidDo = new ESIDDO();
@@ -201,7 +201,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				// Switch Hold ON scenario for SWI
 				if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
 						&& StringUtils.equals(esidDo.getSwitchHoldStatus(), SWITCH_HOLD_STATUS_ON)) {
-					logger.debug("ERROR:{}" , methodName);
+					logger.debug("ERROR in getESIDAndCalendarDates:{}" , methodName);
 					response.setStatusCode(STATUS_CODE_STOP);
 					response.setAvailableDates(EMPTY);
 					response.setSwitchHoldFlag(SWITCH_HOLD_STATUS_ON);
@@ -966,7 +966,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		logger.debug("End:{}" , methodName);
 
-		return null;
+		return false;
 	}
 	
 	/**
@@ -1150,19 +1150,20 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
 		String baseProdURL= envMessageReader.getMessage(Constants.GME_PROD_BASE_URL);
 		
+		String legalDocsExt = "/files/";
 		
 		GMDOfferResponse gmdOfferResponse = new GMDOfferResponse();
 		
-		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.efl.equivalent." + tdspCode, null, null));
 		
-		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+legalDocsExt +this.appConstMessageSource
 		.getMessage("gmd.offer.tos.equivalent." + tdspCode, null, null));
 		
-		gmdOfferResponse.setStrYRAACDocID(baseProdURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrYRAACDocID(baseProdURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.yraac.equivalent." + tdspCode, null, null));	
 		
-		gmdOfferResponse.setStrPrepayDisID(baseProdURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrPrepayDisID(baseProdURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.predis.equivalent." + tdspCode, null, null));			
 		
 		

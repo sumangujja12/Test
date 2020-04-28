@@ -574,9 +574,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		long startTime = CommonUtil.getStartTime();
 		
 		DailyHourlyPriceResponseVO response = new DailyHourlyPriceResponseVO();
-		logger.info("ca in the request is{} ", request.getContractAcctId());
-		logger.info("esiid in the request is {}", request.getEsiId());
-		logger.info("co in the request is {}", request.getContractId());
+
 		
 		Map<String, Object> inParams = new LinkedHashMap<>();
 		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<>();
