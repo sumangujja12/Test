@@ -143,7 +143,6 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
 		ESIDDO esidDo = new ESIDDO();
-		// AddressDO serviceAddressDO = new AddressDO();
 
 		Locale localeObj = null;
 
@@ -219,13 +218,11 @@ public class GMDBO extends BaseAbstractService implements Constants {
 					response.setErrorDescription(messageCodeText);
 				}
 
-				// ESID Active in company scenario (ESID active)
 				if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
 						&& (StringUtils.isNotEmpty(esidDo.getEsidStatus())
 								&& esidDo.getEsidStatus().equalsIgnoreCase(STATUS_ACTIVE))) {
 					logger.debug("ERROR:{}" , methodName);
-					// response.setResultCode(RESULT_CODE_SUCCESS);
-					// response.setResultDescription(RESULT_DESCRIPTION_ACTIVE_ESID);
+
 					response.setStatusCode(STATUS_CODE_STOP);
 					response.setAvailableDates(EMPTY);
 					response.setTdspFee(EMPTY);
@@ -247,7 +244,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 							this.msgSource.getMessage(MESSAGE_CODE_BUSINESS_METER, null, localeObj));
 					return response;
 				}
-			} // else return response;
+			} 
 
 			// GET tdsp calendar dates
 			this.getTdspDates(companyCode, transactionType, tdspCodeCCS, esidDo, response, localeObj);
@@ -256,17 +253,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			response.setErrorCode(RESULT_CODE_SUCCESS);
 			response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION + ": " + e.getMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
-			// response.setMessageCode(EMPTY);
-			// response.setMessageText(EMPTY);
+
 		} finally {
-			// Call update service location
-			/*
-			 * if (StringUtils.isNotBlank(trackingId)) {
-			 * this.updateServiceLocation(companyCode, trackingId, esidDo, response, esid);
-			 * }
-			 */
-			// response.setCompanyCode(companyCode);
-			// response.setBrandName(brandId);
+			
 		}
 
 		// Default to EMPTY if statusflag is "OFF"
@@ -599,7 +588,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		// START test logs
 		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressAptNumber())
 				|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetName())
-						| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
+						|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
 
 			submitEnrollRequest.setStrBPStreet(oeSignUpDTO.getBillingAddressStreetName());
 			submitEnrollRequest.setStrBPHouseNum(oeSignUpDTO.getBillingAddressStreetNumber());
@@ -618,7 +607,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		}
 		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressAptNumber())
 				|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetName())
-						| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
+						|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
 
 			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressAptNumber())) {
 				notifyAddress = oeSignUpDTO.getBillingAddressStreetName() + ", APT "
