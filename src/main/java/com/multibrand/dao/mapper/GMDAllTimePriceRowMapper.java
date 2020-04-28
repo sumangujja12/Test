@@ -19,7 +19,7 @@ public class GMDAllTimePriceRowMapper implements RowMapper<AllTimePrice>, Consta
 		
 		AllTimePrice allTimePrice = new AllTimePrice();
 		
-		allTimePrice.setAvgAllTimePrice(rs.getString(0));
+		allTimePrice.setAvgAllTimePrice(rs.getString(1));
 		
 		
 		return allTimePrice;

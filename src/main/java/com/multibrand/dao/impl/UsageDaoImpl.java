@@ -756,12 +756,15 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		BaseStoredProcedure storedProc = null;
 		
 		inParamsTypeMap.put(ESIID_IN_V,OracleTypes.VARCHAR );
-				
+		inParamsTypeMap.put(CONTRACT_ID_IN_V,OracleTypes.VARCHAR );
+		inParamsTypeMap.put(CONTRACT_ACT_ID_IN_V, OracleTypes.VARCHAR);		
        
 		inParams.put(ESIID_IN_V,request.getEsiId() );
+		inParams.put(CONTRACT_ID_IN_V,request.getContractId() );
+		inParams.put(CONTRACT_ACT_ID_IN_V,request.getContractAcctId() );
 		
 		
-		outParamsTypeMap.put(ZONE_OUT_REC, new ResultObject(
+		outParamsTypeMap.put(AT_PRICE_OUT_REC, new ResultObject(
 				OracleTypes.CURSOR, new GMDAllTimePriceRowMapper()));
 		
 		
@@ -769,7 +772,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		
 		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
 		storedProc = storedProcedure
-				.createStoredProcedure(smartJdbcTemplate, GMDSMART_ZONE_PROC,
+				.createStoredProcedure(smartJdbcTemplate, GMDSMART_ALL_TIME_PRICE_PROC,
 						inParams, inParamsTypeMap, outParamsTypeMap);
 		
 		// START (TIME LOG)
@@ -780,38 +783,39 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 			Map<String, Object> storedProcResult = storedProc.execute();
 		
 			
-		// Elapsed time in minutes (TIME LOG)
-		elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
-		String elapsedTimeDisp = elapsedTime > 0 ? elapsedTime + " seconds."
-				: "less than a second.";
-		logger.info(GMDSMART_ZONE_PROC + "-{}" , elapsedTimeDisp);
-
-		// END (TIME LOG)
+			// Elapsed time in minutes (TIME LOG)
+			elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
+			String elapsedTimeDisp = elapsedTime > 0 ? elapsedTime + " seconds."
+					: "less than a second.";
+			logger.info(GMDSMART_ALL_TIME_PRICE_PROC + "-{}" , elapsedTimeDisp);
+	
+			// END (TIME LOG)
 		
-		if (storedProcResult != null
-				&& (storedProcResult.get(RET_TYP_OUT_V) == null || storedProcResult
-						.get(RET_TYP_OUT_V).equals(""))) {
-			
-			List<AllTimePrice> storeResponseList = (List<AllTimePrice>)storedProcResult
-					.get(ZONE_OUT_REC);
-			if (storeResponseList != null) {
-				response.setAllTimePriceList(storeResponseList);
-			}
-						
-			
-		}		
-		} catch(Exception e) {
+			if (storedProcResult != null
+					&& (storedProcResult.get(RET_TYP_OUT_V) == null || storedProcResult
+							.get(RET_TYP_OUT_V).equals(""))) {
+				
+				List<AllTimePrice> storeResponseList = (List<AllTimePrice>)storedProcResult
+						.get(AT_PRICE_OUT_REC);
+				if (storeResponseList != null) {
+					response.setAllTimePriceList(storeResponseList);
+				}
+							
+				
+			}		
+		} catch(Throwable e) {
+			e.printStackTrace();
 			
 		}
 
-		utilityloggerHelper.logTransaction("getZoneInformFromDB", false,
+		utilityloggerHelper.logTransaction("getAllTimePriceFromDB", false,
 				request, response, "", CommonUtil.getElapsedTime(startTime),
 				"", sessionId, companyCode);
 		if(logger.isDebugEnabled()){
 			logger.debug(XmlUtil.pojoToXML(request));
 			logger.debug(XmlUtil.pojoToXML(response));
 		}
-		logger.info("Exiting getZoneInformFromDB in UsageDaoImpl");
+		logger.info("Exiting getAllTimePriceFromDB in UsageDaoImpl");
 		return response;
 	}
 	
