@@ -5647,6 +5647,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 								.validatePosId(request,oESignupDTO, serviceLoationResponse);
 						response = Response.status(200).entity(validPosIdResponse)
 								.build();
+						response.getMetadata().add(CONST_TRACKING_ID, validPosIdResponse.getTrackingId());
 						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
 								+ request.getAffiliateId()
 								+ "::rendering response pojo :: " + response);
