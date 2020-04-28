@@ -1469,8 +1469,8 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 	 * @return
 	 * @throws OAMException
 	 */
-	public AllTimePriceResponse getAllTimePrice(String accountNumber, String contractId, String esid, String curDate,
-			String sessionId, String companyCode) throws OAMException {
+	public AllTimePriceResponse getAllTimePrice(String accountNumber, String contractId, String esid,
+			String sessionId, String companyCode) {
 
 		logger.info(" START of the getGMDPrice() Helpermethod");
 		UsageRequestVO usageRequestVO = new UsageRequestVO();

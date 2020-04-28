@@ -139,12 +139,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
 		ESIDDO esidDo = null;
 
-		Locale localeObj = null;
+		Locale localeObj = new Locale("en", "US");
 
-		if (locale.equalsIgnoreCase(LANG_ES))
-			localeObj = new Locale("es", "US");
-		else
-			localeObj = new Locale("en", "US");
 
 		response.setEsid(EMPTY);
 		response.setMeterType(EMPTY);
@@ -230,7 +226,6 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				if (StringUtils.isNotEmpty(esidDo.getPremiseType())
 						&& !esidDo.getPremiseType().equalsIgnoreCase(RESI)) {
 					logger.debug("ERROR:{}" , methodName);
-					// response.setResultDescription(RESULT_DESCRIPTION_BUSINESS_METER);
 					response.setStatusCode(STATUS_CODE_STOP);
 					response.setAvailableDates(EMPTY);
 					response.setTdspFee(EMPTY);
@@ -516,19 +511,18 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			logger.debug("enrollmentService SubmitEnrollment creating request:: inside createSubmitEnrollRequest");
 		}
 
-		String bpFullName = EMPTY;
-		String enrollmentType = EMPTY;
-		String contactText = EMPTY;
-		String moveInDate = EMPTY;
-		String specialReadDate = EMPTY;
+		String bpFullName = "";
+		String enrollmentType = "";
+		String contactText = "";
+		String moveInDate = "";
 		String startSvrcDate = oeSignUpDTO.getServiceStartDate();
-		String notifyAddress = EMPTY;
-		String pointOfDeliveryId = EMPTY;
-		String requestedAmount = EMPTY;
-		String reasonSEcurityDeposit = EMPTY;
-		String depositCode = EMPTY;
-		String agreementNumber = EMPTY;
-		String enrollmentHoldType = EMPTY;
+		String notifyAddress = "";
+		String pointOfDeliveryId = "";
+		String requestedAmount = "";
+		String reasonSEcurityDeposit = "";
+		String depositCode = "";
+		String agreementNumber = "";
+		String enrollmentHoldType = "";
 
 		// oeSignUpDTO = prepareAdditionalEnrollmentRequestInfo(request, oeSignUpDTO);
 		// //VSOOD: COMMENTED FOR CLEANUP
@@ -825,7 +819,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		SubmitEnrollRequest submitEnrollRequest = createSubmitEnrollRequest(enrollmentRequest);
 		submitEnrollRequest.setBypassPosId(FLAG_X);//This is fo only GMD application
 		Gson gson = new Gson();
-		logger.info("Before submitting JSON:{}", gson.toJson(submitEnrollRequest));
+		logger.info("Before submitting JSON:{0}", gson.toJson(submitEnrollRequest));
 		SubmitEnrollResponse submitEnrollResponse = oeProxy.submitEnrollment(submitEnrollRequest);
 
 		logger.info("Error code: {}" , submitEnrollResponse.getStrErrCode());
@@ -903,12 +897,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			/** Cirro Changes Start - Msadriw1 */
 			List<UpdatePhoneDO> updatePhoneDOList = new ArrayList<>();
 
-			// set data for Home Phone Number
-			logger.info("inside processOeEnrollment:: setting evening phone number ");
-			/*
-			 * String strEveningPhone = oeSignupDTO.getEveningPhoneNo1() +
-			 * oeSignupDTO.getEveningPhoneNo2() + oeSignupDTO.getEveningPhoneNo3();
-			 */
+
 			logger.info("inside processOeEnrollment:: phone number is :: {}" , enrollmentRequest.getPhoneNumber());
 			if (StringUtils.isNotBlank(enrollmentRequest.getPhoneNumber())) {
 				logger.info("inside  setting evening ph number to Update PhoneDO");
@@ -918,13 +907,12 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				updatePhoneDOList.add(homePhoneDO);
 				logger.info("Setting HOME Phone ~~~ {}" , enrollmentRequest.getPhoneNumber());
 			}
-			if (null != updatePhoneDOList && !updatePhoneDOList.isEmpty()) {
+			if ( !updatePhoneDOList.isEmpty()) {
 				UpdatePhoneDO[] phoneDOArr = updatePhoneDOList.toArray(new UpdatePhoneDO[0]);
 				updateContactRequest.setPhoneDO(phoneDOArr);
 			}
 			updateContactRequest.setStrEmailId(enrollmentRequest.getEmailAddress());
-			logger.info(methodName + " tracking Number is :" + enrollmentRequest.getEsiId()
-					+ ": testing and recent call made till now is " + enrollmentRequest.getRecentCallMade());
+		
 			logger.info("Start: Async call updateContact(...)");
 			asyncHelper.updateContactInCRM(updateContactRequest);
 			logger.info("End: Async call updateContact(...)");

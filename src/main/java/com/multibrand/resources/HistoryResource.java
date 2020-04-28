@@ -527,7 +527,7 @@ public class HistoryResource
 			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
 			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
 		Response response = null;
-		AllTimePriceResponse allTimePriceResponse = historyBO.getAllTimePrice(accountNumber, contractId, esid, curDate,
+		AllTimePriceResponse allTimePriceResponse = historyBO.getAllTimePrice(accountNumber, contractId, esid,
 				httpRequest.getSession(true).getId(), companyCode);
 		response = Response.status(200).entity(allTimePriceResponse).build();
 		return response;
