@@ -604,7 +604,7 @@ public class OEResource extends BaseResource {
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_PERFORM_POSID_AND_BPMATCH, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_PERFORM_POSID_AND_BPMATCH, false, request, response, CommonUtil.getElapsedTime(startTime),  CommonUtil.getTrackingIdFromResponse(response), EMPTY);
    		}
        return response;
 	}

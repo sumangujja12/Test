@@ -2121,4 +2121,15 @@ public class CommonUtil implements Constants {
 			return companyCodeList.contains(value.trim());
 		}
 	}
+	
+	public static String getTrackingIdFromResponse(Response response){
+		String trackingId = EMPTY;
+		List trackingIdList = response.getMetadata().get(CONST_TRACKING_ID);
+		if(trackingIdList != null && trackingIdList.size()>0){
+			trackingId = (String) trackingIdList.get(0);
+		}
+		return trackingId;
+	}
+	
+	
 }
