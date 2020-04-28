@@ -503,7 +503,7 @@ public class HistoryResource
 			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
 			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
 		Response response = null;
-		HourlyPriceResponse hourlyPriceResponse = historyBO.getGMDPrice(accountNumber, contractId, esid, curDate,
+		HourlyPriceResponse hourlyPriceResponse = historyBO.getGMDPrice(accountNumber, contractId, esid,
 				httpRequest.getSession(true).getId(), companyCode);
 		response = Response.status(200).entity(hourlyPriceResponse).build();
 		return response;
