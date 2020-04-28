@@ -607,10 +607,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		} else {
 			submitEnrollRequest.setStrBPPOBoxCountry(COUNTRY_US);
 			submitEnrollRequest.setStrBPPOBoxRegion(oeSignUpDTO.getBillingAddressState());
-			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressZipCode()))
-				submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddressZipCode());
-			else
-				submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddressZipCode());
+			submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddressZipCode());
 			submitEnrollRequest.setStrBPPOBox(oeSignUpDTO.getBillingAddressPoBox());
 		}
 		// END test logs

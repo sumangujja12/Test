@@ -779,7 +779,6 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		long entryTime;
 		long elapsedTime;
 		entryTime = System.currentTimeMillis();
-		try {
 			Map<String, Object> storedProcResult = storedProc.execute();
 		
 			
@@ -803,10 +802,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 							
 				
 			}		
-		} catch(Throwable e) {
-			e.printStackTrace();
-			
-		}
+		
 
 		utilityloggerHelper.logTransaction("getAllTimePriceFromDB", false,
 				request, response, "", CommonUtil.getElapsedTime(startTime),
