@@ -693,8 +693,8 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		long entryTime;
 		long elapsedTime;
 		entryTime = System.currentTimeMillis();
-		try {
-			Map<String, Object> storedProcResult = storedProc.execute();
+			
+		Map<String, Object> storedProcResult = storedProc.execute();
 		
 			
 		// Elapsed time in minutes (TIME LOG)
@@ -717,10 +717,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 						
 			
 		}		
-		} catch(Exception e) {
-			
-		}
-
+		
 		utilityloggerHelper.logTransaction("getZoneInformFromDB", false,
 				request, response, "", CommonUtil.getElapsedTime(startTime),
 				"", sessionId, companyCode);
