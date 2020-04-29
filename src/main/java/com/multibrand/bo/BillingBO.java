@@ -3656,7 +3656,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setPaymentExtension(true);
 				DppDueDateAmountDO [] dppDueAmountDoList = payExtEligibleResponse.getDppDueDateAmountDoList();
 				List<DppValueVO> dppList = new LinkedList<DppValueVO>();
-				response.setDdpValue(dppList);
+				response.setDppValue(dppList);
 				response.setDpplanActive(payExtEligibleResponse.getDpplanActive());
 				response.setDpplanEligible(payExtEligibleResponse.getDpplanEligible());
 				response.setDppplanPending(payExtEligibleResponse.getDppplanPending());
