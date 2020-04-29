@@ -1297,11 +1297,12 @@ public class ValidationBO extends BaseBO {
 				
 				//pass past history address in message text
 				 pastHistoryAddress=CommonUtil.getCompleteAddress(response.getExistingAptNum(),
-						response.getExistingStreetAddress(),
+						 CommonUtil.stripStreetNum(response.getExistingStreetAddress()),
+						 CommonUtil.stripStreetName(response.getExistingStreetAddress()),
 						response.getExistingCity(),
 						response.getExistingZip());
 			}
-			response.setMessageText(msgSource.getMessage(POSID_PASTSERVICE_MSG_TXT,
+			response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
 					new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
 					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())).concat(msgSource.getMessage(POSID_PASTSERVICE_MSG_TXT)+" "+pastHistoryAddress));
 			
