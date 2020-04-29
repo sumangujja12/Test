@@ -4671,14 +4671,18 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		
 		UCCDataResponse uccDataResponse = new UCCDataResponse();
 		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 
 		if (StringUtils.isNotEmpty(uccDataRequest.getTrackingId()))
 			requestData.setTrackingId(uccDataRequest.getTrackingId());
 		requestData.setCompanyCode(uccDataRequest.getCompanyCode());
+		
 
 		ServiceLocationResponse serviceLocationResponse =  getEnrollmentData(uccDataRequest.getTrackingId());
 		
 		if(serviceLocationResponse != null){
+			
+			serviceLocationResponseErrorList = CommonUtil.getErrorCodeListFromPipeSeparatedString(serviceLocationResponse.getErrorCdlist());
 			
 			if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
 					|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), uccDataRequest.getLastName())) ) {
@@ -4708,16 +4712,19 @@ private TLPOfferDO[] constructTLPOfferDOList(
 						requestData.setPayCode(YES);	
 						requestData.setDepositCode(DEPOSIT_OWED);
 						requestData.setDepositAmount(uccDataRequest.getDepositAmount());
+						serviceLocationResponseErrorList.add(DEPOSITHOLD);
 						
 					} else {					
 						requestData.setPayCode(FLAG_NO);
 						requestData.setDepositCode(DEPOSIT_NONE);
 						requestData.setDepositAmount(ZERO);
+						serviceLocationResponseErrorList.remove(DEPOSITHOLD);
 					}
 					
 		
 					/* Updating service location affiliate table */
 					requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(uccDataRequest.getCallExecuted(),serviceLocationResponse.getCallExecutedFromDB()));
+					requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
 					String errorCode = this.updateServiceLocation(requestData);
 					if (StringUtils.isNotBlank(errorCode)){
 						logger.debug("Finished processing updateServiceLocation, errorCode = "

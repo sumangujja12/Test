@@ -1284,15 +1284,26 @@ public class ValidationBO extends BaseBO {
 		}
 		else if(StringUtils.equals(messageCode, PAST_BALANCE)){
 			response.setMessageCode(POSID_PASTDUE);
-			response.setMessageText(msgSource.getMessage(POSID_PASTDUE_MSG_TXT,
+			response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
 					new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
-					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())).concat( msgSource.getMessage(POSID_PASTDUE_MSG_TXT,
+							new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
+							CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode()))));
 		}
 		else if(StringUtils.equals(messageCode, PAST_SERVICE_HISTORY)) {
 			response.setMessageCode(POSID_PASTSERVICE);
+			String pastHistoryAddress = "";
+			if(null!=response){
+				
+				//pass past history address in message text
+				 pastHistoryAddress=CommonUtil.getCompleteAddress(response.getExistingAptNum(),
+						response.getExistingStreetAddress(),
+						response.getExistingCity(),
+						response.getExistingZip());
+			}
 			response.setMessageText(msgSource.getMessage(POSID_PASTSERVICE_MSG_TXT,
 					new String[] {CommonUtil.getCompanyName(performPosIdBpRequest.getBrandId(),performPosIdBpRequest.getCompanyCode())},
-					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())));
+					CommonUtil.localeCode(performPosIdBpRequest.getLanguageCode())).concat(msgSource.getMessage(POSID_PASTSERVICE_MSG_TXT)+" "+pastHistoryAddress));
 			
 		}
 		
