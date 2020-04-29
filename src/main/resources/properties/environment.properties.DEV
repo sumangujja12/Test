@@ -149,6 +149,8 @@ ce.pub.id_en=143
 ce.pub.id_es=144
 gm.pub.id_en=123
 gm.pub.id_es=124
+xoom.pub.id_en=366
+xoom.pub.id_es=367
 
 re.taxonomy.id = 301
 pw.taxonomy.id = TODO
@@ -182,3 +184,10 @@ contractAccountNumberRetro=000010474734
 CCS_GMD_STMT=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/z_e_isu_get_gmd_stmt/z_e_isu_get_gmd_stmt
 CCS_PRICE_STMT = http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/900/z_e_isu_get_gmd_price/z_e_isu_get_gmd_price
 gmd_price_current_date =04/14/2020
+
+
+
+#Content Service 
+content.server.endpoint.url=http://txaixebnbld01.retail.nrgenergy.com:18081/client/v2/content.svc/
+#File
+documentum.endpoint=https://dev-texas.xoomenergy.com/files/{0}.pdf

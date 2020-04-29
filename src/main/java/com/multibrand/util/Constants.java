@@ -1453,7 +1453,19 @@ public interface Constants {
 	
 	public static final String OR = "%20OR%20";
 	public static final String ERROR = "error";
-	 public static final String TEFLF = "TEFLF";
-	 public static final String DISC = "DISC";
+	public static final String TEFLF = "TEFLF";
+	public static final String DISC = "DISC";
+	 
+	public static final String XOOM_COMPANY_CODE = "0586";
+	public static final String XOOM_BRAND_NAME = "XM";
+	public static final String XOOM_EBILL_EXTERNAL_ID_EN = "XOOM.EBILL.UPDATE.CONFIRMATION.EN_US";
+	public static final String XOOM_EBILL_EXTERNAL_ID_ES = "XOOM.EBILL.UPDATE.CONFIRMATION.ES_US";
+	public static final String XOOM_EBILL_TEMPLATE_ID = "HTML";
+	
+	public static final String XOOM_EBILL_CA = "CA_NUMBER";
+	public static final String XOOM_EBILL_CHECK_DIGIT = "CHECK_DIGIT";
+	public static final String XOOM_EBILL_NAME_ON_ACCOUNT = "CA_NAME";
+	public static final String XOOM_EBILL_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
+	public static final String XOOM_EBILL_DELIVERY_LOCATION = "DELIVERY_LOCATION";
 	
 }
