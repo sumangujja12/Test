@@ -761,6 +761,7 @@ public interface Constants {
 	public static final String CCSERR = "CCSERR";
 	
 	public static String BILLING_ADDRESS_ERROR_MESSAGE = "Billing address can either have Street address or PO Box, not both";
+	public static String BILLING_ADDRESS_EMPTY_ERROR_MESSAGE = "Billing address should have atleast Street address or PO Box, not blank";
 	
 	public static final String DELIMITER_SEMI_COLON = ";";
 	

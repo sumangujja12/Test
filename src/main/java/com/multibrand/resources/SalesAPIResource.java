@@ -346,7 +346,7 @@ public class SalesAPIResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
-			SalesCleanupAddressResponse salesCleanupAddressResponse = salesBO.getCleanupAddress(request);
+			SalesCleanupAddressResponse salesCleanupAddressResponse = salesBO.getCleanedUpAddress(request);
 	    	Response.Status status = salesCleanupAddressResponse.getHttpStatus() != null ? salesCleanupAddressResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(salesCleanupAddressResponse).build();
 	    } catch (Exception e) {
