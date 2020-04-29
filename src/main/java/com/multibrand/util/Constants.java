@@ -1441,5 +1441,19 @@ public interface Constants {
    public static final String INDEFINITE_END_DATE = "12/31/9999";
    
    public static final String GMD_PRICE_IRW_DATE = "gmd_price_current_date";   
+   
+	//Content Service metadata
+	public static final String CUSTOM_METADATA= "CustomMetas%28%29?&$filter=(PublicationId%20eq%20";
+	
+	public static final String KEY_NAME = "%20and%20keyName%20eq%20%27offerCodesLookup%27%20and%20(";
+	
+	public static final String STRING_VALUE = "StringValue%20eq%20%27";
+	
+	public static final String JSON_FORMAT_COMPONENT_PRESENTATION = "))&$expand=Component/ComponentPresentations&$format=json";
+	
+	public static final String OR = "%20OR%20";
+	public static final String ERROR = "error";
+	 public static final String TEFLF = "TEFLF";
+	 public static final String DISC = "DISC";
 	
 }
