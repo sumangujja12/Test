@@ -2507,7 +2507,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		Locale localeObj = null;
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		
-		String errorCodeFromDB = serviceLoationResponse.getErrorCode();
+		String errorCodeFromDB = EMPTY;
 		String errorCodeFromAPI = "";
 		String[] validErrorCd= {"NESID","MESID","SWHOLD"};
 
@@ -2530,6 +2530,10 @@ public class OEBO extends OeBoHelper implements Constants{
 			serviceLocationResponseErrorList = CommonUtil.getErrorCodeListFromPipeSeparatedString(serviceLoationResponse.getErrorCdlist());
 			}
 	    	
+			if(serviceLoationResponse != null){
+				errorCodeFromDB = serviceLoationResponse.getErrorCode();
+			}
+			
 			constructServiceAddressDO(serviceAddressDO, servStreetNum, servStreetName, servStreetAptNum,servZipCode );
 
 			if (StringUtils.isNotBlank(servStreetName)) {
