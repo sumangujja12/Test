@@ -1022,7 +1022,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-			<version>18</version>
+			<version>19</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
