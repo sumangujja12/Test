@@ -728,7 +728,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setStrCCNumber(ccNumber);
 		if(cvvNumber!=null)
 			request.setStrCVVNumber(cvvNumber);
-		//request.setStrDuplicatePayment("X");
+		request.setStrDuplicatePayment("X");
 		request.setStrExpirationDate(expirationDate);
 		request.setStrPayAmount(paymentAmount);
 		request.setStrBillingZip(billingZip);
