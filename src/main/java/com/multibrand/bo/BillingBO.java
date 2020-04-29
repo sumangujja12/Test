@@ -728,7 +728,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setStrCCNumber(ccNumber);
 		if(cvvNumber!=null)
 			request.setStrCVVNumber(cvvNumber);
-		//request.setStrDuplicatePayment("X");
+		request.setStrDuplicatePayment("X");
 		request.setStrExpirationDate(expirationDate);
 		request.setStrPayAmount(paymentAmount);
 		request.setStrBillingZip(billingZip);
@@ -3634,6 +3634,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setBrandId(payRequest.getBrandName());
 		request.setCompanyCode(payRequest.getCompanyCode());
 		request.setContAccount(payRequest.getContractAccountNumber());
+		request.setContract(payRequest.getContractId());
 		request.setDppBypassElg(this.appConstMessageSource.getMessage(Constants.DPP_BYPASS_ELIGIBLE_FLAG, null, null));
 		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
 		
