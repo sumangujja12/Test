@@ -17,6 +17,7 @@ import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.AllTimePriceResponseVO;
 import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
 import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 import java.util.List;
@@ -98,4 +99,8 @@ public class UsageHelper
         logger.info(" START getWeeklyUsageByHuorlyDetails Method");
         return usageDAOImpl.getWeeklyUsageByHuorlyDetails(esiId, contractId, fromDate , toDate);
     }
+	
+	public AllTimePriceResponseVO getAllTimePriceFromDB(UsageRequestVO request,String sessionId, String companyCode) {
+		return usageDAOImpl.getAllTimePriceFromDB(request,sessionId, companyCode);
+	}	
 }

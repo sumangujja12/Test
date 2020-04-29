@@ -1,5 +1,6 @@
 package com.multibrand.bo;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -51,6 +52,8 @@ import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageHistory;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.AllTimePriceResponse;
+import com.multibrand.vo.response.gmd.AllTimePriceResponseVO;
 import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
 import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
@@ -1392,11 +1395,11 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 
 		} catch (Exception e) {
 
-			logger.info(" Exeception Occured in the getZoneIdByEsiId" + e.getMessage());
+			logger.info(" Exeception Occured in the getZoneIdByEsiId{}" , e.getMessage());
 
 			logger.error(e.getMessage());
 			logger.error(e.getCause());
-			logger.error(" Error {}", e.getMessage());
+			logger.error(" Error in getZoneIdByEsiId {}", e.getMessage());
 
 			response = new GMDZoneByEsiIdResponseVO();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -1417,8 +1420,8 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 	 * @return
 	 * @throws OAMException
 	 */
-	public HourlyPriceResponse getGMDPrice(String accountNumber, String contractId, String esid, String curDate,
-			String sessionId, String companyCode) throws OAMException {
+	public HourlyPriceResponse getGMDPrice(String accountNumber, String contractId, String esid,
+			String sessionId, String companyCode)  {
 
 		logger.info(" START of the getGMDPrice() Helpermethod");
 		UsageRequestVO usageRequestVO = new UsageRequestVO();
@@ -1462,5 +1465,61 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 		}
 		return hourlyPriceResponse;
 	}
+	
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param currentDate
+	 * @param companyCode
+	 * @return
+	 * @throws OAMException
+	 */
+	public AllTimePriceResponse getAllTimePrice(String accountNumber, String contractId, String esid,
+			String sessionId, String companyCode) {
+
+		logger.info(" START of the getGMDPrice() Helpermethod");
+		UsageRequestVO usageRequestVO = new UsageRequestVO();
+		usageRequestVO.setContractAcctId(accountNumber);
+		usageRequestVO.setContractId(contractId);
+		usageRequestVO.setEsiId(esid);
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat(Constants.MM_dd_yyyy);		
+		usageRequestVO.setCurDtInd(formatter.format(date));
+
+		AllTimePriceResponseVO allTimePriceResp = null;
+		AllTimePriceResponse allTimePriceResponse = new AllTimePriceResponse();
+
+		try {
+
+			allTimePriceResp = usageHelper.getAllTimePriceFromDB(usageRequestVO, sessionId, companyCode);
+
+			if (allTimePriceResp != null && allTimePriceResp.getAllTimePriceList() != null
+					&& !allTimePriceResp.getAllTimePriceList().isEmpty()) {
+
+				allTimePriceResponse = new AllTimePriceResponse();
+
+				allTimePriceResponse.setResultCode(RESULT_CODE_SUCCESS);
+				allTimePriceResponse.setResultDescription(MSG_SUCCESS);
+				allTimePriceResponse.setAvgAllTimePrice(new BigDecimal(allTimePriceResp.getAllTimePriceList().get(0).getAvgAllTimePrice()));
+				
+				logger.info(" END of the getUsage() Helpermethod");
+				return allTimePriceResponse;
+			} else {
+				allTimePriceResponse.setResultCode(RESULT_CODE_THREE);
+				allTimePriceResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+			}
+
+		} catch (Exception e) {
+			logger.error(" Error in getAllTimePrice{}", e.getMessage());
+			allTimePriceResponse = new AllTimePriceResponse();
+			allTimePriceResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			allTimePriceResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), allTimePriceResponse);
+
+		}
+		return allTimePriceResponse;
+	}	
 }
 	

@@ -9,10 +9,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.bo.HistoryBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
@@ -20,6 +22,7 @@ import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.AllTimePriceResponse;
 import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.historyResponse.BillPaymentHistoryResponse;
@@ -571,10 +574,34 @@ public class HistoryResource
 			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
 			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
 		Response response = null;
-		HourlyPriceResponse hourlyPriceResponse = historyBO.getGMDPrice(accountNumber, contractId, esid, curDate,
+		HourlyPriceResponse hourlyPriceResponse = historyBO.getGMDPrice(accountNumber, contractId, esid,
 				httpRequest.getSession(true).getId(), companyCode);
 		response = Response.status(200).entity(hourlyPriceResponse).build();
 		return response;
 
 	}
+	
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param currentDate
+	 * @param companyCode
+	 * @return
+	 */
+	@POST
+	@Path("/getAllTimePrice")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getAllTimePrice(@FormParam("accountNumber") String accountNumber,
+			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
+			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		AllTimePriceResponse allTimePriceResponse = historyBO.getAllTimePrice(accountNumber, contractId, esid,
+				httpRequest.getSession(true).getId(), companyCode);
+		response = Response.status(200).entity(allTimePriceResponse).build();
+		return response;
+
+	}	
 }

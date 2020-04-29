@@ -576,6 +576,9 @@ public interface Constants {
 	public static final String BAL_ALERT = "WSB1";
 	public static final String LOW_ALERT = "TMD1";
 	public static final String PAY_ALERT = "PAY1";
+	public static final String GME_BAL_ALERT = "DBA1 ";
+	public static final String GME_PP_ALERT_DBA1="DBA1";
+	 public static final String PP_ALERT4 = "TTS1";
 	public static final String COMM_PREF = "COMMPREF";
 	public static final String PREPAY = "PREPAY";
 	public static final String ESIDNOTFOUND = "<ESIDNOTFOUND>";

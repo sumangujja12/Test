@@ -73,7 +73,7 @@ public class GMDService extends BaseAbstractService {
 		
 		logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::START"); 
 				
-		GMDStatementBreakDownResponse gmdStatementBreakDownResp = new GMDStatementBreakDownResponse();
+		GMDStatementBreakDownResponse gmdStatementBreakDownResp = null;
 		
 		long startTime = CommonUtil.getStartTime();
 		StringBuilder request = new StringBuilder();
@@ -108,9 +108,7 @@ public class GMDService extends BaseAbstractService {
           
           ZetGmdInvdate zetGmdInvdate = new ZetGmdInvdate();
           ZesGmdStmt zesGmdStmt = new ZesGmdStmt();
-          ZetGmdStmt zetGmdStmt = new ZetGmdStmt();
-          ZettGmdRetchr zettGmdRetchr = new ZettGmdRetchr();
-         
+          ZetGmdStmt zetGmdStmt = new ZetGmdStmt();        
 
          Holder<ZetGmdInvdate>  holderZetGmdInvdate = new Holder<>();
          holderZetGmdInvdate.value = zetGmdInvdate;
@@ -165,7 +163,7 @@ public class GMDService extends BaseAbstractService {
 		
 		logger.info("GMDService.getGMDPriceDetails::::::::::::::::::::START");
 		
-		GMDPricingResponse gmdPricingResp = new GMDPricingResponse();
+		GMDPricingResponse gmdPricingResp = null;
 		
 		long startTime = CommonUtil.getStartTime();
 		StringBuilder request = new StringBuilder();
@@ -209,7 +207,7 @@ public class GMDService extends BaseAbstractService {
 		try{
 			
 			stub.zEISUGETGMDPRICE(companyCode, accountNumber, esiId, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage, exTepProfValues,exZone);
-			gmdPricingResp = handleGMDCurrentPriceResponse(exTepProfValues, exCurrentDate, exCurrentPrice, exCurrentTime, exErrorMessage, response );
+			gmdPricingResp = handleGMDCurrentPriceResponse(exTepProfValues, exCurrentDate, exCurrentPrice, exCurrentTime, response );
 			
 		}catch(Exception ex){
 			utilityloggerHelper.logTransaction("getGMDPriceDetails", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -245,7 +243,7 @@ public class GMDService extends BaseAbstractService {
 	}	
 	
 	private GMDPricingResponse handleGMDCurrentPriceResponse( Holder<TEPROFVALUES> exTepProfValues, Holder<String> exCurrentDate,
-			Holder<BigDecimal> exCurrentPrice,  Holder<XMLGregorianCalendar> exCurrentTime, Holder<String> exErrorMessage, HourlyPriceResponse hourlyPriceResponse) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+			Holder<BigDecimal> exCurrentPrice,  Holder<XMLGregorianCalendar> exCurrentTime, HourlyPriceResponse hourlyPriceResponse)  {
 
 		GMDPricingResponse response = new GMDPricingResponse();
 	
@@ -303,7 +301,7 @@ public class GMDService extends BaseAbstractService {
 		return predictedSeriesList;
 	} 
 	
-	private List<PastSeries> getPastPrice(HourlyPriceResponse response) throws InvocationTargetException, IllegalAccessException, NoSuchMethodException {
+	private List<PastSeries> getPastPrice(HourlyPriceResponse response)  {
 		
 		
 		List<PastSeries> pastSeriesList = new ArrayList<>();
@@ -325,7 +323,7 @@ public class GMDService extends BaseAbstractService {
 				if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
 					pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
 				} else {
-					pastSeries.setPrice(new BigDecimal(0.00));
+					pastSeries.setPrice(new BigDecimal("0.00"));
 				}
 				pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
 				
@@ -467,7 +465,6 @@ public class GMDService extends BaseAbstractService {
 		try {
 			Method method = obj.getClass().getDeclaredMethod(methodName);
 		
-			method.setAccessible(true);
 			return method.invoke(obj, null);
 		} catch(IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
 			logger.error("Exception getMethodRun {} ",ex);
