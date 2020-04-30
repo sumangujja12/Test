@@ -4991,7 +4991,7 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 	KbaQuestionResponse kbaQuestionResponse = new KbaQuestionResponse();
 	try {
 					
-		kbaQuestionRequest = createKBAQuestionRequest(request);
+		kbaQuestionRequest = oeRequestHandler.createKBAQuestionRequest(request);
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
 		 response = createKBAQuestionResposne(kbaQuestionResponse);
 		 
@@ -5013,51 +5013,7 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
  * @param request
  * @return
  */
-private KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest request){
-	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
-	kbaQuestionRequest.setCompanyCode(request.getCompanyCode());
-	kbaQuestionRequest.setBrandName(request.getBrandId());
-	kbaQuestionRequest.setChannel(CHANNEL);
-	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
-	kbaQuestionRequest.setLanguageCode(request.getLanguageCode());
-	
-	kbaQuestionRequest.setFirstName(request.getFirstName());
-	kbaQuestionRequest.setLastName(request.getLastName());
-	kbaQuestionRequest.setMiddleName(request.getMiddleName());	
-	kbaQuestionRequest.setDob(request.getDob());
-	kbaQuestionRequest.setTokenizedSSN(request.gettokenizedSSN());		
-	if(StringUtils.isNotEmpty(request.getTokenizedTDL())){
-        kbaQuestionRequest.setTokenizedDrl(request.getTokenizedTDL());        
-        kbaQuestionRequest.setDlrState(request.getDrivingLicenseState());
-    } 
-	
-//	kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
-//	kbaQuestionRequest.setDlrState("TX");
-//	kbaQuestionRequest.setTokenizedSSN("2RD6VE6-5840");
-//	kbaQuestionRequest.setDlrState(null);
-	
-	
-	kbaQuestionRequest.setHomePhone(request.getPhoneNum());
-	kbaQuestionRequest.setEmailAddress(request.getEmail());
-	kbaQuestionRequest.setIpAddress(request.getIpAddress());
-	kbaQuestionRequest.setEsid(request.getEsid());
-	kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
-	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
-	
-	
-	com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
-	serviceAddressDTO.setStrStreetNum(request.getServStreetNum());
-	serviceAddressDTO.setStrStreetName(request.getServStreetName());		
-	serviceAddressDTO.setStrUnitNumber(request.getServStreetAptNum());
-	serviceAddressDTO.setStrCity(request.getServCity());
-	serviceAddressDTO.setStrState(request.getServState());
-	serviceAddressDTO.setStrZip(request.getServZipCode());
-	
-	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
-	kbaQuestionRequest.setPosidUniqueKey(request.getPosidUniqueKey());
-	
-	return kbaQuestionRequest;
-}
+
 
 
 /**
@@ -5114,7 +5070,7 @@ public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
  * @return
  */
 public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) throws Exception{
-	KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
+	
 	KbaAnswerResponse response = new KbaAnswerResponse();
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
 	LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
@@ -5134,22 +5090,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 		
 			}
 		}
-		
-		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
-		logger.info("KBAHelper.submitKBAAnswer questionAnswerList"+questionAnswerList);
-		request.setTransactionKey(kbaAnswerRequest.getTransactionKey());
-		
-		KbaQuizAnswerDTO[] answerArr = new KbaQuizAnswerDTO[questionAnswerList.size()];
-		int i =0;
-		for(KBAQuestionAnswerVO answerVO:questionAnswerList){
-			KbaQuizAnswerDTO quizAnswerDTO = new KbaQuizAnswerDTO();
-			quizAnswerDTO.setAnswerId(answerVO.getAnswerId());
-			quizAnswerDTO.setQuestionId(answerVO.getQuestionId());
-			quizAnswerDTO.setQuizId(answerVO.getQuizId());
-			answerArr[i] = quizAnswerDTO;
-			i++;
-		}
-		request.setKbaQuizAnswerArr(answerArr);
+		KbaSubmitAnswerRequest request = oeRequestHandler.createKBASubmitAnswerRequest(kbaAnswerRequest);
 
 		KbaSubmitAnswerResponse kbaSubmitAnswerResponse = oeService.submitKBAAnswer(request);
 		logger.info(kbaAnswerRequest.getTrackingId()+" kbaSubmitAnswerResponse : "+CommonUtil.doRender(kbaSubmitAnswerResponse));
@@ -5157,74 +5098,8 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 		logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
 		//kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
 		
-		if(StringUtils.isEmpty(kbaSubmitAnswerResponse.getStrErrCode())){				
-			String returnCode = kbaSubmitAnswerResponse.getReturnCode();
-			int intReturnCode = 0;
-			if(!StringUtils.isEmpty(returnCode)){
-				intReturnCode = Integer.parseInt(returnCode);
-			}
-			if(intReturnCode ==0){
-				if(null != kbaSubmitAnswerResponse 
-						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getSsnVerifyDate()) 
-						&&  !StringUtils.equalsIgnoreCase(kbaSubmitAnswerResponse.getSsnVerifyDate(), POSID_BLANK_DATE)){
-				
-					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
-							kbaSubmitAnswerResponse.getSsnVerifyDate());
-					response.setSsnVerifyDate(validatedDate);
-					
-					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
-						systemNotesList.add(KBA_LIFT_POSIDHOLD);
-					}
-					serviceLocationResponseErrorList.remove(POSIDHOLD);
-					
-				} else if(null != kbaSubmitAnswerResponse 
-						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getDlVerifyDate()) 
-						&& !StringUtils.equalsIgnoreCase(kbaSubmitAnswerResponse.getDlVerifyDate(), POSID_BLANK_DATE)){								
-					
-					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
-							kbaSubmitAnswerResponse.getDlVerifyDate());
-					response.setDrivingLicenceVerifyDate(validatedDate);
-					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
-						systemNotesList.add(KBA_LIFT_POSIDHOLD);
-					}
-					serviceLocationResponseErrorList.remove(POSIDHOLD);
-				}else{
-					response.setStatusCode(STATUS_CODE_CONTINUE);
-					response.setMessageCode(POSIDHOLD);
-					response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
-					serviceLocationResponseErrorList.add(POSIDHOLD);
-					errorCode = POSIDHOLD;
-					systemNotesList.add(KBA_SET_POSIDHOLD);
-				}
-				
-				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
-				if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
-					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
-						response.setErrorCode(RETRY_NOT_ALLOWED);
-						response.setErrorDescription(RETRY_NOT_ALLOWED_TXT);
-					
-					}
-				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
-				}
-			} else{
-				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
-				response.setStatusCode(STATUS_CODE_CONTINUE);
-				response.setMessageCode(POSIDHOLD);
-				response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
-				serviceLocationResponseErrorList.add(POSIDHOLD);
-				errorCode = POSIDHOLD;
-				systemNotesList.add(KBA_SET_POSIDHOLD);
-			}
-		}else{
-			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
-			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
-			response.setStatusCode(STATUS_CODE_CONTINUE);
-			response.setMessageCode(POSIDHOLD);
-			response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
-			serviceLocationResponseErrorList.add(POSIDHOLD);
-			errorCode = POSIDHOLD;
-			systemNotesList.add(KBA_SET_POSIDHOLD);
-		}
+		 errorCode = processKBASubmitAnswerResponse(kbaSubmitAnswerResponse, response, serviceLocationResponseErrorList, systemNotesList);
+		 
 		//update kba_api
 		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
 	}catch (Exception e) {
@@ -5343,16 +5218,7 @@ private KbaAnswerResponseDTO getKBAResponseOutputDTO(KbaResponseOutputDTO respon
 	return kbaResponseOutputDTO;
 }
 
-private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
-	List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
-	
-	if(kbaAnswerRequest.getQuestionList() != null){		
-		ObjectMapper mapper = new ObjectMapper();
-		questionAnswerList = mapper.convertValue(kbaAnswerRequest.getQuestionList(), new TypeReference<List<KBAQuestionAnswerVO>>() { });
-		
-	}
-	return questionAnswerList;
-}
+
 
 /**
  * Start: OE : Sprint3 : 14065 - Create New KBA Answers API :asingh
@@ -5445,7 +5311,7 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 		
 		serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
 		if(null !=serviceLocationResponse && StringUtils.isNotEmpty(serviceLocationResponse.getTrackingId())){
-			kbaQuestionRequest = createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
+			kbaQuestionRequest = oeRequestHandler.createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
 		}else {		
 			return response.populateInvalidTrackingAndGuidResponse();
 		}
@@ -5480,65 +5346,7 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 	return response;
 }
 
-private KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serviceLocationResponse,GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) throws ParseException{
-	KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest(); ;
-	
-	
-	kbaQuestionRequest.setCompanyCode(getOEKBAQuestionsRequest.getCompanyCode());
-	String brandName = CommonUtil.getBrandIdFromCompanycodeForCCS(getOEKBAQuestionsRequest.getCompanyCode(), getOEKBAQuestionsRequest.getBrandId());
-	kbaQuestionRequest.setBrandName(brandName);
-	kbaQuestionRequest.setChannel(CHANNEL);
-	kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
-	String langCode = (StringUtils.equalsIgnoreCase(getOEKBAQuestionsRequest.getLanguageCode(), LANG_ES))? LANG_ES:LANG_EN;
-	kbaQuestionRequest.setLanguageCode(langCode);
-	
-	kbaQuestionRequest.setFirstName(serviceLocationResponse.getPersonResponse().getFirstName());
-	kbaQuestionRequest.setLastName(serviceLocationResponse.getPersonResponse().getLastName());
-	kbaQuestionRequest.setMiddleName(serviceLocationResponse.getPersonResponse().getMiddleName());	
-	
-	Date serDate=new SimpleDateFormat("MMddyyyy").parse(serviceLocationResponse.getPersonResponse().getDob());
-	String finalSerDate = new SimpleDateFormat("MM/dd/yyyy").format(serDate);
-	kbaQuestionRequest.setDob(finalSerDate.toString());
-	
-	kbaQuestionRequest.setTokenizedSSN(serviceLocationResponse.getPersonResponse().getSsn());		
-	if(StringUtils.isNotEmpty(serviceLocationResponse.getPersonResponse().getIdNumber())){
-        kbaQuestionRequest.setTokenizedDrl(serviceLocationResponse.getPersonResponse().getIdNumber());        
-        kbaQuestionRequest.setDlrState(serviceLocationResponse.getPersonResponse().getIdStateOfIssue());
-    }
-	
-//	kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
-//	kbaQuestionRequest.setDlrState("TX");
-//	kbaQuestionRequest.setTokenizedSSN("2RD6VE6-5840");
-//	kbaQuestionRequest.setDlrState(null);
-	
-	
-	kbaQuestionRequest.setHomePhone(serviceLocationResponse.getPersonResponse().getPhoneNum());
-	kbaQuestionRequest.setEmailAddress(serviceLocationResponse.getPersonResponse().getEmail());
-	
-	
-	
-	kbaQuestionRequest.setIpAddress("");
-	kbaQuestionRequest.setEsid(serviceLocationResponse.getEsid());
-	kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
-	kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
-	
-	
-	com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
-	String streetNum = serviceLocationResponse.getServAddressLine1().substring(0, serviceLocationResponse.getServAddressLine1().indexOf(" "));
-	String streetName = serviceLocationResponse.getServAddressLine1().substring(serviceLocationResponse.getServAddressLine1().indexOf(" "));
-	
-	serviceAddressDTO.setStrStreetNum(streetNum);
-	serviceAddressDTO.setStrStreetName(streetName);		
-	serviceAddressDTO.setStrUnitNumber(serviceLocationResponse.getServAddressLine2());
-	serviceAddressDTO.setStrCity(serviceLocationResponse.getServCity());
-	serviceAddressDTO.setStrState(serviceLocationResponse.getServState());
-	serviceAddressDTO.setStrZip(serviceLocationResponse.getServZipCode());
-	
-	kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
-	kbaQuestionRequest.setPosidUniqueKey(serviceLocationResponse.getPosidSNRO());
-	
-	return kbaQuestionRequest;
-}
+
 
 /**
  * @author Kdeshmu1
@@ -6550,6 +6358,82 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			logger.debug(oeSignUpDTO.printOETrackingID()+" There is no agent information to Update ");
 		}
     }
+    
+    private String processKBASubmitAnswerResponse (KbaSubmitAnswerResponse kbaSubmitAnswerResponse,
+    						KbaAnswerResponse response,LinkedHashSet<String> serviceLocationResponseErrorList,
+    						LinkedHashSet<String>  systemNotesList){
+    	
+    	String errorCode = EMPTY;
+    	if(StringUtils.isEmpty(kbaSubmitAnswerResponse.getStrErrCode())){				
+			String returnCode = kbaSubmitAnswerResponse.getReturnCode();
+			int intReturnCode = 0;
+			if(!StringUtils.isEmpty(returnCode)){
+				intReturnCode = Integer.parseInt(returnCode);
+			}
+			if(intReturnCode ==0){
+				if(null != kbaSubmitAnswerResponse 
+						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getSsnVerifyDate()) 
+						&&  !StringUtils.equalsIgnoreCase(kbaSubmitAnswerResponse.getSsnVerifyDate(), POSID_BLANK_DATE)){
+				
+					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
+							kbaSubmitAnswerResponse.getSsnVerifyDate());
+					response.setSsnVerifyDate(validatedDate);
+					
+					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
+						systemNotesList.add(KBA_LIFT_POSIDHOLD);
+					}
+					serviceLocationResponseErrorList.remove(POSIDHOLD);
+					
+				} else if(null != kbaSubmitAnswerResponse 
+						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getDlVerifyDate()) 
+						&& !StringUtils.equalsIgnoreCase(kbaSubmitAnswerResponse.getDlVerifyDate(), POSID_BLANK_DATE)){								
+					
+					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
+							kbaSubmitAnswerResponse.getDlVerifyDate());
+					response.setDrivingLicenceVerifyDate(validatedDate);
+					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
+						systemNotesList.add(KBA_LIFT_POSIDHOLD);
+					}
+					serviceLocationResponseErrorList.remove(POSIDHOLD);
+				}else{
+					response.setStatusCode(STATUS_CODE_CONTINUE);
+					response.setMessageCode(POSIDHOLD);
+					response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+					serviceLocationResponseErrorList.add(POSIDHOLD);
+					errorCode = POSIDHOLD;
+					systemNotesList.add(KBA_SET_POSIDHOLD);
+				}
+				
+				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
+				if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
+					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
+						response.setErrorCode(RETRY_NOT_ALLOWED);
+						response.setErrorDescription(RETRY_NOT_ALLOWED_TXT);
+					
+					}
+				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
+				}
+			} else{
+				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
+				response.setStatusCode(STATUS_CODE_CONTINUE);
+				response.setMessageCode(POSIDHOLD);
+				response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+				serviceLocationResponseErrorList.add(POSIDHOLD);
+				errorCode = POSIDHOLD;
+				systemNotesList.add(KBA_SET_POSIDHOLD);
+			}
+		}else{
+			logger.info("Error in KBAService.submitKBAAnswer method errorCode :"+kbaSubmitAnswerResponse.getStrErrCode());
+			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
+			response.setStatusCode(STATUS_CODE_CONTINUE);
+			response.setMessageCode(POSIDHOLD);
+			response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+			serviceLocationResponseErrorList.add(POSIDHOLD);
+			errorCode = POSIDHOLD;
+			systemNotesList.add(KBA_SET_POSIDHOLD);
+		}
+	    return errorCode;
+	}
 }
 	
 	

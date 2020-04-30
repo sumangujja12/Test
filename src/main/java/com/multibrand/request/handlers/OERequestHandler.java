@@ -1,10 +1,15 @@
 package com.multibrand.request.handlers;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.BeanUtils;
@@ -15,6 +20,9 @@ import com.multibrand.bo.OEBO;
 import com.multibrand.domain.AlertPrefDTO;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.FactorDetailDO;
+import com.multibrand.domain.KbaQuestionRequest;
+import com.multibrand.domain.KbaQuizAnswerDTO;
+import com.multibrand.domain.KbaSubmitAnswerRequest;
 import com.multibrand.domain.NewCreditScoreRequest;
 import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.SubmitEnrollRequest;
@@ -29,6 +37,9 @@ import com.multibrand.dto.PersonDTO;
 import com.multibrand.dto.request.CheckPermitRequest;
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
+import com.multibrand.dto.request.GetKBAQuestionsRequest;
+import com.multibrand.dto.request.GetOEKBAQuestionsRequest;
+import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.SalesCreditCheckRequest;
 import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
@@ -45,6 +56,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.vo.request.ESIDDO;
+import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.request.OESignupVO;
 import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.billingResponse.AddressDO;
@@ -1436,5 +1448,142 @@ public class OERequestHandler implements Constants {
 		request.setEsid(serviceLoationResponse.getEsid());
 		request.setCallExecuted(enrollmentRequest.getCallExecuted());
 		return request;
+	}
+	
+	public KbaQuestionRequest createKBAQuestionRequest(GetKBAQuestionsRequest request){
+		KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest();
+		kbaQuestionRequest.setCompanyCode(request.getCompanyCode());
+		kbaQuestionRequest.setBrandName(request.getBrandId());
+		kbaQuestionRequest.setChannel(CHANNEL);
+		kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
+		kbaQuestionRequest.setLanguageCode(request.getLanguageCode());
+		
+		kbaQuestionRequest.setFirstName(request.getFirstName());
+		kbaQuestionRequest.setLastName(request.getLastName());
+		kbaQuestionRequest.setMiddleName(request.getMiddleName());	
+		kbaQuestionRequest.setDob(request.getDob());
+		kbaQuestionRequest.setTokenizedSSN(request.gettokenizedSSN());		
+		if(StringUtils.isNotEmpty(request.getTokenizedTDL())){
+	        kbaQuestionRequest.setTokenizedDrl(request.getTokenizedTDL());        
+	        kbaQuestionRequest.setDlrState(request.getDrivingLicenseState());
+	    } 
+		
+//		kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
+//		kbaQuestionRequest.setDlrState("TX");
+//		kbaQuestionRequest.setTokenizedSSN("2RD6VE6-5840");
+//		kbaQuestionRequest.setDlrState(null);
+		
+		
+		kbaQuestionRequest.setHomePhone(request.getPhoneNum());
+		kbaQuestionRequest.setEmailAddress(request.getEmail());
+		kbaQuestionRequest.setIpAddress(request.getIpAddress());
+		kbaQuestionRequest.setEsid(request.getEsid());
+		kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
+		kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
+		
+		
+		com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
+		serviceAddressDTO.setStrStreetNum(request.getServStreetNum());
+		serviceAddressDTO.setStrStreetName(request.getServStreetName());		
+		serviceAddressDTO.setStrUnitNumber(request.getServStreetAptNum());
+		serviceAddressDTO.setStrCity(request.getServCity());
+		serviceAddressDTO.setStrState(request.getServState());
+		serviceAddressDTO.setStrZip(request.getServZipCode());
+		
+		kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
+		kbaQuestionRequest.setPosidUniqueKey(request.getPosidUniqueKey());
+		
+		return kbaQuestionRequest;
+	}
+	
+	public KbaSubmitAnswerRequest createKBASubmitAnswerRequest(KbaAnswerRequest kbaAnswerRequest) {
+		KbaSubmitAnswerRequest request = new KbaSubmitAnswerRequest();
+		List<KBAQuestionAnswerVO> questionAnswerList = constructKBAQuestionAnswerVOList(kbaAnswerRequest);
+		logger.info("KBAHelper.submitKBAAnswer questionAnswerList"+questionAnswerList);
+		request.setTransactionKey(kbaAnswerRequest.getTransactionKey());
+		
+		KbaQuizAnswerDTO[] answerArr = new KbaQuizAnswerDTO[questionAnswerList.size()];
+		int i =0;
+		for(KBAQuestionAnswerVO answerVO:questionAnswerList){
+			KbaQuizAnswerDTO quizAnswerDTO = new KbaQuizAnswerDTO();
+			quizAnswerDTO.setAnswerId(answerVO.getAnswerId());
+			quizAnswerDTO.setQuestionId(answerVO.getQuestionId());
+			quizAnswerDTO.setQuizId(answerVO.getQuizId());
+			answerArr[i] = quizAnswerDTO;
+			i++;
+		}
+		request.setKbaQuizAnswerArr(answerArr);
+		return request;
+	}
+	
+	private List<KBAQuestionAnswerVO> constructKBAQuestionAnswerVOList(KbaAnswerRequest kbaAnswerRequest){
+		List<KBAQuestionAnswerVO> questionAnswerList = new ArrayList();
+		
+		if(kbaAnswerRequest.getQuestionList() != null){		
+			ObjectMapper mapper = new ObjectMapper();
+			questionAnswerList = mapper.convertValue(kbaAnswerRequest.getQuestionList(), new TypeReference<List<KBAQuestionAnswerVO>>() { });
+			
+		}
+		return questionAnswerList;
+	}
+	
+	public KbaQuestionRequest createKBAQuestionRequest(ServiceLocationResponse serviceLocationResponse,GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) throws ParseException{
+		KbaQuestionRequest kbaQuestionRequest = new KbaQuestionRequest(); ;
+		
+		
+		kbaQuestionRequest.setCompanyCode(getOEKBAQuestionsRequest.getCompanyCode());
+		String brandName = CommonUtil.getBrandIdFromCompanycodeForCCS(getOEKBAQuestionsRequest.getCompanyCode(), getOEKBAQuestionsRequest.getBrandId());
+		kbaQuestionRequest.setBrandName(brandName);
+		kbaQuestionRequest.setChannel(CHANNEL);
+		kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
+		String langCode = (StringUtils.equalsIgnoreCase(getOEKBAQuestionsRequest.getLanguageCode(), LANG_ES))? LANG_ES:LANG_EN;
+		kbaQuestionRequest.setLanguageCode(langCode);
+		
+		kbaQuestionRequest.setFirstName(serviceLocationResponse.getPersonResponse().getFirstName());
+		kbaQuestionRequest.setLastName(serviceLocationResponse.getPersonResponse().getLastName());
+		kbaQuestionRequest.setMiddleName(serviceLocationResponse.getPersonResponse().getMiddleName());	
+		
+		Date serDate=new SimpleDateFormat("MMddyyyy").parse(serviceLocationResponse.getPersonResponse().getDob());
+		String finalSerDate = new SimpleDateFormat("MM/dd/yyyy").format(serDate);
+		kbaQuestionRequest.setDob(finalSerDate.toString());
+		
+		kbaQuestionRequest.setTokenizedSSN(serviceLocationResponse.getPersonResponse().getSsn());		
+		if(StringUtils.isNotEmpty(serviceLocationResponse.getPersonResponse().getIdNumber())){
+	        kbaQuestionRequest.setTokenizedDrl(serviceLocationResponse.getPersonResponse().getIdNumber());        
+	        kbaQuestionRequest.setDlrState(serviceLocationResponse.getPersonResponse().getIdStateOfIssue());
+	    }
+		
+//		kbaQuestionRequest.setTokenizedDrl("KR0PK39V-2290");
+//		kbaQuestionRequest.setDlrState("TX");
+//		kbaQuestionRequest.setTokenizedSSN("2RD6VE6-5840");
+//		kbaQuestionRequest.setDlrState(null);
+		
+		
+		kbaQuestionRequest.setHomePhone(serviceLocationResponse.getPersonResponse().getPhoneNum());
+		kbaQuestionRequest.setEmailAddress(serviceLocationResponse.getPersonResponse().getEmail());
+		
+		
+		
+		kbaQuestionRequest.setIpAddress("");
+		kbaQuestionRequest.setEsid(serviceLocationResponse.getEsid());
+		kbaQuestionRequest.setPosidBasedKBAFlag(FLAG_X);
+		kbaQuestionRequest.setFailFromPosidFlag(FLAG_X);
+		
+		
+		com.multibrand.domain.AddressDTO serviceAddressDTO = new com.multibrand.domain.AddressDTO();
+		String streetNum = serviceLocationResponse.getServAddressLine1().substring(0, serviceLocationResponse.getServAddressLine1().indexOf(" "));
+		String streetName = serviceLocationResponse.getServAddressLine1().substring(serviceLocationResponse.getServAddressLine1().indexOf(" "));
+		
+		serviceAddressDTO.setStrStreetNum(streetNum);
+		serviceAddressDTO.setStrStreetName(streetName);		
+		serviceAddressDTO.setStrUnitNumber(serviceLocationResponse.getServAddressLine2());
+		serviceAddressDTO.setStrCity(serviceLocationResponse.getServCity());
+		serviceAddressDTO.setStrState(serviceLocationResponse.getServState());
+		serviceAddressDTO.setStrZip(serviceLocationResponse.getServZipCode());
+		
+		kbaQuestionRequest.setServiceAddress(serviceAddressDTO);
+		kbaQuestionRequest.setPosidUniqueKey(serviceLocationResponse.getPosidSNRO());
+		
+		return kbaQuestionRequest;
 	}
 }
