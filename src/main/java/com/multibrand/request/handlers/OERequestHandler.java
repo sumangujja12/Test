@@ -1383,7 +1383,6 @@ public class OERequestHandler implements Constants {
 		} else {
 			creditCheckRequest.setBpMatchFlag(BPSD);
 		}
-		creditCheckRequest.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(salesCreditCheckRequest.getCallExecuted(),serviceLocationResponse.getCallExecutedFromDB()));
 		return creditCheckRequest;
 	}
 
@@ -1418,7 +1417,8 @@ public class OERequestHandler implements Constants {
 			}
 		}
 		request.setMviDate(serviceLoationResponse.getServiceStartDate());
-		request.setTransactionType(serviceLoationResponse.getServiceRequestTypeCode());
+		String transactioType = StringUtils.equals(serviceLoationResponse.getServiceRequestTypeCode(), TRANSACTIONTYPE_N) ? MVI :SWI;
+		request.setTransactionType(transactioType);
 		request.setTdspCodeCCS(serviceLoationResponse.getTdspCode());
 		request.setOfferCode(enrollmentRequest.getOfferCode());
 		request.setPromoCode(enrollmentRequest.getPromoCode());
