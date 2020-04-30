@@ -8,12 +8,13 @@ import com.multibrand.vo.response.GenericResponse;
 public class DPPExtensionCheckResponse extends GenericResponse {
 	
 	private boolean isPaymentExtension = false;
-	List<DppValueVO> ddpValue = new LinkedList<DppValueVO>();
+	List<DppValueVO> dppValue = new LinkedList<DppValueVO>();
 	private String dpplanActive = "";
 	private String dpplanEligible = "";
 	private String dppplanPending = "";
 	private String amount ="";
 	private String dppDescription ="";
+	
 	/**
 	 * @return the isPaymentExtension
 	 */
@@ -25,18 +26,18 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 	 */
 	public void setPaymentExtension(boolean isPaymentExtension) {
 		this.isPaymentExtension = isPaymentExtension;
+	}	
+	/**
+	 * @return the dppValue
+	 */
+	public List<DppValueVO> getDppValue() {
+		return dppValue;
 	}
 	/**
-	 * @return the ddpValue
+	 * @param dppValue the dppValue to set
 	 */
-	public List<DppValueVO> getDdpValue() {
-		return ddpValue;
-	}
-	/**
-	 * @param ddpValue the ddpValue to set
-	 */
-	public void setDdpValue(List<DppValueVO> ddpValue) {
-		this.ddpValue = ddpValue;
+	public void setDppValue(List<DppValueVO> dppValue) {
+		this.dppValue = dppValue;
 	}
 	/**
 	 * @return the dpplanActive
