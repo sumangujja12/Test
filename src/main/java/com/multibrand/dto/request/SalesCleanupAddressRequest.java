@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.util.CommonUtil;
 
@@ -24,15 +25,15 @@ public class SalesCleanupAddressRequest extends SalesBaseRequest{
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String aptNum;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 30, groups = SizeConstraint.class)
 	private String city;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(min = 2, max = 2, groups = SizeConstraint.class, message ="{err.msg.state.format}")
 	private String state;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String zipCode;
 	

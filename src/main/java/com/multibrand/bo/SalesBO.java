@@ -352,13 +352,20 @@ public class SalesBO extends OeBoHelper implements Constants {
 
 	}
 	
-	public SalesCleanupAddressResponse getCleanupAddress(SalesCleanupAddressRequest salesCleanupAddressRequest) throws Exception{
+	public SalesCleanupAddressResponse getCleanedUpAddress(SalesCleanupAddressRequest salesCleanupAddressRequest) throws Exception{
 		SalesCleanupAddressResponse salesCleanupAddressResponse = new SalesCleanupAddressResponse();
 		ValidateAddressRequest validateAddressRequest = new ValidateAddressRequest();
 		try {
 			
 			// Do cleanup address input parameters extra validation errors check
-			if (StringUtils.isNotBlank(salesCleanupAddressRequest.getStreetAddress())
+			if (StringUtils.isBlank(salesCleanupAddressRequest.getStreetAddress())
+					&& StringUtils.isBlank(salesCleanupAddressRequest.getPoBox())){
+				salesCleanupAddressResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				salesCleanupAddressResponse.setErrorCode(HTTP_BAD_REQUEST);
+				salesCleanupAddressResponse.setErrorDescription(BILLING_ADDRESS_EMPTY_ERROR_MESSAGE);
+				salesCleanupAddressResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+				return salesCleanupAddressResponse;
+			}else if (StringUtils.isNotBlank(salesCleanupAddressRequest.getStreetAddress())
 					&& StringUtils.isNotBlank(salesCleanupAddressRequest.getPoBox())) {
 				salesCleanupAddressResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 				salesCleanupAddressResponse.setErrorCode(HTTP_BAD_REQUEST);
