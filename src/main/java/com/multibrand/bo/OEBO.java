@@ -5001,8 +5001,8 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 		response.setStatusCode(STATUS_CODE_CONTINUE);
 		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
-		response.setMessageCode(POSID_FAIL);
-		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+		response.setMessageCode(POSIDHOLD);
+		response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
 	} 
 
 	return response;
@@ -5562,7 +5562,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 	} else {
 		response.setStatusCode(STATUS_CODE_CONTINUE);
 		response.setMessageCode(POSIDHOLD);
-		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+		response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
 
 
 	}
