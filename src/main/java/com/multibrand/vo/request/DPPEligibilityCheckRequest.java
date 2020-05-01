@@ -22,9 +22,11 @@ public class DPPEligibilityCheckRequest implements FormEntityRequest, Serializab
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 12, groups = SizeConstraint.class)
 	private String contractAccountNumber ="";
-	private String noOfInstallments = "";
-	private String dppInitialDownPayment ="";
 	
+	@Length(max = 10, groups = SizeConstraint.class)
+	private String contractId ="";
+	
+
 	/**
 	 * @return the companyCode
 	 */
@@ -67,32 +69,20 @@ public class DPPEligibilityCheckRequest implements FormEntityRequest, Serializab
 		this.contractAccountNumber = contractAccountNumber;
 	}
 
+
+
 	/**
-	 * @return the noOfInstallments
+	 * @return the contractId
 	 */
-	public String getNoOfInstallments() {
-		return noOfInstallments;
+	public String getContractId() {
+		return contractId;
 	}
 
 	/**
-	 * @param noOfInstallments the noOfInstallments to set
+	 * @param contractId the contractId to set
 	 */
-	public void setNoOfInstallments(String noOfInstallments) {
-		this.noOfInstallments = noOfInstallments;
-	}
-
-	/**
-	 * @return the dppInitialDownPayment
-	 */
-	public String getDppInitialDownPayment() {
-		return dppInitialDownPayment;
-	}
-
-	/**
-	 * @param dppInitialDownPayment the dppInitialDownPayment to set
-	 */
-	public void setDppInitialDownPayment(String dppInitialDownPayment) {
-		this.dppInitialDownPayment = dppInitialDownPayment;
+	public void setContractId(String contractId) {
+		this.contractId = contractId;
 	}
 
 	/**

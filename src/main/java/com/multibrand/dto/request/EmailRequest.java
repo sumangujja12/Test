@@ -21,6 +21,8 @@ import com.multibrand.util.EnvMessageReader;
  */
 public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest{
 	
+	private static final String[] validCompCodeAry = {"0121","0271","0270", "0586"};
+	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
 	@Autowired
@@ -160,6 +162,16 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 			String bccEmail = getBCCEmail();
 			if(logger.isDebugEnabled()){logger.debug("BCC EMAIL::::::"+bccEmail);}
 			this.bccEmailList.add(bccEmail);
+		}
+		else if((StringUtils.isNotBlank(this.companyCode) && StringUtils.equalsIgnoreCase(this.companyCode, XOOM_COMPANY_CODE)) &&
+				(StringUtils.isNotBlank(this.brandName) && StringUtils.equalsIgnoreCase(this.brandName, XOOM_BRAND_NAME))){
+			this.externalId = StringUtils.equalsIgnoreCase(this.languageCode, EN)?XOOM_EBILL_EXTERNAL_ID_EN:XOOM_EBILL_EXTERNAL_ID_ES;
+			this.templateType = XOOM_EBILL_TEMPLATE_ID;
+			this.propertyList.add(XOOM_EBILL_CA+COLON+request.getContractaccountnumber());
+			this.propertyList.add(XOOM_EBILL_CHECK_DIGIT+COLON+request.getCheckdigit());
+			this.propertyList.add(XOOM_EBILL_NAME_ON_ACCOUNT+COLON+request.getCaname());
+			this.propertyList.add(XOOM_EBILL_DELIVERY_METHOD+COLON+getBillDeliveryMethod(request.getBilldeliverymethod()));
+			this.propertyList.add(XOOM_EBILL_DELIVERY_LOCATION+COLON+request.getEmailid());
 		}else{
 			logger.info("BRAND NAME/COMPANY CODE IS EMPTY::");
 		}

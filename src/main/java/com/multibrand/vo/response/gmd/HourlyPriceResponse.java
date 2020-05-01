@@ -26,4 +26,5 @@ public class HourlyPriceResponse extends GenericResponse {
 	public void setHourlyPriceList(List<HourlyPrice> hourlyPriceList) {
 		this.hourlyPriceList = hourlyPriceList;
 	}
+
 }

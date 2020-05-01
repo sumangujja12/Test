@@ -63,7 +63,7 @@ ws.endpointURL.historyDomain=http://stg1-ws.nrgenergy.com/NRGWS02/HistoryDomain
 ws.endpointURL.ldapDomain=http://stg1-ws.nrgenergy.com/NRGWS02/LDAPDomain
 ws.endpointURL.oeDomain=http://stg1-ws.nrgenergy.com/NRGWS02/OEDomain
 ws.endpointURL.paymentDomain=http://stg1-ws.nrgenergy.com/NRGWS02/PaymentDomain
-ws.endpointURL.profileDomain=http://stg1-ws.nrgenergy.com/NRGWS02//ProfileDomain
+ws.endpointURL.profileDomain=http://stg1-ws.nrgenergy.com/NRGWS02/ProfileDomain
 ws.endpointURL.swapDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SwapDomain
 ws.endpointURL.tosDomain=http://stg1-ws.nrgenergy.com/NRGWS02/TOSDomain
 ws.endpointURL.ssDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SSDomain
@@ -150,6 +150,8 @@ ce.pub.id_en=143
 ce.pub.id_es=144
 gm.pub.id_en=123
 gm.pub.id_es=124
+xoom.pub.id_en=321
+xoom.pub.id_es=330
 
 re.taxonomy.id = 301
 pw.taxonomy.id = TODO
@@ -184,3 +186,9 @@ contractAccountNumberRetro=000010474734
 CCS_GMD_STMT=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/z_e_isu_get_gmd_stmt/z_e_isu_get_gmd_stmt
 CCS_PRICE_STMT = http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/900/z_e_isu_get_gmd_price/z_e_isu_get_gmd_price
 gmd_price_current_date =04/14/2020
+
+
+#Content Service 
+content.server.endpoint.url=http://txaixebxbls01:18081/client/v2/content.svc/
+#File
+documentum.endpoint=https://texas.xoomenergy.com/files/{0}.pdf

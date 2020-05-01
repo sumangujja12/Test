@@ -1,7 +1,6 @@
 package com.multibrand.bo;
 
 import java.math.BigDecimal;
-import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,13 +9,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
 import com.google.gson.Gson;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.domain.AlertPrefDTO;
@@ -118,10 +115,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		GMDPricingResponse gmdPricingResp = new GMDPricingResponse();
 
 		try {
-				
-			String currentDate = this.envMessageReader.getMessage(GMD_PRICE_IRW_DATE);
-			
-			HourlyPriceResponse response = historyBO.getGMDPrice(accountNumber, contractId, esiId, currentDate, sessionId, companyCode);
+							
+			HourlyPriceResponse response = historyBO.getGMDPrice(accountNumber, contractId, esiId, sessionId, companyCode);
 			
 			gmdPricingResp = gmdService.getGMDPriceDetails(accountNumber, contractId, companyCode, esiId, sessionId, response);
 
@@ -139,18 +134,13 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			String transactionType, String locale, String esid) {
 
 		String methodName = "OEBO: getESIDAndCalendarDates(..)";
-		logger.debug("Start:{}" , methodName);
+		logger.debug("Start in getESIDAndCalendarDates:{}" , methodName);
 
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
-		ESIDDO esidDo = new ESIDDO();
-		// AddressDO serviceAddressDO = new AddressDO();
+		ESIDDO esidDo = null;
 
-		Locale localeObj = null;
+		Locale localeObj = new Locale("en", "US");
 
-		if (locale.equalsIgnoreCase(LANG_ES))
-			localeObj = new Locale("es", "US");
-		else
-			localeObj = new Locale("en", "US");
 
 		response.setEsid(EMPTY);
 		response.setMeterType(EMPTY);
@@ -202,7 +192,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				// Switch Hold ON scenario for SWI
 				if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
 						&& StringUtils.equals(esidDo.getSwitchHoldStatus(), SWITCH_HOLD_STATUS_ON)) {
-					logger.debug("ERROR:{}" , methodName);
+					logger.debug("ERROR in getESIDAndCalendarDates:{}" , methodName);
 					response.setStatusCode(STATUS_CODE_STOP);
 					response.setAvailableDates(EMPTY);
 					response.setSwitchHoldFlag(SWITCH_HOLD_STATUS_ON);
@@ -219,13 +209,11 @@ public class GMDBO extends BaseAbstractService implements Constants {
 					response.setErrorDescription(messageCodeText);
 				}
 
-				// ESID Active in company scenario (ESID active)
 				if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_SWITCH)
 						&& (StringUtils.isNotEmpty(esidDo.getEsidStatus())
 								&& esidDo.getEsidStatus().equalsIgnoreCase(STATUS_ACTIVE))) {
 					logger.debug("ERROR:{}" , methodName);
-					// response.setResultCode(RESULT_CODE_SUCCESS);
-					// response.setResultDescription(RESULT_DESCRIPTION_ACTIVE_ESID);
+
 					response.setStatusCode(STATUS_CODE_STOP);
 					response.setAvailableDates(EMPTY);
 					response.setTdspFee(EMPTY);
@@ -238,7 +226,6 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				if (StringUtils.isNotEmpty(esidDo.getPremiseType())
 						&& !esidDo.getPremiseType().equalsIgnoreCase(RESI)) {
 					logger.debug("ERROR:{}" , methodName);
-					// response.setResultDescription(RESULT_DESCRIPTION_BUSINESS_METER);
 					response.setStatusCode(STATUS_CODE_STOP);
 					response.setAvailableDates(EMPTY);
 					response.setTdspFee(EMPTY);
@@ -247,7 +234,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 							this.msgSource.getMessage(MESSAGE_CODE_BUSINESS_METER, null, localeObj));
 					return response;
 				}
-			} // else return response;
+			} 
 
 			// GET tdsp calendar dates
 			this.getTdspDates(companyCode, transactionType, tdspCodeCCS, esidDo, response, localeObj);
@@ -256,18 +243,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			response.setErrorCode(RESULT_CODE_SUCCESS);
 			response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION + ": " + e.getMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
-			// response.setMessageCode(EMPTY);
-			// response.setMessageText(EMPTY);
-		} finally {
-			// Call update service location
-			/*
-			 * if (StringUtils.isNotBlank(trackingId)) {
-			 * this.updateServiceLocation(companyCode, trackingId, esidDo, response, esid);
-			 * }
-			 */
-			// response.setCompanyCode(companyCode);
-			// response.setBrandName(brandId);
-		}
+
+		} 
 
 		// Default to EMPTY if statusflag is "OFF"
 		if (StringUtils.equalsIgnoreCase("OFF", response.getSwitchHoldFlag())) {
@@ -302,15 +279,12 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				esidDO.setPremiseType(esidProfileResponse.getPremiseType());
 				esidDO.setRecentDisconnectFlag(esidProfileResponse.getRecentDisconnectFlag());
 				esidDO.setSwitchHoldStatus(esidProfileResponse.getSwitchHoldStatus());
-				// Start || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari ||
-				// 15/12/2019
 				if (StringUtils.equalsIgnoreCase(esidProfileResponse.getBlockStatus(), FLAG_X)) {
 					esidDO.setEsidBlocked(true);
 				} else {
 					esidDO.setEsidBlocked(false);
 				}
-				// END || US23692: Affiliate API - Hard Stop Blocked ESIDs || atiwari ||
-				// 15/12/2019
+
 
 			}
 			logger.debug("OEBO.setESIDDTO() esidDTO::{} " , esidDO);
@@ -359,9 +333,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 	 */
 	private void getTdspDates(String companyCode, String transactionType, String tdspCodeCCS, ESIDDO esidDo,
 			EsidInfoTdspCalendarResponse response, Locale locale) throws Exception {
-		String METHOD_NAME = "OEBO: getTdspDates(..)";
+		String methodName = "OEBO: getTdspDates(..)";
 
-		logger.debug("Start:" + METHOD_NAME);
+		logger.debug("Start getTdspDates:{}" , methodName);
 		String internaltdspCodeCCS = "";
 
 		if (esidDo != null && StringUtils.isNotEmpty(esidDo.getEsidTDSP())) {
@@ -371,9 +345,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		// TDSP mismatch scenario
 		if ((StringUtils.isNotEmpty(tdspCodeCCS) && StringUtils.isNotEmpty(internaltdspCodeCCS))
 				&& !tdspCodeCCS.equalsIgnoreCase(internaltdspCodeCCS)) {
-			logger.debug("ERROR:" + METHOD_NAME);
 			response.setResultCode(RESULT_CODE_SUCCESS);
-			// response.setResultDescription(RESULT_DESCRIPTION_TDSP_MISMATCH);
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setErrorCode(TDSPSD);
 			response.setTdspCode(internaltdspCodeCCS);
@@ -391,14 +363,11 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		request.setStartDate(df.format(c.getTime()));
 		request.setEndDate(df.format(DateUtils.addDays(c.getTime(), 59)));
 		request.setStrCompanyCode(companyCode);
-		// START : ALT Channel : Sprint6 :US7569 :Kdeshmu1
 		if (StringUtils.isNotEmpty(esidDo.getEsidNumber())) {
 			request.setEsiid(esidDo.getEsidNumber());
 		} else {
 			request.setEsiid("");
 		}
-		// END : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-		// Get calendar specific days for tdspCodeCCS
 		String dateString = oeService.getTDSPSpecificCalendarDates(request, "");
 		List<String> allInclusiveDateList = CommonUtil.getDaysInBetween(c.getTime(),
 				DateUtils.addDays(c.getTime(), 59));
@@ -487,12 +456,12 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			response.setTdspFee(EMPTY);
 		}
 
-		logger.debug("End:" + METHOD_NAME);
+		logger.debug("End getTdspDates:{}" , methodName);
 	}
 
 	public GMDEnrollmentResponse submitEnrollment(GMDEnrollmentRequest enrollmentRequest, String sessionId) {
 		String methodName = "OEBO: submitEnrollment(..)";
-		logger.debug("Start:{}" + methodName);
+		logger.debug("Start submitEnrollment:{}" , methodName);
 
 		GMDEnrollmentResponse response = new GMDEnrollmentResponse();
 
@@ -508,14 +477,11 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				this.updateContactInformation(response, enrollmentRequest);
 			}
 
-		} catch (RemoteException e) {
-			logger.error(e);
-			this.handleSubmitEnrollmentError(response, enrollmentRequest, e);
-
 		} catch (Exception e) {
 			logger.error(e);
 			this.handleSubmitEnrollmentError(response, enrollmentRequest, e);
-		}
+
+		} 
 		/**
 		 * The Below given finally always runs in all scenarios and in case of exception
 		 * also will execute the calls of below.
@@ -545,19 +511,18 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			logger.debug("enrollmentService SubmitEnrollment creating request:: inside createSubmitEnrollRequest");
 		}
 
-		String bpFullName = EMPTY;
-		String enrollmentType = EMPTY;
-		String contactText = EMPTY;
-		String moveInDate = EMPTY;
-		String specialReadDate = EMPTY;
+		String bpFullName = "";
+		String enrollmentType = "";
+		String contactText = "";
+		String moveInDate = "";
 		String startSvrcDate = oeSignUpDTO.getServiceStartDate();
-		String notifyAddress = EMPTY;
-		String pointOfDeliveryId = EMPTY;
-		String requestedAmount = EMPTY;
-		String reasonSEcurityDeposit = EMPTY;
-		String depositCode = EMPTY;
-		String agreementNumber = EMPTY;
-		String enrollmentHoldType = EMPTY;
+		String notifyAddress = "";
+		String pointOfDeliveryId = "";
+		String requestedAmount = "";
+		String reasonSEcurityDeposit = "";
+		String depositCode = "";
+		String agreementNumber = "";
+		String enrollmentHoldType = "";
 
 		// oeSignUpDTO = prepareAdditionalEnrollmentRequestInfo(request, oeSignUpDTO);
 		// //VSOOD: COMMENTED FOR CLEANUP
@@ -572,9 +537,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		String personDobFormatted = CommonUtil.formatDateForNrgws(oeSignUpDTO.getDateOfBirth());
 		submitEnrollRequest.setStrBPDOB(personDobFormatted);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(" enrollmentService SubmitEnrollment creating request:: checking for FullName");
-		}
+		logger.debug(" enrollmentService SubmitEnrollment creating request:: checking for FullName");
 
 		if ((oeSignUpDTO.getMiddleName() != null)) {
 			bpFullName = oeSignUpDTO.getFirstName() + " " + oeSignUpDTO.getMiddleName() + " "
@@ -591,15 +554,14 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
 		submitEnrollRequest.setStrCAName(
 				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
-		if (logger.isDebugEnabled()) {
-			logger.debug("submitEnrollment request :: Name is {}" , bpFullName);
-		}
+		
+		logger.debug("submitEnrollment request :: Name is {}" , bpFullName);
 
 		submitEnrollRequest.setStrCampaignCode(oeSignUpDTO.getCampaignCode());
 		// START test logs
 		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressAptNumber())
 				|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetName())
-						| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
+						|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
 
 			submitEnrollRequest.setStrBPStreet(oeSignUpDTO.getBillingAddressStreetName());
 			submitEnrollRequest.setStrBPHouseNum(oeSignUpDTO.getBillingAddressStreetNumber());
@@ -607,21 +569,17 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		} else {
 			submitEnrollRequest.setStrBPPOBoxCountry(COUNTRY_US);
 			submitEnrollRequest.setStrBPPOBoxRegion(oeSignUpDTO.getBillingAddressState());
-			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressZipCode()))
-				submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddressZipCode());
-			else
-				submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddressZipCode());
+			submitEnrollRequest.setStrBPPOBoxPostalCode(oeSignUpDTO.getBillingAddressZipCode());
 			submitEnrollRequest.setStrBPPOBox(oeSignUpDTO.getBillingAddressPoBox());
 		}
 		// END test logs
 
-		if (logger.isDebugEnabled()) {
-			logger.debug(
+		logger.debug(
 					"creating SubmitEnrollmentRequest in enrollmentService:: passed the null check for Billing Address");
-		}
+
 		if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressAptNumber())
 				|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetName())
-						| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
+						|| StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressStreetNumber())) {
 
 			if (StringUtils.isNotBlank(oeSignUpDTO.getBillingAddressAptNumber())) {
 				notifyAddress = oeSignUpDTO.getBillingAddressStreetName() + ", APT "
@@ -643,12 +601,10 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrNotifyState(oeSignUpDTO.getBillingAddressState());
 		submitEnrollRequest.setStrNotifyZip(oeSignUpDTO.getBillingAddressZipCode());
 
-		//startSvrcDate = CommonUtil.formatDateForNrgws(CommonUtil.getCurrentDateFormatted(MMddyyyy));
 		moveInDate = oeSignUpDTO.getServiceStartDate();
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,moveInDate is ::{}" , moveInDate);
-		}
+		logger.debug("EnrollmentService creating submitEnrollmentRequest,moveInDate is ::{}" , moveInDate);
+
 
 		if (StringUtils.isNotBlank(oeSignUpDTO.getTransactionType())
 				&& MVI.equalsIgnoreCase(oeSignUpDTO.getTransactionType())) {
@@ -665,15 +621,13 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			}
 		}		
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,contactText is ::{}" , contactText);
-		}
+		logger.debug("EnrollmentService creating submitEnrollmentRequest,contactText is ::{}" , contactText);
+
 
 		submitEnrollRequest.setStrEnrollmentType(enrollmentType);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::{}" , enrollmentType);
-		}
+		logger.debug("EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::{}" , enrollmentType);
+
 
 		if (oeSignUpDTO.getPreferredLanguageCode() != null) {
 			if ((oeSignUpDTO.getPreferredLanguageCode()).equalsIgnoreCase(ES)) {
@@ -699,14 +653,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		} else {
 			pointOfDeliveryId = ESIDNOTFOUND;
 		}
-		/*
-		 * Following are standard dateFormat and TimeFormat defined
-		 * 
-		 * @JSINGH1@lntinfotech
-		 */
 
-		// START Default to system date and time if Offer Date/Offer Time are blank.
-		// Added by Jenith on 04/16/2015
 		String offerDateFormatted = null;
 		String offerTimeFormatted = null;
 
@@ -747,25 +694,17 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		 
 		agreementNumber = WEB_PREFIX_OA_GME + StringUtils.leftPad(String.valueOf(timestamp.getTime()).substring(0,10), 15, '0');
-		if (logger.isDebugEnabled()) {
-			logger.debug(
+
+		logger.debug(
 					"EnrollmentService creating submitEnrollmentRequest,agreementNumber() is ::{}" , agreementNumber);
-		}
+		
 		submitEnrollRequest.setStrAgreementNumber(agreementNumber);
 
 		submitEnrollRequest.setStrSvrcFileTestStatus(FLAG_C);
 
-		if (logger.isDebugEnabled()) {
 			logger.debug("EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getPerson()() is ::{}"
 					, oeSignUpDTO.getFirstName());
-		}
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getServiceAddress()() is ::{}"
-					+ oeSignUpDTO.getServiceAddressAptNumber() + oeSignUpDTO.getBillingAddressStreetName()
-					+ oeSignUpDTO.getServiceAddressStreetNumber() + oeSignUpDTO.getServiceAddressCity()
-					+ oeSignUpDTO.getServiceAddressZipCode());
-		}
 
 		submitEnrollRequest.setStrSvrcStreet(oeSignUpDTO.getBillingAddressStreetName());
 		submitEnrollRequest.setStrSvrcAptNum(oeSignUpDTO.getServiceAddressAptNumber());
@@ -820,10 +759,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			else
 				enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + SWITCHHOLD;
 		}
-		if (logger.isDebugEnabled()) {
-			logger.debug(
+
+		logger.debug(
 					"EnrollmentService creating submitEnrollmentRequest,enrollmentHoldType is ::{}" , enrollmentHoldType);
-		}
 		submitEnrollRequest.setStrEnrollmentHoldType(enrollmentHoldType);
 		BigDecimal reqAmt = null;
 		if (StringUtils.isNotBlank(requestedAmount)) {
@@ -842,9 +780,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrFreqFlyerLastName(EMPTY);
 		submitEnrollRequest.setStrFreqFlyerNo(EMPTY);
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("submitEnrollmentRequest: value of WebTSDP is ::{}" , oeSignUpDTO.getTdspCode());
-		}
+		logger.debug("submitEnrollmentRequest: value of WebTSDP is ::{}" , oeSignUpDTO.getTdspCode());
+
 		submitEnrollRequest.setStrWebTsdp(this.appConstMessageSource
 				.getMessage("ccs.tdsp.web.equivalent." + oeSignUpDTO.getTdspCode(), null, null));
 		submitEnrollRequest.setStrAgentId(EMPTY);
@@ -865,7 +802,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		SubmitEnrollRequest submitEnrollRequest = createSubmitEnrollRequest(enrollmentRequest);
 		submitEnrollRequest.setBypassPosId(FLAG_X);//This is fo only GMD application
 		Gson gson = new Gson();
-		logger.info("Before submitting JSON:{}", gson.toJson(submitEnrollRequest));
+		logger.info("Before submitting JSON:{0}", gson.toJson(submitEnrollRequest));
 		SubmitEnrollResponse submitEnrollResponse = oeProxy.submitEnrollment(submitEnrollRequest);
 
 		logger.info("Error code: {}" , submitEnrollResponse.getStrErrCode());
@@ -889,15 +826,12 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				logger.debug(enrollmentRequest.getEsiId() , "bp numbr is null {}");
 			}
 
-			// }
 		}
 
 		else if (submitEnrollResponse.getStrErrCode() != null) {
 
-			// if (logger.isDebugEnabled()) {
 			logger.info(enrollmentRequest.getEsiId() + "Enrollment Error Message:"
 					+ submitEnrollResponse.getStrErrMessage());
-			// }
 
 			errorCode = submitEnrollResponse.getStrErrCode();
 			response.setErrorCode(errorCode);
@@ -928,7 +862,6 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			updateContactRequest.setStrCANumber(response.getContractAccountNumber());
 			updateContactRequest.setStrCompanyCode(enrollmentRequest.getCompanyCode());
 			updateContactRequest.setBrandName(enrollmentRequest.getBrandName());
-			// updateContactRequest.setIsCreateCRMRecord(X_VALUE);
 			updateContactRequest.setIsTelephoneUpdated(FLAG_Y);
 			updateContactRequest.setIsEmailUpdated(FLAG_Y);
 			updateContactRequest.setIsMktPrefUpdated(FLAG_Y);
@@ -947,12 +880,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			/** Cirro Changes Start - Msadriw1 */
 			List<UpdatePhoneDO> updatePhoneDOList = new ArrayList<>();
 
-			// set data for Home Phone Number
-			logger.info("inside processOeEnrollment:: setting evening phone number ");
-			/*
-			 * String strEveningPhone = oeSignupDTO.getEveningPhoneNo1() +
-			 * oeSignupDTO.getEveningPhoneNo2() + oeSignupDTO.getEveningPhoneNo3();
-			 */
+
 			logger.info("inside processOeEnrollment:: phone number is :: {}" , enrollmentRequest.getPhoneNumber());
 			if (StringUtils.isNotBlank(enrollmentRequest.getPhoneNumber())) {
 				logger.info("inside  setting evening ph number to Update PhoneDO");
@@ -962,13 +890,12 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				updatePhoneDOList.add(homePhoneDO);
 				logger.info("Setting HOME Phone ~~~ {}" , enrollmentRequest.getPhoneNumber());
 			}
-			if (null != updatePhoneDOList && updatePhoneDOList.size() > 0) {
+			if ( !updatePhoneDOList.isEmpty()) {
 				UpdatePhoneDO[] phoneDOArr = updatePhoneDOList.toArray(new UpdatePhoneDO[0]);
 				updateContactRequest.setPhoneDO(phoneDOArr);
 			}
 			updateContactRequest.setStrEmailId(enrollmentRequest.getEmailAddress());
-			logger.info(methodName + " tracking Number is :" + enrollmentRequest.getEsiId()
-					+ ": testing and recent call made till now is " + enrollmentRequest.getRecentCallMade());
+		
 			logger.info("Start: Async call updateContact(...)");
 			asyncHelper.updateContactInCRM(updateContactRequest);
 			logger.info("End: Async call updateContact(...)");
@@ -980,7 +907,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		logger.debug("End:{}" , methodName);
 
-		return null;
+		return false;
 	}
 	
 	/**
@@ -1001,21 +928,13 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		pPDCreateResponse = proxyClient.prepayDocCreate(pPDCreateRequest);
 		
 		String prepayDocId = pPDCreateResponse.getPrepayDocID();
-	    logger.info("inside EnrollmentService :: inside prepayDocCreate Call ::prapayDocId created is {}");
+	    logger.info("inside EnrollmentService :: inside prepayDocCreate Call ::prapayDocId created is ");
 	    if (prepayDocId != null && (!prepayDocId.equals("") && Long.parseLong(prepayDocId) != 0))
 	        {
 	            createPrepayDocOutput="curlaction";
-	            
-	            try {
-					UpdateAlertPrefRequest updateAlertPrefRequest = createUpdateAlertPrefRequest(response, enrollmentRequest);
-					asyncHelper.asychUpdatePrepayAlertPreferences(updateAlertPrefRequest);
 					
-				}
-				catch(Exception e)
-				{
-					logger.error("inside EnrollmentHelper::inside SubmitEnrollment()::Exception occured during call UpdateAlertPref",e);
-					
-                 }
+	            UpdateAlertPrefRequest updateAlertPrefRequest = createUpdateAlertPrefRequest(response, enrollmentRequest);
+				asyncHelper.asychUpdatePrepayAlertPreferences(updateAlertPrefRequest);
 	            
 	        }
 	    else{
@@ -1043,7 +962,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 	 */
 public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse response, GMDEnrollmentRequest enrollmentRequest) {
 		
-		logger.debug("{} inside EnrollmentHelper :: inside createPrepayDocTxn()");
+		logger.debug("inside EnrollmentHelper :: inside createPrepayDocTxn");
 		String srvcStartDate;
 		PpdCreateRequest pPDCreateRequest = new PpdCreateRequest();
 		pPDCreateRequest.setBrandName(enrollmentRequest.getBrandName());
@@ -1116,17 +1035,24 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 																			// set
 																			// to
 																			// null.
+		AlertPrefDTO dailyBalSumDTO = null;
 		AlertPrefDTO lowAccBalDTO = null;
+		AlertPrefDTO tollTagBalDTO = null;
 		AlertPrefDTO payReceivedDTO = null;
 		AlertPrefDTO weeklySumDTO = null;
 		List<AlertPrefDTO> subscribeRequestList = new ArrayList<>();
-		if (!StringUtils.isEmpty(strLowAcctBal)) {
-			lowAccBalDTO = new AlertPrefDTO();
-			lowAccBalDTO.setStrEventId(BAL_ALERT);
-			lowAccBalDTO.setStrParamName(COMM_PREF);
-			lowAccBalDTO.setStrParamValue(strLowAcctBal);
-			subscribeRequestList.add(lowAccBalDTO);
-		}
+		
+		dailyBalSumDTO = new AlertPrefDTO();
+		dailyBalSumDTO.setStrEventId(GME_PP_ALERT_DBA1);
+		dailyBalSumDTO.setStrParamName(COMM_PREF);
+		dailyBalSumDTO.setStrParamValue("E");
+		subscribeRequestList.add(dailyBalSumDTO);
+		
+		tollTagBalDTO = new AlertPrefDTO();
+		tollTagBalDTO.setStrEventId(PP_ALERT4);
+		tollTagBalDTO.setStrParamName(COMM_PREF);
+		tollTagBalDTO.setStrParamValue("E");
+		subscribeRequestList.add(tollTagBalDTO);		
 
 		if (!StringUtils.isEmpty(strPayReceived)) {
 			payReceivedDTO = new AlertPrefDTO();
@@ -1157,26 +1083,27 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 
 	}
 
-	public GMDOfferResponse getGMDOfferDocs(String tdspCode, String sessionId) {
+	public GMDOfferResponse getGMDOfferDocs(String tdspCode) {
 		String methodName = "OEBO: getGMDOfferDocs(..)";
 		logger.debug("Start:{}" , methodName);
 		
 		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
 		String baseProdURL= envMessageReader.getMessage(Constants.GME_PROD_BASE_URL);
 		
+		String legalDocsExt = "/files/";
 		
 		GMDOfferResponse gmdOfferResponse = new GMDOfferResponse();
 		
-		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.efl.equivalent." + tdspCode, null, null));
 		
-		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+legalDocsExt +this.appConstMessageSource
 		.getMessage("gmd.offer.tos.equivalent." + tdspCode, null, null));
 		
-		gmdOfferResponse.setStrYRAACDocID(baseProdURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrYRAACDocID(baseProdURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.yraac.equivalent." + tdspCode, null, null));	
 		
-		gmdOfferResponse.setStrPrepayDisID(baseProdURL.trim()+"/files/"+this.appConstMessageSource
+		gmdOfferResponse.setStrPrepayDisID(baseProdURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.predis.equivalent." + tdspCode, null, null));			
 		
 		
@@ -1186,7 +1113,7 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		
 	}
 	
-	protected SSDomain getSSDomainProxyClient()throws Exception {
+	protected SSDomain getSSDomainProxyClient()  {
 		return (SSDomain) getServiceProxy(SSDomainPortBindingStub.class, SS_SERVICE_ENDPOINT_URL);
 	}	
 }

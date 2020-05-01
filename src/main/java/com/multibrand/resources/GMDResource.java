@@ -148,7 +148,7 @@ public class GMDResource extends BaseResource {
 	public Response getGMDOfferDocs(@PathParam("tdspCode") String tdspCode) {
 		Response response = null;
 
-		GMDOfferResponse gmdOfferResponse = gmdBO.getGMDOfferDocs(tdspCode, httpRequest.getSession(true).getId());
+		GMDOfferResponse gmdOfferResponse = gmdBO.getGMDOfferDocs(tdspCode);
 		
 		response = Response.status(Response.Status.OK).entity(gmdOfferResponse).build();
 		return response;
