@@ -1049,35 +1049,16 @@ public class ValidationBO extends BaseBO {
 				+ ""+retryCount+" so POSID_FAIL_MAX message set");
 		//need to change toggle name
 		
-		if(posidHoldAllowed){
-			response.setStatusCode(STATUS_CODE_CONTINUE);
-			messageCode=POSIDHOLD;
-			serviceLocationResponseerrorList.add(POSIDHOLD);				
-			
-			Map<String,Object> performBpMatchResponse = processBPMatch(performPosIdBpRequest, oESignupDTO, serviceLoationResponse, response,errorCd,messageCode, serviceLocationResponseerrorList );
 
-			response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
-			messageCode=(String)performBpMatchResponse.get("messageCode");
-			errorCd=(String)performBpMatchResponse.get("errorCd");	
-			BPMatchDTO returnedBpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
-			BeanUtils.copyProperties(returnedBpMatchDTO, bpMatchDTO);
-			logger.info("Settting message for hold scenario 1 "+messageCode);
-			
-			setMessageCodeForBPMatchScenario(messageCode,response,performPosIdBpRequest);
-			
-			logger.info("inside validatePosId retry max :: status code after bpmatch call is:: "+response.getStatusCode());
-			logger.info("inside validatePosId retry max :: errorcd after bpmatch is :: "+response.getErrorCode());
-			logger.info("inside validatePosId retry max :: messagecode is after bpmatch ::"+response.getMessageCode());
-			
-		}else{
-			response.setStatusCode(STATUS_CODE_STOP);
-			messageCode=POSID_FAIL_MAX;
-			response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-		}					
-		//response.setMessageCode(messageCode);
+		response.setStatusCode(STATUS_CODE_STOP);
+		messageCode=POSID_FAIL_MAX;
+		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+						
+		response.setMessageCode(messageCode);
 		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setRetryCount(Integer.toString(retryCount));
 		response.setTrackingId(performPosIdBpRequest.getTrackingId());
+		response.setGuid(performPosIdBpRequest.getGuid());
 		logger.info("Settting message for hold scenario 3 "+response.getMessageText());
 			
 	}

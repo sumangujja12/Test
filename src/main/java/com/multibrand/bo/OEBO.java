@@ -1903,6 +1903,17 @@ public class OEBO extends OeBoHelper implements Constants{
 				if(serviceLoationResponse == null){
 					serviceLoationResponse=getEnrollmentData(enrollmentRequest.getTrackingId());
 				}
+				
+				if(serviceLoationResponse == null){					
+					response.populateInvalidTrackingResponse();
+					return response;
+				}
+				if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+				{
+					response.populateAlreadySubmittedEnrollmentResponse();
+					return response;	
+				}
+				
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 				oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
 				}
@@ -2122,6 +2133,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			if(StringUtils.isNotEmpty(creditCheckRequest.getTrackingId())){
 				if(serviceLoationResponse == null){
 					serviceLoationResponse=getEnrollmentData(creditCheckRequest.getTrackingId());
+					if(serviceLoationResponse == null){					
+						response.populateInvalidTrackingResponse();
+						return response;
+					}
+					if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+					{
+						response.populateAlreadySubmittedEnrollmentResponse();
+						return response;	
+					}
 				}
 				
 			
@@ -2525,6 +2545,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			if(StringUtils.isNotEmpty(trackingId)){
 				if(serviceLoationResponse == null){
 					serviceLoationResponse=getEnrollmentData(trackingId);
+					if(serviceLoationResponse == null){					
+						response.populateInvalidTrackingResponse();
+						return response;
+					}
+					if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+					{
+						response.populateAlreadySubmittedEnrollmentResponse();
+						return response;	
+					}
 					holdType = serviceLoationResponse.getErrorCode();
 				}
 			serviceLocationResponseErrorList = CommonUtil.getErrorCodeListFromPipeSeparatedString(serviceLoationResponse.getErrorCdlist());
@@ -4686,6 +4715,12 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		
 		if(serviceLocationResponse != null){
 			
+			if(isEnrollmentAlreadySubmitted(serviceLocationResponse))
+			{
+				uccDataResponse.populateAlreadySubmittedEnrollmentResponse();
+				return uccDataResponse;	
+			}
+			
 			serviceLocationResponseErrorList = CommonUtil.getErrorCodeListFromPipeSeparatedString(serviceLocationResponse.getErrorCdlist());
 			
 			if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
@@ -5080,6 +5115,17 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 	try{
 		if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
 		    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+		    
+		    if(serviceLoationResponse == null){					
+				response.populateInvalidTrackingResponse();
+				return response;
+			}
+			if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+			{
+				response.populateAlreadySubmittedEnrollmentResponse();
+				return response;	
+			}
+		    
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
@@ -5310,11 +5356,19 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 		}	
 		
 		serviceLocationResponse =  getEnrollmentData(getOEKBAQuestionsRequest.getTrackingId(),getOEKBAQuestionsRequest.getGuid());
-		if(null !=serviceLocationResponse && StringUtils.isNotEmpty(serviceLocationResponse.getTrackingId())){
-			kbaQuestionRequest = oeRequestHandler.createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
-		}else {		
-			return response.populateInvalidTrackingAndGuidResponse();
+		
+		if(serviceLocationResponse == null){					
+			response.populateInvalidTrackingAndGuidResponse();
+			return response;
 		}
+		if(isEnrollmentAlreadySubmitted(serviceLocationResponse))
+		{
+			response.populateAlreadySubmittedEnrollmentResponse();
+			return response;	
+		}
+		
+		kbaQuestionRequest = oeRequestHandler.createKBAQuestionRequest(serviceLocationResponse,getOEKBAQuestionsRequest);
+
 		
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
 		 response = createKBAQuestionResposne(kbaQuestionResponse);
@@ -5396,6 +5450,13 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateInvalidTrackingAndGuidResponse()).build();
 						return response;
 					}
+					if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+					{
+						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateAlreadySubmittedEnrollmentResponse()).build();
+						return response;	
+					}
+					
+					
 				}
 								
 				response = checkBillingAddressAgentIdAge(request, oESignupDTO);
@@ -6433,6 +6494,10 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			systemNotesList.add(KBA_SET_POSIDHOLD);
 		}
 	    return errorCode;
+	}
+    
+	public boolean isEnrollmentAlreadySubmitted(ServiceLocationResponse serviceLocationResponse){
+		return !StringUtils.equalsIgnoreCase(serviceLocationResponse.getRequestStatusCode(), I_VALUE);
 	}
 }
 	
