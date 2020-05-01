@@ -14,26 +14,13 @@ import com.multibrand.vo.response.GenericResponse;
 
 public class GMDStatementBreakDownResponse extends GenericResponse{
 	
-    private double rate;
     private BigDecimal totalUsage;
     private BigDecimal avgPrice;
     private BigDecimal totalCost;
     private List<Breakdown> breakdown;
     private List<GMDReturnCharge> returnCharge;
     
-    
-	/**
-	 * @return the rate
-	 */
-	public double getRate() {
-		return rate;
-	}
-	/**
-	 * @param rate the rate to set
-	 */
-	public void setRate(double rate) {
-		this.rate = rate;
-	}
+
 	/**
 	 * @return the totalUsage
 	 */

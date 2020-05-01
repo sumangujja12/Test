@@ -130,10 +130,6 @@ public class GMDService extends BaseAbstractService {
 						
 			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderAvgPrice, holderZettGmdRetchr);
 			
-			double rate = handleRateResponse(holderZetGmdStmt);
-			
-			gmdStatementBreakDownResp.setRate(rate);
-			
 		}catch(Exception ex){
 			utilityloggerHelper.logTransaction("getGMDStatementDetails", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 			throw new NRGException(ex);
@@ -363,9 +359,14 @@ public class GMDService extends BaseAbstractService {
 		
 		List<GMDReturnCharge> gmdReturnChargeList = getReturnCharge(holderZettGmdRetchr);
 		
-		breakdown.add(wholeSaleitemBreakDown(zesGmdStmt, WHOLESALE_ELECTRICITY));
+		breakdown.add(energyChargeitemBreakDown(zesGmdStmt, GMD_ENERGY_CHARGE));
 		
-		breakdown.add(tduDeliveryitemBreakDown(zesGmdStmt, TDU_DELIVERY_CHARGES));
+		breakdown.add(tduDeliveryitemBreakDown(zesGmdStmt, TDSP_DELIVERY_CHARGES));
+		
+		
+		breakdown.add(gmdFixedRateBreakDown(zesGmdStmt, FIXED_RATE_THIRD_PARTY_CHRG));
+		
+		breakdown.add(gmdSolarRecsBreakDown(zesGmdStmt, SOLAR_RECS));
 		
 		breakdown.add(gmdMemberBreakDown(zesGmdStmt, GMD_MEMBERSHIP));
 		breakdown.add(taxesBreakDown(zesGmdStmt, TAXES_FEES));
@@ -379,35 +380,36 @@ public class GMDService extends BaseAbstractService {
 	}
 
 	
-	private Breakdown wholeSaleitemBreakDown(ZesGmdStmt zesGmdStmt, String group) {
-		Breakdown wholesaleElecBreakDown = new Breakdown();
+	private Breakdown energyChargeitemBreakDown(ZesGmdStmt zesGmdStmt, String group) {
+		Breakdown energyChargeBreakDown = new Breakdown();
 		
-		List<Costs> wholeSaleCost = new ArrayList<>();
+		List<Costs> energyChargeSaleCost = new ArrayList<>();
 		
 		Costs costs = new Costs();
-		costs.setItem(SOLAR_FEE);
-		costs.setCost(zesGmdStmt.getSolarFee());
+		costs.setItem(GMD_ENERGY_CHARGE);
+		costs.setCost(zesGmdStmt.getCusage());
 		
-		wholeSaleCost.add(costs);
-		
-		costs = new Costs();
-		costs.setItem(ANCILLARY_SERVICES);
-		costs.setCost(zesGmdStmt.getAnclServ());
-		
-		wholeSaleCost.add(costs);
-		
-		costs = new Costs();
-		costs.setItem(ELECTRICITY_USAGE);
-		costs.setCost(zesGmdStmt.getUseChrg());
-		
-		wholeSaleCost.add(costs);
-		
-		wholesaleElecBreakDown.setGroup(group);
+		energyChargeSaleCost.add(costs);
 
 		
-		wholesaleElecBreakDown.setTotalCost(zesGmdStmt.getSolarFee() .add(zesGmdStmt.getAnclServ()).add(zesGmdStmt.getUseChrg()));
-		wholesaleElecBreakDown.setCosts(wholeSaleCost);
-		return wholesaleElecBreakDown;
+		costs = new Costs();
+		costs.setItem(GMD_ENERGY_TRUE_UP);
+		costs.setCost(zesGmdStmt.getCusageAdj());
+		
+		energyChargeSaleCost.add(costs);
+		
+		costs = new Costs();
+		costs.setItem(GMD_USAGE_TRUE_UP);
+		costs.setCost(zesGmdStmt.getCusageAdj());
+		
+		energyChargeSaleCost.add(costs);
+		
+		energyChargeBreakDown.setGroup(group);
+
+		
+		energyChargeBreakDown.setTotalCost(zesGmdStmt.getSolarFee() .add(zesGmdStmt.getAnclServ()).add(zesGmdStmt.getUseChrg()));
+		energyChargeBreakDown.setCosts(energyChargeSaleCost);
+		return energyChargeBreakDown;
 	}
 	
 	private Breakdown tduDeliveryitemBreakDown(ZesGmdStmt zesGmdStmt, String group) {
@@ -417,7 +419,7 @@ public class GMDService extends BaseAbstractService {
 		List<Costs> wholeSaleCost = new ArrayList<>();
 		
 		Costs costs = new Costs();
-		costs.setItem(TDU_DELIVERY_CHARGES);
+		costs.setItem(TDSP_DELIVERY_CHARGES);
 		costs.setCost(zesGmdStmt.getTduDely());
 		
 		wholeSaleCost.add(costs);
@@ -443,19 +445,65 @@ public class GMDService extends BaseAbstractService {
 		
 		gmdMemberBreakDown.setGroup(group);
 		gmdMemberBreakDown.setTotalCost(zesGmdStmt.getMemFee());
-		gmdMemberBreakDown.setTotalCost(zesGmdStmt.getMemFee());
+	
 		return gmdMemberBreakDown;
+	}
+	
+	
+	
+	private Breakdown gmdFixedRateBreakDown(ZesGmdStmt zesGmdStmt, String group) {
+		
+		Breakdown gmdFixedBreakDown = new Breakdown();
+		
+	
+		
+		gmdFixedBreakDown.setGroup(group);
+		gmdFixedBreakDown.setTotalCost(zesGmdStmt.getAnclServ());
+	
+		return gmdFixedBreakDown;
+	}
+	
+	
+	private Breakdown gmdSolarRecsBreakDown(ZesGmdStmt zesGmdStmt, String group) {
+		
+		Breakdown gmdSolarBreakDown = new Breakdown();
+		
+	
+		
+		gmdSolarBreakDown.setGroup(group);
+		gmdSolarBreakDown.setTotalCost(zesGmdStmt.getSolarFee());
+	
+		return gmdSolarBreakDown;
 	}
 	
 	private Breakdown taxesBreakDown(ZesGmdStmt zesGmdStmt, String group) {
 		
 		Breakdown gmdTaxesBreakDown = new Breakdown();
 		
+		List<Costs> taxCost = new ArrayList<>();
+		
+		Costs costs = new Costs();
+		costs.setItem(SALES_TAX);
+		costs.setCost(zesGmdStmt.getTax());
+		
+		taxCost.add(costs);
+		
+		costs = new Costs();
+		costs.setItem(GROSS_RECP_TAX);
+		costs.setCost(new BigDecimal("0.00"));
+		
+		taxCost.add(costs);
+		
+		costs = new Costs();
+		costs.setItem(PUC_FEE);
+		costs.setCost(new BigDecimal("0.00"));
+		
+		taxCost.add(costs);		
+		
+		
 		gmdTaxesBreakDown.setGroup(group);
 		gmdTaxesBreakDown.setTotalCost(zesGmdStmt.getTax());
-		gmdTaxesBreakDown.setTotalCost(zesGmdStmt.getTax());
-
-		
+		gmdTaxesBreakDown.setCosts(taxCost);
 		
 		return gmdTaxesBreakDown;
 	}	
