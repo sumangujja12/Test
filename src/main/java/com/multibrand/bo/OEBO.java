@@ -2709,7 +2709,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				errorCodeFromAPI = errorCodeFromDB;
 			}
 			this.updateServiceLocation(companyCode, affiliateId, trackingId, 
-					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE),callExecutedStrForDB,errorCodeFromAPI);
+					serviceAddressDO, esidDo, response,esid,StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE),
+					callExecutedStrForDB,errorCodeFromAPI, serviceLoationResponse.getDepositAmount());
 		}
 	    
 	  //Default to EMPTY if statusflag is "OFF"
@@ -3881,7 +3882,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void updateServiceLocation(String companyCode, String affiliateId, String trackingId, 
 			AddressDO serviceAddressDO, ESIDDO esidDo,
-			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist, String callExecutedStrForDB,String errorCodeFromAPI) {
+			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist, 
+			String callExecutedStrForDB,String errorCodeFromAPI, String depositAmt) {
 		logger.debug("Processing updateServiceLocation ...");
 		Assert.notNull(Integer.parseInt(trackingId),
 				"trackingId must not be null.");
