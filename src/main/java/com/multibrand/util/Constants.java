@@ -1421,4 +1421,6 @@ public interface Constants {
     
 	public static final String CONST_TRACKING_ID= "trackingId";
 	
+	public static final String MESSAGE_CODE_ENROLLMENT_ALREADY_REQUESTED = "ENROLLMENT_ALREADY_REQUESTED";
+	
 }

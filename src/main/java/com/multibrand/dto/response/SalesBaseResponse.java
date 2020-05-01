@@ -78,4 +78,13 @@ public class SalesBaseResponse implements Constants  {
 		return this;
 		
 	}
+	
+	public SalesBaseResponse populateAlreadySubmittedEnrollmentResponse() {
+		this.errorCode=MESSAGE_CODE_ENROLLMENT_ALREADY_REQUESTED;
+		this.errorDescription="Enrollment Already Requested for trackingId & guid";
+		this.statusCode=STATUS_CODE_STOP;
+		this.httpStatus=Response.Status.BAD_REQUEST;
+		return this;
+		
+	}
 }

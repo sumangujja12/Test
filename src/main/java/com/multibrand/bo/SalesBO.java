@@ -125,18 +125,23 @@ public class SalesBO extends OeBoHelper implements Constants {
 			serviceLoationResponse = oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),
 					salesEsidCalendarRequest.getGuid());
 			if (null != serviceLoationResponse) {
-				bpMatchFlag = extractBpMatchFlag(salesEsidCalendarRequest,serviceLoationResponse,serviceLocationResponseErrorList );
-				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO.getESIDAndCalendarDates(
-						salesEsidCalendarRequest.getCompanyCode(), salesEsidCalendarRequest.getAffiliateId(),
-						salesEsidCalendarRequest.getBrandId(), serviceLoationResponse.getServStreetNum(),
-						serviceLoationResponse.getServStreetName(), serviceLoationResponse.getServStreetAptNum(),
-						serviceLoationResponse.getServZipCode(), serviceLoationResponse.getTdspCode(),
-						serviceLoationResponse.getServiceRequestTypeCode(), salesEsidCalendarRequest.getTrackingId(),
-						bpMatchFlag, salesEsidCalendarRequest.getLanguageCode(), serviceLoationResponse.getEsid(),
-						httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,salesEsidCalendarRequest.getCallExecuted());
-
-				BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);
-				response = salesEsidInfoTdspCalendarResponse;
+				if(!oeBO.isEnrollmentAlreadySubmitted(serviceLoationResponse))
+					{
+					bpMatchFlag = extractBpMatchFlag(salesEsidCalendarRequest,serviceLoationResponse,serviceLocationResponseErrorList );
+					EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO.getESIDAndCalendarDates(
+							salesEsidCalendarRequest.getCompanyCode(), salesEsidCalendarRequest.getAffiliateId(),
+							salesEsidCalendarRequest.getBrandId(), serviceLoationResponse.getServStreetNum(),
+							serviceLoationResponse.getServStreetName(), serviceLoationResponse.getServStreetAptNum(),
+							serviceLoationResponse.getServZipCode(), serviceLoationResponse.getTdspCode(),
+							serviceLoationResponse.getServiceRequestTypeCode(), salesEsidCalendarRequest.getTrackingId(),
+							bpMatchFlag, salesEsidCalendarRequest.getLanguageCode(), serviceLoationResponse.getEsid(),
+							httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,salesEsidCalendarRequest.getCallExecuted());
+	
+					BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);
+					response = salesEsidInfoTdspCalendarResponse;
+				} else{
+					response = salesEsidInfoTdspCalendarResponse.populateAlreadySubmittedEnrollmentResponse();
+				}
 			} else {
 				response = salesEsidInfoTdspCalendarResponse.populateInvalidTrackingAndGuidResponse();
 			}
@@ -256,24 +261,30 @@ public class SalesBO extends OeBoHelper implements Constants {
 			serviceLocationResponse=oeBO.getEnrollmentData(request.getTrackingId(),request.getGuid() );
 			if (null!= serviceLocationResponse){
 				
-				if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
-					if(StringUtils.isEmpty(request.getMviDate())) {
-						response = salesCreditCheckResponse;
-						response.setStatusCode(Constants.STATUS_CODE_STOP);
-						response.setErrorCode(HTTP_BAD_REQUEST);
-						response.setErrorDescription("mviDate is required for move-in");
-						response.setHttpStatus(Response.Status.BAD_REQUEST);
-						return response;
-					}
-				}
+				if(!oeBO.isEnrollmentAlreadySubmitted(serviceLocationResponse))
+				{
 				
-				CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditCheckRequest(request, serviceLocationResponse);
-				newCreditScoreResponse =  oeBO
-				.performCreditCheck(oeRequestHandler
-						.createNewCreditScoreRequest(creditCheckRequest),
-						creditCheckRequest, serviceLocationResponse);
-				BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
-				response= 	salesCreditCheckResponse;			
+					if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
+						if(StringUtils.isEmpty(request.getMviDate())) {
+							response = salesCreditCheckResponse;
+							response.setStatusCode(Constants.STATUS_CODE_STOP);
+							response.setErrorCode(HTTP_BAD_REQUEST);
+							response.setErrorDescription("mviDate is required for move-in");
+							response.setHttpStatus(Response.Status.BAD_REQUEST);
+							return response;
+						}
+					}
+					
+					CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditCheckRequest(request, serviceLocationResponse);
+					newCreditScoreResponse =  oeBO
+					.performCreditCheck(oeRequestHandler
+							.createNewCreditScoreRequest(creditCheckRequest),
+							creditCheckRequest, serviceLocationResponse);
+					BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
+					response= 	salesCreditCheckResponse;
+				} else {
+					response =salesCreditCheckResponse.populateAlreadySubmittedEnrollmentResponse();
+				}
 			}else{
 				response =salesCreditCheckResponse.populateInvalidTrackingAndGuidResponse();
 			}
@@ -295,24 +306,29 @@ public class SalesBO extends OeBoHelper implements Constants {
 			serviceLocationResponse=oeBO.getEnrollmentData(request.getTrackingId(),request.getGuid() );
 			if (null!= serviceLocationResponse){
 				
-				if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
-					if(StringUtils.isEmpty(request.getMviDate())) {
-						response = salesCreditCheckResponse;
-						response.setStatusCode(Constants.STATUS_CODE_STOP);
-						response.setErrorCode(HTTP_BAD_REQUEST);
-						response.setErrorDescription("mviDate is required for move-in");
-						response.setHttpStatus(Response.Status.BAD_REQUEST);
-						return response;
+				if(!oeBO.isEnrollmentAlreadySubmitted(serviceLocationResponse))
+				{
+					if(!StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), S)){
+						if(StringUtils.isEmpty(request.getMviDate())) {
+							response = salesCreditCheckResponse;
+							response.setStatusCode(Constants.STATUS_CODE_STOP);
+							response.setErrorCode(HTTP_BAD_REQUEST);
+							response.setErrorDescription("mviDate is required for move-in");
+							response.setHttpStatus(Response.Status.BAD_REQUEST);
+							return response;
+						}
 					}
+					
+					CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditReCheckRequest(request, serviceLocationResponse);
+					newCreditScoreResponse =  oeBO
+					.performCreditCheck(oeRequestHandler
+							.createNewCreditScoreRequest(creditCheckRequest),
+							creditCheckRequest, serviceLocationResponse);
+					BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
+					response= 	salesCreditCheckResponse;	
+				} else {
+					response =salesCreditCheckResponse.populateAlreadySubmittedEnrollmentResponse();
 				}
-				
-				CreditCheckRequest creditCheckRequest = oeRequestHandler.createCreditReCheckRequest(request, serviceLocationResponse);
-				newCreditScoreResponse =  oeBO
-				.performCreditCheck(oeRequestHandler
-						.createNewCreditScoreRequest(creditCheckRequest),
-						creditCheckRequest, serviceLocationResponse);
-				BeanUtils.copyProperties(newCreditScoreResponse, salesCreditCheckResponse);	
-				response= 	salesCreditCheckResponse;			
 			}else{
 				response =salesCreditCheckResponse.populateInvalidTrackingAndGuidResponse();
 			}
@@ -336,9 +352,14 @@ public class SalesBO extends OeBoHelper implements Constants {
 		try {
 			serviceLoationResponse = oeBO.getEnrollmentData(enrollmentRequest.getTrackingId(),enrollmentRequest.getGuid());
 			if (null != serviceLoationResponse) {
-				EnrollmentRequest request = oeRequestHandler.createSubmitEnrollmentRequest(enrollmentRequest, serviceLoationResponse);
-				EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request, serviceLoationResponse);
-				BeanUtils.copyProperties(enrollmentResponse, salesEnrollmentresponse);
+				if(!oeBO.isEnrollmentAlreadySubmitted(serviceLoationResponse))
+				{
+					EnrollmentRequest request = oeRequestHandler.createSubmitEnrollmentRequest(enrollmentRequest, serviceLoationResponse);
+					EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request, serviceLoationResponse);
+					BeanUtils.copyProperties(enrollmentResponse, salesEnrollmentresponse);
+				} else {
+					salesEnrollmentresponse.populateAlreadySubmittedEnrollmentResponse();
+				}
 			} else {
 				salesEnrollmentresponse.populateInvalidTrackingAndGuidResponse();
 			}
@@ -385,4 +406,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 		}
 		return salesCleanupAddressResponse;
 	}
+	
+
 }
