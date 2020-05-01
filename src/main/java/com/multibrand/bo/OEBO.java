@@ -3890,6 +3890,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 
 		requestData.setTrackingId(trackingId);
+		requestData.setDepositAmount(depositAmt);
 
 		String personId = getPersonIdByTrackingNo(requestData.getTrackingId());
 
