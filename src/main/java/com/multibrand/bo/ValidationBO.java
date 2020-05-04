@@ -411,6 +411,9 @@ public class ValidationBO extends BaseBO {
 			UpdateServiceLocationRequest updateServiceLocation= new UpdateServiceLocationRequest();
 			if(null!=serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getCallExecutedFromDB()))
 				updateServiceLocation.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(performPosIdBpRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
+			if(serviceLoationResponse !=null) {
+				updateServiceLocation.setDepositAmount(serviceLoationResponse.getDepositAmount());
+			}
 			createUpdateServiceLocationRequest(updateServiceLocation, performPosIdBpRequest, personId,
 					messageCode, errorCd,bpMatchDTO,recentCallMade,oESignupDTO);
 			String updateSrvLocationErrorCode=oeBO.updateServiceLocation(updateServiceLocation);
