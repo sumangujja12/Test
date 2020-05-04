@@ -398,8 +398,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 			// Do cleanup address using Trillium
 			ValidateAddressResponse validateAddressResponse = validationBO.validateAddress(validateAddressRequest);
 			BeanUtils.copyProperties(validateAddressResponse, salesCleanupAddressResponse);
-			salesCleanupAddressResponse.setMessageCode(validateAddressResponse.getResultCode());
-			salesCleanupAddressResponse.setMessageText(validateAddressResponse.getResultDescription());
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.getCleanupAddress()", e);
 			throw e;
