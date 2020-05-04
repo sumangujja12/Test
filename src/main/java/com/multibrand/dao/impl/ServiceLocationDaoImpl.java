@@ -274,9 +274,6 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 				}
 				request.setProviderAgreementFlag(providerAgreementFlag);
 				String depositAmount = request.getDepositAmount();
-				if (StringUtils.isEmpty(depositAmount)) {
-					depositAmount = "0";
-				}
 				request.setDepositAmount(depositAmount);
 				request.setServAddressLine1(CommonUtil.getAddressLine1(
 						request.getServStreetNum(), request.getServStreetName()));
