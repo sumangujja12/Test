@@ -292,7 +292,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
-			if(responseMap!= null && responseMap.size()!= 0)
+			response= (ProfileResponse)responseMap.get("profileResponse");	
+			if(response!= null &&   response.getContractAccountDO() != null)
 			{
 			response= (ProfileResponse)responseMap.get("profileResponse");			
 			if(response.getContractAccountDO()!=null)
