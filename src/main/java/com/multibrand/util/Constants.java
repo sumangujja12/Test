@@ -1348,6 +1348,8 @@ public interface Constants {
     public static final String API_ESID = "esid";
     public static final String API_RECHECK_CREDIT= "recheck-credit";
     public static final String API_CLEANUP_ADDRESS="cleanup-address";
+    public static final String API_GET_HOLD="hold";
+    
     
     //Submit new KBA Answers API
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
@@ -1422,5 +1424,15 @@ public interface Constants {
 	public static final String CONST_TRACKING_ID= "trackingId";
 	
 	public static final String MESSAGE_CODE_ENROLLMENT_ALREADY_REQUESTED = "ENROLLMENT_ALREADY_REQUESTED";
+	
+	public static final String CCS_STATUS_CODE_NO_HOLDS="01";
+	
+	public static final String MESSAGE_CODE_NO_HOLD="NO_HOLD_ON_ACCOUNT";
+	public static final String MESSAGE_TEXT_NO_HOLD="No Hold for this Account";
+	
+	public static final String MESSAGE_CODE_CCS_HOLD_FAILURE="HOLD_LOOKUP_ERROR";
+	public static final String MESSAGE_CODE_TEXT_HOLD_FAILURE="Failure to obtain hold information";
+	
+	
 	
 }

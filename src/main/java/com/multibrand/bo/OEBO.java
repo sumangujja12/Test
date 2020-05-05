@@ -48,6 +48,9 @@ import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.CampEnvironmentOutData;
+import com.multibrand.domain.EnrollmentHold;
+import com.multibrand.domain.EnrollmentHoldInfoRequest;
+import com.multibrand.domain.EnrollmentHoldInfoResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.GetEsiidResponse;
@@ -83,6 +86,7 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspDetailsResponse;
 import com.multibrand.domain.TdspDetailsResponseStrTdspCodesEntry;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
+import com.multibrand.dto.EnrollmentHoldDTO;
 import com.multibrand.dto.KBAErrorDTO;
 import com.multibrand.dto.KBAResponseAssessmentDTO;
 import com.multibrand.dto.KBAResponseReasonDTO;
@@ -107,6 +111,7 @@ import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
+import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -122,6 +127,7 @@ import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.dto.response.SalesHoldLookupResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -180,6 +186,7 @@ import com.multibrand.vo.response.KBO.Question;
 import com.multibrand.vo.response.billingResponse.AddressDO;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.reliant.domain.AddressValidateResponse;
+
 
 
 
@@ -2621,8 +2628,10 @@ public class OEBO extends OeBoHelper implements Constants{
 					
 					if(StringUtils.isNotEmpty(tdspCodeCCS)){
 						response.setTdspCode(tdspCodeCCS); 
+						
 					}else {
-						populateTDSPCodeNotFoundResponse(response, esidDo);
+						populateTDSPCodeNotFoundResponse(response, esidDo, serviceLocationResponseErrorList);
+						errorCodeFromAPI = NESID;
 						return response;
 					}
 					transactionType = StringUtils.equals(transactionType, TRANSACTIONTYPE_N) ? MVI :(StringUtils.equals(transactionType, TRANSACTIONTYPE_S) ? SWI: transactionType) ;
@@ -5882,13 +5891,16 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		}
      }
     
-    private void populateTDSPCodeNotFoundResponse(EsidInfoTdspCalendarResponse response, ESIDDO esidDo)
+    private void populateTDSPCodeNotFoundResponse(EsidInfoTdspCalendarResponse response, ESIDDO esidDo, LinkedHashSet<String> serviceLocationResponseErrorList)
     {
 		response.setEsid(EMPTY);
 		response.setResultCode(RESULT_CODE_SUCCESS);
 		response.setStatusCode(STATUS_CODE_STOP);
 		response.setMessageText(msgSource.getMessage(MESSAGE_CODE_NESID));
 		response.setMessageCode(esidDo.getEsidNumber());
+		serviceLocationResponseErrorList.add(NESID);
+		serviceLocationResponseErrorList.remove(MESID);
+		serviceLocationResponseErrorList.remove(NRESID);
     }
     
     private void populateSwitchHoldResponse(EsidInfoTdspCalendarResponse response, ESIDDO esidDo, 
@@ -6522,6 +6534,43 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     
 	public boolean isEnrollmentAlreadySubmitted(ServiceLocationResponse serviceLocationResponse){
 		return !StringUtils.equalsIgnoreCase(serviceLocationResponse.getRequestStatusCode(), I_VALUE);
+	}
+	
+	public SalesHoldLookupResponse getSalesHoldList(SalesHoldLookupRequest salesHoldLookupRequest){
+		EnrollmentHoldInfoRequest request = oeRequestHandler.createEnrollmentHoldInfoRequest(salesHoldLookupRequest);
+		EnrollmentHoldInfoResponse response = oeProxy.getEnrollmentHoldInfo(request);
+		SalesHoldLookupResponse salesHoldLookupResponse = constructEnrollmentHoldMaster(response); 
+		return salesHoldLookupResponse;
+	}
+	private SalesHoldLookupResponse constructEnrollmentHoldMaster(EnrollmentHoldInfoResponse response ){
+		SalesHoldLookupResponse salesResponse = new SalesHoldLookupResponse();
+		
+		if( StringUtils.equalsIgnoreCase(response.getStrReturnCode(), CCS_STATUS_CODE_NO_HOLDS) )
+		{
+			salesResponse.setMessageCode(MESSAGE_CODE_NO_HOLD);
+			salesResponse.setMessageText(MESSAGE_TEXT_NO_HOLD);
+		}
+		
+		if(!StringUtils.equalsIgnoreCase(response.getStrReturnCode(), SUCCESS_CODE) )
+		{
+			salesResponse.setMessageCode(MESSAGE_CODE_CCS_HOLD_FAILURE);
+			salesResponse.setMessageText(MESSAGE_CODE_TEXT_HOLD_FAILURE);
+		}
+		salesResponse.setEnrollmentStatus(response.getStrEnrollmentStatus());
+		salesResponse.setCaNumber(response.getStrCaNumber());
+		salesResponse.setCheckDigit(response.getStrCheckDigit());
+		salesResponse.setBpNumber(response.getStrBPNumber());
+		List<EnrollmentHoldDTO> holdDTOList = new ArrayList<>();
+		if(response.getEnrollmentHoldList() !=null){
+			for(EnrollmentHold hold:response.getEnrollmentHoldList()){
+				EnrollmentHoldDTO holdDTO = new EnrollmentHoldDTO();
+				holdDTO.setHoldType(hold.getStrHoldType());
+				holdDTO.setHoldStatus(hold.getStrHoldStatus());
+				holdDTOList.add(holdDTO);
+			}
+		}
+		salesResponse.setEnrollmentHoldList(holdDTOList);
+		return salesResponse;
 	}
 }
 	

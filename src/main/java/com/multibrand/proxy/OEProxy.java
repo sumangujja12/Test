@@ -5,9 +5,13 @@ package com.multibrand.proxy;
 
 import java.rmi.RemoteException;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.domain.EnrollmentHoldInfoRequest;
+import com.multibrand.domain.EnrollmentHoldInfoResponse;
 import com.multibrand.domain.NewCreditScoreRequest;
 import com.multibrand.domain.NewCreditScoreResponse;
 import com.multibrand.domain.OEDomain;
@@ -153,4 +157,26 @@ public class OEProxy {
 		return response;
 	}
 	
+	public EnrollmentHoldInfoResponse getEnrollmentHoldInfo(EnrollmentHoldInfoRequest request) {
+		EnrollmentHoldInfoResponse response = new EnrollmentHoldInfoResponse();
+		try{
+				
+		logger.debug("getEnrollmentHoldInfo :: inside function in enrollmentService");
+					
+		
+		logger.info("EnrollmentHoldInfoRequest  is " + ReflectionToStringBuilder.toString(request,
+				ToStringStyle.MULTI_LINE_STYLE));
+		 
+		response =  oeDomainPortProxy.getEnrollmentHoldInformation(request);
+		logger.info("EnrollmentHoldInfoResponse:: "+ReflectionToStringBuilder.toString(response,
+				ToStringStyle.MULTI_LINE_STYLE));
+		}
+		catch(Exception e)
+		{									
+			logger.error("inside OEProxy:: in getEnrollmentHoldInfo() ::getEnrollmentHoldInfo Call Failed with error ::",e);
+			
+		}
+		
+		return response;
+	}
 }
