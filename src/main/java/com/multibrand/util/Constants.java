@@ -923,7 +923,6 @@ public interface Constants {
 	public static final String EMAIL = "email";
 	public static final String BOTH = "both";
 	
-	public static final String[] validCompCodeAry = {"0121","0271","0270"};
 	
 	//ccs Ebill email GME BCC EMAIL
 	public static final String EBILL_GME_BCC_EMAIL = "ebill.gme.bcc.email";

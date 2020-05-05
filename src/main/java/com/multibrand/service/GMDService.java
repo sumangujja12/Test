@@ -213,29 +213,6 @@ public class GMDService extends BaseAbstractService {
 		logger.info("GMDService.getGMDPriceDetails::::::::::::::::::::after call");
        
 		return gmdPricingResp;
-	}
-	private double handleRateResponse(Holder<ZetGmdStmt>  holderZetGmdStmt) {
-	
-		
-		ZetGmdStmt zetGmdStmt = holderZetGmdStmt.value;
-		
-		double rate = 0;
-		
-		int count = 0;
-		
-		for ( ZesGmdStmt ZesGmdStmt : zetGmdStmt.getItem()) {
-			rate = rate+ZesGmdStmt.getUseChrg().doubleValue();
-			count ++;
-		}
-					
-
-		if ( count  > 0) {
-			return Double.parseDouble(String.format("%.2f", rate/count));
-		} else {
-			return rate;
-		}
-		
-
 	}	
 	
 	private GMDPricingResponse handleGMDCurrentPriceResponse( Holder<TEPROFVALUES> exTepProfValues, Holder<String> exCurrentDate,
