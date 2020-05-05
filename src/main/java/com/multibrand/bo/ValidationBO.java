@@ -298,7 +298,7 @@ public class ValidationBO extends BaseBO {
 				serviceLocationResponseerrorList.remove(POSIDHOLD);
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
 								
-				processPosidPassResponse( performPosIdBpRequest, 
+				errorCd = processPosidPassResponse( performPosIdBpRequest, 
 										oESignupDTO, serviceLoationResponse,
 										response,errorCd,messageCode, 
 										serviceLocationResponseerrorList ,  
@@ -315,12 +315,12 @@ public class ValidationBO extends BaseBO {
 							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
 			{
 				
-				processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
+				errorCd = processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
 						serviceLoationResponse, response, errorCd, messageCode, 
 						serviceLocationResponseerrorList, bpMatchDTO, 
 						validatePosIdKBAResponse, posidHoldAllowed, retryCount);
 				posidStatus = oESignupDTO.getPosidStatus();
-				errorCd=POSIDHOLD;
+				
 			}
 			else
 			{ 
@@ -1063,7 +1063,7 @@ public class ValidationBO extends BaseBO {
 			
 	}
 	
-	private void processPosidPassResponse(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
+	private String processPosidPassResponse(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
 			OESignupDTO oESignupDTO, 
 			ServiceLocationResponse serviceLoationResponse,
 			PerformPosIdandBpMatchResponse response,
@@ -1117,10 +1117,11 @@ public class ValidationBO extends BaseBO {
 		oESignupDTO.setRecentCallMade(recentCallMade);
 		oESignupDTO.setPosIdDate(posIdDate);
 		oESignupDTO.setPosidPii(posidPii);
-		oESignupDTO.setPosidStatus(posidStatus);		
+		oESignupDTO.setPosidStatus(posidStatus);
+		return errorCd;
 	}
 	
-	private void processPosidFailedResponse(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
+	private String processPosidFailedResponse(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
 			OESignupDTO oESignupDTO, 
 			ServiceLocationResponse serviceLoationResponse,
 			PerformPosIdandBpMatchResponse response,
@@ -1178,6 +1179,7 @@ public class ValidationBO extends BaseBO {
 			}
 		}
 		oESignupDTO.setPosidStatus(posidStatus);
+		return errorCd;
 	}
 	
 	private void createPersonAndServiceLocationRecordForPerformPosidBPMatchProcess(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
