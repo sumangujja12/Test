@@ -5031,7 +5031,11 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 		kbaQuestionRequest = oeRequestHandler.createKBAQuestionRequest(request);
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
 		 response = createKBAQuestionResposne(kbaQuestionResponse);
-		 
+		 if(StringUtils.equalsIgnoreCase(POSIDHOLD,response.getMessageCode())){
+				response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+						new String[] {CommonUtil.getCompanyName(request.getBrandId(),request.getCompanyCode())},
+						CommonUtil.localeCode(request.getLanguageCode())));
+		 }
 		 boolean addKBAErrorCode=this.addKBADetails(kbaQuestionResponse);
 
 	} catch (Exception e) {
@@ -5039,7 +5043,9 @@ public GetKBAQuestionsResponse getKBAQuestions(GetKBAQuestionsRequest request) {
 		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
 		response.setMessageCode(POSIDHOLD);
-		response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+		response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+				new String[] {CommonUtil.getCompanyName(request.getBrandId(),request.getCompanyCode())},
+				CommonUtil.localeCode(request.getLanguageCode())));
 	} 
 
 	return response;
@@ -5146,7 +5152,7 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 		logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
 		//kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
 		
-		 errorCode = processKBASubmitAnswerResponse(kbaSubmitAnswerResponse, response, serviceLocationResponseErrorList, systemNotesList);
+		 errorCode = processKBASubmitAnswerResponse(kbaAnswerRequest,kbaSubmitAnswerResponse, response, serviceLocationResponseErrorList, systemNotesList);
 		 
 		//update kba_api
 		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
@@ -5374,14 +5380,21 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 		
 		 kbaQuestionResponse = oeService.getKBAQuestionList(kbaQuestionRequest);
 		 response = createKBAQuestionResposne(kbaQuestionResponse);
+		 if(StringUtils.equalsIgnoreCase(POSIDHOLD,response.getMessageCode())){
+			response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+					new String[] {CommonUtil.getCompanyName(getOEKBAQuestionsRequest.getBrandId(),getOEKBAQuestionsRequest.getCompanyCode())},
+					CommonUtil.localeCode(getOEKBAQuestionsRequest.getLanguageCode())));
+		 }
 		 boolean addKBAErrorCode =this.addKBADetails(kbaQuestionResponse);
 
 	} catch (Exception e) {
 		response.setStatusCode(STATUS_CODE_CONTINUE);
 		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
-		response.setMessageCode(POSID_FAIL);
-		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
+		response.setMessageCode(POSIDHOLD);
+		response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+				new String[] {CommonUtil.getCompanyName(getOEKBAQuestionsRequest.getBrandId(),getOEKBAQuestionsRequest.getCompanyCode())},
+				CommonUtil.localeCode(getOEKBAQuestionsRequest.getLanguageCode())));
 	} finally {
 		try{
 				if(StringUtils.isNotBlank(kbaQuestionResponse.getTransactionKey())
@@ -6422,7 +6435,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		}
     }
     
-    private String processKBASubmitAnswerResponse (KbaSubmitAnswerResponse kbaSubmitAnswerResponse,
+    private String processKBASubmitAnswerResponse (KbaAnswerRequest kbaAnswerRequest,KbaSubmitAnswerResponse kbaSubmitAnswerResponse,
     						KbaAnswerResponse response,LinkedHashSet<String> serviceLocationResponseErrorList,
     						LinkedHashSet<String>  systemNotesList){
     	
@@ -6461,7 +6474,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				}else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
 					response.setMessageCode(POSIDHOLD);
-					response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+					response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+							new String[] {CommonUtil.getCompanyName(kbaAnswerRequest.getBrandId(),kbaAnswerRequest.getCompanyCode())},
+							CommonUtil.localeCode(kbaAnswerRequest.getLanguageCode())));
 					serviceLocationResponseErrorList.add(POSIDHOLD);
 					errorCode = POSIDHOLD;
 					systemNotesList.add(KBA_SET_POSIDHOLD);
@@ -6480,7 +6495,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				logger.info("Return msg in KbaSubmitAnswerResponse is:"+kbaSubmitAnswerResponse.getReturnMessage());
 				response.setStatusCode(STATUS_CODE_CONTINUE);
 				response.setMessageCode(POSIDHOLD);
-				response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+				response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+						new String[] {CommonUtil.getCompanyName(kbaAnswerRequest.getBrandId(),kbaAnswerRequest.getCompanyCode())},
+						CommonUtil.localeCode(kbaAnswerRequest.getLanguageCode())));
 				serviceLocationResponseErrorList.add(POSIDHOLD);
 				errorCode = POSIDHOLD;
 				systemNotesList.add(KBA_SET_POSIDHOLD);
@@ -6490,7 +6507,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			logger.info("Error in KBAService.submitKBAAnswer method errorCodeErrorMsg:"+kbaSubmitAnswerResponse.getStrErrMessage());
 			response.setStatusCode(STATUS_CODE_CONTINUE);
 			response.setMessageCode(POSIDHOLD);
-			response.setMessageText(getMessage(POSID_HOLD_MSG_TXT));
+			response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+					new String[] {CommonUtil.getCompanyName(kbaAnswerRequest.getBrandId(),kbaAnswerRequest.getCompanyCode())},
+					CommonUtil.localeCode(kbaAnswerRequest.getLanguageCode())));
 			serviceLocationResponseErrorList.add(POSIDHOLD);
 			errorCode = POSIDHOLD;
 			systemNotesList.add(KBA_SET_POSIDHOLD);
