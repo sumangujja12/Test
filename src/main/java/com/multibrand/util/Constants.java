@@ -1411,7 +1411,7 @@ public interface Constants {
    public static final String PUC_FEE = "PUC Fee";
    
    
-   public static final String GMD_MEMBERSHIP = " Membership Fee";
+   public static final String GMD_MEMBERSHIP = "Membership Fee";
    public static final String  TAXES_FEES = "Taxes & Fees";
   
    public static final String ENERGY_CHARGES = "Energy Charges";
