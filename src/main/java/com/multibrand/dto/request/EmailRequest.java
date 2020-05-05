@@ -21,6 +21,8 @@ import com.multibrand.util.EnvMessageReader;
  */
 public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest{
 	
+	private static final String[] validCompCodeAry = {"0121","0271","0270", "0586"};
+	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
 	@Autowired
@@ -39,7 +41,7 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 	private List<String> bounceAddEmailList;
 	private List<String> propertyList = new ArrayList<String>();
 	private String templateType;
-	private static final String[] validCompCodeAry = {"0121","0271","0270"};
+	
 	
 	
 	public String getExternalId() {
