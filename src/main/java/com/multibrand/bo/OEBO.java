@@ -2226,7 +2226,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (RemoteException e) {
 			logger.error(e);
 			errorCodeFromAPI = CCSD;
-			constructRemoteExceptionResponse(response, serviceLocationResponseErrorList, localeObj);
+			serviceLocationResponseErrorList.remove(CREDFREEZE);
+			serviceLocationResponseErrorList.add(CCSD);
+			constructRemoteExceptionResponse(response, localeObj);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (NoSuchMessageException e) {
 			logger.error("inside performCreditCheck:: exception occured ::", e);
@@ -2234,7 +2236,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (Exception e) {
 			logger.error("ERROR:" + METHOD_NAME, e);
 			errorCodeFromAPI = CCSD;
-			constructRemoteExceptionResponse(response, serviceLocationResponseErrorList, localeObj);
+			serviceLocationResponseErrorList.remove(CREDFREEZE);
+			serviceLocationResponseErrorList.add(CCSD);
+			constructRemoteExceptionResponse(response, localeObj);
 			throw new OAMException(200, e.getMessage(), response);
 		} finally {
 			logger.debug("Processing updateServiceLocation ...");
@@ -6253,10 +6257,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     }
     
     private void constructRemoteExceptionResponse(NewCreditScoreResponse response,
-    		LinkedHashSet<String> serviceLocationResponseErrorList, Locale localeObj )
+    		 Locale localeObj )
     {
-    	serviceLocationResponseErrorList.remove(CREDFREEZE);
-		serviceLocationResponseErrorList.add(CCSD);
+    	
 		response.setResultCode(RESULT_CODE_SUCCESS);
 		response.setResultDescription(RESULT_DESCRIPTION_CREDIT_CHECK_FAILED);
 		response.setStatusCode(STATUS_CODE_STOP);
