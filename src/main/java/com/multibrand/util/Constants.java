@@ -1418,5 +1418,7 @@ public interface Constants {
    
    public static final String INDEFINITE_END_DATE = "12/31/9999";
    
-   public static final String GMD_PRICE_IRW_DATE = "gmd_price_current_date";   
+   public static final String GMD_PRICE_IRW_DATE = "gmd_price_current_date"; 
+   
+   public static final String[] validCompCodeAry = {"0121","0271","0270"};
 }

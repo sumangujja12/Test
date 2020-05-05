@@ -40,7 +40,6 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 	private List<String> propertyList = new ArrayList<String>();
 	private String templateType;
 	
-	private static final String[] validCompCodeAry = {"0121","0271","0270"};
 	
 	
 	public String getExternalId() {
