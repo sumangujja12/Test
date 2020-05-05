@@ -426,7 +426,7 @@ public class GMDService extends BaseAbstractService {
 		
 		costs = new Costs();
 		costs.setItem(QUALITY_OTHER_CREDIT);
-		costs.setCost(zesGmdStmt.getServQual());
+		costs.setCost(new BigDecimal("0.00"));
 		
 		wholeSaleCost.add(costs);
 		
