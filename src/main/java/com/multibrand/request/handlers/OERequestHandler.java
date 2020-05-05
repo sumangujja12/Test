@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.bo.OEBO;
 import com.multibrand.domain.AlertPrefDTO;
 import com.multibrand.domain.BpMatchCCSRequest;
+import com.multibrand.domain.EnrollmentHoldInfoRequest;
 import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.KbaQuestionRequest;
 import com.multibrand.domain.KbaQuizAnswerDTO;
@@ -43,6 +44,7 @@ import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.SalesCreditCheckRequest;
 import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
+import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.dto.response.PersonResponse;
@@ -1586,4 +1588,14 @@ public class OERequestHandler implements Constants {
 		
 		return kbaQuestionRequest;
 	}
+	
+	public EnrollmentHoldInfoRequest createEnrollmentHoldInfoRequest(SalesHoldLookupRequest salesHoldLookupRequest){
+		EnrollmentHoldInfoRequest request = new EnrollmentHoldInfoRequest();
+		request.setStrCompanyCode(salesHoldLookupRequest.getCompanyCode());
+		request.setStrCaNumber(CommonUtil.addLeadingZeroes(salesHoldLookupRequest.getCaNumber(), 12));
+		request.setStrBillingZipCode(salesHoldLookupRequest.getBillZipCode());
+		return request;
+	}
+	
+	
 }

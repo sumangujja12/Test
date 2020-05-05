@@ -2093,7 +2093,7 @@ public class CommonUtil implements Constants {
 			callExecutedList = new ArrayList<String>(Arrays.asList(callExecutedArr));
 			callExecutedList.add(currentApiCall);
 			callExecutedStrForDB = StringUtils.join(callExecutedList,SYMBOL_PIPE);
-			if(StringUtils.isNotBlank(callExecutedStrForDB) && callExecutedStrForDB.getBytes(Charsets.UTF_8).length<=255){
+			if(StringUtils.isNotBlank(callExecutedStrForDB) && callExecutedStrForDB.getBytes(Charsets.UTF_8).length>=255){
 				callExecutedStrForDB = callExecutedStrForDB.substring(0, 254);
 			}
 		}catch(Exception ex){
