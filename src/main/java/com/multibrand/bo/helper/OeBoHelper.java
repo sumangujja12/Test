@@ -559,8 +559,13 @@ public class OeBoHelper extends BaseBO {
 			   oeSignUpDTO.setReqStatusCd(FLAG_N);
 			}
 		   
-		   if (ArrayUtils.contains(errorCdArray, NESID) || ArrayUtils.contains(errorCdArray, MESID)) {
+		   if (ArrayUtils.contains(errorCdArray, NESID)) {
 			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			   oeSignUpDTO.setErrorCode(NESID);
+			}
+		   if (ArrayUtils.contains(errorCdArray, MESID)) {
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			   oeSignUpDTO.setErrorCode(MESID);
 			}
 		}
 		
