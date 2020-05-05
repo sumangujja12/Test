@@ -384,7 +384,7 @@ public class GMDService extends BaseAbstractService {
 		energyChargeBreakDown.setGroup(group);
 
 		
-		energyChargeBreakDown.setTotalCost(zesGmdStmt.getSolarFee() .add(zesGmdStmt.getAnclServ()).add(zesGmdStmt.getUseChrg()));
+		energyChargeBreakDown.setTotalCost(zesGmdStmt.getCusage() .add(zesGmdStmt.getCusageAdj()).add(zesGmdStmt.getCusageAdj()));
 		energyChargeBreakDown.setCosts(energyChargeSaleCost);
 		return energyChargeBreakDown;
 	}
@@ -408,7 +408,7 @@ public class GMDService extends BaseAbstractService {
 		wholeSaleCost.add(costs);
 		
 		tduDeliveryitemBreakDown.setGroup(group);
-		tduDeliveryitemBreakDown.setTotalCost(zesGmdStmt.getTduDely() .add(zesGmdStmt.getServQual()));
+		tduDeliveryitemBreakDown.setTotalCost(zesGmdStmt.getTduDely());
 		tduDeliveryitemBreakDown.setCosts(wholeSaleCost);
 		
 		return tduDeliveryitemBreakDown;
