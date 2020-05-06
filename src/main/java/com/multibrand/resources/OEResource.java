@@ -19,6 +19,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -828,7 +830,7 @@ public class OEResource extends BaseResource {
 		try{
 			request.setCallExecuted(API_LEGACY_SUBMIT_ENROLLMENT);
 	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request, null);
-	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
+	    	response = Response.status(enrollmentResponse.getHttpStatus()).entity(enrollmentResponse).build();
 	    } catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{

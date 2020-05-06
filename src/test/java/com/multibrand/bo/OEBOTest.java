@@ -652,7 +652,7 @@ public class OEBOTest implements Constants{
 	public void testCheckFraudulentActivityWithSWHOLD() throws OEException{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		oeSignUpDTO.setReqStatusCd(I_VALUE);
-		oeSignUpDTO.setErrorCdList(SWHOLD);
+		oeSignUpDTO.setErrorCdList(SWITCHHOLD);
 		oeSignUpDTO.setServiceReqTypeCd(SWI);
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
 	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);

@@ -279,7 +279,6 @@ public interface Constants {
 	public static final String COMPLETE_MATCH = "COMPLETE_MATCH";
 	public static final String NESID = "NESID";
 	public static final String MESID = "MESID";
-	public static final String SWHOLD = "SWHOLD";
 	public static final String NRESID = "NRESID";
 	public static final String NOZ	= "NOZ";
 	public static final String DELIMETER_COMMA = ",";
@@ -1433,6 +1432,9 @@ public interface Constants {
 	public static final String MESSAGE_CODE_CCS_HOLD_FAILURE="HOLD_LOOKUP_ERROR";
 	public static final String MESSAGE_CODE_TEXT_HOLD_FAILURE="Failure to obtain hold information";
 	
-	
+	public static final String HTTP_INTERNAL_SERVER_ERROR  = "INTERNAL_SERVER_ERROR";
+	 
+	 public static final String ENROLLMENT_NOT_ALLOWED = "ENROLLMENT_NOT_ALLOWED";
+	 public static final String ENROLLMENT_NOT_ALLOWED_TEXT = "Enrollment cannot be accepted since the Credit check API failed and customer's credit requirements could not be assessed";
 	
 }
