@@ -2369,6 +2369,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setBpid(StringUtils.EMPTY); 
 			enrollmentResponse.setHttpStatus(Status.OK);
 		} else if (NESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
+				|| MESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				||(SWHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
 				|| CCSERR.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				||(StringUtils.isBlank(oeSignUpDTO.getErrorCode()))) {
