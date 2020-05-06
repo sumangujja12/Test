@@ -2184,7 +2184,10 @@ public class OEBO extends OeBoHelper implements Constants{
 			 CompanyMsgText.CREDIT_AGENCY_ENUM creditAgencyEnum=null;
 			
 			  response.setCreditAgency(newCreditScoreResponse.getStrCreditSource());
-			  if(StringUtils.isNotEmpty(newCreditScoreResponse.getStrCreditSource())) {
+			  if(StringUtils.isNotEmpty(newCreditScoreResponse.getStrCreditSource())
+					  && (StringUtils.equalsIgnoreCase(newCreditScoreResponse.getStrCreditSource(),EQ)
+							 || StringUtils.equalsIgnoreCase(newCreditScoreResponse.getStrCreditSource(),TU)
+							  )){
 				  creditAgencyEnum = CompanyMsgText.CREDIT_AGENCY_ENUM.valueOf(newCreditScoreResponse.getStrCreditSource());
 			  }
 			
@@ -2673,7 +2676,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_MOVE_IN)
 							&& StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) {
-						
+						errorCodeFromAPI = SWHOLD;
+						serviceLocationResponseErrorList.add(SWHOLD);
 						populateSwitchHoldResponseForMovein(response, companyCode,brandId );
 					}else{
 						serviceLocationResponseErrorList.remove(SWHOLD);
