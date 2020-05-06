@@ -574,7 +574,7 @@ public class OeBoHelper extends BaseBO {
 				&& StringUtils.equalsIgnoreCase(oeSignUpDTO.getSwitchHoldStatus(), ON) ) {
 
 			// Update for service location
-			oeSignUpDTO.setErrorCode(SWHOLD);
+			oeSignUpDTO.setErrorCode(SWITCHHOLD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
 		}
 		

@@ -1931,7 +1931,14 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
 			
-		
+			if((serviceLoationResponse == null)  || (CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(CCSD))  
+					|| ( StringUtils.isEmpty(serviceLoationResponse.getPersonResponse().getCredSourceNum())
+					&& StringUtils.isEmpty(serviceLoationResponse.getPersonResponse().getCredScoreNum()) 
+					&& StringUtils.isEmpty(serviceLoationResponse.getPersonResponse().getCredLevelNum())
+					) ){
+				oeSignUpDTO.setErrorCode(CCSD);
+				return response;
+			}
 			
 			// Check for any fraudulent activity in Enrollment Submission and block enrollment
 			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType(),serviceLoationResponse.getCallExecutedFromDB());
@@ -2004,9 +2011,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		finally {
 			// Calls 7, 8 and 9 are executed here.
 			// Save Person and Location details in database.
+			try {
 			this.updatePersonAndServiceLocation(oeSignUpDTO);
 			// populate enrollment response for output.
 			this.setEnrollmentResponse(response, oeSignUpDTO, enrollmentFraudEnum);
+			} catch(Exception en) {
+				logger.error("Exception in SubmitEnrollment :", en);
+			}
 		}
 		
 		logger.debug("END:" + METHOD_NAME);
@@ -2035,7 +2046,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		    else if(ArrayUtils.contains(errorCdArray, BP_RESTRICT)){
 		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("RESTRICTED_BP");
 			}
-		    else if(ArrayUtils.contains(errorCdArray, SWHOLD) && StringUtils.equals(oeSignUpDTO.getServiceReqTypeCd(), SWI)){
+		    else if(ArrayUtils.contains(errorCdArray, SWITCHHOLD) && StringUtils.equals(oeSignUpDTO.getServiceReqTypeCd(), SWI)){
 		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("SWITCH_HOLD");
 			}else if(ArrayUtils.contains(errorCdArray, CREDFREEZE)){
 				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
@@ -2370,7 +2381,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setHttpStatus(Status.OK);
 		} else if (NESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				|| MESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
-				||(SWHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
+				||(SWITCHHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
 				|| CCSERR.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				||(StringUtils.isBlank(oeSignUpDTO.getErrorCode()))) {
 
@@ -2393,7 +2404,14 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setBpid(StringUtils.defaultIfEmpty(
 					oeSignUpDTO.getBusinessPartnerID(), StringUtils.EMPTY));
 			enrollmentResponse.setHttpStatus(Status.OK);
-		} 
+		} else if(StringUtils.equalsIgnoreCase(oeSignUpDTO.getErrorCode(), CCSD)){
+			enrollmentResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+			enrollmentResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
+			enrollmentResponse.setResultDescription(ENROLLMENT_NOT_ALLOWED_TEXT);
+			enrollmentResponse.setErrorCode(ENROLLMENT_NOT_ALLOWED);
+			enrollmentResponse.setErrorDescription(ENROLLMENT_NOT_ALLOWED_TEXT);
+			enrollmentResponse.setHttpStatus(Status.INTERNAL_SERVER_ERROR);
+		}
 		else {
 			// set error code if any in response
 			enrollmentResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -2544,7 +2562,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		String errorCodeFromDB = EMPTY;
 		String errorCodeFromAPI = "";
-		String[] validErrorCd= {"NESID","MESID","SWHOLD"};
+		String[] validErrorCd= {"NESID","MESID","SWITCHHOLD"};
 
 		
 		if (locale.equalsIgnoreCase(S))
@@ -2642,10 +2660,10 @@ public class OEBO extends OeBoHelper implements Constants{
 					if(StringUtils.equalsIgnoreCase(esidDo.getSwitchHoldStatus(), ON) 
 							&& (StringUtils.equalsIgnoreCase(transactionType, SWI))){
 						populateSwitchHoldResponse(response, esidDo, serviceLocationResponseErrorList);
-						errorCodeFromAPI = SWHOLD;
+						errorCodeFromAPI = SWITCHHOLD;
 						return response;
 					}else{
-						serviceLocationResponseErrorList.remove(SWHOLD);
+						serviceLocationResponseErrorList.remove(SWITCHHOLD);
 					}
 					
 					
@@ -2677,11 +2695,11 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 					if (transactionType.equalsIgnoreCase(TRANSACTION_TYPE_MOVE_IN)
 							&& StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON)) {
-						errorCodeFromAPI = SWHOLD;
-						serviceLocationResponseErrorList.add(SWHOLD);
+						errorCodeFromAPI = SWITCHHOLD;
+						serviceLocationResponseErrorList.add(SWITCHHOLD);
 						populateSwitchHoldResponseForMovein(response, companyCode,brandId );
 					}else{
-						serviceLocationResponseErrorList.remove(SWHOLD);
+						serviceLocationResponseErrorList.remove(SWITCHHOLD);
 					}
 					
 					// ESID Active in company scenario (ESID active)
@@ -5916,7 +5934,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		response.setStatusCode(STATUS_CODE_STOP);
 		response.setMessageText(msgSource.getMessage(MESSAGE_CODE_SWITCH_HOLD));
 		response.setMessageCode(MESSAGE_CODE_SWITCH_HOLD);
-		serviceLocationResponseErrorList.add(SWHOLD);
+		serviceLocationResponseErrorList.add(SWITCHHOLD);
     }
     
     private void populateMESIDNESIDResponse(EsidInfoTdspCalendarResponse response, String strESIDNumber,
@@ -6390,34 +6408,35 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 					.getStrLastName());
 			if (StringUtils.isNotBlank(creditScoreRequest.getStrSSN()))
 				requestDataPerson.setSsn(creditScoreRequest.getStrSSN());
-			if (StringUtils.isNotBlank(newCreditScoreResponse
-					.getStrCreditBucket()))
-				requestDataPerson.setCredLevelNum(newCreditScoreResponse
-						.getStrCreditBucket());
-			if (StringUtils.isNotBlank(newCreditScoreResponse
-					.getStrCreditSource()))
-				requestDataPerson.setCredSourceNum(newCreditScoreResponse
-						.getStrCreditSource());
-			if (StringUtils.isNotBlank(newCreditScoreResponse
-					.getStrCreditScore()))
-				requestDataPerson.setCredScoreNum(newCreditScoreResponse
-						.getStrCreditScore());
-			requestDataPerson.setAdvActionData(StringUtils.removeEnd(
-					creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
-
-
-			if(StringUtils.isNotBlank(response.getDepositAmount())) {
+			if(newCreditScoreResponse != null) {
 				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrDepositHold()) 
-						&& newCreditScoreResponse.getStrDepositHold()
-								.equalsIgnoreCase(YES))
-					requestDataPerson.setCredStatusCode(HOLD);
-				else
-					requestDataPerson.setCredStatusCode(NOTICE);
-			} else {
-				requestDataPerson.setCredStatusCode(RELEASE);	
+						.getStrCreditBucket()))
+					requestDataPerson.setCredLevelNum(newCreditScoreResponse
+							.getStrCreditBucket());
+				if (StringUtils.isNotBlank(newCreditScoreResponse
+						.getStrCreditSource()))
+					requestDataPerson.setCredSourceNum(newCreditScoreResponse
+							.getStrCreditSource());
+				if (StringUtils.isNotBlank(newCreditScoreResponse
+						.getStrCreditScore()))
+					requestDataPerson.setCredScoreNum(newCreditScoreResponse
+							.getStrCreditScore());
+				requestDataPerson.setAdvActionData(StringUtils.removeEnd(
+						creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
+	
+	
+				if(StringUtils.isNotBlank(response.getDepositAmount())) {
+					if (StringUtils.isNotBlank(newCreditScoreResponse
+							.getStrDepositHold()) 
+							&& newCreditScoreResponse.getStrDepositHold()
+									.equalsIgnoreCase(YES))
+						requestDataPerson.setCredStatusCode(HOLD);
+					else
+						requestDataPerson.setCredStatusCode(NOTICE);
+				} else {
+					requestDataPerson.setCredStatusCode(RELEASE);	
+				}
 			}
-
 			errorCode = this.updatePerson(requestDataPerson);
 			if (StringUtils.isNotBlank(errorCode))
 				logger.debug("Finished processing updateServiceLocation, errorCode = "
