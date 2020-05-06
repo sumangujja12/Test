@@ -2124,7 +2124,7 @@ public class OEBO extends OeBoHelper implements Constants{
 
 		Locale localeObj = null;
 		StringBuilder creditFactor = new StringBuilder(EMPTY);
-		String errorCodeFromDB = serviceLoationResponse.getErrorCode();
+		String errorCodeFromDB = null;
 		String errorCodeFromAPI = "";
 		String[] validErrorCd= {"CREDFREEZE"};
 
@@ -2152,7 +2152,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 				
 			
-				
+				 errorCodeFromDB = serviceLoationResponse.getErrorCode();
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
