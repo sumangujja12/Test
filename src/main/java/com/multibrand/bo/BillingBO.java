@@ -50,6 +50,7 @@ import com.multibrand.domain.DeActEbillResponse;
 import com.multibrand.domain.DppDueDateAmountDO;
 import com.multibrand.domain.DppEligibleRequest;
 import com.multibrand.domain.DppEligibleResponse;
+import com.multibrand.domain.DppInstPlanDetailsDO;
 import com.multibrand.domain.GetArRequest;
 import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.PayExtEligibleRequest;
@@ -3650,11 +3651,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		if (payExtEligibleResponse != null
 				&& StringUtils.isNotBlank(payExtEligibleResponse.getDppReturnCode())) {
 		
-			if (StringUtils.equalsIgnoreCase("00", payExtEligibleResponse.getDppReturnCode())
-					&& StringUtils.equalsIgnoreCase(Constants.YES, payExtEligibleResponse.getDpplanEligible())
-					&& StringUtils.equalsIgnoreCase("NO", payExtEligibleResponse.getDpplanActive())) {
+				if(checkDPPEligibility(payExtEligibleResponse)){
 				response.setPaymentExtension(true);
 				DppDueDateAmountDO [] dppDueAmountDoList = payExtEligibleResponse.getDppDueDateAmountDoList();
+				DppInstPlanDetailsDO [] dppInstPlanDetailsDOList = payExtEligibleResponse.getDppInstplanDetList();
+				
 				List<DppValueVO> dppList = new LinkedList<DppValueVO>();
 				response.setDppValue(dppList);
 				response.setDpplanActive(payExtEligibleResponse.getDpplanActive());
@@ -3718,5 +3719,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		
 		
 		return templateProps;
-	}		
+	}	
+	private boolean checkDPPEligibility(DppEligibleResponse response) {
+		return StringUtils.isBlank(response.getErrorCode()) 
+				&& StringUtils.equals(SUCCESS_CODE, response.getDppReturnCode())
+				&& StringUtils.equalsIgnoreCase(YES, response.getDpplanEligible())
+			   && !StringUtils.equalsIgnoreCase(YES, response.getDpplanActive())
+			   && !StringUtils.equalsIgnoreCase(YES, response.getDppplanPending());
+	}	
 }
