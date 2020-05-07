@@ -364,7 +364,7 @@ public class GMDService extends BaseAbstractService {
 		
 		Costs costs = new Costs();
 		costs.setItem(GMD_ENERGY_CHARGE);
-		costs.setCost(zesGmdStmt.getCusage());
+		costs.setCost(zesGmdStmt.getUseChrg());
 		
 		energyChargeSaleCost.add(costs);
 
@@ -377,7 +377,7 @@ public class GMDService extends BaseAbstractService {
 		
 		costs = new Costs();
 		costs.setItem(GMD_USAGE_TRUE_UP);
-		costs.setCost(zesGmdStmt.getCusageAdj());
+		costs.setCost(new BigDecimal("0.00"));
 		
 		energyChargeSaleCost.add(costs);
 		
