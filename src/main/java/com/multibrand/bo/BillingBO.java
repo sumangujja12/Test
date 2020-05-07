@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,13 @@ import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.DeActEbillRequest;
 import com.multibrand.domain.DeActEbillResponse;
+import com.multibrand.domain.DppAmountVO;
 import com.multibrand.domain.DppDueDateAmountDO;
 import com.multibrand.domain.DppEligibleRequest;
 import com.multibrand.domain.DppEligibleResponse;
 import com.multibrand.domain.DppInstPlanDetailsDO;
+import com.multibrand.domain.DppSubmissionRequest;
+import com.multibrand.domain.DppSubmissionResponse;
 import com.multibrand.domain.GetArRequest;
 import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.PayExtEligibleRequest;
@@ -121,6 +125,7 @@ import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.ContractDOSort;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.DPPExtensionCheckResponse;
+import com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO;
 import com.multibrand.vo.response.billingResponse.DppValueVO;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
@@ -3653,25 +3658,33 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		
 				if(checkDPPEligibility(payExtEligibleResponse)){
 				response.setPaymentExtension(true);
-				DppDueDateAmountDO [] dppDueAmountDoList = payExtEligibleResponse.getDppDueDateAmountDoList();
-				DppInstPlanDetailsDO [] dppInstPlanDetailsDOList = payExtEligibleResponse.getDppInstplanDetList();
 				
-				List<DppValueVO> dppList = new LinkedList<DppValueVO>();
-				response.setDppValue(dppList);
-				response.setDpplanActive(payExtEligibleResponse.getDpplanActive());
-				response.setDpplanEligible(payExtEligibleResponse.getDpplanEligible());
-				response.setDppplanPending(payExtEligibleResponse.getDppplanPending());
-				response.setAmount(StringUtils.trim(payExtEligibleResponse.getAmount()));
-				response.setDppDescription(payExtEligibleResponse.getDppDes());
-				if(dppDueAmountDoList != null) {
-					for(DppDueDateAmountDO dppDueDateAmountDO : dppDueAmountDoList) {
-						DppValueVO dppValueVO = new DppValueVO();
-						dppValueVO.setDppAmountDue(StringUtils.trim(dppDueDateAmountDO.getDppAmountDue()));
-						dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
-								Constants.yyyyMMdd, dppDueDateAmountDO.getDppDueDate()));
-						dppList.add(dppValueVO);
-					}
+				DppDueDateAmountDO[] amtDueArray = payExtEligibleResponse.getDppDueDateAmountDoList();
+				List<DppValueVO> dppDetailsList = new ArrayList<>();
+				
+				for(DppDueDateAmountDO amtDue: amtDueArray){
+					DppValueVO dppValueVO = new DppValueVO();
+					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue());
+					dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
+								Constants.yyyyMMdd, amtDue.getDppDueDate()));
+					dppDetailsList.add(dppValueVO);
 				}
+				
+				DppInstPlanDetailsDO[] dppInstplanDetList = payExtEligibleResponse.getDppInstplanDetList();
+				List<com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO> dppInstPlanDetailsList = new ArrayList<>();
+				for (DppInstPlanDetailsDO dppInstPlanDetailsDO : dppInstplanDetList) {
+					DppInstPlanDetailsDTO dppInstPlanDetailsDTO = new com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO();
+					dppInstPlanDetailsDTO.setAmount(dppInstPlanDetailsDO.getAmount());
+					dppInstPlanDetailsDTO.setDppDes(dppInstPlanDetailsDO.getDppDes());
+					dppInstPlanDetailsDTO.setDueDate(dppInstPlanDetailsDO.getDueDate());
+					dppInstPlanDetailsDTO.setItemCount(dppInstPlanDetailsDO.getItemCount());
+					dppInstPlanDetailsDTO.setOpbel(dppInstPlanDetailsDO.getOpbel());
+					
+					dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
+				}
+				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);
+				
+				response.setDppValue(dppDetailsList);
 				
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
@@ -3692,6 +3705,22 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		logger.info("END - [BillingBO - getDPPPaymentExtensionCheck]");
 		return response;
 	}
+
+	public DPPExtensionCheckResponse dppSubmit(DPPEligibilityCheckRequest payRequest, String sessionId) {
+		logger.info("Start - [BillingBO - dppSubmit]");
+		DPPExtensionCheckResponse response = new DPPExtensionCheckResponse();
+		DppSubmissionResponse dppSubmissionResponse = null;
+		
+		DppSubmissionRequest request = new DppSubmissionRequest();
+		
+		
+	
+		
+		logger.info("END - [BillingBO - getDPPPaymentExtensionCheck]");
+		return response;
+	}
+	
+	
 	
 	private HashMap<String, String> createGMEPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
 	

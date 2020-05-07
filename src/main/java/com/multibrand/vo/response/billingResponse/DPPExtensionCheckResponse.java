@@ -2,13 +2,13 @@ package com.multibrand.vo.response.billingResponse;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import com.multibrand.vo.response.GenericResponse;
 
 public class DPPExtensionCheckResponse extends GenericResponse {
 	
 	private boolean isPaymentExtension = false;
-	List<DppValueVO> dppValue = new LinkedList<DppValueVO>();
+	private List<DppValueVO> dppValue = new LinkedList<DppValueVO>();
+	private List<DppInstPlanDetailsDTO> dppInstPlanDetailsList; 
 	private String dpplanActive = "";
 	private String dpplanEligible = "";
 	private String dppplanPending = "";
@@ -99,7 +99,16 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 	public void setDppDescription(String dppDescription) {
 		this.dppDescription = dppDescription;
 	}
-	
-	
-
+	/**
+	 * @return the dppInstPlanDetailsList
+	 */
+	public List<DppInstPlanDetailsDTO> getDppInstPlanDetailsList() {
+		return dppInstPlanDetailsList;
+	}
+	/**
+	 * @param dppInstPlanDetailsList the dppInstPlanDetailsList to set
+	 */
+	public void setDppInstPlanDetailsList(List<DppInstPlanDetailsDTO> dppInstPlanDetailsList) {
+		this.dppInstPlanDetailsList = dppInstPlanDetailsList;
+	}
 }
