@@ -2187,7 +2187,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			populateCreditFactorDepositAmtInResponse(response, newCreditScoreResponse, creditCheckRequest,
 		    		 creditScoreRequest, creditFactor, locale,localeObj ,serviceLocationResponseErrorList );
 			
-	 	
+			
 /*Setting the CreditAgency info From zestNotifyHold*/	
 			 CompanyMsgText.CREDIT_AGENCY_ENUM creditAgencyEnum=null;
 			
@@ -2268,12 +2268,11 @@ public class OEBO extends OeBoHelper implements Constants{
 			}else if((StringUtils.isBlank(errorCodeFromAPI))){
 				errorCodeFromAPI = errorCodeFromDB;
 			}
-			if( !isPropectCreditCheckExecuted( serviceLoationResponse)) {
-				
-				updateServiceLocationAndPersonForCreditCheck(response, newCreditScoreResponse, 
+			
+			updateServiceLocationAndPersonForCreditCheck(response, newCreditScoreResponse, 
 						creditCheckRequest, creditScoreRequest, serviceLocationResponseErrorList, 
 						creditFactor, serviceLoationResponse,errorCodeFromAPI);
-			}
+			
 		}
 
 		logger.debug("END:" + METHOD_NAME);
@@ -2349,6 +2348,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			OESignupDTO oeSignUpDTO, ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum, boolean isPosidHoldAllowed) {
 		// TODO Set error code if any. (Reliant code base)
 		// this.setErrorCode(oeSignUpDTO);
+		logger.info(oeSignUpDTO.printOETrackingID()+"errorcode "+oeSignUpDTO.getErrorCode());
+		logger.info(oeSignUpDTO.printOETrackingID()+"isPosidHoldAllowed "+isPosidHoldAllowed);
 		if(null!=enrollmentFraudEnum){
 			enrollmentResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			enrollmentResponse.setResultDescription(enrollmentFraudEnum.getFraudErrorMessage());
@@ -2412,6 +2413,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setHttpStatus(Status.INTERNAL_SERVER_ERROR);
 
 		}
+		logger.info(oeSignUpDTO.printOETrackingID()+" enrollmentResponse "+ReflectionToStringBuilder.toString(enrollmentResponse,
+				ToStringStyle.MULTI_LINE_STYLE));
 		// Set OE Signup DTO in the response
 		// enrollmentResponse.setOeSignupDTO(oeSignUpDTO);
 	}
@@ -6128,7 +6131,11 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						.floatValue())>0)) {
 			serviceLocationResponseErrorList.add(DEPOSITHOLD);
 		}else{
-			serviceLocationResponseErrorList.remove(DEPOSITHOLD);
+			if(StringUtils.equalsIgnoreCase(newCreditScoreResponse.getStrDepositHold(), FLAG_YES)) {
+				serviceLocationResponseErrorList.add(DEPOSITHOLD);
+			}else{
+				serviceLocationResponseErrorList.remove(DEPOSITHOLD);
+			}
 		}
 		
 		if (StringUtils.isNotEmpty(creditCheckRequest.getMviDate())
@@ -6411,9 +6418,10 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						.getStrCreditScore()))
 					requestDataPerson.setCredScoreNum(newCreditScoreResponse
 							.getStrCreditScore());
-				requestDataPerson.setAdvActionData(StringUtils.removeEnd(
+				if(creditFactor != null) {
+					requestDataPerson.setAdvActionData(StringUtils.removeEnd(
 						creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
-	
+				}
 	
 				if(StringUtils.isNotBlank(response.getDepositAmount())) {
 					if (StringUtils.isNotBlank(newCreditScoreResponse
