@@ -1904,7 +1904,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			constructPromoCodeEmptyResponse(response);
 			return response;	
 		}
-		
+		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,enrollmentRequest.getChannelType());
 		try {
 			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
 				if(serviceLoationResponse == null){
@@ -1929,7 +1929,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 			
 			// Check for any fraudulent activity in Enrollment Submission and block enrollment
-			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType(),serviceLoationResponse.getCallExecutedFromDB(), serviceLoationResponse);
+			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,isPosidHoldAllowed,serviceLoationResponse.getCallExecutedFromDB(), serviceLoationResponse);
 			if(null==enrollmentFraudEnum){
 				
 				// Do the input normalization/sanitization
@@ -2002,7 +2002,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			try {
 			this.updatePersonAndServiceLocation(oeSignUpDTO);
 			// populate enrollment response for output.
-			this.setEnrollmentResponse(response, oeSignUpDTO, enrollmentFraudEnum);
+			this.setEnrollmentResponse(response, oeSignUpDTO, enrollmentFraudEnum, isPosidHoldAllowed);
 			} catch(Exception en) {
 				logger.error("Exception in SubmitEnrollment :", en);
 			}
@@ -2013,12 +2013,11 @@ public class OEBO extends OeBoHelper implements Constants{
 		return response;
 	}
 
-	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType,String apiCallExecuted,
+	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, boolean isPosidHoldAllowed,String apiCallExecuted,
 														ServiceLocationResponse serviceLocationResponse) {
 		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
 		logger.debug("Start:" + METHOD_NAME);
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
-		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,channelType);
 		
 		String errorCdList=oeSignUpDTO.getErrorCdList();
 		enrollmentFraudEnum = isMandatoryCallExecuted(apiCallExecuted);
@@ -2347,7 +2346,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 * @param enrollmentFraudEnum 
 	 */
 	private void setEnrollmentResponse(EnrollmentResponse enrollmentResponse,
-			OESignupDTO oeSignUpDTO, ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum) {
+			OESignupDTO oeSignUpDTO, ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum, boolean isPosidHoldAllowed) {
 		// TODO Set error code if any. (Reliant code base)
 		// this.setErrorCode(oeSignUpDTO);
 		if(null!=enrollmentFraudEnum){
@@ -2381,6 +2380,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				|| MESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				||(SWITCHHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
 				|| CCSERR.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
+				|| (isPosidHoldAllowed && StringUtils.equalsIgnoreCase(POSIDHOLD, oeSignUpDTO.getErrorCode()))
 				||(StringUtils.isBlank(oeSignUpDTO.getErrorCode()))) {
 
 			enrollmentResponse.setResultCode(RESULT_CODE_SUCCESS);
