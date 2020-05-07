@@ -637,7 +637,7 @@ public class OEBOTest implements Constants{
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(false);
 	    ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
 	    serviceLocationResponse.setPersonResponse(new PersonResponse());
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted, serviceLocationResponse);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, false,apiCallExecuted, serviceLocationResponse);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
@@ -660,7 +660,7 @@ public class OEBOTest implements Constants{
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
 	    ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
 	    serviceLocationResponse.setPersonResponse(new PersonResponse());
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted, serviceLocationResponse);
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, true,apiCallExecuted, serviceLocationResponse);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
