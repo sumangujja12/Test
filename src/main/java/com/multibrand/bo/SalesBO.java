@@ -127,7 +127,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 			if (null != serviceLoationResponse) {
 				if(!oeBO.isEnrollmentAlreadySubmitted(serviceLoationResponse))
 					{
-					bpMatchFlag = extractBpMatchFlag(salesEsidCalendarRequest,serviceLoationResponse,serviceLocationResponseErrorList );
+					bpMatchFlag = extractBpMatchFlag(salesEsidCalendarRequest,serviceLoationResponse );
 					EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO.getESIDAndCalendarDates(
 							salesEsidCalendarRequest.getCompanyCode(), salesEsidCalendarRequest.getAffiliateId(),
 							salesEsidCalendarRequest.getBrandId(), serviceLoationResponse.getServStreetNum(),
@@ -154,24 +154,28 @@ public class SalesBO extends OeBoHelper implements Constants {
 	}
 	
 	private String extractBpMatchFlag(SalesEsidCalendarRequest salesEsidCalendarRequest, 
-			ServiceLocationResponse serviceLoationResponse, 
-			LinkedHashSet<String> serviceLocationResponseErrorList ) throws Exception {
+			ServiceLocationResponse serviceLoationResponse ) throws Exception {
 		String bpMatchFlag = null;
 		if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
 				&& (StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
 			if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
 				String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 
-				LinkedHashSet<String> serviceLocationResponseErrorListTemp = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-				BeanUtils.copyProperties(serviceLocationResponseErrorListTemp, serviceLocationResponseErrorList);
+				LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+				//BeanUtils.copyProperties(serviceLocationResponseErrorListTemp, serviceLocationResponseErrorList);
+				if(!serviceLocationResponseErrorList.contains(PBSD)){
 				serviceLocationResponseErrorList.remove(BPSD);
+				boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidCalendarRequest.getTrackingId(),
+						salesEsidCalendarRequest.getGuid(), StringUtils.EMPTY,
+						StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
+				serviceLoationResponse.setErrorCode(StringUtils.EMPTY);
+				serviceLoationResponse.setErrorCdlist(StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
+				}else{
+					bpMatchFlag = BPSD;
+				}
 			}
 
-			boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidCalendarRequest.getTrackingId(),
-					salesEsidCalendarRequest.getGuid(), StringUtils.EMPTY,
-					StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
-			serviceLoationResponse.setErrorCode(StringUtils.EMPTY);
-			serviceLoationResponse.setErrorCdlist(StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
+			
 
 		} else if ((StringUtils.equalsIgnoreCase(serviceLoationResponse.getErrorCode(), BPSD))
 				&& (!StringUtils.equalsIgnoreCase(salesEsidCalendarRequest.getPastServiceMatchedFlag(), FLAG_YES))) {
