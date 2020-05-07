@@ -59,6 +59,7 @@ import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.request.EnrollmentReportDataRequest;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.request.handlers.OERequestHandler;
@@ -634,7 +635,9 @@ public class OEBOTest implements Constants{
 		oeSignUpDTO.setReqStatusCd(I_VALUE);
 		oeSignUpDTO.setErrorCdList(POSIDHOLD);
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(false);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);
+	    ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
+	    serviceLocationResponse.setPersonResponse(new PersonResponse());
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted, serviceLocationResponse);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
@@ -655,7 +658,9 @@ public class OEBOTest implements Constants{
 		oeSignUpDTO.setErrorCdList(SWITCHHOLD);
 		oeSignUpDTO.setServiceReqTypeCd(SWI);
 	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(true);
-	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted);
+	    ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
+	    serviceLocationResponse.setPersonResponse(new PersonResponse());
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, "",apiCallExecuted, serviceLocationResponse);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	

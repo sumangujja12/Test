@@ -165,9 +165,9 @@ public class SalesBO extends OeBoHelper implements Constants {
 				//BeanUtils.copyProperties(serviceLocationResponseErrorListTemp, serviceLocationResponseErrorList);
 				if(!serviceLocationResponseErrorList.contains(PBSD)){
 				serviceLocationResponseErrorList.remove(BPSD);
-				boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidCalendarRequest.getTrackingId(),
+				/*boolean errorCode = oeBO.updateErrorCodeinSLA(salesEsidCalendarRequest.getTrackingId(),
 						salesEsidCalendarRequest.getGuid(), StringUtils.EMPTY,
-						StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
+						StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));*/
 				serviceLoationResponse.setErrorCode(StringUtils.EMPTY);
 				serviceLoationResponse.setErrorCdlist(StringUtils.join(serviceLocationResponseErrorList, SYMBOL_PIPE));
 				}else{

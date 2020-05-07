@@ -10,7 +10,8 @@ public static enum ENROLLMENT_FRAUD_ENUM {
 		SWITCH_HOLD(ERROR_CD_ENROLLMENT_NOT_ALLOWED, "Switch Hold Submission not allowed for Switch Transaction","SWITCH_HOLD_FRAUD"),
 		CREDIT_FREEZE(ERROR_CD_ENROLLMENT_NOT_ALLOWED, "Credit Freeze / Fraud Submission not allowed","CREDIT_FREEZE_FRAUD"),
 		CREDIT_CALL_SKIP(ERROR_CD_ENROLLMENT_NOT_ALLOWED,"Credit not checked ", "CREDIT_API_SKIPPED"),    
-		DATE_CALL_SKIP(ERROR_CD_ENROLLMENT_NOT_ALLOWED,"Available Dates not checked ", "DATES_API_SKIPPED");
+		DATE_CALL_SKIP(ERROR_CD_ENROLLMENT_NOT_ALLOWED,"Available Dates not checked ", "DATES_API_SKIPPED"),
+	    CREDIT_CHECK_FRAUD(ERROR_CD_ENROLLMENT_NOT_ALLOWED, ENROLLMENT_NOT_ALLOWED_TEXT,"CREDIT_CHECK_FRAUD");
 	
 		private String fraudErrorCode;	
 		private String fraudErrorMessage;

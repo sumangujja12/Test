@@ -1915,14 +1915,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					response.populateInvalidTrackingResponse();
 					return response;
 				}
-				if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
-				{
-					response.populateAlreadySubmittedEnrollmentResponse();
-					return response;	
-				}
 				
 				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-				oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
+					oeSignUpDTO.setErrorCdList(serviceLoationResponse.getErrorCdlist());
 				}
 			}
 				
@@ -1931,17 +1926,10 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
 			
-			if((serviceLoationResponse == null)  || (CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(CCSD))  
-					|| ( StringUtils.isEmpty(serviceLoationResponse.getPersonResponse().getCredSourceNum())
-					&& StringUtils.isEmpty(serviceLoationResponse.getPersonResponse().getCredScoreNum()) 
-					&& StringUtils.isEmpty(serviceLoationResponse.getPersonResponse().getCredLevelNum())
-					) ){
-				oeSignUpDTO.setErrorCode(CCSD);
-				return response;
-			}
+	
 			
 			// Check for any fraudulent activity in Enrollment Submission and block enrollment
-			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType(),serviceLoationResponse.getCallExecutedFromDB());
+			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,enrollmentRequest.getChannelType(),serviceLoationResponse.getCallExecutedFromDB(), serviceLoationResponse);
 			if(null==enrollmentFraudEnum){
 				
 				// Do the input normalization/sanitization
@@ -2025,11 +2013,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		return response;
 	}
 
-	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType,String apiCallExecuted) {
+	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, String channelType,String apiCallExecuted,
+														ServiceLocationResponse serviceLocationResponse) {
 		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
 		logger.debug("Start:" + METHOD_NAME);
-		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,channelType);
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,channelType);
+		
 		String errorCdList=oeSignUpDTO.getErrorCdList();
 		enrollmentFraudEnum = isMandatoryCallExecuted(apiCallExecuted);
 		if(null!=enrollmentFraudEnum){
@@ -2037,6 +2027,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		}
 		if(!StringUtils.equals(oeSignUpDTO.getReqStatusCd(), I_VALUE)){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DUPLICATE_ENROLLMENT");
+		}
+		else  if((CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(CCSD))  
+				|| ( StringUtils.isEmpty(serviceLocationResponse.getPersonResponse().getCredSourceNum())
+				&& StringUtils.isEmpty(serviceLocationResponse.getPersonResponse().getCredScoreNum()) 
+				&& StringUtils.isEmpty(serviceLocationResponse.getPersonResponse().getCredLevelNum())
+				) ){
+			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CHECK_FRAUD");
 		}
 		else if (StringUtils.isNotBlank(errorCdList)) {
 			String errorCdArray[] =errorCdList.split(ERROR_CD_LIST_SPLIT_PATTERN);	
@@ -2051,8 +2048,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			}else if(ArrayUtils.contains(errorCdArray, CREDFREEZE)){
 				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
 			}
-		}
+		} 
 		logger.debug("End:" + METHOD_NAME);
+		
 		return enrollmentFraudEnum;
 	}
 	
@@ -2352,7 +2350,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			OESignupDTO oeSignUpDTO, ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum) {
 		// TODO Set error code if any. (Reliant code base)
 		// this.setErrorCode(oeSignUpDTO);
-
 		if(null!=enrollmentFraudEnum){
 			enrollmentResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			enrollmentResponse.setResultDescription(enrollmentFraudEnum.getFraudErrorMessage());
@@ -2362,6 +2359,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setErrorCode(enrollmentFraudEnum.getFraudErrorCode());
 			enrollmentResponse.setErrorDescription(enrollmentFraudEnum.getFraudErrorMessage());
 			enrollmentResponse.setHttpStatus(Status.BAD_REQUEST);
+			
 		}
 		else if (BPSD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()) || PBSD.equalsIgnoreCase(oeSignUpDTO.getErrorCode())) {
 
@@ -2404,15 +2402,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setBpid(StringUtils.defaultIfEmpty(
 					oeSignUpDTO.getBusinessPartnerID(), StringUtils.EMPTY));
 			enrollmentResponse.setHttpStatus(Status.OK);
-		} else if(StringUtils.equalsIgnoreCase(oeSignUpDTO.getErrorCode(), CCSD)){
-			enrollmentResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-			enrollmentResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			enrollmentResponse.setResultDescription(ENROLLMENT_NOT_ALLOWED_TEXT);
-			enrollmentResponse.setErrorCode(ENROLLMENT_NOT_ALLOWED);
-			enrollmentResponse.setErrorDescription(ENROLLMENT_NOT_ALLOWED_TEXT);
-			enrollmentResponse.setHttpStatus(Status.INTERNAL_SERVER_ERROR);
-		}
-		else {
+		} else {
 			// set error code if any in response
 			enrollmentResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			enrollmentResponse.setResultDescription("Enrollment Call Failed with error: "+oeSignUpDTO.getErrorCode());
