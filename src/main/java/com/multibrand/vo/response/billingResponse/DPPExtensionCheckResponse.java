@@ -8,7 +8,7 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 	
 	private boolean isPaymentExtension = false;
 	private List<DppValueVO> dppValue = new LinkedList<DppValueVO>();
-	private List<DppInstPlanDetailsDTO> dppInstPlanDetailsList; 
+	private List<DppInstPlanDetailsDTO> dppInstPlanDetailsList = new LinkedList<DppInstPlanDetailsDTO>();
 	private String dpplanActive = "";
 	private String dpplanEligible = "";
 	private String dppplanPending = "";
