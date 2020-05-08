@@ -1321,6 +1321,7 @@ public interface Constants {
     public static final String TOGGLZ_FEATURE_NEW_POSID_CALL="salesapi.newposid.flag";
 	public static final String TOGGLZ_FEATURE_CMS_OFFER_DATA="salesapi.cmsofferdata.flag";
 	public static final String TOGGLZ_FEATURE_DEFAULT_REACTIVE_OFFER="salesapi.dros.flag";
+	public static final String TOGGLZ_FEATURE_HOLD_CMS_DATA="salesapi.hold.content";
  
     //***************** SALES APIs *************************
     //Legacy Sales APIs - Currently being used by Affiliates - To be deprecated

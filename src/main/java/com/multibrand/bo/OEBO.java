@@ -6572,11 +6572,15 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 	
 	public SalesHoldLookupResponse getSalesHoldList(SalesHoldLookupRequest salesHoldLookupRequest){
 		EnrollmentHoldInfoRequest request = oeRequestHandler.createEnrollmentHoldInfoRequest(salesHoldLookupRequest);
+		logger.info("EnrollmentHoldInfoRequest "+ReflectionToStringBuilder.toString(request,
+				ToStringStyle.MULTI_LINE_STYLE));
 		EnrollmentHoldInfoResponse response = oeProxy.getEnrollmentHoldInfo(request);
-		SalesHoldLookupResponse salesHoldLookupResponse = constructEnrollmentHoldMaster(response); 
+		logger.info("EnrollmentHoldInfoResponse "+ReflectionToStringBuilder.toString(response,
+				ToStringStyle.MULTI_LINE_STYLE));
+		SalesHoldLookupResponse salesHoldLookupResponse = constructEnrollmentHoldMaster(response, salesHoldLookupRequest); 
 		return salesHoldLookupResponse;
 	}
-	private SalesHoldLookupResponse constructEnrollmentHoldMaster(EnrollmentHoldInfoResponse response ){
+	private SalesHoldLookupResponse constructEnrollmentHoldMaster(EnrollmentHoldInfoResponse response,SalesHoldLookupRequest salesHoldLookupRequest  ){
 		SalesHoldLookupResponse salesResponse = new SalesHoldLookupResponse();
 		
 		if( StringUtils.equalsIgnoreCase(response.getStrReturnCode(), CCS_STATUS_CODE_NO_HOLDS) )
@@ -6595,13 +6599,39 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		salesResponse.setCheckDigit(response.getStrCheckDigit());
 		salesResponse.setBpNumber(response.getStrBPNumber());
 		List<EnrollmentHoldDTO> holdDTOList = new ArrayList<>();
+		String languageCode = (StringUtils.equalsIgnoreCase(salesHoldLookupRequest.getLanguageCode(), S)) ? S: E;
+		boolean isCMSEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_HOLD_CMS_DATA, salesHoldLookupRequest.getCompanyCode(), salesHoldLookupRequest.getBrandId());
 		if(response.getEnrollmentHoldList() !=null){
+			Map<String, String>  snippetMap = new HashMap<String, String>();
 			for(EnrollmentHold hold:response.getEnrollmentHoldList()){
 				EnrollmentHoldDTO holdDTO = new EnrollmentHoldDTO();
 				holdDTO.setHoldType(hold.getStrHoldType());
 				holdDTO.setHoldStatus(hold.getStrHoldStatus());
+				String holdTitleSnippet = "oe_holds_"+hold.getStrHoldType().toLowerCase()+"_title_tctxt";
+				String holdDescriptionSnippet = "oe_holds_"+hold.getStrHoldType().toLowerCase()+"_description_tctxt";
+				snippetMap.put(holdTitleSnippet, holdTitleSnippet);
+				snippetMap.put(holdDescriptionSnippet, holdDescriptionSnippet);
+				
+			//	String holdTitle = contentHelper.getSnippetContent("oe_holds_"+hold.getStrHoldType().toLowerCase()+"_title_tctxt", 
+			//			salesHoldLookupRequest.getCompanyCode(), salesHoldLookupRequest.getBrandId(), languageCode);
+			//	holdDTO.setHoldTitle(holdTitle);
 				holdDTOList.add(holdDTO);
 			}
+			
+			if(isCMSEnabled) {
+			
+				snippetMap = contentHelper.getSnippetContent(snippetMap, 
+						salesHoldLookupRequest.getCompanyCode(), salesHoldLookupRequest.getBrandId(), languageCode);
+				
+				for(EnrollmentHoldDTO holdDTO:holdDTOList){
+					String holdTitleSnippet = "oe_holds_"+holdDTO.getHoldType().toLowerCase()+"_title_tctxt";
+					String holdDescriptionSnippet = "oe_holds_"+holdDTO.getHoldType().toLowerCase()+"_description_tctxt";
+					
+					holdDTO.setHoldTitle(snippetMap.get(holdTitleSnippet));
+					holdDTO.setHoldDescription(snippetMap.get(holdDescriptionSnippet));
+				}
+			}
+			
 		}
 		salesResponse.setEnrollmentHoldList(holdDTOList);
 		return salesResponse;

@@ -1594,6 +1594,9 @@ public class OERequestHandler implements Constants {
 		request.setStrCompanyCode(salesHoldLookupRequest.getCompanyCode());
 		request.setStrCaNumber(CommonUtil.addLeadingZeroes(salesHoldLookupRequest.getCaNumber(), 12));
 		request.setStrBillingZipCode(salesHoldLookupRequest.getBillZipCode());
+		request.setStrDOB(StringUtils.EMPTY);
+		request.setStrLastName(StringUtils.EMPTY);
+		request.setStrStreetNumber(StringUtils.EMPTY);
 		return request;
 	}
 	
