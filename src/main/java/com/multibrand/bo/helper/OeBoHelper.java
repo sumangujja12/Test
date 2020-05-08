@@ -567,6 +567,11 @@ public class OeBoHelper extends BaseBO {
 			   oeSignUpDTO.setReqStatusCd(FLAG_N);
 			   oeSignUpDTO.setErrorCode(MESID);
 			}
+		   
+		   if (ArrayUtils.contains(errorCdArray, CURRENT_CUSTOMER)) {
+			   oeSignUpDTO.setErrorCode(CURRENT_CUSTOMER);
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			}
 		}
 		
 		// Switch Hold ON and Move IN case
@@ -586,7 +591,9 @@ public class OeBoHelper extends BaseBO {
 		String requestStatusCode = oeSignUpDTO.getReqStatusCd();
 
 		if (!oeSignUpDTO.isEnrolled()) {
-			errorCode = CCSERR;
+			if(!StringUtils.equalsIgnoreCase(errorCode, CURRENT_CUSTOMER) ) {
+				errorCode = CCSERR;
+			}
 			requestStatusCode = FLAG_N;
 
 			// Before returning from here, explicitly setting the error code and
@@ -656,7 +663,11 @@ public class OeBoHelper extends BaseBO {
 		   if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
 			   oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
 			   allowSubmit = false;
+		   }else if(ArrayUtils.contains(errorCdArray, CURRENT_CUSTOMER)){
+			   oeSignUpDTO.setErrorCode(CURRENT_CUSTOMER);
+			   allowSubmit = false;
 		   }
+		   
 		}
 		logger.debug("End:" + METHOD_NAME);
 		return allowSubmit;

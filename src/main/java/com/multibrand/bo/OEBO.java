@@ -2377,6 +2377,21 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setCheckDigit(StringUtils.EMPTY);
 			enrollmentResponse.setBpid(StringUtils.EMPTY); 
 			enrollmentResponse.setHttpStatus(Status.OK);
+		} else if (StringUtils.equalsIgnoreCase(CURRENT_CUSTOMER, oeSignUpDTO.getErrorCode())) {
+			
+			enrollmentResponse.setResultCode(CURRENT_CUSTOMER);
+			enrollmentResponse.setResultDescription(msgSource.getMessage(BP_MATCH_CURRENT_CUSTOMER_MSG_TXT));
+			enrollmentResponse.setStatusCode(STATUS_CODE_STOP);
+			enrollmentResponse.setMessageCode(CURRENT_CUSTOMER);
+			enrollmentResponse.setMessageText(enrollmentResponse.getResultDescription());
+			enrollmentResponse.setErrorCode(StringUtils.EMPTY);
+			enrollmentResponse.setErrorDescription(StringUtils.EMPTY);
+			//enrollmentResponse.setTrackingId(StringUtils.EMPTY);
+			enrollmentResponse.setIdocNumber(StringUtils.EMPTY);
+			enrollmentResponse.setCaNumber(StringUtils.EMPTY);
+			enrollmentResponse.setCheckDigit(StringUtils.EMPTY);
+			enrollmentResponse.setBpid(StringUtils.EMPTY); 
+			enrollmentResponse.setHttpStatus(Status.OK);
 		} else if (NESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				|| MESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				||(SWITCHHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
@@ -3285,7 +3300,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				messageCode=CURRENT_CUSTOMER;
 				response.setStatusCode(STATUS_CODE_STOP);
 				String currentCustomer=null;
-				
+				errorCd = CURRENT_CUSTOMER;
+				errorCdSet.add(CURRENT_CUSTOMER);
 				if(null!=bpmatchResponse.getBpActiveCustomerDTO() && null!=bpmatchResponse.getBpActiveCustomerDTO().getActiveAddressDTO()){
 					response.setExistingCity(bpmatchResponse.getBpActiveCustomerDTO().getActiveAddressDTO().getStrCity());
 					response.setExistingState(bpmatchResponse.getBpActiveCustomerDTO().getActiveAddressDTO().getStrState());
@@ -6131,11 +6147,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						.floatValue())>0)) {
 			serviceLocationResponseErrorList.add(DEPOSITHOLD);
 		}else{
-			if(StringUtils.equalsIgnoreCase(newCreditScoreResponse.getStrDepositHold(), FLAG_YES)) {
-				serviceLocationResponseErrorList.add(DEPOSITHOLD);
-			}else{
-				serviceLocationResponseErrorList.remove(DEPOSITHOLD);
-			}
+			serviceLocationResponseErrorList.remove(DEPOSITHOLD);
 		}
 		
 		if (StringUtils.isNotEmpty(creditCheckRequest.getMviDate())

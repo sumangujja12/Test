@@ -28,6 +28,7 @@ import com.multibrand.domain.ProfileDomain;
 import com.multibrand.domain.ProfileDomainPortBindingStub;
 import com.multibrand.domain.TdspDetailsRequest;
 import com.multibrand.domain.TdspDetailsResponse;
+import com.multibrand.domain.TdspDetailsResponseStrTdspCodeGeoZoneMapEntry;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.vo.request.ESIDData;
@@ -397,6 +398,16 @@ public class AddressService extends BaseAbstractService
 			OEDomain proxyclient = getOEServiceProxy();
 			tdspDetailsResponse = proxyclient.getTdspDetails(tdspDetailsRequest);
 			tdspCode = tdspDetailsResponse.getStrTdsp();
+			
+			if(StringUtils.isEmpty(tdspCode) && tdspDetailsResponse.getStrTdspCodeGeoZoneMap() != null && tdspDetailsResponse.getStrTdspCodeGeoZoneMap().length >0){
+				for(TdspDetailsResponseStrTdspCodeGeoZoneMapEntry tdspCodeGeoZoneObj:tdspDetailsResponse.getStrTdspCodeGeoZoneMap()){
+					if(null!=tdspCodeGeoZoneObj){
+						if(!StringUtils.equalsIgnoreCase("NER",tdspCodeGeoZoneObj.getValue())){
+							tdspCode =tdspCodeGeoZoneObj.getKey();
+						}
+					}
+				}
+			}
 			
 		} catch (ServiceException | RemoteException e) {
 			// TODO Auto-generated catch block
