@@ -3654,7 +3654,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				&& StringUtils.isNotBlank(dppEligibleResponse.getDppReturnCode())) {
 		
 				if(checkDPPEligibility(dppEligibleResponse)){
-				response.setDppEligible(true);
+				response.setDppPlanEligible(true);
 				
 				DppDueDateAmountDO[] amtDueArray = dppEligibleResponse.getDppDueDateAmountDoList();
 				List<DppValueVO> dppDetailsList = new ArrayList<>();
@@ -3680,6 +3680,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
 				}
 				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);
+				response.setDppAmountToBePaid(dppDetailsList.remove(0));
 				
 				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() { 
 					@Override
@@ -3688,12 +3689,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						int returnInt = 0;
 						try {
 						if(pd1.getDppDueDate() != null && pd2.getDppDueDate() !=null){	
-						Date d1 = new SimpleDateFormat(DATE_FORMAT).parse(pd1.getDppDueDate());
-						Date d2 = new SimpleDateFormat(DATE_FORMAT).parse(pd2.getDppDueDate());
-						if(d1.getTime() < d2.getTime())
-							returnInt = 1;
-						else if(d1.getTime() > d2.getTime())
-							returnInt = -1;
+						Date d1 = new SimpleDateFormat(RESPONSE_DATE_FORMAT).parse(pd1.getDppDueDate());
+						Date d2 = new SimpleDateFormat(RESPONSE_DATE_FORMAT).parse(pd2.getDppDueDate());
+						
+						return (d1.getTime() > d2.getTime() ? -1 : 1);
 						}			
 						
 					} catch (ParseException e) {
@@ -3705,18 +3704,19 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				});
 				
 				response.setDppValue(dppDetailsList);
-				response.setDppAmountToBePaid(dppDetailsList.remove(0));
+				
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
 			} else {
-				response.setDppEligible(false);
+				response.setDppPlanEligible(false);
 				response.setResultCode(RESULT_CODE_NO_DATA);
 				response.setResultDescription("Extension Date not available");
 				response.setErrorCode(dppEligibleResponse.getErrorCode());
 				response.setErrorDescription(dppEligibleResponse.getErrorMessage());
 			}
-				response.setDppPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
-				response.setTotalDppAmount(dppEligibleResponse.getAmount());
+				response.setDppPlanPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
+				response.setDppPlanActive(BooleanUtils.toBoolean(dppEligibleResponse.getDpplanActive()));
+				response.setTotalDppAmount(dppEligibleResponse.getAmount().trim());
 		} else if(dppEligibleResponse != null) {
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
 			response.setResultDescription("Failed to get the Extension Date or not available");

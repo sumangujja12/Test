@@ -11,9 +11,9 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 	private DppValueVO dppAmountToBePaid;
 	private List<DppValueVO> dppValue = new LinkedList<>();
 	private List<DppInstPlanDetailsDTO> dppInstPlanDetailsList = new LinkedList<>();
-	private boolean isDppEligible;
-	private boolean isDppPending;
-	
+	private boolean isDppPlanEligible;
+	private boolean isDppPlanPending;
+	private boolean isDppPlanActive;
 	/**
 	 * @return the totalDppAmount
 	 */
@@ -63,29 +63,43 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 		this.dppInstPlanDetailsList = dppInstPlanDetailsList;
 	}
 	/**
-	 * @return the isDppEligible
+	 * @return the isDppPlanEligible
 	 */
-	public boolean isDppEligible() {
-		return isDppEligible;
+	public boolean isDppPlanEligible() {
+		return isDppPlanEligible;
 	}
 	/**
-	 * @param isDppEligible the isDppEligible to set
+	 * @param isDppPlanEligible the isDppPlanEligible to set
 	 */
-	public void setDppEligible(boolean isDppEligible) {
-		this.isDppEligible = isDppEligible;
+	public void setDppPlanEligible(boolean isDppPlanEligible) {
+		this.isDppPlanEligible = isDppPlanEligible;
 	}
 	/**
-	 * @return the isDppPending
+	 * @return the isDppPlanPending
 	 */
-	public boolean isDppPending() {
-		return isDppPending;
+	public boolean isDppPlanPending() {
+		return isDppPlanPending;
 	}
 	/**
-	 * @param isDppPending the isDppPending to set
+	 * @param isDppPlanPending the isDppPlanPending to set
 	 */
-	public void setDppPending(boolean isDppPending) {
-		this.isDppPending = isDppPending;
+	public void setDppPlanPending(boolean isDppPlanPending) {
+		this.isDppPlanPending = isDppPlanPending;
+	}
+	/**
+	 * @return the isDppPlanActive
+	 */
+	public boolean isDppPlanActive() {
+		return isDppPlanActive;
+	}
+	/**
+	 * @param isDppPlanActive the isDppPlanActive to set
+	 */
+	public void setDppPlanActive(boolean isDppPlanActive) {
+		this.isDppPlanActive = isDppPlanActive;
 	}
 	
+	
+
 }
 
