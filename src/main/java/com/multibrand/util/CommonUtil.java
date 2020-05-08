@@ -2131,5 +2131,16 @@ public class CommonUtil implements Constants {
 		return trackingId;
 	}
 	
-	
+	  public static String removeHTMLComment(String contentMsg)
+	  {
+	    String updatedContentMsg = "";
+
+	    if (StringUtils.isNotBlank(contentMsg))
+	    {
+	      updatedContentMsg = contentMsg.replaceAll("(?=<!--)([\\s\\S]*?)(-->)", "");
+	    }
+
+	    return updatedContentMsg;
+	  }
+	  
 }
