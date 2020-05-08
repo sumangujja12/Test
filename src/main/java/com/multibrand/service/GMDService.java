@@ -384,7 +384,7 @@ public class GMDService extends BaseAbstractService {
 		energyChargeBreakDown.setGroup(group);
 
 		
-		energyChargeBreakDown.setTotalCost(zesGmdStmt.getCusage() .add(zesGmdStmt.getCusageAdj()).add(zesGmdStmt.getCusageAdj()));
+		energyChargeBreakDown.setTotalCost(zesGmdStmt.getCusage() .add(zesGmdStmt.getUseChrg()).add(zesGmdStmt.getCusageAdj()));
 		energyChargeBreakDown.setCosts(energyChargeSaleCost);
 		return energyChargeBreakDown;
 	}
