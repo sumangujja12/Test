@@ -12,21 +12,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.BillDAO;
 import com.multibrand.domain.ActEbillRequest;
 import com.multibrand.domain.ActEbillResponse;
@@ -3635,7 +3632,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	public DPPExtensionCheckResponse getDPPPaymentExtensionCheck(DPPEligibilityCheckRequest payRequest, String sessionId) {
 		logger.info("Start - [BillingBO - getDPPPaymentExtensionCheck]");
 		DPPExtensionCheckResponse response = new DPPExtensionCheckResponse();
-		DppEligibleResponse payExtEligibleResponse = null;
+		DppEligibleResponse dppEligibleResponse = null;
 		DppEligibleRequest request = new DppEligibleRequest();
 		request.setBrandId(payRequest.getBrandName());
 		request.setCompanyCode(payRequest.getCompanyCode());
@@ -3645,7 +3642,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
 		
 		try {
-			payExtEligibleResponse = paymentService.getDPPExtEligibleResponse(request, sessionId);
+			dppEligibleResponse = paymentService.getDPPExtEligibleResponse(request, sessionId);
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
@@ -3653,28 +3650,28 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			return response;
 		}
 		
-		if (payExtEligibleResponse != null
-				&& StringUtils.isNotBlank(payExtEligibleResponse.getDppReturnCode())) {
+		if (dppEligibleResponse != null
+				&& StringUtils.isNotBlank(dppEligibleResponse.getDppReturnCode())) {
 		
-				if(checkDPPEligibility(payExtEligibleResponse)){
-				response.setPaymentExtension(true);
+				if(checkDPPEligibility(dppEligibleResponse)){
+				response.setDppEligible(true);
 				
-				DppDueDateAmountDO[] amtDueArray = payExtEligibleResponse.getDppDueDateAmountDoList();
+				DppDueDateAmountDO[] amtDueArray = dppEligibleResponse.getDppDueDateAmountDoList();
 				List<DppValueVO> dppDetailsList = new ArrayList<>();
 				
 				for(DppDueDateAmountDO amtDue: amtDueArray){
 					DppValueVO dppValueVO = new DppValueVO();
-					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue());
+					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue().trim());
 					dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
 								Constants.yyyyMMdd, amtDue.getDppDueDate()));
 					dppDetailsList.add(dppValueVO);
 				}
 				
-				DppInstPlanDetailsDO[] dppInstplanDetList = payExtEligibleResponse.getDppInstplanDetList();
+				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
 				List<com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO> dppInstPlanDetailsList = new ArrayList<>();
 				for (DppInstPlanDetailsDO dppInstPlanDetailsDO : dppInstplanDetList) {
 					DppInstPlanDetailsDTO dppInstPlanDetailsDTO = new com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO();
-					dppInstPlanDetailsDTO.setAmount(dppInstPlanDetailsDO.getAmount());
+					dppInstPlanDetailsDTO.setAmount(dppInstPlanDetailsDO.getAmount().trim());
 					dppInstPlanDetailsDTO.setDppDes(dppInstPlanDetailsDO.getDppDes());
 					dppInstPlanDetailsDTO.setDueDate(dppInstPlanDetailsDO.getDueDate());
 					dppInstPlanDetailsDTO.setItemCount(dppInstPlanDetailsDO.getItemCount());
@@ -3684,22 +3681,47 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				}
 				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);
 				
-				response.setDppValue(dppDetailsList);
+				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() { 
+					@Override
+					public int compare(DppValueVO pd1, DppValueVO pd2) {
 				
+						int returnInt = 0;
+						try {
+						if(pd1.getDppDueDate() != null && pd2.getDppDueDate() !=null){	
+						Date d1 = new SimpleDateFormat(DATE_FORMAT).parse(pd1.getDppDueDate());
+						Date d2 = new SimpleDateFormat(DATE_FORMAT).parse(pd2.getDppDueDate());
+						if(d1.getTime() < d2.getTime())
+							returnInt = 1;
+						else if(d1.getTime() > d2.getTime())
+							returnInt = -1;
+						}			
+						
+					} catch (ParseException e) {
+						logger.error("Error cooucred in PaymentHelper:sortBillInsertList()",e);
+						returnInt = 0;
+					}
+		           return returnInt;
+					}
+				});
+				
+				response.setDppValue(dppDetailsList);
+				response.setDppAmountToBePaid(dppDetailsList.remove(0));
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
 			} else {
-				response.setPaymentExtension(false);
+				response.setDppEligible(false);
 				response.setResultCode(RESULT_CODE_NO_DATA);
 				response.setResultDescription("Extension Date not available");
-				response.setErrorCode(payExtEligibleResponse.getErrorCode());
-				response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+				response.setErrorCode(dppEligibleResponse.getErrorCode());
+				response.setErrorDescription(dppEligibleResponse.getErrorMessage());
 			}
-		} else if(payExtEligibleResponse != null) {
+				response.setDppPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
+				response.setTotalDppAmount(dppEligibleResponse.getAmount());
+		} else if(dppEligibleResponse != null) {
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
 			response.setResultDescription("Failed to get the Extension Date or not available");
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
-			response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+			response.setErrorDescription(dppEligibleResponse.getErrorMessage());
 		}
 		
 		logger.info("END - [BillingBO - getDPPPaymentExtensionCheck]");

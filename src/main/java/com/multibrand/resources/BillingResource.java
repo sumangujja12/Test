@@ -1261,10 +1261,10 @@ public class BillingResource {
 	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 	public Response getDppExtensionCheck(@Valid DPPEligibilityCheckRequest request) {
 		Response response = null;
-		logger.info("Start-[ProfileResource-getPaymentExtensionCheck]");
-		DPPExtensionCheckResponse paymentExtensionResponse = billingBO.getDPPPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(paymentExtensionResponse).build();
-		logger.info("End-[ProfileResource-getPaymentExtensionCheck]");
+		logger.info("Start-[ProfileResource-getDppExtensionCheck]");
+		DPPExtensionCheckResponse dppExtensionCheckResponse = billingBO.getDPPPaymentExtensionCheck(request, httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(dppExtensionCheckResponse).build();
+		logger.info("End-[ProfileResource-getDppExtensionCheck]");
 		return response;
 		
 	}

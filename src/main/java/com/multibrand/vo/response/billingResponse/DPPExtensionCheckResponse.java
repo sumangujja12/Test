@@ -2,31 +2,42 @@ package com.multibrand.vo.response.billingResponse;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import com.multibrand.vo.response.GenericResponse;
 
 public class DPPExtensionCheckResponse extends GenericResponse {
-	
-	private boolean isPaymentExtension = false;
-	private List<DppValueVO> dppValue = new LinkedList<DppValueVO>();
-	private List<DppInstPlanDetailsDTO> dppInstPlanDetailsList = new LinkedList<DppInstPlanDetailsDTO>();
-	private String dpplanActive = "";
-	private String dpplanEligible = "";
-	private String dppplanPending = "";
-	private String amount ="";
-	private String dppDescription ="";
+
+	private String totalDppAmount;
+	private DppValueVO dppAmountToBePaid;
+	private List<DppValueVO> dppValue = new LinkedList<>();
+	private List<DppInstPlanDetailsDTO> dppInstPlanDetailsList = new LinkedList<>();
+	private boolean isDppEligible;
+	private boolean isDppPending;
 	
 	/**
-	 * @return the isPaymentExtension
+	 * @return the totalDppAmount
 	 */
-	public boolean isPaymentExtension() {
-		return isPaymentExtension;
+	public String getTotalDppAmount() {
+		return totalDppAmount;
 	}
 	/**
-	 * @param isPaymentExtension the isPaymentExtension to set
+	 * @param totalDppAmount the totalDppAmount to set
 	 */
-	public void setPaymentExtension(boolean isPaymentExtension) {
-		this.isPaymentExtension = isPaymentExtension;
-	}	
+	public void setTotalDppAmount(String totalDppAmount) {
+		this.totalDppAmount = totalDppAmount;
+	}
+	/**
+	 * @return the dppAmountToBePaid
+	 */
+	public DppValueVO getDppAmountToBePaid() {
+		return dppAmountToBePaid;
+	}
+	/**
+	 * @param dppAmountToBePaid the dppAmountToBePaid to set
+	 */
+	public void setDppAmountToBePaid(DppValueVO dppAmountToBePaid) {
+		this.dppAmountToBePaid = dppAmountToBePaid;
+	}
 	/**
 	 * @return the dppValue
 	 */
@@ -40,66 +51,6 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 		this.dppValue = dppValue;
 	}
 	/**
-	 * @return the dpplanActive
-	 */
-	public String getDpplanActive() {
-		return dpplanActive;
-	}
-	/**
-	 * @param dpplanActive the dpplanActive to set
-	 */
-	public void setDpplanActive(String dpplanActive) {
-		this.dpplanActive = dpplanActive;
-	}
-	/**
-	 * @return the dpplanEligible
-	 */
-	public String getDpplanEligible() {
-		return dpplanEligible;
-	}
-	/**
-	 * @param dpplanEligible the dpplanEligible to set
-	 */
-	public void setDpplanEligible(String dpplanEligible) {
-		this.dpplanEligible = dpplanEligible;
-	}
-	/**
-	 * @return the dppplanPending
-	 */
-	public String getDppplanPending() {
-		return dppplanPending;
-	}
-	/**
-	 * @param dppplanPending the dppplanPending to set
-	 */
-	public void setDppplanPending(String dppplanPending) {
-		this.dppplanPending = dppplanPending;
-	}
-	/**
-	 * @return the amount
-	 */
-	public String getAmount() {
-		return amount;
-	}
-	/**
-	 * @param amount the amount to set
-	 */
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
-	/**
-	 * @return the dppDescription
-	 */
-	public String getDppDescription() {
-		return dppDescription;
-	}
-	/**
-	 * @param dppDescription the dppDescription to set
-	 */
-	public void setDppDescription(String dppDescription) {
-		this.dppDescription = dppDescription;
-	}
-	/**
 	 * @return the dppInstPlanDetailsList
 	 */
 	public List<DppInstPlanDetailsDTO> getDppInstPlanDetailsList() {
@@ -111,4 +62,30 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 	public void setDppInstPlanDetailsList(List<DppInstPlanDetailsDTO> dppInstPlanDetailsList) {
 		this.dppInstPlanDetailsList = dppInstPlanDetailsList;
 	}
+	/**
+	 * @return the isDppEligible
+	 */
+	public boolean isDppEligible() {
+		return isDppEligible;
+	}
+	/**
+	 * @param isDppEligible the isDppEligible to set
+	 */
+	public void setDppEligible(boolean isDppEligible) {
+		this.isDppEligible = isDppEligible;
+	}
+	/**
+	 * @return the isDppPending
+	 */
+	public boolean isDppPending() {
+		return isDppPending;
+	}
+	/**
+	 * @param isDppPending the isDppPending to set
+	 */
+	public void setDppPending(boolean isDppPending) {
+		this.isDppPending = isDppPending;
+	}
+	
 }
+
