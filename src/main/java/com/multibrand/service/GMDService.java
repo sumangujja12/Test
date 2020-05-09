@@ -326,9 +326,9 @@ public class GMDService extends BaseAbstractService {
 
 		ZesGmdStmt zesGmdStmt = holderZesGmdStmt.value ;
 	
+		BigDecimal totalCost = new BigDecimal("0.00");
 		
-		response.setTotalCost(zesGmdStmt.getUseChrg());
-		response.setTotalUsage(zesGmdStmt.getCusage());
+		
 		
 		response.setAvgPrice(holderAvgPrice !=null ? holderAvgPrice.value : null);
 		
@@ -337,6 +337,8 @@ public class GMDService extends BaseAbstractService {
 		List<GMDReturnCharge> gmdReturnChargeList = getReturnCharge(holderZettGmdRetchr);
 		
 		breakdown.add(energyChargeitemBreakDown(zesGmdStmt, GMD_ENERGY_CHARGE));
+		
+
 		
 		breakdown.add(tduDeliveryitemBreakDown(zesGmdStmt, TDSP_DELIVERY_CHARGES));
 		
@@ -347,11 +349,19 @@ public class GMDService extends BaseAbstractService {
 		
 		breakdown.add(gmdMemberBreakDown(zesGmdStmt, GMD_MEMBERSHIP));
 		breakdown.add(taxesBreakDown(zesGmdStmt, TAXES_FEES));
+
+		totalCost = totalCost.add(zesGmdStmt.getUseChrg() .add(zesGmdStmt.getCusageAdj())
+				.add(zesGmdStmt.getTduDely())
+				.add(zesGmdStmt.getAnclServ()).
+				add(zesGmdStmt.getSolarFee())
+				.add(zesGmdStmt.getMemFee())
+				.add(zesGmdStmt.getTax()));
 		
 		
+		response.setTotalCost(totalCost);
 		response.setBreakdown(breakdown);
 		response.setReturnCharge(gmdReturnChargeList);		
-
+		response.setTotalUsage(zesGmdStmt.getCusage());
 		return response;
 
 	}
