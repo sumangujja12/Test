@@ -3640,6 +3640,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setContract(payRequest.getContractId());
 		request.setDppBypassElg(this.appConstMessageSource.getMessage(Constants.DPP_BYPASS_ELIGIBLE_FLAG, null, null));
 		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
+		request.setNoOfInstallments(this.appConstMessageSource.getMessage(Constants.DPP_NO_OF_INST, null, null));
+		request.setDppInitialDownPayment("");
 		
 		try {
 			dppEligibleResponse = paymentService.getDPPExtEligibleResponse(request, sessionId);
@@ -3669,39 +3671,28 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				
 				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
 				List<com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO> dppInstPlanDetailsList = new ArrayList<>();
-				for (DppInstPlanDetailsDO dppInstPlanDetailsDO : dppInstplanDetList) {
-					DppInstPlanDetailsDTO dppInstPlanDetailsDTO = new com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO();
-					dppInstPlanDetailsDTO.setAmount(dppInstPlanDetailsDO.getAmount().trim());
-					dppInstPlanDetailsDTO.setDppDes(dppInstPlanDetailsDO.getDppDes());
-					dppInstPlanDetailsDTO.setDueDate(dppInstPlanDetailsDO.getDueDate());
-					dppInstPlanDetailsDTO.setItemCount(dppInstPlanDetailsDO.getItemCount());
-					dppInstPlanDetailsDTO.setOpbel(dppInstPlanDetailsDO.getOpbel());
-					
-					dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
+				
+				if ( dppInstplanDetList != null && dppInstplanDetList.length > 0) {
+					for (DppInstPlanDetailsDO dppInstPlanDetailsDO : dppInstplanDetList) {
+						DppInstPlanDetailsDTO dppInstPlanDetailsDTO = new com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO();
+						dppInstPlanDetailsDTO.setAmount(dppInstPlanDetailsDO.getAmount().trim());
+						dppInstPlanDetailsDTO.setDppDes(dppInstPlanDetailsDO.getDppDes());
+						dppInstPlanDetailsDTO.setDueDate(dppInstPlanDetailsDO.getDueDate());
+						dppInstPlanDetailsDTO.setItemCount(dppInstPlanDetailsDO.getItemCount());
+						dppInstPlanDetailsDTO.setOpbel(dppInstPlanDetailsDO.getOpbel());
+						
+						dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
+					}
 				}
 				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);
 				response.setDppAmountToBePaid(dppDetailsList.remove(0));
 				
-				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() { 
-					@Override
-					public int compare(DppValueVO pd1, DppValueVO pd2) {
-				
-						int returnInt = 0;
-						try {
-						if(pd1.getDppDueDate() != null && pd2.getDppDueDate() !=null){	
-						Date d1 = new SimpleDateFormat(RESPONSE_DATE_FORMAT).parse(pd1.getDppDueDate());
-						Date d2 = new SimpleDateFormat(RESPONSE_DATE_FORMAT).parse(pd2.getDppDueDate());
-						
-						return (d1.getTime() > d2.getTime() ? -1 : 1);
-						}			
-						
-					} catch (ParseException e) {
-						logger.error("Error cooucred in PaymentHelper:sortBillInsertList()",e);
-						returnInt = 0;
-					}
-		           return returnInt;
-					}
-				});
+				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() {
+					  @Override
+					  public int compare(DppValueVO u1, DppValueVO u2) {
+					    return u1.getDppDueDate().compareTo(u2.getDppDueDate());
+					  }
+					});
 				
 				response.setDppValue(dppDetailsList);
 				
