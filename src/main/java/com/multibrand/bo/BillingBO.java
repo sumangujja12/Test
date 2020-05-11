@@ -89,6 +89,7 @@ import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
 import com.multibrand.vo.request.AvgTempRequestVO;
 import com.multibrand.vo.request.DPPEligibilityCheckRequest;
+import com.multibrand.vo.request.DPPSubmitRequest;
 import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.ProjectedBillRequestVO;
 import com.multibrand.vo.request.RetroPopupRequestVO;
@@ -122,6 +123,7 @@ import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.ContractDOSort;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.DPPExtensionCheckResponse;
+import com.multibrand.vo.response.billingResponse.DPPSubmitResponse;
 import com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO;
 import com.multibrand.vo.response.billingResponse.DppValueVO;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
@@ -3769,4 +3771,80 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   && !StringUtils.equalsIgnoreCase(YES, response.getDpplanActive())
 			   && !StringUtils.equalsIgnoreCase(YES, response.getDppplanPending());
 	}	
+	
+	
+	public DPPSubmitResponse dppSubmit(DPPSubmitRequest submitRequest, String sessionId) {
+		DPPSubmitResponse response = new DPPSubmitResponse();
+		DppSubmissionRequest request = new DppSubmissionRequest();
+		
+		com.multibrand.domain.AddressDTO billAddressDTO = new com.multibrand.domain.AddressDTO();
+		if(submitRequest!= null)
+		{
+			billAddressDTO.setStrStreetNum(submitRequest.getStreetNumber());
+			billAddressDTO.setStrStreetName(submitRequest.getStreetName());
+			billAddressDTO.setStrCity(submitRequest.getCity());
+			billAddressDTO.setStrUnitNumber(submitRequest.getUnitNumber());
+			billAddressDTO.setStrState(submitRequest.getState());
+			billAddressDTO.setStrZip(submitRequest.getZipCode());
+		}
+		request.setBillingAddress(billAddressDTO);
+		request.setBrandId(submitRequest.getBrandName());
+		request.setCompanyCode(submitRequest.getCompanyCode());
+		request.setContAccount(submitRequest.getContractAccountNumber());
+		request.setContract(submitRequest.getContractId());
+		request.setDppBypassElg(this.appConstMessageSource.getMessage(Constants.DPP_BYPASS_ELIGIBLE_FLAG, null, null));
+		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
+		request.setImAddrChk("");
+		request.setImEmail("");
+		request.setImEmailChk("");
+		request.setImFax("");
+		request.setImFaxChk("");
+		request.setImFaxto("");
+		request.setImNewaddr("");
+		request.setIvDefaultCorr("");
+		request.setIvDppInipay("");
+		request.setIvDwnpayDate("");
+		request.setIvStartDate("");
+		request.setNoOfInstall(this.appConstMessageSource.getMessage(Constants.DPP_NO_OF_INST, null, null));
+		
+		DPPEligibilityCheckRequest payRequest = new DPPEligibilityCheckRequest();
+		payRequest.setBrandName(submitRequest.getBrandName());
+		payRequest.setCompanyCode(submitRequest.getCompanyCode());
+		payRequest.setContractAccountNumber(submitRequest.getContractAccountNumber());
+		payRequest.setContractId(submitRequest.getContractId());
+		DPPExtensionCheckResponse dppEligibityResponse = getDPPPaymentExtensionCheck(payRequest,sessionId);
+		List<DppInstPlanDetailsDTO> dppInsPlanDetailsList= dppEligibityResponse.getDppInstPlanDetailsList();
+		DppAmountVO[] amountVOArray = new DppAmountVO[dppInsPlanDetailsList.size()];
+		int counter = 0;
+		for(DppInstPlanDetailsDTO planDetails : dppInsPlanDetailsList) {
+			DppAmountVO amountVO = new DppAmountVO();
+			amountVO.setAmount(planDetails.getAmount());
+			amountVO.setDueDate(planDetails.getDueDate());
+			amountVO.setDppDes(planDetails.getDppDes());
+			amountVO.setItemCount(planDetails.getItemCount());
+			amountVO.setOpbel(planDetails.getOpbel());
+			amountVOArray[counter] = amountVO;
+			counter++;
+		}
+		DppSubmissionResponse dppResponse = null;
+		request.setDPPAmountVOList(amountVOArray);
+		try {
+			dppResponse = paymentService.dppSubmit(request, sessionId);
+		} catch (RemoteException e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in  Submit Exception :::" + e);
+			return response;
+		}
+		
+		if (dppResponse != null
+				&& StringUtils.isNotBlank(dppResponse.getErrorCode())) {
+			response.setDppSubmit(false);
+			response.setErrorCode(RESULT_CODE_CCS_ERROR);
+			response.setErrorDescription("DPP Submission Failed");
+		}
+		
+		return response;
+		
+	}
 }
