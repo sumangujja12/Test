@@ -3825,6 +3825,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			amountVO.setOpbel(planDetails.getOpbel());
 			amountVOArray[counter] = amountVO;
 			counter++;
+			break;
 		}
 		DppSubmissionResponse dppResponse = null;
 		request.setDPPAmountVOList(amountVOArray);
@@ -3838,7 +3839,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		}
 		
 		if (dppResponse != null
-				&& StringUtils.isNotBlank(dppResponse.getErrorCode())) {
+				&& StringUtils.isNotBlank(dppResponse.getErrorCode())
+				&&  !StringUtils.equalsIgnoreCase(dppResponse.getErrorCode(), "00")) {
 			response.setDppSubmit(false);
 			response.setErrorCode(RESULT_CODE_CCS_ERROR);
 			response.setErrorDescription("DPP Submission Failed");
