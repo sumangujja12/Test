@@ -24,12 +24,6 @@ public class DPPSubmitRequest implements FormEntityRequest, Serializable {
 	private String contractAccountNumber ="";
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String contractId ="";
-	private String streetNumber ="";
-	private String streetName ="";
-	private String city ="";
-	private String unitNumber ="";
-	private String state ="";
-	private String zipCode ="";
 	
 	/**
 	 * @return the companyCode
@@ -89,90 +83,7 @@ public class DPPSubmitRequest implements FormEntityRequest, Serializable {
 		this.contractId = contractId;
 	}
 
-	/**
-	 * @return the streetNumber
-	 */
-	public String getStreetNumber() {
-		return streetNumber;
-	}
-
-	/**
-	 * @param streetNumber the streetNumber to set
-	 */
-	public void setStreetNumber(String streetNumber) {
-		this.streetNumber = streetNumber;
-	}
-
-	/**
-	 * @return the streetName
-	 */
-	public String getStreetName() {
-		return streetName;
-	}
-
-	/**
-	 * @param streetName the streetName to set
-	 */
-	public void setStreetName(String streetName) {
-		this.streetName = streetName;
-	}
-
-	/**
-	 * @return the city
-	 */
-	public String getCity() {
-		return city;
-	}
-
-	/**
-	 * @param city the city to set
-	 */
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	/**
-	 * @return the unitNumber
-	 */
-	public String getUnitNumber() {
-		return unitNumber;
-	}
-
-	/**
-	 * @param unitNumber the unitNumber to set
-	 */
-	public void setUnitNumber(String unitNumber) {
-		this.unitNumber = unitNumber;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @param state the state to set
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the zipCode
-	 */
-	public String getZipCode() {
-		return zipCode;
-	}
-
-	/**
-	 * @param zipCode the zipCode to set
-	 */
-	public void setZipCode(String zipCode) {
-		this.zipCode = zipCode;
-	}
-
+	
 	/**
 	 * @return String representation of this request.
 	 */

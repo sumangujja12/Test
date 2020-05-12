@@ -3777,15 +3777,50 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		DPPSubmitResponse response = new DPPSubmitResponse();
 		DppSubmissionRequest request = new DppSubmissionRequest();
 		
-		com.multibrand.domain.AddressDTO billAddressDTO = new com.multibrand.domain.AddressDTO();
-		if(submitRequest!= null)
-		{
-			billAddressDTO.setStrStreetNum(submitRequest.getStreetNumber());
-			billAddressDTO.setStrStreetName(submitRequest.getStreetName());
-			billAddressDTO.setStrCity(submitRequest.getCity());
-			billAddressDTO.setStrUnitNumber(submitRequest.getUnitNumber());
-			billAddressDTO.setStrState(submitRequest.getState());
-			billAddressDTO.setStrZip(submitRequest.getZipCode());
+		com.multibrand.domain.AddressDTO billAddressDTO = null;
+		try {
+
+			Map<String, Object> responseMap = new HashMap<String, Object>();
+			responseMap = profileService.getProfile(submitRequest.getContractAccountNumber(),
+					submitRequest.getCompanyCode(), sessionId);
+			ProfileResponse profileResponse = null;
+			if (responseMap != null && responseMap.size() != 0) {
+				profileResponse = (ProfileResponse) responseMap.get("profileResponse");
+				if (profileResponse != null && profileResponse.getContractAccountDO() != null
+						&& profileResponse.getContractAccountDO().getListOfContracts() != null) {
+
+					com.multibrand.domain.ContractDO[] contractDO = profileResponse.getContractAccountDO()
+							.getListOfContracts();
+					for (com.multibrand.domain.ContractDO contractDOArr : contractDO) {
+						if (StringUtils.equalsIgnoreCase(contractDOArr.getStrContractID(),
+								submitRequest.getContractId())) {
+							billAddressDTO = new com.multibrand.domain.AddressDTO();
+							contractDOArr.getServiceAddressDO();
+							billAddressDTO.setStrStreetNum(contractDOArr.getServiceAddressDO().getStrStreetNum());
+							billAddressDTO.setStrStreetName(contractDOArr.getServiceAddressDO().getStrStreetName());
+							billAddressDTO.setStrCity(contractDOArr.getServiceAddressDO().getStrCity());
+							billAddressDTO.setStrUnitNumber(contractDOArr.getServiceAddressDO().getStrUnitNumber());
+							billAddressDTO.setStrState(contractDOArr.getServiceAddressDO().getStrState());
+							billAddressDTO.setStrZip(contractDOArr.getServiceAddressDO().getStrZip());
+							break;
+						}
+
+					}
+
+				}
+			}
+
+		} catch (Exception e1) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in  Submit Exception :::" + e1);
+			return response;
+		}
+
+		if (billAddressDTO == null) {
+			response.setErrorCode(RESULT_CODE_NO_DATA);
+			response.setErrorDescription("No Service Address");
+			return response;
 		}
 		request.setBillingAddress(billAddressDTO);
 		request.setBrandId(submitRequest.getBrandName());
