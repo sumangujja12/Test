@@ -282,30 +282,31 @@ public class GMDService extends BaseAbstractService {
 		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cal = Calendar.getInstance();
 		
-		for (HourlyPrice hourlyPrice : response.getHourlyPriceList()) {
-			
-			
-			for (int i = cal.get(Calendar.HOUR_OF_DAY) ; i > 0 ;i--) {
+		if (response.getHourlyPriceList() != null)  {
+			for (HourlyPrice hourlyPrice : response.getHourlyPriceList()) {
 				
-				String methodName = "getPriceHr"+StringUtils.leftPad(String.valueOf(i), 2, '0');
 				
-				String price = (String) getMethodRun(hourlyPrice, methodName);
-
-				PastSeries pastSeries = new PastSeries();
+				for (int i = cal.get(Calendar.HOUR_OF_DAY) ; i > 0 ;i--) {
+					
+					String methodName = "getPriceHr"+StringUtils.leftPad(String.valueOf(i), 2, '0');
+					
+					String price = (String) getMethodRun(hourlyPrice, methodName);
+	
+					PastSeries pastSeries = new PastSeries();
+					
+					if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
+						pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
+					} else {
+						pastSeries.setPrice(new BigDecimal("0.00"));
+					}
+					pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
+					
+					pastSeriesList.add(pastSeries);
 				
-				if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
-					pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
-				} else {
-					pastSeries.setPrice(new BigDecimal("0.00"));
 				}
-				pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
-				
-				pastSeriesList.add(pastSeries);
-			
 			}
-		}
 		
-		
+	    }
 		return pastSeriesList;
 	} 
 	
