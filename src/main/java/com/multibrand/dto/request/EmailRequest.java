@@ -43,6 +43,7 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 	private String templateType;
 	
 	
+	
 	public String getExternalId() {
 		return externalId;
 	}
