@@ -1933,7 +1933,21 @@ public class OEBO extends OeBoHelper implements Constants{
 			if(null==enrollmentFraudEnum){
 				
 				// Do the input normalization/sanitization
-				this.initNormalization(oeSignUpDTO);
+				try{
+					this.initNormalization(oeSignUpDTO);
+				}catch(NoSuchMessageException nsme){
+					logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", nsme);
+					response.setMessageCode(AREA_NOT_SERVICED);
+					response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(enrollmentRequest.getLanguageCode())));
+					response.setStatusCode(Constants.STATUS_CODE_STOP);
+					return response;
+				}catch(Exception e){
+					logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
+					response.setMessageCode(AREA_NOT_SERVICED);
+					response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(enrollmentRequest.getLanguageCode())));
+					response.setStatusCode(Constants.STATUS_CODE_STOP);
+					return response;
+				}
 				logger.debug("oeSignUpDTO : "+oeSignUpDTO);
 				
 				if (allowEnrollmentSubmissionToCCS(oeSignUpDTO, response)) {
@@ -2034,6 +2048,12 @@ public class OEBO extends OeBoHelper implements Constants{
 				) ){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CHECK_FRAUD");
 		}
+		else if((CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(CURRENT_CUSTOMER))){
+			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf(CURRENT_CUSTOMER);
+		}
+		else if((CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(NRESID))){
+			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("BUSINESS_METER");
+		}
 		else if (StringUtils.isNotBlank(errorCdList)) {
 			String errorCdArray[] =errorCdList.split(ERROR_CD_LIST_SPLIT_PATTERN);	
 		    if(!isPosidHoldAllowed && ArrayUtils.contains(errorCdArray, POSIDHOLD)){
@@ -2046,8 +2066,8 @@ public class OEBO extends OeBoHelper implements Constants{
 		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("SWITCH_HOLD");
 			}else if(ArrayUtils.contains(errorCdArray, CREDFREEZE)){
 				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
-			}
-		} 
+			} 
+		}
 		logger.debug("End:" + METHOD_NAME);
 		
 		return enrollmentFraudEnum;
@@ -2614,8 +2634,22 @@ public class OEBO extends OeBoHelper implements Constants{
 					if(StringUtils.isEmpty(esidDo.getEsidNumber())) {
 						esidDo.setEsidNumber(NESID);
 					}
-					if(StringUtils.isNotEmpty(esidDo.getEsidTDSP())) {
-						tdspCodeCCS = (this.appConstMessageSource.getMessage(esidDo.getEsidTDSP(), null, null));
+					try{
+						if(StringUtils.isNotEmpty(esidDo.getEsidTDSP())) {
+							tdspCodeCCS = (this.appConstMessageSource.getMessage(esidDo.getEsidTDSP(), null, null));
+						}
+					}catch(NoSuchMessageException nsme){
+						logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", nsme);
+						response.setMessageCode(AREA_NOT_SERVICED);
+						response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						return response;
+					}catch(Exception e){
+						logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
+						response.setMessageCode(AREA_NOT_SERVICED);
+						response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
+						response.setStatusCode(Constants.STATUS_CODE_STOP);
+						return response;
 					}
 					if(esidDo.isEsidBlocked()){
 						serviceLocationResponseErrorList.add(HOLD_DNP);
@@ -2637,16 +2671,30 @@ public class OEBO extends OeBoHelper implements Constants{
 					TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(esid,companyCode,sessionId);
 					if ((tdspByESIDResponse != null) && (StringUtils.isNotBlank(tdspByESIDResponse.getServiceId()))) {
 						String tdspCodeCCSForEsid = tdspByESIDResponse.getServiceId();
-						esidDo.setEsidTDSP(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."
-										+ tdspCodeCCSForEsid, null, null));						
+						try{
+							esidDo.setEsidTDSP(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."
+										+ tdspCodeCCSForEsid, null, null));
+						}catch(NoSuchMessageException nsme){
+							logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", nsme);
+							response.setMessageCode(AREA_NOT_SERVICED);
+							response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
+							response.setStatusCode(Constants.STATUS_CODE_STOP);
+							return response;
+						}catch(Exception e){
+							logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
+							response.setMessageCode(AREA_NOT_SERVICED);
+							response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
+							response.setStatusCode(Constants.STATUS_CODE_STOP);
+							return response;
+						}
 						logger.info("TDSP Code :"+esidDo.getEsidTDSP());
 						response.setTdspCode(tdspCodeCCSForEsid);
 						tdspCodeCCS = tdspCodeCCSForEsid;
-					} else {
+					} else{
 						response.setMessageCode(AREA_NOT_SERVICED);
 						response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
 						response.setStatusCode(Constants.STATUS_CODE_STOP);
-						response.setResultCode(Constants.RESULT_CODE_SUCCESS );
+						response.setResultCode(Constants.RESULT_CODE_SUCCESS);
 						return response;
 					}
 				}

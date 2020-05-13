@@ -28,11 +28,6 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 10, groups = SizeConstraint.class)
-	@AssertDuplicateRecord(duplicateRecordValidatorClass = EnrollmentDuplicateRecordValidator.class, 
-							message = "{err.msg.duplicate.enrollment.by.ca}",
-							messageCode = MESSAGE_CODE_DUPLICATE_SUBMISSION, 
-							messageCodeText = MESSAGE_CODE_TEXT_DUPLICATE_SUBMISSION, 
-							groups = DuplicateRecordGroupConstraint.class)
 	private String trackingId;
 
 	@NotBlank(groups = BasicConstraint.class)
