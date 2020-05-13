@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
@@ -24,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.dao.BillDAO;
 import com.multibrand.domain.ActEbillRequest;
 import com.multibrand.domain.ActEbillResponse;
@@ -45,13 +47,9 @@ import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.DeActEbillRequest;
 import com.multibrand.domain.DeActEbillResponse;
-import com.multibrand.domain.DppAmountVO;
 import com.multibrand.domain.DppDueDateAmountDO;
 import com.multibrand.domain.DppEligibleRequest;
 import com.multibrand.domain.DppEligibleResponse;
-import com.multibrand.domain.DppInstPlanDetailsDO;
-import com.multibrand.domain.DppSubmissionRequest;
-import com.multibrand.domain.DppSubmissionResponse;
 import com.multibrand.domain.GetArRequest;
 import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.PayExtEligibleRequest;
@@ -89,7 +87,6 @@ import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
 import com.multibrand.vo.request.AvgTempRequestVO;
 import com.multibrand.vo.request.DPPEligibilityCheckRequest;
-import com.multibrand.vo.request.DPPSubmitRequest;
 import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.ProjectedBillRequestVO;
 import com.multibrand.vo.request.RetroPopupRequestVO;
@@ -123,8 +120,6 @@ import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.ContractDOSort;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.DPPExtensionCheckResponse;
-import com.multibrand.vo.response.billingResponse.DPPSubmitResponse;
-import com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO;
 import com.multibrand.vo.response.billingResponse.DppValueVO;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
@@ -3672,7 +3667,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					dppDetailsList.add(dppValueVO);
 				}
 				
-				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
+				//Commented and will enable once CCS completed the code chnages
+/*				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
 				List<com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO> dppInstPlanDetailsList = new ArrayList<>();
 				
 				if ( dppInstplanDetList != null && dppInstplanDetList.length > 0) {
@@ -3687,7 +3683,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
 					}
 				}
-				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);
+				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);*/
 				response.setDppAmountToBePaid(dppDetailsList.remove(0));
 				
 				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() {
@@ -3719,20 +3715,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		return response;
 	}
 
-	public DPPExtensionCheckResponse dppSubmit(DPPEligibilityCheckRequest payRequest, String sessionId) {
-		logger.info("Start - [BillingBO - dppSubmit]");
-		DPPExtensionCheckResponse response = new DPPExtensionCheckResponse();
-		DppSubmissionResponse dppSubmissionResponse = null;
-		
-		DppSubmissionRequest request = new DppSubmissionRequest();
-		
-		
-	
-		
-		logger.info("END - [BillingBO - getDPPPaymentExtensionCheck]");
-		return response;
-	}
-	
 	
 	
 	private HashMap<String, String> createGMEPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
@@ -3770,116 +3752,4 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			   && !StringUtils.equalsIgnoreCase(YES, response.getDppplanPending());
 	}	
 	
-	
-	public DPPSubmitResponse dppSubmit(DPPSubmitRequest submitRequest, String sessionId) {
-		DPPSubmitResponse response = new DPPSubmitResponse();
-		DppSubmissionRequest request = new DppSubmissionRequest();
-		
-		com.multibrand.domain.AddressDTO billAddressDTO = null;
-		try {
-
-			Map<String, Object> responseMap = new HashMap<String, Object>();
-			responseMap = profileService.getProfile(submitRequest.getContractAccountNumber(),
-					submitRequest.getCompanyCode(), sessionId);
-			ProfileResponse profileResponse = null;
-			if (responseMap != null && responseMap.size() != 0) {
-				profileResponse = (ProfileResponse) responseMap.get("profileResponse");
-				if (profileResponse != null && profileResponse.getContractAccountDO() != null
-						&& profileResponse.getContractAccountDO().getListOfContracts() != null) {
-
-					com.multibrand.domain.ContractDO[] contractDO = profileResponse.getContractAccountDO()
-							.getListOfContracts();
-					for (com.multibrand.domain.ContractDO contractDOArr : contractDO) {
-						if (StringUtils.equalsIgnoreCase(contractDOArr.getStrContractID(),
-								submitRequest.getContractId())) {
-							billAddressDTO = new com.multibrand.domain.AddressDTO();
-							contractDOArr.getServiceAddressDO();
-							billAddressDTO.setStrStreetNum(contractDOArr.getServiceAddressDO().getStrStreetNum());
-							billAddressDTO.setStrStreetName(contractDOArr.getServiceAddressDO().getStrStreetName());
-							billAddressDTO.setStrCity(contractDOArr.getServiceAddressDO().getStrCity());
-							billAddressDTO.setStrUnitNumber(contractDOArr.getServiceAddressDO().getStrUnitNumber());
-							billAddressDTO.setStrState(contractDOArr.getServiceAddressDO().getStrState());
-							billAddressDTO.setStrZip(contractDOArr.getServiceAddressDO().getStrZip());
-							break;
-						}
-
-					}
-
-				}
-			}
-
-		} catch (Exception e1) {
-			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.error("Exception Occured in  Submit Exception :::" + e1);
-			return response;
-		}
-
-		if (billAddressDTO == null) {
-			response.setErrorCode(RESULT_CODE_NO_DATA);
-			response.setErrorDescription("No Service Address");
-			return response;
-		}
-		request.setBillingAddress(billAddressDTO);
-		request.setBrandId(submitRequest.getBrandName());
-		request.setCompanyCode(submitRequest.getCompanyCode());
-		request.setContAccount(submitRequest.getContractAccountNumber());
-		request.setContract(submitRequest.getContractId());
-		request.setDppBypassElg(this.appConstMessageSource.getMessage(Constants.DPP_BYPASS_ELIGIBLE_FLAG, null, null));
-		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
-		request.setImAddrChk("");
-		request.setImEmail("");
-		request.setImEmailChk("");
-		request.setImFax("");
-		request.setImFaxChk("");
-		request.setImFaxto("");
-		request.setImNewaddr("");
-		request.setIvDefaultCorr("");
-		request.setIvDppInipay("");
-		request.setIvDwnpayDate("");
-		request.setIvStartDate("");
-		request.setNoOfInstall(this.appConstMessageSource.getMessage(Constants.DPP_NO_OF_INST, null, null));
-		
-		DPPEligibilityCheckRequest payRequest = new DPPEligibilityCheckRequest();
-		payRequest.setBrandName(submitRequest.getBrandName());
-		payRequest.setCompanyCode(submitRequest.getCompanyCode());
-		payRequest.setContractAccountNumber(submitRequest.getContractAccountNumber());
-		payRequest.setContractId(submitRequest.getContractId());
-		DPPExtensionCheckResponse dppEligibityResponse = getDPPPaymentExtensionCheck(payRequest,sessionId);
-		List<DppInstPlanDetailsDTO> dppInsPlanDetailsList= dppEligibityResponse.getDppInstPlanDetailsList();
-		DppAmountVO[] amountVOArray = new DppAmountVO[dppInsPlanDetailsList.size()];
-		int counter = 0;
-		for(DppInstPlanDetailsDTO planDetails : dppInsPlanDetailsList) {
-			DppAmountVO amountVO = new DppAmountVO();
-			amountVO.setAmount(planDetails.getAmount());
-			amountVO.setDueDate(planDetails.getDueDate());
-			amountVO.setDppDes(planDetails.getDppDes());
-			amountVO.setItemCount(planDetails.getItemCount());
-			amountVO.setOpbel(planDetails.getOpbel());
-			amountVOArray[counter] = amountVO;
-			counter++;
-			break;
-		}
-		DppSubmissionResponse dppResponse = null;
-		request.setDPPAmountVOList(amountVOArray);
-		try {
-			dppResponse = paymentService.dppSubmit(request, sessionId);
-		} catch (RemoteException e) {
-			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.error("Exception Occured in  Submit Exception :::" + e);
-			return response;
-		}
-		
-		if (dppResponse != null
-				&& StringUtils.isNotBlank(dppResponse.getErrorCode())
-				&&  !StringUtils.equalsIgnoreCase(dppResponse.getErrorCode(), "00")) {
-			response.setDppSubmit(false);
-			response.setErrorCode(RESULT_CODE_CCS_ERROR);
-			response.setErrorDescription("DPP Submission Failed");
-		}
-		
-		return response;
-		
-	}
 }

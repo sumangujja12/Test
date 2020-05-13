@@ -1270,19 +1270,4 @@ public class BillingResource {
 		return response;
 		
 	}
-	
-	@POST
-	@Path("submitdpp")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
-	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-	public Response submitdpp(@Valid DPPSubmitRequest request) {
-		Response response = null;
-		logger.info("Start-[BillingResource-submitdpp]");
-		DPPSubmitResponse dppSubmitResponse = billingBO.dppSubmit(request, httpRequest.getSession(true).getId());
-		response = Response.status(200).entity(dppSubmitResponse).build();
-		logger.info("End-[BillingResource-submitdpp]");
-		return response;
-		
-	}
-	
 }	
