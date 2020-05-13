@@ -3702,10 +3702,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultDescription(MSG_SUCCESS);
 			} else {
 				response.setDppPlanEligible(false);
-				response.setResultCode(RESULT_CODE_NO_DATA);
-				response.setResultDescription("Extension Date not available");
-				response.setErrorCode(dppEligibleResponse.getErrorCode());
-				response.setErrorDescription(dppEligibleResponse.getErrorMessage());
+				
 			}
 				response.setDppPlanPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
 				response.setDppPlanActive(BooleanUtils.toBoolean(dppEligibleResponse.getDpplanActive()));
