@@ -5178,7 +5178,6 @@ public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) thr
 				response.populateAlreadySubmittedEnrollmentResponse();
 				return response;	
 			}
-		    
 			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
@@ -6506,21 +6505,28 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 					
 					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
 						systemNotesList.add(KBA_LIFT_POSIDHOLD);
+						serviceLocationResponseErrorList.remove(POSIDHOLD);
 					}
-					serviceLocationResponseErrorList.remove(POSIDHOLD);
 					
-				} else if(null != kbaSubmitAnswerResponse 
+			}
+			else if(null != kbaSubmitAnswerResponse 
 						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getDlVerifyDate()) 
 						&& !StringUtils.equalsIgnoreCase(kbaSubmitAnswerResponse.getDlVerifyDate(), POSID_BLANK_DATE)){								
 					
 					String validatedDate = DateUtil.getFormattedDate(DATE_FORMAT, RESPONSE_DATE_FORMAT,
 							kbaSubmitAnswerResponse.getDlVerifyDate());
 					response.setDrivingLicenceVerifyDate(validatedDate);
+					
 					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
 						systemNotesList.add(KBA_LIFT_POSIDHOLD);
+						serviceLocationResponseErrorList.remove(POSIDHOLD);
 					}
-					serviceLocationResponseErrorList.remove(POSIDHOLD);
-				}else{
+			}
+			else if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
+					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
+						response.populateKbaAnswerRetryNotAllowedResponse();
+			}
+			else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
 					response.setMessageCode(POSIDHOLD);
 					response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
@@ -6532,12 +6538,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				}
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
-				if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
-					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
-						response.setErrorCode(RETRY_NOT_ALLOWED);
-						response.setErrorDescription(RETRY_NOT_ALLOWED_TXT);
-					
-					}
+				
 				response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
 				}
 			} else{
