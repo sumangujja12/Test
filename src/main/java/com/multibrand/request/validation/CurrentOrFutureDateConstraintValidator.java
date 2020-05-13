@@ -8,10 +8,13 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import com.multibrand.util.Constants;
+import com.multibrand.util.LoggerUtil;
 
 public class CurrentOrFutureDateConstraintValidator implements 
 ConstraintValidator<CurrentOrFutureDate, String>, Constants{
 
+	LoggerUtil logger = LoggerUtil.getInstance("NRGREST_LOGGER");
+	
 	DateTimeFormatter dateFormat = null;
 	@Override
 	public void initialize(CurrentOrFutureDate constraintAnnotation) {
@@ -25,7 +28,7 @@ ConstraintValidator<CurrentOrFutureDate, String>, Constants{
 	        LocalDate current = LocalDate.now();
 	        return (startDate.isEqual(current) || startDate.isAfter(current));
 	    }catch(DateTimeParseException ex) {
-	        ex.printStackTrace();
+	    	logger.error("Exception in CurrentOrFutureDateConstraintValidator.isValid "+ex.getMessage());
 	    }
 	    return false;
 	}
