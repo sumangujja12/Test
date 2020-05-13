@@ -1407,6 +1407,7 @@ public interface Constants {
 //***************** GMD APP APIs *************************    
 	public static final String DPP_BYPASS_ELIGIBLE_FLAG ="dpp.bypass.eligible.flag";
 	public static final String DPP_DEFAULT_FLAG = "dpp.default.flag";
+	public static final String DPP_NO_OF_INST = "dpp.no.of.installments";
 	
 	 public static final String DUE_AMOUNT = "dueAmount";
 	 public static final String EXTENSION_DATE = "extensionDate";
