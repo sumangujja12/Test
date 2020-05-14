@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.response.GenericResponse;
 
 @XmlRootElement
 public class SalesBaseResponse implements Constants  {
@@ -84,6 +85,23 @@ public class SalesBaseResponse implements Constants  {
 		this.errorDescription="Enrollment Already Requested for trackingId & guid";
 		this.statusCode=STATUS_CODE_STOP;
 		this.httpStatus=Response.Status.BAD_REQUEST;
+		return this;
+		
+	}
+	public SalesBaseResponse populateKbaAnswerRetryNotAllowedResponse() {
+		this.errorCode=RETRY_NOT_ALLOWED;
+		this.errorDescription=RETRY_NOT_ALLOWED_TXT;
+		this.statusCode=STATUS_CODE_CONTINUE;
+		this.httpStatus=Response.Status.BAD_REQUEST;
+		return this;	
+		
+	}
+	public SalesBaseResponse populateInvalidTrackingResponse() {
+		this.errorCode=MESSAGE_CODE_NO_MATCH_FOUND;
+		this.errorDescription="Invalid trackingId";
+		this.messageCode=errorCode;
+		this.messageText=errorDescription;
+		this.statusCode=STATUS_CODE_STOP;
 		return this;
 		
 	}

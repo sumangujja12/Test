@@ -5204,83 +5204,81 @@ public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
  * @author 
  * @param request
  * @return
- */
-public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) throws Exception{
-	
-	KbaAnswerResponse response = new KbaAnswerResponse();
-	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
-	LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-	ServiceLocationResponse serviceLoationResponse=null;
-	String errorCode = "";
-	LinkedHashSet<String>  systemNotesList=new LinkedHashSet<>();
-	try{
-		if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
-		    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
-		    
-		    if(serviceLoationResponse == null){					
-				response.populateInvalidTrackingResponse();
-				return response;
-			}
-			if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
-			{
-				response.populateAlreadySubmittedEnrollmentResponse();
-				return response;	
-			}
-			if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
-				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-			}
-			if(StringUtils.isNotBlank(serviceLoationResponse.getSystemNotes())){
-				String[] systemNotesArray =serviceLoationResponse.getSystemNotes().split(ERROR_CD_LIST_SPLIT_PATTERN);
-				systemNotesList = new LinkedHashSet<>(Arrays.asList(systemNotesArray));
+ */public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) throws Exception{
 		
-			}
-		}
-		KbaSubmitAnswerRequest request = oeRequestHandler.createKBASubmitAnswerRequest(kbaAnswerRequest);
-
-		KbaSubmitAnswerResponse kbaSubmitAnswerResponse = oeService.submitKBAAnswer(request);
-		logger.info(kbaAnswerRequest.getTrackingId()+" kbaSubmitAnswerResponse : "+CommonUtil.doRender(kbaSubmitAnswerResponse));
-	    kbaSubmitResultsDTO = constructKBAResponseOutputDTO(kbaSubmitAnswerResponse);
-		logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
-		//kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
-		
-		 errorCode = processKBASubmitAnswerResponse(kbaAnswerRequest,kbaSubmitAnswerResponse, response, serviceLocationResponseErrorList, systemNotesList);
-		 
-		//update kba_api
-		boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
-	}catch (Exception e) {
-		response.setStatusCode(STATUS_CODE_STOP);
-		response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);		
-		
-	}finally{
+		KbaAnswerResponse response = new KbaAnswerResponse();
+		KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
+		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		ServiceLocationResponse serviceLoationResponse=null;
+		String errorCode = "";
+		LinkedHashSet<String>  systemNotesList=new LinkedHashSet<>();
 		try{
-		if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
-			//update service location affiliate
-			 UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
-             requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
-             requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
-             //update RECENT_MSG_CD
-             if(StringUtils.isNotBlank(errorCode)){
-            	 requestData.setErrorCode(errorCode);
-     		}else{
-     			requestData.setErrorCode("$blank$");}
-             requestData.setMessageCode(response.getMessageCode());
-             if(StringUtils.isNotBlank(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE))){
-            	 requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
-     		}else{
-     			requestData.setErrorCdList("$blank$");}
-             requestData.setSystemNotes(StringUtils.join(systemNotesList,SYMBOL_PIPE));
-             requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
-            this.updateServiceLocation(requestData);
-        }
-	}catch(Exception e){
-		response.setStatusCode(STATUS_CODE_STOP);
-		response.setResultDescription("Java exception making Database call for submitKbaAnswers-updateServiceLocation with exception ::"+e.getMessage());
-		logger.error("Tracking Number ::"+kbaAnswerRequest.getTrackingId()+ "Exception while making submitKbaAnswers-updateserviceLocation call :: ", e);
-	}
-	}
-	return response;
-	}
+			if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
+			    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+			    
+			    if(serviceLoationResponse == null){					
+					response.populateInvalidTrackingResponse();
+					return response;
+				}
+				if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+				{
+					response.populateAlreadySubmittedEnrollmentResponse();
+					return response;	
+				}
+				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
+					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+				}
+				if(StringUtils.isNotBlank(serviceLoationResponse.getSystemNotes())){
+					String[] systemNotesArray =serviceLoationResponse.getSystemNotes().split(ERROR_CD_LIST_SPLIT_PATTERN);
+					systemNotesList = new LinkedHashSet<>(Arrays.asList(systemNotesArray));
+			
+				}
+			}
+			KbaSubmitAnswerRequest request = oeRequestHandler.createKBASubmitAnswerRequest(kbaAnswerRequest);
+
+			KbaSubmitAnswerResponse kbaSubmitAnswerResponse = oeService.submitKBAAnswer(request);
+			logger.info(kbaAnswerRequest.getTrackingId()+" kbaSubmitAnswerResponse : "+CommonUtil.doRender(kbaSubmitAnswerResponse));
+		    kbaSubmitResultsDTO = constructKBAResponseOutputDTO(kbaSubmitAnswerResponse);
+			logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
+			//kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
+			
+			 errorCode = processKBASubmitAnswerResponse(kbaAnswerRequest,kbaSubmitAnswerResponse, response, serviceLocationResponseErrorList, systemNotesList);
+			 
+			//update kba_api
+			boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
+		}catch (Exception e) {
+			response.setStatusCode(STATUS_CODE_STOP);
+			response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);		
+			
+		}finally{
+			try{
+			if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
+				//update service location affiliate
+				 UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+	             requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
+	             requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
+	             //update RECENT_MSG_CD
+	             if(StringUtils.isNotBlank(errorCode)){
+	            	 requestData.setErrorCode(errorCode);
+	     		}else{
+	     			requestData.setErrorCode("$blank$");}
+	             requestData.setMessageCode(response.getMessageCode());
+	             if(StringUtils.isNotBlank(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE))){
+	            	 requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+	     		}else{
+	     			requestData.setErrorCdList("$blank$");}
+	             requestData.setSystemNotes(StringUtils.join(systemNotesList,SYMBOL_PIPE));
+	             requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
+	            this.updateServiceLocation(requestData);
+	        }
+		}catch(Exception e){
+			response.setStatusCode(STATUS_CODE_STOP);
+			logger.error("Tracking Number ::"+kbaAnswerRequest.getTrackingId()+ "Exception while making submitKbaAnswers-updateserviceLocation call :: ", e);
+		}
+		}
+		return response;
+		}
 
 private KBASubmitResultsDTO constructKBAResponseOutputDTO(KbaSubmitAnswerResponse kbaSubmitAnswerResponse){
 	KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();

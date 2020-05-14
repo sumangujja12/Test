@@ -178,13 +178,5 @@ public class GenericResponse implements Constants {
 		return this;	
 	}
 	
-	public GenericResponse populateKbaAnswerRetryNotAllowedResponse() {
-		this.errorCode=RETRY_NOT_ALLOWED;
-		this.errorDescription=RETRY_NOT_ALLOWED_TXT;
-		this.messageCode=errorCode;
-		this.messageText=errorDescription;
-		this.statusCode=STATUS_CODE_CONTINUE;
-		return this;	
-		
-	}
+	
 }
