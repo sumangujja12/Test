@@ -1,6 +1,7 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -8,6 +9,8 @@ import java.util.HashMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -93,6 +96,7 @@ public class TOSBO extends BaseAbstractService implements Constants {
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
+	 
 	/**
 	 * @author ahanda1
 	 * @param request
@@ -477,7 +481,7 @@ public com.multibrand.vo.response.TdspByZipResponse getTdspByZip(String zip, Str
 			}
 			
 			JavaBeanUtil.copy(tdspByZipResponse, response);
-			
+			response.setServiceIdDescription(appConstMessageSource.getMessage(response.getServiceId(), null, null));
 			
 			
 		} catch (RemoteException e) {
@@ -735,6 +739,8 @@ public OetdspResponse getTDSPSpecificCalendarDates(OetdspRequest request, String
 	
 	logger.info("TOSBO.getTDSPSpecificCalendarDates :::::::: Start");
 	OetdspResponse response = new OetdspResponse();
+	
+    
     try {
     	
     	String dateString = oeService.getTDSPSpecificCalendarDates(request, sessionId);
@@ -742,6 +748,8 @@ public OetdspResponse getTDSPSpecificCalendarDates(OetdspRequest request, String
 		if (dateString!= null && !dateString.trim().equalsIgnoreCase(""))
 			response.setDateString(dateString);
 		
+		response.setCurrentDate(new SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().getTime()));
+		response.setCurrentDate(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
 		
 	} catch (RemoteException e) {
 		logger.error(e);
