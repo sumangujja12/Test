@@ -1,6 +1,8 @@
 package com.multibrand.vo.response;
 
-public class KbaAnswerResponse extends GenericResponse{
+import com.multibrand.dto.response.SalesBaseResponse;
+
+public class KbaAnswerResponse extends SalesBaseResponse{
 	
 	private String ssnVerifyDate;
 	private String drivingLicenceVerifyDate;

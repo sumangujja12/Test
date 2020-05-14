@@ -249,7 +249,9 @@ public class SalesAPIResource extends BaseResource {
 		try{
 			request.setCallExecuted(API_KBA_RESULT);
 			KbaAnswerResponse kbaAnsweresponse = oeBO.submitKBAAnswers(request);
-			response = Response.status(Response.Status.OK).entity(kbaAnsweresponse).build();
+			Response.Status status = kbaAnsweresponse.getErrorCode().equals(RETRY_NOT_ALLOWED) ? kbaAnsweresponse.getHttpStatus() : Response.Status.OK;
+			response = Response.status(status).entity(kbaAnsweresponse).build();
+			
    		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
