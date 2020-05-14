@@ -5434,7 +5434,7 @@ public ProspectDataInternalResponse getProspectData(ProspectDataRequest request)
 /**
  * 
  * @param getOEKBAQuestionsRequest
- * @return
+ * @return 
  */
 public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEKBAQuestionsRequest) {
 	
@@ -6569,8 +6569,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 					}
 			}
 			else if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
+					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
+						errorCode = POSIDHOLD;
+					}
 					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
 						response.populateKbaAnswerRetryNotAllowedResponse();
+					
 			}
 			else{
 					response.setStatusCode(STATUS_CODE_CONTINUE);
