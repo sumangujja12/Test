@@ -746,7 +746,7 @@ public OetdspResponse getTDSPSpecificCalendarDates(OetdspRequest request, String
 			response.setDateString(dateString);
 		
 		response.setCurrentDate(new SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().getTime()));
-		response.setCurrentDate(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
+		response.setCurrentTime(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
 		
 	} catch (RemoteException e) {
 		logger.error(e);
