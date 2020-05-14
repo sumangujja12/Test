@@ -91,7 +91,7 @@ public class SalesBaseResponse implements Constants  {
 	public SalesBaseResponse populateKbaAnswerRetryNotAllowedResponse() {
 		this.errorCode=RETRY_NOT_ALLOWED;
 		this.errorDescription=RETRY_NOT_ALLOWED_TXT;
-		this.statusCode=STATUS_CODE_CONTINUE;
+		this.statusCode=STATUS_CODE_STOP;
 		this.httpStatus=Response.Status.BAD_REQUEST;
 		return this;	
 		
