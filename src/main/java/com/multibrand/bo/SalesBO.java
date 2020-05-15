@@ -119,7 +119,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 		ServiceLocationResponse serviceLoationResponse = null;
 		SalesEsidInfoTdspCalendarResponse salesEsidInfoTdspCalendarResponse = new SalesEsidInfoTdspCalendarResponse();
 		String bpMatchFlag = null;
-		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
 		SalesBaseResponse response = null;
 		try {
 			serviceLoationResponse = oeBO.getEnrollmentData(salesEsidCalendarRequest.getTrackingId(),
@@ -136,7 +135,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 							serviceLoationResponse.getServiceRequestTypeCode(), salesEsidCalendarRequest.getTrackingId(),
 							bpMatchFlag, salesEsidCalendarRequest.getLanguageCode(), serviceLoationResponse.getEsid(),
 							httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,
-							salesEsidCalendarRequest.getCallExecuted(), serviceLoationResponse.getProspectPreapprovalFlag()
+							salesEsidCalendarRequest.getCallExecuted()
 							);
 	
 					BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);
