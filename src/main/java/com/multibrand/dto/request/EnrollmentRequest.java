@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.AssertDuplicateRecord;
 import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.DuplicateRecordGroupConstraint;
 import com.multibrand.request.validation.EnrollmentDuplicateRecordValidator;
 import com.multibrand.request.validation.FormatConstraint;
@@ -77,7 +78,7 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	@Length(max = 2, groups = SizeConstraint.class)
 	private String marketSegment;
 
-	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "{err.msg.date.mmddyyyy.format}")
+	@CurrentOrFutureDate
 	private String mviDate;
 
 	@NotBlank(groups = BasicConstraint.class)

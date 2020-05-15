@@ -2102,15 +2102,15 @@ public class CommonUtil implements Constants {
 		return callExecutedStrForDB;
 	}
 	
-	public static LinkedHashSet<String> getErrorCodeListFromPipeSeparatedString(String errorCdStr){
-		LinkedHashSet<String> serviceLocationResponseErrorList = null;
-		if(StringUtils.isNotBlank(errorCdStr)){
-			String[] errorCdArray =errorCdStr.split(ERROR_CD_LIST_SPLIT_PATTERN);
-			serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+	public static LinkedHashSet<String> getSetFromPipeSeparatedString(String pipeSeparatedStringValue){
+		LinkedHashSet<String> valueSet = null;
+		if(StringUtils.isNotBlank(pipeSeparatedStringValue)){
+			String[] valueArray =pipeSeparatedStringValue.split(ERROR_CD_LIST_SPLIT_PATTERN);
+			valueSet = new LinkedHashSet<>(Arrays.asList(valueArray));
 		} else {
-			serviceLocationResponseErrorList = new LinkedHashSet<>();
+			valueSet = new LinkedHashSet<>();
 		}
-		return serviceLocationResponseErrorList;		
+		return valueSet;		
 	}
 	
 	public static boolean isValidCompanyCode(String value) {

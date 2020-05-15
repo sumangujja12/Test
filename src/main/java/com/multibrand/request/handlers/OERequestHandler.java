@@ -820,17 +820,8 @@ public class OERequestHandler implements Constants {
 		else
 			submitEnrollRequest.setStrPriorityMovinFlag("N");
 
-		/*
-		 * if BPMATCH call returns existing BpNUmber for the prospect
-		 * matchedPartnerId will be populated and later used for enrollment on
-		 * same bpNumber and will be later passed on as new BPNumber
-		 * 
-		 * @Jsingh1@lntinfotech
-		 */
-		if (oeSignUpDTO.getBpMatch() != null) {
-			if ((oeSignUpDTO.getBpMatch().getMatchedPartnerID()) != null) {
-				submitEnrollRequest.setStrBPNumber(oeSignUpDTO.getBpMatch().getMatchedPartnerID());
-			}
+		if (oeSignUpDTO.getBpMatch() != null && StringUtils.isNotBlank(oeSignUpDTO.getBpMatch().getMatchedPartnerID())) {
+			submitEnrollRequest.setStrBPNumber(oeSignUpDTO.getBpMatch().getMatchedPartnerID());
 		}
 		/*
 		 * frequent flyer will be checked here
@@ -1255,15 +1246,15 @@ public class OERequestHandler implements Constants {
 			if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId()) && StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
 				if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
 					bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
-					oeSignupDTO.setSystemNotes(MATCHED_BP_USED);
-				}if(!servLocResponse.getErrorCdlist().contains(PBSD)){
+					oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
+				}else if(!servLocResponse.getErrorCdlist().contains(PBSD)){
 					bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
 					oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
 				}
 			}else if(StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
 				if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
 					bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
-					oeSignupDTO.setSystemNotes(MATCHED_BP_USED);
+					oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
 				}
 			}
 			else if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId())){
