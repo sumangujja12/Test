@@ -1407,6 +1407,7 @@ public interface Constants {
 //***************** GMD APP APIs *************************    
 	public static final String DPP_BYPASS_ELIGIBLE_FLAG ="dpp.bypass.eligible.flag";
 	public static final String DPP_DEFAULT_FLAG = "dpp.default.flag";
+	public static final String DPP_NO_OF_INST = "dpp.no.of.installments";
 	
 	 public static final String DUE_AMOUNT = "dueAmount";
 	 public static final String EXTENSION_DATE = "extensionDate";
@@ -1427,22 +1428,34 @@ public interface Constants {
    public static final String GMD_STATEMENT_ENDPOINT_URL_JNDINAME = "CCS_GMD_STMT";
    public static final String GMD_PRICET_ENDPOINT_URL_JNDINAME = "CCS_PRICE_STMT";
    
-   public static final String SOLAR_FEE = "Solar Fee";
+   public static final String GMD_ENERGY_CHARGE = "Energy Charge";
+   public static final String GMD_ENERGY_TRUE_UP = "Energy True-up";
+   public static final String GMD_USAGE_TRUE_UP = "Usage True-up";
+   
+   public static final String SOLAR_RECS = "Solar Recs";
+   public static final String FIXED_RATE_THIRD_PARTY_CHRG = "Fixed Rate Third Party Charges";
    public static final String ANCILLARY_SERVICES = "Ancillary Services";
    public static final String ELECTRICITY_USAGE = "Electricity Usage";
    
    public static final String QUALITY_OTHER_CREDIT = "Quality Other Credit";
    
    
-   public static final String TDU_DELIVERY_CHARGES = "TDU Delivery Charges";
+   public static final String TDSP_DELIVERY_CHARGES = "TDSP Delivery Charges";
+   public static final String SALES_TAX = "Sales Tax";
    
-   public static final String GMD_MEMBERSHIP = " GMD Membership";
-   public static final String  TAXES_FEES = " Taxes & Fees";
+   public static final String GROSS_RECP_TAX = "Gross Receipt Tax";
+   
+   public static final String PUC_FEE = "PUC Fee";
+   
+   
+   public static final String GMD_MEMBERSHIP = "Membership Fee";
+   public static final String  TAXES_FEES = "Taxes & Fees";
   
-   public static final String WHOLESALE_ELECTRICITY = "Wholesale Electricity";
+   public static final String ENERGY_CHARGES = "Energy Charges";
+   
    public static final String INDEFINITE_END_DATE = "12/31/9999";
    
-   public static final String GMD_PRICE_IRW_DATE = "gmd_price_current_date";   
+   public static final String GMD_PRICE_IRW_DATE = "gmd_price_current_date"; 
    
 	//Content Service metadata
 	public static final String CUSTOM_METADATA= "CustomMetas%28%29?&$filter=(PublicationId%20eq%20";
@@ -1469,5 +1482,4 @@ public interface Constants {
 	public static final String XOOM_EBILL_NAME_ON_ACCOUNT = "CA_NAME";
 	public static final String XOOM_EBILL_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
 	public static final String XOOM_EBILL_DELIVERY_LOCATION = "DELIVERY_LOCATION";
-	
 }

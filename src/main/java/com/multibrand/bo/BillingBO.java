@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -21,6 +20,7 @@ import java.util.concurrent.Executors;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -308,7 +308,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
-			if(responseMap!= null && responseMap.size()!= 0)
+			response= (ProfileResponse)responseMap.get("profileResponse");	
+			if(response!= null &&   response.getContractAccountDO() != null)
 			{
 			response= (ProfileResponse)responseMap.get("profileResponse");			
 			if(response.getContractAccountDO()!=null)
@@ -3629,7 +3630,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	public DPPExtensionCheckResponse getDPPPaymentExtensionCheck(DPPEligibilityCheckRequest payRequest, String sessionId) {
 		logger.info("Start - [BillingBO - getDPPPaymentExtensionCheck]");
 		DPPExtensionCheckResponse response = new DPPExtensionCheckResponse();
-		DppEligibleResponse payExtEligibleResponse = null;
+		DppEligibleResponse dppEligibleResponse = null;
 		DppEligibleRequest request = new DppEligibleRequest();
 		request.setBrandId(payRequest.getBrandName());
 		request.setCompanyCode(payRequest.getCompanyCode());
@@ -3637,9 +3638,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setContract(payRequest.getContractId());
 		request.setDppBypassElg(this.appConstMessageSource.getMessage(Constants.DPP_BYPASS_ELIGIBLE_FLAG, null, null));
 		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
+		request.setNoOfInstallments(this.appConstMessageSource.getMessage(Constants.DPP_NO_OF_INST, null, null));
+		request.setDppInitialDownPayment("");
 		
 		try {
-			payExtEligibleResponse = paymentService.getDPPExtEligibleResponse(request, sessionId);
+			dppEligibleResponse = paymentService.getDPPExtEligibleResponse(request, sessionId);
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
@@ -3647,50 +3650,72 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			return response;
 		}
 		
-		if (payExtEligibleResponse != null
-				&& StringUtils.isNotBlank(payExtEligibleResponse.getDppReturnCode())) {
+		if (dppEligibleResponse != null
+				&& StringUtils.isNotBlank(dppEligibleResponse.getDppReturnCode())) {
 		
-			if (StringUtils.equalsIgnoreCase("00", payExtEligibleResponse.getDppReturnCode())
-					&& StringUtils.equalsIgnoreCase(Constants.YES, payExtEligibleResponse.getDpplanEligible())
-					&& StringUtils.equalsIgnoreCase("NO", payExtEligibleResponse.getDpplanActive())) {
-				response.setPaymentExtension(true);
-				DppDueDateAmountDO [] dppDueAmountDoList = payExtEligibleResponse.getDppDueDateAmountDoList();
-				List<DppValueVO> dppList = new LinkedList<DppValueVO>();
-				response.setDppValue(dppList);
-				response.setDpplanActive(payExtEligibleResponse.getDpplanActive());
-				response.setDpplanEligible(payExtEligibleResponse.getDpplanEligible());
-				response.setDppplanPending(payExtEligibleResponse.getDppplanPending());
-				response.setAmount(StringUtils.trim(payExtEligibleResponse.getAmount()));
-				response.setDppDescription(payExtEligibleResponse.getDppDes());
-				if(dppDueAmountDoList != null) {
-					for(DppDueDateAmountDO dppDueDateAmountDO : dppDueAmountDoList) {
-						DppValueVO dppValueVO = new DppValueVO();
-						dppValueVO.setDppAmountDue(StringUtils.trim(dppDueDateAmountDO.getDppAmountDue()));
-						dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
-								Constants.yyyyMMdd, dppDueDateAmountDO.getDppDueDate()));
-						dppList.add(dppValueVO);
+				if(checkDPPEligibility(dppEligibleResponse)){
+				response.setDppPlanEligible(true);
+				
+				DppDueDateAmountDO[] amtDueArray = dppEligibleResponse.getDppDueDateAmountDoList();
+				List<DppValueVO> dppDetailsList = new ArrayList<>();
+				
+				for(DppDueDateAmountDO amtDue: amtDueArray){
+					DppValueVO dppValueVO = new DppValueVO();
+					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue().trim());
+					dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
+								Constants.yyyyMMdd, amtDue.getDppDueDate()));
+					dppDetailsList.add(dppValueVO);
+				}
+				
+				//Commented and will enable once CCS completed the code chnages
+/*				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
+				List<com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO> dppInstPlanDetailsList = new ArrayList<>();
+				
+				if ( dppInstplanDetList != null && dppInstplanDetList.length > 0) {
+					for (DppInstPlanDetailsDO dppInstPlanDetailsDO : dppInstplanDetList) {
+						DppInstPlanDetailsDTO dppInstPlanDetailsDTO = new com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO();
+						dppInstPlanDetailsDTO.setAmount(dppInstPlanDetailsDO.getAmount().trim());
+						dppInstPlanDetailsDTO.setDppDes(dppInstPlanDetailsDO.getDppDes());
+						dppInstPlanDetailsDTO.setDueDate(dppInstPlanDetailsDO.getDueDate());
+						dppInstPlanDetailsDTO.setItemCount(dppInstPlanDetailsDO.getItemCount());
+						dppInstPlanDetailsDTO.setOpbel(dppInstPlanDetailsDO.getOpbel());
+						
+						dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
 					}
 				}
+				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);*/
+				response.setDppAmountToBePaid(dppDetailsList.remove(0));
+				
+				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() {
+					  @Override
+					  public int compare(DppValueVO u1, DppValueVO u2) {
+					    return u1.getDppDueDate().compareTo(u2.getDppDueDate());
+					  }
+					});
+				
+				response.setDppValue(dppDetailsList);
 				
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
 			} else {
-				response.setPaymentExtension(false);
-				response.setResultCode(RESULT_CODE_NO_DATA);
-				response.setResultDescription("Extension Date not available");
-				response.setErrorCode(payExtEligibleResponse.getErrorCode());
-				response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+				response.setDppPlanEligible(false);
+				
 			}
-		} else if(payExtEligibleResponse != null) {
+				response.setDppPlanPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
+				response.setDppPlanActive(BooleanUtils.toBoolean(dppEligibleResponse.getDpplanActive()));
+				response.setTotalDppAmount(dppEligibleResponse.getAmount() != null ?  dppEligibleResponse.getAmount().trim() : dppEligibleResponse.getAmount());
+		} else if(dppEligibleResponse != null) {
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
 			response.setResultDescription("Failed to get the Extension Date or not available");
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
-			response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
+			response.setErrorDescription(dppEligibleResponse.getErrorMessage());
 		}
 		
 		logger.info("END - [BillingBO - getDPPPaymentExtensionCheck]");
 		return response;
 	}
+
+	
 	
 	private HashMap<String, String> createGMEPaymentExtensionEmailRequest(com.multibrand.vo.request.PaymentExtensionSubmitRequest request, PaymentExtensionResponse response) {
 	
@@ -3718,5 +3743,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		
 		
 		return templateProps;
-	}		
+	}	
+	private boolean checkDPPEligibility(DppEligibleResponse response) {
+		return StringUtils.isBlank(response.getErrorCode()) 
+				&& StringUtils.equals(SUCCESS_CODE, response.getDppReturnCode())
+				&& StringUtils.equalsIgnoreCase(YES, response.getDpplanEligible())
+			   && !StringUtils.equalsIgnoreCase(YES, response.getDpplanActive())
+			   && !StringUtils.equalsIgnoreCase(YES, response.getDppplanPending());
+	}	
+	
 }

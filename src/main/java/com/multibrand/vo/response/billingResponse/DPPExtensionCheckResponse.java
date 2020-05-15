@@ -6,27 +6,38 @@ import java.util.List;
 import com.multibrand.vo.response.GenericResponse;
 
 public class DPPExtensionCheckResponse extends GenericResponse {
-	
-	private boolean isPaymentExtension = false;
-	List<DppValueVO> dppValue = new LinkedList<DppValueVO>();
-	private String dpplanActive = "";
-	private String dpplanEligible = "";
-	private String dppplanPending = "";
-	private String amount ="";
-	private String dppDescription ="";
-	
+
+	private String totalDppAmount;
+	private DppValueVO dppAmountToBePaid;
+	private List<DppValueVO> dppValue = new LinkedList<>();
+	private List<DppInstPlanDetailsDTO> dppInstPlanDetailsList = new LinkedList<>();
+	private boolean isDppPlanEligible;
+	private boolean isDppPlanPending;
+	private boolean isDppPlanActive;
 	/**
-	 * @return the isPaymentExtension
+	 * @return the totalDppAmount
 	 */
-	public boolean isPaymentExtension() {
-		return isPaymentExtension;
+	public String getTotalDppAmount() {
+		return totalDppAmount;
 	}
 	/**
-	 * @param isPaymentExtension the isPaymentExtension to set
+	 * @param totalDppAmount the totalDppAmount to set
 	 */
-	public void setPaymentExtension(boolean isPaymentExtension) {
-		this.isPaymentExtension = isPaymentExtension;
-	}	
+	public void setTotalDppAmount(String totalDppAmount) {
+		this.totalDppAmount = totalDppAmount;
+	}
+	/**
+	 * @return the dppAmountToBePaid
+	 */
+	public DppValueVO getDppAmountToBePaid() {
+		return dppAmountToBePaid;
+	}
+	/**
+	 * @param dppAmountToBePaid the dppAmountToBePaid to set
+	 */
+	public void setDppAmountToBePaid(DppValueVO dppAmountToBePaid) {
+		this.dppAmountToBePaid = dppAmountToBePaid;
+	}
 	/**
 	 * @return the dppValue
 	 */
@@ -40,66 +51,55 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 		this.dppValue = dppValue;
 	}
 	/**
-	 * @return the dpplanActive
+	 * @return the dppInstPlanDetailsList
 	 */
-	public String getDpplanActive() {
-		return dpplanActive;
+	public List<DppInstPlanDetailsDTO> getDppInstPlanDetailsList() {
+		return dppInstPlanDetailsList;
 	}
 	/**
-	 * @param dpplanActive the dpplanActive to set
+	 * @param dppInstPlanDetailsList the dppInstPlanDetailsList to set
 	 */
-	public void setDpplanActive(String dpplanActive) {
-		this.dpplanActive = dpplanActive;
+	public void setDppInstPlanDetailsList(List<DppInstPlanDetailsDTO> dppInstPlanDetailsList) {
+		this.dppInstPlanDetailsList = dppInstPlanDetailsList;
 	}
 	/**
-	 * @return the dpplanEligible
+	 * @return the isDppPlanEligible
 	 */
-	public String getDpplanEligible() {
-		return dpplanEligible;
+	public boolean isDppPlanEligible() {
+		return isDppPlanEligible;
 	}
 	/**
-	 * @param dpplanEligible the dpplanEligible to set
+	 * @param isDppPlanEligible the isDppPlanEligible to set
 	 */
-	public void setDpplanEligible(String dpplanEligible) {
-		this.dpplanEligible = dpplanEligible;
+	public void setDppPlanEligible(boolean isDppPlanEligible) {
+		this.isDppPlanEligible = isDppPlanEligible;
 	}
 	/**
-	 * @return the dppplanPending
+	 * @return the isDppPlanPending
 	 */
-	public String getDppplanPending() {
-		return dppplanPending;
+	public boolean isDppPlanPending() {
+		return isDppPlanPending;
 	}
 	/**
-	 * @param dppplanPending the dppplanPending to set
+	 * @param isDppPlanPending the isDppPlanPending to set
 	 */
-	public void setDppplanPending(String dppplanPending) {
-		this.dppplanPending = dppplanPending;
+	public void setDppPlanPending(boolean isDppPlanPending) {
+		this.isDppPlanPending = isDppPlanPending;
 	}
 	/**
-	 * @return the amount
+	 * @return the isDppPlanActive
 	 */
-	public String getAmount() {
-		return amount;
+	public boolean isDppPlanActive() {
+		return isDppPlanActive;
 	}
 	/**
-	 * @param amount the amount to set
+	 * @param isDppPlanActive the isDppPlanActive to set
 	 */
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
-	/**
-	 * @return the dppDescription
-	 */
-	public String getDppDescription() {
-		return dppDescription;
-	}
-	/**
-	 * @param dppDescription the dppDescription to set
-	 */
-	public void setDppDescription(String dppDescription) {
-		this.dppDescription = dppDescription;
+	public void setDppPlanActive(boolean isDppPlanActive) {
+		this.isDppPlanActive = isDppPlanActive;
 	}
 	
 	
 
 }
+
