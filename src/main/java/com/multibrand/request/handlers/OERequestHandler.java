@@ -1251,9 +1251,26 @@ public class OERequestHandler implements Constants {
 		if (servLocResponse != null) {
 			// Bp match
 			BPMatchDTO bpMatch = new BPMatchDTO();
+			
+			if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId()) && StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
+				if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
+					bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
+					oeSignupDTO.setSystemNotes(MATCHED_BP_USED);
+				}if(!servLocResponse.getErrorCdlist().contains(PBSD)){
+					bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
+					oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
+				}
+			}else if(StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
+				if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
+					bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
+					oeSignupDTO.setSystemNotes(MATCHED_BP_USED);
+				}
+			}
+			else if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId())){
+				bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
+				oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
+			}
 
-			// matchedBP
-			bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
 
 			// set bp match
 			oeSignupDTO.setBpMatch(bpMatch);
