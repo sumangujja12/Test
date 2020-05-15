@@ -1950,7 +1950,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 				logger.debug("oeSignUpDTO : "+oeSignUpDTO);
 				
-				if (allowEnrollmentSubmissionToCCS(oeSignUpDTO, response)) {
+				if (allowEnrollmentSubmissionToCCS(oeSignUpDTO)) {
 		
 					// Populate all Pre-requisite input for enrollment
 					this.initPrerequisites(oeSignUpDTO);
@@ -1982,12 +1982,14 @@ public class OEBO extends OeBoHelper implements Constants{
 				this.updateEnrollmentStatus(oeSignUpDTO);
 				//Send date to TLP
 				//START : OE :Sprint62 :US21019 :Kdeshmu1
-				if(!StringUtils.equalsIgnoreCase(I_VALUE,oeSignUpDTO.getReqStatusCd()) && 
+				// VSood: Commenting TLP API call on Stacie's request - 052020
+				/*if(!StringUtils.equalsIgnoreCase(I_VALUE,oeSignUpDTO.getReqStatusCd()) && 
 						StringUtils.equalsIgnoreCase(Constants.DSI_AGENT_ID,oeSignUpDTO.getAffiliateId()))
 				{
 					String tlpReportApiStatus = sendReliantEnrollmentDataToTLP (oeSignUpDTO);
 					oeSignUpDTO.setTlpReportApiStatus(tlpReportApiStatus);
 				}
+				*/
 				//END : OE :Sprint62 :US21019 :Kdeshmu1
 				oeSignUpDTO.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(enrollmentRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
 			}else{
@@ -2032,64 +2034,54 @@ public class OEBO extends OeBoHelper implements Constants{
 		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
 		logger.debug("Start:" + METHOD_NAME);
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		LinkedHashSet<String> errorCodeSet = CommonUtil.getSetFromPipeSeparatedString(oeSignUpDTO.getErrorCdList());
 		
-		String errorCdList=oeSignUpDTO.getErrorCdList();
 		enrollmentFraudEnum = isMandatoryCallExecuted(apiCallExecuted);
 		if(null!=enrollmentFraudEnum){
 			return enrollmentFraudEnum;
 		}
-		if(!StringUtils.equals(oeSignUpDTO.getReqStatusCd(), I_VALUE)){
+		else if(!StringUtils.equals(oeSignUpDTO.getReqStatusCd(), I_VALUE)){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DUPLICATE_ENROLLMENT");
 		}
-		else  if((CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(CCSD))  
+		else if(errorCodeSet.contains(CCSD)  
 				|| ( StringUtils.isEmpty(serviceLocationResponse.getPersonResponse().getCredSourceNum())
 				&& StringUtils.isEmpty(serviceLocationResponse.getPersonResponse().getCredScoreNum()) 
 				&& StringUtils.isEmpty(serviceLocationResponse.getPersonResponse().getCredLevelNum())
 				) ){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CHECK_FRAUD");
 		}
-		else if((CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(CURRENT_CUSTOMER))){
+		else if(errorCodeSet.contains(CURRENT_CUSTOMER)){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf(CURRENT_CUSTOMER);
 		}
-		else if((CommonUtil.getErrorCodeListFromPipeSeparatedString(oeSignUpDTO.getErrorCdList()).contains(NRESID))){
+		else if(errorCodeSet.contains(NRESID)){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("BUSINESS_METER");
 		}
-		else if (StringUtils.isNotBlank(errorCdList)) {
-			String errorCdArray[] =errorCdList.split(ERROR_CD_LIST_SPLIT_PATTERN);	
-		    if(!isPosidHoldAllowed && ArrayUtils.contains(errorCdArray, POSIDHOLD)){
-		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("POSID_HOLD");
-			}
-		    else if(ArrayUtils.contains(errorCdArray, BP_RESTRICT)){
-		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("RESTRICTED_BP");
-			}
-		    else if(ArrayUtils.contains(errorCdArray, SWITCHHOLD) && StringUtils.equals(oeSignUpDTO.getServiceReqTypeCd(), SWI)){
-		    	enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("SWITCH_HOLD");
-			}else if(ArrayUtils.contains(errorCdArray, CREDFREEZE)){
-				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
-			} 
+		else if(!isPosidHoldAllowed && errorCodeSet.contains(POSIDHOLD)){
+		    enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("POSID_HOLD");
 		}
+		else if(errorCodeSet.contains(BP_RESTRICT)){
+		    enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("RESTRICTED_BP");
+		}
+		else if(errorCodeSet.contains(SWITCHHOLD) && StringUtils.equals(oeSignUpDTO.getServiceReqTypeCd(), SWI)){
+		    enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("SWITCH_HOLD");
+		}else if(errorCodeSet.contains(CREDFREEZE)){
+			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
+		} 
 		logger.debug("End:" + METHOD_NAME);
-		
 		return enrollmentFraudEnum;
 	}
 	
 	public ENROLLMENT_FRAUD_ENUM isMandatoryCallExecuted(String callExecutedFromDB){
 		boolean creditFlag = false;
 		boolean dateFlag = false;
-		String[] callExecutedArr = null;
-		List<String> creditApiCallList = new ArrayList<String>();
-		List<String> dateApiCallList = new ArrayList<String>();
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		try{
-			if(StringUtils.isNotBlank(callExecutedFromDB)){
-				callExecutedArr = callExecutedFromDB.split(ERROR_CD_LIST_SPLIT_PATTERN);
-			}else{
-				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CALL_SKIP");
-				return enrollmentFraudEnum;
+			if(StringUtils.isBlank(callExecutedFromDB)){
+				return ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CALL_SKIP");
 			}
-			List<String> callExecutedList = new ArrayList<String>(Arrays.asList(callExecutedArr));
-			creditApiCallList = new ArrayList<>(Arrays.asList(allCreditAPICalls));
-			dateApiCallList = new ArrayList<>(Arrays.asList(allDatesAPICalls));
+			LinkedHashSet<String> callExecutedSet = CommonUtil.getSetFromPipeSeparatedString(callExecutedFromDB);
+			List<String> creditApiCallList = new ArrayList<>(Arrays.asList(allCreditAPICalls));
+			List<String> dateApiCallList = new ArrayList<>(Arrays.asList(allDatesAPICalls));
 			
 			// java 8 predicate Solution
 			/*flag = creditApiCallList.stream().anyMatch(creditAPICalls -> callExecutedList.contains(creditAPICalls));
@@ -2103,7 +2095,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				return enrollmentFraudEnum;
 			}*/
 			for(String creditAPICalls: creditApiCallList){
-				if(callExecutedList.contains(creditAPICalls)){
+				if(callExecutedSet.contains(creditAPICalls)){
 					creditFlag=true;
 					break;
 				}
@@ -2113,7 +2105,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				return enrollmentFraudEnum;
 			}
 			for(String dateAPICalls: dateApiCallList){
-				if(callExecutedList.contains(dateAPICalls)){
+				if(callExecutedSet.contains(dateAPICalls)){
 					dateFlag=true;
 					break;
 				}
@@ -2140,12 +2132,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			NewCreditScoreRequest creditScoreRequest, 
 			CreditCheckRequest creditCheckRequest, ServiceLocationResponse serviceLoationResponse) throws OAMException {
 
-		String affiliateId = creditCheckRequest.getAffiliateId();
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
-		String errorCd=null;
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: performCreditCheck(..)";
 
 		logger.debug("Start:" + METHOD_NAME);
@@ -2616,7 +2605,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					}
 					holdType = serviceLoationResponse.getErrorCode();
 				}
-			serviceLocationResponseErrorList = CommonUtil.getErrorCodeListFromPipeSeparatedString(serviceLoationResponse.getErrorCdlist());
+			serviceLocationResponseErrorList = CommonUtil.getSetFromPipeSeparatedString(serviceLoationResponse.getErrorCdlist());
 			}
 	    	
 			if(serviceLoationResponse != null){
@@ -4816,7 +4805,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 				return uccDataResponse;	
 			}
 			
-			serviceLocationResponseErrorList = CommonUtil.getErrorCodeListFromPipeSeparatedString(serviceLocationResponse.getErrorCdlist());
+			serviceLocationResponseErrorList = CommonUtil.getSetFromPipeSeparatedString(serviceLocationResponse.getErrorCdlist());
 			
 			if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
 					|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), uccDataRequest.getLastName())) ) {

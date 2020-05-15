@@ -2,6 +2,7 @@ package com.multibrand.bo.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -651,24 +652,16 @@ public class OeBoHelper extends BaseBO {
 		oeSignUpDTO.setErrorCode(errorCode);
 	}
 
-	protected Boolean allowEnrollmentSubmissionToCCS(OESignupDTO oeSignUpDTO,
-			EnrollmentResponse response) {
+	protected Boolean allowEnrollmentSubmissionToCCS(OESignupDTO oeSignUpDTO) {
 		String METHOD_NAME = "OEBOHelper: allowSubmitEnrollment(..)";
 		logger.debug("Start:" + METHOD_NAME);
-
+		LinkedHashSet<String> errorCodeSet = CommonUtil.getSetFromPipeSeparatedString(oeSignUpDTO.getErrorCdList());
 		Boolean allowSubmit = true;
-
-		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
-			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split(ERROR_CD_LIST_SPLIT_PATTERN);	
-		   if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
-			   oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
-			   allowSubmit = false;
-		   }else if(ArrayUtils.contains(errorCdArray, CURRENT_CUSTOMER)){
-			   oeSignUpDTO.setErrorCode(CURRENT_CUSTOMER);
-			   allowSubmit = false;
-		   }
-		   
-		}
+		//Do not submit enrollment to SAP if unresolved BPSD or PBSD and no matching partner id (neither sold to nor prospect)
+	   if ((errorCodeSet.contains(BPSD) || errorCodeSet.contains(PBSD)) && (null==oeSignUpDTO.getBpMatch() || StringUtils.isBlank(oeSignUpDTO.getBpMatch().getMatchedPartnerID()))) {
+		   oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
+		   allowSubmit = false;
+	   }
 		logger.debug("End:" + METHOD_NAME);
 		return allowSubmit;
 	}

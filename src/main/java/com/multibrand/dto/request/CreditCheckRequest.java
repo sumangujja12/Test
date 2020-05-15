@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidDateTime;
@@ -50,7 +51,7 @@ public class CreditCheckRequest extends BaseAffiliateRequest {
 	@Length(max = 8, groups = SizeConstraint.class)
 	private String offerCode;
 
-	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class)
+	@CurrentOrFutureDate
 	private String mviDate;
 
 	@NotBlank(groups = BasicConstraint.class)

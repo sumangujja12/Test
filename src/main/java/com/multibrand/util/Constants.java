@@ -1439,6 +1439,6 @@ public interface Constants {
 	 public static final String ENROLLMENT_NOT_ALLOWED_TEXT = "Enrollment cannot be accepted since the Credit check API failed and customer's credit requirements could not be assessed";
 	 
 	 public static final String PROSPECT_BP_USED = "PROSPECT_BP_USED";
-	 public static final String MATCHED_BP_USED = "MATCHED_BP_USED";
+	 public static final String SOLD_TO_BP_USED = "SOLD_TO_BP_USED";
 	
 }
