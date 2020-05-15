@@ -2575,7 +2575,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			String servStreetName, String servStreetAptNum, String servZipCode,
 			String tdspCodeCCS, String transactionType, String trackingId, String bpMatchFlag,
 			String locale, String esid,String sessionId,String holdType,
-			ServiceLocationResponse serviceLoationResponse,String callExecutedStrForDB  ) throws OAMException {
+			ServiceLocationResponse serviceLoationResponse,String callExecutedStrForDB, String prospectPreapprovalFlag  ) throws OAMException {
 		/* author Mayank Mishra */
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
@@ -2783,7 +2783,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 			}
 			logger.info("Tracking Number :"+trackingId +" ESID CalendarDates call Hold Type :"+holdType);
-			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType);
+			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType, prospectPreapprovalFlag);
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
 			response.setResultCode(RESULT_CODE_SUCCESS);
@@ -3060,7 +3060,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		for(TDSPDO tdspDo : tdspDataList)
 		{
 			try {
-				this.getTdspDates(request.getCompanyCode(), sessionId, transactionType, tdspDo.getTdspCodeCCS(), StringUtils.EMPTY, esidDo, calendarResp, new Locale(CommonUtil.localeCode(request.getLanguageCode())),null);
+				this.getTdspDates(request.getCompanyCode(), sessionId, transactionType, tdspDo.getTdspCodeCCS(), StringUtils.EMPTY, esidDo, calendarResp, new Locale(CommonUtil.localeCode(request.getLanguageCode())),null, null);
 				tdspDo.setAvailableDates(calendarResp.getAvailableDates());
 				tdspDo.setTdspFee(calendarResp.getTdspFee());
 			} catch (Exception e) {
@@ -4070,7 +4070,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void getTdspDates(String companyCode, String trackingId,
 			String transactionType, String tdspCodeCCS, String bpMatchFlag,
-			ESIDDO esidDo, EsidInfoTdspCalendarResponse response, Locale locale,String holdType) throws Exception {
+			ESIDDO esidDo, EsidInfoTdspCalendarResponse response,
+			Locale locale,String holdType, String prospectPreapprovalFlag) throws Exception {
 		String METHOD_NAME = "OEBO: getTdspDates(..)";
 
 		logger.debug("Start:" + METHOD_NAME);
@@ -4127,7 +4128,13 @@ public class OEBO extends OeBoHelper implements Constants{
 	   		//	If there is no exception, then check meter type.
 	   		//  If meterType='AMSR' then first available date is today, for all other meter Types, push out the date by 2 days.
     		
-    		processTdspCalendarDatesforHoldsLogic(allInclusiveDateList,response,transactionType, holdType, bpMatchFlag, esidDo, c );
+    		if(prospectPreapprovalFlag != null  && !(StringUtils.equals(prospectPreapprovalFlag, PROSPECT_PREAPPROVAL_FLAG_PASS) && (StringUtils.equals(bpMatchFlag,BPSD)|| StringUtils.equals(holdType,PBSD)))){
+    			
+    			processTdspCalendarDatesforHoldsLogic(allInclusiveDateList,response,transactionType, 
+        				holdType, bpMatchFlag, esidDo, c);
+        		
+    		}
+    		
     		String availableDates = StringUtils.join(allInclusiveDateList, SEMI_COLON);
     		availableDatesNoFwdSlash = StringUtils.replace(availableDates, FWD_SLASH , EMPTY);
     	}
@@ -4139,7 +4146,7 @@ public class OEBO extends OeBoHelper implements Constants{
     	{
     		String keyForTdspFee = EMPTY;
     		String meterType = EMPTY;
-    		if (!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR))
+    		if (!StringUtils.equals(response.getMeterType(), METER_TYPE_AMSR))
     		{
     			meterType = METER_TYPE_NON_AMSR;
     		} else{

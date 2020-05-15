@@ -135,7 +135,9 @@ public class SalesBO extends OeBoHelper implements Constants {
 							serviceLoationResponse.getServZipCode(), serviceLoationResponse.getTdspCode(),
 							serviceLoationResponse.getServiceRequestTypeCode(), salesEsidCalendarRequest.getTrackingId(),
 							bpMatchFlag, salesEsidCalendarRequest.getLanguageCode(), serviceLoationResponse.getEsid(),
-							httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,salesEsidCalendarRequest.getCallExecuted());
+							httpRequest.getSession(true).getId(), serviceLoationResponse.getErrorCode(), serviceLoationResponse,
+							salesEsidCalendarRequest.getCallExecuted(), serviceLoationResponse.getProspectPreapprovalFlag()
+							);
 	
 					BeanUtils.copyProperties(esidInfoTdspResponse, salesEsidInfoTdspCalendarResponse);
 					response = salesEsidInfoTdspCalendarResponse;
