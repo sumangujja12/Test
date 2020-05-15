@@ -34,7 +34,6 @@ import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.response.EsidResponse;
-import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;

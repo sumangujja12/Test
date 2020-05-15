@@ -1,12 +1,10 @@
 package com.multibrand.dto.response;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
-import com.multibrand.vo.response.GenericResponse;
 
 @XmlRootElement
 public class SalesBaseResponse implements Constants  {
@@ -94,15 +92,6 @@ public class SalesBaseResponse implements Constants  {
 		this.statusCode=STATUS_CODE_STOP;
 		this.httpStatus=Response.Status.BAD_REQUEST;
 		return this;	
-		
-	}
-	public SalesBaseResponse populateInvalidTrackingResponse() {
-		this.errorCode=MESSAGE_CODE_NO_MATCH_FOUND;
-		this.errorDescription="Invalid trackingId";
-		this.messageCode=errorCode;
-		this.messageText=errorDescription;
-		this.statusCode=STATUS_CODE_STOP;
-		return this;
 		
 	}
 }

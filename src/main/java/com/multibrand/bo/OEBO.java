@@ -2575,8 +2575,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			String servStreetName, String servStreetAptNum, String servZipCode,
 			String tdspCodeCCS, String transactionType, String trackingId, String bpMatchFlag,
 			String locale, String esid,String sessionId,String holdType,
-			ServiceLocationResponse serviceLoationResponse,String callExecutedStrForDB, String prospectPreapprovalFlag  ) throws OAMException {
-		/* author Mayank Mishra */
+			ServiceLocationResponse serviceLoationResponse,String callExecutedStrForDB ) throws OAMException {
 		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start:" + METHOD_NAME);
 		
@@ -2590,7 +2589,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		String errorCodeFromDB = EMPTY;
 		String errorCodeFromAPI = "";
-		String[] validErrorCd= {"NESID","MESID","SWITCHHOLD"};
+		String[] validErrorCd= {NESID,MESID,SWITCHHOLD};
 
 		
 		if (locale.equalsIgnoreCase(S))
@@ -2783,7 +2782,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 			}
 			logger.info("Tracking Number :"+trackingId +" ESID CalendarDates call Hold Type :"+holdType);
-			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType, prospectPreapprovalFlag);
+			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType, serviceLoationResponse.getProspectPartnerId());
 	    }catch (Exception e) {
 			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
 			response.setResultCode(RESULT_CODE_SUCCESS);
@@ -4071,7 +4070,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	private void getTdspDates(String companyCode, String trackingId,
 			String transactionType, String tdspCodeCCS, String bpMatchFlag,
 			ESIDDO esidDo, EsidInfoTdspCalendarResponse response,
-			Locale locale,String holdType, String prospectPreapprovalFlag) throws Exception {
+			Locale locale,String holdType, String prospectPartnerId) throws Exception {
 		String METHOD_NAME = "OEBO: getTdspDates(..)";
 
 		logger.debug("Start:" + METHOD_NAME);
@@ -4093,10 +4092,10 @@ public class OEBO extends OeBoHelper implements Constants{
 
     	OetdspRequest request = new OetdspRequest();
     	DateFormat df = new SimpleDateFormat(MM_dd_yyyy);
-    	Calendar c = Calendar.getInstance();
+    	Calendar today = Calendar.getInstance();
 		request.setTdsp(tdspCodeCCS);
-		request.setStartDate(df.format(c.getTime()));
-		request.setEndDate(df.format(DateUtils.addDays(c.getTime(), 59)));
+		request.setStartDate(df.format(today.getTime()));
+		request.setEndDate(df.format(DateUtils.addDays(today.getTime(), 59)));
 		request.setStrCompanyCode(companyCode);
 		//START : ALT Channel : Sprint6 :US7569 :Kdeshmu1
 		if(StringUtils.isNotEmpty(esidDo.getEsidNumber())){
@@ -4107,7 +4106,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		//END : ALT Channel : Sprint6 :US7569 :Kdeshmu1
 		// Get calendar specific days for tdspCodeCCS
     	String dateString = oeService.getTDSPSpecificCalendarDates(request, trackingId);
-		List<String> allInclusiveDateList = CommonUtil.getDaysInBetween(c.getTime(),DateUtils.addDays(c.getTime(), 59));
+		List<String> allInclusiveDateList = CommonUtil.getDaysInBetween(today.getTime(),DateUtils.addDays(today.getTime(), 59));
     	if (allInclusiveDateList == null) {
     		response.setAvailableDates(EMPTY);
     		return;
@@ -4126,14 +4125,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	   		//	Include 2:00PM cut-off logic as an initial "default" check.
 	   		//	If 'ESID Not Found' or 'SwitchHold' or 'BPSD' then do not check Meter Type, push the available date 4 days out 
 	   		//	If there is no exception, then check meter type.
-	   		//  If meterType='AMSR' then first available date is today, for all other meter Types, push out the date by 2 days.
-    		
-    		if(prospectPreapprovalFlag != null  && !(StringUtils.equals(prospectPreapprovalFlag, PROSPECT_PREAPPROVAL_FLAG_PASS) && (StringUtils.equals(bpMatchFlag,BPSD)|| StringUtils.equals(holdType,PBSD)))){
-    			
-    			processTdspCalendarDatesforHoldsLogic(allInclusiveDateList,response,transactionType, 
-        				holdType, bpMatchFlag, esidDo, c);
-        		
-    		}
+	   		//  If meterType='AMSR' then first available date is today, for all other meter Types, push out the date by 2 days.			
+    		processTdspCalendarDatesforHoldsLogic(allInclusiveDateList,response,transactionType, holdType, bpMatchFlag, esidDo, today, prospectPartnerId);
     		
     		String availableDates = StringUtils.join(allInclusiveDateList, SEMI_COLON);
     		availableDatesNoFwdSlash = StringUtils.replace(availableDates, FWD_SLASH , EMPTY);
@@ -5211,8 +5204,8 @@ public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
  * @author 
  * @param request
  * @return
- */public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) throws Exception{
-		
+ */
+	public KbaAnswerResponse submitKBAAnswers(KbaAnswerRequest kbaAnswerRequest) throws Exception{	
 		KbaAnswerResponse response = new KbaAnswerResponse();
 		KBASubmitResultsDTO kbaSubmitResultsDTO = new KBASubmitResultsDTO();
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
@@ -5220,69 +5213,65 @@ public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
 		String errorCode = "";
 		LinkedHashSet<String>  systemNotesList=new LinkedHashSet<>();
 		try{
-			if(StringUtils.isNotEmpty(kbaAnswerRequest.getTrackingId())){
-			    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
-			    
-			    if(serviceLoationResponse == null){					
-					response.populateInvalidTrackingResponse();
-					return response;
-				}
-				if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
-				{
-					response.populateAlreadySubmittedEnrollmentResponse();
-					return response;	
-				}
-				if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-					String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
-					serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-				}
-				if(StringUtils.isNotBlank(serviceLoationResponse.getSystemNotes())){
-					String[] systemNotesArray =serviceLoationResponse.getSystemNotes().split(ERROR_CD_LIST_SPLIT_PATTERN);
-					systemNotesList = new LinkedHashSet<>(Arrays.asList(systemNotesArray));
-			
-				}
+		    serviceLoationResponse=getEnrollmentData(kbaAnswerRequest.getTrackingId());
+		    if(serviceLoationResponse == null){					
+				response.populateInvalidTrackingAndGuidResponse();
+				return response;
+			}
+		    else if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+			{
+				response.populateAlreadySubmittedEnrollmentResponse();
+				return response;	
+			}
+		    
+		    if(StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
+				serviceLocationResponseErrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+			if(StringUtils.isNotBlank(serviceLoationResponse.getSystemNotes())){
+				String[] systemNotesArray =serviceLoationResponse.getSystemNotes().split(ERROR_CD_LIST_SPLIT_PATTERN);
+				systemNotesList = new LinkedHashSet<>(Arrays.asList(systemNotesArray));
+		
 			}
 			KbaSubmitAnswerRequest request = oeRequestHandler.createKBASubmitAnswerRequest(kbaAnswerRequest);
-
 			KbaSubmitAnswerResponse kbaSubmitAnswerResponse = oeService.submitKBAAnswer(request);
 			logger.info(kbaAnswerRequest.getTrackingId()+" kbaSubmitAnswerResponse : "+CommonUtil.doRender(kbaSubmitAnswerResponse));
 		    kbaSubmitResultsDTO = constructKBAResponseOutputDTO(kbaSubmitAnswerResponse);
 			logger.info("kbaResponseOutputDTO : "+CommonUtil.doRender(kbaSubmitResultsDTO));
-			//kbaAnswerRequest.setKbaAnswerResponse(kbaSubmitResultsDTO.getKbaSubmitAnswerResponseOutput());
-			
-			 errorCode = processKBASubmitAnswerResponse(kbaAnswerRequest,kbaSubmitAnswerResponse, response, serviceLocationResponseErrorList, systemNotesList);
+			errorCode = processKBASubmitAnswerResponse(kbaAnswerRequest,kbaSubmitAnswerResponse, response, serviceLocationResponseErrorList, systemNotesList);
 			 
 			//update kba_api
-			boolean updateKBAErrorCode=this.updateKbaDetails(kbaSubmitResultsDTO);
+			this.updateKbaDetails(kbaSubmitResultsDTO);
 		}catch (Exception e) {
 			response.setStatusCode(STATUS_CODE_STOP);
 			response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);		
 			
 		}finally{
 			try{
-			if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
-				//update service location affiliate
-				 UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
-	             requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
-	             requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
-	             //update RECENT_MSG_CD
-	             if(StringUtils.isNotBlank(errorCode)){
-	            	 requestData.setErrorCode(errorCode);
-	     		}else{
-	     			requestData.setErrorCode("$blank$");}
-	             requestData.setMessageCode(response.getMessageCode());
-	             if(StringUtils.isNotBlank(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE))){
-	            	 requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
-	     		}else{
-	     			requestData.setErrorCdList("$blank$");}
-	             requestData.setSystemNotes(StringUtils.join(systemNotesList,SYMBOL_PIPE));
-	             requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
-	            this.updateServiceLocation(requestData);
-	        }
-		}catch(Exception e){
+				if(StringUtils.isNotBlank(kbaAnswerRequest.getTrackingId())){
+					//update service location affiliate
+					UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
+		            requestData.setRecentCallMade(CALL_NAME_KBA_SUBMIT);	
+		            requestData.setTrackingId(kbaAnswerRequest.getTrackingId());
+		            if(StringUtils.isNotBlank(errorCode)){
+		            	requestData.setErrorCode(errorCode);
+		     		}else{
+		     			requestData.setErrorCode("$blank$");
+		     		}
+		             requestData.setMessageCode(response.getMessageCode());
+		             if(StringUtils.isNotBlank(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE))){
+		            	 requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+		     		}else{
+		     			requestData.setErrorCdList("$blank$");
+		     		}
+		             requestData.setSystemNotes(StringUtils.join(systemNotesList,SYMBOL_PIPE));
+		             requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
+		            this.updateServiceLocation(requestData);
+		        }
+			}catch(Exception e){
 			response.setStatusCode(STATUS_CODE_STOP);
-			logger.error("Tracking Number ::"+kbaAnswerRequest.getTrackingId()+ "Exception while making submitKbaAnswers-updateserviceLocation call :: ", e);
-		}
+			logger.error("Tracking Number: "+kbaAnswerRequest.getTrackingId()+ "Exception while making submitKbaAnswers-updateserviceLocation call :: ", e);
+			}
 		}
 		return response;
 		}
@@ -6071,7 +6060,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     
     private void processTdspCalendarDatesforHoldsLogic(List<String> allInclusiveDateList, 
     				EsidInfoTdspCalendarResponse response, String transactionType,
-    				String holdType, String bpMatchFlag, ESIDDO esidDo, Calendar c)
+    				String holdType, String bpMatchFlag, ESIDDO esidDo, Calendar today, String prospectPartnerId)
     {
     	Calendar c2 = Calendar.getInstance();
 		c2.set(Calendar.HOUR_OF_DAY, 14);
@@ -6089,14 +6078,14 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		c3.set(Calendar.SECOND, 00);
 		c3.set(Calendar.MILLISECOND, 00);
 		
-		if (c.getTimeInMillis() > c3.getTimeInMillis()&& (StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
+		if (today.getTimeInMillis() > c3.getTimeInMillis()&& (StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
 		{
-			allInclusiveDateList.remove(df2.format(c.getTime()));
+			allInclusiveDateList.remove(df2.format(today.getTime()));
 		}
 		
-		else if(c.getTimeInMillis() > c2.getTimeInMillis()&& (!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
+		else if(today.getTimeInMillis() > c2.getTimeInMillis()&& (!StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)))
 		{
-			allInclusiveDateList.remove(df2.format(c.getTime()));
+			allInclusiveDateList.remove(df2.format(today.getTime()));
 		}
 		//END  : ALT Channel : Sprint6 :US7569 :Kdeshmu1
 		
@@ -6104,7 +6093,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		{
 			
 				if(StringUtils.equals(esidDo.getSwitchHoldStatus(),SWITCH_HOLD_STATUS_ON) ||StringUtils.isBlank(response.getEsid()) 
-						|| StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)
+						|| (StringUtils.equals(bpMatchFlag,BPSD) && StringUtils.isBlank(prospectPartnerId)) || StringUtils.equals(holdType,PBSD) || StringUtils.equals(holdType,HOLD_DNP)
 						|| StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), NESID) || StringUtils.equalsIgnoreCase(esidDo.getEsidNumber(), MESID)) 
 				{
 					for (int i = 0; i < PUSH_4; i++)
@@ -6120,7 +6109,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		}else if(allInclusiveDateList.size() > 0){
 			
 			if(StringUtils.equals(response.getMeterType(),METER_TYPE_AMSR)){
-				if(StringUtils.equals(bpMatchFlag,BPSD) || StringUtils.equals(holdType,PBSD)){
+				if((StringUtils.equals(bpMatchFlag,BPSD) && StringUtils.isBlank(prospectPartnerId))  || StringUtils.equals(holdType,PBSD)){
 					for (int i = 0; i < PUSH_7; i++)
 		    			allInclusiveDateList.remove(0);
 				}else if(StringUtils.equals(holdType,POSIDHOLD))
