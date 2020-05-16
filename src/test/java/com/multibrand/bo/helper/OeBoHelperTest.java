@@ -34,13 +34,13 @@ public class OeBoHelperTest {
 	public void testAllowSubmitEnrollmentPositiveForBPMatch(){		
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		oeSignUpDTO.setBpMatchText("");
-		Assert.assertTrue(oeBoHelper.allowEnrollmentSubmissionToCCS(oeSignUpDTO, null));
+		Assert.assertTrue(oeBoHelper.allowEnrollmentSubmissionToCCS(oeSignUpDTO));
 	}
 	@Test
 	public void testAllowSubmitEnrollmentNegativeForBPMatch(){
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		oeSignUpDTO.setBpMatchText(Constants.BPSD);
 		oeSignUpDTO.setErrorCdList("BPSD");
-		Assert.assertFalse(oeBoHelper.allowEnrollmentSubmissionToCCS(oeSignUpDTO, null));
+		Assert.assertFalse(oeBoHelper.allowEnrollmentSubmissionToCCS(oeSignUpDTO));
 	}
 }
