@@ -1,5 +1,6 @@
 package com.multibrand.bo;
 
+import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -6476,6 +6477,11 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				} else {
 					requestDataPerson.setCredStatusCode(RELEASE);	
 				}
+				
+				requestDataPerson.setDepWaiveFlag(newCreditScoreResponse.getStrDepWaiveFlag());
+				requestDataPerson.setDepAmtWaived(newCreditScoreResponse.getDepAmtWaived().toString());
+				requestDataPerson.setDepAmtWaivedProc(newCreditScoreResponse.getDepAmtWaivedProc().toString());
+				
 			}
 			errorCode = this.updatePerson(requestDataPerson);
 			if (StringUtils.isNotBlank(errorCode))

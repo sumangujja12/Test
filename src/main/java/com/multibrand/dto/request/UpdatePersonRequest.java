@@ -166,9 +166,18 @@ public class UpdatePersonRequest implements FormEntityRequest, Serializable {
 	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_cred_score_date", parameterIndex = 50)
 	private String creditScoreDate;
 
-	@ProcedureOutParameter(name = "sp.update.person.affiliate.out.param.out_error_code", parameterIndex = 51)
+	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_dep_waive_flag", parameterIndex = 51)
+	private String depWaiveFlag;
+	
+	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_dep_amt_waived_proc", parameterIndex = 52)
+	private String depAmtWaivedProc;
+	
+	@ProcedureInParameter(name = "sp.update.person.affiliate.in.param.in_dep_amt_waived", parameterIndex = 53)
+	private String depAmtWaived;
+	
+	@ProcedureOutParameter(name = "sp.update.person.affiliate.out.param.out_error_code", parameterIndex = 54)
 	private String errorCode;
-
+	
 	private String esuiteFlag;
 	private String offerCategory;
 	private String paymentMethod;
@@ -979,6 +988,30 @@ public class UpdatePersonRequest implements FormEntityRequest, Serializable {
 	}
 
 	
+	public String getDepWaiveFlag() {
+		return depWaiveFlag;
+	}
+
+	public void setDepWaiveFlag(String depWaiveFlag) {
+		this.depWaiveFlag = depWaiveFlag;
+	}
+
+	public String getDepAmtWaivedProc() {
+		return depAmtWaivedProc;
+	}
+
+	public void setDepAmtWaivedProc(String depAmtWaivedProc) {
+		this.depAmtWaivedProc = depAmtWaivedProc;
+	}
+
+	public String getDepAmtWaived() {
+		return depAmtWaived;
+	}
+
+	public void setDepAmtWaived(String depAmtWaived) {
+		this.depAmtWaived = depAmtWaived;
+	}
+
 	public String getCreditScoreDate() {
 		return creditScoreDate;
 	}
