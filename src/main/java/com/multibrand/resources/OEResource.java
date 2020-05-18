@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-
 package com.multibrand.resources;
 
 import java.util.HashMap;
