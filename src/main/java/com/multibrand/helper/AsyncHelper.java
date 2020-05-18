@@ -6,11 +6,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.domain.CreateContactLogRequest;
+import com.multibrand.domain.UpdateAlertPrefRequest;
 import com.multibrand.domain.UpdateContactRequest;
 import com.multibrand.proxy.ProfileProxy;
 import com.multibrand.util.Constants;
@@ -105,5 +106,15 @@ public class AsyncHelper implements Constants  {
 		logger.debug("END: Updating CCSContactLog in asynchronous manner");
 
 	}
-	
+  	/**
+     * update alert preferences asynchronous
+     * 
+     * @param oeSignUpDTO, updateAlertPrefRequest
+     */
+   public void asychUpdatePrepayAlertPreferences(UpdateAlertPrefRequest updateAlertPrefRequest) {
+  		
+  	logger.debug("START: Updateing prepay alert preference in asynchronous manner");
+  	excuteASyncService(ProfileProxy.class, METHOD_PREPAY_ALERT_TO_CRM,updateAlertPrefRequest);
+ 		logger.debug("END: Updateing prepay alert preference in asynchronous manner");
+  	 }	
 }

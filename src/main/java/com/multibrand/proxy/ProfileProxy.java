@@ -147,10 +147,17 @@ public class ProfileProxy extends BaseProxy {
 
 		UpdateAlertPrefResponse response = null;
 
+		long delayInMS = 2000L;
+		
 		try {
 
+			delayInMS = Integer.parseInt(getEnvMessageReader().getMessage(
+					ENV_UPDATE_CRM_ASYNC_DELAY_MS));
+			logger.info("updateContact(...) Introducing delay of " + delayInMS
+					+ "ms.");
+			Thread.sleep(delayInMS); // Adding 2 sec delay by default
 			// Call NRGWS ProfileDomain.updateContactInfo web service call
-			response = profileDomainPortProxy.updateAlertPreferences(request);
+			response = getProfileDomainProxy().updateAlertPreferences(request);
 
 		} catch (RemoteException re) {
 			logger.error(METHOD_NAME

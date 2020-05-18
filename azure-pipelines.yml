@@ -9,8 +9,7 @@ resources:
 
 pool:
   #vmImage: 'ubuntu-16.04'
-  name: On-Premise-DEV-Digital-IT
-  demands: maven  
+  name: '$(param.agent.pool.name)'
 
 trigger:
   branches:
@@ -23,11 +22,6 @@ trigger:
     - README.md
 
 jobs:
-- job: build
-  displayName: Compile and test
-  steps:
-  - bash: mvn clean
-
 - template: create_release_notes_n_autotag.yml@templates
 
 - job: trigger_jenkins

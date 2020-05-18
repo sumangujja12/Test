@@ -6,6 +6,7 @@ import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +56,7 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.XmlUtil;
+import com.multibrand.util.Constants.ADDRESS_MATCH;
 import com.multibrand.vo.request.SecondaryNameUpdateReqVO;
 import com.multibrand.vo.request.UserRegistrationRequest;
 import com.multibrand.vo.response.CampEnvironmentDO;
@@ -146,7 +148,8 @@ public class ProfileService extends BaseAbstractService {
 	
 	@Autowired
 	private ProfileHelper profileHelper;
-	
+
+	private String[] excludeOfferList = {"S", "F"}; 
 	
 	/**
 	 * This will return ProfileDomainProxy and set EndPoint URL
@@ -932,17 +935,26 @@ public class ProfileService extends BaseAbstractService {
 	private OfferDO[] populateEligibleOffers(ZesSwapOutput zesSwapOutput,List<ZesOfrcdFlag> zesOfferCDFlagList,List<ZesCampEnviDetails> zesCampEnvDetailsList) {
 
 		int count = 0;
+		int offerCount = 0;
 		logger.info("Setting eligible offers::::::");
 		List<ZesEligoffer> zesEligibleOfferList = zesSwapOutput.getEligOffers().getItem();
 		
-		logger.info("zesEligibleOfferList:::::: list size "+zesEligibleOfferList.size());
-		com.multibrand.vo.response.OfferDO[] eligibleOffersList = new com.multibrand.vo.response.OfferDO[zesEligibleOfferList
-				.size()];
+		offerCount = getOfferCount(offerCount, zesEligibleOfferList);
+		
+		logger.info("zesEligibleOfferList:::::: list size {}", zesEligibleOfferList.size());
+		com.multibrand.vo.response.OfferDO[] eligibleOffersList = new com.multibrand.vo.response.OfferDO[offerCount];
 
 		if (zesEligibleOfferList != null && zesEligibleOfferList.size() > 0) {
 
+			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
 				try {
+	
+					if(zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
+					&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
+						continue;
+					}
+					
 					eligibleOffersList[count] = new com.multibrand.vo.response.OfferDO();
 					List<Map<String,Object>> offerCategoryLookupDetailsList = offerService.getOfferCategories(zesEligoffer.getOfferCode());
 					String strOfferCategory="";
@@ -1062,6 +1074,22 @@ public class ProfileService extends BaseAbstractService {
 		}
 
 		return eligibleOffersList;
+	}
+
+	private int getOfferCount(int offerCount, List<ZesEligoffer> zesEligibleOfferList) {
+		if (zesEligibleOfferList != null && zesEligibleOfferList.size() > 0) {
+			
+			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
+		
+	
+					if(zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
+					&& !Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
+						offerCount++;
+					}
+			}
+					
+		}
+		return offerCount;
 	}
 
 	/**
@@ -1860,6 +1888,46 @@ public class ProfileService extends BaseAbstractService {
 				CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
 		if (logger.isDebugEnabled()) {
 			logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		return response;
+	}	
+	
+	
+	/**
+	 * @author SMarimuthu
+	 * @param allAlertsRequest
+	 * @param sessionId
+	 * @return
+	 * @throws RemoteException
+	 */
+	public AllAccountDetailsResponse getAllAccountDetailsParallel(AllAccountDetailsRequest allAccountRequest, String sessionId) throws RemoteException {
+
+		ProfileDomain proxy = getProfileDomainProxy();
+
+		long startTime = CommonUtil.getStartTime();
+		AllAccountDetailsResponse response = null;
+		try {
+			response = proxy.getAllAccountDetailsInParallel(allAccountRequest);
+		} catch (RemoteException ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAccountRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAccountRequest));
+			throw ex;
+		} catch (Exception ex) {
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, ex, "",
+					CommonUtil.getElapsedTime(startTime), "", sessionId, allAccountRequest.getCompanyCode());
+			if (logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(allAccountRequest));
+			throw ex;
+		}
+		utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, response, response.getErrorMessage(),
+				CommonUtil.getElapsedTime(startTime), "", sessionId, allAccountRequest.getCompanyCode());
+		if (logger.isDebugEnabled()) {
+			logger.debug(XmlUtil.pojoToXML(allAccountRequest));
 			logger.debug(XmlUtil.pojoToXML(response));
 		}
 		return response;

@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import com.multibrand.dao.ProfileDAO;
 import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AllAccountDetailsRequest;
+import com.multibrand.domain.AllAccountDetailsResponse;
 import com.multibrand.domain.ChangeUsrNameRequest;
 import com.multibrand.domain.ChangeUsrNameResponse;
 import com.multibrand.domain.CirroStructureCallRequest;
@@ -30,6 +32,10 @@ import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.LanguageUpdateRequest;
 import com.multibrand.domain.LanguageUpdateResponse;
+import com.multibrand.domain.PayExtEligibleRequest;
+import com.multibrand.domain.PayExtEligibleResponse;
+import com.multibrand.domain.PaymentExtensionSubmitRequest;
+import com.multibrand.domain.PaymentExtensionSubmitResponse;
 import com.multibrand.domain.ProfileResponse;
 import com.multibrand.domain.UpdateAddressRequest;
 import com.multibrand.domain.UpdateContactRequest;
@@ -47,14 +53,15 @@ import com.multibrand.helper.BPAccountContractPayHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.LDAPHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
-import com.multibrand.proxy.ProfileProxy;
 import com.multibrand.service.LDAPService;
+import com.multibrand.service.PaymentService;
 import com.multibrand.service.ProfileService;
 import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnvMessageReader;
 import com.multibrand.util.XmlUtil;
+import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.SecondaryNameUpdateReqVO;
 import com.multibrand.vo.request.ValidateUserNameRequest;
 import com.multibrand.vo.response.AcctValidationResponse;
@@ -85,6 +92,8 @@ import com.multibrand.vo.response.WseEsenseEligibility;
 import com.multibrand.vo.response.billingResponse.GetAccountDetailsResponse;
 import com.multibrand.vo.response.billingResponse.GetBillingAddressResponse;
 import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
+import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
 import com.multibrand.vo.response.profileResponse.UpdateLanguageResponse;
@@ -123,7 +132,10 @@ public class ProfileBO extends BaseBO {
 	
 	@Autowired
 	protected EnvMessageReader envMessageReader;
-
+	
+	@Autowired
+	private PaymentService paymentService;
+	
 	
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
@@ -279,7 +291,7 @@ public class ProfileBO extends BaseBO {
 		    if(billingZipCodeValidation&&((CommonUtil.trimZipCode(billingAddressResp.getStrZip())).equalsIgnoreCase(zip.trim()))){
 		    	response.setUserName(userName);
 		  	
-		    	logger.info("User Email id"+emailID);		
+		    	logger.info("User Email id{}", emailID);		
 		    
 		       if(LDAPEmailValidation&&EMAIL_VERIFIED){
 				HashMap<String, String> templateProperties = new HashMap<String, String>();
@@ -660,8 +672,10 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		// Get EMail.
 		String emailAddress = this.getEmailAddress(caNumber, bpNumber, companyCode, sessionId);
 
-		// Set Email in response.
-		userResponse.setEmailID(emailAddress);
+		// Set Email in response only when it is not empty
+		if (org.apache.commons.lang3.StringUtils.isNotBlank(emailAddress)) {
+			userResponse.setEmailID(emailAddress);
+		}
 
 		// Set success code in response.
 		userResponse.setResultCode(RESULT_CODE_SUCCESS);
@@ -2174,8 +2188,7 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		}
 		logger.info("End - [ProfileBO - validatePassword]");
 		return passwordValidityResponse;
-	}
-	
+	}	
 }
 	
 

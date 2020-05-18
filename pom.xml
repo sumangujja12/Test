@@ -955,7 +955,8 @@
  		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-ccs-ws-client-nrg-rest</artifactId>
-			<version>4</version> 		
+			<version>8</version>
+
  		</dependency>
 		<dependency>
 			<groupId>com.nrg.util</groupId>
@@ -973,7 +974,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-payment-domain</artifactId>
-			<version>6</version>
+			<version>9</version> 
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
@@ -1021,7 +1022,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-			<version>18</version>
+			<version>20</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>

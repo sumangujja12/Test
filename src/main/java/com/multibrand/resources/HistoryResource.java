@@ -9,10 +9,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.bo.HistoryBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.DailyWeeklyUsageResponseList;
@@ -20,6 +22,9 @@ import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
 import com.multibrand.vo.response.SmartMeterUsageResponseList;
 import com.multibrand.vo.response.WeeklyUsageResponseList;
+import com.multibrand.vo.response.gmd.AllTimePriceResponse;
+import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
+import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.historyResponse.BillPaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.GetConsumptionHistoryResponse;
 import com.multibrand.vo.response.historyResponse.IntervalDataResponse;
@@ -27,6 +32,15 @@ import com.multibrand.vo.response.historyResponse.InvoiceUsageHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.PlanHistoryResponse;
 import com.multibrand.vo.response.historyResponse.WeeklyUsageResponse;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import com.multibrand.util.Constants;
+import com.multibrand.util.DateUtil;
+import com.multibrand.vo.response.DailyResponseVO;
+import com.multibrand.vo.response.HourlyUsage;
 
 
 /***
@@ -462,5 +476,132 @@ public class HistoryResource
 		response = Response.status(200).entity(weeklyUsageSummary).build();
 		return response;
 	}
+	
+	 @POST
+	    @Path("/getWeeklyUsageByHourly")
+	    @Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+	    public Response getWeeklyUsageByHuorly(@FormParam("accountNumber") String accountNumber,
+	            @FormParam("contractId") String contractId, @FormParam("esid") String esid,
+	            @FormParam("zoneId") String zoneId, @FormParam("companyCode") String companyCode,
+	            @FormParam("brandName") String brandName, @FormParam("weekNumber") int weekNumber,
+	            @FormParam("year") int year) {
+	        Response response = null;
+	 
+	        logger.info("fetching ActualDay from getWeeklyUsage API");
+	        WeeklyUsageResponse weeklyUsageSummary = historyBO.getWeeklyUsageData(accountNumber, contractId, esid, zoneId,
+	                companyCode, brandName, weekNumber, year, httpRequest.getSession(true).getId());
+	 
+	        // Sorting ActualDay List
+	        Set<DailyResponseVO> dailyResponseSet = weeklyUsageSummary != null ? weeklyUsageSummary.getWeeklyUsageData()
+	                : null;
+	 
+	        if (dailyResponseSet != null) {
+	            Date[] arrayOfDates = new Date[dailyResponseSet.size()];
+	            int i = 0;
+	            for (DailyResponseVO dailyResponseVO : dailyResponseSet) {
+	                if (dailyResponseVO != null && dailyResponseVO.getActualDay() != null) {
+	                    arrayOfDates[i] = DateUtil.getDate(dailyResponseVO.getActualDay(), Constants.yyyyMMdd);
+	                    i++;
+	                }
+	            }
+	            Arrays.sort(arrayOfDates);// Sorting Dates
+	 
+	            // Data Base Call
+	            logger.info("fetching ActualDay from getWeeklyUsage API");
+	            if (arrayOfDates.length > 0) {
+	                DailyResponseVO dailyRespVO = dailyResponseSet.iterator().next();
+	                List<HourlyUsage> hourlyUsageList = historyBO.getWeeklyUsageByHuorlyDetails(dailyRespVO.getEsiId(),
+	                        dailyRespVO.getContractId(), DateUtil.getFormatedDate(arrayOfDates[0], Constants.MM_dd_yyyy),
+	                        DateUtil.getFormatedDate(arrayOfDates[arrayOfDates.length - 1], Constants.MM_dd_yyyy));
+	    
+	                // Map hourlyUsage to DailyResponse
+	                Iterator<DailyResponseVO> dailyResponseItr = dailyResponseSet.iterator();
+	                while (dailyResponseItr.hasNext()) {
+	                    dailyRespVO = dailyResponseItr.next();
+	                    for (HourlyUsage hourlyUsage : hourlyUsageList) {
+	                        if (hourlyUsage.getActualDay().equals(dailyRespVO.getActualDay())) {
+	                            dailyRespVO.setHourlyUsageList(hourlyUsage);	                            
+	                            break;
+	                        }
+	                    }
+	                    
+	                    if(dailyRespVO.getHourlyUsageList() == null) {
+	                    	dailyRespVO.setDayUsg(Constants.DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO);
+	                    	dailyRespVO.setDayCst(Constants.DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO);
+	                    	
+	                    }
+	                }
+	            }
+	        }
+	 
+	        response = Response.status(200).entity(weeklyUsageSummary).build();
+	        return response;
+	}
+	
+	/**
+	 * 
+	 * @param esid
+	 * @param companyCode
+	 * @return
+	 */
+	@POST
+	@Path("/getZoneIdByESIID")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getZoneIdByEsiId(@FormParam("esid") String esid, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		GMDZoneByEsiIdResponseVO gmdZoneByEsiIdResponse = historyBO.getZoneIdByEsiId(esid, companyCode,
+				httpRequest.getSession(true).getId());
+		response = Response.status(200).entity(gmdZoneByEsiIdResponse).build();
+		return response;
+	}
 
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param currentDate
+	 * @param companyCode
+	 * @return
+	 */
+	@POST
+	@Path("/getGMDPrice")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getGMDPrice(@FormParam("accountNumber") String accountNumber,
+			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
+			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		HourlyPriceResponse hourlyPriceResponse = historyBO.getGMDPrice(accountNumber, contractId, esid,
+				httpRequest.getSession(true).getId(), companyCode);
+		response = Response.status(200).entity(hourlyPriceResponse).build();
+		return response;
+
+	}
+	
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param currentDate
+	 * @param companyCode
+	 * @return
+	 */
+	@POST
+	@Path("/getAllTimePrice")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getAllTimePrice(@FormParam("accountNumber") String accountNumber,
+			@FormParam("contractId") String contractId, @FormParam("esid") String esid,
+			@FormParam("currentDate") String curDate, @FormParam("companyCode") String companyCode) {
+		Response response = null;
+		AllTimePriceResponse allTimePriceResponse = historyBO.getAllTimePrice(accountNumber, contractId, esid,
+				httpRequest.getSession(true).getId(), companyCode);
+		response = Response.status(200).entity(allTimePriceResponse).build();
+		return response;
+
+	}	
 }

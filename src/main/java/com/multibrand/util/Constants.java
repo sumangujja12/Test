@@ -575,6 +575,9 @@ public interface Constants {
 	public static final String BAL_ALERT = "WSB1";
 	public static final String LOW_ALERT = "TMD1";
 	public static final String PAY_ALERT = "PAY1";
+	public static final String GME_BAL_ALERT = "DBA1 ";
+	public static final String GME_PP_ALERT_DBA1="DBA1";
+	 public static final String PP_ALERT4 = "TTS1";
 	public static final String COMM_PREF = "COMMPREF";
 	public static final String PREPAY = "PREPAY";
 	public static final String ESIDNOTFOUND = "<ESIDNOTFOUND>";
@@ -708,6 +711,7 @@ public interface Constants {
 	
 	public static final String ENV_UPDATE_CRM_ASYNC_DELAY_MS="env.updatecrm.async.delay.ms";
 	public static final String METHOD_UPDATE_CONTACT_ASYNC="updateContactInfoWithAsyncDelay";
+	public static final String METHOD_PREPAY_ALERT_TO_CRM="updateAlertPreferences";
 	
 	public static final String LOCALE_LANGUAGE_CODE_PARAM = "languageCode";
 	public static final String LOCALE_LANGUAGE_CODE_EN_US = "en_US";
@@ -923,7 +927,6 @@ public interface Constants {
 	public static final String EMAIL = "email";
 	public static final String BOTH = "both";
 	
-	public static final String[] validCompCodeAry = {"0121","0271","0270"};
 	
 	//ccs Ebill email GME BCC EMAIL
 	public static final String EBILL_GME_BCC_EMAIL = "ebill.gme.bcc.email";
@@ -1187,6 +1190,9 @@ public interface Constants {
 	 public static final String ACCOUNT_ALREADY_ENROLLED = "Account already enrolled";
 	 
 	 public static final String GME_BASE_URL = "gm.base.url";
+	 public static final String GME_PROD_BASE_URL = "gm.prod.base.url";
+	 
+	 
 	 public static final String IMG_URL = "<img src=\"{0}\"/>";
 	 public static final String INVALID_REQUEST = "Please provide valid request for {0}";
 	 public static final String CONTRACT_ID ="contractId";
@@ -1384,8 +1390,8 @@ public interface Constants {
 	public static final String OFFER_CATEGORY_TRUELY_FREE_DAYS= "TRULYFREEDAYS";
 	
 	public static final String KBA_OE="kba-oe";
+	public static final String DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO= "0.0";
 	
-
 	public static final String SYMBOL_DOLLAR = "$";
 	public static final String SYMBOL_CENTS = "¢";
 
@@ -1405,7 +1411,15 @@ public interface Constants {
 	public static final String PROSPECT_PREAPPROVAL_FLAG_PASS= "P";
 	public static final String PROSPECT_MISMATCH= "PROSPECT_MISMATCH";
 	public static final String PROSPECT_MISMATCH_TEXT = "msg_prospect_mismatch";
+	public static final String CCS_UPDATE_ERROR="SAP Update failed";
+	public static final String PAYMENTEXTENSION_BYPASS_ELIGIBLE_FLAG ="paymentextension.bypass.eligible.flag";
+
+//***************** GMD APP APIs *************************    
+	public static final String DPP_BYPASS_ELIGIBLE_FLAG ="dpp.bypass.eligible.flag";
+	public static final String DPP_DEFAULT_FLAG = "dpp.default.flag";
+	public static final String DPP_NO_OF_INST = "dpp.no.of.installments";
 	
+
 	public static final String TRANSACTIONTYPE_S = "S";
 
 	public static final String RESIDENTIAL = "RESIDENTIAL";
@@ -1441,4 +1455,78 @@ public interface Constants {
 	 public static final String PROSPECT_BP_USED = "PROSPECT_BP_USED";
 	 public static final String SOLD_TO_BP_USED = "SOLD_TO_BP_USED";
 	
+
+	 public static final String DUE_AMOUNT = "dueAmount";
+	 public static final String EXTENSION_DATE = "extensionDate";
+	 
+	 public static final String GME_PAYMTXTN_EMAIL_EN_US ="GME.PAYMTXTN.EMAIL.EN_US"; 
+	 public static final String GME_PAYMTXTN_EMAIL_ES_US ="GME.PAYMTXTN.EMAIL.ES_US"; 
+	 
+	 public static final String DP_PAYMTXTN_EMAIL_EN_US ="DP.PAYMTXTN.EMAIL.EN_US"; 
+	 public static final String DP_PAYMTXTN_EMAIL_ES_US ="DP.PAYMTXTN.EMAIL.ES_US"; 	
+	 public static final String DP_ACCOUNT_NAME="ACCOUNT_NAME";
+	 public static final String DP_ACCOUNT_NUMBER ="CA_NUMBER";
+	 public static final String DP_DUE_AMOUNT = "PAST_DUEAMOUNT";
+	 public static final String DP_EXTENSION_DATE = "EXTENSION_DATE";
+//***************** GMD APP APIs *************************    
+   public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
+   public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
+   
+   public static final String GMD_STATEMENT_ENDPOINT_URL_JNDINAME = "CCS_GMD_STMT";
+   public static final String GMD_PRICET_ENDPOINT_URL_JNDINAME = "CCS_PRICE_STMT";
+   
+   public static final String GMD_ENERGY_CHARGE = "Energy Charge";
+   public static final String GMD_ENERGY_TRUE_UP = "Energy True-up";
+   public static final String GMD_USAGE_TRUE_UP = "Usage True-up";
+   
+   public static final String SOLAR_RECS = "Solar Recs";
+   public static final String FIXED_RATE_THIRD_PARTY_CHRG = "Fixed Rate Third Party Charges";
+   public static final String ANCILLARY_SERVICES = "Ancillary Services";
+   public static final String ELECTRICITY_USAGE = "Electricity Usage";
+   
+   public static final String QUALITY_OTHER_CREDIT = "Quality Other Credit";
+   
+   
+   public static final String TDSP_DELIVERY_CHARGES = "TDSP Delivery Charges";
+   public static final String SALES_TAX = "Sales Tax";
+   
+   public static final String GROSS_RECP_TAX = "Gross Receipt Tax";
+   
+   public static final String PUC_FEE = "PUC Fee";
+   
+   
+   public static final String GMD_MEMBERSHIP = "Membership Fee";
+   public static final String  TAXES_FEES = "Taxes & Fees";
+  
+   public static final String ENERGY_CHARGES = "Energy Charges";
+   
+   public static final String INDEFINITE_END_DATE = "12/31/9999";
+   
+   public static final String GMD_PRICE_IRW_DATE = "gmd_price_current_date"; 
+   
+	//Content Service metadata
+	public static final String CUSTOM_METADATA= "CustomMetas%28%29?&$filter=(PublicationId%20eq%20";
+	
+	public static final String KEY_NAME = "%20and%20keyName%20eq%20%27offerCodesLookup%27%20and%20(";
+	
+	public static final String STRING_VALUE = "StringValue%20eq%20%27";
+	
+	public static final String JSON_FORMAT_COMPONENT_PRESENTATION = "))&$expand=Component/ComponentPresentations&$format=json";
+	
+	public static final String OR = "%20OR%20";
+	public static final String ERROR = "error";
+	public static final String TEFLF = "TEFLF";
+	public static final String DISC = "DISC";
+	 
+	public static final String XOOM_COMPANY_CODE = "0586";
+	public static final String XOOM_BRAND_NAME = "XM";
+	public static final String XOOM_EBILL_EXTERNAL_ID_EN = "XOOM.EBILL.UPDATE.CONFIRMATION.EN_US";
+	public static final String XOOM_EBILL_EXTERNAL_ID_ES = "XOOM.EBILL.UPDATE.CONFIRMATION.ES_US";
+	public static final String XOOM_EBILL_TEMPLATE_ID = "HTML";
+	
+	public static final String XOOM_EBILL_CA = "CA_NUMBER";
+	public static final String XOOM_EBILL_CHECK_DIGIT = "CHECK_DIGIT";
+	public static final String XOOM_EBILL_NAME_ON_ACCOUNT = "CA_NAME";
+	public static final String XOOM_EBILL_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
+	public static final String XOOM_EBILL_DELIVERY_LOCATION = "DELIVERY_LOCATION";
 }
