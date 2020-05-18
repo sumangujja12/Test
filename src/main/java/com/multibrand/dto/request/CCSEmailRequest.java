@@ -85,7 +85,9 @@ public class CCSEmailRequest extends NRGServicesRequest implements BaseEmailRequ
 		if(StringUtils.equalsIgnoreCase(this.companycode, GME_COMPANY_CODE)){
 			if(!StringUtils.equalsIgnoreCase(this.brandname, GME_BRAND_NAME)){throw new ValidateRequestException("BRAND NAME AND COMPANY CODE DOES NOT MATCH");}
 		}
-		
+		if(StringUtils.equalsIgnoreCase(this.companycode, XOOM_COMPANY_CODE)){
+			if(!StringUtils.equalsIgnoreCase(this.brandname, XOOM_BRAND_NAME)){throw new ValidateRequestException("BRAND NAME AND COMPANY CODE DOES NOT MATCH");}
+		}
 		if((StringUtils.isNotBlank(this.companycode) && StringUtils.equalsIgnoreCase(this.companycode, RELIANT_COMPANY_CODE)) && 
 				(StringUtils.isNotBlank(this.brandname) && StringUtils.equalsIgnoreCase(this.brandname, RELIANT_BRAND_NAME))){
 			if(StringUtils.isBlank(this.billdeliverymethod)){throw new ValidateRequestException("BILL DELIVERY METHOD IS REQUIRED FOR BRAND RELIANT");}
@@ -94,6 +96,10 @@ public class CCSEmailRequest extends NRGServicesRequest implements BaseEmailRequ
 		if((StringUtils.isNotBlank(this.companycode) && StringUtils.equalsIgnoreCase(this.companycode, GME_COMPANY_CODE)) && 
 				(StringUtils.isNotBlank(this.brandname) && StringUtils.equalsIgnoreCase(this.brandname, GME_BRAND_NAME))){
 			if(!(StringUtils.isBlank(this.billdeliverymethod) || StringUtils.equalsIgnoreCase(this.billdeliverymethod, EMAIL))){throw new ValidateRequestException("ONLY EMAIL OPTION IS ALLOWED FOR BRAND GME");}
+		}
+		if((StringUtils.isNotBlank(this.companycode) && StringUtils.equalsIgnoreCase(this.companycode, XOOM_COMPANY_CODE)) && 
+				(StringUtils.isNotBlank(this.brandname) && StringUtils.equalsIgnoreCase(this.brandname, XOOM_BRAND_NAME))){
+			if(!(StringUtils.isBlank(this.billdeliverymethod) || StringUtils.equalsIgnoreCase(this.billdeliverymethod, EMAIL))){throw new ValidateRequestException("ONLY EMAIL OPTION IS ALLOWED FOR BRAND XOOM");}
 		}
 		
 	}

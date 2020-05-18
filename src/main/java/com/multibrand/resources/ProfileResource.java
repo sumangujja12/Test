@@ -9,12 +9,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.bo.ProfileBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.helper.ProfileHelper;
@@ -666,6 +664,5 @@ public class ProfileResource {
 		logger.info("End-[ProfileResource-validatePassword]");
 		return response;
 	}
-	
 }	
 	

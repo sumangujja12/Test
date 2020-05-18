@@ -299,6 +299,8 @@ public class PrepayBO implements Constants {
 			request.setServiceStartDate(CommonUtil.getDatefromString(serviceStartDate));
 			request.setTollTagEndDate(CommonUtil.getDatefromString(tollTagEndDate));
 			request.setTollTagStartDate(CommonUtil.getDatefromString(tollTagStartDate));
+			request.setCompanyCode(companyCode);
+			request.setBrandId(brandName);
 			try{
 			ppdDocUpdateResponse = billingService.prepayDocUpdate(request);
 			}
