@@ -1218,6 +1218,9 @@ public class OERequestHandler implements Constants {
 		esid.setEsidNumber(enrollmentRequest.getEsid());
 
 		oeSignupDTO.setEsid(esid);
+		
+		// set bp match
+		oeSignupDTO.setBpMatch(setMatchedBP(oeSignupDTO,serviceLoationResponse));
 
 		// Read Person, BP and Credit information from tables
 		this.readPersonBpCreditData(oeSignupDTO, enrollmentRequest);
@@ -1240,31 +1243,8 @@ public class OERequestHandler implements Constants {
 		ServiceLocationResponse servLocResponse = oeBo.getEnrollmentData(enrollmentRequest.getTrackingId());
 
 		if (servLocResponse != null) {
-			// Bp match
-			BPMatchDTO bpMatch = new BPMatchDTO();
 			
-			if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId()) && StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
-				if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
-					bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
-					oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
-				}else if(!servLocResponse.getErrorCdlist().contains(PBSD)){
-					bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
-					oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
-				}
-			}else if(StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
-				if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
-					bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
-					oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
-				}
-			}
-			else if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId())){
-				bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
-				oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
-			}
-
-
-			// set bp match
-			oeSignupDTO.setBpMatch(bpMatch);
+			
 			// START : OE :Sprint62 :US21019 :Kdeshmu1
 			oeSignupDTO.setAgentID(servLocResponse.getAgentID());
 			oeSignupDTO.setAgentType(servLocResponse.getAgentType());
@@ -1608,5 +1588,34 @@ public class OERequestHandler implements Constants {
 		return request;
 	}
 	
+	/**
+	 * @author Kdeshmu1
+	 * @param oeSignupDTO
+	 * @param servLocResponse
+	 * @return
+	 */
+	public BPMatchDTO setMatchedBP(OESignupDTO oeSignupDTO,ServiceLocationResponse servLocResponse){
+		BPMatchDTO bpMatch = new BPMatchDTO();
+		
+		if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId()) && StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
+			if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
+				bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
+				oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
+			}else if(!servLocResponse.getErrorCdlist().contains(PBSD)){
+				bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
+				oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
+			}
+		}else if(StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
+			if(!servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
+				bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
+				oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
+			}
+		}
+		else if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId())){
+			bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
+			oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
+		}
+		return bpMatch;
+	}
 	
 }
