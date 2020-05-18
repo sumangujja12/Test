@@ -4,13 +4,10 @@
 package com.multibrand.dto.request;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
-import com.multibrand.request.validation.AssertDuplicateRecord;
-import com.multibrand.request.validation.BasicConstraint;
-import com.multibrand.request.validation.DuplicateRecordGroupConstraint;
-import com.multibrand.request.validation.EnrollmentDuplicateRecordValidator;
+import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidDateTime;
 import com.multibrand.util.CommonUtil;
@@ -26,22 +23,22 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String trackingId;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 3, groups = SizeConstraint.class)
 	private String transactionType;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 5, groups = SizeConstraint.class)
 	private String tdspCodeCCS;
 
 	@Length(max = 4, groups = SizeConstraint.class)
 	private String bpMatchFlag;
 
-	// @NotBlank(groups = BasicConstraint.class)
+	// @NotEmpty
 	// @Length(max = 1, groups = SizeConstraint.class)
 	private String preferredLanguage;
 
@@ -54,52 +51,52 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	@Length(max = 1, groups = SizeConstraint.class)
 	private String ebillFlag;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(min= 8, max = 8, groups = SizeConstraint.class)
 	private String offerCode;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String promoCode;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String campaignCode;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String productPriceCode;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 15, groups = SizeConstraint.class)
 	private String incentiveCode;
 
 	@Length(max = 2, groups = SizeConstraint.class)
 	private String marketSegment;
 
-	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "{err.msg.date.mmddyyyy.format}")
+	@CurrentOrFutureDate
 	private String mviDate;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 30, groups = SizeConstraint.class)
 	private String servCity;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(min = 2, max = 2, groups = SizeConstraint.class, message = "{err.msg.state.format}")
 	private String servState;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 
