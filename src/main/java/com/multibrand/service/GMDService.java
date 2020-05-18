@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multibrand.exception.NRGException;
+import com.multibrand.handler.JaxWsHandlerResolver;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.response.gmd.Breakdown;
@@ -184,8 +185,9 @@ public class GMDService extends BaseAbstractService {
                      "Can not initialize the default wsdl from {0}", "Z_E_ISU_GET_GMD_PRICE.wsdl");
         }
         ZEISUGETGMDPRICE_Service gmdPriceService = new ZEISUGETGMDPRICE_Service(url);
-		
+        gmdPriceService.setHandlerResolver(new JaxWsHandlerResolver());
         ZEISUGETGMDPRICE stub = gmdPriceService.getZEISUGETGMDPRICE();
+
 		BindingProvider binding = (BindingProvider)stub;
 	    
 	    binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  this.envMessageReader.getMessage(CCS_USER_NAME));

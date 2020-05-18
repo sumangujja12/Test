@@ -3786,24 +3786,18 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if (profileResponse != null && profileResponse.getContractAccountDO() != null
 						&& profileResponse.getContractAccountDO().getListOfContracts() != null) {
 
-					com.multibrand.domain.ContractDO[] contractDO = profileResponse.getContractAccountDO()
-							.getListOfContracts();
-					for (com.multibrand.domain.ContractDO contractDOArr : contractDO) {
-						if (StringUtils.equalsIgnoreCase(contractDOArr.getStrContractID(),
-								submitRequest.getContractId())) {
-							billAddressDTO = new com.multibrand.domain.AddressDTO();
-							contractDOArr.getServiceAddressDO();
-							billAddressDTO.setStrStreetNum(contractDOArr.getServiceAddressDO().getStrStreetNum());
-							billAddressDTO.setStrStreetName(contractDOArr.getServiceAddressDO().getStrStreetName());
-							billAddressDTO.setStrCity(contractDOArr.getServiceAddressDO().getStrCity());
-							billAddressDTO.setStrUnitNumber(contractDOArr.getServiceAddressDO().getStrUnitNumber());
-							billAddressDTO.setStrState(contractDOArr.getServiceAddressDO().getStrState());
-							billAddressDTO.setStrZip(contractDOArr.getServiceAddressDO().getStrZip());
-							break;
-						}
 
-					}
+						AddressDO addressDO = profileResponse.getContractAccountDO().getBillingAddressDO();
+								
+							if (addressDO != null) {
+								billAddressDTO.setStrStreetNum(addressDO.getStrStreetNum());
+								billAddressDTO.setStrStreetName(addressDO.getStrStreetName());
+								billAddressDTO.setStrCity(addressDO.getStrCity());
+								billAddressDTO.setStrUnitNumber(addressDO.getStrUnitNumber());
+								billAddressDTO.setStrState(addressDO.getStrState());
+								billAddressDTO.setStrZip(addressDO.getStrZip());
 
+							}
 				}
 			}
 
@@ -3814,11 +3808,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			return response;
 		}
 
-		if (billAddressDTO == null) {
-			response.setErrorCode(RESULT_CODE_NO_DATA);
-			response.setErrorDescription("No Service Address");
-			return response;
-		}
 		request.setBillingAddress(billAddressDTO);
 		request.setBrandId(submitRequest.getBrandName());
 		request.setCompanyCode(submitRequest.getCompanyCode());
@@ -3857,7 +3846,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			amountVO.setOpbel(planDetails.getOpbel());
 			amountVOArray[counter] = amountVO;
 			counter++;
-			break;
 		}
 		DppSubmissionResponse dppResponse = null;
 		request.setDPPAmountVOList(amountVOArray);
@@ -3866,7 +3854,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.error("Exception Occured in  Submit Exception :::" + e);
+			logger.error("Exception Occured in  Submit Exception :::" , e);
 			return response;
 		}
 		
