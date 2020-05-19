@@ -3,7 +3,6 @@ package com.multibrand.bo.helper;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.mockito.Mockito.when;
@@ -35,25 +34,13 @@ public class OeBoHelperTest {
 	public void testAllowSubmitEnrollmentPositiveForBPMatch(){		
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		oeSignUpDTO.setBpMatchText("");
-		Assert.assertTrue(oeBoHelper.allowSubmitEnrollment(oeSignUpDTO, null , 1, true));
+		Assert.assertTrue(oeBoHelper.allowEnrollmentSubmissionToCCS(oeSignUpDTO));
 	}
 	@Test
 	public void testAllowSubmitEnrollmentNegativeForBPMatch(){
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		oeSignUpDTO.setBpMatchText(Constants.BPSD);
-		Assert.assertFalse(oeBoHelper.allowSubmitEnrollment(oeSignUpDTO, null , 1, true));
-	}
-	@Test
-	public void testAllowSubmitEnrollmentPositiveForPosid(){		
-		OESignupDTO oeSignUpDTO = new OESignupDTO();
-		oeSignUpDTO.setBpMatchText("");
-		Assert.assertTrue(oeBoHelper.allowSubmitEnrollment(oeSignUpDTO, null , 1, false));
-	}
-
-	@Test
-	public void testAllowSubmitEnrollmentNegativeForPosid(){
-		OESignupDTO oeSignUpDTO = new OESignupDTO();
-		oeSignUpDTO.setBpMatchText("");
-		Assert.assertFalse(oeBoHelper.allowSubmitEnrollment(oeSignUpDTO, null , 3, false));
+		oeSignUpDTO.setErrorCdList("BPSD");
+		Assert.assertFalse(oeBoHelper.allowEnrollmentSubmissionToCCS(oeSignUpDTO));
 	}
 }

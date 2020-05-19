@@ -1,4 +1,3 @@
-
 package com.multibrand.resources;
 
 import java.util.HashMap;
@@ -19,12 +18,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
+
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
@@ -54,7 +57,6 @@ import com.multibrand.dto.response.CheckPendingServiceResponse;
 import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.PersonResponse;
-import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
@@ -82,7 +84,7 @@ import com.multibrand.web.i18n.WebI18nMessageSource;
  * @author NRG Energy
  */
 @Component
-@Path("oeResource")
+@Path("/"+Constants.OE_RESOURCE_API_BASE_PATH)
 public class OEResource extends BaseResource {
 	
 	/**
@@ -111,11 +113,6 @@ public class OEResource extends BaseResource {
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 	
-	
-	
-	
-	
-	
 	/**
 	 * get product offer informations plus sdl content
 	 * @param productOfferRequest
@@ -141,6 +138,8 @@ public class OEResource extends BaseResource {
 		return Response.status(Status.BAD_REQUEST).build();
 		
 	}
+
+
 	/**
 	 * @param locale
 	 * @param companyCode
@@ -635,11 +634,12 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;		
 		try{
+			request.setCallExecuted(API_LEGACY_PERFORM_POSID_AND_BPMATCH);
 			response = oeBO.performPosidAndBpMatch(request);
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_PERFORM_POSID_AND_BPMATCH, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_LEGACY_PERFORM_POSID_AND_BPMATCH, false, request, response, CommonUtil.getElapsedTime(startTime),  CommonUtil.getTrackingIdFromResponse(response), EMPTY);
    		}
        return response;
 	}
@@ -653,10 +653,8 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
+			request.setCallExecuted(API_LEGACY_GET_ESID_AND_CALENDAR_DATES);
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-			//START : OE : Sprint 6 : Update Calendar dates call	
-			ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(request.getTrackingId() );
-			//END : OE : Sprint 6 : Update Calendar dates call	
 				EsidInfoTdspCalendarResponse esidInfoTdspResponse = oeBO
 					.getESIDAndCalendarDates(request.getCompanyCode(),
 							request.getAffiliateId(),
@@ -672,7 +670,8 @@ public class OEResource extends BaseResource {
 							request.getLanguageCode(),
 							request.getEsid(),
 							httpRequest.getSession(true).getId(),
-							serviceLoationResponse.getErrorCode()
+							null,
+							null, API_LEGACY_GET_ESID_AND_CALENDAR_DATES
 							);
 				response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
 		} catch (Exception e) {
@@ -692,6 +691,7 @@ public class OEResource extends BaseResource {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
+			request.setCallExecuted(API_LEGACY_PERFORM_CREDIT_CHECK);
 			HashMap<String, Object> mandatoryParamList = new HashMap<String, Object>();
 	
 			if (StringUtils.isBlank(request.getBillStreetNum())
@@ -728,7 +728,7 @@ public class OEResource extends BaseResource {
 				NewCreditScoreResponse newCreditScoreResponse = oeBO
 						.performCreditCheck(oeRequestHandler
 								.createNewCreditScoreRequest(request),
-								request);
+								request,null);
 				response = Response.status(Response.Status.OK)
 						.entity(newCreditScoreResponse).build();
 			} else {
@@ -765,6 +765,7 @@ public class OEResource extends BaseResource {
 		
 		mandatoryParamList = new HashMap<String, Object>();
 		try{
+			request.setCallExecuted(API_LEGACY_SUBMIT_UCC_DATA);
 			// Either Billing PO box or Billing Street num/name should be supplied
 			mandatoryParamList.put("firstName",
 					request.getFirstName());
@@ -859,9 +860,10 @@ public class OEResource extends BaseResource {
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
-	    try{
-	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request);
-	    	response = Response.status(Response.Status.OK).entity(enrollmentResponse).build();
+		try{
+			request.setCallExecuted(API_LEGACY_SUBMIT_ENROLLMENT);
+	    	EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request, null);
+	    	response = Response.status(enrollmentResponse.getHttpStatus()).entity(enrollmentResponse).build();
 	    } catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    		}finally{
@@ -875,3 +877,4 @@ public class OEResource extends BaseResource {
 	 *****************************************************************************************************************************************************************/
 
 }
+

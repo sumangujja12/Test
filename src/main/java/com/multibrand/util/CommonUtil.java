@@ -21,6 +21,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -36,6 +37,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.CharEncoding;
 import org.apache.commons.lang.StringUtils;
@@ -65,10 +67,11 @@ import com.multibrand.vo.response.WebHookResponse;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
+
 @Component
 public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
-	
+	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
 	public static HashSet<String> privacyDataParams = null;
 	public static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
@@ -2080,5 +2083,64 @@ public class CommonUtil implements Constants {
 		}
 	}
 	
+	public static String getPipeSeperatedCallExecutedParamForDB(String currentApiCall, String callExecutedFromDB){
+		String callExecutedStrForDB = StringUtils.EMPTY;
+		String[] callExecutedArr = null;
+		List<String> callExecutedList = new ArrayList<>();
+		try{
+			if(StringUtils.isNotBlank(callExecutedFromDB))
+				callExecutedArr = callExecutedFromDB.split(ERROR_CD_LIST_SPLIT_PATTERN);
+			callExecutedList = new ArrayList<String>(Arrays.asList(callExecutedArr));
+			callExecutedList.add(currentApiCall);
+			callExecutedStrForDB = StringUtils.join(callExecutedList,SYMBOL_PIPE);
+			if(StringUtils.isNotBlank(callExecutedStrForDB) && callExecutedStrForDB.getBytes(Charsets.UTF_8).length>=255){
+				callExecutedStrForDB = callExecutedStrForDB.substring(0, 254);
+			}
+		}catch(Exception ex){
+			logger.error(ex.getMessage());
+		}
+		return callExecutedStrForDB;
+	}
 	
+	public static LinkedHashSet<String> getSetFromPipeSeparatedString(String pipeSeparatedStringValue){
+		LinkedHashSet<String> valueSet = null;
+		if(StringUtils.isNotBlank(pipeSeparatedStringValue)){
+			String[] valueArray =pipeSeparatedStringValue.split(ERROR_CD_LIST_SPLIT_PATTERN);
+			valueSet = new LinkedHashSet<>(Arrays.asList(valueArray));
+		} else {
+			valueSet = new LinkedHashSet<>();
+		}
+		return valueSet;		
+	}
+	
+	public static boolean isValidCompanyCode(String value) {
+		List<String> companyCodeList = Arrays.asList(COMPANY_CODE_ARRAY);
+		if(value==null) {
+			return false;
+		}else {
+			return companyCodeList.contains(value.trim());
+		}
+	}
+	
+	public static String getTrackingIdFromResponse(Response response){
+		String trackingId = EMPTY;
+		List trackingIdList = response.getMetadata().get(CONST_TRACKING_ID);
+		if(trackingIdList != null && trackingIdList.size()>0){
+			trackingId = (String) trackingIdList.get(0);
+		}
+		return trackingId;
+	}
+	
+	  public static String removeHTMLComment(String contentMsg)
+	  {
+	    String updatedContentMsg = "";
+
+	    if (StringUtils.isNotBlank(contentMsg))
+	    {
+	      updatedContentMsg = contentMsg.replaceAll("(?=<!--)([\\s\\S]*?)(-->)", "");
+	    }
+
+	    return updatedContentMsg;
+	  }
+	  
 }

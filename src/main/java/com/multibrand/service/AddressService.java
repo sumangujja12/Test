@@ -2,6 +2,7 @@ package com.multibrand.service;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,10 @@ import com.multibrand.domain.ProfileDomain;
 import com.multibrand.domain.ProfileDomainPortBindingStub;
 import com.multibrand.domain.TdspDetailsRequest;
 import com.multibrand.domain.TdspDetailsResponse;
+import com.multibrand.domain.TdspDetailsResponseStrTdspCodeGeoZoneMapEntry;
+import com.multibrand.dto.request.EsidRequest;
+import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.response.billingResponse.AddressDO;
 import com.reliant.domain.AddressValidateRequest;
 import com.reliant.domain.AddressValidateResponse;
@@ -341,4 +346,89 @@ public class AddressService extends BaseAbstractService
 		}
 		return false;
 	}  
+	
+	public EsidResponse getNewESIDInfo(AddressDO serviceAddressDO, String companyCode) throws ServiceException{
+		EsidResponse esidResponse=null;
+		try
+		{
+			EsidRequest esidRequest = new EsidRequest();
+			esidRequest.setServStreet(serviceAddressDO.getStrStreetNum()+SPACE+serviceAddressDO.getStrStreetName());
+			esidRequest.setServStreetAptNum(serviceAddressDO.getStrApartNum());
+			esidRequest.setServCity(serviceAddressDO.getStrCity());
+			esidRequest.setServZipCode(serviceAddressDO.getStrZip());
+			esidRequest.setCompanyCode(companyCode);
+			esidResponse = addressDAO.getESIDDetails(esidRequest);
+
+			
+			if(esidResponse != null && esidResponse.getEsidList() != null){
+				
+				
+				Iterator<ESIDData> itr =  esidResponse.getEsidList().iterator();
+				
+				while (itr.hasNext()) { 
+					ESIDData esidData = itr.next(); 
+					if (!esidStatusValidation(esidData.getPremiseType(), esidData.getEsidStatus())) { 
+						
+						if(!StringUtils.equalsIgnoreCase(esidData.getPremiseType(), RESIDENTIAL)&& esidResponse.getEsidList().size() == 1) {
+							esidData.setEsidNumber(NRESID);
+						} else{
+							itr.remove(); 
+						}
+					} 
+				}
+				
+				logger.info("esidResponse  "+ReflectionToStringBuilder.toString(esidResponse,
+						ToStringStyle.MULTI_LINE_STYLE));
+			}
+			
+		} catch(Exception en) {
+			logger.error("Exception in getNewESIDInfo ", en);
+		}
+		return esidResponse;
+	}
+	
+	public String getTDSPDetailsFromZip(String zipCode,String companyCode){
+		TdspDetailsRequest tdspDetailsRequest = new TdspDetailsRequest();
+		tdspDetailsRequest.setStrCompanyCode(companyCode);
+		tdspDetailsRequest.setStrZipCode(zipCode);
+		TdspDetailsResponse tdspDetailsResponse=null;
+		String tdspCode = EMPTY;
+		
+		try{
+			OEDomain proxyclient = getOEServiceProxy();
+			tdspDetailsResponse = proxyclient.getTdspDetails(tdspDetailsRequest);
+			tdspCode = tdspDetailsResponse.getStrTdsp();
+			
+			if(StringUtils.isEmpty(tdspCode) && tdspDetailsResponse.getStrTdspCodeGeoZoneMap() != null && tdspDetailsResponse.getStrTdspCodeGeoZoneMap().length >0){
+				for(TdspDetailsResponseStrTdspCodeGeoZoneMapEntry tdspCodeGeoZoneObj:tdspDetailsResponse.getStrTdspCodeGeoZoneMap()){
+					if(null!=tdspCodeGeoZoneObj){
+						if(!StringUtils.equalsIgnoreCase("NER",tdspCodeGeoZoneObj.getValue())){
+							tdspCode =tdspCodeGeoZoneObj.getKey();
+						}
+					}
+				}
+			}
+			
+		} catch (ServiceException | RemoteException e) {
+			// TODO Auto-generated catch block
+			logger.error(" ERROR_IN_ADDRESS_SERVICE",e);
+			
+		} 
+		
+		return tdspCode;
+	}	
+	
+	private boolean esidStatusValidation(String premiseType, String status ) {
+		
+		if(StringUtils.equalsIgnoreCase(premiseType, RESIDENTIAL) && (null == status || ACTIVE.equalsIgnoreCase(status) || ESID_STATUS_DE_ENERGIZED.equalsIgnoreCase(status))){
+				
+			return true;
+		}else{
+			logger.debug("ESID found but not eligible due to status is not Active or De-Energized or it's not a Residential address :");
+			return false;
+		}
+		
+
+		}
+	
 }

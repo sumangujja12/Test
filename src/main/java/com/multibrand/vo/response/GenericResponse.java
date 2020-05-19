@@ -1,10 +1,12 @@
 package com.multibrand.vo.response;
 
+import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
+import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.util.Constants;
 
 /**
@@ -153,4 +155,28 @@ public class GenericResponse implements Constants {
 		this.statusCode=STATUS_CODE_STOP;
 		return this;
 	}
+	
+	public GenericResponse populateInvalidTrackingResponse() {
+		this.errorCode=MESSAGE_CODE_NO_MATCH_FOUND;
+		this.errorDescription="Invalid trackingId";
+		this.resultDescription=errorDescription;
+		this.messageCode=errorCode;
+		this.messageText=errorDescription;
+		this.statusCode=STATUS_CODE_STOP;
+		return this;
+		
+	}
+	
+	public GenericResponse populateAlreadySubmittedEnrollmentResponse() {
+		this.errorCode=MESSAGE_CODE_ENROLLMENT_ALREADY_REQUESTED;
+		this.errorDescription="Enrollment Already Requested for trackingId & guid";
+		this.resultCode=errorCode;
+		this.resultDescription=errorDescription;
+		this.messageCode=errorCode;
+		this.messageText=errorDescription;
+		this.statusCode=STATUS_CODE_STOP;
+		return this;	
+	}
+	
+	
 }
