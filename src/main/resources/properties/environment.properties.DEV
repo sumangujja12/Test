@@ -150,8 +150,8 @@ ce.pub.id_en=143
 ce.pub.id_es=144
 gm.pub.id_en=123
 gm.pub.id_es=124
-xoom.pub.id_en=321
-xoom.pub.id_es=330
+xoom.pub.id_en=366
+xoom.pub.id_es=367
 
 re.taxonomy.id = 301
 pw.taxonomy.id = TODO
@@ -189,6 +189,6 @@ gmd_price_current_date =04/14/2020
 
 
 #Content Service 
-content.server.endpoint.url=http://txaixebxbls01:18081/client/v2/content.svc/
+content.server.endpoint.url=http://txaixebnbld01:18081/client/v2/content.svc/
 #File
 documentum.endpoint=https://stg-texas.xoomenergy.com/files/{0}.pdf
