@@ -21,6 +21,8 @@ import com.multibrand.domain.CancelPaymentResponse;
 import com.multibrand.domain.CancelSchdOtccPaymetReq;
 import com.multibrand.domain.DppEligibleRequest;
 import com.multibrand.domain.DppEligibleResponse;
+import com.multibrand.domain.DppSubmissionRequest;
+import com.multibrand.domain.DppSubmissionResponse;
 import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.PayByBankResponse;
 import com.multibrand.domain.PayByCCRequest;
@@ -530,5 +532,36 @@ public class PaymentService extends BaseAbstractService {
 		logger.info("PaymentService.getDPPExtEligibleResponse :: END");
 		return response;
 	}
+	public DppSubmissionResponse dppSubmit(DppSubmissionRequest request, String sessionId) throws RemoteException {
+		logger.info("PaymentService.dppSubmit :: START");
+		
+		PaymentDomain proxy = getPaymentDomainProxy();
+		long startTime = CommonUtil.getStartTime();
+		DppSubmissionResponse response = null;
+		
+		try{
+		response= proxy.dppSubmit(request);
+		
+		utilityloggerHelper.logTransaction("dppSubmit", false, request,response, response.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+		if(logger.isDebugEnabled()){
+			logger.debug(XmlUtil.pojoToXML(request));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		}catch(RemoteException ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("dppSubmit", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}catch(Exception ex){
+			if(logger.isDebugEnabled())
+				logger.debug(XmlUtil.pojoToXML(request));
+			logger.error(ex);
+			utilityloggerHelper.logTransaction("dppSubmit", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+			throw ex;
+		}
+		logger.info("PaymentService.dppSubmit :: END");
+		return response;
+	}	
 		
 }
