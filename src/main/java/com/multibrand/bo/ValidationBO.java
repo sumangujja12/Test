@@ -7,7 +7,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -169,7 +168,8 @@ public class ValidationBO extends BaseBO {
 		String posidPii=null;
 		String posIdDate=null;
 		String messageCode=null;
-		String errorCd=null;
+		String errorCodeFromDB=null;
+		String errorCodeFromAPI=null;
 		String recentCallMade=null;
 		LinkedHashSet<String> serviceLocationResponseerrorList = new LinkedHashSet<>();
 		
@@ -188,7 +188,10 @@ public class ValidationBO extends BaseBO {
 		logger.info("inside validatePosId:: is valid date is :: "+isValidDate);*/
 
 		boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
-
+		
+		if(serviceLoationResponse != null){
+		 errorCodeFromDB=serviceLoationResponse.getErrorCode();
+		}
 		/*
 		 * Processing preferredLanguage
 		 */
@@ -240,7 +243,7 @@ public class ValidationBO extends BaseBO {
 				if(retryCount>2)
 				{
 					processPerformPosidBPMatchAfterMaxRetryAllowed(performPosIdBpRequest, 
-						oESignupDTO, serviceLoationResponse, response,errorCd,messageCode, 
+						oESignupDTO, serviceLoationResponse, response,errorCodeFromAPI,messageCode, 
 						serviceLocationResponseerrorList, posidHoldAllowed,bpMatchDTO, retryCount  );
 					
 					return response;
@@ -297,10 +300,10 @@ public class ValidationBO extends BaseBO {
 				posidStatus=POSID_FLAG_YES;
 				serviceLocationResponseerrorList.remove(POSIDHOLD);
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
-								
-				errorCd = processPosidPassResponse( performPosIdBpRequest, 
+							
+				errorCodeFromAPI = processPosidPassResponse( performPosIdBpRequest, 
 										oESignupDTO, serviceLoationResponse,
-										response,errorCd,messageCode, 
+										response,errorCodeFromAPI,messageCode, 
 										serviceLocationResponseerrorList ,  
 										bpMatchDTO, validatePosIdKBAResponse);
 				
@@ -315,8 +318,8 @@ public class ValidationBO extends BaseBO {
 							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
 			{
 				
-				errorCd = processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
-						serviceLoationResponse, response, errorCd, messageCode, 
+				errorCodeFromAPI = processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
+						serviceLoationResponse, response, errorCodeFromAPI, messageCode, 
 						serviceLocationResponseerrorList, bpMatchDTO, 
 						validatePosIdKBAResponse, posidHoldAllowed, retryCount);
 				posidStatus = oESignupDTO.getPosidStatus();
@@ -329,7 +332,7 @@ public class ValidationBO extends BaseBO {
 					messageCode=POSID_FAIL;
 					response.setMessageText(getMessage(POSID_FAIL_MSG_TXT));
 					response.setMessageCode(messageCode);
-					errorCd=POSIDHOLD;
+					errorCodeFromAPI=POSIDHOLD;
 				}
 				else{
 					logger.debug("inside com.multibrand.bo:: validatePosId ::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
@@ -338,11 +341,11 @@ public class ValidationBO extends BaseBO {
 					messageCode=POSID_FAIL_MAX;
 					response.setMessageCode(messageCode);
 					response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-					errorCd=POSIDHOLD;
+					errorCodeFromAPI=POSIDHOLD;
 				}
 				serviceLocationResponseerrorList.remove(BP_RESTRICT);
 				serviceLocationResponseerrorList.remove(BPSD);
-				serviceLocationResponseerrorList.add(errorCd);
+				serviceLocationResponseerrorList.add(errorCodeFromAPI);
 			}
 
 			//setting retrycount in response:
@@ -351,7 +354,7 @@ public class ValidationBO extends BaseBO {
 			response.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());	
 			oESignupDTO.setKbaSuggestionFlag(validatePosIdKBAResponse.getKbaSuggestionFlag());
 			if(serviceLocationResponseerrorList.contains(BPSD)) {
-				errorCd = BPSD;
+				errorCodeFromAPI = BPSD;
 			}
 
 		}
@@ -372,7 +375,7 @@ public class ValidationBO extends BaseBO {
 			if (retryCount==0)
 			{
 				createPersonAndServiceLocationRecordForPerformPosidBPMatchProcess(performPosIdBpRequest, oESignupDTO, 
-						serviceLoationResponse, response, errorCd, messageCode, serviceLocationResponseerrorList,
+						serviceLoationResponse, response, errorCodeFromAPI, messageCode, serviceLocationResponseerrorList,
 						bpMatchDTO, validatePosIdKBAResponse, posidPii, posIdDate, posidStatus, recentCallMade);
 				personId = oESignupDTO.getPerson().getPersonID();
 				
@@ -411,8 +414,14 @@ public class ValidationBO extends BaseBO {
 			UpdateServiceLocationRequest updateServiceLocation= new UpdateServiceLocationRequest();
 			if(null!=serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getCallExecutedFromDB()))
 				updateServiceLocation.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(performPosIdBpRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
+			
+			if((StringUtils.isBlank(errorCodeFromAPI)) && StringUtils.equalsIgnoreCase(POSIDHOLD, errorCodeFromDB)){
+				errorCodeFromAPI = "";
+			}else if((StringUtils.isBlank(errorCodeFromAPI))){
+				errorCodeFromAPI = errorCodeFromDB;
+			}
 			createUpdateServiceLocationRequest(updateServiceLocation, performPosIdBpRequest, personId,
-					messageCode, errorCd,bpMatchDTO,recentCallMade,oESignupDTO);
+					messageCode, errorCodeFromAPI,bpMatchDTO,recentCallMade,oESignupDTO);
 			String updateSrvLocationErrorCode=oeBO.updateServiceLocation(updateServiceLocation);
 			logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
 					+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
