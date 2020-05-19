@@ -3,6 +3,7 @@ package com.multibrand.service;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multibrand.exception.NRGException;
+import com.multibrand.handler.JaxWsHandlerResolver;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.response.gmd.Breakdown;
@@ -58,7 +60,7 @@ public class GMDService extends BaseAbstractService {
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 
-
+	private BigDecimal hundred = new BigDecimal(100);
 
 	/**
 	 * This profile call will do the call to the logging framework 
@@ -180,8 +182,9 @@ public class GMDService extends BaseAbstractService {
                      "Can not initialize the default wsdl from {0}", "Z_E_ISU_GET_GMD_PRICE.wsdl");
         }
         ZEISUGETGMDPRICE_Service gmdPriceService = new ZEISUGETGMDPRICE_Service(url);
-		
+        gmdPriceService.setHandlerResolver(new JaxWsHandlerResolver());
         ZEISUGETGMDPRICE stub = gmdPriceService.getZEISUGETGMDPRICE();
+
 		BindingProvider binding = (BindingProvider)stub;
 	    
 	    binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  this.envMessageReader.getMessage(CCS_USER_NAME));
@@ -264,7 +267,7 @@ public class GMDService extends BaseAbstractService {
 			
 			PredictedSeries predictedSeries = new PredictedSeries();
 			
-			predictedSeries.setPrice(epROFVALUE.getPROFVALUE());
+			predictedSeries.setPrice(epROFVALUE.getPROFVALUE().multiply(hundred).setScale(2, RoundingMode.CEILING));
 			predictedSeries.setTime(epROFVALUE.getPROFDATE()+"T" +epROFVALUE.getPROFTIME()+".000");
 			
 			predictedSeriesList.add(predictedSeries);
@@ -295,9 +298,7 @@ public class GMDService extends BaseAbstractService {
 					PastSeries pastSeries = new PastSeries();
 					
 					if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
-						pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
-					} else {
-						pastSeries.setPrice(new BigDecimal("0.00"));
+					pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))).multiply(hundred).setScale(2, RoundingMode.CEILING));
 					}
 					pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
 					
@@ -314,7 +315,7 @@ public class GMDService extends BaseAbstractService {
 			Holder<XMLGregorianCalendar> exCurrentTime) {
 		
 		Current current = new Current();
-		current.setPrice(exCurrentPrice.value);
+		current.setPrice((exCurrentPrice.value).multiply(hundred).setScale(2, RoundingMode.CEILING));
 		
 		current.setLastUpdated(exCurrentDate.value+"T" +exCurrentTime.value+".000");
 		
