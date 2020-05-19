@@ -3763,7 +3763,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		DPPSubmitResponse response = new DPPSubmitResponse();
 		DppSubmissionRequest request = new DppSubmissionRequest();
 		
-		com.multibrand.domain.AddressDTO billAddressDTO = null;
+		com.multibrand.domain.AddressDTO billAddressDTO = new com.multibrand.domain.AddressDTO();
 		try {
 
 			Map<String, Object> responseMap = new HashMap<String, Object>();
