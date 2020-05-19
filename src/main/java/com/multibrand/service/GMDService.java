@@ -265,7 +265,7 @@ public class GMDService extends BaseAbstractService {
 			
 			PredictedSeries predictedSeries = new PredictedSeries();
 			
-			predictedSeries.setPrice(new BigDecimal(String.format("%.1f", epROFVALUE.getPROFVALUE().multiply(hundred))));
+			predictedSeries.setPrice(epROFVALUE.getPROFVALUE());
 			predictedSeries.setTime(epROFVALUE.getPROFDATE()+"T" +epROFVALUE.getPROFTIME()+".000");
 			
 			predictedSeriesList.add(predictedSeries);
@@ -296,7 +296,7 @@ public class GMDService extends BaseAbstractService {
 					PastSeries pastSeries = new PastSeries();
 					
 					if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
-						pastSeries.setPrice(new BigDecimal(String.format("%.1f", Double.parseDouble(price)*100)));
+						pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
 						pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
 						
 						pastSeriesList.add(pastSeries);
@@ -314,7 +314,7 @@ public class GMDService extends BaseAbstractService {
 			Holder<XMLGregorianCalendar> exCurrentTime) {
 		
 		Current current = new Current();
-		current.setPrice(new BigDecimal(String.format("%.1f", exCurrentPrice.value.multiply(hundred))));
+		current.setPrice(exCurrentPrice.value);
 		
 		
 		
