@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
 import com.multibrand.request.validation.ActionCode;
 import com.multibrand.request.validation.ActionCodeValidator;
 
+@Test(singleThreaded = true)
 public class CurrentOrFutureDateConstraintValidatorTest {
 
 	

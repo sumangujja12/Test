@@ -4,6 +4,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.testng.annotations.Test;
 
+@Test(singleThreaded = true)
 public class CommonUtilTest {
 
 	@Test

@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.NotEmptyValidator;
 
+@Test(singleThreaded = true)
 public class EsidCalendarRequestTest {
 
 	
