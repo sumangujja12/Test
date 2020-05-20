@@ -45,6 +45,7 @@ import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.CampEnvironmentOutData;
 import com.multibrand.domain.EsidProfileResponse;
+import com.multibrand.domain.Esiddo;
 import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.GetEsiidResponse;
 import com.multibrand.domain.KbaAnswerDTO;
@@ -663,6 +664,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		logger.info("OEBO.getESIDInformation() start");
 		EsidProfileResponse esidProfileResponse = null;
 		AddressDO serviceAddressDO = oeSignupVO.getServiceAddressDO();
+		String esiidStatus ;
 		if (StringUtils.isNotBlank(serviceAddressDO.getStrStreetName())) {
 			AddressValidateResponse addressResponse = null;
 			try {
@@ -714,8 +716,35 @@ public class OEBO extends OeBoHelper implements Constants{
 						oeSignupVO.setEsidDO(esidDO);
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
 					} else {
-						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED:"
-								+ esidResponse.getStrErrCode());
+						if(esidResponse.isMultiESIIDs() && (oeSignupVO.getCompanyCode().equalsIgnoreCase("0391") && oeSignupVO.getBrandId().equalsIgnoreCase("CE")))
+								{
+							Esiddo[] listESIDO = esidResponse.getEsidList();
+								for(Esiddo esiid:listESIDO) {
+									
+									esidProfileResponse = this.addressService
+											.getESIDProfile(esiid.getESIDNumber(),
+													oeSignupVO.getCompanyCode());
+										esiidStatus = esidProfileResponse.getEsidStatus();
+										if(esiidStatus.equalsIgnoreCase("active")) {
+											oeSignupVO.setEsidNumber(esidResponse.getStrESIID());
+											logger.debug("OEBO.getESIDInformation() GETTING ESID SUCCESSFUL:"
+													+ esidResponse.getStrErrCode()
+													+ " :: "
+													+ esidResponse.getStrESIID());
+											ESIDDO esidDO = setESIDDTO(esidProfileResponse);
+											oeSignupVO.setEsidDO(esidDO);
+											break;
+										} else {
+													
+													logger.debug("COMPANY CODE - ESID STatus - ESID ::"  +  oeSignupVO.getCompanyCode() +"-" + esiidStatus + "-" +esidResponse.getStrESIID());
+										}
+							}
+			
+						} else {
+							logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED:"
+									+ esidResponse.getStrErrCode());
+						}
+							
 					}
 				} catch (ServiceException localServiceException) {
 					logger.error("ServiceException in OEBO.getESIDInformation():"
