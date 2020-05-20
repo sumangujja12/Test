@@ -1943,15 +1943,11 @@ public class OEBO extends OeBoHelper implements Constants{
 					this.initNormalization(oeSignUpDTO);
 				}catch(NoSuchMessageException nsme){
 					logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", nsme);
-					response.setMessageCode(AREA_NOT_SERVICED);
-					response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(enrollmentRequest.getLanguageCode())));
-					response.setStatusCode(Constants.STATUS_CODE_STOP);
+					response.setErrorCode(AREA_NOT_SERVICED);
 					return response;
 				}catch(Exception e){
 					logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
-					response.setMessageCode(AREA_NOT_SERVICED);
-					response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(enrollmentRequest.getLanguageCode())));
-					response.setStatusCode(Constants.STATUS_CODE_STOP);
+					response.setErrorCode(AREA_NOT_SERVICED);
 					return response;
 				}
 				logger.debug("oeSignUpDTO : "+oeSignUpDTO);
@@ -2407,7 +2403,23 @@ public class OEBO extends OeBoHelper implements Constants{
 			enrollmentResponse.setCheckDigit(StringUtils.EMPTY);
 			enrollmentResponse.setBpid(StringUtils.EMPTY); 
 			enrollmentResponse.setHttpStatus(Status.OK);
-		} else if (NESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
+		}else if (StringUtils.equalsIgnoreCase(AREA_NOT_SERVICED, enrollmentResponse.getErrorCode())) {
+				
+			enrollmentResponse.setMessageCode(AREA_NOT_SERVICED);
+			enrollmentResponse.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT));
+			enrollmentResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+			enrollmentResponse.setResultCode(AREA_NOT_SERVICED);
+			enrollmentResponse.setResultDescription(msgSource.getMessage(AREA_NOT_SERVICED_TEXT));
+			enrollmentResponse.setErrorCode(StringUtils.EMPTY);
+			enrollmentResponse.setErrorDescription(StringUtils.EMPTY);
+			//enrollmentResponse.setTrackingId(StringUtils.EMPTY);
+			enrollmentResponse.setIdocNumber(StringUtils.EMPTY);
+			enrollmentResponse.setCaNumber(StringUtils.EMPTY);
+			enrollmentResponse.setCheckDigit(StringUtils.EMPTY);
+			enrollmentResponse.setBpid(StringUtils.EMPTY); 
+			enrollmentResponse.setHttpStatus(Status.OK);
+	 
+		}else if (NESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				|| MESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				||(SWITCHHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
 				|| CCSERR.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
@@ -6484,9 +6496,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				}
 				
 				requestDataPerson.setDepWaiveFlag(newCreditScoreResponse.getStrDepWaiveFlag());
+				if (newCreditScoreResponse.getDepAmtWaived() != null){
 				requestDataPerson.setDepAmtWaived(newCreditScoreResponse.getDepAmtWaived().toString());
+				}
+				if (newCreditScoreResponse.getDepAmtWaivedProc() != null){
 				requestDataPerson.setDepAmtWaivedProc(newCreditScoreResponse.getDepAmtWaivedProc().toString());
-				
+				}
 			}
 			errorCode = this.updatePerson(requestDataPerson);
 			if (StringUtils.isNotBlank(errorCode))

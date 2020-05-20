@@ -7,6 +7,8 @@ import java.time.format.DateTimeParseException;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.multibrand.util.Constants;
 import com.multibrand.util.LoggerUtil;
 
@@ -24,9 +26,11 @@ ConstraintValidator<CurrentOrFutureDate, String>, Constants{
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
 		try {
-	        LocalDate startDate = LocalDate.parse(value, dateFormat);
-	        LocalDate current = LocalDate.now();
-	        return (startDate.isEqual(current) || startDate.isAfter(current));
+			if(StringUtils.isNotBlank(value)){
+		        LocalDate startDate = LocalDate.parse(value, dateFormat);
+		        LocalDate current = LocalDate.now();
+		        return (startDate.isEqual(current) || startDate.isAfter(current));
+			}
 	    }catch(DateTimeParseException ex) {
 	    	logger.error("Exception in CurrentOrFutureDateConstraintValidator.isValid "+ex.getMessage());
 	    }

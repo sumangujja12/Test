@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -2142,5 +2143,24 @@ public class CommonUtil implements Constants {
 
 	    return updatedContentMsg;
 	  }
+		public static String extractHtmlCSSUsingRegexPattern(String holdStr){
+			String htmlCommentPattern = "(?=<!--)([\\s\\S]*?)(-->)";
+			String cssPatternRegex = "#"+".*"+"}";
+			String multipleSpacePatternRegex = "\\t";
+			//String htmlTagPatternRegex ="\\<.*?>";
+			String htmlContentPatternRegex = "<[^>]*>";
+			String output="";
+			output =getRegexPattern(htmlCommentPattern).matcher(holdStr).replaceAll("");
+			output =getRegexPattern(cssPatternRegex).matcher(output).replaceAll("");
+			output =getRegexPattern(multipleSpacePatternRegex).matcher(output).replaceAll("");
+			//output =getRegexPattern(htmlTagPatternRegex).matcher(output).replaceAll("");
+			output =getRegexPattern(htmlContentPatternRegex).matcher(output).replaceAll("");
+			return output;
+		}
+		
+		public static Pattern getRegexPattern(String regex){
+			Pattern p = Pattern.compile(regex);
+			return p;
+		}
 	  
 }
