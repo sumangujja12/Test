@@ -6484,9 +6484,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				}
 				
 				requestDataPerson.setDepWaiveFlag(newCreditScoreResponse.getStrDepWaiveFlag());
+				if (newCreditScoreResponse.getDepAmtWaived() != null){
 				requestDataPerson.setDepAmtWaived(newCreditScoreResponse.getDepAmtWaived().toString());
+				}
+				if (newCreditScoreResponse.getDepAmtWaivedProc() != null){
 				requestDataPerson.setDepAmtWaivedProc(newCreditScoreResponse.getDepAmtWaivedProc().toString());
-				
+				}
 			}
 			errorCode = this.updatePerson(requestDataPerson);
 			if (StringUtils.isNotBlank(errorCode))
