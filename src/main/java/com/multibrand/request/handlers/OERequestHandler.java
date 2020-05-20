@@ -1598,15 +1598,15 @@ public class OERequestHandler implements Constants {
 		BPMatchDTO bpMatch = new BPMatchDTO();
 		
 		if(StringUtils.isNotBlank(servLocResponse.getProspectPartnerId()) && StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
-			if(StringUtils.isNotBlank(servLocResponse.getErrorCdlist()) && !servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
+			if(StringUtils.isBlank(servLocResponse.getErrorCdlist()) || !servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
 				bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
 				oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
-			}else if(StringUtils.isNotBlank(servLocResponse.getErrorCdlist()) &&!servLocResponse.getErrorCdlist().contains(PBSD)){
+			}else if(StringUtils.isBlank(servLocResponse.getErrorCdlist()) || !servLocResponse.getErrorCdlist().contains(PBSD)){
 				bpMatch.setMatchedPartnerID(servLocResponse.getProspectPartnerId());
 				oeSignupDTO.setSystemNotes(PROSPECT_BP_USED);
 			}
 		}else if(StringUtils.isNotBlank(servLocResponse.getMatchedPartnerId())){
-			if(StringUtils.isNotBlank(servLocResponse.getErrorCdlist()) && !servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
+			if(StringUtils.isBlank(servLocResponse.getErrorCdlist()) || !servLocResponse.getErrorCdlist().contains(BPSD) && !servLocResponse.getErrorCdlist().contains(PBSD)){
 				bpMatch.setMatchedPartnerID(servLocResponse.getMatchedPartnerId());
 				oeSignupDTO.setSystemNotes(SOLD_TO_BP_USED);
 			}
