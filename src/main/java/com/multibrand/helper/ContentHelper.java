@@ -817,8 +817,7 @@ public class ContentHelper implements Constants {
 			
 			for(String snippetName: snippetMap.keySet()){
 				String snippetValue = contentDataResponse.getMsgKeyRespMap().get(snippetName);
-				snippetValue = CommonUtil.removeHTMLComment(snippetValue);
-				snippetValue = CommonUtil.removeHTMLTags(snippetValue);
+				snippetValue = CommonUtil.extractHtmlCSSUsingRegexPattern(snippetValue);
 				snippetMap.put(snippetName, snippetValue);
 			}
 			return snippetMap;
