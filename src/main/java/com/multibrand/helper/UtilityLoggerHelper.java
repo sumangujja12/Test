@@ -174,7 +174,8 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		//return true;
 	}
 
-	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, BaseAffiliateRequest request, Response response, long responseTime, String trackingId, String caNumber) {
+	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, BaseAffiliateRequest request, Response response, long responseTime, String trackingId, String caNumber,
+			String affiliateId)  {
 		LoggingVO logVO = new LoggingVO();	
 		logVO.setTransactionType(Constants.OE_RESOURCE_API_BASE_PATH+"/"+apiName);
 		logVO.setCompanyCode(request.getCompanyCode());
@@ -185,6 +186,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		logVO.setUserId(trackingId);
 		logVO.setConfirmationNumber(caNumber);
 		logVO.setResponseTime(responseTime);
+		logVO.setUserUniqueId(affiliateId);
 		if(isLoggingEnable()){
 			logger.debug("LOGGING SERVICE IS ENABLED:::");
 			try{
@@ -196,7 +198,8 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		}
 	}
 	
-	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, SalesBaseRequest request, Response response, long responseTime, String trackingId, String caNumber) {
+	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, SalesBaseRequest request, Response response, long responseTime, String trackingId, String caNumber,
+			String affiliateId, String guId) {
 		LoggingVO logVO = new LoggingVO();	
 		logVO.setTransactionType(Constants.SALES_API_BASE_PATH+"/"+apiName);
 		logVO.setCompanyCode(request.getCompanyCode());
@@ -207,6 +210,8 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		logVO.setUserId(trackingId);
 		logVO.setConfirmationNumber(caNumber);
 		logVO.setResponseTime(responseTime);
+		logVO.setUserUniqueId(affiliateId);
+		logVO.setSessionId(guId);
 		if(isLoggingEnable()){
 			logger.debug("LOGGING SERVICE IS ENABLED:::");
 			try{

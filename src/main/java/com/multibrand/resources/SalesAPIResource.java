@@ -119,7 +119,7 @@ public class SalesAPIResource extends BaseResource {
    			
    		}finally{
    			try {
-   				utilityloggerHelper.logSalesAPITransaction(API_IDENTITY, false, request, response, CommonUtil.getElapsedTime(startTime), CommonUtil.getTrackingIdFromResponse(response), EMPTY);
+   				utilityloggerHelper.logSalesAPITransaction(API_IDENTITY, false, request, response, CommonUtil.getElapsedTime(startTime), CommonUtil.getTrackingIdFromResponse(response), EMPTY, request.getAffiliateId(), CommonUtil.getGuIdFromResponse(response));
    			} catch(Exception en){
    				logger.error("Exception utilityloggerHelper.logSalesAPITransaction ",en);
    			}
@@ -143,7 +143,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_AVAILABLE_DATES, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_AVAILABLE_DATES, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY, request.getAffiliateId(), request.getGuid());
    		}
        return response;
 	}
@@ -167,7 +167,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_CHECK_CREDIT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_CHECK_CREDIT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY, request.getAffiliateId(), request.getGuid());
    		}
 		return response;
 	}
@@ -191,7 +191,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_RECHECK_CREDIT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_RECHECK_CREDIT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY, request.getAffiliateId(), request.getGuid());
    		}
 		return response;
 	}
@@ -213,7 +213,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_SUBMIT_ENROLLMENT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_SUBMIT_ENROLLMENT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY, request.getAffiliateId(), request.getGuid());
    		}
        return response;
 	}
@@ -232,7 +232,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_GET_KBA_QUESTIONS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY, request.getAffiliateId(), EMPTY);
    		}
        return response;
     }
@@ -255,7 +255,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_KBA_RESULT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_KBA_RESULT, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY, request.getAffiliateId(), request.getGuid());
    		}
        return response;
 	}
@@ -295,7 +295,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_PROSPECT, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY, request.getAffiliateId(), EMPTY);
    		}
 		return response;
 	}
@@ -314,7 +314,7 @@ public class SalesAPIResource extends BaseResource {
 	   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
 	   			logger.error(e.fillInStackTrace());
 	   	}finally{
-	   			utilityloggerHelper.logSalesAPITransaction(API_ESID, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+	   			utilityloggerHelper.logSalesAPITransaction(API_ESID, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY,request.getAffiliateId(), EMPTY);
 	   	}
 		return response;	
 	}
@@ -335,7 +335,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(KBA_OE, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(KBA_OE, false, request, response, CommonUtil.getElapsedTime(startTime), request.getTrackingId(), EMPTY, request.getAffiliateId(), request.getGuid());
    		}
        return response;
     }
@@ -356,7 +356,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_CLEANUP_ADDRESS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_CLEANUP_ADDRESS, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY, request.getAffiliateId(), EMPTY);
    		}
        return response;
 	}
@@ -377,7 +377,7 @@ public class SalesAPIResource extends BaseResource {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
    		}finally{
-   			utilityloggerHelper.logSalesAPITransaction(API_GET_HOLD, false, request, response, CommonUtil.getElapsedTime(startTime), request.getCaNumber(), EMPTY);
+   			utilityloggerHelper.logSalesAPITransaction(API_GET_HOLD, false, request, response, CommonUtil.getElapsedTime(startTime), request.getCaNumber(), EMPTY, request.getAffiliateId(), EMPTY);
    		}
        return response;
 	}

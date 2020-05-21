@@ -2162,5 +2162,14 @@ public class CommonUtil implements Constants {
 			Pattern p = Pattern.compile(regex);
 			return p;
 		}
+		
+		public static String getGuIdFromResponse(Response response){
+			String guId = EMPTY;
+			List guIdList = response.getMetadata().get(CONST_GUID);
+			if(guIdList != null && guIdList.size()>0){
+				guId = (String) guIdList.get(0);
+			}
+			return guId;
+		}
 	  
 }
