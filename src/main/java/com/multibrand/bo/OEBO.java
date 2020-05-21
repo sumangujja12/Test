@@ -716,29 +716,26 @@ public class OEBO extends OeBoHelper implements Constants{
 						oeSignupVO.setEsidDO(esidDO);
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
 					} else {
-						if(esidResponse.isMultiESIIDs() && (oeSignupVO.getCompanyCode().equalsIgnoreCase("0391") && oeSignupVO.getBrandId().equalsIgnoreCase("CE")))
+						logger.debug("Enter the else condition Company Code - Brand ID " + oeSignupVO.getCompanyCode()+ "-" + oeSignupVO.getBrandId());
+						if((esidResponse != null) && (esidResponse.isMultiESIIDs()) && (oeSignupVO.getCompanyCode().equalsIgnoreCase("0391")) && (oeSignupVO.getBrandId().equalsIgnoreCase("CE")))
 						{
 							logger.debug("Enter the multi esiid check for cirro");
-							logger.info("Enter the multi esiid check for cirro");
 							Esiddo[] listESIDO = esidResponse.getEsidList();
 							for(Esiddo esiid:listESIDO)
 								{
 									logger.debug("Enter the for loop for list iteration");
-									logger.info("Enter the for loop for list iteration");
-									
+							
 									esidProfileResponse = this.addressService
 												.getESIDProfile(esiid.getESIDNumber(),
 														oeSignupVO.getCompanyCode());
 										logger.debug("before null check the esiidResponse ");
-										logger.info("before null check the esiidResponse");	
 										if(esidProfileResponse != null) 
 										{
 												esiidStatus = esidProfileResponse.getEsidStatus();
 												if(esiidStatus.equalsIgnoreCase("active")) 
 												{
 													logger.debug("Inside the esiid status active Start ... ");
-													logger.info("Inside the esiid status active Start...");	
-									
+								
 													oeSignupVO.setEsidNumber(esiid.getESIDNumber());
 													logger.debug("OEBO.getESIDInformation() GETTING ESID SUCCESSFUL:"
 															+ esidResponse.getStrErrCode()
@@ -747,8 +744,7 @@ public class OEBO extends OeBoHelper implements Constants{
 													ESIDDO esidDO = setESIDDTO(esidProfileResponse);
 													oeSignupVO.setEsidDO(esidDO);
 													logger.debug("Inside the esiid status active End");
-													logger.info("Inside the esiid status active End");	
-									
+								
 													break;
 												}
 												else
