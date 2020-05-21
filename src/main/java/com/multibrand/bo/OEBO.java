@@ -697,7 +697,7 @@ public class OEBO extends OeBoHelper implements Constants{
 							.getESID(serviceAddressDO,
 									oeSignupVO.getCompanyCode());
 					logger.debug("esidResponse.... " + esidResponse);
-					logger.debug("Enter the else condition Company Code - Brand ID " + oeSignupVO.getCompanyCode()+ "-" + oeSignupVO.getBrandId());
+					logger.debug("Enter the else condition Company Code" + oeSignupVO.getCompanyCode());
 					if ((esidResponse != null)
 							&& (StringUtils.isBlank(esidResponse
 									.getStrErrCode()))
@@ -716,7 +716,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						ESIDDO esidDO = setESIDDTO(esidProfileResponse);
 						oeSignupVO.setEsidDO(esidDO);
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
-					} else if((esidResponse != null) && (esidResponse.isMultiESIIDs()) && (oeSignupVO.getCompanyCode().equalsIgnoreCase("0391")) && (oeSignupVO.getBrandId().equalsIgnoreCase("CE")))
+					} else if((esidResponse != null) && (esidResponse.isMultiESIIDs()) && (oeSignupVO.getCompanyCode().equalsIgnoreCase("0391")))
 					{	
 						logger.debug("Enter the multi esiid check for cirro");
 						Esiddo[] listESIDO = esidResponse.getEsidList();
