@@ -3618,8 +3618,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultDescription(MSG_SUCCESS);
 			} else {
 				response.setPaymentExtension(false);
-				response.setErrorCode(payExtEligibleResponse.getErrorCode());
-				response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
 			}
 		} else if(payExtEligibleResponse != null) {
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
