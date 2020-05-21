@@ -14,6 +14,7 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.ProgramAccountInfoRequest;
 import com.multibrand.domain.TosAmbWebRequest;
 import com.multibrand.domain.TransferServiceRequest;
+import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.TOSPipelineOffersRequest;
@@ -59,6 +60,18 @@ public class TOSRequestHandler {
 		return request;
 		
 	}
+	
+	public EsidRequest createRequestESIDFormAddress(String apartmentNumber, String city, String country, String state, String streetName, String streetNumber, String zip, String companyCode){
+		
+		EsidRequest request = new EsidRequest();
+		request.setServStreet(streetNumber + " " + streetName);
+		request.setServStreetAptNum(apartmentNumber);
+		request.setServCity(city);
+		request.setServZipCode(zip);
+		
+		return request;
+		
+	}	
 	
 	
 	public TransferServiceRequest getTransferServiceRequest(
