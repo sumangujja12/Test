@@ -1165,7 +1165,10 @@ public class ValidationBO extends BaseBO {
 
 				response=(PerformPosIdandBpMatchResponse)performBpMatchResponse.get("response");
 				messageCode=(String)performBpMatchResponse.get("messageCode");
-				errorCd=(String)performBpMatchResponse.get("errorCd");	
+				String bpMatchErrorCd=(String)performBpMatchResponse.get("errorCd");
+				if(StringUtils.isNotEmpty(bpMatchErrorCd)) {
+					errorCd = bpMatchErrorCd;
+				}
 				BPMatchDTO returnedBpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 				BeanUtils.copyProperties(returnedBpMatchDTO, bpMatchDTO);
 				
