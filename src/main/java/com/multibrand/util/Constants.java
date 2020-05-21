@@ -1531,4 +1531,6 @@ public interface Constants {
 	public static final String XOOM_EBILL_DELIVERY_LOCATION = "DELIVERY_LOCATION";
 	
 	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
+	
+	public static final String CONST_GUID= "guId";
 }

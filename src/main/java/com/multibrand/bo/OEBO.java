@@ -5682,6 +5682,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						response = Response.status(200).entity(validPosIdResponse)
 								.build();
 						response.getMetadata().add(CONST_TRACKING_ID, validPosIdResponse.getTrackingId());
+						response.getMetadata().add(CONST_GUID, validPosIdResponse.getGuid());
 						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
 								+ request.getAffiliateId()
 								+ "::rendering response pojo :: " + response);
