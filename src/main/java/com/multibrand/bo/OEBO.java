@@ -1977,7 +1977,11 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 			
 			// Check for any fraudulent activity in Enrollment Submission and block enrollment
-			enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,isPosidHoldAllowed,serviceLoationResponse.getCallExecutedFromDB(), serviceLoationResponse);
+			
+			boolean allowFraudCheck = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK);
+			if(allowFraudCheck) {
+				enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,isPosidHoldAllowed,serviceLoationResponse.getCallExecutedFromDB(), serviceLoationResponse);
+			}
 			if(null==enrollmentFraudEnum){
 				
 				// Do the input normalization/sanitization
