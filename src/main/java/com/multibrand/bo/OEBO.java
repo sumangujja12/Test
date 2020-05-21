@@ -734,50 +734,59 @@ public class OEBO extends OeBoHelper implements Constants{
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
 					} else {
 						if(esidResponse.isMultiESIIDs() && (oeSignupVO.getCompanyCode().equalsIgnoreCase("0391") && oeSignupVO.getBrandId().equalsIgnoreCase("CE")))
-								{
+						{
 							logger.debug("Enter the multi esiid check for cirro");
 							logger.info("Enter the multi esiid check for cirro");
 							Esiddo[] listESIDO = esidResponse.getEsidList();
-							if(listESIDO.length > 0)	
-							for(Esiddo esiid:listESIDO) {
-								logger.debug("Enter the for loop for list iteration");
-								logger.info("Enter the for loop for list iteration");
-								
-								esidProfileResponse = this.addressService
-											.getESIDProfile(esiid.getESIDNumber(),
-													oeSignupVO.getCompanyCode());
-									logger.debug("before null check the esiidResponse ");
-									logger.info("before null check the esiidResponse");	
-									if(esidProfileResponse != null) {
-											esiidStatus = esidProfileResponse.getEsidStatus();
-										if(esiidStatus.equalsIgnoreCase("active")) {
-											logger.debug("Inside the esiid status active Start ... ");
-											logger.info("Inside the esiid status active Start...");	
-							
-											oeSignupVO.setEsidNumber(esiid.getESIDNumber());
-											logger.debug("OEBO.getESIDInformation() GETTING ESID SUCCESSFUL:"
-													+ esidResponse.getStrErrCode()
-													+ " :: "
-													+ esidResponse.getStrESIID());
-											ESIDDO esidDO = setESIDDTO(esidProfileResponse);
-											oeSignupVO.setEsidDO(esidDO);
-											logger.debug("Inside the esiid status active End");
-											logger.info("Inside the esiid status active End");	
-							
-											break;
-										}
-										} else {
-													
+							for(Esiddo esiid:listESIDO)
+								{
+									logger.debug("Enter the for loop for list iteration");
+									logger.info("Enter the for loop for list iteration");
+									
+									esidProfileResponse = this.addressService
+												.getESIDProfile(esiid.getESIDNumber(),
+														oeSignupVO.getCompanyCode());
+										logger.debug("before null check the esiidResponse ");
+										logger.info("before null check the esiidResponse");	
+										if(esidProfileResponse != null) 
+										{
+												esiidStatus = esidProfileResponse.getEsidStatus();
+												if(esiidStatus.equalsIgnoreCase("active")) 
+												{
+													logger.debug("Inside the esiid status active Start ... ");
+													logger.info("Inside the esiid status active Start...");	
+									
+													oeSignupVO.setEsidNumber(esiid.getESIDNumber());
+													logger.debug("OEBO.getESIDInformation() GETTING ESID SUCCESSFUL:"
+															+ esidResponse.getStrErrCode()
+															+ " :: "
+															+ esidResponse.getStrESIID());
+													ESIDDO esidDO = setESIDDTO(esidProfileResponse);
+													oeSignupVO.setEsidDO(esidDO);
+													logger.debug("Inside the esiid status active End");
+													logger.info("Inside the esiid status active End");	
+									
+													break;
+												}
+												else
+												{
 													logger.debug("COMPANY CODE - ESID STatus - ESID ::"  +  oeSignupVO.getCompanyCode() +"-" + esiidStatus + "-" +esidResponse.getStrESIID());
+												}
 										}
-							}
-			
-						} else {
-							logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED:"
-									+ esidResponse.getStrErrCode());
-						}
+										else
+										{
+											logger.debug("esidProfileResponse :: is NULL for " + esiid.getESIDNumber());
+											continue;
+										}
+								}
 							
+		
+					} else {
+						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED:"
+								+ esidResponse.getStrErrCode());
 					}
+						
+				}
 				} catch (ServiceException localServiceException) {
 					logger.error("ServiceException in OEBO.getESIDInformation():"
 							, localServiceException);
