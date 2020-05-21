@@ -1,5 +1,5 @@
 @Library('nrg-commons')
-//Jenkinsfile version-1.0
+//Jenkinsfile version-2.0
 
 def args = [
 	//##### Config param #####
@@ -33,7 +33,17 @@ def args = [
 
 	//##### Batch commands #####
 	zipLib: 'cd target/ & jar -cMf shared-lib.zip lib/ & cd ../../',
-	deployBranch: 'develop'
+	deployBranch: 'develop',
+	
+	typeOfTest: [
+		postman: [
+			postmanCollectionId: '3890864-441e570b-23ce-42c2-808d-6c3bde41c331',
+			postmanEnvIdDev: '',
+			postmanEnvIdStg: '10503842-ae725690-84bf-4138-8d27-1078d22d5912'
+		],
+		karate: [],
+		selenium: []
+	]
 ]
 
 javaWebAppTemplate(args)
