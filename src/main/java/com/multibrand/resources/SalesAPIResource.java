@@ -248,7 +248,7 @@ public class SalesAPIResource extends BaseResource {
 		try{
 			request.setCallExecuted(API_KBA_RESULT);
 			KbaAnswerResponse kbaAnsweresponse = oeBO.submitKBAAnswers(request);
-			Response.Status status = kbaAnsweresponse.getErrorCode().equals(RETRY_NOT_ALLOWED) ? kbaAnsweresponse.getHttpStatus() : Response.Status.OK;
+			Response.Status status = kbaAnsweresponse.getHttpStatus() != null ? kbaAnsweresponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(kbaAnsweresponse).build();
 			
    		} catch (Exception e) {
