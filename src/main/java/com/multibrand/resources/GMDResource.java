@@ -1,5 +1,7 @@
 package com.multibrand.resources;
 
+import java.rmi.RemoteException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -21,10 +23,17 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.GMDBO;
+import com.multibrand.bo.OEBO;
+import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
 import com.multibrand.dto.request.GMDEsidCalendarRequest;
+import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
+import com.multibrand.dto.response.SalesBaseResponse;
+import com.multibrand.exception.OAMException;
+import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
@@ -51,6 +60,10 @@ public class GMDResource extends BaseResource {
 	/** Object of BillingBO class. */
 	@Autowired
 	private GMDBO gmdBO;
+	
+	/** Object of oeBO class. */
+	@Autowired
+	private OEBO oeBO;
 	
 	@Autowired
 	@Qualifier("appConstMessageSource")
@@ -152,7 +165,70 @@ public class GMDResource extends BaseResource {
 		
 		response = Response.status(Response.Status.OK).entity(gmdOfferResponse).build();
 		return response;
-	}	
+	}
+	
+	@POST
+	@Path("/ESIDForAddress")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitEnrollment(@FormParam("apartmentNumber")String apartmentNumber, 
+			@FormParam("city")String city, 
+			@FormParam("country")String country,
+			//@FormParam("POBox")String poBox,
+			@FormParam("state")String state,
+			@FormParam("streetName")String streetName,
+			@FormParam("streetNumber")String streetNumber,
+			@FormParam("zip")String zip, 
+			@FormParam("companyCode") String companyCode) {
+		
+		Response response = null;
+		ESIDForAddressResponse esidForAddressResponse = new ESIDForAddressResponse();
+		
+		try{
+			EsidRequest request = new EsidRequest();
+			
+			request.setServStreet(streetNumber + " " + streetName);
+			request.setServStreetAptNum(apartmentNumber);
+			request.setServCity(city);
+			request.setServZipCode(zip);
+			
+			EsidResponse getEsiidResponse = oeBO.getESIDDetails(request);
+			
+			if ( getEsiidResponse.getEsidList() != null && !getEsiidResponse.getEsidList().isEmpty() &&  getEsiidResponse.getEsidList().size() == 1) {
+				esidForAddressResponse.setPointofDeliveryID(getEsiidResponse.getEsidList().get(0).getEsidNumber());
+				esidForAddressResponse.setServiceId(getEsiidResponse.getEsidList().get(0).getEsidTDSP());
+				esidForAddressResponse.setCustomerClass(getEsiidResponse.getEsidList().get(0).getEsidClass());
+				
+			} else {
+				esidForAddressResponse.setPointofDeliveryID("<ESIDNOTFOUND>");
+				esidForAddressResponse.setResultCode("1");
+				esidForAddressResponse.setResultDescription("MSG_ERR_ESI_LOOKUP");
+				esidForAddressResponse.setResultDisplayText("Sorry! Something went wrong. Please try again");
+			}
+			esidForAddressResponse.setCompanyCode(companyCode);
+			
+			response = Response.status(Response.Status.OK).entity(esidForAddressResponse).build();
+			
+			
+			
+		} catch (RemoteException e) {
+			logger.error(e);
+			esidForAddressResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			esidForAddressResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), esidForAddressResponse);			
+		} catch (Exception e) {
+			logger.error(e);
+			esidForAddressResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			esidForAddressResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), esidForAddressResponse);	
+		}
+		
+		
+		
+		
+		return response;
+	}
+		
 	
 		
 }	
