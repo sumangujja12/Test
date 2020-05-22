@@ -592,7 +592,7 @@ public class OeBoHelper extends BaseBO {
 		String requestStatusCode = oeSignUpDTO.getReqStatusCd();
 
 		if (!oeSignUpDTO.isEnrolled()) {
-			if(!StringUtils.equalsIgnoreCase(errorCode, CURRENT_CUSTOMER) ) {
+			if(!StringUtils.equalsIgnoreCase(errorCode, CURRENT_CUSTOMER) && (!StringUtils.equalsIgnoreCase(errorCode, BPSD))) {
 				errorCode = CCSERR;
 			}
 			requestStatusCode = FLAG_N;
