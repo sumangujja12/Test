@@ -242,7 +242,7 @@ public class ValidationBO extends BaseBO {
 				 */
 				if(retryCount>2)
 				{
-					processPerformPosidBPMatchAfterMaxRetryAllowed(performPosIdBpRequest, 
+					errorCodeFromAPI = processPerformPosidBPMatchAfterMaxRetryAllowed(performPosIdBpRequest, 
 						oESignupDTO, serviceLoationResponse, response,errorCodeFromAPI,messageCode, 
 						serviceLocationResponseerrorList, posidHoldAllowed,bpMatchDTO, retryCount  );
 					
@@ -1041,7 +1041,7 @@ public class ValidationBO extends BaseBO {
 		return performBpMatchResponse;
 	}
 	
-	private void processPerformPosidBPMatchAfterMaxRetryAllowed
+	private String processPerformPosidBPMatchAfterMaxRetryAllowed
 					(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
 						OESignupDTO oESignupDTO, 
 						ServiceLocationResponse serviceLoationResponse,
@@ -1062,14 +1062,14 @@ public class ValidationBO extends BaseBO {
 		response.setStatusCode(STATUS_CODE_STOP);
 		messageCode=POSID_FAIL_MAX;
 		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-						
+		errorCd=POSIDHOLD;			
 		response.setMessageCode(messageCode);
 		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setRetryCount(Integer.toString(retryCount));
 		response.setTrackingId(performPosIdBpRequest.getTrackingId());
 		response.setGuid(performPosIdBpRequest.getGuid());
 		logger.info("Settting message for hold scenario 3 "+response.getMessageText());
-			
+		return errorCd;	
 	}
 	
 	private String processPosidPassResponse(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
@@ -1168,6 +1168,8 @@ public class ValidationBO extends BaseBO {
 				String bpMatchErrorCd=(String)performBpMatchResponse.get("errorCd");
 				if(StringUtils.isNotEmpty(bpMatchErrorCd)) {
 					errorCd = bpMatchErrorCd;
+				}else{
+					errorCd=POSIDHOLD;
 				}
 				BPMatchDTO returnedBpMatchDTO=(BPMatchDTO)performBpMatchResponse.get("bpMatchDTO");
 				BeanUtils.copyProperties(returnedBpMatchDTO, bpMatchDTO);
