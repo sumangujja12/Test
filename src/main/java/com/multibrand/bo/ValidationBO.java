@@ -240,18 +240,23 @@ public class ValidationBO extends BaseBO {
 				 * continue as PASS and assess POSIDHOLD (when Togglz is ON)
 				 * or hardstop (when TOGGLZ is OFF)
 				 */
-				if(retryCount>2)
+				retryCount=retryCount+1;
+				if(retryCount>3)
 				{
 					errorCodeFromAPI = processPerformPosidBPMatchAfterMaxRetryAllowed(performPosIdBpRequest, 
 						oESignupDTO, serviceLoationResponse, response,errorCodeFromAPI,messageCode, 
 						serviceLocationResponseerrorList, posidHoldAllowed,bpMatchDTO, retryCount  );
+					
+					if(StringUtils.isNotEmpty(serviceLoationResponse.getErrorCode())){
+						errorCodeFromAPI = serviceLoationResponse.getErrorCode();
+					}
 					
 					return response;
 				}
 
 				response.setTrackingId(performPosIdBpRequest.getTrackingId());
 				//increment retry count
-				retryCount=retryCount+1;
+				
 				logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 						+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: retry count after increment is ::"+retryCount);
 			}
