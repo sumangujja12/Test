@@ -16,6 +16,8 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.OEBO;
@@ -72,6 +74,10 @@ public class TOSResource extends BaseResource{
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
+	@Autowired
+	@Qualifier("appConstMessageSource")
+	protected ReloadableResourceBundleMessageSource appConstMessageSource;
+	
 	/**
 	 * @author ahanda1
 	 * @param contractNumber
@@ -159,8 +165,12 @@ public class TOSResource extends BaseResource{
 					&& !getEsiidResponse.getEsidList().isEmpty() 
 					&&  getEsiidResponse.getEsidList().size() == 1) {
 				esidForAddressResponse.setPointofDeliveryID(getEsiidResponse.getEsidList().get(0).getEsidNumber());
-				esidForAddressResponse.setServiceId(getEsiidResponse.getEsidList().get(0).getEsidTDSP());
+				esidForAddressResponse.setServiceId(this.appConstMessageSource
+						.getMessage(getEsiidResponse.getEsidList().get(0).getEsidTDSP(), null,
+								null));
 				esidForAddressResponse.setCustomerClass(getEsiidResponse.getEsidList().get(0).getEsidClass());
+
+				
 				esidForAddressResponse.setMeterType("METERED");
 				
 			} else {

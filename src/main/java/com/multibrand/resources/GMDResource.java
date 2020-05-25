@@ -1,7 +1,5 @@
 package com.multibrand.resources;
 
-import java.rmi.RemoteException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -13,7 +11,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.bo.GMDBO;
 import com.multibrand.bo.OEBO;
 import com.multibrand.dto.request.EsidRequest;
@@ -29,9 +25,7 @@ import com.multibrand.dto.request.GMDEnrollmentRequest;
 import com.multibrand.dto.request.GMDEsidCalendarRequest;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
-import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.exception.OAMException;
-import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
@@ -174,7 +168,6 @@ public class GMDResource extends BaseResource {
 	public Response submitEnrollment(@FormParam("apartmentNumber")String apartmentNumber, 
 			@FormParam("city")String city, 
 			@FormParam("country")String country,
-			//@FormParam("POBox")String poBox,
 			@FormParam("state")String state,
 			@FormParam("streetName")String streetName,
 			@FormParam("streetNumber")String streetNumber,
@@ -211,18 +204,12 @@ public class GMDResource extends BaseResource {
 			
 			
 			
-		} catch (RemoteException e) {
-			logger.error(e);
-			esidForAddressResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			esidForAddressResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			throw new OAMException(200, e.getMessage(), esidForAddressResponse);			
 		} catch (Exception e) {
 			logger.error(e);
 			esidForAddressResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			esidForAddressResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			throw new OAMException(200, e.getMessage(), esidForAddressResponse);	
-		}
-		
+			throw new OAMException(200, e.getMessage(), esidForAddressResponse);			
+		} 	
 		
 		
 		

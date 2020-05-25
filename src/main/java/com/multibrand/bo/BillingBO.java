@@ -51,6 +51,7 @@ import com.multibrand.domain.DppAmountVO;
 import com.multibrand.domain.DppDueDateAmountDO;
 import com.multibrand.domain.DppEligibleRequest;
 import com.multibrand.domain.DppEligibleResponse;
+import com.multibrand.domain.DppInstPlanDetailsDO;
 import com.multibrand.domain.DppSubmissionRequest;
 import com.multibrand.domain.DppSubmissionResponse;
 import com.multibrand.domain.GetArRequest;
@@ -3660,19 +3661,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(checkDPPEligibility(dppEligibleResponse)){
 				response.setDppPlanEligible(true);
 				
-				DppDueDateAmountDO[] amtDueArray = dppEligibleResponse.getDppDueDateAmountDoList();
-				List<DppValueVO> dppDetailsList = new ArrayList<>();
-				
-				for(DppDueDateAmountDO amtDue: amtDueArray){
-					DppValueVO dppValueVO = new DppValueVO();
-					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue().trim());
-					dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
-								Constants.yyyyMMdd, amtDue.getDppDueDate()));
-					dppDetailsList.add(dppValueVO);
-				}
-				
 				//Commented and will enable once CCS completed the code chnages
-/*				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
+				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
 				List<com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO> dppInstPlanDetailsList = new ArrayList<>();
 				
 				if ( dppInstplanDetList != null && dppInstplanDetList.length > 0) {
@@ -3687,8 +3677,30 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
 					}
 				}
-				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);*/
-				response.setDppAmountToBePaid(dppDetailsList.remove(0));
+				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);
+				
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+			} else {
+				response.setDppPlanEligible(false);
+				
+			}
+				
+			DppDueDateAmountDO[] amtDueArray = dppEligibleResponse.getDppDueDateAmountDoList();
+			List<DppValueVO> dppDetailsList = new ArrayList<>();
+			
+			if(amtDueArray!=null){
+				
+				for(DppDueDateAmountDO amtDue: amtDueArray){
+					
+					DppValueVO dppValueVO = new DppValueVO();
+					
+					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue().trim());
+					dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
+								Constants.yyyyMMdd, amtDue.getDppDueDate()));
+					dppDetailsList.add(dppValueVO);
+					
+				}
 				
 				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() {
 					  @Override
@@ -3697,17 +3709,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					  }
 					});
 				
-				response.setDppValue(dppDetailsList);
+				response.setDppAmountToBePaid(dppDetailsList.remove(0));			
 				
-				response.setResultCode(RESULT_CODE_SUCCESS);
-				response.setResultDescription(MSG_SUCCESS);
-			} else {
-				response.setDppPlanEligible(false);
-				
+				response.setDppValue(dppDetailsList);				
 			}
-				response.setDppPlanPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
-				response.setDppPlanActive(BooleanUtils.toBoolean(dppEligibleResponse.getDpplanActive()));
-				response.setTotalDppAmount(dppEligibleResponse.getAmount() != null ?  dppEligibleResponse.getAmount().trim() : dppEligibleResponse.getAmount());
+						
+
+			
+			response.setDppPlanPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
+			response.setDppPlanActive(BooleanUtils.toBoolean(dppEligibleResponse.getDpplanActive()));
+			response.setTotalDppAmount(dppEligibleResponse.getAmount() != null ?  dppEligibleResponse.getAmount().trim() : dppEligibleResponse.getAmount());
 		} else if(dppEligibleResponse != null) {
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
 			response.setResultDescription("Failed to get the Extension Date or not available");
