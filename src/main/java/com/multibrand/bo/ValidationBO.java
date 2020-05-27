@@ -189,6 +189,12 @@ public class ValidationBO extends BaseBO {
 
 		boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
 		
+		boolean posidHoldAllowedForAffilate = false;  
+		if(StringUtils.equals(performPosIdBpRequest.getAffiliateId(), AFFILIATE_ID_COMPAREPOWER)) {
+			posidHoldAllowedForAffilate = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION+DOT+AFFILIATE_ID_COMPAREPOWER);
+		}
+		 
+		
 		if(serviceLoationResponse != null){
 		 errorCodeFromDB=serviceLoationResponse.getErrorCode();
 		}
@@ -245,7 +251,7 @@ public class ValidationBO extends BaseBO {
 				{
 					errorCodeFromAPI = processPerformPosidBPMatchAfterMaxRetryAllowed(performPosIdBpRequest, 
 						oESignupDTO, serviceLoationResponse, response,errorCodeFromAPI,messageCode, 
-						serviceLocationResponseerrorList, posidHoldAllowed,bpMatchDTO, retryCount  );
+						serviceLocationResponseerrorList,bpMatchDTO, retryCount  );
 					
 					if(StringUtils.isNotEmpty(serviceLoationResponse.getErrorCode())){
 						errorCodeFromAPI = serviceLoationResponse.getErrorCode();
@@ -326,7 +332,7 @@ public class ValidationBO extends BaseBO {
 				errorCodeFromAPI = processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
 						serviceLoationResponse, response, errorCodeFromAPI, messageCode, 
 						serviceLocationResponseerrorList, bpMatchDTO, 
-						validatePosIdKBAResponse, posidHoldAllowed, retryCount);
+						validatePosIdKBAResponse, posidHoldAllowedForAffilate, posidHoldAllowed, retryCount);
 				posidStatus = oESignupDTO.getPosidStatus();
 				
 			}
@@ -1054,7 +1060,6 @@ public class ValidationBO extends BaseBO {
 						String errorCd,
 						String messageCode,
 						LinkedHashSet<String> serviceLocationResponseerrorList,
-						boolean posidHoldAllowed, 
 						BPMatchDTO bpMatchDTO,
 						int retryCount)
 			{
@@ -1144,6 +1149,7 @@ public class ValidationBO extends BaseBO {
 			LinkedHashSet<String> serviceLocationResponseerrorList, 
 			BPMatchDTO bpMatchDTO,
 			ValidatePosIdKBAResponse validatePosIdKBAResponse,
+			boolean posidHoldAllowedForAffilate,
 			boolean posidHoldAllowed, 
 			int retryCount)
 	{
@@ -1160,7 +1166,7 @@ public class ValidationBO extends BaseBO {
 			serviceLocationResponseerrorList.add(errorCd);
 		}
 		else{
-			if(posidHoldAllowed){
+			if(posidHoldAllowedForAffilate || posidHoldAllowed){
 				errorCd=POSIDHOLD;
 				serviceLocationResponseerrorList.add(errorCd);
 				messageCode = POSIDHOLD;
