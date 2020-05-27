@@ -1911,6 +1911,12 @@ public class OEBO extends OeBoHelper implements Constants{
 			return response;	
 		}
 		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,enrollmentRequest.getChannelType());
+		
+		boolean posidHoldAllowedForAffilate = false;  
+		if(StringUtils.equals(enrollmentRequest.getAffiliateId(), AFFILIATE_ID_COMPAREPOWER)) {
+			posidHoldAllowedForAffilate = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION+DOT+AFFILIATE_ID_COMPAREPOWER);
+		}
+		
 		try {
 			if(StringUtils.isNotEmpty(enrollmentRequest.getTrackingId())){
 				if(serviceLoationResponse == null){
@@ -1938,7 +1944,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			boolean allowFraudCheck = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK);
 			if(allowFraudCheck) {
-				enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,isPosidHoldAllowed,serviceLoationResponse.getCallExecutedFromDB(), serviceLoationResponse);
+				enrollmentFraudEnum = checkFraudulentActivity(oeSignUpDTO,posidHoldAllowedForAffilate, isPosidHoldAllowed,serviceLoationResponse.getCallExecutedFromDB(), serviceLoationResponse);
 			}
 			if(null==enrollmentFraudEnum){
 				
@@ -2024,7 +2030,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			try {
 			this.updatePersonAndServiceLocation(oeSignUpDTO);
 			// populate enrollment response for output.
-			this.setEnrollmentResponse(response, oeSignUpDTO, enrollmentFraudEnum, isPosidHoldAllowed);
+			this.setEnrollmentResponse(response, oeSignUpDTO, enrollmentFraudEnum, posidHoldAllowedForAffilate, isPosidHoldAllowed);
 			} catch(Exception en) {
 				logger.error("Exception in SubmitEnrollment :", en);
 			}
@@ -2035,7 +2041,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		return response;
 	}
 
-	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO, boolean isPosidHoldAllowed,String apiCallExecuted,
+	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO,boolean posidHoldAllowedForAffilate, boolean isPosidHoldAllowed,String apiCallExecuted,
 														ServiceLocationResponse serviceLocationResponse) {
 		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
 		logger.debug("Start:" + METHOD_NAME);
@@ -2062,7 +2068,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		else if(errorCodeSet.contains(NRESID)){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("BUSINESS_METER");
 		}
-		else if(!isPosidHoldAllowed && errorCodeSet.contains(POSIDHOLD)){
+		else if(!posidHoldAllowedForAffilate && !isPosidHoldAllowed && errorCodeSet.contains(POSIDHOLD)){
 		    enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("POSID_HOLD");
 		}
 		else if(errorCodeSet.contains(BP_RESTRICT)){
@@ -2360,7 +2366,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 * @param enrollmentFraudEnum 
 	 */
 	private void setEnrollmentResponse(EnrollmentResponse enrollmentResponse,
-			OESignupDTO oeSignUpDTO, ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum, boolean isPosidHoldAllowed) {
+			OESignupDTO oeSignUpDTO, ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum, boolean posidHoldAllowedForAffilate, boolean isPosidHoldAllowed) {
 		// TODO Set error code if any. (Reliant code base)
 		// this.setErrorCode(oeSignUpDTO);
 		logger.info(oeSignUpDTO.printOETrackingID()+"errorcode "+oeSignUpDTO.getErrorCode());
@@ -2427,7 +2433,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				|| MESID.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
 				||(SWITCHHOLD.equalsIgnoreCase(oeSignUpDTO.getErrorCode()))
 				|| CCSERR.equalsIgnoreCase(oeSignUpDTO.getErrorCode())
-				|| (isPosidHoldAllowed && StringUtils.equalsIgnoreCase(POSIDHOLD, oeSignUpDTO.getErrorCode()))
+				|| ((posidHoldAllowedForAffilate || isPosidHoldAllowed )&& StringUtils.equalsIgnoreCase(POSIDHOLD, oeSignUpDTO.getErrorCode()))
 				||(StringUtils.isBlank(oeSignUpDTO.getErrorCode()))) {
 
 			enrollmentResponse.setResultCode(RESULT_CODE_SUCCESS);
