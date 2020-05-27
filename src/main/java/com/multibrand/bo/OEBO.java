@@ -6575,7 +6575,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						systemNotesList.add(KBA_LIFT_POSIDHOLD);
 						serviceLocationResponseErrorList.remove(POSIDHOLD);
 					}
-					
+					if( kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput() != null) {
+						response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
+					}
 			}
 			else if(null != kbaSubmitAnswerResponse 
 						&& StringUtils.isNotEmpty(kbaSubmitAnswerResponse.getDlVerifyDate()) 
@@ -6589,6 +6591,10 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						systemNotesList.add(KBA_LIFT_POSIDHOLD);
 						serviceLocationResponseErrorList.remove(POSIDHOLD);
 					}
+					if( kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput() != null) {
+						response.setDecision(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision());
+					}
+
 			}
 			else if(null != kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput()){
 					if(serviceLocationResponseErrorList.contains(POSIDHOLD)){
@@ -6597,17 +6603,17 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 					if(StringUtils.isBlank(kbaSubmitAnswerResponse.getKbaSubmitAnswerResponseOutput().getDecision())){
 						response.populateKbaAnswerRetryNotAllowedResponse();
 					
-			}
-			else{
-					response.setStatusCode(STATUS_CODE_CONTINUE);
-					response.setMessageCode(POSIDHOLD);
-					response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
-							new String[] {CommonUtil.getCompanyName(kbaAnswerRequest.getBrandId(),kbaAnswerRequest.getCompanyCode())},
-							CommonUtil.localeCode(kbaAnswerRequest.getLanguageCode())));
-					serviceLocationResponseErrorList.add(POSIDHOLD);
-					errorCode = POSIDHOLD;
-					systemNotesList.add(KBA_SET_POSIDHOLD);
-				}
+					}
+					else{
+							response.setStatusCode(STATUS_CODE_CONTINUE);
+							response.setMessageCode(POSIDHOLD);
+							response.setMessageText(msgSource.getMessage(POSID_HOLD_MSG_TXT,
+									new String[] {CommonUtil.getCompanyName(kbaAnswerRequest.getBrandId(),kbaAnswerRequest.getCompanyCode())},
+									CommonUtil.localeCode(kbaAnswerRequest.getLanguageCode())));
+							serviceLocationResponseErrorList.add(POSIDHOLD);
+							errorCode = POSIDHOLD;
+							systemNotesList.add(KBA_SET_POSIDHOLD);
+						}
 				
 				response.setDrivingLicenceVerifyDate(kbaSubmitAnswerResponse.getDlVerifyDate());
 				
