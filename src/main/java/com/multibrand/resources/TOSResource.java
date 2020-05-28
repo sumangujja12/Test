@@ -159,32 +159,10 @@ public class TOSResource extends BaseResource{
 				
 			EsidResponse getEsiidResponse = oeBO.getESIDDetails(request);
 			
+			esidForAddressResponse = tosBO.removeInactiveEsids(getEsiidResponse);
 			esidForAddressResponse.setCompanyCode(companyCode);
 			
-			if ( getEsiidResponse.getEsidList() != null 
-					&& !getEsiidResponse.getEsidList().isEmpty() 
-					&&  getEsiidResponse.getEsidList().size() == 1) {
-				esidForAddressResponse.setPointofDeliveryID(getEsiidResponse.getEsidList().get(0).getEsidNumber());
-				esidForAddressResponse.setServiceId(this.appConstMessageSource
-						.getMessage(getEsiidResponse.getEsidList().get(0).getEsidTDSP(), null,
-								null));
-				esidForAddressResponse.setCustomerClass(getEsiidResponse.getEsidList().get(0).getEsidClass());
-
-				
-				esidForAddressResponse.setMeterType("METERED");
-				
-			} else {
-				esidForAddressResponse.setPointofDeliveryID("<ESIDNOTFOUND>");
-				esidForAddressResponse.setResultCode("1");
-				esidForAddressResponse.setResultDescription("MSG_ERR_ESI_LOOKUP");
-				esidForAddressResponse.setResultDisplayText("Sorry! Something went wrong. Please try again");
-			}
-			
-			
-			
-			
-			
-			
+					
 			response = Response.status(Response.Status.OK).entity(esidForAddressResponse).build();
 			} catch (RemoteException e) {
 				logger.error(e);
