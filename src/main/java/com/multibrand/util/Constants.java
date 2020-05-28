@@ -889,7 +889,8 @@ public interface Constants {
 	public String MSG_EXCP_ERROR_CODE    = "MSG_EXCEPTION_ERROR_CODE";
 	public String MSG_USR_NOT_FOUND="User Not Found";
 	
-	
+	//nnp
+	public static final String NNP_SUBJECT = "";
 	/* START EMAIL CHANGES */
 	public static final String EBILL_SUBJECT = "";
 	public static final String EBILL_EXTERNAL_ID_EN = "EBILL.CONFR.CBOC.EN_US";
@@ -1529,10 +1530,23 @@ public interface Constants {
 	public static final String XOOM_EBILL_NAME_ON_ACCOUNT = "CA_NAME";
 	public static final String XOOM_EBILL_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
 	public static final String XOOM_EBILL_DELIVERY_LOCATION = "DELIVERY_LOCATION";
-	
+
 	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
 	
 	public static final String CONST_GUID= "guId";
 	
 	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
+
+	
+	
+	public static final String XOOM_NNP_EXTERNAL_ID_EN = "XOOM.NNP.UPDATE.CONFIRMATION.EN_US";
+	public static final String XOOM_NNP_EXTERNAL_ID_ES = "XOOM.NNP.UPDATE.CONFIRMATION.ES_US";
+	public static final String XOOM_NNP_TEMPLATE_ID = "HTML";
+	
+	public static final String XOOM_NNP_CA = "CA_NUMBER";
+	public static final String XOOM_NNP_CHECK_DIGIT = "CHECK_DIGIT";
+	public static final String XOOM_NNP_NAME_ON_ACCOUNT = "CA_NAME";
+	public static final String XOOM_NNP_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
+	public static final String XOOM_NNP_DELIVERY_LOCATION = "DELIVERY_LOCATION";
+
 }
