@@ -1081,7 +1081,6 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		logger.debug("Start:{}" , methodName);
 		
 		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
-		String baseProdURL= envMessageReader.getMessage(Constants.GME_PROD_BASE_URL);
 		
 		String legalDocsExt = "/files/";
 		
@@ -1093,10 +1092,10 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+legalDocsExt +this.appConstMessageSource
 		.getMessage("gmd.offer.tos.equivalent." + tdspCode, null, null));
 		
-		gmdOfferResponse.setStrYRAACDocID(baseProdURL.trim()+legalDocsExt+this.appConstMessageSource
+		gmdOfferResponse.setStrYRAACDocID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.yraac.equivalent." + tdspCode, null, null));	
 		
-		gmdOfferResponse.setStrPrepayDisID(baseProdURL.trim()+legalDocsExt+this.appConstMessageSource
+		gmdOfferResponse.setStrPrepayDisID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
 		.getMessage("gmd.offer.predis.equivalent." + tdspCode, null, null));			
 		
 		
