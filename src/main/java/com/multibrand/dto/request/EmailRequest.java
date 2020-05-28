@@ -214,5 +214,27 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 		EmailRequest re = new EmailRequest();
 		System.out.println(gson.toJson(re));
 	}
+	public void populateRequestForNNPBasedOnBrand(CCSNNPEmailRequest request) {
+		this.subject = NNP_SUBJECT;
+		this.toEmailList.add(request.getEmailid());
+		this.companyCode = request.getCompanycode();
+		this.languageCode = request.getLanguagecode();
+		this.brandName = request.getBrandname();
+
+		if((StringUtils.isNotBlank(this.companyCode) && StringUtils.equalsIgnoreCase(this.companyCode, XOOM_COMPANY_CODE)) &&
+				(StringUtils.isNotBlank(this.brandName) && StringUtils.equalsIgnoreCase(this.brandName, XOOM_BRAND_NAME))){
+			this.externalId = StringUtils.equalsIgnoreCase(this.languageCode, EN) ? XOOM_NNP_EXTERNAL_ID_EN : XOOM_NNP_EXTERNAL_ID_ES;
+			this.templateType = XOOM_NNP_TEMPLATE_ID;
+			this.propertyList.add(XOOM_NNP_CA+COLON+request.getContractaccountnumber());
+			this.propertyList.add(XOOM_NNP_CHECK_DIGIT+COLON+request.getCheckdigit());
+			this.propertyList.add(XOOM_NNP_NAME_ON_ACCOUNT+COLON+request.getCaname());
+			this.propertyList.add(XOOM_NNP_DELIVERY_METHOD+COLON+getBillDeliveryMethod(request.getNnpDeliveryMethod()));
+			this.propertyList.add(XOOM_NNP_DELIVERY_LOCATION+COLON+request.getEmailid());
+		}else{
+			logger.info("BRAND NAME/COMPANY CODE IS EMPTY::");
+		}
+		logger.info("Printing Object::::::"+ ReflectionToStringBuilder.toString(this));
+		
+	}
 	
 }
