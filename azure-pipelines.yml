@@ -9,7 +9,7 @@ resources:
 
 pool:
   #vmImage: 'ubuntu-16.04'
-  name: '$(param.agent.pool.name)'
+  name: '$(param.agent.pool.name)'  
 
 trigger:
   branches:
@@ -21,16 +21,25 @@ trigger:
     exclude:
     - README.md
 
-jobs:
-- template: create_release_notes_n_autotag.yml@templates
+stages:
+  - stage:
+    displayName: Checkout
+    jobs:
+      - job:
+        displayName: Checkout App
 
-- job: trigger_jenkins
-  displayName: trigger jenkins pipeline
-  steps:
-  - task: JenkinsQueueJob@2
-    displayName: 'Queue Jenkins job: Services/nrg-rest-services'
-    inputs:
-      serverEndpoint: 'Prod Jenkins'
-      jobName: 'Services/nrg-rest-services'
-      isMultibranchJob: true
-      multibranchPipelineBranch: '$(Build.SourceBranch)'
+  - stage:
+    displayName: Generate release notes N trigger Jenkins
+    jobs:
+      - template: create_release_notes_n_autotag.yml@templates
+
+      - job:
+        displayName: Trigger Jenkins
+        steps:
+          - task: JenkinsQueueJob@2
+            displayName: 'Queue Jenkins job: Services/nrg-rest-services'
+            inputs:
+              serverEndpoint: 'Prod Jenkins'
+              jobName: 'Services/nrg-rest-services'
+              isMultibranchJob: true
+              multibranchPipelineBranch: '$(Build.SourceBranch)'
