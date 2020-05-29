@@ -641,6 +641,33 @@ public class OEBOTest implements Constants{
 		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
 	}
 	
+	@Test
+	public void testCheckFraudulentActivityWithPOSIDHOLDComparePowerToggleOFF() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(I_VALUE);
+		oeSignUpDTO.setErrorCdList(POSIDHOLD);
+	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(false);
+	    ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
+	    serviceLocationResponse.setPersonResponse(new PersonResponse());
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, false, false,apiCallExecuted, serviceLocationResponse);
+		Assert.assertEquals(enrollmentFraudEnum.getFraudErrorCode(), ERROR_CD_ENROLLMENT_NOT_ALLOWED);
+	}
+	
+	@Test
+	public void testCheckFraudulentActivityWithPOSIDHOLDComparePowerToggleON() throws OEException{
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		oeSignUpDTO.setReqStatusCd(I_VALUE);
+		oeSignUpDTO.setErrorCdList(POSIDHOLD);
+	    when(togglzUtil.getFeatureStatusFromTogglzByChannel(Matchers.any(String.class),Matchers.any(String.class))).thenReturn(false);
+	    ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
+	    serviceLocationResponse.setPersonResponse(new PersonResponse());
+	    serviceLocationResponse.getPersonResponse().setCredScoreNum("0550");;
+	    serviceLocationResponse.getPersonResponse().setCredSourceNum("1");;
+	    serviceLocationResponse.getPersonResponse().setCredLevelNum("1");;
+	    enrollmentFraudEnum=oebo.checkFraudulentActivity(oeSignUpDTO, true, false,apiCallExecuted, serviceLocationResponse);
+	    Assert.assertNull(enrollmentFraudEnum);
+	}
+	
 	/*@Test
 	public void testCheckFraudulentActivityWithBPRestrict() throws OEException{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
