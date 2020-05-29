@@ -5647,7 +5647,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						if(StringUtils.isEmpty(validPosIdResponse.getTrackingId())){
 							validPosIdResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 							validPosIdResponse.setErrorCode(HTTP_INTERNAL_SERVER_ERROR);
-							validPosIdResponse.setErrorDescription("Capturing data in Database is failed");					
+							validPosIdResponse.setErrorDescription("Database save operation failed!");					
 							response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(validPosIdResponse).build();
 						} else {
 							response = Response.status(Response.Status.OK).entity(validPosIdResponse)

@@ -106,7 +106,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 					IdentityResponse bpMatchResponse = new IdentityResponse();
 					bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 					bpMatchResponse.setErrorCode(HTTP_INTERNAL_SERVER_ERROR);
-					bpMatchResponse.setErrorDescription("Capturing data in Database is failed");					
+					bpMatchResponse.setErrorDescription("Database save operation failed!");					
 					response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(bpMatchResponse).build();
 					return response;
 				} 
