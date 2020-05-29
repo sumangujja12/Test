@@ -242,7 +242,7 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 			if(StringUtils.equalsIgnoreCase(nnpDeliveryMethod, MAIL)){return (StringUtils.equalsIgnoreCase(this.languageCode, EN))?NNP_DELIVERY_METHOD_VAL_MAIL_EN:NNP_DELIVERY_METHOD_VAL_MAIL_ES;}
 			if(StringUtils.equalsIgnoreCase(nnpDeliveryMethod, EMAIL)){return (StringUtils.equalsIgnoreCase(this.languageCode, EN))?NNP_DELIVERY_METHOD_VAL_EMAIL_EN:NNP_DELIVERY_METHOD_VAL_EMAIL_ES;}
 		}else{
-			logger.info("LANGUAGE CODE/BILL DELIVERY METHOD IS EMPTY::");
+			logger.info("LANGUAGE CODE/NNP DELIVERY METHOD IS EMPTY::");
 		}
 		return null;
 	}
