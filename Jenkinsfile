@@ -4,7 +4,7 @@
 def args = [
 	//##### Config param #####
 	emailRecepients: 'NRGDigitalIT-All@nrg.com, saurabh.tripathi@nrg.com, Sanjesh.Malviya@nrg.com, BBARMAN@nrg.com',
-	buildTimeOut: 45, //MINUTES
+	buildTimeOut: 60, //MINUTES
 	stgPromotionApvrlWaitTime: 15,//MINUTES
 	projectArtifact: 'target/nrgrest.war, src/main/resources/properties/environment.properties*',
 	
