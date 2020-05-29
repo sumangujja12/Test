@@ -37,9 +37,9 @@ def args = [
 	
 	typeOfTest: [
 		postman: [
-			postmanCollectionId: '3890864-441e570b-23ce-42c2-808d-6c3bde41c331',
+			postmanCollectionId: '3890864-cf7ddaa5-f64f-4d62-8a82-917230f86813',
 			postmanEnvIdDev: '',
-			postmanEnvIdStg: '10503842-ae725690-84bf-4138-8d27-1078d22d5912'
+			postmanEnvIdStg: '3890864-43f48261-041a-4135-a5f0-08ec3f53f5c9'
 		],
 		karate: [],
 		selenium: []
