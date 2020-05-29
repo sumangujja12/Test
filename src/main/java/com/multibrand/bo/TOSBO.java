@@ -2,8 +2,10 @@ package com.multibrand.bo;
 
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -31,6 +33,7 @@ import com.multibrand.domain.TdspByESIDResponse;
 import com.multibrand.domain.TdspByZipResponse;
 import com.multibrand.domain.TransferServiceRequest;
 import com.multibrand.domain.TransferServiceResponse;
+import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.ContractHelper;
 import com.multibrand.helper.EmailHelper;
@@ -46,6 +49,7 @@ import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
+import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.request.TOSEligibleNonEligibleProductsRequest;
 import com.multibrand.vo.request.TOSSubmitEligibleProductsRequest;
 import com.multibrand.vo.response.CheckPendingMVOResponse;
@@ -93,6 +97,7 @@ public class TOSBO extends BaseAbstractService implements Constants {
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
+	 
 	/**
 	 * @author ahanda1
 	 * @param request
@@ -477,7 +482,7 @@ public com.multibrand.vo.response.TdspByZipResponse getTdspByZip(String zip, Str
 			}
 			
 			JavaBeanUtil.copy(tdspByZipResponse, response);
-			
+			response.setServiceIdDescription(appConstMessageSource.getMessage(response.getServiceId(), null, null));
 			
 			
 		} catch (RemoteException e) {
@@ -735,6 +740,8 @@ public OetdspResponse getTDSPSpecificCalendarDates(OetdspRequest request, String
 	
 	logger.info("TOSBO.getTDSPSpecificCalendarDates :::::::: Start");
 	OetdspResponse response = new OetdspResponse();
+	
+    
     try {
     	
     	String dateString = oeService.getTDSPSpecificCalendarDates(request, sessionId);
@@ -742,6 +749,8 @@ public OetdspResponse getTDSPSpecificCalendarDates(OetdspRequest request, String
 		if (dateString!= null && !dateString.trim().equalsIgnoreCase(""))
 			response.setDateString(dateString);
 		
+		response.setCurrentDate(new SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().getTime()));
+		response.setCurrentTime(new SimpleDateFormat("HH:mm:ss").format(Calendar.getInstance().getTime()));
 		
 	} catch (RemoteException e) {
 		logger.error(e);
@@ -904,7 +913,59 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 		return response;
 	}
 	
+	public ESIDForAddressResponse removeInactiveEsids(EsidResponse esiidResponse){
+		logger.info("TOSBO.removeInactiveEsids :::::::: START");
+		
+		ESIDForAddressResponse esIdForAddressResponse = new ESIDForAddressResponse();
+		try {
+			 List<ESIDData>  esidList = new  ArrayList();
+		
+			 //Filtering Inaqctive ESID's
+			if ( esiidResponse.getEsidList() != null && !esiidResponse.getEsidList().isEmpty()) {
+				
+				for (ESIDData esIdData : esiidResponse.getEsidList()) {
+					
+					if ( esIdData.getEsidStatus().equalsIgnoreCase(STATUS_ACTIVE)) {
+						
+						esidList.add(esIdData);
+					}
+				}
+				esiidResponse.setEsidList(esidList);
+			}
+			
+			if ( esiidResponse.getEsidList() != null 
+					&& !esiidResponse.getEsidList().isEmpty() 
+					&&  esiidResponse.getEsidList().size() == 1) {
+				esIdForAddressResponse.setPointofDeliveryID(esiidResponse.getEsidList().get(0).getEsidNumber());
+				esIdForAddressResponse.setServiceId(this.appConstMessageSource
+						.getMessage(esiidResponse.getEsidList().get(0).getEsidTDSP(), null,
+								null));
+				esIdForAddressResponse.setCustomerClass(esiidResponse.getEsidList().get(0).getEsidClass());
+
+				
+				esIdForAddressResponse.setMeterType("METERED");
+				
+			} else {
+				esIdForAddressResponse.setPointofDeliveryID(ESIDNOTFOUND);
+				esIdForAddressResponse.setResultCode("1");
+				esIdForAddressResponse.setResultDescription("MSG_ERR_ESI_LOOKUP");
+				esIdForAddressResponse.setResultDisplayText("Sorry! Something went wrong. Please try again");
+			}
+			
+			
+			
+		}  catch (Exception e) {
+			logger.error(e);
+			esIdForAddressResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			esIdForAddressResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+					
+		}
+		
 	
+		logger.info("TOSBO.removeInactiveEsids :::::::: END");
+		return esIdForAddressResponse;
+		
+	}
 	
 
 }

@@ -1,5 +1,7 @@
 package com.multibrand.resources;
 
+import java.rmi.RemoteException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -14,19 +16,24 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.bo.OEBO;
 import com.multibrand.bo.TOSBO;
 import com.multibrand.domain.CheckPendingMVORequest;
 import com.multibrand.domain.CheckPendingMoveInRequest;
 import com.multibrand.domain.ContractDataRequest;
 import com.multibrand.domain.CreateContactLogRequest;
-import com.multibrand.domain.EsiDforAddressRequest;
 import com.multibrand.domain.OetdspRequest;
 import com.multibrand.domain.OfferOfContractRequest;
 import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.ProgramAccountInfoRequest;
 import com.multibrand.domain.TransferServiceRequest;
+import com.multibrand.dto.request.EsidRequest;
+import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.exception.OAMException;
 import com.multibrand.resources.requestHandlers.TOSRequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.request.TOSEligibleNonEligibleProductsRequest;
@@ -50,7 +57,7 @@ import com.multibrand.vo.response.TransferServiceResponse;
 
 @Component
 @Path("tos")
-public class TOSResource {
+public class TOSResource extends BaseResource{
 	
 	@Autowired
 	TOSRequestHandler tosRequestHandler;
@@ -58,11 +65,19 @@ public class TOSResource {
 	@Autowired
 	TOSBO tosBO;
 	
+	/** Object of oeBO class. */
+	@Autowired
+	private OEBO oeBO;
+	
 	@Context 
 	private HttpServletRequest httpRequest;
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
+	@Autowired
+	@Qualifier("appConstMessageSource")
+	protected ReloadableResourceBundleMessageSource appConstMessageSource;
+	
 	/**
 	 * @author ahanda1
 	 * @param contractNumber
@@ -136,13 +151,30 @@ public class TOSResource {
 		
 		logger.debug("TOSResource.getESIDForAddress ::: START");
 		
-		EsiDforAddressRequest request = tosRequestHandler.createRequestESIDForAddress(apartmentNumber, city, country, state, streetName, streetNumber, zip, companyCode);	
-				
-		ESIDForAddressResponse esidForAddResp = tosBO.getESIDForAddress(request, companyCode, httpRequest.getSession(true).getId());
-		
+		ESIDForAddressResponse esidForAddressResponse = new ESIDForAddressResponse();
 		Response response = null;
 		
-		response = Response.status(200).entity(esidForAddResp).build();
+		try {
+			EsidRequest request = tosRequestHandler.createRequestESIDFormAddress(apartmentNumber, city, country, state, streetName, streetNumber, zip, companyCode);	
+				
+			EsidResponse getEsiidResponse = oeBO.getESIDDetails(request);
+			
+			esidForAddressResponse = tosBO.removeInactiveEsids(getEsiidResponse);
+			esidForAddressResponse.setCompanyCode(companyCode);
+			
+					
+			response = Response.status(Response.Status.OK).entity(esidForAddressResponse).build();
+			} catch (RemoteException e) {
+				logger.error(e);
+				esidForAddressResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				esidForAddressResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				throw new OAMException(200, e.getMessage(), esidForAddressResponse);			
+			} catch (Exception e) {
+				logger.error(e);
+				esidForAddressResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				esidForAddressResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				throw new OAMException(200, e.getMessage(), esidForAddressResponse);	
+			}
 		
 		logger.debug("TOSResource.getESIDForAddress ::: END");
 		return response;		

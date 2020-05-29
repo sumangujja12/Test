@@ -907,25 +907,27 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			List<UpdatePhoneDO> phones = new ArrayList<UpdatePhoneDO>();
 			
 			
+			if (!StringUtils.isEmpty(homePhone) ) {
 				phone = new UpdatePhoneDO();
 		    	phone.setRemark(REMARK_HOME);
 		    	phone.setPhoneNumber(homePhone);
 		    	phones.add(phone);
-		    	
+			}	
 			
-			
+			if (!StringUtils.isEmpty(workPhone) ) {
 		    	phone = new UpdatePhoneDO();
 		    	phone.setRemark(REMARK_WORK);
 		    	phone.setPhoneNumber(workPhone);
 		    	phones.add(phone); 	
-			    
+			}  
 			
-			
+			if (!StringUtils.isEmpty(cellPhone) ) {
 		    	phone = new UpdatePhoneDO();
 		    	phone.setRemark(REMARK_CELL);
 		    	phone.setPhoneNumber(cellPhone);
 		    	phones.add(phone);
-			    
+			 
+			}
 		    // Do not set the telephone updated flag if all phones are null or empty 
 	    	if(!(StringUtils.isEmpty(homePhone)) || !(StringUtils.isEmpty(workPhone)) || !(StringUtils.isEmpty(cellPhone))) {
 	    		updateContactRequest.setPhoneDO(phones.toArray(new UpdatePhoneDO[0])); 

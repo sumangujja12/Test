@@ -47,9 +47,13 @@ import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
 import com.multibrand.domain.DeActEbillRequest;
 import com.multibrand.domain.DeActEbillResponse;
+import com.multibrand.domain.DppAmountVO;
 import com.multibrand.domain.DppDueDateAmountDO;
 import com.multibrand.domain.DppEligibleRequest;
 import com.multibrand.domain.DppEligibleResponse;
+import com.multibrand.domain.DppInstPlanDetailsDO;
+import com.multibrand.domain.DppSubmissionRequest;
+import com.multibrand.domain.DppSubmissionResponse;
 import com.multibrand.domain.GetArRequest;
 import com.multibrand.domain.PayByBankRequest;
 import com.multibrand.domain.PayExtEligibleRequest;
@@ -87,6 +91,7 @@ import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
 import com.multibrand.vo.request.AvgTempRequestVO;
 import com.multibrand.vo.request.DPPEligibilityCheckRequest;
+import com.multibrand.vo.request.DPPSubmitRequest;
 import com.multibrand.vo.request.PaymentExtensionRequest;
 import com.multibrand.vo.request.ProjectedBillRequestVO;
 import com.multibrand.vo.request.RetroPopupRequestVO;
@@ -120,6 +125,8 @@ import com.multibrand.vo.response.billingResponse.ContractDO;
 import com.multibrand.vo.response.billingResponse.ContractDOSort;
 import com.multibrand.vo.response.billingResponse.CrCardDetails;
 import com.multibrand.vo.response.billingResponse.DPPExtensionCheckResponse;
+import com.multibrand.vo.response.billingResponse.DPPSubmitResponse;
+import com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO;
 import com.multibrand.vo.response.billingResponse.DppValueVO;
 import com.multibrand.vo.response.billingResponse.EditCancelOTCCPaymentResponse;
 import com.multibrand.vo.response.billingResponse.GMEContractAccountDO;
@@ -3612,8 +3619,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				response.setResultDescription(MSG_SUCCESS);
 			} else {
 				response.setPaymentExtension(false);
-				response.setErrorCode(payExtEligibleResponse.getErrorCode());
-				response.setErrorDescription(payExtEligibleResponse.getErrorMessage());
 			}
 		} else if(payExtEligibleResponse != null) {
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
@@ -3656,19 +3661,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				if(checkDPPEligibility(dppEligibleResponse)){
 				response.setDppPlanEligible(true);
 				
-				DppDueDateAmountDO[] amtDueArray = dppEligibleResponse.getDppDueDateAmountDoList();
-				List<DppValueVO> dppDetailsList = new ArrayList<>();
-				
-				for(DppDueDateAmountDO amtDue: amtDueArray){
-					DppValueVO dppValueVO = new DppValueVO();
-					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue().trim());
-					dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
-								Constants.yyyyMMdd, amtDue.getDppDueDate()));
-					dppDetailsList.add(dppValueVO);
-				}
-				
 				//Commented and will enable once CCS completed the code chnages
-/*				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
+				DppInstPlanDetailsDO[] dppInstplanDetList = dppEligibleResponse.getDppInstplanDetList();
 				List<com.multibrand.vo.response.billingResponse.DppInstPlanDetailsDTO> dppInstPlanDetailsList = new ArrayList<>();
 				
 				if ( dppInstplanDetList != null && dppInstplanDetList.length > 0) {
@@ -3683,8 +3677,30 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						dppInstPlanDetailsList.add(dppInstPlanDetailsDTO);
 					}
 				}
-				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);*/
-				response.setDppAmountToBePaid(dppDetailsList.remove(0));
+				response.setDppInstPlanDetailsList(dppInstPlanDetailsList);
+				
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+			} else {
+				response.setDppPlanEligible(false);
+				
+			}
+				
+			DppDueDateAmountDO[] amtDueArray = dppEligibleResponse.getDppDueDateAmountDoList();
+			List<DppValueVO> dppDetailsList = new ArrayList<>();
+			
+			if(amtDueArray!=null){
+				
+				for(DppDueDateAmountDO amtDue: amtDueArray){
+					
+					DppValueVO dppValueVO = new DppValueVO();
+					
+					dppValueVO.setDppAmountDue(amtDue.getDppAmountDue().trim());
+					dppValueVO.setDppDueDate(DateUtil.getFormattedDate(Constants.RESPONSE_DATE_FORMAT,
+								Constants.yyyyMMdd, amtDue.getDppDueDate()));
+					dppDetailsList.add(dppValueVO);
+					
+				}
 				
 				Collections.sort(dppDetailsList, new Comparator<DppValueVO>() {
 					  @Override
@@ -3693,17 +3709,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					  }
 					});
 				
-				response.setDppValue(dppDetailsList);
+				response.setDppAmountToBePaid(dppDetailsList.remove(0));			
 				
-				response.setResultCode(RESULT_CODE_SUCCESS);
-				response.setResultDescription(MSG_SUCCESS);
-			} else {
-				response.setDppPlanEligible(false);
-				
+				response.setDppValue(dppDetailsList);				
 			}
-				response.setDppPlanPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
-				response.setDppPlanActive(BooleanUtils.toBoolean(dppEligibleResponse.getDpplanActive()));
-				response.setTotalDppAmount(dppEligibleResponse.getAmount() != null ?  dppEligibleResponse.getAmount().trim() : dppEligibleResponse.getAmount());
+						
+
+			
+			response.setDppPlanPending(BooleanUtils.toBoolean(dppEligibleResponse.getDppplanPending()));
+			response.setDppPlanActive(BooleanUtils.toBoolean(dppEligibleResponse.getDpplanActive()));
+			response.setTotalDppAmount(dppEligibleResponse.getAmount() != null ?  dppEligibleResponse.getAmount().trim() : dppEligibleResponse.getAmount());
 		} else if(dppEligibleResponse != null) {
 			response.setResultCode(RESULT_CODE_CCS_ERROR);
 			response.setResultDescription("Failed to get the Extension Date or not available");
@@ -3750,6 +3765,106 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				&& StringUtils.equalsIgnoreCase(YES, response.getDpplanEligible())
 			   && !StringUtils.equalsIgnoreCase(YES, response.getDpplanActive())
 			   && !StringUtils.equalsIgnoreCase(YES, response.getDppplanPending());
+	}	
+	
+	
+	public DPPSubmitResponse dppSubmit(DPPSubmitRequest submitRequest, String sessionId) {
+		DPPSubmitResponse response = new DPPSubmitResponse();
+		DppSubmissionRequest request = new DppSubmissionRequest();
+		
+		com.multibrand.domain.AddressDTO billAddressDTO = new com.multibrand.domain.AddressDTO();
+		try {
+
+			Map<String, Object> responseMap = new HashMap<String, Object>();
+			responseMap = profileService.getProfile(submitRequest.getContractAccountNumber(),
+					submitRequest.getCompanyCode(), sessionId);
+			ProfileResponse profileResponse = null;
+			if (responseMap != null && responseMap.size() != 0) {
+				profileResponse = (ProfileResponse) responseMap.get("profileResponse");
+				if (profileResponse != null && profileResponse.getContractAccountDO() != null
+						&& profileResponse.getContractAccountDO().getListOfContracts() != null) {
+
+
+						AddressDO addressDO = profileResponse.getContractAccountDO().getBillingAddressDO();
+								
+							if (addressDO != null) {
+								billAddressDTO.setStrStreetNum(addressDO.getStrStreetNum());
+								billAddressDTO.setStrStreetName(addressDO.getStrStreetName());
+								billAddressDTO.setStrCity(addressDO.getStrCity());
+								billAddressDTO.setStrUnitNumber(addressDO.getStrUnitNumber());
+								billAddressDTO.setStrState(addressDO.getStrState());
+								billAddressDTO.setStrZip(addressDO.getStrZip());
+
+							}
+				}
+			}
+
+		} catch (Exception e1) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in  Submit Exception :::" + e1);
+			return response;
+		}
+
+		request.setBillingAddress(billAddressDTO);
+		request.setBrandId(submitRequest.getBrandName());
+		request.setCompanyCode(submitRequest.getCompanyCode());
+		request.setContAccount(submitRequest.getContractAccountNumber());
+		request.setContract(submitRequest.getContractId());
+		request.setDppBypassElg(this.appConstMessageSource.getMessage(Constants.DPP_BYPASS_ELIGIBLE_FLAG, null, null));
+		request.setDppDefaultFlag(this.appConstMessageSource.getMessage(Constants.DPP_DEFAULT_FLAG, null, null));
+		request.setImAddrChk("");
+		request.setImEmail("");
+		request.setImEmailChk("");
+		request.setImFax("");
+		request.setImFaxChk("");
+		request.setImFaxto("");
+		request.setImNewaddr("");
+		request.setIvDefaultCorr("");
+		request.setIvDppInipay("");
+		request.setIvDwnpayDate("");
+		request.setIvStartDate("");
+		request.setNoOfInstall(this.appConstMessageSource.getMessage(Constants.DPP_NO_OF_INST, null, null));
+		
+		DPPEligibilityCheckRequest payRequest = new DPPEligibilityCheckRequest();
+		payRequest.setBrandName(submitRequest.getBrandName());
+		payRequest.setCompanyCode(submitRequest.getCompanyCode());
+		payRequest.setContractAccountNumber(submitRequest.getContractAccountNumber());
+		payRequest.setContractId(submitRequest.getContractId());
+		DPPExtensionCheckResponse dppEligibityResponse = getDPPPaymentExtensionCheck(payRequest,sessionId);
+		List<DppInstPlanDetailsDTO> dppInsPlanDetailsList= dppEligibityResponse.getDppInstPlanDetailsList();
+		DppAmountVO[] amountVOArray = new DppAmountVO[dppInsPlanDetailsList.size()];
+		int counter = 0;
+		for(DppInstPlanDetailsDTO planDetails : dppInsPlanDetailsList) {
+			DppAmountVO amountVO = new DppAmountVO();
+			amountVO.setAmount(planDetails.getAmount());
+			amountVO.setDueDate(planDetails.getDueDate());
+			amountVO.setDppDes(planDetails.getDppDes());
+			amountVO.setItemCount(planDetails.getItemCount());
+			amountVO.setOpbel(planDetails.getOpbel());
+			amountVOArray[counter] = amountVO;
+			counter++;
+		}
+		DppSubmissionResponse dppResponse = null;
+		request.setDPPAmountVOList(amountVOArray);
+		try {
+			dppResponse = paymentService.dppSubmit(request, sessionId);
+		} catch (RemoteException e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.error("Exception Occured in  Submit Exception :::" , e);
+			return response;
+		}
+		
+		if (dppResponse != null
+				&& StringUtils.isNotBlank(dppResponse.getErrorCode())
+				&&  !StringUtils.equalsIgnoreCase(dppResponse.getErrorCode(), "00")) {
+			response.setDppSubmit(false);
+			response.setErrorCode(RESULT_CODE_CCS_ERROR);
+			response.setErrorDescription("DPP Submission Failed");
+		}
+		
+		return response;
 	}	
 	
 }
