@@ -790,4 +790,36 @@ public class ContentHelper implements Constants {
 		return cmsErroredOfferCodes;
 	}
 
+	public Map<String, String> getSnippetContent(Map<String, String> snippetMap, String companyCode, String brandId, String languageCode ){
+		
+			brandId = CommonUtil.getBrandIdFromCompanycodeForTogglz(companyCode, brandId);
+			ContentDataRequest contentDataRequest  = new ContentDataRequest();			
+			contentDataRequest.setBrandId(brandId);
+			contentDataRequest.setEndPointUri(getEndPointURL(brandId));
+			contentDataRequest.setPublicationId(getPublicationId(brandId, languageCode));
+			contentDataRequest.setTemplateId(getTemplateId(brandId, true));
+			contentDataRequest.setTaxonomyId(getTaxonomyId(brandId));
+			contentDataRequest.setProdOfferSchemaId(getProductOfferSchemaId(brandId));
+			contentDataRequest.setProdBonusSchemaId(getProductBonusSchemaId(brandId));
+			
+			List<com.nrg.content.model.MessageKey> messageKeyList = new ArrayList<com.nrg.content.model.MessageKey>();
+			for(String snippetName: snippetMap.keySet()){
+				com.nrg.content.model.MessageKey msgKey = new com.nrg.content.model.MessageKey();
+				msgKey.setKeyName(snippetName);
+				msgKey.setKeyType(com.nrg.content.utils.MessageKeyTypeEnum.CONTENT_DATA);
+				msgKey.setSearchType(com.nrg.content.utils.SearchTypeEnum.KEYWORD_FILTER);
+				messageKeyList.add(msgKey);
+			}
+			
+			contentDataRequest.getMessageKeys().setMessageKeyList(messageKeyList);			
+			ContentDataResponse contentDataResponse = ContentDataService.getContentData(contentDataRequest);
+		
+			
+			for(String snippetName: snippetMap.keySet()){
+				String snippetValue = contentDataResponse.getMsgKeyRespMap().get(snippetName);
+				snippetValue = CommonUtil.extractHtmlCSSUsingRegexPattern(snippetValue);
+				snippetMap.put(snippetName, snippetValue);
+			}
+			return snippetMap;
+	}
 }

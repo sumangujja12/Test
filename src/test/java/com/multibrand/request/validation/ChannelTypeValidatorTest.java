@@ -7,6 +7,7 @@ import org.hibernate.validator.internal.util.annotationfactory.AnnotationFactory
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+@Test(singleThreaded = true)
 public class ChannelTypeValidatorTest {
 	
 	private ChannelTypeValidator validator;

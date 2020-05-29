@@ -5,9 +5,8 @@ package com.multibrand.dto.request;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
-import com.multibrand.request.validation.BasicConstraint;
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 
 /**
@@ -20,25 +19,25 @@ public class EsidCalendarRequest extends BaseAffiliateRequest {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@NotBlank	
+	@NotEmpty	
 	private String trackingId;
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 3, groups = SizeConstraint.class)
 	private String transactionType; //MVI or SWI
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 5, groups = SizeConstraint.class)
 	private String tdspCodeCCS;
 
-	@NotBlank
+	@NotEmpty
 	private String servStreetNum;
 
-	@NotBlank
+	@NotEmpty
 	private String servStreetName;
 	
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
-	@NotBlank
+	@NotEmpty
 	@Length(min = 5, max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 

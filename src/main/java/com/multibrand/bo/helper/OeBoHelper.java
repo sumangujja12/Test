@@ -2,11 +2,13 @@ package com.multibrand.bo.helper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +22,7 @@ import com.multibrand.domain.UpdateContactRequestAttNamValPairMapEntry;
 import com.multibrand.domain.UpdatePhoneDO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.response.EnrollmentResponse;
+import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.helper.AsyncHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.proxy.OEProxy;
@@ -550,23 +553,26 @@ public class OeBoHelper extends BaseBO {
 		String METHOD_NAME = "OEBOHelper: updateEnrollmentStatus(..)";
 		logger.debug("Start:" + METHOD_NAME);
 
-		// START. Code cleanup merging and tweaking. Added by Jenith on 06/24/2015
-		if (oeSignUpDTO.isBpMatchFlag()) {
-			// Update for service location
-			oeSignUpDTO.setErrorCode(BPSD);
-			oeSignUpDTO.setReqStatusCd(FLAG_N);
-			oeSignUpDTO.getErrorSet().add(BPSD);
-			return;
-		}
-		
-		
-		if (oeSignUpDTO.getEsid() == null
-				|| (StringUtils.isBlank(oeSignUpDTO.getEsid().getEsidNumber()))) {
-
-			// Update for service location
-			oeSignUpDTO.setErrorCode(NESID);
-			oeSignUpDTO.setReqStatusCd(FLAG_N);
-			oeSignUpDTO.getErrorSet().add(NESID);
+		if (StringUtils.isNotBlank(oeSignUpDTO.getErrorCdList())) {
+			String errorCdArray[] =oeSignUpDTO.getErrorCdList().split(ERROR_CD_LIST_SPLIT_PATTERN);	
+		   if (ArrayUtils.contains(errorCdArray, BPSD) || ArrayUtils.contains(errorCdArray, PBSD)) {
+			   oeSignUpDTO.setErrorCode(BPSD);
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			}
+		   
+		   if (ArrayUtils.contains(errorCdArray, NESID)) {
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			   oeSignUpDTO.setErrorCode(NESID);
+			}
+		   if (ArrayUtils.contains(errorCdArray, MESID)) {
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			   oeSignUpDTO.setErrorCode(MESID);
+			}
+		   
+		   if (ArrayUtils.contains(errorCdArray, CURRENT_CUSTOMER)) {
+			   oeSignUpDTO.setErrorCode(CURRENT_CUSTOMER);
+			   oeSignUpDTO.setReqStatusCd(FLAG_N);
+			}
 		}
 		
 		// Switch Hold ON and Move IN case
@@ -574,9 +580,8 @@ public class OeBoHelper extends BaseBO {
 				&& StringUtils.equalsIgnoreCase(oeSignUpDTO.getSwitchHoldStatus(), ON) ) {
 
 			// Update for service location
-			oeSignUpDTO.setErrorCode(SWHOLD);
+			oeSignUpDTO.setErrorCode(SWITCHHOLD);
 			oeSignUpDTO.setReqStatusCd(FLAG_N);
-			oeSignUpDTO.getErrorSet().add(SWHOLD);
 		}
 		
 		// END. Code cleanup merging and tweaking
@@ -587,7 +592,9 @@ public class OeBoHelper extends BaseBO {
 		String requestStatusCode = oeSignUpDTO.getReqStatusCd();
 
 		if (!oeSignUpDTO.isEnrolled()) {
-			errorCode = CCSERR;
+			if(!StringUtils.equalsIgnoreCase(errorCode, CURRENT_CUSTOMER) && (!StringUtils.equalsIgnoreCase(errorCode, BPSD))) {
+				errorCode = CCSERR;
+			}
 			requestStatusCode = FLAG_N;
 
 			// Before returning from here, explicitly setting the error code and
@@ -645,35 +652,17 @@ public class OeBoHelper extends BaseBO {
 		oeSignUpDTO.setErrorCode(errorCode);
 	}
 
-	/**
-	 * This method determines if the Submit Enrollment calls should be proceed.
-	 * 
-	 * Case 1. If bpMatchFlag value in API request is passed as BPSD.
-	 *
-	 * 
-	 * @author jyogapa1 (Jenith)
-	 */
-	protected Boolean allowSubmitEnrollment(OESignupDTO oeSignUpDTO,
-			EnrollmentResponse response, int retryCount, boolean posidHoldAllowed) {
+	protected Boolean allowEnrollmentSubmissionToCCS(OESignupDTO oeSignUpDTO) {
 		String METHOD_NAME = "OEBOHelper: allowSubmitEnrollment(..)";
 		logger.debug("Start:" + METHOD_NAME);
-
+		LinkedHashSet<String> errorCodeSet = CommonUtil.getSetFromPipeSeparatedString(oeSignUpDTO.getErrorCdList());
 		Boolean allowSubmit = true;
-
-		if (StringUtils.equals(oeSignUpDTO.getBpMatchText(), BPSD)) {
-			oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
-
-			allowSubmit = false;
-		}
-		
-		
-		if (!posidHoldAllowed && retryCount>=3) {
-			allowSubmit = false;
-		}
-
-		
+		//Do not submit enrollment to SAP if unresolved BPSD or PBSD and no matching partner id (neither sold to nor prospect)
+	   if ((errorCodeSet.contains(BPSD) || errorCodeSet.contains(PBSD)) && (null==oeSignUpDTO.getBpMatch() || StringUtils.isBlank(oeSignUpDTO.getBpMatch().getMatchedPartnerID()))) {
+		   oeSignUpDTO.setBpMatchFlag(BOOLEAN_TRUE);
+		   allowSubmit = false;
+	   }
 		logger.debug("End:" + METHOD_NAME);
-
 		return allowSubmit;
 	}
 	

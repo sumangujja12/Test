@@ -1,20 +1,16 @@
 package com.multibrand.helper;
 
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dto.request.BaseAffiliateRequest;
-import com.multibrand.dto.request.BaseRequest;
 import com.multibrand.dto.request.SalesBaseRequest;
-import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.UtilityService;
 import com.multibrand.util.CommonUtil;
@@ -22,6 +18,7 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.JAXBUtil;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.request.LoggingVO;
+import com.nrgenergy.utility.webservices.Client;
 import com.nrgenergy.utility.webservices.TransactionLogMessage;
 import com.nrgenergy.utility.webservices.TransactionLogRequest;
 
@@ -65,6 +62,17 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 			client.setUserLoginID(logvo.getUserId());
 		    client.setUserUniqueID(logvo.getUserUniqueId());
 	    txnLogRequest.setClient(client);}*/
+	    if(StringUtils.isNotBlank(logvo.getUserId()) 
+	    		&& (StringUtils.contains(logvo.getTransactionType(), OE_RESOURCE_API_BASE_PATH) || StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
+	    	Client client= new Client();
+	    	client.setUserLoginID(logvo.getUserId());
+	    	if(StringUtils.isNotBlank(logvo.getConfirmationNumber())) 	client.setConfirmationNumber(CommonUtil.generateConfirmationNumber());
+	    	if(StringUtils.isNotBlank(logvo.getUserUniqueId()))  
+	    		client.setUserUniqueID(logvo.getUserUniqueId());
+	    	else
+	    		client.setUserUniqueID(logvo.getUserId());
+		    txnLogRequest.setClient(client);
+	    }
 	    txnLogRequest.setResponseStatus(logvo.getResponseStatus());
 	    txnLogRequest.setTransactionProcessingTimeInMS(logvo.getResponseTime());
 	    txnLogRequest.setCompanyCode(logvo.getCompanyCode());
@@ -166,9 +174,10 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		//return true;
 	}
 
-	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, BaseAffiliateRequest request, Response response, long responseTime, String trackingId, String caNumber) {
+	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, BaseAffiliateRequest request, Response response, long responseTime, String trackingId, String caNumber,
+			String affiliateId)  {
 		LoggingVO logVO = new LoggingVO();	
-		logVO.setTransactionType(apiName);
+		logVO.setTransactionType(Constants.OE_RESOURCE_API_BASE_PATH+"/"+apiName);
 		logVO.setCompanyCode(request.getCompanyCode());
 		logVO.setRequestData(request);
 		logVO.setResponseData(response);
@@ -177,6 +186,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		logVO.setUserId(trackingId);
 		logVO.setConfirmationNumber(caNumber);
 		logVO.setResponseTime(responseTime);
+		logVO.setUserUniqueId(affiliateId);
 		if(isLoggingEnable()){
 			logger.debug("LOGGING SERVICE IS ENABLED:::");
 			try{
@@ -188,7 +198,8 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		}
 	}
 	
-	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, SalesBaseRequest request, Response response, long responseTime, String trackingId, String caNumber) {
+	public void logSalesAPITransaction(String apiName, boolean isLogMaskingRequired, SalesBaseRequest request, Response response, long responseTime, String trackingId, String caNumber,
+			String affiliateId, String guId) {
 		LoggingVO logVO = new LoggingVO();	
 		logVO.setTransactionType(Constants.SALES_API_BASE_PATH+"/"+apiName);
 		logVO.setCompanyCode(request.getCompanyCode());
@@ -199,6 +210,8 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		logVO.setUserId(trackingId);
 		logVO.setConfirmationNumber(caNumber);
 		logVO.setResponseTime(responseTime);
+		logVO.setUserUniqueId(affiliateId);
+		logVO.setSessionId(guId);
 		if(isLoggingEnable()){
 			logger.debug("LOGGING SERVICE IS ENABLED:::");
 			try{

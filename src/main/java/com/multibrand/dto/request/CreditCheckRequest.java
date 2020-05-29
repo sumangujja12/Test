@@ -5,12 +5,10 @@ package com.multibrand.dto.request;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-
-import com.multibrand.request.validation.BasicConstraint;
-import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.CurrentOrFutureDate;
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
-import com.multibrand.request.validation.ValidDateTime;
+
 
 /**
  * @author Mayank Mishra
@@ -22,14 +20,14 @@ public class CreditCheckRequest extends BaseAffiliateRequest {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@NotBlank	
+	@NotEmpty	
 	private String trackingId;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 40, groups = SizeConstraint.class)
 	private String firstName;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 40, groups = SizeConstraint.class)
 	private String lastName;
 
@@ -39,40 +37,40 @@ public class CreditCheckRequest extends BaseAffiliateRequest {
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String matchedBP;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 3, groups = SizeConstraint.class)
 	private String transactionType; //MVI or SWI
 
 	@Length(max = 32, groups = SizeConstraint.class)
 	private String esid;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 8, groups = SizeConstraint.class)
 	private String offerCode;
 
-	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class)
+	@CurrentOrFutureDate
 	private String mviDate;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 30, groups = SizeConstraint.class)
 	private String servCity;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(min = 2, max = 2, groups = SizeConstraint.class)
 	private String servState;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 

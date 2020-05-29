@@ -151,7 +151,8 @@ public class EnrollmentDataResponseRowMapper implements RowMapper<ServiceLocatio
 		dataRow.setProspectId(rs.getString("prospect_id"));
 		dataRow.setProspectPartnerId(rs.getString("prospect_partner_id"));														 
 		dataRow.setProspectPreapprovalFlag(rs.getString("prospect_preapproved_flag"));
-		
+		dataRow.setCallExecutedFromDB(rs.getString("call_executed"));
+		dataRow.setSystemNotes(rs.getString("system_notes"));
 		
 		PersonResponse personResponse = new PersonResponse();
 		personResponse.setPersonId(rs.getString("person_id"));

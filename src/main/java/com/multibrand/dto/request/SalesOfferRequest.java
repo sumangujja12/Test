@@ -4,9 +4,10 @@
 package com.multibrand.dto.request;
 
 import javax.ws.rs.QueryParam;
+
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import com.multibrand.request.validation.BasicConstraint;
+
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 
 public class SalesOfferRequest extends SalesBaseRequest {
@@ -21,7 +22,6 @@ public class SalesOfferRequest extends SalesBaseRequest {
 	
 	/** The promo code. */
 	@QueryParam(value = "promoCode")
-	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String promoCode;
 

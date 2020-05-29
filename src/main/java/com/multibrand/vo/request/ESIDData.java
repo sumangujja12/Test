@@ -18,6 +18,7 @@ public class ESIDData implements Serializable{
 	private String esidClass;
 	private String esidDeposit;
 	private String esidTDSP;
+	private String tdspCodeCCS;
 	
 	public String getEsidNumber() {
 		return esidNumber;
@@ -76,6 +77,16 @@ public class ESIDData implements Serializable{
 
 	public void setEsidTDSP(String esidTDSP) {
 		this.esidTDSP = esidTDSP;
+	}
+
+
+	public String getTdspCodeCCS() {
+		return tdspCodeCCS;
+	}
+
+
+	public void setTdspCodeCCS(String tdspCodeCCS) {
+		this.tdspCodeCCS = tdspCodeCCS;
 	}
 
 
