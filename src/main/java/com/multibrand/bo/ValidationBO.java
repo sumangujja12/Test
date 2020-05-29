@@ -155,9 +155,10 @@ public class ValidationBO extends BaseBO {
 	 *  business partner detail available for the prospect and merges the response from both calls.</p>
 	 * @param performPosIdBpRequest
 	 * @return {@link com.multibrand.vo.response.PerformPosIdandBpMatchResponse PerformPosIdandBpMatchResponse}
+	 * @throws OEException 
 	 */
 	public com.multibrand.vo.response.PerformPosIdandBpMatchResponse validatePosId(
-			PerformPosIdAndBpMatchRequest performPosIdBpRequest,OESignupDTO oESignupDTO, ServiceLocationResponse serviceLoationResponse)
+			PerformPosIdAndBpMatchRequest performPosIdBpRequest,OESignupDTO oESignupDTO, ServiceLocationResponse serviceLoationResponse) throws OEException
 	{
 		logger.debug(" START *******ValidationBO:: validatePosID API**********");
 		logger.debug("inside validatePosId:: tracking id from Form Parameters is :: "+performPosIdBpRequest.getTrackingId());
@@ -1219,7 +1220,7 @@ public class ValidationBO extends BaseBO {
 			String posidPii,
 			String posIdDate,
 			String posidStatus,
-			String recentCallMade){
+			String recentCallMade) throws OEException{
 		try{//making addperson call if its 1st try
 			logger.debug("inside com.multibrand.bo:: validatePosId ::making add person call and retrycount is 0");
 			AddPersonRequest addPersonRequest= new AddPersonRequest();
@@ -1250,9 +1251,10 @@ public class ValidationBO extends BaseBO {
 				}
 				else
 				{
-					logger.debug("inside com.multibrand.bo:: validatePosId :: addServiceLocation call failed");
-					response.setStatusCode(STATUS_CODE_STOP);
-					response.setResultDescription("addServiceLocation call failed");
+					logger.error("inside com.multibrand.bo:: validatePosId :: addServiceLocation call failed");
+					//response.setStatusCode(STATUS_CODE_STOP);
+					//response.setResultDescription("addServiceLocation call failed");
+					throw new OEException();
 				}
 				logger.debug("inside validatePosId:: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
 						+ "tracking id after servicelocation call is :: "+performPosIdBpRequest.getTrackingId());
@@ -1262,16 +1264,16 @@ public class ValidationBO extends BaseBO {
 				logger.debug("inside validatePosId::Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" ::"
 						+ " affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: addperson call failed ");
 				// error in person call so redirect with errr message
-				response.setStatusCode(STATUS_CODE_STOP);
-				response.setResultDescription("addPerson call failed");	
+				throw new OEException();
 			}
 		}
 		catch(Exception e)
 		{// when addperson or addservicelocation get error}
-			response.setStatusCode(STATUS_CODE_STOP);
-			response.setResultDescription("Java exception making Database call for addPerson and addServiceLocation with exception ::"+e.getMessage());
+			//response.setStatusCode(STATUS_CODE_STOP);
+		//	response.setResultDescription("Java exception making Database call for addPerson and addServiceLocation with exception ::"+e.getMessage());
 			logger.error("Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: affiliate Id : "
 					+ ""+performPosIdBpRequest.getAffiliateId() +"::Exception while making addperson and addserviceLocation call :: ", e);
+			throw new OEException();
 		}
 	}
 	
