@@ -138,7 +138,10 @@ public class SalesAPIResource extends BaseResource {
 			request.setCallExecuted(API_AVAILABLE_DATES);
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
 			SalesBaseResponse salesBaseResponse = salesBO.getSalesESIDAndCalendarDates(request,httpRequest);
-			response=Response.status(Response.Status.OK).entity(salesBaseResponse).build();
+			
+			Response.Status status = salesBaseResponse.getHttpStatus() != null ? salesBaseResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status)
+					.entity(salesBaseResponse).build();
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
