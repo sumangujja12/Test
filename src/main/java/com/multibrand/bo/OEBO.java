@@ -130,6 +130,7 @@ import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
@@ -5644,8 +5645,15 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						
 						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
 								.validatePosId(request,oESignupDTO, serviceLoationResponse);
-						response = Response.status(200).entity(validPosIdResponse)
+						if(StringUtils.isEmpty(validPosIdResponse.getTrackingId())){
+							validPosIdResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+							validPosIdResponse.setErrorCode(HTTP_INTERNAL_SERVER_ERROR);
+							validPosIdResponse.setErrorDescription("Database save operation failed!");					
+							response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(validPosIdResponse).build();
+						} else {
+							response = Response.status(Response.Status.OK).entity(validPosIdResponse)
 								.build();
+						}
 						response.getMetadata().add(CONST_TRACKING_ID, validPosIdResponse.getTrackingId());
 						response.getMetadata().add(CONST_GUID, validPosIdResponse.getGuid());
 						logger.info("inside performPosidAndBpMatch:: affiliate Id : "

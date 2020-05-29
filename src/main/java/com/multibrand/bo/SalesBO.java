@@ -101,6 +101,16 @@ public class SalesBO extends OeBoHelper implements Constants {
 				response = Response.status(response.getStatus()).entity(identityResponse).build();
 				response.getMetadata().add(CONST_TRACKING_ID, identityResponse.getTrackingId());
 				response.getMetadata().add(CONST_GUID, identityResponse.getGuid());
+				
+				if(StringUtils.isEmpty(identityResponse.getTrackingId())){
+					IdentityResponse bpMatchResponse = new IdentityResponse();
+					bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+					bpMatchResponse.setErrorCode(HTTP_INTERNAL_SERVER_ERROR);
+					bpMatchResponse.setErrorDescription("Database save operation failed!");					
+					response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(bpMatchResponse).build();
+					return response;
+				} 
+				
 			}
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch", e);
