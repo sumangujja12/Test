@@ -891,6 +891,13 @@ public interface Constants {
 	
 	//nnp
 	public static final String NNP_SUBJECT = "";
+	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my contract related notices by email only (Paperless)";
+	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electrónico (sin papel)";
+	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_EN ="Receive my contract related notices by mail only";
+	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_ES ="Recibir mis avisos relacionados con el contrato solo por correo";
+	
+	
+	
 	/* START EMAIL CHANGES */
 	public static final String EBILL_SUBJECT = "";
 	public static final String EBILL_EXTERNAL_ID_EN = "EBILL.CONFR.CBOC.EN_US";
