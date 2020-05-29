@@ -182,8 +182,8 @@ RetroAmbPercentageValue=10
 contractAccountNumberRetro=000000000000
 
 #//START : GMD APIS
-CCS_GMD_STMT = http://sapcmp01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/z_e_isu_get_gmd_stmt/z_e_isu_get_gmd_stmt
-CCS_PRICE_STMT = http://sapcmp01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/900/z_e_isu_get_gmd_price/z_e_isu_get_gmd_price
+CCS_GMD_STMT = http://sapprrci:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/z_e_isu_get_gmd_stmt/z_e_isu_get_gmd_stmt
+CCS_PRICE_STMT = http://sapprrci:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/900/z_e_isu_get_gmd_price/z_e_isu_get_gmd_price
 gmd_price_current_date =04/14/2020	
 
 #Content Service 
