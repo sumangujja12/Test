@@ -5551,7 +5551,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 }
 	
 	public Response performPosidAndBpMatch(
-			@Valid PerformPosIdAndBpMatchRequest request) {		
+			@Valid PerformPosIdAndBpMatchRequest request) throws OEException {		
 		Response response = null;
 		OEBO oeBo = null;
 		TokenizedResponse tokenResponse = null;
