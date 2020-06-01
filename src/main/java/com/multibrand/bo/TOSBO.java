@@ -109,6 +109,7 @@ public class TOSBO extends BaseAbstractService implements Constants {
 		CheckPendingMVOResponse checkPendingMVOResponse = new CheckPendingMVOResponse();
 		
 		try {
+			
 			com.multibrand.domain.CheckPendingMVOResponse response = tosService.checkingPendingMVO(request, companyCode, sessionId);
 			
 			if(response!= null && StringUtils.isNotEmpty(response.getErrCode())){
@@ -118,6 +119,10 @@ public class TOSBO extends BaseAbstractService implements Constants {
 			
 			JavaBeanUtil.copy(response, checkPendingMVOResponse);
 			
+			checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			checkPendingMVOResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			
+			throw new OAMException(200, "Timeout", checkPendingMVOResponse);		
 			
 		} catch (RemoteException e) {
 			logger.error(e);
@@ -132,8 +137,8 @@ public class TOSBO extends BaseAbstractService implements Constants {
 		}
 		
 	
-		logger.info("TOSBO.checkPendingMVO :::::::: END");
-		return checkPendingMVOResponse;
+		//logger.info("TOSBO.checkPendingMVO :::::::: END");
+		//return checkPendingMVOResponse;
 		
 	}
 	
