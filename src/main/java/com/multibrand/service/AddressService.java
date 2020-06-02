@@ -418,7 +418,7 @@ public class AddressService extends BaseAbstractService
 		return tdspCode;
 	}	
 	
-	private boolean esidStatusValidation(String premiseType, String status ) {
+	public boolean esidStatusValidation(String premiseType, String status ) {
 		
 		if(StringUtils.equalsIgnoreCase(premiseType, RESIDENTIAL) && (null == status || ACTIVE.equalsIgnoreCase(status) || ESID_STATUS_DE_ENERGIZED.equalsIgnoreCase(status))){
 				
