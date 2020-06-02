@@ -1355,6 +1355,7 @@ public interface Constants {
     public static final String API_RECHECK_CREDIT= "recheck-credit";
     public static final String API_CLEANUP_ADDRESS="cleanup-address";
     public static final String API_GET_HOLD="holds";
+    public static final String API_ESID_RESIDENTIAL = "esid/residential";
     
     
     //Submit new KBA Answers API
