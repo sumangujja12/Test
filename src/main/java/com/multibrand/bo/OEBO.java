@@ -160,6 +160,7 @@ import com.multibrand.util.TogglzUtil;
 import com.multibrand.util.Token;
 import com.multibrand.vo.request.CharityDetailsVO;
 import com.multibrand.vo.request.ESIDDO;
+import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.request.EnrollmentReportDataRequest;
 import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.request.OESignupVO;
@@ -6779,6 +6780,40 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return offerCodes;
 	}
 
+	public EsidResponse getESIDResidentialDetails(EsidRequest request) throws Exception{
+		EsidResponse esidResponse= getESIDDetails(request);
+		
+		if(esidResponse != null && esidResponse.getEsidList() != null){
+			
+			
+			Iterator<ESIDData> itr =  esidResponse.getEsidList().iterator();
+			
+			while (itr.hasNext()) { 
+				ESIDData esidData = itr.next(); 
+				if (! addressService.esidStatusValidation(esidData.getPremiseType(), esidData.getEsidStatus())) { 
+					if(!StringUtils.equalsIgnoreCase(esidData.getPremiseType(), RESIDENTIAL)&& esidResponse.getEsidList().size() == 1) {
+						esidData.setEsidNumber(NRESID);
+					} else{
+						itr.remove(); 
+					}
+				} else {
+					EsidProfileResponse esidProfileResponse = this.addressService.getESIDProfile(esidData.getEsidNumber(),request.getCompanyCode());
+					esidData.setEsidStatusBrand(esidProfileResponse.getEsidStatus());
+					esidData.setMeterType(esidProfileResponse.getMeterType());
+					esidData.setRecentDisconnectFlag(esidProfileResponse.getRecentDisconnectFlag());
+					esidData.setBlockStatus(esidProfileResponse.getBlockStatus());
+					esidData.setSwitchHoldStatus(esidProfileResponse.getSwitchHoldStatus());
+				}
+			}
+			
+			logger.info("esidResponse  "+ReflectionToStringBuilder.toString(esidResponse,
+					ToStringStyle.MULTI_LINE_STYLE));
+		}
+		
+		
+		return esidResponse;
+
+		}
 }
 	
 	

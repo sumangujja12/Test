@@ -323,6 +323,25 @@ public class SalesAPIResource extends BaseResource {
 	}
 	
 	@POST
+	@Path(API_ESID_RESIDENTIAL)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+    @Produces({ MediaType.APPLICATION_JSON })
+	public Response getESIDResidentialDetails(EsidRequest request){
+		Response response = null;
+		long startTime = CommonUtil.getStartTime();
+		try{
+			EsidResponse getEsiidResponse = oeBO.getESIDResidentialDetails(request);
+			response = Response.status(Response.Status.OK).entity(getEsiidResponse).build();
+		}catch (Exception e) {
+	   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+	   			logger.error(e.fillInStackTrace());
+	   	}finally{
+	   			utilityloggerHelper.logSalesAPITransaction(API_ESID, false, request, response, CommonUtil.getElapsedTime(startTime), EMPTY, EMPTY,request.getAffiliateId(), EMPTY);
+	   	}
+		return response;	
+	}
+	
+	@POST
     @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
