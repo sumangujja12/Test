@@ -20,6 +20,12 @@ public class ESIDData implements Serializable{
 	private String esidTDSP;
 	private String tdspCodeCCS;
 	
+	private String meterType;
+	private String recentDisconnectFlag;
+	private String switchHoldStatus;
+	private String blockStatus;
+	private String esidStatusBrand;
+	
 	public String getEsidNumber() {
 		return esidNumber;
 	}
@@ -87,6 +93,58 @@ public class ESIDData implements Serializable{
 
 	public void setTdspCodeCCS(String tdspCodeCCS) {
 		this.tdspCodeCCS = tdspCodeCCS;
+	}
+
+
+	public String getMeterType() {
+		return meterType;
+	}
+
+
+	public void setMeterType(String meterType) {
+		this.meterType = meterType;
+	}
+
+
+	public String getRecentDisconnectFlag() {
+		return recentDisconnectFlag;
+	}
+
+
+	public void setRecentDisconnectFlag(String recentDisconnectFlag) {
+		this.recentDisconnectFlag = recentDisconnectFlag;
+	}
+
+
+	public String getSwitchHoldStatus() {
+		return switchHoldStatus;
+	}
+
+
+	public void setSwitchHoldStatus(String switchHoldStatus) {
+		this.switchHoldStatus = switchHoldStatus;
+	}
+
+
+	public String getBlockStatus() {
+		return blockStatus;
+	}
+
+
+	public void setBlockStatus(String blockStatus) {
+		this.blockStatus = blockStatus;
+	}
+	
+	
+
+
+	public String getEsidStatusBrand() {
+		return esidStatusBrand;
+	}
+
+
+	public void setEsidStatusBrand(String esidStatusBrand) {
+		this.esidStatusBrand = esidStatusBrand;
 	}
 
 
