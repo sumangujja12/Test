@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -35,6 +36,10 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 		AddressDAOIF, Constants {
 
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	
+	@Autowired
+	@Qualifier("appConstMessageSource")
+	protected ReloadableResourceBundleMessageSource appConstMessageSource;
 
 	@Autowired(required = true)
 	public AddressDAOImpl(
@@ -208,6 +213,14 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 		storedProc = storedProcedure.createStoredProcedure(getJdbcTemplate(),sqlQuery, inParams, inParamsTypeMap, outParamsTypeMap, OUTPUT);
 		storedProcResult = storedProc.execute();
 		esiidResponse.setEsidList((List<ESIDData>)storedProcResult.get(OUT_CURR_GET_ESI));
+		for(ESIDData esidData : esiidResponse.getEsidList()){
+			String tdspCodeCCS = this.appConstMessageSource
+					.getMessage(
+							esidData.getEsidTDSP(), null,
+							null);
+			esidData.setTdspCodeCCS(tdspCodeCCS);
+		}
+		
 		return esiidResponse;
 	}
 }

@@ -264,8 +264,13 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 	@ProcedureInParameter(name = "in_bpmatch_scenario_id", parameterIndex = 86)
 	private String bpMatchScenarioId;
 	
-	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 87)
+	@ProcedureInParameter(name = "in_call_executed", parameterIndex = 87)
+	private String callExecuted;
+	
+	@ProcedureOutParameter(name = "out_error_code", parameterIndex = 88)
 	private String outErrorCode;
+	
+	
 
 	///END : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
 		
@@ -1507,6 +1512,20 @@ public class AddServiceLocationRequest implements FormEntityRequest,
 
 	public void setBpMatchScenarioId(String bpMatchScenarioId) {
 		this.bpMatchScenarioId = bpMatchScenarioId;
+	}
+
+	/**
+	 * @return the callExecuted
+	 */
+	public String getCallExecuted() {
+		return callExecuted;
+	}
+
+	/**
+	 * @param callExecuted the callExecuted to set
+	 */
+	public void setCallExecuted(String callExecuted) {
+		this.callExecuted = callExecuted;
 	}
 	
 	

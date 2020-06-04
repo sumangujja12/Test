@@ -4,60 +4,59 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
-import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 
 
 public class GetKBAQuestionsRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1L;
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 40, groups = SizeConstraint.class)
 	String lastName;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 40, groups = SizeConstraint.class)
 	String firstName;
 	
 	@Length(max = 1,groups = SizeConstraint.class)
 	String middleName;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	String dob;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 100, groups = SizeConstraint.class)
 	@Email(groups = FormatConstraint.class)
 	String email;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	@Pattern(regexp = "\\d{10}", groups = FormatConstraint.class, message="is invalid")
 	String phoneNum;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 30, groups = SizeConstraint.class)
 	String servCity;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(min = 2, max = 2, groups = SizeConstraint.class)
 	String servState;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	String servZipCode;
 	

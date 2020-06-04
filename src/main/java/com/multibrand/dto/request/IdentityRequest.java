@@ -4,10 +4,9 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
-import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidAge;
 import com.multibrand.request.validation.ValidDateTime;
@@ -16,18 +15,19 @@ public class IdentityRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1068351198219357955L;
 
-	@NotBlank(groups = BasicConstraint.class)
+	
+	@NotEmpty
 	@Length(max = 40, groups = SizeConstraint.class)
 	String lastName;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 40, groups = SizeConstraint.class)
 	String firstName;
 	
 	@Length(max = 1,groups = SizeConstraint.class)
 	String middleName;
-	
-	@NotBlank(groups = BasicConstraint.class)
+
+	@NotEmpty
 	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "must be in MMddyyyy format",messageCode="INVALID_DOB",messageCodeText="INVALID_DOB")
 	@ValidAge
 	String dob;
@@ -37,12 +37,12 @@ public class IdentityRequest extends SalesBaseRequest {
 	
 	String trackingId;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 100, groups = SizeConstraint.class)
 	@Email(groups = FormatConstraint.class)
 	String email;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	@Pattern(regexp = "\\d{10}", groups = FormatConstraint.class, message="is invalid")
 	String phoneNum;
@@ -52,26 +52,26 @@ public class IdentityRequest extends SalesBaseRequest {
 	
 	String transactionType;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 30, groups = SizeConstraint.class)
 	String servCity;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(min = 2, max = 2, groups = SizeConstraint.class)
 	String servState;
 	
-	@NotBlank(groups = BasicConstraint.class)
+	@NotEmpty
 	@Length(max = 10, groups = SizeConstraint.class)
 	String servZipCode;
 	
@@ -110,7 +110,6 @@ public class IdentityRequest extends SalesBaseRequest {
 
 	String prospectId;
 	String tabletId;
-	String abandonedEnrollStatFlag;
 	String etfFlag;
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
@@ -128,7 +127,8 @@ public class IdentityRequest extends SalesBaseRequest {
 	
 	String guid;
 	String noid;
-	String etf;
+
+
 	public String getLastName() {
 		return lastName;
 	}
@@ -316,12 +316,7 @@ public class IdentityRequest extends SalesBaseRequest {
 	public void setTabletId(String tabletId) {
 		this.tabletId = tabletId;
 	}
-	public String getAbandonedEnrollStatFlag() {
-		return abandonedEnrollStatFlag;
-	}
-	public void setAbandonedEnrollStatFlag(String abandonedEnrollStatFlag) {
-		this.abandonedEnrollStatFlag = abandonedEnrollStatFlag;
-	}
+
 	public String getEtfFlag() {
 		return etfFlag;
 	}
@@ -364,10 +359,5 @@ public class IdentityRequest extends SalesBaseRequest {
 	public void setNoid(String noid) {
 		this.noid = noid;
 	}
-	public String getEtf() {
-		return etf;
-	}
-	public void setEtf(String etf) {
-		this.etf = etf;
-	}	
+	
 }

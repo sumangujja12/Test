@@ -166,7 +166,17 @@ public class ServiceLocationResponse implements Serializable {
     private String prospectId;
     private String prospectPreapprovalFlag;
     private String prospectPartnerId;
-			
+    private String callExecutedFromDB;	
+    private String systemNotes;	
+    
+    
+	public String getSystemNotes() {
+		return systemNotes;
+	}
+
+	public void setSystemNotes(String systemNotes) {
+		this.systemNotes = systemNotes;
+	}
 			
 			public String getAgentID() {
 				return agentID;
@@ -649,6 +659,9 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the billStreetNum
 	 */
 	public String getBillStreetNum() {
+		if(StringUtils.isEmpty(billStreetNum)) {
+			billStreetNum = CommonUtil.stripStreetNum(billAddressLine1);
+		}
 		return billStreetNum;
 	}
 
@@ -664,6 +677,9 @@ public class ServiceLocationResponse implements Serializable {
 	 * @return the billStreetName
 	 */
 	public String getBillStreetName() {
+		if(StringUtils.isEmpty(billStreetName)) {
+			billStreetName = CommonUtil.stripStreetName(billAddressLine1);
+		}
 		return billStreetName;
 	}
 
@@ -2332,6 +2348,15 @@ public class ServiceLocationResponse implements Serializable {
 
 	public void setProspectPartnerId(String prospectPartnerId) {
 		this.prospectPartnerId = prospectPartnerId;
+	}
+
+
+	public String getCallExecutedFromDB() {
+		return callExecutedFromDB;
+	}
+
+	public void setCallExecutedFromDB(String callExecutedFromDB) {
+		this.callExecutedFromDB = callExecutedFromDB;
 	}
 
 	@Override

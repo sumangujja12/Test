@@ -26,6 +26,8 @@ import org.testng.annotations.Test;
 
 import com.multibrand.util.Constants;
 import com.multibrand.util.LoggerUtil;
+
+@Test(singleThreaded = true)
 public class ValidationBOTest {
 	
 	@Mock

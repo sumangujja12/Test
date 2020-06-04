@@ -279,7 +279,6 @@ public interface Constants {
 	public static final String COMPLETE_MATCH = "COMPLETE_MATCH";
 	public static final String NESID = "NESID";
 	public static final String MESID = "MESID";
-	public static final String SWHOLD = "SWHOLD";
 	public static final String NRESID = "NRESID";
 	public static final String NOZ	= "NOZ";
 	public static final String DELIMETER_COMMA = ",";
@@ -730,6 +729,8 @@ public interface Constants {
 	public static final String TOKEN_SERVER_DOWN_MSG_TXT="msg_token_server_down";
 	public static final String POSID_FAIL="POSID_FAIL";
 	public static final String PAST_BALANCE="PAST_BALANCE";
+	public static final String POSID_PASTDUE="POSID_PASTDUE";
+	public static final String POSID_PASTSERVICE="POSID_PASTSERVICE";
 	public static final String CURRENT_CUSTOMER="CURRENT_CUSTOMER";
 	public static final String TOKEN_SERVER_DOWN="TOKEN_SERVER_DOWN";
 	public static final String PAST_SERVICE_HISTORY="PAST_SERVICE_HISTORY";
@@ -763,6 +764,7 @@ public interface Constants {
 	public static final String CCSERR = "CCSERR";
 	
 	public static String BILLING_ADDRESS_ERROR_MESSAGE = "Billing address can either have Street address or PO Box, not both";
+	public static String BILLING_ADDRESS_EMPTY_ERROR_MESSAGE = "Billing address should have atleast Street address or PO Box, not blank";
 	
 	public static final String DELIMITER_SEMI_COLON = ";";
 	
@@ -886,6 +888,14 @@ public interface Constants {
 	
 	public String MSG_EXCP_ERROR_CODE    = "MSG_EXCEPTION_ERROR_CODE";
 	public String MSG_USR_NOT_FOUND="User Not Found";
+	
+	//nnp
+	public static final String NNP_SUBJECT = "";
+	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my contract related notices by email only (Paperless)";
+	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electrónico (sin papel)";
+	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_EN ="Receive my contract related notices by mail only";
+	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_ES ="Recibir mis avisos relacionados con el contrato solo por correo";
+	
 	
 	
 	/* START EMAIL CHANGES */
@@ -1325,6 +1335,7 @@ public interface Constants {
     public static final String TOGGLZ_FEATURE_NEW_POSID_CALL="salesapi.newposid.flag";
 	public static final String TOGGLZ_FEATURE_CMS_OFFER_DATA="salesapi.cmsofferdata.flag";
 	public static final String TOGGLZ_FEATURE_DEFAULT_REACTIVE_OFFER="salesapi.dros.flag";
+	public static final String TOGGLZ_FEATURE_HOLD_CMS_DATA="salesapi.hold.content";
  
     //***************** SALES APIs *************************
     //Legacy Sales APIs - Currently being used by Affiliates - To be deprecated
@@ -1337,17 +1348,23 @@ public interface Constants {
     
     //New Sales APIs - To be used by all channels and brands
     public static final String SALES_API_BASE_PATH = "sales";
+    public static final String OE_RESOURCE_API_BASE_PATH = "oeResource";
     public static final String API_OFFERS = "offers";
     public static final String API_IDENTITY= "identity";
     public static final String API_AVAILABLE_DATES= "available-dates";
     public static final String API_CHECK_CREDIT= "check-credit";
     public static final String API_CREDIT_DATA= "credit-data";
-    public static final String API_SUBMIT_ENROLLMENT= "enrollment";
+    public static final String API_SUBMIT_ENROLLMENT= "enroll";
     public static final String API_GET_KBA_QUESTIONS = "kba-questions";
     public static final String API_KBA_RESULT = "kba-result";
     public static final String API_TOKEN = "token";
     public static final String API_PROSPECT = "prospect";
     public static final String API_ESID = "esid";
+    public static final String API_RECHECK_CREDIT= "recheck-credit";
+    public static final String API_CLEANUP_ADDRESS="cleanup-address";
+    public static final String API_GET_HOLD="holds";
+    public static final String API_ESID_RESIDENTIAL = "esid/residential";
+    
     
     //Submit new KBA Answers API
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
@@ -1396,6 +1413,8 @@ public interface Constants {
 	
 	public static final String TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION="salesapi.allow.posidhold.submission";
 	public static final String POSID_HOLD_MSG_TXT="msg_posid_hold";
+	public static final String POSID_PASTDUE_MSG_TXT="msg_posid_pastdue";
+	public static final String POSID_PASTSERVICE_MSG_TXT="msg_posid_past_history";
 	public static final String MESSAGE_CODE_NO_MATCH_FOUND = "NO_MATCH_FOUND";
 	
 	public static final String PROSPECT_PREAPPROVAL_FLAG_PASS= "P";
@@ -1409,6 +1428,43 @@ public interface Constants {
 	public static final String DPP_DEFAULT_FLAG = "dpp.default.flag";
 	public static final String DPP_NO_OF_INST = "dpp.no.of.installments";
 	
+
+	public static final String TRANSACTIONTYPE_S = "S";
+
+	public static final String RESIDENTIAL = "RESIDENTIAL";
+	public static final String ACTIVE = "ACTIVE";
+
+	public static final String POSID  = "POSID";
+	
+	public static final String ERROR_CD_LIST_SPLIT_PATTERN = "\\|";
+	public static final String ERROR_CD_ENROLLMENT_NOT_ALLOWED = "ENROLLMENT_NOT_ALLOWED";
+	
+	public static final String KBA_SET_POSIDHOLD  = "KBA sets POSID hold";
+    public static final String KBA_LIFT_POSIDHOLD  = "KBA lifts POSID hold";
+    
+    public static final String DEPOSITHOLD  = "DEPOSITHOLD";
+    
+	public static final String CONST_TRACKING_ID= "trackingId";
+	
+	public static final String MESSAGE_CODE_ENROLLMENT_ALREADY_REQUESTED = "ENROLLMENT_ALREADY_REQUESTED";
+	
+	public static final String CCS_STATUS_CODE_NO_HOLDS="01";
+	
+	public static final String MESSAGE_CODE_NO_HOLD="NO_HOLD_ON_ACCOUNT";
+	public static final String MESSAGE_TEXT_NO_HOLD="No Hold for this Account";
+	
+	public static final String MESSAGE_CODE_CCS_HOLD_FAILURE="HOLD_LOOKUP_ERROR";
+	public static final String MESSAGE_CODE_TEXT_HOLD_FAILURE="Failure to obtain hold information";
+	
+	public static final String HTTP_INTERNAL_SERVER_ERROR  = "INTERNAL_SERVER_ERROR";
+	 
+	 public static final String ENROLLMENT_NOT_ALLOWED = "ENROLLMENT_NOT_ALLOWED";
+	 public static final String ENROLLMENT_NOT_ALLOWED_TEXT = "Enrollment cannot be accepted since the Credit check API failed and customer's credit requirements could not be assessed";
+	 
+	 public static final String PROSPECT_BP_USED = "PROSPECT_BP_USED";
+	 public static final String SOLD_TO_BP_USED = "SOLD_TO_BP_USED";
+	
+
 	 public static final String DUE_AMOUNT = "dueAmount";
 	 public static final String EXTENSION_DATE = "extensionDate";
 	 
@@ -1482,4 +1538,22 @@ public interface Constants {
 	public static final String XOOM_EBILL_NAME_ON_ACCOUNT = "CA_NAME";
 	public static final String XOOM_EBILL_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
 	public static final String XOOM_EBILL_DELIVERY_LOCATION = "DELIVERY_LOCATION";
+	
+	
+	
+	public static final String XOOM_NNP_EXTERNAL_ID_EN = "XOOM.NNP.UPDATE.CONFIRMATION.EN_US";
+	public static final String XOOM_NNP_EXTERNAL_ID_ES = "XOOM.NNP.UPDATE.CONFIRMATION.ES_US";
+	public static final String XOOM_NNP_TEMPLATE_ID = "HTML";
+	
+	public static final String XOOM_NNP_CA = "CA_NUMBER";
+	public static final String XOOM_NNP_CHECK_DIGIT = "CHECK_DIGIT";
+	public static final String XOOM_NNP_NAME_ON_ACCOUNT = "CA_NAME";
+	public static final String XOOM_NNP_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
+	public static final String XOOM_NNP_DELIVERY_LOCATION = "DELIVERY_LOCATION";
+
+	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
+	
+	public static final String CONST_GUID= "guId";
+	
+	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
 }

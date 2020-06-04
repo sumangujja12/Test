@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dto.request.CCSEmailRequest;
+import com.multibrand.dto.request.CCSNNPEmailRequest;
 import com.multibrand.dto.request.EmailRequest;
 import com.multibrand.dto.response.EmailResponse;
 import com.multibrand.service.EmailService;
@@ -51,6 +52,27 @@ public class EmailResource {
 		return response;
 	} 
 	
+	
+	
+	@POST
+	@Path("send/nnpPreference")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response sendNNPEmail(CCSNNPEmailRequest request) {
+		EmailResponse emailResult = new EmailResponse();
+		try{
+			request.validateRequest();
+			EmailRequest emailRequest = new EmailRequest();
+			emailRequest.populateRequestForNNPBasedOnBrand(request);
+			emailResult = emailService.sendEmail(emailRequest);
+		}catch(Exception ex){
+			logger.error("ERROR OCCURED WHILE SENDING CCS BILL PREFERENCE EMAIL:::", ex);
+			emailResult.setResultdescription(NRGRestUtil.getMessageFromException(ex));
+			emailResult.setResultcode("3");
+		}
+		Response response = Response.status(Response.Status.OK).entity(emailResult).build();
+		return response;
+	} 
 	
 	@POST
 	@Path("send")

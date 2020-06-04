@@ -1,6 +1,5 @@
 package com.multibrand.dto.response;
 
-import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -76,6 +75,23 @@ public class SalesBaseResponse implements Constants  {
 		this.statusCode=STATUS_CODE_STOP;
 		this.httpStatus=Response.Status.BAD_REQUEST;
 		return this;
+		
+	}
+	
+	public SalesBaseResponse populateAlreadySubmittedEnrollmentResponse() {
+		this.errorCode=MESSAGE_CODE_ENROLLMENT_ALREADY_REQUESTED;
+		this.errorDescription="Enrollment Already Requested for trackingId & guid";
+		this.statusCode=STATUS_CODE_STOP;
+		this.httpStatus=Response.Status.BAD_REQUEST;
+		return this;
+		
+	}
+	public SalesBaseResponse populateKbaAnswerRetryNotAllowedResponse() {
+		this.errorCode=RETRY_NOT_ALLOWED;
+		this.errorDescription=RETRY_NOT_ALLOWED_TXT;
+		this.statusCode=STATUS_CODE_STOP;
+		this.httpStatus=Response.Status.BAD_REQUEST;
+		return this;	
 		
 	}
 }

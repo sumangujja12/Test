@@ -274,9 +274,6 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 				}
 				request.setProviderAgreementFlag(providerAgreementFlag);
 				String depositAmount = request.getDepositAmount();
-				if (StringUtils.isEmpty(depositAmount)) {
-					depositAmount = "0";
-				}
 				request.setDepositAmount(depositAmount);
 				request.setServAddressLine1(CommonUtil.getAddressLine1(
 						request.getServStreetNum(), request.getServStreetName()));
@@ -843,6 +840,8 @@ public class ServiceLocationDaoImpl extends AbstractSpringDAO implements
 										dataRow.setProspectId(rs.getString("prospect_id"));
 										dataRow.setProspectPartnerId(rs.getString("prospect_partner_id"));														 
 										dataRow.setProspectPreapprovalFlag(rs.getString("prospect_preapproved_flag"));
+										dataRow.setSystemNotes(rs.getString("system_notes"));
+										dataRow.setCallExecutedFromDB(rs.getString("call_executed"));
 										return dataRow;
 									}
 								});

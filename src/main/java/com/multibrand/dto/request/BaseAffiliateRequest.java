@@ -49,6 +49,8 @@ public class BaseAffiliateRequest implements Constants, FormEntityRequest, Seria
 	@Length(max = 1, groups = SizeConstraint.class)
 	private String languageCode = null;
 	
+	private String callExecuted;
+	
 	/**
 	 * @return the affiliateId
 	 */
@@ -112,6 +114,20 @@ public class BaseAffiliateRequest implements Constants, FormEntityRequest, Seria
 	 */
 	public void setLanguageCode(String languageCode) {
 		this.languageCode = languageCode;
+	}
+
+	/**
+	 * @return the callExecuted
+	 */
+	public String getCallExecuted() {
+		return callExecuted;
+	}
+
+	/**
+	 * @param callExecuted the callExecuted to set
+	 */
+	public void setCallExecuted(String callExecuted) {
+		this.callExecuted = callExecuted;
 	}
 
 	@Override

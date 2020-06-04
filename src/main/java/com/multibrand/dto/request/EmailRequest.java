@@ -22,6 +22,7 @@ import com.multibrand.util.EnvMessageReader;
 public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest{
 	
 	private static final String[] validCompCodeAry = {"0121","0271","0270", "0586"};
+
 	
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
@@ -213,6 +214,37 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 		Gson gson = new Gson();
 		EmailRequest re = new EmailRequest();
 		System.out.println(gson.toJson(re));
+	}
+	public void populateRequestForNNPBasedOnBrand(CCSNNPEmailRequest request) {
+		this.subject = NNP_SUBJECT;
+		this.toEmailList.add(request.getEmailid());
+		this.companyCode = request.getCompanycode();
+		this.languageCode = request.getLanguagecode();
+		this.brandName = request.getBrandname();
+
+		if((StringUtils.isNotBlank(this.companyCode) && StringUtils.equalsIgnoreCase(this.companyCode, XOOM_COMPANY_CODE)) &&
+				(StringUtils.isNotBlank(this.brandName) && StringUtils.equalsIgnoreCase(this.brandName, XOOM_BRAND_NAME))){
+			this.externalId = StringUtils.equalsIgnoreCase(this.languageCode, EN) ? XOOM_NNP_EXTERNAL_ID_EN : XOOM_NNP_EXTERNAL_ID_ES;
+			this.templateType = XOOM_NNP_TEMPLATE_ID;
+			this.propertyList.add(XOOM_NNP_CA+COLON+request.getContractaccountnumber());
+			this.propertyList.add(XOOM_NNP_CHECK_DIGIT+COLON+request.getCheckdigit());
+			this.propertyList.add(XOOM_NNP_NAME_ON_ACCOUNT+COLON+request.getCaname());
+			this.propertyList.add(XOOM_NNP_DELIVERY_METHOD+COLON+getNNPDeliveryMethod(request.getNnpDeliveryMethod()));
+			this.propertyList.add(XOOM_NNP_DELIVERY_LOCATION+COLON+request.getEmailid());
+		}else{
+			logger.info("BRAND NAME/COMPANY CODE IS EMPTY::");
+		}
+		logger.info("Printing Object::::::"+ ReflectionToStringBuilder.toString(this));
+		
+	}
+	private String getNNPDeliveryMethod(String nnpDeliveryMethod) {
+		if(StringUtils.isNotBlank(this.languageCode) && StringUtils.isNotBlank(nnpDeliveryMethod)){
+			if(StringUtils.equalsIgnoreCase(nnpDeliveryMethod, MAIL)){return (StringUtils.equalsIgnoreCase(this.languageCode, EN))?NNP_DELIVERY_METHOD_VAL_MAIL_EN:NNP_DELIVERY_METHOD_VAL_MAIL_ES;}
+			if(StringUtils.equalsIgnoreCase(nnpDeliveryMethod, EMAIL)){return (StringUtils.equalsIgnoreCase(this.languageCode, EN))?NNP_DELIVERY_METHOD_VAL_EMAIL_EN:NNP_DELIVERY_METHOD_VAL_EMAIL_ES;}
+		}else{
+			logger.info("LANGUAGE CODE/NNP DELIVERY METHOD IS EMPTY::");
+		}
+		return null;
 	}
 	
 }

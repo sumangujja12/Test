@@ -4,9 +4,7 @@
 package com.multibrand.dto.request;
 import javax.ws.rs.QueryParam;
 
-import org.hibernate.validator.constraints.NotBlank;
-
-import com.multibrand.util.CommonUtil;
+import com.multibrand.request.validation.NotEmpty;
 
 /**
  * 
@@ -18,11 +16,11 @@ public class ProspectDataRequest extends SalesBaseRequest {
 	private static final long serialVersionUID = 1L;
 
 	@QueryParam(value = "prospectID")
-	@NotBlank
+	@NotEmpty
 	private String prospectID;
 	
 	@QueryParam(value = "last4SSN") 
-	@NotBlank
+	@NotEmpty
 	private String	lastfourdigitSSN;
 	
 	public String getProspectID() {

@@ -1,5 +1,7 @@
 package com.multibrand.vo.response;
 
+import javax.ws.rs.core.Response;
+
 /*import java.util.List;*/
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,6 +19,8 @@ public class NewCreditScoreResponse extends GenericResponse implements java.io.S
 	private String depositReasonText = StringUtils.EMPTY;
 	private String[] creditFactorsText;
 
+	private Response.Status httpStatus;
+	
 	/**
 	 * @return the depositAmount
 	 */
@@ -78,5 +82,13 @@ public class NewCreditScoreResponse extends GenericResponse implements java.io.S
 	public void setCreditAgency(String creditAgency) {
 		this.creditAgency = creditAgency;
 	}
+	public Response.Status getHttpStatus() {
+		return httpStatus;
+	}
+	public void setHttpStatus(Response.Status httpStatus) {
+		this.httpStatus = httpStatus;
+	}
+	
+	
 	
 }

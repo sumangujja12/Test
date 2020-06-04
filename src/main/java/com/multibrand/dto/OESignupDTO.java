@@ -164,6 +164,11 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 	private String kbaSuggestionFlag;
 	
 	private String posidSNRO;
+	
+	private String posidStatus;
+	private String posIdDate;
+	private String posidPii;
+
 	private LinkedHashSet<String> errorSet = new LinkedHashSet<>();
 	public OESignupDTO() {
 		
@@ -190,7 +195,7 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		String prospectId;
 		String prospectBpNumber;
 		String prospectPreapprovalStatus;
-		
+		private String callExecuted;
 		
 		public String getPdfCaptureFlag() {
 			return pdfCaptureFlag;
@@ -1450,8 +1455,42 @@ public class OESignupDTO extends BaseDTO implements Serializable{
 		this.prospectPreapprovalStatus = prospectPreapprovalStatus;
 	}
 
+	public String getPosidStatus() {
+		return posidStatus;
+	}
 
-	
-	
-	
+	public void setPosidStatus(String posidStatus) {
+		this.posidStatus = posidStatus;
+	}
+
+	public String getPosIdDate() {
+		return posIdDate;
+	}
+
+	public void setPosIdDate(String posIdDate) {
+		this.posIdDate = posIdDate;
+	}
+
+	public String getPosidPii() {
+		return posidPii;
+	}
+
+	public void setPosidPii(String posidPii) {
+		this.posidPii = posidPii;
+	}
+
+	/**
+	 * @return the callExecuted
+	 */
+	public String getCallExecuted() {
+		return callExecuted;
+	}
+
+	/**
+	 * @param callExecuted the callExecuted to set
+	 */
+	public void setCallExecuted(String callExecuted) {
+		this.callExecuted = callExecuted;
+	}
+
 }
