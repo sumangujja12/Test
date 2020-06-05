@@ -1538,6 +1538,10 @@ public interface Constants {
 	public static final String XOOM_EBILL_NAME_ON_ACCOUNT = "CA_NAME";
 	public static final String XOOM_EBILL_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
 	public static final String XOOM_EBILL_DELIVERY_LOCATION = "DELIVERY_LOCATION";
+	
+	
+	
+	
 
 	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
 	
@@ -1557,4 +1561,7 @@ public interface Constants {
 	public static final String XOOM_NNP_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
 	public static final String XOOM_NNP_DELIVERY_LOCATION = "DELIVERY_LOCATION";
 
+
+	public static final String AFFILIATE_ID_DSI="270519";
+	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
 }

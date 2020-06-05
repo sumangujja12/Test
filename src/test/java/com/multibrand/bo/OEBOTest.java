@@ -714,7 +714,7 @@ public class OEBOTest implements Constants{
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		String callExecutedFromDB = "identity|check-credit|submitUCCData";
 		enrollmentFraudEnum = oebo.isMandatoryCallExecuted(callExecutedFromDB);
-		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "DATES_API_SKIPPED");
+		Assert.assertNull(enrollmentFraudEnum);
 	}
 	
 	@Test
