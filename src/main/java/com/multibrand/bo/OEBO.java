@@ -1915,8 +1915,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		boolean isPosidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,enrollmentRequest.getChannelType());
 		
 		boolean posidHoldAllowedForAffilate = false;  
-		if(StringUtils.equals(enrollmentRequest.getAffiliateId(), AFFILIATE_ID_COMPAREPOWER)) {
-			posidHoldAllowedForAffilate = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION+DOT+AFFILIATE_ID_COMPAREPOWER);
+		if(StringUtils.equals(enrollmentRequest.getAffiliateId(), AFFILIATE_ID_COMPAREPOWER) 
+				|| StringUtils.equals(enrollmentRequest.getAffiliateId(), AFFILIATE_ID_DSI) ) {
+			posidHoldAllowedForAffilate = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION+DOT+enrollmentRequest.getAffiliateId());
 		}
 		
 		try {
@@ -2118,15 +2119,19 @@ public class OEBO extends OeBoHelper implements Constants{
 				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_CALL_SKIP");
 				return enrollmentFraudEnum;
 			}
-			for(String dateAPICalls: dateApiCallList){
-				if(callExecutedSet.contains(dateAPICalls)){
-					dateFlag=true;
-					break;
+			
+			boolean mandatoryCallCheck = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK);
+			if(mandatoryCallCheck) {
+				for(String dateAPICalls: dateApiCallList){
+					if(callExecutedSet.contains(dateAPICalls)){
+						dateFlag=true;
+						break;
+					}
 				}
-			}
-			if(!dateFlag){
-				enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DATE_CALL_SKIP");
-				return enrollmentFraudEnum;
+				if(!dateFlag){
+					enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("DATE_CALL_SKIP");
+					return enrollmentFraudEnum;
+				}
 			}
 			
 		}catch(Exception ex){

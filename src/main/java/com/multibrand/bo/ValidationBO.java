@@ -191,8 +191,9 @@ public class ValidationBO extends BaseBO {
 		boolean posidHoldAllowed= togglzUtil.getFeatureStatusFromTogglzByChannel(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION,performPosIdBpRequest.getChannelType());
 		
 		boolean posidHoldAllowedForAffilate = false;  
-		if(StringUtils.equals(performPosIdBpRequest.getAffiliateId(), AFFILIATE_ID_COMPAREPOWER)) {
-			posidHoldAllowedForAffilate = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION+DOT+AFFILIATE_ID_COMPAREPOWER);
+		if(StringUtils.equals(performPosIdBpRequest.getAffiliateId(), AFFILIATE_ID_COMPAREPOWER) 
+				|| (StringUtils.equals(performPosIdBpRequest.getAffiliateId(), AFFILIATE_ID_DSI))) {
+			posidHoldAllowedForAffilate = togglzUtil.getFeatureStatusFromTogglz(TOGGLZ_FEATURE_ALLOW_POSID_SUBMISSION+DOT+performPosIdBpRequest.getAffiliateId());
 		}
 		 
 		
