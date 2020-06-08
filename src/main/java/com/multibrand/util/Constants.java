@@ -1556,4 +1556,6 @@ public interface Constants {
 	public static final String CONST_GUID= "guId";
 	
 	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
+	public static final String AFFILIATE_ID_DSI="270519";
+	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
 }

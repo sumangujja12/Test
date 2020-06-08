@@ -710,11 +710,21 @@ public class OEBOTest implements Constants{
 		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "CREDIT_API_SKIPPED");
 	}
 	@Test
-	public void testIsMandatoryCallExecutedForDateApiCheck(){
+	public void testIsMandatoryCallExecutedForDateApiCheckTogglzON(){
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		String callExecutedFromDB = "identity|check-credit|submitUCCData";
+	    when(togglzUtil.getFeatureStatusFromTogglz(Matchers.any(String.class))).thenReturn(true);
 		enrollmentFraudEnum = oebo.isMandatoryCallExecuted(callExecutedFromDB);
 		Assert.assertEquals(enrollmentFraudEnum.getFraudSystemNotes(), "DATES_API_SKIPPED");
+	}
+	
+	@Test
+	public void testIsMandatoryCallExecutedForDateApiCheckTogglzOff(){
+		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
+		String callExecutedFromDB = "identity|check-credit|submitUCCData";
+	    when(togglzUtil.getFeatureStatusFromTogglz(Matchers.any(String.class))).thenReturn(false);
+		enrollmentFraudEnum = oebo.isMandatoryCallExecuted(callExecutedFromDB);
+		Assert.assertNull(enrollmentFraudEnum);
 	}
 	
 	@Test
