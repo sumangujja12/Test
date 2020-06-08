@@ -34,7 +34,7 @@ ConstraintValidator<CurrentOrFutureDate, String>, Constants{
 	    }catch(DateTimeParseException ex) {
 	    	logger.error("Exception in CurrentOrFutureDateConstraintValidator.isValid "+ex.getMessage());
 	    }
-	    return false;
+	    return true;
 	}
 
 }
