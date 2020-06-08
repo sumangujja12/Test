@@ -190,3 +190,6 @@ gmd_price_current_date =04/14/2020
 content.server.endpoint.url=http://ebxblp01:18081/client/v2/content.svc/
 #Legal Docs File
 documentum.endpoint=https://texas.xoomenergy.com/files/{0}.pdf
+
+#mongodb config
+mongodb.uri=mongodb://reliantTestData_user:relPrdTestData123@wntdevopsp03:27017/reliantTestData
