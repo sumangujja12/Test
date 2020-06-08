@@ -19,7 +19,7 @@ import com.multibrand.dao.impl.TestDataDAOImpl;
 import com.multibrand.vo.response.TestDataResponse;
 
 @Component
-@Path("testdata")
+@Path("/public/testdata")
 public class TestDataResource {
 
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
