@@ -34,6 +34,7 @@
 		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
 		<junit.version>4.11</junit.version>
 		<spring-version>3.2.3.RELEASE</spring-version>
+		<mongo.driver.version>3.2.2</mongo.driver.version>
 		<dependency.scope>compile</dependency.scope>
 		<snapshot-version>-SNAPSHOT</snapshot-version>
 	</properties>
@@ -1063,5 +1064,13 @@
 			<version>11.2.0.3</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- mongodb java driver -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>${mongo.driver.version}</version>
+		</dependency>
+		
 	</dependencies>
 </project>
