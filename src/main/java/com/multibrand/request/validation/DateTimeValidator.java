@@ -3,6 +3,8 @@ package com.multibrand.request.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.multibrand.util.CommonUtil;
 
 /**
@@ -24,7 +26,7 @@ public class DateTimeValidator implements
 	public boolean isValid(String value,
 			ConstraintValidatorContext constraintContext) {
 
-		if (value == null)
+		if (StringUtils.isEmpty(value))
 			return true;
 
 		return CommonUtil.isValidDate(value, dateFormat);
