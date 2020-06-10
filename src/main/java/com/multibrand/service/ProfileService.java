@@ -4,27 +4,20 @@ import java.math.BigDecimal;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAccountDetailsRequest;
@@ -56,7 +49,6 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.XmlUtil;
-import com.multibrand.util.Constants.ADDRESS_MATCH;
 import com.multibrand.vo.request.SecondaryNameUpdateReqVO;
 import com.multibrand.vo.request.UserRegistrationRequest;
 import com.multibrand.vo.response.CampEnvironmentDO;
@@ -149,7 +141,6 @@ public class ProfileService extends BaseAbstractService {
 	@Autowired
 	private ProfileHelper profileHelper;
 
-	private String[] excludeOfferList = {"S", "F"}; 
 	
 	/**
 	 * This will return ProfileDomainProxy and set EndPoint URL
@@ -935,25 +926,18 @@ public class ProfileService extends BaseAbstractService {
 	private OfferDO[] populateEligibleOffers(ZesSwapOutput zesSwapOutput,List<ZesOfrcdFlag> zesOfferCDFlagList,List<ZesCampEnviDetails> zesCampEnvDetailsList) {
 
 		int count = 0;
-		int offerCount = 0;
 		logger.info("Setting eligible offers::::::");
 		List<ZesEligoffer> zesEligibleOfferList = zesSwapOutput.getEligOffers().getItem();
 		
-		offerCount = getOfferCount(offerCount, zesEligibleOfferList);
 		
 		logger.info("zesEligibleOfferList:::::: list size {}", zesEligibleOfferList.size());
-		com.multibrand.vo.response.OfferDO[] eligibleOffersList = new com.multibrand.vo.response.OfferDO[offerCount];
+		com.multibrand.vo.response.OfferDO[] eligibleOffersList = new com.multibrand.vo.response.OfferDO[zesEligibleOfferList.size()];
 
 		if (zesEligibleOfferList != null && zesEligibleOfferList.size() > 0) {
 
 			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
 				try {
-	
-					if(zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
-					&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
-						continue;
-					}
 					
 					eligibleOffersList[count] = new com.multibrand.vo.response.OfferDO();
 					List<Map<String,Object>> offerCategoryLookupDetailsList = offerService.getOfferCategories(zesEligoffer.getOfferCode());
@@ -1076,21 +1060,6 @@ public class ProfileService extends BaseAbstractService {
 		return eligibleOffersList;
 	}
 
-	private int getOfferCount(int offerCount, List<ZesEligoffer> zesEligibleOfferList) {
-		if (zesEligibleOfferList != null && zesEligibleOfferList.size() > 0) {
-			
-			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
-		
-	
-					if(zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
-					&& !Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
-						offerCount++;
-					}
-			}
-					
-		}
-		return offerCount;
-	}
 
 	/**
 	 * Populate Pricing and DocType lists for eligible offers
