@@ -135,6 +135,8 @@ public class OEService extends BaseAbstractService {
 	    String response = null;
 	    
 	        OEDomain proxyclient = getOEDomainProxy();
+	        
+	        proxyclient=(OEDomain) getHeaderValueForMockServerCall(proxyclient,MOCK_EX_CALENDAR_DATES);
 	        long startTime = CommonUtil.getStartTime();
 	 try{
 	        response = proxyclient.getTDSPSpecificCalendarDates(request);
