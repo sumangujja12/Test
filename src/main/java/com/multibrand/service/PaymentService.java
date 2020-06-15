@@ -2,9 +2,7 @@ package com.multibrand.service;
 
 import java.net.URL;
 import java.rmi.RemoteException;
-
 import javax.xml.ws.BindingProvider;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
