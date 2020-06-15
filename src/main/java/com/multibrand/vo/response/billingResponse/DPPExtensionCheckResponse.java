@@ -14,6 +14,9 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 	private boolean isDppPlanEligible;
 	private boolean isDppPlanPending;
 	private boolean isDppPlanActive;
+	private String initialAmtIncInARFlag;
+	private String xCodeDesc;
+	
 	/**
 	 * @return the totalDppAmount
 	 */
@@ -98,8 +101,29 @@ public class DPPExtensionCheckResponse extends GenericResponse {
 	public void setDppPlanActive(boolean isDppPlanActive) {
 		this.isDppPlanActive = isDppPlanActive;
 	}
-	
-	
-
+	/**
+	 * @return the initialAmtIncInARFlag
+	 */
+	public String getInitialAmtIncInARFlag() {
+		return initialAmtIncInARFlag;
+	}
+	/**
+	 * @param initialAmtIncInARFlag the initialAmtIncInARFlag to set
+	 */
+	public void setInitialAmtIncInARFlag(String initialAmtIncInARFlag) {
+		this.initialAmtIncInARFlag = initialAmtIncInARFlag;
+	}
+	/**
+	 * @return the xCodeDesc
+	 */
+	public String getxCodeDesc() {
+		return xCodeDesc;
+	}
+	/**
+	 * @param xCodeDesc the xCodeDesc to set
+	 */
+	public void setxCodeDesc(String xCodeDesc) {
+		this.xCodeDesc = xCodeDesc;
+	}
 }
 
