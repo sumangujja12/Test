@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
@@ -23,6 +24,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.multibrand.util.CommonUtil;
@@ -364,6 +367,24 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 			byte[] encodedToken = Base64.encodeBase64(token.getBytes());
 
 			return "Basic " + new String(encodedToken);
+		}
+		
+		/**
+		 * 
+		 * @param proxyObject
+		 * @param apiName
+		 * @return
+		 */
+		public Object getHeaderValueForMockServerCall(Object proxyObject,String apiName){
+
+	        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	        
+	        if(httpServletRequest.getHeader(apiName) != null){
+	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
+				proxyObjectStub.setHeader("namespace", httpServletRequest.getHeader(apiName),httpServletRequest.getHeader(apiName));
+	        }
+			
+			return proxyObject;
 		}
 	 
 }
