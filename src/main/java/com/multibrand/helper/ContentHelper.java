@@ -760,11 +760,11 @@ public class ContentHelper implements Constants {
 				messageKeyList.add(msgKey);
 			}
 			contentDataRequest.getMessageKeys().setMessageKeyList(messageKeyList);
-			logger.info("SDL Offer Data Request "+			contentDataRequest		);			
+			logger.debug("SDL Offer Data Request "+			contentDataRequest		);			
 			ContentDataResponse contentDataResponse = ContentDataService.getContentData(contentDataRequest);			
 			int index = 0;
 			for(ProductOffer productOffer : contentDataResponse.getProductOfferList()){				
-				logger.info("SDL Offer Response ProductOffer : "+productOffer);				
+				logger.debug("SDL Offer Response ProductOffer : "+productOffer);				
 				AffiliateOfferDO affiliateOfferDO = offerList.get(index);
 				if(StringUtils.isEmpty(productOffer.getStrProductTagLine())){					
 					cmsErrorOfferList.add(affiliateOfferDO);
