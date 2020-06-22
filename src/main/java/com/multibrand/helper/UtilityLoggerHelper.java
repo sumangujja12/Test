@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
+
+import com.google.gson.Gson;
 import com.multibrand.dto.request.BaseAffiliateRequest;
 import com.multibrand.dto.request.SalesBaseRequest;
 import com.multibrand.service.BaseAbstractService;
@@ -53,8 +55,19 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 	    txnLogRequest.setTransactionType(logvo.getTransactionType());
 	    txnLogRequest.setDisableMasking(true);
 	    txnLogRequest.setSessionID(logvo.getSessionId());
- 	    txnLogRequest.setRequestData(XmlUtil.pojoToXMLwithRootElement(logvo.getRequestData(),logvo.getTransactionType()));
-	    txnLogRequest.setResponseData(XmlUtil.pojoToXMLwithRootElement(logvo.getResponseData(), logvo.getTransactionType()));
+	    if((StringUtils.contains(logvo.getTransactionType(), OE_RESOURCE_API_BASE_PATH) 
+	    		|| StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
+	    	Gson gson = new Gson();
+	    	txnLogRequest.setRequestData(gson.toJson(logvo.getRequestData()));
+	    	if(logvo.getResponseData() instanceof Response){
+	    		txnLogRequest.setResponseData(gson.toJson(((Response)logvo.getResponseData()).getEntity()));
+	    	} else {
+	    		txnLogRequest.setResponseData(gson.toJson(logvo.getResponseData()));
+	    	}
+	    } else {
+	 	    txnLogRequest.setRequestData(XmlUtil.pojoToXMLwithRootElement(logvo.getRequestData(),logvo.getTransactionType()));
+		    txnLogRequest.setResponseData(XmlUtil.pojoToXMLwithRootElement(logvo.getResponseData(), logvo.getTransactionType()));
+	    }
 	    /*if(StringUtils.isNotBlank(logvo.getUserUniqueId()) && StringUtils.isNotBlank(logvo.getUserId())){
 	    	Client client= new Client();
 	    	if(StringUtils.isNotBlank(logvo.getConfirmationNumber()))
