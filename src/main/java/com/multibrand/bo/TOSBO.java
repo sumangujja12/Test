@@ -111,7 +111,9 @@ public class TOSBO extends BaseAbstractService implements Constants {
 		try {
 			com.multibrand.domain.CheckPendingMVOResponse response = tosService.checkingPendingMVO(request, companyCode, sessionId);
 			
+			logger.info(org.apache.commons.lang3.StringUtils.isNotEmpty(response.getErrCode()));
 			if(response!= null && org.apache.commons.lang3.StringUtils.isNotEmpty(response.getErrCode())){
+				logger.info("Inside error code");
 				checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				checkPendingMVOResponse.setResultDescription(response.getErrCode());				
 			}
