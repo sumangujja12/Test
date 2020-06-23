@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.axis.utils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -119,7 +120,12 @@ public class TOSBO extends BaseAbstractService implements Constants {
 				checkPendingMVOResponse.setResultDescription(response.getErrCode());				
 			}
 			logger.info("Before Java copy");
-			JavaBeanUtil.copy(response, checkPendingMVOResponse);
+			try {
+				JavaBeanUtil.copy(response, checkPendingMVOResponse);
+			} catch (Exception e) {
+				logger.info("bean util copy error "+e);
+			}
+			
 			logger.info("After Java copy");
 			checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			checkPendingMVOResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
