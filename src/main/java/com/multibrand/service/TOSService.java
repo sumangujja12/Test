@@ -74,12 +74,14 @@ public class TOSService extends BaseAbstractService
     	response= proxy.checkPendingMoveOut(request);
     }catch(RemoteException ex){
     	logger.error(ex);
+    	 logger.error("inside remote exception");
     	this.utilityloggerHelper.logTransaction("checkingPendingMVO", false, request, ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
     	if(logger.isDebugEnabled())
     		logger.debug(XmlUtil.pojoToXML(request));
     	throw ex;// it is required to throw exception back to BO layer for proper response generation
     }
     catch(Exception ex){
+    	logger.error("inside  exception");
     	logger.error(ex);
     	this.utilityloggerHelper.logTransaction("checkingPendingMVO", false, request, ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
     	if(logger.isDebugEnabled())
@@ -87,6 +89,7 @@ public class TOSService extends BaseAbstractService
     	throw ex;// it is required to throw exception back to BO layer for proper response generation
     }
     this.utilityloggerHelper.logTransaction("checkingPendingMVO", false, request, response, response.getErrMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+    logger.error("No Exception********************");
     if(logger.isDebugEnabled()){
 	    logger.debug(XmlUtil.pojoToXML(request));
 		logger.debug(XmlUtil.pojoToXML(response));
