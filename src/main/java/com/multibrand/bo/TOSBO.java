@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.axis.utils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -112,28 +110,20 @@ public class TOSBO extends BaseAbstractService implements Constants {
 		try {
 			com.multibrand.domain.CheckPendingMVOResponse response = tosService.checkingPendingMVO(request, companyCode, sessionId);
 			
-			logger.info(org.apache.commons.lang3.StringUtils.isNotEmpty(response.getErrCode()));
 			if(response!= null && org.apache.commons.lang3.StringUtils.isNotEmpty(response.getErrCode())){
-				logger.info("Inside error code");
 				checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				checkPendingMVOResponse.setResultDescription(response.getErrCode());				
 			}
-			logger.info("Before Java copy");
-			try {
-				JavaBeanUtil.copy(response, checkPendingMVOResponse);
-			} catch (Exception e) {
-				logger.info("bean util copy error "+e);
-			}
+			JavaBeanUtil.copy(response, checkPendingMVOResponse);
 			
-			logger.info("After Java copy1111111");
 			
 		} catch (RemoteException e) {
-			logger.error("TOSBO.RemoteException:"+e);
+			logger.error(e);
 			checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			checkPendingMVOResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), checkPendingMVOResponse);			
 		} catch (Exception e) {
-			logger.error("TOSBO.Exception:"+e);
+			logger.error(e);
 			checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			checkPendingMVOResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), checkPendingMVOResponse);	
