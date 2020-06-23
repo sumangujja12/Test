@@ -2,6 +2,8 @@ package com.multibrand.vo.response;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import com.multibrand.vo.request.ExBankValidationVO;
 
 /*
@@ -23,5 +25,11 @@ public class GiactBankValidationResponse implements Serializable{
 	    {
 	        this.d = d;
 	    }
-	
+		/**
+		 * @return String representation of this request.
+		 */
+		@Override
+		public String toString() {
+			return ReflectionToStringBuilder.toString(this);
+		}
 }
