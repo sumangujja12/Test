@@ -59,11 +59,8 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 	    		|| StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
 	    	Gson gson = new Gson();
 	    	txnLogRequest.setRequestData(gson.toJson(logvo.getRequestData()));
-	    	if(logvo.getResponseData() instanceof Response){
-	    		txnLogRequest.setResponseData(gson.toJson(((Response)logvo.getResponseData()).getEntity()));
-	    	} else {
-	    		txnLogRequest.setResponseData(gson.toJson(logvo.getResponseData()));
-	    	}
+	    	txnLogRequest.setResponseData(gson.toJson(logvo.getResponseData()));
+	    	
 	    } else {
 	 	    txnLogRequest.setRequestData(XmlUtil.pojoToXMLwithRootElement(logvo.getRequestData(),logvo.getTransactionType()));
 		    txnLogRequest.setResponseData(XmlUtil.pojoToXMLwithRootElement(logvo.getResponseData(), logvo.getTransactionType()));
