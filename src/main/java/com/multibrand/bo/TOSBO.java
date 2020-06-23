@@ -125,28 +125,22 @@ public class TOSBO extends BaseAbstractService implements Constants {
 			} catch (Exception e) {
 				logger.info("bean util copy error "+e);
 			}
-			
-			logger.info("After Java copy");
-			checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			checkPendingMVOResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			
-			throw new OAMException(200, "Timeout", checkPendingMVOResponse);		
-			
+			logger.info("After Java copy1111111");			
 		} catch (RemoteException e) {
-			logger.error(e);
+			logger.error("TOSBO.RemoteException:"+e);
 			checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			checkPendingMVOResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), checkPendingMVOResponse);			
 		} catch (Exception e) {
-			logger.error(e);
+			logger.error("TOSBO.Exception:"+e);
 			checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			checkPendingMVOResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), checkPendingMVOResponse);	
 		}
 		
 	
-		//logger.info("TOSBO.checkPendingMVO :::::::: END");
-		//return checkPendingMVOResponse;
+		logger.info("TOSBO.checkPendingMVO :::::::: END");
+		return checkPendingMVOResponse;
 		
 	}
 	
