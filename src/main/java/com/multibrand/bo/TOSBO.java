@@ -117,9 +117,9 @@ public class TOSBO extends BaseAbstractService implements Constants {
 				checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				checkPendingMVOResponse.setResultDescription(response.getErrCode());				
 			}
-			
+			logger.info("Before Java copy");
 			JavaBeanUtil.copy(response, checkPendingMVOResponse);
-			
+			logger.info("After Java copy");
 			
 		} catch (RemoteException e) {
 			logger.error(e);
