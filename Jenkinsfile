@@ -1,5 +1,5 @@
 @Library('nrg-commons')
-//Jenkinsfile version-2.0
+//Jenkinsfile version-2.1
 
 def args = [
 	//##### Config param #####
@@ -37,9 +37,26 @@ def args = [
 	
 	typeOfTest: [
 		postman: [
-			postmanCollectionId: '3890864-cf7ddaa5-f64f-4d62-8a82-917230f86813',
-			postmanEnvIdDev: '',
-			postmanEnvIdStg: '3890864-43f48261-041a-4135-a5f0-08ec3f53f5c9'
+			typeOfTestStage: [
+				E2E:[
+					collections: [
+						sales: [
+							postmanCollectionId: '3890864-cf7ddaa5-f64f-4d62-8a82-917230f86813',
+							postmanEnvIdDev: '',
+							postmanEnvIdStg: '3890864-43f48261-041a-4135-a5f0-08ec3f53f5c9',
+							dataSourceArray: [
+							],
+							foldersToinclude: [
+							]
+						]
+					]
+				],
+				smoke: [
+					collections: [
+						// Add additional collections for smoke here 
+					]
+				]
+			]
 		],
 		karate: [],
 		selenium: []
