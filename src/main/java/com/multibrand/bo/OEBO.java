@@ -1905,6 +1905,16 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		EnrollmentResponse response =  new EnrollmentResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
+		
+		if(StringUtils.equalsIgnoreCase(enrollmentRequest.getTransactionType(), TRANSACTION_TYPE_MOVE_IN) 
+				&& StringUtils.isEmpty(enrollmentRequest.getMviDate())) {
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription("mviDate is required for move-in");
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			return response;
+		}
+		
 		OESignupDTO oeSignUpDTO = new OESignupDTO();
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum = null;
 		if(StringUtils.isBlank(enrollmentRequest.getPromoCode()))
@@ -2150,6 +2160,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	public NewCreditScoreResponse performCreditCheck(
 			NewCreditScoreRequest creditScoreRequest, 
 			CreditCheckRequest creditCheckRequest, ServiceLocationResponse serviceLoationResponse) throws OAMException {
+		
+		
 
 		String locale = creditCheckRequest.getLanguageCode();
 		/*string companyCode = creditCheckRequest.getCompanyCode();*/
@@ -2170,6 +2182,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			localeObj = new Locale("en", "US");
 
 		NewCreditScoreResponse response = new NewCreditScoreResponse();
+	
+		if(StringUtils.equalsIgnoreCase(creditCheckRequest.getTransactionType(), TRANSACTION_TYPE_MOVE_IN) 
+				&& StringUtils.isEmpty(creditCheckRequest.getMviDate())) {
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription("mviDate is required for move-in");
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			return response;
+		}
 
 		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = null;
 		try {

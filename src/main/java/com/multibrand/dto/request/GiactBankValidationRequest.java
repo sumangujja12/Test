@@ -2,6 +2,7 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -71,5 +72,13 @@ public class GiactBankValidationRequest implements FormEntityRequest, Serializab
 
 	public void setCompanyCode(String companyCode) {
 		this.companyCode = companyCode;
+	}
+	
+	/**
+	 * @return String representation of this request.
+	 */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
 	}
 }

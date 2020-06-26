@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -111,11 +110,10 @@ public class TOSBO extends BaseAbstractService implements Constants {
 		try {
 			com.multibrand.domain.CheckPendingMVOResponse response = tosService.checkingPendingMVO(request, companyCode, sessionId);
 			
-			if(response!= null && StringUtils.isNotEmpty(response.getErrCode())){
+			if(response!= null && org.apache.commons.lang3.StringUtils.isNotEmpty(response.getErrCode())){
 				checkPendingMVOResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				checkPendingMVOResponse.setResultDescription(response.getErrCode());				
 			}
-			
 			JavaBeanUtil.copy(response, checkPendingMVOResponse);
 			
 			
