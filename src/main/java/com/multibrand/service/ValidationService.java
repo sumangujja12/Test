@@ -142,7 +142,7 @@ public class ValidationService extends BaseAbstractService {
 			try{
 				logger.debug("inside service validatePosIdWihKBA:: inside try");
 				ValidationDomain proxy = getValidationServiceProxy();
-
+				this.populateMockDataRequestHeader(proxy);
 				response = proxy.validatePosidWithKBA(validatePosIdKBAReq);
 				logger.debug("inside service validatePosIdWihKBA:: after call ::"+CommonUtil.doRender(validatePosIdKBAReq));
 				logger.debug("inside validatePosIdWihKBA:: response is :: "+CommonUtil.doRender(response));
