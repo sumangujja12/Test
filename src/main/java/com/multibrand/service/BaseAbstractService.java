@@ -3,11 +3,15 @@ package com.multibrand.service;
 import java.lang.reflect.Constructor;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.axis.message.SOAPHeaderElement;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,6 +105,8 @@ public class BaseAbstractService implements Constants{
 					Method method = srvProxyClass.getSuperclass().getDeclaredMethod("setTimeout", Integer.TYPE);
 				   // int timeout = getWSConnTimeout(endPointUrlKey);
 				    method.invoke(proxyObject, WEBSERVICE_CALL_TIMEOUT * 1000);
+				    
+				    populateMockDataRequestHeader(proxyObject);
 				}
 				catch(Exception e) {
 					//logger.warn("Setting timeout has been failed:" +e.getMessage());
@@ -374,10 +380,13 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 		public Object populateMockDataRequestHeader (Object proxyObject){
 
 	        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-	        
-	        if(httpServletRequest.getHeader("UseDataMockup") != null){
+	        logger.info("Service header "+httpServletRequest.getHeader(DATA_MOCKUP_HEADER_NAME));
+	        if(httpServletRequest.getHeader(DATA_MOCKUP_HEADER_NAME) != null){
 	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
-				proxyObjectStub.setHeader("UseDataMockup", httpServletRequest.getHeader("UseDataMockup"),httpServletRequest.getHeader("UseDataMockup"));
+	      		Hashtable<String, String> headers = new Hashtable<String, String>();
+	      		headers.put(DATA_MOCKUP_HEADER_NAME, httpServletRequest.getHeader(DATA_MOCKUP_HEADER_NAME));
+	      		proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+
 	        }
 			
 			return proxyObject;
