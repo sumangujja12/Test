@@ -2,12 +2,16 @@ package com.multibrand.service;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,20 +100,18 @@ public class BaseAbstractService implements Constants{
 				Constructor constructor = srvProxyClass.getConstructor(parmTypes);
 				proxyObject =  constructor.newInstance(new Object[] { new java.net.URL(endPoint) ,service });  
 				try {
+					
 					Method method = srvProxyClass.getSuperclass().getDeclaredMethod("setTimeout", Integer.TYPE);
-				   // int timeout = getWSConnTimeout(endPointUrlKey);
 				    method.invoke(proxyObject, WEBSERVICE_CALL_TIMEOUT * 1000);
+				    
 				}
 				catch(Exception e) {
-					//logger.warn("Setting timeout has been failed:" +e.getMessage());
 					logger.error("Setting timeout has been failed:"+e.getMessage());
 				}
 				
 			} catch (Exception e) {
-				//throw new ServiceException("getServiceProxy() Failed :", e);
 				logger.error("ServiceException :: "+e.getMessage());
 			} catch (Throwable t) {
-				//throw new ServiceException("getServiceProxy() Failed :", t);
 				logger.error("Throwable ServiceException ::"+t.getMessage());
 			}	
 		return proxyObject;
@@ -375,13 +377,22 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 		 * @param apiName
 		 * @return
 		 */
-		public Object getHeaderValueForMockServerCall(Object proxyObject,String apiName){
+		public Object getHeaderValueForMockServerCall(Object proxyObject){
 
-	        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	        
-	        if(httpServletRequest.getHeader(apiName) != null){
+	       /* if(httpServletRequest.getHeader(apiName) != null){
 	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
+	      		proxyObjectStub.clearHeaders();
 				proxyObjectStub.setHeader("namespace", httpServletRequest.getHeader(apiName),httpServletRequest.getHeader(apiName));
+	        }*/
+			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	        
+	        if(httpServletRequest.getHeader("useMockData") != null){
+	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
+	      		Hashtable<String, String> headers = new Hashtable<String, String>();
+	      		headers.put("useMockData", httpServletRequest.getHeader("useMockData"));
+	      		proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+
 	        }
 			
 			return proxyObject;

@@ -20,6 +20,8 @@ import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.SubmitEnrollRequest;
 import com.multibrand.domain.SubmitEnrollResponse;
 import com.multibrand.helper.UtilityLoggerHelper;
+import com.multibrand.service.BaseAbstractService;
+import com.multibrand.util.Constants;
 import com.multibrand.util.LoggerUtil;
 
 /**
@@ -31,7 +33,7 @@ import com.multibrand.util.LoggerUtil;
  * 
  */
 @Component
-public class OEProxy {
+public class OEProxy extends BaseAbstractService {
 	LoggerUtil logger = LoggerUtil.getInstance("OEProxy");
 
 	// ~Autowire entries
@@ -134,6 +136,8 @@ public class OEProxy {
 		try {
 
 			// Call NRGWS OEDomain.getNewCreditScore
+			
+			oeDomainPortProxy=(OEDomain) getHeaderValueForMockServerCall(oeDomainPortProxy);
 			response = oeDomainPortProxy.getNewCreditScore(creditScoreRequest);
 		
 		} catch (RemoteException re) {
