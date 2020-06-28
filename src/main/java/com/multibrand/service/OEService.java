@@ -41,6 +41,7 @@ import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.UpdateCRMAgentInfoRequest;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
+import com.multibrand.domain.ValidationDomain;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.OESignupDTO;
@@ -217,6 +218,9 @@ public class OEService extends BaseAbstractService {
 			BpMatchCCSResponse bpMatchCCSResponse = null ;
 			try {
 				OEDomain proxyclient = getOEServiceProxy();
+				
+				proxyclient=(OEDomain) getHeaderValueForMockServerCall(proxyclient,MOCK_EX_BPMATCH);
+				
 				bpMatchCCSResponse = proxyclient.getBPMatchStatusFromCCS(request);
 			} catch (Exception e) {
 				logger.error("error while executing getBPMatchStatusFromCCS() method from OEDomain web service");
