@@ -297,7 +297,7 @@ public class ValidationBO extends BaseBO {
 				validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
 			} else{
 				validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
-			}
+		}
 
 			//Pass the parameters from NRG response to wrapper Response POJO
 			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
