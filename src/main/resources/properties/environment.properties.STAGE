@@ -192,3 +192,5 @@ gmd_price_current_date =04/14/2020
 content.server.endpoint.url=http://txaixebxbls01:18081/client/v2/content.svc/
 #File
 documentum.endpoint=https://texas.xoomenergy.com/files/{0}.pdf
+CUSTOM_ERROR_MESSAGE=Unfortunately, we were unable to find the requested information. We apologize for the inconvenience.\n\nPlease try again later.
+doc.inv.url.timeout=5
