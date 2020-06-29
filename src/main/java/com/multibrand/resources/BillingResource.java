@@ -832,10 +832,17 @@ public class BillingResource {
 			logger.debug("Throwing the values to output");
 			
         } catch(SocketTimeoutException e){
-        	ServletOutputStream out = response.getOutputStream();
-			out.write(customErrorMessage.getBytes());
-			out.flush();
-			out.close();
+        	logger.error("SocketTimeoutException -- :{}", e);
+        	ServletOutputStream out;
+			try {
+				out = response.getOutputStream();
+				out.write(customErrorMessage.getBytes());
+				out.flush();
+				out.close();
+			} catch (IOException e1) {
+				logger.error(e);
+			}
+
         } catch (UnsupportedEncodingException e) {
 			logger.error("UnsupportedException -- Printing an Error PDF");
 			logger.error(e);
