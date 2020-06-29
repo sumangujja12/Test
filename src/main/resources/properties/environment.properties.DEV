@@ -195,3 +195,6 @@ documentum.endpoint=https://stg-texas.xoomenergy.com/files/{0}.pdf
 
 #mongodb config
 mongodb.uri=mongodb://reliantTestData_user:reliantTestData123@wntwebapd1:27017/reliantTestData
+
+CUSTOM_ERROR_MESSAGE=Unfortunately, we were unable to find the requested information. We apologize for the inconvenience.\n\nPlease try again later.
+doc.inv.url.timeout=5

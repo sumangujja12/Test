@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,20 +22,25 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.params.HttpParams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.bo.BillingBO;
 import com.multibrand.bo.ProfileBO;
 import com.multibrand.dto.request.BillCourtesyCreditActivityRequest;
@@ -43,12 +50,13 @@ import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.BillingService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.EnvMessageReader;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
-import com.multibrand.vo.request.PaymentExtensionRequest;
-import com.multibrand.vo.request.PaymentExtensionSubmitRequest;
 import com.multibrand.vo.request.DPPEligibilityCheckRequest;
 import com.multibrand.vo.request.DPPSubmitRequest;
+import com.multibrand.vo.request.PaymentExtensionRequest;
+import com.multibrand.vo.request.PaymentExtensionSubmitRequest;
 import com.multibrand.vo.request.RetroPopupRequestVO;
 import com.multibrand.vo.request.SaveAMBSingupRequestVO;
 import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
@@ -116,6 +124,10 @@ public class BillingResource {
 	
 	@Autowired
 	private BillingRequestHandler billingRequestHandler;
+	
+	@Autowired
+	protected EnvMessageReader envMessageReader;
+
 	
 	/** This service is to provide the balance information from CCS system.
 	 * 
@@ -771,12 +783,25 @@ public class BillingResource {
 			){
 		
 		
+		String customErrorMessage = envMessageReader.getMessage("CUSTOM_ERROR_MESSAGE");
+		
 		try {
+		
+		int timeout = Integer.parseInt(envMessageReader.getMessage("doc.inv.url.timeout")); // seconds
+		
 		ServletOutputStream out = response.getOutputStream(); 
 		response.setHeader("Content-Disposition","attachment; filename=ebill.pdf");
 		response.setContentType("application/pdf");
 		
 		DefaultHttpClient httpClient = new DefaultHttpClient();
+		
+		HttpParams httpParams = httpClient.getParams();
+        httpParams.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, timeout * 1000);
+        httpParams.setParameter(CoreConnectionPNames.SO_TIMEOUT, timeout * 1000);
+
+        
+        
+		
 		HttpResponse billResponse = null;
 		String output = null;
 		BufferedReader br = null;
@@ -806,6 +831,18 @@ public class BillingResource {
 			bis.close();
 			logger.debug("Throwing the values to output");
 			
+        } catch(SocketTimeoutException e){
+        	logger.error("SocketTimeoutException -- :{}", e);
+        	ServletOutputStream out;
+			try {
+				out = response.getOutputStream();
+				out.write(customErrorMessage.getBytes());
+				out.flush();
+				out.close();
+			} catch (IOException e1) {
+				logger.error(e);
+			}
+
         } catch (UnsupportedEncodingException e) {
 			logger.error("UnsupportedException -- Printing an Error PDF");
 			logger.error(e);
