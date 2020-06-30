@@ -392,5 +392,21 @@ public interface DBConstants {
 	//END || PBI 15786: Update ESID Call || atiwari
 	
 	public static final String OE_UPDATE_ERROR_SLA_QUERY = "db.choice.reliant.updateerrorinsla";
+	
+	//columns of component_outage table
+	public static final String COL_OUTAGE_STATUS = "OUTAGE_STATUS";
+	public static final String COL_OUTAGE_MESSAGE = "OUTAGE_MESSAGE";
+	public static final String COL_SCHEDULED_OUTAGE_FLAG = "SCHEDULED_OUTAGE_FLAG";
+	public static final String COL_SCHEDULED_OUTAGE_START = "SCHEDULED_OUTAGE_START";
+	public static final String COL_SCHEDULED_OUTAGE_END = "SCHEDULED_OUTAGE_END";
+	public static final String COL_DYNAMIC_MESSAGE_TYPE = "DYNAMIC_MESSAGE_TYPE";
+	public static final String COL_DYNAMIC_MESSAGE_STATUS = "DYNAMIC_MESSAGE_STATUS";
+	public static final String COL_DYNAMIC_MESSAGE_CTR = "DYNAMIC_MESSAGE_CTR";
+	public static final String COL_NON_SCHEDULED_OUTAGE_FLAG = "NON_SCHEDULED_OUTAGE_FLAG";
+	public static final String COL_NON_SCHEDULED_OUTAGE_START = "NON_SCHEDULED_OUTAGE_START";
+	public static final String COL_NON_SCHEDULED_OUTAGE_END = "NON_SCHEDULED_OUTAGE_END";
+	public static final String COL_MSG_PRIORITY = "MSG_PRIORITY";
+	public static final String COL_MESSAGE_CODE = "MESSAGE_CODE";
+	
 
 }
