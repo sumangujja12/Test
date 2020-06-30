@@ -8,13 +8,14 @@ import org.hibernate.validator.constraints.Length;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
+import com.multibrand.request.validation.SsnDlMandatoryCheck;
 import com.multibrand.request.validation.ValidAge;
 import com.multibrand.request.validation.ValidDateTime;
 
+@SsnDlMandatoryCheck(message="please provide ssn or dl")
 public class IdentityRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1068351198219357955L;
-
 	
 	@NotEmpty
 	@Length(max = 40, groups = SizeConstraint.class)
@@ -95,9 +96,13 @@ public class IdentityRequest extends SalesBaseRequest {
 	
 	@Length(max = 25, groups = SizeConstraint.class)
 	String billPOBox;
+	
 	String preferredLanguage;
+	
+	
 	@Length(max = 20, groups = SizeConstraint.class)
 	String tokenizedTDL;
+	
 	
 	@Length(max = 20, groups = SizeConstraint.class)
 	String tokenizedSSN;
