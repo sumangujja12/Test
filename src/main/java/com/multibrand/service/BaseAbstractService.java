@@ -381,6 +381,7 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 	        
 	        if(httpServletRequest.getHeader(apiName) != null){
 	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
+	      		proxyObjectStub.clearHeaders();
 				proxyObjectStub.setHeader("namespace", httpServletRequest.getHeader(apiName),httpServletRequest.getHeader(apiName));
 	        }
 			
