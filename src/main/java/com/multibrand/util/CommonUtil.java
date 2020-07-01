@@ -2,6 +2,7 @@ package com.multibrand.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
@@ -58,6 +59,13 @@ import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
 import com.multibrand.dto.ErrorDTO;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.WebHookRequest;
@@ -2171,5 +2179,19 @@ public class CommonUtil implements Constants {
 			}
 			return guId;
 		}
-	  
+		public static ByteArrayOutputStream getInvoiceTimeOutException(String customErrorMessage) throws DocumentException, IOException {
+			logger.debug("Entering getInvoiceException..");
+	
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			Document document = new Document();
+			PdfWriter.getInstance(document, baos);
+			document.open();
+			Paragraph paragraph = new Paragraph(customErrorMessage, new Font(FontFamily.HELVETICA, 15, Font.BOLD));
+			paragraph.setAlignment(Element.ALIGN_CENTER);
+			document.add(paragraph);
+			document.close();
+			//toRet = baos.toByteArray();
+			logger.debug("Exiting getInvoiceException..");
+			return baos;
+		}  
 }
