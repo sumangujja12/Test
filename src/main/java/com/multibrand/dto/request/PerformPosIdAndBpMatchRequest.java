@@ -7,6 +7,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
+import com.multibrand.request.validation.MandotoryFieldCheck;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.RepetitiveDigitCheck;
@@ -17,6 +18,8 @@ import com.multibrand.util.CommonUtil;
 /**
  * @author jsingh1
  */
+
+@MandotoryFieldCheck(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
 public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 
 	private static final long serialVersionUID = 1L;
@@ -111,6 +114,7 @@ public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 	
 	@Length(max = 20, groups = SizeConstraint.class)
 	String tokenizedSSN;
+	
 	String dobForPosId;
 	
 	//START : OE :Sprint61 :US21009 :Kdeshmu1
