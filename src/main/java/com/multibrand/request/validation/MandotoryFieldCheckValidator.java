@@ -9,13 +9,13 @@ import org.springframework.beans.BeanWrapperImpl;
 
 import com.multibrand.util.Constants;
 
-public class CombinedNotNullValidator  implements 
-				ConstraintValidator<CombinedNotNull, Object>, Constants {
+public class MandotoryFieldCheckValidator  implements 
+				ConstraintValidator<MandotoryFieldCheck, Object>, Constants {
 					
 	String[] fields;
 	@Override
-	public void initialize(final CombinedNotNull combinedNotNull) {
-		fields = combinedNotNull.fields();		
+	public void initialize(final MandotoryFieldCheck mandotoryFieldCheck) {
+		fields = mandotoryFieldCheck.fields();		
 	}
 
 	

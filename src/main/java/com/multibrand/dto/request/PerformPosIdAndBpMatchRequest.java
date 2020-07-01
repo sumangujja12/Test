@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
-import com.multibrand.request.validation.CombinedNotNull;
+import com.multibrand.request.validation.MandotoryFieldCheck;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.RepetitiveDigitCheck;
@@ -19,7 +19,7 @@ import com.multibrand.util.CommonUtil;
  * @author jsingh1
  */
 
-@CombinedNotNull(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
+@MandotoryFieldCheck(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
 public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 
 	private static final long serialVersionUID = 1L;

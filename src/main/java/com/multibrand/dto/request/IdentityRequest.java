@@ -5,14 +5,14 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
-import com.multibrand.request.validation.CombinedNotNull;
+import com.multibrand.request.validation.MandotoryFieldCheck;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidAge;
 import com.multibrand.request.validation.ValidDateTime;
 
-@CombinedNotNull(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
+@MandotoryFieldCheck(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
 public class IdentityRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1068351198219357955L;

@@ -14,10 +14,10 @@ import javax.validation.Payload;
 import org.apache.commons.lang.StringUtils;
 
 @Documented
-@Constraint(validatedBy = CombinedNotNullValidator.class)
+@Constraint(validatedBy = MandotoryFieldCheckValidator.class)
 @Target({TYPE, ANNOTATION_TYPE})
 @Retention(RUNTIME)
-public @interface CombinedNotNull {
+public @interface MandotoryFieldCheck {
 	
 	String message() default "";
 	
