@@ -779,9 +779,9 @@ public class BillingResource {
 			@FormParam("brandName")String brandName,
 			@Context HttpServletResponse response
 			) throws IOException, DocumentException{
-		
-		
-		String customErrorMessage = envMessageReader.getMessage("CUSTOM_ERROR_MESSAGE");
+
+		String customErrorMessage = envMessageReader.getMessage("custom.inv.error.message");
+
 		ServletOutputStream out = response.getOutputStream(); 
 		
 		CloseableHttpClient client =  null;
@@ -823,20 +823,17 @@ public class BillingResource {
 			inputstream = httpResponse.getEntity().getContent();
 			
 			IOUtils.copy(inputstream, out);
-			
 			out.flush();
 			out.close(); 
        
 			logger.debug("Throwing the values to output");
-			
         } catch(SocketTimeoutException e){
         	logger.error("SocketTimeoutException -- :{}", e);
-        	ByteArrayOutputStream outputStream = CommonUtil.getInvoiceException(customErrorMessage);
+        	ByteArrayOutputStream outputStream = CommonUtil.getInvoiceTimeOutException(customErrorMessage);
 			out.write(outputStream.toByteArray());
 			out.flush();
 			out.close();
 			outputStream.close();
-
         } catch (UnsupportedEncodingException e) {
 			logger.error("UnsupportedException -- Printing an Error PDF");
 			logger.error(e);

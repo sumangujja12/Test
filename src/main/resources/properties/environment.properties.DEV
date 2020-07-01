@@ -192,8 +192,7 @@ gmd_price_current_date =04/14/2020
 content.server.endpoint.url=http://txaixebnbld01:18081/client/v2/content.svc/
 #File
 documentum.endpoint=https://stg-texas.xoomenergy.com/files/{0}.pdf
-
 #mongodb config
 mongodb.uri=mongodb://reliantTestData_user:reliantTestData123@wntwebapd1:27017/reliantTestData
-CUSTOM_ERROR_MESSAGE=We're sorry, but we were unable to retrieve your document. Please try again later.
+custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20

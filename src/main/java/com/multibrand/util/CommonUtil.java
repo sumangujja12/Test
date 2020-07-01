@@ -2179,8 +2179,8 @@ public class CommonUtil implements Constants {
 			}
 			return guId;
 		}
-		public static ByteArrayOutputStream getInvoiceException(String customErrorMessage) throws DocumentException, IOException {
-			logger.debug("Entering PDFUtilities.getInvoiceException..");
+		public static ByteArrayOutputStream getInvoiceTimeOutException(String customErrorMessage) throws DocumentException, IOException {
+			logger.debug("Entering getInvoiceException..");
 	
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			Document document = new Document();
@@ -2191,7 +2191,7 @@ public class CommonUtil implements Constants {
 			document.add(paragraph);
 			document.close();
 			//toRet = baos.toByteArray();
-			logger.debug("Exiting PDFUtilities.getInvoiceException..");
+			logger.debug("Exiting getInvoiceException..");
 			return baos;
-		}  
+		}
 }
