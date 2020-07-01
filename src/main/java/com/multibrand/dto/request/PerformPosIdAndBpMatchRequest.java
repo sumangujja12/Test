@@ -11,7 +11,6 @@ import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.RepetitiveDigitCheck;
 import com.multibrand.request.validation.SizeConstraint;
-import com.multibrand.request.validation.SsnDlMandatoryCheck;
 import com.multibrand.request.validation.ValidDateTime;
 import com.multibrand.util.CommonUtil;
 
@@ -19,7 +18,7 @@ import com.multibrand.util.CommonUtil;
  * @author jsingh1
  */
 
-@SsnDlMandatoryCheck(message="please provide ssn or dl")
+@CombinedNotNull(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
 public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 
 	private static final long serialVersionUID = 1L;
