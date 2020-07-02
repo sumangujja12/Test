@@ -25,7 +25,9 @@ import com.multibrand.util.Constants;
  * @Author bbachin1
  */
 import com.multibrand.vo.request.ContractInfoRequest;
+import com.multibrand.vo.request.MaintenanceScheduleRequest;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
+import com.multibrand.vo.response.contentResponse.MaintenanceScheduleResponse;
 
 @Component
 @Path("personalize")
@@ -150,6 +152,19 @@ public class ContentResource implements Constants{
 		ContractOfferPlanContentResponse getContractInfoResponse = contentServiceBO.getMultiBrandPlanOffers(request, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(getContractInfoResponse).build();
 		logger.info("END-[ContentResource-getMultiBrandPlanOffers]");
+		return response;
+	}
+	
+	@POST
+	@Path("/getMaintenanceSchedule")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getMaintenanceSchedule(MaintenanceScheduleRequest request) {
+		Response response = null;
+		logger.info("Start-[ContentResource-getMaintenanceSchedule]");
+		MaintenanceScheduleResponse maintenanceScheduleResponse = contentServiceBO.getMaintenanceSchedule(request);
+		response = Response.status(200).entity(maintenanceScheduleResponse).build();
+		logger.info("END-[ContentResource-getMaintenanceSchedule]");
 		return response;
 	}
 	
