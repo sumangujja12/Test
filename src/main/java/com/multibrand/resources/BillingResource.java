@@ -1,13 +1,13 @@
 package com.multibrand.resources;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,20 +20,25 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.CoreProtocolPNames;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.itextpdf.text.DocumentException;
 import com.multibrand.bo.BillingBO;
 import com.multibrand.bo.ProfileBO;
 import com.multibrand.dto.request.BillCourtesyCreditActivityRequest;
@@ -43,12 +48,13 @@ import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.BillingService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.EnvMessageReader;
 import com.multibrand.vo.request.AMBEligibilityCheckRequest;
 import com.multibrand.vo.request.AutoPayInfoRequest;
-import com.multibrand.vo.request.PaymentExtensionRequest;
-import com.multibrand.vo.request.PaymentExtensionSubmitRequest;
 import com.multibrand.vo.request.DPPEligibilityCheckRequest;
 import com.multibrand.vo.request.DPPSubmitRequest;
+import com.multibrand.vo.request.PaymentExtensionRequest;
+import com.multibrand.vo.request.PaymentExtensionSubmitRequest;
 import com.multibrand.vo.request.RetroPopupRequestVO;
 import com.multibrand.vo.request.SaveAMBSingupRequestVO;
 import com.multibrand.vo.request.StoreUpdatePayAccountRequest;
@@ -116,6 +122,10 @@ public class BillingResource {
 	
 	@Autowired
 	private BillingRequestHandler billingRequestHandler;
+	
+	@Autowired
+	protected EnvMessageReader envMessageReader;
+
 	
 	/** This service is to provide the balance information from CCS system.
 	 * 
@@ -768,44 +778,64 @@ public class BillingResource {
 			@FormParam("companyCode")String companyCode,
 			@FormParam("brandName")String brandName,
 			@Context HttpServletResponse response
-			){
+			) throws IOException, DocumentException {
 		
+		
+		String customErrorMessage = envMessageReader.getMessage("custom.inv.error.message");
+		ServletOutputStream out = response.getOutputStream(); 
+		
+		CloseableHttpClient client =  null;
+		InputStream inputstream = null;
 		
 		try {
-		ServletOutputStream out = response.getOutputStream(); 
-		response.setHeader("Content-Disposition","attachment; filename=ebill.pdf");
-		response.setContentType("application/pdf");
 		
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpResponse billResponse = null;
-		String output = null;
-		BufferedReader br = null;
-		String url = new BaseAbstractService(){}.getEndPointUrl(Constants.EBILL_DOCUMENTUM_END_POINT_URL);
-		HttpPost postRequest = new HttpPost(url);
-		//HttpPost postRequest = new HttpPost(JNDILookupHelper.doJndiLookup(MobileJNDIConstants.VIEW_BILL_SERVICE_URL));
-		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-		postRequest.getParams().setParameter(CoreProtocolPNames.USE_EXPECT_CONTINUE, Boolean.FALSE);
-		nameValuePairs.add(new BasicNameValuePair("invoiceID", invoiceId));
-		nameValuePairs.add(new BasicNameValuePair("docType", (StringUtils.isEmpty(docType))?Constants.DEFAULT_DOCTYPE:docType));
-        nameValuePairs.add(new BasicNameValuePair("languageCode", (StringUtils.isEmpty(languageCode))?Constants.EN:languageCode));
-        
-			postRequest.setEntity(new UrlEncodedFormEntity(nameValuePairs, "utf-8"));
-			billResponse = httpClient.execute(postRequest);
-			br = new BufferedReader(new InputStreamReader((billResponse.getEntity().getContent())));
-			System.out.println("Output from Server 1st time is .... \n");
-		    InputStream inputStream = billResponse.getEntity().getContent();
-			BufferedInputStream bis = new BufferedInputStream(inputStream); 
-			byte bytes[] = new byte[4096];
-			int bytesRead;
-			while ((bytesRead = bis.read(bytes)) != -1) {
-				out.write(bytes, 0, bytesRead);
-			}
-			logger.debug("After while");
+			int timeout = Integer.parseInt(envMessageReader.getMessage("doc.inv.url.timeout")); // seconds
+			
+			
+			response.setHeader("Content-Disposition","attachment; filename=ebill.pdf");
+			response.setContentType("application/pdf");
+			
+			
+			RequestConfig config = RequestConfig.custom()
+					  .setConnectTimeout(timeout * 1000)
+					  .setConnectionRequestTimeout(timeout * 1000)
+					  .setSocketTimeout(timeout * 1000).build();
+			
+			client = 
+					  HttpClientBuilder.create().setDefaultRequestConfig(config).build();
+			
+			
+			String url = new BaseAbstractService().getEndPointUrl(Constants.EBILL_DOCUMENTUM_END_POINT_URL);
+			
+			HttpPost post = new HttpPost(url);
+	
+			
+			List<NameValuePair> arguments = new ArrayList<>(3);
+			arguments.add(new BasicNameValuePair("invoiceID", invoiceId));
+			arguments.add(new BasicNameValuePair("docType",(StringUtils.isEmpty(docType))?Constants.DEFAULT_DOCTYPE:docType));
+			arguments.add(new BasicNameValuePair("languageCode",(StringUtils.isEmpty(languageCode))?Constants.EN:languageCode));
+	        
+	        
+			post.setEntity(new UrlEncodedFormEntity(arguments));
+			
+			HttpResponse httpResponse = client.execute(post);
+			inputstream = httpResponse.getEntity().getContent();
+			
+			IOUtils.copy(inputstream, out);
+			
 			out.flush();
-			out.close();
-			bis.close();
+			out.close(); 
+       
 			logger.debug("Throwing the values to output");
 			
+        } catch(SocketTimeoutException e){
+        	logger.error("SocketTimeoutException -- :{}", e);
+        	ByteArrayOutputStream outputStream = CommonUtil.getInvoiceTimeOutException(customErrorMessage);
+			out.write(outputStream.toByteArray());
+			out.flush();
+			out.close();
+			outputStream.close();
+
         } catch (UnsupportedEncodingException e) {
 			logger.error("UnsupportedException -- Printing an Error PDF");
 			logger.error(e);
@@ -821,6 +851,13 @@ public class BillingResource {
 			logger.error(e);
 			//e.printStackTrace();
 			//callExceptionPDFWriter(out, txtInvoiceID);
+		} finally {
+			if (client != null) {
+				client.close();
+			}
+			if (inputstream != null) {
+				inputstream.close();
+			}
 		}
 		
 		
