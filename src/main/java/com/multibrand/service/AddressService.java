@@ -143,7 +143,7 @@ public class AddressService extends BaseAbstractService
 	    EsidProfileResponse esidProfileResponse = null;
 	    try {
 	      ProfileDomain proxy = getProfileServiceProxy();
-	      proxy=(ProfileDomain) getHeaderValueForMockServerCall(proxy,MOCK_EX_ESID_PROFILE);
+	      proxy=(ProfileDomain) getHeaderValueForMockServerCall(proxy);
 	      esidProfileResponse = proxy.getESIDProfile(companyCode, strESIID);
 
 	      if (StringUtils.isNotBlank(esidProfileResponse.getErrorMessage())){

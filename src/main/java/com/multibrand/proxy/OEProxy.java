@@ -137,7 +137,7 @@ public class OEProxy extends BaseAbstractService {
 
 			// Call NRGWS OEDomain.getNewCreditScore
 			
-			oeDomainPortProxy=(OEDomain) getHeaderValueForMockServerCall(oeDomainPortProxy,Constants.MOCK_EX_NEW_CREDIT_SCORE);
+			oeDomainPortProxy=(OEDomain) getHeaderValueForMockServerCall(oeDomainPortProxy);
 			response = oeDomainPortProxy.getNewCreditScore(creditScoreRequest);
 		
 		} catch (RemoteException re) {

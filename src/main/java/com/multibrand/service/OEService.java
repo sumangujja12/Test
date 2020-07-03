@@ -137,7 +137,7 @@ public class OEService extends BaseAbstractService {
 	    
 	        OEDomain proxyclient = getOEDomainProxy();
 	        
-	        proxyclient=(OEDomain) getHeaderValueForMockServerCall(proxyclient,MOCK_EX_CALENDAR_DATES);
+	        proxyclient=(OEDomain) getHeaderValueForMockServerCall(proxyclient);
 	        long startTime = CommonUtil.getStartTime();
 	 try{
 	        response = proxyclient.getTDSPSpecificCalendarDates(request);
@@ -219,7 +219,7 @@ public class OEService extends BaseAbstractService {
 			try {
 				OEDomain proxyclient = getOEServiceProxy();
 				
-				proxyclient=(OEDomain) getHeaderValueForMockServerCall(proxyclient,MOCK_EX_BPMATCH);
+				proxyclient=(OEDomain) getHeaderValueForMockServerCall(proxyclient);
 				
 				bpMatchCCSResponse = proxyclient.getBPMatchStatusFromCCS(request);
 			} catch (Exception e) {

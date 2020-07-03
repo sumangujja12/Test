@@ -143,7 +143,7 @@ public class ValidationService extends BaseAbstractService {
 				logger.debug("inside service validatePosIdWihKBA:: inside try");
 				ValidationDomain proxy = getValidationServiceProxy();
 				
-				proxy=(ValidationDomain) getHeaderValueForMockServerCall(proxy,MOCK_EX_POSID_WITH_KBA);
+				proxy=(ValidationDomain) getHeaderValueForMockServerCall(proxy);
 
 				response = proxy.validatePosidWithKBA(validatePosIdKBAReq);
 				
