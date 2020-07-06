@@ -1,4 +1,4 @@
-### Associated work items  
+### **Associated work items**
 @@WILOOP@@  
-* ** ${widetail.fields['System.WorkItemType']} ${widetail.id} ** Assigned by: ${widetail.fields['System.AssignedTo']}  ${widetail.fields['System.Title']}  
+* **Sprint Team** *[ ${widetail.fields['System.AreaPath']} ]*  **${widetail.fields['System.WorkItemType']} [ ${widetail.id} ]** - ${widetail.fields['System.Title']}  
 @@WILOOP@@ 
