@@ -3,23 +3,16 @@ package com.multibrand.service;
 import java.rmi.RemoteException;
 import java.text.MessageFormat;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
@@ -41,12 +34,12 @@ import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.UpdateCRMAgentInfoRequest;
 import com.multibrand.domain.UpdateCRMAgentInfoResponse;
-import com.multibrand.domain.ValidationDomain;
-import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
-import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.AgentDetailsRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
+import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
+import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
+import com.multibrand.exception.ServiceException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
@@ -69,6 +62,8 @@ public class OEService extends BaseAbstractService {
 	
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
+	@Autowired
+	private OEDomain oeDomainPortProxy;
 	/**
 	 * This will return SwapDomainProxy and set EndPoint URL
 	 * @return swapDomainProxy The SwapDomainProxy Object
@@ -217,11 +212,7 @@ public class OEService extends BaseAbstractService {
 		{
 			BpMatchCCSResponse bpMatchCCSResponse = null ;
 			try {
-				OEDomain proxyclient = getOEServiceProxy();
-				
-				proxyclient=(OEDomain) getHeaderValueForMockServerCall(proxyclient,MOCK_EX_BPMATCH);
-				
-				bpMatchCCSResponse = proxyclient.getBPMatchStatusFromCCS(request);
+				bpMatchCCSResponse = oeDomainPortProxy.getBPMatchStatusFromCCS(request);
 			} catch (Exception e) {
 				logger.error("error while executing getBPMatchStatusFromCCS() method from OEDomain web service");
 				throw new Exception("Exception in ValidationService:getBPMatchStatusFromCCS():", e);
