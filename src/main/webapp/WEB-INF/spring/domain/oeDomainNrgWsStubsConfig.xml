@@ -23,6 +23,14 @@
         <property name="portName" value="${NRGWS_OE_DOMAIN_PORT_NAME}" />
         <property name="endpointAddress" value="${ws.endpointURL.oeDomain}" />
 	 </bean>
- 	
- 	
+	 
+	 <bean id="validationDomainPortProxy" class="com.multibrand.ws.helper.JaxWsClientFactoryBean">
+       	<property name="wsdlDocumentLocation" value="${ws.endpointURL.validationDomain}?wsdl" />
+       	<property name="serviceEndpointInterface" value="${NRGWS_VALIDATION_DOMAIN_SERVICE_INTERFACE}" />
+        <property name="namespaceURI" value="${NRGWS_VALIDATION_DOMAIN_NAMESPACE_URI}" />
+        <property name="portName" value="${NRGWS_VALIDATION_DOMAIN_PORT_NAME}" />
+        <property name="endpointAddress" value="${ws.endpointURL.validationDomain}" />
+	 </bean>
+	 
+	
 </beans>

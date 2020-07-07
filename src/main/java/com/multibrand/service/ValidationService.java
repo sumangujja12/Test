@@ -3,8 +3,8 @@ package com.multibrand.service;
 import java.rmi.RemoteException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,6 @@ import com.multibrand.domain.ValidatePosIdRequest;
 import com.multibrand.domain.ValidatePosIdResponse;
 import com.multibrand.domain.ValidateReferralIdRequest;
 import com.multibrand.domain.ValidationDomain;
-import com.multibrand.domain.ValidationDomainPortBindingStub;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
@@ -45,10 +44,12 @@ public class ValidationService extends BaseAbstractService {
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 	
+	@Autowired
+	private ValidationDomain validationDomainPortProxy;
 	
-	protected AddressValidationDomain getAddressValidationDomainProxy(){
-        
-		return (AddressValidationDomain) getServiceProxy(AddressValidationDomainPortBindingStub.class,
+	
+	public AddressValidationDomain getAddressValidationDomainProxy(){
+        return (AddressValidationDomain) getServiceProxy(AddressValidationDomainPortBindingStub.class,
 				ADDRESS_VALIDATION_SERVICE_ENDPOINT_URL);
 	}
 	
@@ -86,14 +87,7 @@ public class ValidationService extends BaseAbstractService {
 	//START ONLINE AFFILIATES PROJECT - JSINGH1
 	
 	
-		/**
-		 * This will return ValidationDomain and set EndPoint URL
-		 * @return proxy The ValidationDomain Object
-		 */
-		protected ValidationDomain getValidationServiceProxy() {
-			return (ValidationDomain) getServiceProxy(ValidationDomainPortBindingStub.class,
-					VALIDATION_DOMAIN_END_POINT_URL_JNDI_NAME);
-		}
+		
 		
 		
 		
@@ -104,10 +98,8 @@ public class ValidationService extends BaseAbstractService {
 			long startTime=CommonUtil.getStartTime();
 			logger.debug(" START *******ValidationService:: validatePosID API**********");
 			try{
-				logger.debug("inside service validatePosId:: inside try");
-				ValidationDomain proxy = getValidationServiceProxy();
-
-				response = proxy.validatePosID(validatePosIdReq);
+				
+				response = validationDomainPortProxy.validatePosID(validatePosIdReq);
 				logger.debug("inside service validatePosId:: after call ::"+CommonUtil.doRender(validatePosIdReq));
 				logger.debug("inside validatePosId:: response is :: "+CommonUtil.doRender(response));
 
@@ -140,14 +132,8 @@ public class ValidationService extends BaseAbstractService {
 			long startTime=CommonUtil.getStartTime();
 			logger.debug(" START *******ValidationService:: validatePosIdWihKBA API**********");
 			try{
-				logger.debug("inside service validatePosIdWihKBA:: inside try");
-				ValidationDomain proxy = getValidationServiceProxy();
 				
-				proxy=(ValidationDomain) getHeaderValueForMockServerCall(proxy);
-
-				response = proxy.validatePosidWithKBA(validatePosIdKBAReq);
-				
-				
+				response = validationDomainPortProxy.validatePosidWithKBA(validatePosIdKBAReq);
 				logger.debug("inside service validatePosIdWihKBA:: after call ::"+CommonUtil.doRender(validatePosIdKBAReq));
 				logger.debug("inside validatePosIdWihKBA:: response is :: "+CommonUtil.doRender(response));
 
@@ -172,7 +158,6 @@ public class ValidationService extends BaseAbstractService {
 			
 		}
 		
-		
 		//END ONLINE AFFILIATES PROJECT - JSINGH1
 	
 		//START -- Security and Services Sprint 2
@@ -184,9 +169,9 @@ public class ValidationService extends BaseAbstractService {
 			logger.debug(" START *******ValidationService:: validateReferralId API**********");
 			try {
 				logger.debug("inside service validateReferralId:: inside try");
-				ValidationDomain proxy = getValidationServiceProxy();
+				
 
-				response = proxy.validateReferralId(validateReferralIdRequest);
+				response = validationDomainPortProxy.validateReferralId(validateReferralIdRequest);
 				logger.debug("inside service validateReferralId:: after call ::"+CommonUtil.doRender(validateReferralIdRequest));
 				logger.debug("inside validateReferralId:: response is :: "+CommonUtil.doRender(response));
 
