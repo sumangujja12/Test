@@ -124,12 +124,14 @@ public class GMDService extends BaseAbstractService {
          
          Holder<ZetGmdStmt>  holderZetGmdStmt = new Holder<>();
          holderZetGmdStmt.value = zetGmdStmt;
+         
+         Holder<String> holderLastBillDate = new Holder<String>();
 		
 		try{
-			
-			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderAvgPrice, holderZetGmdInvdate, holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
+
+			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderAvgPrice, holderZetGmdInvdate, holderLastBillDate,holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
 						
-			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderAvgPrice, holderZettGmdRetchr);
+			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderAvgPrice, holderZettGmdRetchr,holderLastBillDate);
 			
 		}catch(Exception ex){
 			utilityloggerHelper.logTransaction("getGMDStatementDetails", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -323,7 +325,7 @@ public class GMDService extends BaseAbstractService {
 		return current;
 	}
 	
-	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr) {
+	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr, Holder<String>holderLastBillDate) {
 
 		GMDStatementBreakDownResponse response = new GMDStatementBreakDownResponse();
 
@@ -365,6 +367,7 @@ public class GMDService extends BaseAbstractService {
 		response.setBreakdown(breakdown);
 		response.setReturnCharge(gmdReturnChargeList);		
 		response.setTotalUsage(zesGmdStmt.getCusage());
+		response.setLastBillDate(holderLastBillDate !=null ? holderLastBillDate.value : null);
 		return response;
 
 	}
