@@ -122,7 +122,7 @@ ws.rest.ccs.google.product.set.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB
 #################
 ######## GME Related #######
 GME.MYACCOUNT.LOGIN.URL=https://myaccount-test.greenmountain.com/
-GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-test.greenmountain.com/ResetPassword
+GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-test.greenmountain.com/ResetPassword/
 
 #Content server props
 gm.content.server.endpoint.url=http://txaixebxindxs01:13180/cd-service/gme/cdws/odata.svc/
