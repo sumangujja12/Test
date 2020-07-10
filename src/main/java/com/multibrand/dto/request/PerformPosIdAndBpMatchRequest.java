@@ -19,7 +19,7 @@ import com.multibrand.util.CommonUtil;
  * @author jsingh1
  */
 
-@MandotoryFieldCheck(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
+@MandotoryFieldCheck(fields = {"ssn", "tdl"}, message = "please provide valid ssn or dl")
 public class PerformPosIdAndBpMatchRequest extends BaseAffiliateRequest {
 
 	private static final long serialVersionUID = 1L;
