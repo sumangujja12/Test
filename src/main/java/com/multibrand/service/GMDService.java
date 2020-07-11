@@ -3,24 +3,23 @@ package com.multibrand.service;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Service;
-
+import org.springframework.ws.client.core.WebServiceTemplate;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.WebServiceMessageSenderWithAuth;
 import com.multibrand.vo.response.gmd.Breakdown;
 import com.multibrand.vo.response.gmd.Costs;
 import com.multibrand.vo.response.gmd.Current;
@@ -38,10 +37,10 @@ import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
 import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT;
 import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT_Service;
+import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmtResponse;
+import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
-import com.nrg.cxfstubs.gmdstatement.ZetGmdInvdate;
-import com.nrg.cxfstubs.gmdstatement.ZetGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
 
 
@@ -58,8 +57,10 @@ public class GMDService extends BaseAbstractService {
 
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
+	
+	@Autowired
+	private WebServiceTemplate webServiceTemplate;
 
-	private BigDecimal hundred = new BigDecimal(100);
 
 	/**
 	 * This profile call will do the call to the logging framework 
@@ -77,6 +78,7 @@ public class GMDService extends BaseAbstractService {
 		GMDStatementBreakDownResponse gmdStatementBreakDownResp = null;
 		
 		long startTime = CommonUtil.getStartTime();
+		Long endTime = null;
 		StringBuilder request = new StringBuilder();
 		request
 			.append("accountNumber=")
@@ -106,32 +108,41 @@ public class GMDService extends BaseAbstractService {
 	        binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.envMessageReader.getMessage(GMD_STATEMENT_ENDPOINT_URL_JNDINAME));
 	        
           logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::before call");
-          
-          ZetGmdInvdate zetGmdInvdate = new ZetGmdInvdate();
-          ZesGmdStmt zesGmdStmt = new ZesGmdStmt();
-          ZetGmdStmt zetGmdStmt = new ZetGmdStmt();        
-
-         Holder<ZetGmdInvdate>  holderZetGmdInvdate = new Holder<>();
-         holderZetGmdInvdate.value = zetGmdInvdate;
-         
-         Holder<ZettGmdRetchr> holderZettGmdRetchr =  new Holder<>();
-         
-         
-         Holder<BigDecimal> holderAvgPrice = new Holder<>(); 
-         
-         Holder<ZesGmdStmt>  holderZesGmdStmt = new Holder<>();
-         holderZesGmdStmt.value = zesGmdStmt;
-         
-         Holder<ZetGmdStmt>  holderZetGmdStmt = new Holder<>();
-         holderZetGmdStmt.value = zetGmdStmt;
-         
-         Holder<String> holderLastBillDate = new Holder<String>();
-		
+          		
+ 		
 		try{
 
-			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderAvgPrice, holderZetGmdInvdate, holderLastBillDate,holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
+			String user = this.envMessageReader.getMessage(CCS_USER_NAME);
+			String password = this.envMessageReader.getMessage(CCS_PASSWORD);
+			Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+			jaxb2Marshaller.setContextPath(ZEISUGETGMDSTMT.class.getPackage().getName());
+
+			webServiceTemplate.setMessageSender(new WebServiceMessageSenderWithAuth(user, password));
+			webServiceTemplate.setMarshaller(jaxb2Marshaller);
+			webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+
+			webServiceTemplate.setDefaultUri(this.envMessageReader.getMessage(GMD_STATEMENT_ENDPOINT_URL_JNDINAME));
+			
+			com.nrg.cxfstubs.gmdstatement.ObjectFactory factory = new com.nrg.cxfstubs.gmdstatement.ObjectFactory();
+			
+			ZEIsuGetGmdStmt_Type wsRequest = factory.createZEIsuGetGmdStmt_Type();
+
+			wsRequest.setCompCode(companyCode);
+			wsRequest.setContAcct(accountNumber);
+			wsRequest.setEsid(esiId);
+			wsRequest.setStmtMonth(month);
+			wsRequest.setStmtYear(year);
+			
+			startTime = Calendar.getInstance().getTimeInMillis();
+			
+			ZEIsuGetGmdStmtResponse  zEIsuGetGmdStmtResponse = (ZEIsuGetGmdStmtResponse) webServiceTemplate.marshalSendAndReceive(wsRequest);
+
+			endTime = Calendar.getInstance().getTimeInMillis();
+			logger.info("Time taken by service is =" + (endTime - startTime));
+			
+			//stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderAvgPrice, holderZetGmdInvdate, holderLastBillDate,holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
 						
-			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderAvgPrice, holderZettGmdRetchr,holderLastBillDate);
+			gmdStatementBreakDownResp = handleGMDStatementResponse(zEIsuGetGmdStmtResponse);
 			
 		}catch(Exception ex){
 			utilityloggerHelper.logTransaction("getGMDStatementDetails", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -239,11 +250,11 @@ public class GMDService extends BaseAbstractService {
 
 	}
 	
-	private List<GMDReturnCharge> getReturnCharge(Holder<ZettGmdRetchr> holderZettGmdRetchr) {
+	private List<GMDReturnCharge> getReturnCharge(ZettGmdRetchr holderZettGmdRetchr) {
 		
 		List<GMDReturnCharge> gmdReturnChargeList = new ArrayList<>();
 				
-		for (ZesGmdRetchr zesGmdRetchr : holderZettGmdRetchr.value.getItem()) {
+		for (ZesGmdRetchr zesGmdRetchr : holderZettGmdRetchr.getItem()) {
 			
 			GMDReturnCharge gmdReturnCharge = new GMDReturnCharge();
 			
@@ -325,21 +336,23 @@ public class GMDService extends BaseAbstractService {
 		return current;
 	}
 	
-	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr, Holder<String>holderLastBillDate) {
+	private GMDStatementBreakDownResponse handleGMDStatementResponse(ZEIsuGetGmdStmtResponse zEIsuGetGmdStmtResponse) {
+			
+			//Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr, Holder<String>holderLastBillDate) {
 
 		GMDStatementBreakDownResponse response = new GMDStatementBreakDownResponse();
 
-		ZesGmdStmt zesGmdStmt = holderZesGmdStmt.value ;
+		ZesGmdStmt zesGmdStmt = zEIsuGetGmdStmtResponse.getStmt();
 	
 		BigDecimal totalCost = new BigDecimal("0.00");
 		
 		
 		
-		response.setAvgPrice(holderAvgPrice !=null ? holderAvgPrice.value : null);
+		response.setAvgPrice(zEIsuGetGmdStmtResponse.getAvgPrice() !=null ? zEIsuGetGmdStmtResponse.getAvgPrice() : null);
 		
 		List<Breakdown> breakdown = new ArrayList<>();
 		
-		List<GMDReturnCharge> gmdReturnChargeList = getReturnCharge(holderZettGmdRetchr);
+		List<GMDReturnCharge> gmdReturnChargeList = getReturnCharge(zEIsuGetGmdStmtResponse.getRetChrg());
 		
 		breakdown.add(energyChargeitemBreakDown(zesGmdStmt, GMD_ENERGY_CHARGE));
 		
@@ -367,7 +380,7 @@ public class GMDService extends BaseAbstractService {
 		response.setBreakdown(breakdown);
 		response.setReturnCharge(gmdReturnChargeList);		
 		response.setTotalUsage(zesGmdStmt.getCusage());
-		response.setLastBillDate(holderLastBillDate !=null ? holderLastBillDate.value : null);
+		response.setLastBillDate(zEIsuGetGmdStmtResponse.getLastBildate() !=null ? zEIsuGetGmdStmtResponse.getLastBildate() : null);
 		return response;
 
 	}
