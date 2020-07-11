@@ -13,6 +13,7 @@ import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -59,7 +60,8 @@ public class GMDService extends BaseAbstractService {
 	private UtilityLoggerHelper utilityloggerHelper;
 	
 	@Autowired
-	private WebServiceTemplate webServiceTemplate;
+	@Qualifier("webServiceTemplateForGMDStatement")
+	private WebServiceTemplate webServiceTemplateForGMDStatement;
 
 
 	/**
@@ -112,16 +114,6 @@ public class GMDService extends BaseAbstractService {
  		
 		try{
 
-			String user = this.envMessageReader.getMessage(CCS_USER_NAME);
-			String password = this.envMessageReader.getMessage(CCS_PASSWORD);
-			Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-			jaxb2Marshaller.setContextPath(ZEISUGETGMDSTMT.class.getPackage().getName());
-
-			webServiceTemplate.setMessageSender(new WebServiceMessageSenderWithAuth(user, password));
-			webServiceTemplate.setMarshaller(jaxb2Marshaller);
-			webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
-
-			webServiceTemplate.setDefaultUri(this.envMessageReader.getMessage(GMD_STATEMENT_ENDPOINT_URL_JNDINAME));
 			
 			com.nrg.cxfstubs.gmdstatement.ObjectFactory factory = new com.nrg.cxfstubs.gmdstatement.ObjectFactory();
 			
@@ -135,7 +127,7 @@ public class GMDService extends BaseAbstractService {
 			
 			startTime = Calendar.getInstance().getTimeInMillis();
 			
-			ZEIsuGetGmdStmtResponse  zEIsuGetGmdStmtResponse = (ZEIsuGetGmdStmtResponse) webServiceTemplate.marshalSendAndReceive(wsRequest);
+			ZEIsuGetGmdStmtResponse  zEIsuGetGmdStmtResponse = (ZEIsuGetGmdStmtResponse) webServiceTemplateForGMDStatement.marshalSendAndReceive(wsRequest);
 
 			endTime = Calendar.getInstance().getTimeInMillis();
 			logger.info("Time taken by service is =" + (endTime - startTime));
