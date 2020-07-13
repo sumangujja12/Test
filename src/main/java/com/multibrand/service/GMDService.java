@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.soap.client.SoapFaultClientException;
+
+import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -27,9 +30,12 @@ import com.multibrand.vo.response.gmd.GMDReturnCharge;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.HourlyPrice;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
+import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
 import com.multibrand.vo.response.gmd.Pricing;
+import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
+import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
 import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
@@ -60,6 +66,10 @@ public class GMDService extends BaseAbstractService {
 	@Autowired
 	@Qualifier("webServiceTemplateForGMDStatement")
 	private WebServiceTemplate webServiceTemplateForGMDStatement;
+	
+	@Autowired
+	@Qualifier("webServiceTemplateForGMDCreateMoveOut")
+	private WebServiceTemplate webServiceTemplateForGMDCreateMoveOut;  
 
 
 	/**
@@ -515,5 +525,37 @@ public class GMDService extends BaseAbstractService {
 		}
 		return 0.0;
 
+	}
+	
+	public MoveOutResponse createMoveOut(MoveOutRequest moveOutRequest) {
+		String moveOutDocId = "";
+		MoveOutResponse moveOutResponse = new MoveOutResponse();
+		try {
+			com.nrg.cxfstubs.gmdmoveout.ObjectFactory factory = new com.nrg.cxfstubs.gmdmoveout.ObjectFactory();
+			ZEISUCREATEMOVEOUT_Type wsRequest = factory.createZEISUCREATEMOVEOUT_Type();
+			wsRequest.setCONTACC(moveOutRequest.getContractAccountNumber());
+			wsRequest.setESID(moveOutRequest.getEsiId());
+			wsRequest.setMOUTDATE(moveOutRequest.getFutureDate());
+			wsRequest.setMOUTREASON(moveOutRequest.getMoveOutReason());
+
+			ZEISUCREATEMOVEOUTResponse response = (ZEISUCREATEMOVEOUTResponse) webServiceTemplateForGMDCreateMoveOut
+					.marshalSendAndReceive(wsRequest);
+			moveOutDocId = response.getMOUTDOC();
+			if (moveOutDocId != null) {
+				moveOutResponse.setMoveOutDocNumber(moveOutDocId);
+				moveOutResponse.setResultCode(RESULT_CODE_SUCCESS);
+				moveOutResponse.setResultDescription(MSG_SUCCESS);
+			}
+			
+		}catch (SoapFaultClientException ex) {
+			logger.error("Exception Occured in  createMoveOut {} ", ex);
+			moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			moveOutResponse.setResultDescription(ex.getMessage());
+		} catch (Exception ex) {
+			logger.error("Exception Occured in  createMoveOut {} ", ex);
+			moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return moveOutResponse;
 	}
 }

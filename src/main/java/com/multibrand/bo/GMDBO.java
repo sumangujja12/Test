@@ -31,6 +31,7 @@ import com.multibrand.domain.UpdateContactRequest;
 import com.multibrand.domain.UpdateContactRequestAttNamValPairMapEntry;
 import com.multibrand.domain.UpdatePhoneDO;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
+import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.exception.NRGException;
 import com.multibrand.exception.OAMException;
@@ -51,6 +52,7 @@ import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
+import com.multibrand.vo.response.gmd.MoveOutResponse;
 
 /**
  * This BO class is to handle all the GMD Related API calls.
@@ -1107,5 +1109,9 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	
 	protected SSDomain getSSDomainProxyClient()  {
 		return (SSDomain) getServiceProxy(SSDomainPortBindingStub.class, SS_SERVICE_ENDPOINT_URL);
-	}	
+	}
+	
+	public MoveOutResponse createMoveOut(MoveOutRequest moveOutRequest){
+		return gmdService.createMoveOut(moveOutRequest);
+	}
 }
