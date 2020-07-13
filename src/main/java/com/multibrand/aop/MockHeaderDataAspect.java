@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -19,6 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.multibrand.domain.OEDomain;
 import com.multibrand.domain.ValidationDomain;
 import com.multibrand.util.Constants;
+import com.multibrand.util.EnvMessageReader;
 
 @Aspect
 @Component
@@ -26,6 +28,8 @@ public class MockHeaderDataAspect implements Constants{
 	
 	@Autowired
 	private ValidationDomain validationDomainPortProxy;
+	@Autowired
+	protected EnvMessageReader envMessageReader;
 	
 	@Autowired
 	private OEDomain oeDomainPortProxy;
@@ -38,17 +42,21 @@ public class MockHeaderDataAspect implements Constants{
 			Object responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 			org.apache.axis.client.Stub proxyObjectStub = ( org.apache.axis.client.Stub)validationDomainPortProxy;
-	        proxyObjectStub.clearHeaders();
-	        Hashtable<String, String> headers = new Hashtable<String, String>();
-	        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
-	        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
-	        }
+			if(isNonProdUrl())
+			{
+				
+		        proxyObjectStub.clearHeaders();
+		        Hashtable<String, String> headers = new Hashtable<String, String>();
+		        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+		        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
+		        }
+		        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+			}
 	        responseObject = jp.proceed();
-	        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+	        
       		return responseObject;
 	    }
-	
-		@Pointcut("execution(public * com.multibrand.proxy.OEProxy.*(..)) && execution(public * com.multibrand.service.OEService.*(..))")
+		@Pointcut("execution(public * com.multibrand.proxy.OEProxy.*(..))")
 	    public void addSoapHeaderPointForOEPRoxy() {}
 		
 		@Around("addSoapHeaderPointForOEPRoxy()")
@@ -56,12 +64,35 @@ public class MockHeaderDataAspect implements Constants{
 		    Object responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	        org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) oeDomainPortProxy;
-	        proxyObjectStub.clearHeaders();
-	        Hashtable<String, String> headers = new Hashtable<String, String>();
-	        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
-	        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
-	        }
-	        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+	        if(isNonProdUrl())
+				{	        proxyObjectStub.clearHeaders();
+		        Hashtable<String, String> headers = new Hashtable<String, String>();
+		        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+		        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
+		        }
+		        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+			}
+      		responseObject = jp.proceed();
+	        return responseObject;
+		}
+	
+		@Pointcut("execution(public * com.multibrand.service.OEService.*(..))")
+	    public void addSoapHeaderPointForOEService() {}
+		
+		@Around("addSoapHeaderPointForOEService()")
+		public Object addSoapHeaderPointForOEService(ProceedingJoinPoint jp) throws Throwable{
+		    Object responseObject = null;
+			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	        org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) oeDomainPortProxy;
+	        if(isNonProdUrl())
+			{
+		        proxyObjectStub.clearHeaders();
+		        Hashtable<String, String> headers = new Hashtable<String, String>();
+		        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+		        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
+		        }
+		        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+			}
       		responseObject = jp.proceed();
 	        return responseObject;
 		}
@@ -74,10 +105,29 @@ public class MockHeaderDataAspect implements Constants{
 			Response responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
       		responseObject = (Response) jp.proceed();
-      		if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
-      			responseObject.getMetadata().add(CONST_USE_MOCK_DATA,FLAG_TRUE);
-	        }
+      		if(isNonProdUrl())
+			{
+	      		if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+	      			responseObject.getMetadata().add(CONST_IS_MOCK_RESPONSE,FLAG_TRUE);
+		        }
+			}
 	        return responseObject;
+		}
+		
+		/**
+		 * 
+		 * @param requestUrl
+		 * @return
+		 */
+		private boolean isNonProdUrl(){
+			
+			String defaultEnv  = this.envMessageReader.getMessage(PROP_DEFAULT_ENV);
+			if(!StringUtils.equalsIgnoreCase(defaultEnv, ENV_PROD))
+			{
+				return true;
+			}else{
+				return false;
+			}
 		}
 	
 	
