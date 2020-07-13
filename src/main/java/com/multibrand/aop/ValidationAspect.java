@@ -72,7 +72,7 @@ public class ValidationAspect implements Constants{
 				response = (Response) joinPoint.proceed();
 				HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 				if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
-					response.getMetadata().add(CONST_USE_MOCK_DATA,FLAG_TRUE);
+					response.getMetadata().add(CONST_IS_MOCK_RESPONSE,FLAG_TRUE);
 		        }
 			} catch (Throwable e) {
 				logger.error("Exception in ValidationAspect.validate() -> "+e.getStackTrace());

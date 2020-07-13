@@ -47,12 +47,29 @@ public class MockHeaderDataAspect implements Constants{
 	        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
       		return responseObject;
 	    }
-	
-		@Pointcut("execution(public * com.multibrand.proxy.OEProxy.*(..)) && execution(public * com.multibrand.service.OEService.*(..))")
+		@Pointcut("execution(public * com.multibrand.proxy.OEProxy.*(..))")
 	    public void addSoapHeaderPointForOEPRoxy() {}
 		
 		@Around("addSoapHeaderPointForOEPRoxy()")
 		public Object addSoapHeaderElementForOEProxy(ProceedingJoinPoint jp) throws Throwable{
+		    Object responseObject = null;
+			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	        org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) oeDomainPortProxy;
+	        proxyObjectStub.clearHeaders();
+	        Hashtable<String, String> headers = new Hashtable<String, String>();
+	        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+	        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
+	        }
+	        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+      		responseObject = jp.proceed();
+	        return responseObject;
+		}
+	
+		@Pointcut("execution(public * com.multibrand.service.OEService.*(..))")
+	    public void addSoapHeaderPointForOEService() {}
+		
+		@Around("addSoapHeaderPointForOEService()")
+		public Object addSoapHeaderPointForOEService(ProceedingJoinPoint jp) throws Throwable{
 		    Object responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	        org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) oeDomainPortProxy;
@@ -75,7 +92,7 @@ public class MockHeaderDataAspect implements Constants{
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
       		responseObject = (Response) jp.proceed();
       		if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
-      			responseObject.getMetadata().add(CONST_USE_MOCK_DATA,FLAG_TRUE);
+      			responseObject.getMetadata().add(CONST_IS_MOCK_RESPONSE,FLAG_TRUE);
 	        }
 	        return responseObject;
 		}
