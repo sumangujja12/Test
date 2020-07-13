@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
@@ -11,6 +12,7 @@ import javax.validation.Validator;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -19,6 +21,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.util.Constants;
@@ -66,6 +70,10 @@ public class ValidationAspect implements Constants{
 		}else {
 			try {
 				response = (Response) joinPoint.proceed();
+				HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+				if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+					response.getMetadata().add(CONST_USE_MOCK_DATA,FLAG_TRUE);
+		        }
 			} catch (Throwable e) {
 				logger.error("Exception in ValidationAspect.validate() -> "+e.getStackTrace());
 			}

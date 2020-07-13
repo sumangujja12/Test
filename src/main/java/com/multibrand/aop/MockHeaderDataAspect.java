@@ -3,6 +3,7 @@ package com.multibrand.aop;
 import java.util.Hashtable;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.Response;
 
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.lang.StringUtils;
@@ -17,10 +18,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.multibrand.domain.OEDomain;
 import com.multibrand.domain.ValidationDomain;
+import com.multibrand.util.Constants;
 
 @Aspect
 @Component
-public class MockHeaderDataAspect {
+public class MockHeaderDataAspect implements Constants{
 	
 	@Autowired
 	private ValidationDomain validationDomainPortProxy;
@@ -28,7 +30,7 @@ public class MockHeaderDataAspect {
 	@Autowired
 	private OEDomain oeDomainPortProxy;
 	
-		@Pointcut("execution(* com.multibrand.service.ValidationService.*(..))")
+		@Pointcut("execution(public * com.multibrand.service.ValidationService.*(..))")
 	    public void addSoapHeaderPoint() {}
 	
 		@Around("addSoapHeaderPoint()")
@@ -38,15 +40,15 @@ public class MockHeaderDataAspect {
 			org.apache.axis.client.Stub proxyObjectStub = ( org.apache.axis.client.Stub)validationDomainPortProxy;
 	        proxyObjectStub.clearHeaders();
 	        Hashtable<String, String> headers = new Hashtable<String, String>();
-	        if(StringUtils.isNotBlank(httpServletRequest.getHeader("mock_flag"))) {
-	        	headers.put("usermockdata", httpServletRequest.getHeader("mock_flag"));
+	        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+	        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
 	        }
 	        responseObject = jp.proceed();
 	        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
       		return responseObject;
 	    }
 	
-		@Pointcut("execution(* com.multibrand.proxy.OEProxy.*(..)) && execution(* com.multibrand.service.OEService.*(..))")
+		@Pointcut("execution(public * com.multibrand.proxy.OEProxy.*(..)) && execution(public * com.multibrand.service.OEService.*(..))")
 	    public void addSoapHeaderPointForOEPRoxy() {}
 		
 		@Around("addSoapHeaderPointForOEPRoxy()")
@@ -56,11 +58,25 @@ public class MockHeaderDataAspect {
 	        org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) oeDomainPortProxy;
 	        proxyObjectStub.clearHeaders();
 	        Hashtable<String, String> headers = new Hashtable<String, String>();
-	        if(StringUtils.isNotBlank(httpServletRequest.getHeader("mock_flag"))) {
-	        	headers.put("usermockdata", httpServletRequest.getHeader("mock_flag"));
+	        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+	        	headers.put(CONST_USE_MOCK_DATA, httpServletRequest.getHeader(CONST_USE_MOCK_DATA));
 	        }
 	        proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
       		responseObject = jp.proceed();
+	        return responseObject;
+		}
+		
+		@Pointcut("execution(public* com.multibrand.resources.OEResource.*(..))")
+	    public void addMockFlagSoapHeaderPointForOEPRoxy() {}
+		
+		@Around("addMockFlagSoapHeaderPointForOEPRoxy()")
+		public Object addMockFlagIntoResponseHeader(ProceedingJoinPoint jp) throws Throwable{
+			Response responseObject = null;
+			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+      		responseObject = (Response) jp.proceed();
+      		if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
+      			responseObject.getMetadata().add(CONST_USE_MOCK_DATA,FLAG_TRUE);
+	        }
 	        return responseObject;
 		}
 	
