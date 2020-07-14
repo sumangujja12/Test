@@ -7,7 +7,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.transport.http.HttpComponentsMessageSender;
+
+import com.multibrand.interceptor.MySoapClientInterceptor;
 
 @Configuration
 @PropertySource({ "classpath:properties/environment.properties" })
@@ -60,6 +63,9 @@ public class WSConfig {
 		webServiceTemplate.setMarshaller(jaxb2MarshallerForGMDMoveOut());
 		webServiceTemplate.setUnmarshaller(jaxb2MarshallerForGMDMoveOut());
 		webServiceTemplate.setDefaultUri(gmdCreateMoveOutEndPoint);
+		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
+		webServiceTemplate.setInterceptors(clientInterceptors);
+        
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
 	}

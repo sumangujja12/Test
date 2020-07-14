@@ -15,11 +15,13 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
+import com.multibrand.exception.WebServiceException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.response.gmd.Breakdown;
@@ -547,8 +549,8 @@ public class GMDService extends BaseAbstractService {
 				moveOutResponse.setResultDescription(MSG_SUCCESS);
 			}
 			
-		}catch (SoapFaultClientException ex) {
-			logger.error("Exception Occured in  createMoveOut {} ", ex);
+		}catch (WebServiceClientException ex) {
+			logger.error("Exception Occured in WebServiceException  createMoveOut {} ", ex);
 			moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			moveOutResponse.setResultDescription(ex.getMessage());
 		} catch (Exception ex) {
