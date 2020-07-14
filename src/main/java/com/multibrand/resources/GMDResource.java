@@ -23,6 +23,7 @@ import com.multibrand.bo.OEBO;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
 import com.multibrand.dto.request.GMDEsidCalendarRequest;
+import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.exception.OAMException;
@@ -32,6 +33,7 @@ import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.MoveOutResponse;
 
 
 /** This Resource is to handle all the GMD APP Related API calls.
@@ -216,6 +218,16 @@ public class GMDResource extends BaseResource {
 		return response;
 	}
 		
+	@POST
+	@Path(API_CREATE_GMD_MOVE_OUT)
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response createMoveOut(MoveOutRequest moveOutRequest) {
+		MoveOutResponse moveOutResponse = new MoveOutResponse();
+		moveOutResponse = gmdBO.createMoveOut(moveOutRequest);
+		Response response = Response.status(Response.Status.OK).entity(moveOutResponse).build();
+		return response;
+	}
 	
 		
 }	
