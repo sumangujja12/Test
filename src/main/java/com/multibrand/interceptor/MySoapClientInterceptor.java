@@ -68,48 +68,5 @@ public class MySoapClientInterceptor implements ClientInterceptor {
         SoapMessage soapMessage = (SoapMessage) messageContext.getResponse();
         SoapEnvelope soapEnvelope = soapMessage.getEnvelope();
         return soapEnvelope.getBody();
-    }
-    private Element getFirstChildElement(Element el) {
-        return getFirstChildElement(el, null);
-    }
-    
-    private Element getFirstChildElement(Element el, String tagName) {
-        Element childEl = null;
-        NodeList nlist = el != null ? el.getChildNodes() : null;
-        int len = nlist != null ? nlist.getLength() : 0;
-        for (int i = 0; childEl == null && i < len; i++) {
-            Node node = nlist.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
-                if (tagName == null || tagName.equals(node.getLocalName()))
-                    childEl = (Element) node;
-            }
-        }
-            String responseObtained = convertNodeToXMLString(childEl);
-            logger.info("Response obtained: %s" + responseObtained);
-        return childEl;
-    }   
-    
-    /**
-	 * Convert a org.w3c.dom.Node into an XML representation.
-	 * @param node - containing an xml tree.
-	 * @return - String containing the XML.
-	 */
-	public  String convertNodeToXMLString(Node node)
-	  {
-		  String xml=null;
-		  try {
-		      Source source = new DOMSource(node);
-		      StringWriter stringWriter = new StringWriter();
-		      javax.xml.transform.Result result = new StreamResult(stringWriter);
-		      TransformerFactory factory = TransformerFactory.newInstance();
-		      Transformer transformer = factory.newTransformer();
-		      transformer.transform(source, result);
-		      xml=stringWriter.getBuffer().toString();
-		  } catch (TransformerConfigurationException e) {
-			  logger.error("Could not obtain the XML. ", e);
-		  } catch (TransformerException e) {
-			  logger.error("Could not obtain the XML. ",e);
-		  }
-		  return xml;
-	  }    
+    }    
 }  
