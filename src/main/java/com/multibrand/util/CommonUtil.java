@@ -2,6 +2,7 @@ package com.multibrand.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -37,6 +38,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPException;
+import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.Charsets;
@@ -2193,5 +2200,12 @@ public class CommonUtil implements Constants {
 			//toRet = baos.toByteArray();
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
-		}
+		} 
+		public static <T> Object unmarshallSoapResponse(String response, Class<T> responseClass)
+				throws IOException, SOAPException, JAXBException {
+			SOAPMessage message = MessageFactory.newInstance().createMessage(null,
+					new ByteArrayInputStream(response.getBytes()));
+			Unmarshaller unmarshaller = JAXBContext.newInstance(responseClass).createUnmarshaller();
+			return unmarshaller.unmarshal(message.getSOAPBody().extractContentAsDocument());
+		}		
 }

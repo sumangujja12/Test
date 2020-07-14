@@ -1,5 +1,6 @@
 package com.multibrand.service;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -8,7 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.soap.SOAPException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +40,7 @@ import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
 import com.multibrand.vo.response.gmd.Pricing;
+import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
 import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
@@ -546,8 +551,13 @@ public class GMDService extends BaseAbstractService {
 			
 		}catch (WebServiceClientException ex) {
 			logger.error("Exception Occured in WebServiceException  createMoveOut {} ", ex);
-			moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			moveOutResponse.setResultDescription(ex.getMessage());
+			try {
+				ZEISUCREATEMOVEOUTException zEISUCREATEMOVEOUTException =(ZEISUCREATEMOVEOUTException) CommonUtil.unmarshallSoapResponse(ex.getMessage(),ZEISUCREATEMOVEOUTException.class);
+				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getFaultInfo().getName().value());
+				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getFaultInfo().getText());
+			} catch (Exception e) {
+				logger.error("Exception Occured in  createMoveOut {} ", e);
+			} 
 		} catch (Exception ex) {
 			logger.error("Exception Occured in  createMoveOut {} ", ex);
 			moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
