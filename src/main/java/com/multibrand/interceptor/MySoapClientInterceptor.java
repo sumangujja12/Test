@@ -2,6 +2,7 @@ package com.multibrand.interceptor;
 
 import java.io.StringWriter;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -11,6 +12,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.jackson.XmlConstants;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapBody;
@@ -43,8 +45,9 @@ public class MySoapClientInterceptor implements ClientInterceptor {
        	logger.info("intercepted a fault...");
         SoapBody soapBody = getSoapBody(messageContext);
         SoapFault soapFault = soapBody.getFault();
+
+        TransformerFactory factory = TransformerFactory.newInstance();
         
-        TransformerFactory tf = TransformerFactory.newInstance();
         Transformer transformer;
         String strResult = "";
 		try {
@@ -54,7 +57,9 @@ public class MySoapClientInterceptor implements ClientInterceptor {
 			
 			Result result = new StreamResult(outWriter);
 			
-			transformer = tf.newTransformer();
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			
+			transformer = factory.newTransformer();
 			transformer.transform(sourceInput, result);
 			strResult = outWriter.getBuffer().toString();
 			

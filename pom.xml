@@ -697,6 +697,12 @@
 		    <groupId>com.sun.xml.bind</groupId>
 		    <artifactId>jaxb-impl</artifactId>
 		    <version>2.2.7</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>javax.xml.bind</groupId>
+		    		<artifactId>jsr173_api</artifactId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
 		<dependency>
