@@ -1,8 +1,5 @@
 package com.multibrand.service;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -12,20 +9,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.soap.SOAPException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import com.multibrand.dto.request.MoveOutRequest;
@@ -567,14 +558,7 @@ public class GMDService extends BaseAbstractService {
 				soapFaultRes = soapFaultRes.replaceAll("</detail>", "");
 				
 				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
-						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(soapFaultRes, ZEISUCREATEMOVEOUTRfcException.class);
-				
-				/*InputStream targetStream = new ByteArrayInputStream(soapFaultRes.getBytes());
-				JAXBContext jaxbContext = JAXBContext.newInstance(com.nrg.cxfstubs.gmdmoveout.ObjectFactory.class);
-				
-				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
-						((JAXBElement<ZEISUCREATEMOVEOUTRfcException>) jaxbContext.createUnmarshaller().unmarshal(targetStream)).getValue();*/
-				
+						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(soapFaultRes, ZEISUCREATEMOVEOUTRfcException.class);		
 				
 				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());
 				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
