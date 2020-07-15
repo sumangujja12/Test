@@ -10,16 +10,16 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.jackson.XmlConstants;
+import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapEnvelope;
 import org.springframework.ws.soap.SoapFault;
 import org.springframework.ws.soap.SoapMessage;
-import com.multibrand.exception.WebServiceException;
 
 public class MySoapClientInterceptor implements ClientInterceptor {
 
@@ -52,7 +52,8 @@ public class MySoapClientInterceptor implements ClientInterceptor {
         String strResult = "";
 		try {
 			
-			Source sourceInput = soapFault.getSource();
+			Source sourceInput = soapFault.getFaultDetail().getSource();
+			
 			StringWriter outWriter = new StringWriter();
 			
 			Result result = new StreamResult(outWriter);
@@ -63,14 +64,12 @@ public class MySoapClientInterceptor implements ClientInterceptor {
 			transformer.transform(sourceInput, result);
 			strResult = outWriter.getBuffer().toString();
 			
-			throw new WebServiceException(String.format("Error occured while invoking SOAP service - %s ", strResult));
-		} catch (WebServiceException e) {
-			logger.error("WebServiceException:{}",e);
+			throw new RuntimeException( strResult);
 		} catch (TransformerConfigurationException  e) {
 			logger.error("TransformerConfiguration Exception:{}",e);
 		} catch (TransformerException e) {
 			logger.error("Transformer Exception:{}",e);
-		}
+		} 
 		return true;
 
     }

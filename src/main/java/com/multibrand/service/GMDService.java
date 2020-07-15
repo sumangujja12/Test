@@ -1,6 +1,5 @@
 package com.multibrand.service;
 
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -10,22 +9,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
-import javax.xml.soap.SOAPException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
-import com.multibrand.exception.WebServiceException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.response.gmd.Breakdown;
@@ -40,8 +35,8 @@ import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
 import com.multibrand.vo.response.gmd.Pricing;
-import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
+import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTRfcException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
 import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
@@ -537,7 +532,7 @@ public class GMDService extends BaseAbstractService {
 			ZEISUCREATEMOVEOUT_Type wsRequest = factory.createZEISUCREATEMOVEOUT_Type();
 			wsRequest.setCONTACC(moveOutRequest.getContractAccountNumber());
 			wsRequest.setESID(moveOutRequest.getEsiId());
-			wsRequest.setMOUTDATE(moveOutRequest.getFutureDate());
+			wsRequest.setMOUTDATE(moveOutRequest.getMoveOutDate());
 			wsRequest.setMOUTREASON(moveOutRequest.getMoveOutReason());
 
 			ZEISUCREATEMOVEOUTResponse response = (ZEISUCREATEMOVEOUTResponse) webServiceTemplateForGMDCreateMoveOut
@@ -549,14 +544,23 @@ public class GMDService extends BaseAbstractService {
 				moveOutResponse.setResultDescription(MSG_SUCCESS);
 			}
 			
-		}catch (WebServiceClientException ex) {
-			logger.error("Exception Occured in WebServiceException  createMoveOut {} ", ex);
+		}catch (RuntimeException ex) {
+			logger.error("Exception Occured in RuntimeException  createMoveOut {} ", ex.getMessage());
 			try {
-				ZEISUCREATEMOVEOUTException zEISUCREATEMOVEOUTException =(ZEISUCREATEMOVEOUTException) CommonUtil.unmarshallSoapResponse(ex.getMessage(),ZEISUCREATEMOVEOUTException.class);
-				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getFaultInfo().getName().value());
-				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getFaultInfo().getText());
+				
+				String soapFaultRes = ex.getMessage();
+				soapFaultRes = soapFaultRes.replaceAll("<detail>", "");
+				soapFaultRes = soapFaultRes.replaceAll("</detail>", "");
+				
+				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
+						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(soapFaultRes, ZEISUCREATEMOVEOUTRfcException.class);		
+				
+				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());
+				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
 			} catch (Exception e) {
 				logger.error("Exception Occured in  createMoveOut {} ", e);
+				moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			} 
 		} catch (Exception ex) {
 			logger.error("Exception Occured in  createMoveOut {} ", ex);
