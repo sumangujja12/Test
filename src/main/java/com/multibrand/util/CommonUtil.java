@@ -5,6 +5,8 @@ import java.beans.PropertyDescriptor;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -39,11 +41,10 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.Charsets;
@@ -2201,11 +2202,15 @@ public class CommonUtil implements Constants {
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
 		} 
-		public static <T> Object unmarshallSoapResponse(String response, Class<T> responseClass)
+		@SuppressWarnings("unchecked")
+		public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
 				throws IOException, SOAPException, JAXBException {
-			SOAPMessage message = MessageFactory.newInstance().createMessage(null,
-					new ByteArrayInputStream(response.getBytes()));
-			Unmarshaller unmarshaller = JAXBContext.newInstance(responseClass).createUnmarshaller();
-			return unmarshaller.unmarshal(message.getSOAPBody().extractContentAsDocument());
-		}		
+			
+			InputStream targetStream = new ByteArrayInputStream(response.getBytes());
+			
+			JAXBContext JAXBContext = JAXBContext.newInstance(responseClass);
+			
+			return ((JAXBElement<responseClass.getClassLoader()>) JAXBContext.createUnmarshaller().unmarshal(targetStream)).getValue();
+			
+		}
 }

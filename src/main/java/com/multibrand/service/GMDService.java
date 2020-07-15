@@ -1,6 +1,8 @@
 package com.multibrand.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -10,22 +12,24 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.soap.SOAPException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.soap.client.SoapFaultClientException;
 
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
-import com.multibrand.exception.WebServiceException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.response.gmd.Breakdown;
@@ -40,8 +44,8 @@ import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
 import com.multibrand.vo.response.gmd.Pricing;
-import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
+import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTRfcException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
 import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
@@ -542,7 +546,7 @@ public class GMDService extends BaseAbstractService {
 			ZEISUCREATEMOVEOUT_Type wsRequest = factory.createZEISUCREATEMOVEOUT_Type();
 			wsRequest.setCONTACC(moveOutRequest.getContractAccountNumber());
 			wsRequest.setESID(moveOutRequest.getEsiId());
-			wsRequest.setMOUTDATE(moveOutRequest.getFutureDate());
+			wsRequest.setMOUTDATE(moveOutRequest.getMoveOutDate());
 			wsRequest.setMOUTREASON(moveOutRequest.getMoveOutReason());
 
 			ZEISUCREATEMOVEOUTResponse response = (ZEISUCREATEMOVEOUTResponse) webServiceTemplateForGMDCreateMoveOut
@@ -554,12 +558,22 @@ public class GMDService extends BaseAbstractService {
 				moveOutResponse.setResultDescription(MSG_SUCCESS);
 			}
 			
-		}catch (WebServiceClientException ex) {
-			logger.error("Exception Occured in WebServiceException  createMoveOut {} ", ex);
+		}catch (RuntimeException ex) {
+			logger.error("Exception Occured in RuntimeException  createMoveOut {} ", ex.getMessage());
 			try {
-				ZEISUCREATEMOVEOUTException zEISUCREATEMOVEOUTException =(ZEISUCREATEMOVEOUTException) CommonUtil.unmarshallSoapResponse(ex.getMessage(),ZEISUCREATEMOVEOUTException.class);
-				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getFaultInfo().getName().value());
-				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getFaultInfo().getText());
+				
+				String soapFaultRes = ex.getMessage();
+				soapFaultRes = soapFaultRes.replaceAll("<detail>", "");
+				soapFaultRes = soapFaultRes.replaceAll("</detail>", "");
+				InputStream targetStream = new ByteArrayInputStream(soapFaultRes.getBytes());
+				JAXBContext jaxbContext = JAXBContext.newInstance(com.nrg.cxfstubs.gmdmoveout.ObjectFactory.class);
+				
+				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
+						((JAXBElement<ZEISUCREATEMOVEOUTRfcException>) jaxbContext.createUnmarshaller().unmarshal(targetStream)).getValue();
+				
+				
+				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());
+				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
 			} catch (Exception e) {
 				logger.error("Exception Occured in  createMoveOut {} ", e);
 			} 
