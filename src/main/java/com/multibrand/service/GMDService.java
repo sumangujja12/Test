@@ -564,6 +564,8 @@ public class GMDService extends BaseAbstractService {
 				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
 			} catch (Exception e) {
 				logger.error("Exception Occured in  createMoveOut {} ", e);
+				moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			} 
 		} catch (Exception ex) {
 			logger.error("Exception Occured in  createMoveOut {} ", ex);
