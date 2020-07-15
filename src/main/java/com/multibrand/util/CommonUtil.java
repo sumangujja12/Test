@@ -2202,15 +2202,17 @@ public class CommonUtil implements Constants {
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
 		} 
-		@SuppressWarnings("unchecked")
-		public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
+		public <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
 				throws IOException, SOAPException, JAXBException {
 			
 			InputStream targetStream = new ByteArrayInputStream(response.getBytes());
 			
-			JAXBContext JAXBContext = JAXBContext.newInstance(responseClass);
+			JAXBContext JAXBContext = javax.xml.bind.JAXBContext.newInstance(responseClass.getPackage().getName());
+			Unmarshaller unmarshaller = JAXBContext.createUnmarshaller();
 			
-			return ((JAXBElement<responseClass.getClassLoader()>) JAXBContext.createUnmarshaller().unmarshal(targetStream)).getValue();
+			JAXBElement<T> document = (JAXBElement<T>)unmarshaller.unmarshal( targetStream );
+			 
+			 return document.getValue();
 			
-		}
+		}		
 }
