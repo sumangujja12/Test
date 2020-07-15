@@ -565,11 +565,15 @@ public class GMDService extends BaseAbstractService {
 				String soapFaultRes = ex.getMessage();
 				soapFaultRes = soapFaultRes.replaceAll("<detail>", "");
 				soapFaultRes = soapFaultRes.replaceAll("</detail>", "");
-				InputStream targetStream = new ByteArrayInputStream(soapFaultRes.getBytes());
+				
+				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
+						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(soapFaultRes, ZEISUCREATEMOVEOUTRfcException.class);
+				
+				/*InputStream targetStream = new ByteArrayInputStream(soapFaultRes.getBytes());
 				JAXBContext jaxbContext = JAXBContext.newInstance(com.nrg.cxfstubs.gmdmoveout.ObjectFactory.class);
 				
 				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
-						((JAXBElement<ZEISUCREATEMOVEOUTRfcException>) jaxbContext.createUnmarshaller().unmarshal(targetStream)).getValue();
+						((JAXBElement<ZEISUCREATEMOVEOUTRfcException>) jaxbContext.createUnmarshaller().unmarshal(targetStream)).getValue();*/
 				
 				
 				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());

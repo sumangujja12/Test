@@ -2202,7 +2202,7 @@ public class CommonUtil implements Constants {
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
 		} 
-		public <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
+		public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
 				throws IOException, SOAPException, JAXBException {
 			
 			InputStream targetStream = new ByteArrayInputStream(response.getBytes());
