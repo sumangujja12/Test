@@ -2,16 +2,11 @@ package com.multibrand.service;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Locale;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +23,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.multibrand.util.CommonUtil;
@@ -369,33 +362,6 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 			byte[] encodedToken = Base64.encodeBase64(token.getBytes());
 
 			return "Basic " + new String(encodedToken);
-		}
-		
-		/**
-		 * 
-		 * @param proxyObject
-		 * @param apiName
-		 * @return
-		 */
-		public Object getHeaderValueForMockServerCall(Object proxyObject){
-
-	        
-	       /* if(httpServletRequest.getHeader(apiName) != null){
-	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
-	      		proxyObjectStub.clearHeaders();
-				proxyObjectStub.setHeader("namespace", httpServletRequest.getHeader(apiName),httpServletRequest.getHeader(apiName));
-	        }*/
-			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-	        
-	        if(httpServletRequest.getHeader("useMockData") != null){
-	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
-	      		Hashtable<String, String> headers = new Hashtable<String, String>();
-	      		headers.put("useMockData", httpServletRequest.getHeader("useMockData"));
-	      		proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
-
-	        }
-			
-			return proxyObject;
 		}
 	 
 }
