@@ -1080,6 +1080,18 @@
             <artifactId>spring-ws-core</artifactId>
             <version>2.1.4.RELEASE</version>
         </dependency>
+          <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+	    	<groupId>org.springframework.ws</groupId>
+	    	<artifactId>spring-ws-test</artifactId>
+	    	<version>2.0.2.RELEASE</version>
+	    	<scope>test</scope>
+		</dependency>	
 				
 	</dependencies>
 </project>
