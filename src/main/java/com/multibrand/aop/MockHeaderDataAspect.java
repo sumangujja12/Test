@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -19,6 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.multibrand.domain.OEDomain;
 import com.multibrand.domain.ValidationDomain;
 import com.multibrand.util.Constants;
+import com.multibrand.util.EnvMessageReader;
 
 @Aspect
 @Component
@@ -26,6 +28,8 @@ public class MockHeaderDataAspect implements Constants{
 	
 	@Autowired
 	private ValidationDomain validationDomainPortProxy;
+	@Autowired
+	protected EnvMessageReader envMessageReader;
 	
 	@Autowired
 	private OEDomain oeDomainPortProxy;
@@ -38,7 +42,7 @@ public class MockHeaderDataAspect implements Constants{
 			Object responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 			org.apache.axis.client.Stub proxyObjectStub = ( org.apache.axis.client.Stub)validationDomainPortProxy;
-			if(isNonProdUrl(httpServletRequest.getRequestURL()));
+			if(isNonProdUrl())
 			{
 				
 		        proxyObjectStub.clearHeaders();
@@ -60,7 +64,7 @@ public class MockHeaderDataAspect implements Constants{
 		    Object responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	        org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) oeDomainPortProxy;
-	        if(isNonProdUrl(httpServletRequest.getRequestURL()));
+	        if(isNonProdUrl())
 				{	        proxyObjectStub.clearHeaders();
 		        Hashtable<String, String> headers = new Hashtable<String, String>();
 		        if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
@@ -80,7 +84,7 @@ public class MockHeaderDataAspect implements Constants{
 		    Object responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	        org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) oeDomainPortProxy;
-	        if(isNonProdUrl(httpServletRequest.getRequestURL()));
+	        if(isNonProdUrl())
 			{
 		        proxyObjectStub.clearHeaders();
 		        Hashtable<String, String> headers = new Hashtable<String, String>();
@@ -101,7 +105,7 @@ public class MockHeaderDataAspect implements Constants{
 			Response responseObject = null;
 			HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
       		responseObject = (Response) jp.proceed();
-      		if(isNonProdUrl(httpServletRequest.getRequestURL()));
+      		if(isNonProdUrl())
 			{
 	      		if(StringUtils.isNotBlank(httpServletRequest.getHeader(CONST_USE_MOCK_DATA))) {
 	      			responseObject.getMetadata().add(CONST_IS_MOCK_RESPONSE,FLAG_TRUE);
@@ -115,17 +119,15 @@ public class MockHeaderDataAspect implements Constants{
 		 * @param requestUrl
 		 * @return
 		 */
-		private boolean isNonProdUrl(StringBuffer requestUrl){
-			String tempURLBuffer[] = requestUrl.toString().split("/");
-
-			String serverURL = tempURLBuffer[2];
-			if(serverURL.contains("dev1") || serverURL.contains("stg1")|| serverURL.contains("prelive1")||serverURL.contains("localhost"))
+		private boolean isNonProdUrl(){
+			
+			String defaultEnv  = this.envMessageReader.getMessage(PROP_DEFAULT_ENV);
+			if(!StringUtils.equalsIgnoreCase(defaultEnv, ENV_PROD))
 			{
 				return true;
 			}else{
 				return false;
 			}
-			
 		}
 	
 	

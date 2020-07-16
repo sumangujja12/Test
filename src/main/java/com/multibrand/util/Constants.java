@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface Constants {
+	
+	public static final String PROP_DEFAULT_ENV = "default.env";
+	public static final String ENV_PROD = "PROD";
 
 	public static final String ENV_PROPERTIES_FILE = "classpath:properties/environment";
 	public static final String EMPTY = "";
