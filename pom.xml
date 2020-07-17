@@ -36,7 +36,6 @@
 		<spring-version>3.2.3.RELEASE</spring-version>
 		<dependency.scope>compile</dependency.scope>
 		<snapshot-version>-SNAPSHOT</snapshot-version>
-		<mongo.driver.version>3.2.2</mongo.driver.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -1064,10 +1063,6 @@
 			<version>11.2.0.3</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.mongodb</groupId>
-			<artifactId>mongo-java-driver</artifactId>
-			<version>${mongo.driver.version}</version>
-		</dependency>
+		
 	</dependencies>
 </project>
