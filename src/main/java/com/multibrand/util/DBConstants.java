@@ -392,5 +392,7 @@ public interface DBConstants {
 	//END || PBI 15786: Update ESID Call || atiwari
 	
 	public static final String OE_UPDATE_ERROR_SLA_QUERY = "db.choice.reliant.updateerrorinsla";
+	public static final String GMD_PERSON_SEQ = "PERSON_ID_SEQ";
+	public static final String GMD_TRACKING_SEQ = "TRACKING_NUMBER_SEQ";
 
 }
