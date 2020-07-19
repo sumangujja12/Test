@@ -395,4 +395,25 @@ public interface DBConstants {
 	public static final String GMD_PERSON_SEQ = "PERSON_ID_SEQ";
 	public static final String GMD_TRACKING_SEQ = "TRACKING_NUMBER_SEQ";
 
+	
+	//columns of component_outage table
+	public static final String COL_OUTAGE_STATUS = "OUTAGE_STATUS";
+	public static final String COL_OUTAGE_MESSAGE = "OUTAGE_MESSAGE";
+	public static final String COL_SCHEDULED_OUTAGE_FLAG = "SCHEDULED_OUTAGE_FLAG";
+	public static final String COL_SCHEDULED_OUTAGE_START = "SCHEDULED_OUTAGE_START";
+	public static final String COL_SCHEDULED_OUTAGE_END = "SCHEDULED_OUTAGE_END";
+	public static final String COL_DYNAMIC_MESSAGE_TYPE = "DYNAMIC_MESSAGE_TYPE";
+	public static final String COL_DYNAMIC_MESSAGE_STATUS = "DYNAMIC_MESSAGE_STATUS";
+	public static final String COL_DYNAMIC_MESSAGE_CTR = "DYNAMIC_MESSAGE_CTR";
+	public static final String COL_NON_SCHEDULED_OUTAGE_FLAG = "NON_SCHEDULED_OUTAGE_FLAG";
+	public static final String COL_NON_SCHEDULED_OUTAGE_START = "NON_SCHEDULED_OUTAGE_START";
+	public static final String COL_NON_SCHEDULED_OUTAGE_END = "NON_SCHEDULED_OUTAGE_END";
+	public static final String COL_MSG_PRIORITY = "MSG_PRIORITY";
+	public static final String COL_MESSAGE_CODE = "MESSAGE_CODE";
+	
+
+	public static final String GMD_PERSON_SEQ = "PERSON_ID_SEQ";
+	public static final String GMD_TRACKING_SEQ = "TRACKING_NUMBER_SEQ";
+
+
 }
