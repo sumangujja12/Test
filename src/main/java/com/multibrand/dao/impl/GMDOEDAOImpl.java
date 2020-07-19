@@ -15,19 +15,16 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Repository;
 
-import com.multibrand.dao.AbstractSpringDAO;
+import com.multibrand.dao.GMDDAO;
 import com.multibrand.dao.mapper.GetTrackNoRowMapper;
-import com.multibrand.dao.mapper.UserInfoRowMapper;
 import com.multibrand.dto.GMDPersonDetailsDTO;
 import com.multibrand.dto.GMDServiceLocationDetailsDTO;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
-import com.multibrand.resources.GMDResource;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.DBConstants;
-import com.multibrand.vo.response.HourlyUsage;
 @Repository("GMDOEDAO")
-public class GMDOEDAOImpl   {
+public class GMDOEDAOImpl implements GMDDAO  {
 
 	@Resource(name = "choiceGMDJdbcTemplate")
 	private JdbcTemplate choiceGMDJdbcTemplate;
@@ -89,10 +86,10 @@ public class GMDOEDAOImpl   {
 		try {
 			nextVal = choiceGMDJdbcTemplate.queryForObject(query, Integer.class);
 		} catch (DataAccessException dae) {
-			this.logger.error("getDataWithOutParam returing String: Exception while performing DB operation : "
+			logger.error("getDataWithOutParam returing String: Exception while performing DB operation : "
 					+ dae.getMessage());
 		} catch (Throwable t) {
-			this.logger
+			logger
 					.error("getDataWithOutParam returing String: Throwable Exception while performing DB operation : "
 							+ t.getMessage());
 		}
