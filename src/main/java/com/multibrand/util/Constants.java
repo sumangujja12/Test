@@ -1567,5 +1567,5 @@ public interface Constants {
 	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
 
 	public static final String TEST_DATA_DB = "reliantTestData";
-
-}
+	public static final String DATA_MOCKUP_HEADER_NAME ="UseDataMockup";
+	}
