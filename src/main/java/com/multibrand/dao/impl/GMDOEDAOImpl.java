@@ -106,9 +106,10 @@ public class GMDOEDAOImpl implements GMDDAO  {
 
 		StringBuffer strBuffer = new StringBuffer("");
 		strBuffer.append(" Select TRACKING_NUMBER from GME_CHOICE.SERVICE_LOCATION_GMD ");
-		strBuffer.append(" where ESID =? and SERVICE_START_DATE =? ");
+		strBuffer.append(" where ESID =? and SERVICE_START_DATE >= ? ");
 		final String esid = enrollmentRequest.getEsiId();
-		final String startDate = enrollmentRequest.getServiceStartDate();
+		final String startDate = CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(),
+				Constants.RESPONSE_DATE_FORMAT, "dd-MMM-YY");
 		
 		List<GMDServiceLocationDetailsDTO> returnList = choiceGMDJdbcTemplate.query(strBuffer.toString(),
 				new PreparedStatementSetter() {
@@ -119,10 +120,8 @@ public class GMDOEDAOImpl implements GMDDAO  {
 						ps.setString(1, esid);
 						if (StringUtils.isNotBlank(startDate)) {
 							ps.setDate(2, CommonUtil.getSqlDate(startDate,
-									Constants.DATE_FORMAT));
-						} else {
-							ps.setDate( 2, null);
-						}
+									"dd-MMM-YY"));
+						} 
 						
 					}
 				},
