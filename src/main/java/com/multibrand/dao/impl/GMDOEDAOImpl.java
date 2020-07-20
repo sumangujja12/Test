@@ -109,7 +109,7 @@ public class GMDOEDAOImpl implements GMDDAO  {
 		strBuffer.append(" where ESID =? and SERVICE_START_DATE >= ? ");
 		final String esid = enrollmentRequest.getEsiId();
 		final String startDate = CommonUtil.changeDateFormat(CommonUtil.getCurrentDateYYYYMMDD(),
-				Constants.RESPONSE_DATE_FORMAT, "dd-MMM-YY");
+				Constants.RESPONSE_DATE_FORMAT, Constants.DATE_FRMT_DB);
 		
 		List<GMDServiceLocationDetailsDTO> returnList = choiceGMDJdbcTemplate.query(strBuffer.toString(),
 				new PreparedStatementSetter() {
@@ -120,7 +120,7 @@ public class GMDOEDAOImpl implements GMDDAO  {
 						ps.setString(1, esid);
 						if (StringUtils.isNotBlank(startDate)) {
 							ps.setDate(2, CommonUtil.getSqlDate(startDate,
-									"dd-MMM-YY"));
+									Constants.DATE_FRMT_DB));
 						} 
 						
 					}
