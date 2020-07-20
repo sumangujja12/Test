@@ -2,6 +2,9 @@
 #Environment Properties file
 ##########################################
 
+#### Build related properties
+default.env=SANDBOX
+
 ####### Credentials
 #CCS user name and password
 CCSPASSWORD=CustAlrt01
