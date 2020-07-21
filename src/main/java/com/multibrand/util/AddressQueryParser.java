@@ -16,6 +16,11 @@ import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 
+/** This class defines AddressQueryParser for forming the Query  used in Lucene  Searcher 
+ * 
+ * @author RKiran
+ */
+
 public class AddressQueryParser
 {
     private  String field;

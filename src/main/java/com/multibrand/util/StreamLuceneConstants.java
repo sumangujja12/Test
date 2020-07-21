@@ -1,5 +1,10 @@
 package com.multibrand.util;
 
+/** This class defines the Analyzer Stop Words 
+ * 
+ * @author RKiran
+ */
+
 public interface StreamLuceneConstants {
 	
 	public static  String[] StreetSuffixes = new String[] {

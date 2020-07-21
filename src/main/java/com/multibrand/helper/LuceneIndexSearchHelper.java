@@ -30,6 +30,12 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants{
 	
 	private List<String> stopWordsList = null;
 	
+	 /**
+		 * Builds the Stop Words , used in Analyzer
+		 * @param 
+		 * @return Analyzer
+		 */
+	
 	LuceneIndexSearchHelper()
 	{
 		stopWordsList = new ArrayList<>();
@@ -42,6 +48,11 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants{
 		return stopWordsList;
 	}
 
+	 /**
+	 * This will create the Standard Analyzer used to define stopWords 
+	 * @param 
+	 * @return Analyzer
+	 */
 	
 	 public  Analyzer BuildLuceneAnalyzer()
 	    {
@@ -49,7 +60,11 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants{
 	        stopWordSet.addAll(getStopWordsList());
 	        return new StandardAnalyzer(Version.LUCENE_42,stopWordSet);
 	    }
-	 
+				 /**
+					 * This will form the Query Object for Lucene Searcher 
+					 * @param state , customerType , esiId , analyzer
+					 * @return BooleanQuery
+					 */
 	 public BooleanQuery formQuery(String state , String customerType , String esiId , Analyzer analyzer) throws IOException
 		{
 			
@@ -69,7 +84,11 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants{
 			    return query;
 			    
 		}
-		
+	 		/**
+				 * This will close the Resources
+				 * @param Resource in Form of Object
+				 * @return void
+		    */
 		public  void closeResources(Object resource) throws IOException
 		{
 			if(resource !=null)
