@@ -192,3 +192,6 @@ content.server.endpoint.url=http://ebxblp01:18081/client/v2/content.svc/
 documentum.endpoint=https://texas.xoomenergy.com/files/{0}.pdf
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
+
+# Lucene Search Engine Index Files Directory Location
+lucene.indexed.dir=/apps02/data/stream/address/lucene

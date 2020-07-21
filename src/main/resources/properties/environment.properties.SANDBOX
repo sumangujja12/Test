@@ -174,3 +174,6 @@ CCS_PRICE_STMT = http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/9
 gmd_price_current_date =04/14/2020
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
+
+# Lucene Search Engine Index Files Directory Location
+lucene.indexed.dir=/apps02/data/stream/address/lucene
