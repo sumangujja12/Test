@@ -1080,6 +1080,7 @@
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13</version>
+
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.ws/spring-ws -->		
 		<dependency>
@@ -1087,6 +1088,8 @@
             <artifactId>spring-ws-core</artifactId>
             <version>2.1.4.RELEASE</version>
         </dependency>
+
+	
 		 <dependency>
 		    <groupId>org.apache.lucene</groupId>
 		    <artifactId>lucene-core</artifactId>
@@ -1104,6 +1107,6 @@
 			    <artifactId>lucene-analyzers-common</artifactId>
 			    <version>4.0.0</version>
 			</dependency>
-	
+
 	</dependencies>
 </project>
