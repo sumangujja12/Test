@@ -1087,33 +1087,23 @@
             <artifactId>spring-ws-core</artifactId>
             <version>2.1.4.RELEASE</version>
         </dependency>
-
-		
-		<!--LUCENE: START -->
-		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
-				
 		 <dependency>
 		    <groupId>org.apache.lucene</groupId>
 		    <artifactId>lucene-core</artifactId>
 		    <version>4.2.0</version>
 		 </dependency>
-
-			<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser -->
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser -->
 			<dependency>
 			    <groupId>org.apache.lucene</groupId>
 			    <artifactId>lucene-queryparser</artifactId>
 			    <version>4.2.1</version>
 			</dependency>
-
-			<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-common -->
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-common -->
 			<dependency>
 			    <groupId>org.apache.lucene</groupId>
 			    <artifactId>lucene-analyzers-common</artifactId>
 			    <version>4.0.0</version>
 			</dependency>
-
-				
-		<!--LUCENE: END -->
-
+	
 	</dependencies>
 </project>
