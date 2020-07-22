@@ -1,5 +1,7 @@
 package com.multibrand.dto;
 
+import com.multibrand.dao.jdbc.sp.ProcedureInParameter;
+
 public class GMDPersonDetailsDTO {
 	
 	private Integer personId;
@@ -17,6 +19,17 @@ public class GMDPersonDetailsDTO {
 	private String businessPartnerNumber ="";
 	private String middleName="";
 	private String maidenName="";
+	private String routingNumber="";
+	private String bankInstitutionName="";
+	private String ccType ="";
+	private String ccExpiryMonth ="";
+	private String ccExpiryYear ="";
+	private String ccBillzip ="";
+	private String tokenizedCCNumber ="";
+	private String ccAccountName ="";
+	private String autoPayFlag ="";
+	private String tokenizedBankAccountNumber = "";
+	
 	
 	/**
 	 * @return the personId
@@ -197,6 +210,126 @@ public class GMDPersonDetailsDTO {
 	 */
 	public void setMaidenName(String maidenName) {
 		this.maidenName = maidenName;
+	}
+	/**
+	 * @return the routingNumber
+	 */
+	public String getRoutingNumber() {
+		return routingNumber;
+	}
+	/**
+	 * @param routingNumber the routingNumber to set
+	 */
+	public void setRoutingNumber(String routingNumber) {
+		this.routingNumber = routingNumber;
+	}
+	/**
+	 * @return the bankInstitutionName
+	 */
+	public String getBankInstitutionName() {
+		return bankInstitutionName;
+	}
+	/**
+	 * @param bankInstitutionName the bankInstitutionName to set
+	 */
+	public void setBankInstitutionName(String bankInstitutionName) {
+		this.bankInstitutionName = bankInstitutionName;
+	}
+	/**
+	 * @return the ccType
+	 */
+	public String getCcType() {
+		return ccType;
+	}
+	/**
+	 * @param ccType the ccType to set
+	 */
+	public void setCcType(String ccType) {
+		this.ccType = ccType;
+	}
+	/**
+	 * @return the ccExpiryMonth
+	 */
+	public String getCcExpiryMonth() {
+		return ccExpiryMonth;
+	}
+	/**
+	 * @param ccExpiryMonth the ccExpiryMonth to set
+	 */
+	public void setCcExpiryMonth(String ccExpiryMonth) {
+		this.ccExpiryMonth = ccExpiryMonth;
+	}
+	/**
+	 * @return the ccExpiryYear
+	 */
+	public String getCcExpiryYear() {
+		return ccExpiryYear;
+	}
+	/**
+	 * @param ccExpiryYear the ccExpiryYear to set
+	 */
+	public void setCcExpiryYear(String ccExpiryYear) {
+		this.ccExpiryYear = ccExpiryYear;
+	}
+	/**
+	 * @return the ccBillzip
+	 */
+	public String getCcBillzip() {
+		return ccBillzip;
+	}
+	/**
+	 * @param ccBillzip the ccBillzip to set
+	 */
+	public void setCcBillzip(String ccBillzip) {
+		this.ccBillzip = ccBillzip;
+	}
+	/**
+	 * @return the tokenizedCCNumber
+	 */
+	public String getTokenizedCCNumber() {
+		return tokenizedCCNumber;
+	}
+	/**
+	 * @param tokenizedCCNumber the tokenizedCCNumber to set
+	 */
+	public void setTokenizedCCNumber(String tokenizedCCNumber) {
+		this.tokenizedCCNumber = tokenizedCCNumber;
+	}
+	/**
+	 * @return the ccAccountName
+	 */
+	public String getCcAccountName() {
+		return ccAccountName;
+	}
+	/**
+	 * @param ccAccountName the ccAccountName to set
+	 */
+	public void setCcAccountName(String ccAccountName) {
+		this.ccAccountName = ccAccountName;
+	}
+	/**
+	 * @return the autoPayFlag
+	 */
+	public String getAutoPayFlag() {
+		return autoPayFlag;
+	}
+	/**
+	 * @param autoPayFlag the autoPayFlag to set
+	 */
+	public void setAutoPayFlag(String autoPayFlag) {
+		this.autoPayFlag = autoPayFlag;
+	}
+	/**
+	 * @return the tokenizedBankAccountNumber
+	 */
+	public String getTokenizedBankAccountNumber() {
+		return tokenizedBankAccountNumber;
+	}
+	/**
+	 * @param tokenizedBankAccountNumber the tokenizedBankAccountNumber to set
+	 */
+	public void setTokenizedBankAccountNumber(String tokenizedBankAccountNumber) {
+		this.tokenizedBankAccountNumber = tokenizedBankAccountNumber;
 	}
 	
 	

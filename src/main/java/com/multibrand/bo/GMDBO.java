@@ -1148,6 +1148,14 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		gmdPersonDetailsDTO.setPhoneNumber(submitEnrollRequest.getStrBPHomeTelNum());
 		gmdPersonDetailsDTO.setMaidenName(submitEnrollRequest.getStrBPMaidenName());
 		gmdPersonDetailsDTO.setMiddleName(submitEnrollRequest.getStrBPMiddleInitial());
+		gmdPersonDetailsDTO.setTokenizedCCNumber(enrollmentRequest.getCcNumber());
+		gmdPersonDetailsDTO.setCcType(enrollmentRequest.getCcInstituteCode());
+		if (StringUtils.isNotBlank(enrollmentRequest.getExpirationDate())
+				&& StringUtils.contains(enrollmentRequest.getExpirationDate(), "/")) {
+			String[] expArr = enrollmentRequest.getExpirationDate().split("/");
+			gmdPersonDetailsDTO.setCcExpiryMonth(expArr[0]);
+			gmdPersonDetailsDTO.setCcExpiryYear(expArr[1]);
+		}
 		return gmdPersonDetailsDTO;
 	}
 	

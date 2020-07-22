@@ -56,24 +56,22 @@ public class GMDServiceLocationPreParedStatementSetter implements PreparedStatem
 		}
 		ps.setString(21,"");	
 		ps.setString(22,serviceLocationDTO.getReferrerCode());
-		ps.setString(23,"");
-		ps.setString(24,serviceLocationDTO.getPromoCodeEntered());
-		ps.setString(25,serviceLocationDTO.getCompletionStatusCode());	
-		ps.setString(26,"");
-		ps.setString(27,serviceLocationDTO.getTdspCode());
-		ps.setString(28,serviceLocationDTO.getOfferCodeTitle());
-		ps.setString(29,serviceLocationDTO.getCaCheckDigit());
-		ps.setString(30,serviceLocationDTO.getErrorCode());
-		ps.setString(31,serviceLocationDTO.getCampaignCode());
-		ps.setString(32,serviceLocationDTO.getContactByPhoneFlag());
-		ps.setString(33,serviceLocationDTO.getContactByEmailFlag());
-		ps.setString(34,serviceLocationDTO.getEnrollSource());
-		ps.setString(35,serviceLocationDTO.getSwitchHoldStatus());
-		ps.setString(36,serviceLocationDTO.getPremiseType());
-		ps.setString(37,serviceLocationDTO.getEsidStatus());
-		ps.setString(38,serviceLocationDTO.getBrandId());
-		ps.setString(39,Constants.GME_COMPANY_CODE);
-		ps.setString(40,serviceLocationDTO.getErrorCodesList());
+		ps.setString(23,serviceLocationDTO.getPromoCodeEntered());
+		ps.setString(24,serviceLocationDTO.getCompletionStatusCode());	
+		
+		ps.setString(25,serviceLocationDTO.getTdspCode());
+		ps.setString(26,serviceLocationDTO.getOfferCodeTitle());
+		ps.setString(27,serviceLocationDTO.getCaCheckDigit());
+		ps.setString(28,serviceLocationDTO.getErrorCode());
+		ps.setString(29,serviceLocationDTO.getCampaignCode());
+		ps.setString(30,serviceLocationDTO.getContactByPhoneFlag());
+		ps.setString(31,serviceLocationDTO.getContactByEmailFlag());
+		ps.setString(32,serviceLocationDTO.getEnrollSource());
+		ps.setString(33,serviceLocationDTO.getSwitchHoldStatus());
+		ps.setString(34,serviceLocationDTO.getPremiseType());
+		ps.setString(35,serviceLocationDTO.getEsidStatus());
+		ps.setString(36,Constants.GME_COMPANY_CODE);
+		ps.setString(37,serviceLocationDTO.getErrorCodesList());
 	}
 
 }

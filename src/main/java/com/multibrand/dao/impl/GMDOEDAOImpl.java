@@ -42,8 +42,12 @@ public class GMDOEDAOImpl implements GMDDAO  {
 		strBuffer.append(" (PERSON_ID,NAME_FIRST,NAME_LAST,DATE_OF_BIRTH,PHONE_NUMBER,");
 		strBuffer.append(" ADDRESS_EMAIL, ADDITIONAL_NAME_FIRST,ADDITIONAL_NAME_LAST,");
 		strBuffer.append(" KEEP_ME_INFORMED_FLAG, IDOC_NUMBER, PERSON_STATUS, CREATION_DATE, ");
-		strBuffer.append(" LANGUAGE_CD,BUSINESS_PARTNER_ID,COMPANY_CODE, ID_CD) ");
-		strBuffer.append(" values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		strBuffer.append(" LANGUAGE_CD,BUSINESS_PARTNER_ID,COMPANY_CODE, AUTOPAY_FLAG, ");
+		strBuffer.append(" AP_ROUTING_NUMBER, AP_TOKENIZED_BANK_ACCT, AP_CC_TYPE,AP_CC_EXPIRY_MONTH,   ");
+		strBuffer.append(" AP_CC_EXPIRY_YEAR, AP_CC_BILLZIP, AP_TOKENIZED_CC_NUMBER, AP_CC_ACCOUNT_NAME ");
+		strBuffer.append(" ) ");
+		strBuffer.append(" values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		
 
 		int isUpdate = choiceGMDJdbcTemplate.update(strBuffer.toString(),
 				new GMDPersonPreParedStatementSetter(enrollRequest));
@@ -63,12 +67,12 @@ public class GMDOEDAOImpl implements GMDDAO  {
 		strBuffer.append(" ADDRESS_BILL_SAMEAS_SRVC_FLAG,SRVC_ADDRESS_OVERRIDE_FLAG, ");
 		strBuffer.append(" BILL_ADDRESS_LINE_1, BILL_ADDRESS_LINE_2,BILL_CITY,");
 		strBuffer.append(" BILL_STATE, BILL_ZIP,SERVICE_START_DATE,");
-		strBuffer.append(" ESID_MATCH_FLAG, REFERRER_CD,GEO_ZONE,OFFER_CELL_TRK_CD,");
-		strBuffer.append(" COMPLETION_STATUS_CD,AD_ID,TDSP_CD, OFFER_TEASER, CA_CHECK_DIGIT, ERROR_CD,");
+		strBuffer.append(" ESID_MATCH_FLAG, REFERRER_CD,OFFER_CELL_TRK_CD,");
+		strBuffer.append(" COMPLETION_STATUS_CD,TDSP_CD, OFFER_TEASER, CA_CHECK_DIGIT, ERROR_CD,");
 		strBuffer.append(" CAMPAIGN_CODE, CONTACTBY_PHONE_FLAG,CONTACTBY_EMAIL_FLAG, ENROLL_SOURCE,");
-		strBuffer.append(" SW_HOLD_STATUS,PREMISE_TYPE,ESID_STATUS,BRAND_NAME,COMPANY_CODE,ERROR_CODES_LIST )  ");
+		strBuffer.append(" SW_HOLD_STATUS,PREMISE_TYPE,ESID_STATUS,COMPANY_CODE,ERROR_CODES_LIST )  ");
 
-		strBuffer.append(" values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		strBuffer.append(" values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
 		int isUpdate = choiceGMDJdbcTemplate.update(strBuffer.toString(),
 				new GMDServiceLocationPreParedStatementSetter(enrollRequest));

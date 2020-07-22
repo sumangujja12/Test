@@ -44,7 +44,15 @@ public class GMDPersonPreParedStatementSetter implements PreparedStatementSetter
 		ps.setString(13, personDTO.getLanguagePref());
 		ps.setString(14, personDTO.getBusinessPartnerNumber());
 		ps.setString(15, Constants.GME_COMPANY_CODE);
-		ps.setString(16, "");
+		ps.setString(16, personDTO.getAutoPayFlag());
+		ps.setString(17, personDTO.getRoutingNumber());
+		ps.setString(18, personDTO.getTokenizedBankAccountNumber());
+		ps.setString(19, personDTO.getCcType());
+		ps.setString(20, personDTO.getCcExpiryMonth());
+		ps.setString(21, personDTO.getCcExpiryYear());
+		ps.setString(22, personDTO.getCcBillzip());
+		ps.setString(23, personDTO.getTokenizedCCNumber());
+		ps.setString(24, personDTO.getCcAccountName());
 	}
 
 }
