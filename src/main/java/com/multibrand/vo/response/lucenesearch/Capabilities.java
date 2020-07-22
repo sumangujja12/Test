@@ -25,7 +25,11 @@ public class Capabilities {
     private String state;
 
     private String zipcode;
-
+    
+    private String aglcPremisesNumber ;
+    
+    private String aglcAccountNumber ;
+    
     public void setCapabilityType(String capabilityType){
         this.capabilityType = capabilityType;
     }
@@ -80,6 +84,18 @@ public class Capabilities {
     public String getZipcode(){
         return this.zipcode;
     }
+	public String getAglcPremisesNumber() {
+		return aglcPremisesNumber;
+	}
+	public void setAglcPremisesNumber(String aglcPremisesNumber) {
+		this.aglcPremisesNumber = aglcPremisesNumber;
+	}
+	public String getAglcAccountNumber() {
+		return aglcAccountNumber;
+	}
+	public void setAglcAccountNumber(String aglcAccountNumber) {
+		this.aglcAccountNumber = aglcAccountNumber;
+	}
 	
 
 
