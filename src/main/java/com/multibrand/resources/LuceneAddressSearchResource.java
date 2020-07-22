@@ -73,7 +73,7 @@ public class LuceneAddressSearchResource {
 		@FormParam("queryString") String queryString) throws IOException {
 		
 		long startTime = System.currentTimeMillis();
-
+		logger.info("Lucene Address Search Call Start ---");
 		String documentToReturn = null;
 		IndexReader reader = null;
 		Directory fsDir = null;
@@ -83,9 +83,9 @@ public class LuceneAddressSearchResource {
 		Gson gson = new Gson();
 		try {
 			
-			logger.info("state" + state);
-			logger.info("customerType" + customerType);
-			logger.info("queryString" + queryString);
+			logger.info("Lucene Address Search state" + state);
+			logger.info("Lucene Address Search customerType" + customerType);
+			logger.info("Lucene Address Search queryString" + queryString);
 
 			if(addressLuceneHelper.isRequestValid(state, customerType, queryString))
 			{
@@ -138,6 +138,7 @@ public class LuceneAddressSearchResource {
 		long endTime = System.currentTimeMillis();
     	Response response = Response.status(httpStatus).entity(gson.toJson(responseSet)).build();
 		logger.info("getAddress API Call took " + (endTime - startTime) + " milliseconds");
+		logger.info("Lucene Address Search Call Ends ---");
 		return response;
 
 	}
