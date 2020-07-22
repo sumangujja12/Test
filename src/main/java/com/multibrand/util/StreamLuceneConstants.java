@@ -41,5 +41,13 @@ public interface StreamLuceneConstants {
 	public static    String[] ApartmentPrefixes = new String[] {
 			 "APT", "UNIT", "STE"
 	 };
+	
+	/* Constants Related to Lucene Search Query*/
+	
+	public static String STATE = "State" ;
+	public static String CUSTOMERTYPE = "CustomerType" ;
+	public static String EXACT = "Exact" ;
+	public static String CANONICAL = "Canonical" ;
+	public static String EMPTY_STR = "" ;
 
 }

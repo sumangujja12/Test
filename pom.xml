@@ -36,6 +36,7 @@
 		<spring-version>3.2.3.RELEASE</spring-version>
 		<dependency.scope>compile</dependency.scope>
 		<snapshot-version>-SNAPSHOT</snapshot-version>
+		<mongo.driver.version>3.2.2</mongo.driver.version>
 	</properties>
 	<profiles>
 		<profile>
@@ -697,6 +698,12 @@
 		    <groupId>com.sun.xml.bind</groupId>
 		    <artifactId>jaxb-impl</artifactId>
 		    <version>2.2.7</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>javax.xml.bind</groupId>
+		    		<artifactId>jsr173_api</artifactId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
 		<dependency>
@@ -929,7 +936,7 @@
  		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-ccs-ws-client-nrg-rest</artifactId>
-			<version>9</version>
+			<version>10</version>
 
  		</dependency>
 		<dependency>
@@ -996,7 +1003,8 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-			<version>20</version>
+			<version>17-SNAPSHOT
+			</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
@@ -1064,10 +1072,22 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>${mongo.driver.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13</version>
-		</dependency>		
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.ws/spring-ws -->		
+		<dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+            <version>2.1.4.RELEASE</version>
+        </dependency>
+
 		
 		<!--LUCENE: START -->
 		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
@@ -1094,7 +1114,6 @@
 
 				
 		<!--LUCENE: END -->
-		
-		
+
 	</dependencies>
 </project>
