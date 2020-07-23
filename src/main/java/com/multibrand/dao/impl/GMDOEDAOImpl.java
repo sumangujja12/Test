@@ -68,11 +68,11 @@ public class GMDOEDAOImpl implements GMDDAO  {
 		strBuffer.append(" BILL_ADDRESS_LINE_1, BILL_ADDRESS_LINE_2,BILL_CITY,");
 		strBuffer.append(" BILL_STATE, BILL_ZIP,SERVICE_START_DATE,");
 		strBuffer.append(" ESID_MATCH_FLAG, REFERRER_CD,OFFER_CELL_TRK_CD,");
-		strBuffer.append(" COMPLETION_STATUS_CD,TDSP_CD, OFFER_TEASER, CA_CHECK_DIGIT, ERROR_CD,");
+		strBuffer.append(" TDSP_CD, OFFER_TEASER, CA_CHECK_DIGIT, ERROR_CD,");
 		strBuffer.append(" CAMPAIGN_CODE, CONTACTBY_PHONE_FLAG,CONTACTBY_EMAIL_FLAG, ENROLL_SOURCE,");
 		strBuffer.append(" SW_HOLD_STATUS,PREMISE_TYPE,ESID_STATUS,COMPANY_CODE,ERROR_CODES_LIST )  ");
 
-		strBuffer.append(" values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		strBuffer.append(" values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
 		int isUpdate = choiceGMDJdbcTemplate.update(strBuffer.toString(),
 				new GMDServiceLocationPreParedStatementSetter(enrollRequest));

@@ -410,8 +410,8 @@ public interface DBConstants {
 	public static final String COL_MESSAGE_CODE = "MESSAGE_CODE";
 	
 
-	public static final String GMD_PERSON_SEQ = "PERSON_ID_SEQ";
-	public static final String GMD_TRACKING_SEQ = "TRACKING_NUMBER_SEQ";
+	public static final String GMD_PERSON_SEQ = "GME_CHOICE.GMD_PERSON_ID_SEQ";
+	public static final String GMD_TRACKING_SEQ = "GME_CHOICE.GMD_TRACKING_NUMBER_SEQ";
 
 
 }
