@@ -1,16 +1,13 @@
 package com.multibrand.service;
 
 import java.lang.reflect.Constructor;
-
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Locale;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
@@ -30,14 +27,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnvMessageReader;
 import com.multibrand.web.i18n.WebI18nMessageSource;
-
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 
 /**
@@ -374,6 +370,7 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 			return "Basic " + new String(encodedToken);
 		}
 	 
+
 		public Object populateMockDataRequestHeader (Object proxyObject){
 
 	        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
@@ -388,4 +385,5 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 			
 			return proxyObject;
 		}
+
 }
