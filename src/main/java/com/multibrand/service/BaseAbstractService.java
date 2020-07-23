@@ -93,20 +93,18 @@ public class BaseAbstractService implements Constants{
 				Constructor constructor = srvProxyClass.getConstructor(parmTypes);
 				proxyObject =  constructor.newInstance(new Object[] { new java.net.URL(endPoint) ,service });  
 				try {
+					
 					Method method = srvProxyClass.getSuperclass().getDeclaredMethod("setTimeout", Integer.TYPE);
-				   // int timeout = getWSConnTimeout(endPointUrlKey);
 				    method.invoke(proxyObject, WEBSERVICE_CALL_TIMEOUT * 1000);
+				    
 				}
 				catch(Exception e) {
-					//logger.warn("Setting timeout has been failed:" +e.getMessage());
 					logger.error("Setting timeout has been failed:"+e.getMessage());
 				}
 				
 			} catch (Exception e) {
-				//throw new ServiceException("getServiceProxy() Failed :", e);
 				logger.error("ServiceException :: "+e.getMessage());
 			} catch (Throwable t) {
-				//throw new ServiceException("getServiceProxy() Failed :", t);
 				logger.error("Throwable ServiceException ::"+t.getMessage());
 			}	
 		return proxyObject;
