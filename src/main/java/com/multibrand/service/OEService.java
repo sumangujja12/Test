@@ -549,8 +549,8 @@ public class OEService extends BaseAbstractService {
 		public KbaSubmitAnswerResponse submitKBAAnswer(KbaSubmitAnswerRequest kbaSubmitAnswerRequest)   {
 			KbaSubmitAnswerResponse kbaSubmitAnswerResponse = null;
 			try {
-				OEDomain proxyclient = getOEServiceProxy();
-				kbaSubmitAnswerResponse = proxyclient.submitAnswerKBA(kbaSubmitAnswerRequest);
+				//OEDomain proxyclient = getOEServiceProxy();
+				kbaSubmitAnswerResponse = oeDomainPortProxy.submitAnswerKBA(kbaSubmitAnswerRequest);
 			} catch (Exception e) {
 				logger.error("Error in method: submitKbaAnswer");
 			} 
@@ -567,8 +567,8 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 			
 			ProspectResponse  response = null;
 			try {
-				OEDomain proxyclient = getOEServiceProxy();
-				response= proxyclient.getProsectData(request);
+				//OEDomain proxyclient = getOEServiceProxy();
+				response= oeDomainPortProxy.getProsectData(request);
 			} catch (Exception e) {
 				logger.error("Error in method: submitKbaAnswer");
 			} 
