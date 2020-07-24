@@ -78,7 +78,6 @@ public class LuceneAddressSearchResource {
 		IndexReader reader = null;
 		Directory fsDir = null;
 		Analyzer analyzer = null;
-		int httpStatus = 200;
 		Set<Location> responseSet = new LinkedHashSet<>();
 		Gson gson = new Gson();
 		try {
@@ -120,7 +119,6 @@ public class LuceneAddressSearchResource {
 		}
 		
 		catch (Exception e) {
-			httpStatus = 500;
 			logger.error("Error getting getAddressFromLuceneSearch... " + e);
 		} 
 		
@@ -136,7 +134,7 @@ public class LuceneAddressSearchResource {
 		}
 		
 		long endTime = System.currentTimeMillis();
-    	Response response = Response.status(httpStatus).entity(gson.toJson(responseSet)).build();
+    	Response response = Response.status(200).entity(gson.toJson(responseSet)).build();
 		logger.info("getAddress API Call took " + (endTime - startTime) + " milliseconds");
 		logger.info("Lucene Address Search Call Ends ---");
 		return response;
