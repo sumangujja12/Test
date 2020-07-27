@@ -12,6 +12,10 @@
 
 	  
 	 <!-- Jndi lookups -->
+	<jee:jndi-lookup id="gmdChoiceDataSource"
+		jndi-name="jdbc/gme_choice_user" cache="true" resource-ref="true"
+		lookup-on-startup="false" proxy-interface="javax.sql.DataSource" />
+       					            	
 	<jee:jndi-lookup	id="cpdbDataSource" 
 	 				   	jndi-name="jdbc/cpdb1_main_user" cache="true" 
 	 				  	resource-ref="true" lookup-on-startup="false"
@@ -68,7 +72,8 @@
 			cache="true"
 			resource-ref="true"
 			lookup-on-startup="false"
-			proxy-interface="javax.sql.DataSource"/>            					      					
+			proxy-interface="javax.sql.DataSource"/> 
+							      					
        					
     <!--   To run on Local
     
@@ -202,6 +207,11 @@
 	<bean id="solprefUserTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
 		<property name="dataSource" ref="solprefUser"/>
 		<qualifier value="solprefUserTemplate"/>
+	</bean>
+	
+	<bean id="choiceGMDJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="gmdChoiceDataSource"/>
+		<qualifier value="choiceGMDJdbcTemplate"/>
 	</bean>
 	
 </beans>

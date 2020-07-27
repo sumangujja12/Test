@@ -9,13 +9,16 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.dao.impl.GMDOEDAOImpl;
 import com.multibrand.domain.AlertPrefDTO;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.OetdspRequest;
@@ -30,6 +33,8 @@ import com.multibrand.domain.UpdateAlertPrefRequest;
 import com.multibrand.domain.UpdateContactRequest;
 import com.multibrand.domain.UpdateContactRequestAttNamValPairMapEntry;
 import com.multibrand.domain.UpdatePhoneDO;
+import com.multibrand.dto.GMDPersonDetailsDTO;
+import com.multibrand.dto.GMDServiceLocationDetailsDTO;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
@@ -45,6 +50,7 @@ import com.multibrand.service.OEService;
 import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.util.DBConstants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
@@ -91,6 +97,9 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 	@Autowired
 	private AsyncHelper asyncHelper;
+	
+	@Autowired
+	private GMDOEDAOImpl gmdOEDAOImpl;
 
 	public GMDStatementBreakDownResponse getGMDStatementDetails(String accountNumber, String companyCode, String esiId,
 			String year, String month, String sessionId) {
@@ -800,6 +809,12 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		 */
 
 		enrollmentRequest.setRecentCallMade(CALL_NAME_SUBMIT_ENROLLMENT);
+		if(gmdOEDAOImpl.checkTrackNo(enrollmentRequest)) {
+			response.setErrorCode(Constants.RESULT_CODE_TWO);
+			response.setErrorDescription("Enrollment already registered for Esid (" + enrollmentRequest.getEsiId()
+					+ ") with Start Date - " + enrollmentRequest.getServiceStartDate());
+			return response;
+		}
 
 		SubmitEnrollRequest submitEnrollRequest = createSubmitEnrollRequest(enrollmentRequest);
 		submitEnrollRequest.setBypassPosId(FLAG_X);//This is fo only GMD application
@@ -826,6 +841,14 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 			if (submitEnrollResponse.getStrBPNumber() == null) {
 				logger.debug(enrollmentRequest.getEsiId() , "bp numbr is null {}");
+			}
+			GMDPersonDetailsDTO personDetailsDTO = getGMDPersonDetailsDTO(submitEnrollRequest,submitEnrollResponse,enrollmentRequest);
+			GMDServiceLocationDetailsDTO serviceLocationDetailsDTO = getGMDServiceLocationDetailsDTO(
+					submitEnrollRequest, submitEnrollResponse, enrollmentRequest,
+					personDetailsDTO.getPersonId());
+			boolean isReutrn = gmdOEDAOImpl.inserPersonDetails(personDetailsDTO);
+			if (isReutrn) {
+				gmdOEDAOImpl.insertServiceLocationLocation(serviceLocationDetailsDTO);
 			}
 
 		}
@@ -1109,6 +1132,86 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	
 	protected SSDomain getSSDomainProxyClient()  {
 		return (SSDomain) getServiceProxy(SSDomainPortBindingStub.class, SS_SERVICE_ENDPOINT_URL);
+	}	
+	
+	
+	private GMDPersonDetailsDTO getGMDPersonDetailsDTO(SubmitEnrollRequest submitEnrollRequest,
+			SubmitEnrollResponse submitEnrollResponse, GMDEnrollmentRequest enrollmentRequest) {
+		GMDPersonDetailsDTO gmdPersonDetailsDTO = new GMDPersonDetailsDTO();
+
+		gmdPersonDetailsDTO.setBusinessPartnerNumber(submitEnrollResponse.getStrBPNumber());
+		gmdPersonDetailsDTO.setDateOfBirth(enrollmentRequest.getDateOfBirth());
+		gmdPersonDetailsDTO.setEmailAddress(enrollmentRequest.getEmailAddress());
+		gmdPersonDetailsDTO.setIdocNumber(submitEnrollResponse.getStrIDOCNumber());
+		gmdPersonDetailsDTO.setLanguagePref(submitEnrollRequest.getStrlanguagePref());
+		gmdPersonDetailsDTO.setNameFirst(submitEnrollRequest.getStrBPFirstName());
+		gmdPersonDetailsDTO.setNameLast(submitEnrollRequest.getStrBPLastName());
+		gmdPersonDetailsDTO.setPersonId(gmdOEDAOImpl.getNextValForSequence(DBConstants.GMD_PERSON_SEQ));
+		gmdPersonDetailsDTO.setPhoneNumber(submitEnrollRequest.getStrBPHomeTelNum());
+		gmdPersonDetailsDTO.setMaidenName(submitEnrollRequest.getStrBPMaidenName());
+		gmdPersonDetailsDTO.setMiddleName(submitEnrollRequest.getStrBPMiddleInitial());
+		gmdPersonDetailsDTO.setTokenizedCCNumber(enrollmentRequest.getCcNumber());
+		gmdPersonDetailsDTO.setCcType(enrollmentRequest.getCcInstituteCode());
+		if (StringUtils.isNotBlank(enrollmentRequest.getExpirationDate())
+				&& StringUtils.contains(enrollmentRequest.getExpirationDate(), "/")) {
+			String[] expArr = enrollmentRequest.getExpirationDate().split("/");
+			gmdPersonDetailsDTO.setCcExpiryMonth(expArr[0]);
+			gmdPersonDetailsDTO.setCcExpiryYear(expArr[1]);
+		}
+		return gmdPersonDetailsDTO;
+	}
+	
+	
+	private GMDServiceLocationDetailsDTO getGMDServiceLocationDetailsDTO(SubmitEnrollRequest submitEnrollRequest,
+			SubmitEnrollResponse submitEnrollResponse, GMDEnrollmentRequest enrollmentRequest, Integer personId) {
+		GMDServiceLocationDetailsDTO gmdServiceLocationDetailsDTO = new GMDServiceLocationDetailsDTO();
+		if (StringUtils.isNotBlank(enrollmentRequest.getBillingAddressAptNumber())
+				|| StringUtils.isNotBlank(enrollmentRequest.getBillingAddressStreetName())
+				|| StringUtils.isNotBlank(enrollmentRequest.getBillingAddressState())
+				|| StringUtils.isNotBlank(enrollmentRequest.getBillingAddressZipCode())) {
+
+			gmdServiceLocationDetailsDTO.setBillAddressLine1(enrollmentRequest.getBillingAddressAptNumber() + " "
+					+ enrollmentRequest.getBillingAddressStreetName());
+			gmdServiceLocationDetailsDTO.setBillCity(enrollmentRequest.getBillingAddressCity());
+			gmdServiceLocationDetailsDTO.setBillState(enrollmentRequest.getBillingAddressState());
+			gmdServiceLocationDetailsDTO.setBillZipCode(enrollmentRequest.getBillingAddressZipCode());
+
+		} else {
+			gmdServiceLocationDetailsDTO.setAddressBillSameAsServiceFlag(Constants.YES);
+		}
+
+		gmdServiceLocationDetailsDTO.setServAddressLine1(
+				enrollmentRequest.getServiceAddressAptNumber() + " " + enrollmentRequest.getServiceAddressStreetName());
+		gmdServiceLocationDetailsDTO.setServCity(enrollmentRequest.getServiceAddressCity());
+		gmdServiceLocationDetailsDTO.setServState(enrollmentRequest.getServiceAddressState());
+		gmdServiceLocationDetailsDTO.setServZipCode(enrollmentRequest.getServiceAddressZipCode());
+
+		gmdServiceLocationDetailsDTO.setBrandId(enrollmentRequest.getBrandName());
+		gmdServiceLocationDetailsDTO.setCompanyCode(enrollmentRequest.getCompanyCode());
+		gmdServiceLocationDetailsDTO.setBussinessPartnerNumber(submitEnrollResponse.getStrBPNumber());
+		gmdServiceLocationDetailsDTO.setCaCheckDigit(submitEnrollResponse.getStrCheckDigit());
+		gmdServiceLocationDetailsDTO.setCampaignCode(enrollmentRequest.getCampaignCode());
+		gmdServiceLocationDetailsDTO.setContractAccountNumber(submitEnrollResponse.getStrCANumber());
+		gmdServiceLocationDetailsDTO.setEnrollSource(submitEnrollRequest.getStrLogicalSystem());
+		gmdServiceLocationDetailsDTO.setErrorCodesList(submitEnrollRequest.getStrEnrollmentHoldType());
+		gmdServiceLocationDetailsDTO.setEsid(submitEnrollRequest.getStrPointOfDeliveryID());
+		gmdServiceLocationDetailsDTO.setEsidStatus(EMPTY);
+		gmdServiceLocationDetailsDTO.setGeoZone(EMPTY);
+		gmdServiceLocationDetailsDTO.setPromoType(submitEnrollRequest.getStrPromotionCode());
+		gmdServiceLocationDetailsDTO.setOfferCodeTitle(EMPTY);
+		gmdServiceLocationDetailsDTO.setOfferCode(enrollmentRequest.getOfferCode());
+		gmdServiceLocationDetailsDTO.setSignupChannelCode(EMPTY);
+		gmdServiceLocationDetailsDTO.setPromoCodeEntered(submitEnrollRequest.getStrPromotionCode());
+		gmdServiceLocationDetailsDTO.setServiceRequestTypeCode(enrollmentRequest.getTransactionType());
+		gmdServiceLocationDetailsDTO.setSwitchHoldStatus(enrollmentRequest.getSwitchHoldFlag());
+		gmdServiceLocationDetailsDTO.setServiceStartDate(submitEnrollRequest.getStrMovinDate());
+		gmdServiceLocationDetailsDTO.setTdspCode(enrollmentRequest.getTdspCode());
+		gmdServiceLocationDetailsDTO
+				.setTrackingId(String.valueOf(gmdOEDAOImpl.getNextValForSequence(DBConstants.GMD_TRACKING_SEQ)));
+		gmdServiceLocationDetailsDTO.setPersonId(String.valueOf(personId));
+
+		return gmdServiceLocationDetailsDTO;
+
 	}
 	
 	public MoveOutResponse createMoveOut(MoveOutRequest moveOutRequest){

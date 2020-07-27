@@ -1576,4 +1576,5 @@ public interface Constants {
 	
 	public static final String CONST_USE_MOCK_DATA = "usemockdata";
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
+	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 }

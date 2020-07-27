@@ -393,6 +393,11 @@ public interface DBConstants {
 	
 	public static final String OE_UPDATE_ERROR_SLA_QUERY = "db.choice.reliant.updateerrorinsla";
 	
+
+	public static final String GMD_PERSON_SEQ = "PERSON_ID_SEQ";
+	public static final String GMD_TRACKING_SEQ = "TRACKING_NUMBER_SEQ";
+
+	
 	//columns of component_outage table
 	public static final String COL_OUTAGE_STATUS = "OUTAGE_STATUS";
 	public static final String COL_OUTAGE_MESSAGE = "OUTAGE_MESSAGE";
@@ -407,6 +412,10 @@ public interface DBConstants {
 	public static final String COL_NON_SCHEDULED_OUTAGE_END = "NON_SCHEDULED_OUTAGE_END";
 	public static final String COL_MSG_PRIORITY = "MSG_PRIORITY";
 	public static final String COL_MESSAGE_CODE = "MESSAGE_CODE";
+	
+
+
+
 	
 
 }
