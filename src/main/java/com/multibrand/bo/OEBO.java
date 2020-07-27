@@ -4347,7 +4347,7 @@ public class OEBO extends OeBoHelper implements Constants{
 
 				String webURL = getWebURL(request.getCompanyCode(),
 						request.getBrandId());
-
+				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
 				affiliateOfferDO.setEflURL(webURL + CONST_FILES
 						+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
 				affiliateOfferDO.setTosURL(webURL + CONST_FILES
