@@ -13,7 +13,7 @@ public class CompanyCodeConstraintValidator implements
 ConstraintValidator<ValidateCompanyCode, String>, Constants{
 
 	private List<String> companyCodeList = null;
-	private String[] companyCodeArr = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
+	private String[] companyCodeArr = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE, XOOM_COMPANY_CODE};
 	
 	@Override
 	public void initialize(ValidateCompanyCode constraintAnnotation) {

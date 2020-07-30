@@ -80,7 +80,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @Component
 public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
-	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
+	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE, XOOM_COMPANY_CODE};
 	public static HashSet<String> privacyDataParams = null;
 	public static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
