@@ -165,6 +165,8 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				String tdspCodeCCSForEsid = tdspByESIDResponse.getServiceId();
 				esidDo.setEsidTDSP(this.appConstMessageSource
 						.getMessage("ccs.tdsp.web.equivalent." + tdspCodeCCSForEsid, null, null));
+				response.setTdspCode(tdspCodeCCSForEsid);
+				tdspCodeCCS = tdspCodeCCSForEsid;
 				logger.info("TDSP Code:{}" , esidDo.getEsidTDSP());
 			} else {
 				response.setErrorCode(AREA_NOT_SERVICED);
