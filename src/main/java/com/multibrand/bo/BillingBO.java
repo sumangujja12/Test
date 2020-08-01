@@ -150,6 +150,7 @@ import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
 import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
+import com.nrg.cxfstubs.profile.ZesZesuerStat;
 
 
 /**
@@ -315,7 +316,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
-			response= (ProfileResponse)responseMap.get("profileResponse");	
+			
+			accountDetailsResp.setZesZesuerStat((ZesZesuerStat)responseMap.get("profileSuerStats"));
 			if(response!= null &&   response.getContractAccountDO() != null)
 			{
 			response= (ProfileResponse)responseMap.get("profileResponse");			
