@@ -83,7 +83,7 @@ public class GMDService extends BaseAbstractService {
 	 * @throws Exception 
 	 */
 	public GMDStatementBreakDownResponse getGMDStatementDetails(String accountNumber, String companyCode, 
-			String esiId, String year, String month ,String sessionId) throws NRGException {
+			String esiId, String year, String month ,boolean isAllInPriceCall, String sessionId) throws NRGException {
 		
 		logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::START"); 
 				
@@ -101,25 +101,6 @@ public class GMDService extends BaseAbstractService {
 			.append(year)
 			.append("month=")
 			.append(month);
-
-		
-		//Start : Added for Redbull CXF upgrade by IJ
-		URL url =  ZEISUGETGMDSTMT_Service.class.getResource("Z_E_ISU_GET_GMD_STMT.wsdl");
-        if (url == null) {
-            java.util.logging.Logger.getLogger(ZEISUGETGMDSTMT_Service.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "Z_E_ISU_GET_GMD_STMT.wsdl");
-        }
-        ZEISUGETGMDSTMT_Service gmdStatementService = new ZEISUGETGMDSTMT_Service(url);
-		
-		ZEISUGETGMDSTMT stub = gmdStatementService.getZEISUGETGMDSTMT();
-		 BindingProvider binding = (BindingProvider)stub;
-	    
-	        binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  this.envMessageReader.getMessage(CCS_USER_NAME));
-	        binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  this.envMessageReader.getMessage(CCS_PASSWORD));
-	        binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.envMessageReader.getMessage(GMD_STATEMENT_ENDPOINT_URL_JNDINAME));
-	        
-          logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::before call");
           		
  		
 		try{
@@ -134,16 +115,15 @@ public class GMDService extends BaseAbstractService {
 			wsRequest.setEsid(esiId);
 			wsRequest.setStmtMonth(month);
 			wsRequest.setStmtYear(year);
+			wsRequest.setAllinPrice(isAllInPriceCall ? "X" :"");
 			
 			startTime = Calendar.getInstance().getTimeInMillis();
 			
 			ZEIsuGetGmdStmtResponse  zEIsuGetGmdStmtResponse = (ZEIsuGetGmdStmtResponse) webServiceTemplateForGMDStatement.marshalSendAndReceive(wsRequest);
 
 			endTime = Calendar.getInstance().getTimeInMillis();
-			logger.info("Time taken by service is =" + (endTime - startTime));
-			
-			//stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderAvgPrice, holderZetGmdInvdate, holderLastBillDate,holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
-						
+			logger.info("Time taken by service is ={}" , (endTime - startTime));
+									
 			gmdStatementBreakDownResp = handleGMDStatementResponse(zEIsuGetGmdStmtResponse);
 			
 		}catch(Exception ex){
@@ -349,7 +329,7 @@ public class GMDService extends BaseAbstractService {
 		BigDecimal totalCost = new BigDecimal("0.00");
 		
 		
-		
+		response.setAllInPrice(zEIsuGetGmdStmtResponse.getAllinCharge());
 		response.setAvgPrice(zEIsuGetGmdStmtResponse.getAvgPrice() !=null ? zEIsuGetGmdStmtResponse.getAvgPrice() : null);
 		
 		List<Breakdown> breakdown = new ArrayList<>();

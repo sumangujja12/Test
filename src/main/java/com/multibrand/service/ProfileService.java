@@ -110,6 +110,7 @@ import com.nrg.cxfstubs.profile.ZcaOutputTt;
 import com.nrg.cxfstubs.profile.ZcontractAdrc;
 import com.nrg.cxfstubs.profile.ZcontractOutput;
 import com.nrg.cxfstubs.profile.ZcontractOutputTt;
+import com.nrg.cxfstubs.profile.ZesZesuerStat;
 import com.nrg.cxfstubs.sundriverclub.Bapiret2T;
 import com.nrg.cxfstubs.sundriverclub.ZECRMVASWEBPRODUPDATE;
 import com.nrg.cxfstubs.sundriverclub.ZECRMVASWEBPRODUPDATE_Service;
@@ -349,12 +350,17 @@ public class ProfileService extends BaseAbstractService {
 		holderZcaOutputTt.value = exCaDetail;
 		holderZcontractOutputTt.value = exContractDetail;
 		
+		ZesZesuerStat zesZesuerStat = new ZesZesuerStat();
+		Holder<ZesZesuerStat> holderZesZesuerStat = new Holder<ZesZesuerStat>();
+		holderZesZesuerStat.value = zesZesuerStat;
+		
 		//super.startTime = Calendar.getInstance().getTimeInMillis();	
 		//map.put(START_TIME, super.startTime.toString());
 		//map.put(END_POINT_URL, CommonUtil.getEndpointURL(PROFILE_CADATA_ENDPOINT_URL_JNDINAME));
 		
 		try{
-			stub.zeIsuGetCaProfileData(exMessage1, imCaOnly, imVkont, holderZcaOutputTt, holderZcontractOutputTt, exReturnCode, exSuperPartner);
+			stub.zeIsuGetCaProfileData(exMessage1, imCaOnly, imVkont, holderZcaOutputTt, holderZcontractOutputTt, exReturnCode, exSuperPartner, holderZesZesuerStat);
+			
 		}catch(Exception ex){
 			if(logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
@@ -366,6 +372,9 @@ public class ProfileService extends BaseAbstractService {
 		//super.endTime = Calendar.getInstance().getTimeInMillis();
 		//map.put(END_TIME, super.endTime.toString());
 		
+		zesZesuerStat=holderZesZesuerStat.value;
+		
+		
 		exCaDetail=holderZcaOutputTt.value;
 		List<ZcaOutput> zcaOutputList =exCaDetail.getItem();
 		
@@ -376,7 +385,7 @@ public class ProfileService extends BaseAbstractService {
 		List<com.nrg.cxfstubs.profile.Bapiret2> bapiret2List=exMessage.getItem();	
 		
 		String superBPID = exSuperPartner.value;
-		logger.info("super bpid ::::: " + superBPID);
+		logger.info("super bpid ::::: {}" , superBPID);
 		profileResponse.setSuperBPID(superBPID);
 		//End : Added for Redbull CXF upgrade by IJ
 		
@@ -572,6 +581,9 @@ public class ProfileService extends BaseAbstractService {
 			
 		}
 		
+		
+		
+		
 		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)){
 			
 			profileResponse.setErrorCode(Constants.MSG_CCSERR_+exReturnCode.value+Constants._GET_PROFILE);
@@ -579,8 +591,10 @@ public class ProfileService extends BaseAbstractService {
 		else if((null == zcaOutputList  || zcaOutputList.size() == 0) && exReturnCode.value == null){
 			
 			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
+		} else if (zesZesuerStat != null && org.apache.commons.lang3.StringUtils.isNotBlank(zesZesuerStat.getDocnum()))  {
+			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
 		}
-					
+							
 		utilityloggerHelper.logTransaction("getProfile", false, request,profileResponse, profileResponse.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 		if(logger.isDebugEnabled()){
 			logger.debug(XmlUtil.pojoToXML(request));
@@ -588,6 +602,7 @@ public class ProfileService extends BaseAbstractService {
 		}
 		logger.info("ProfileService.getProfile::::::::::::::::::::end");
 		responseMap.put("profileResponse", profileResponse);
+		responseMap.put("profileSuerStats", zesZesuerStat);
 		return responseMap;
 	}
 	/**

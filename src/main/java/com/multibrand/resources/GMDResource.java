@@ -81,11 +81,11 @@ public class GMDResource extends BaseResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	
 	public Response getGMDStatementDetails(@FormParam("contractAccountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
-			@FormParam("esiId") String esiId, @FormParam("year") String year, @FormParam("month") String month) {
+			@FormParam("esiId") String esiId, @FormParam("year") String year, @FormParam("month") String month, @FormParam("isAllInPriceCall") boolean isAllInPriceCall) {
 		
 		logger.info(" START ******* getGMDStatementDetails API**********");
 		Response response = null;
-		GMDStatementBreakDownResponse gmdStatementBreakDownResp = gmdBO.getGMDStatementDetails(accountNumber, companyCode, esiId, year, month, httpRequest.getSession(true).getId());
+		GMDStatementBreakDownResponse gmdStatementBreakDownResp = gmdBO.getGMDStatementDetails(accountNumber, companyCode, esiId, year, month, isAllInPriceCall, httpRequest.getSession(true).getId());
 		
 		response = Response.status(200).entity(gmdStatementBreakDownResp).build();
 		

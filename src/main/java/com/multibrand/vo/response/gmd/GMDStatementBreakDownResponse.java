@@ -16,6 +16,7 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
 	
     private BigDecimal totalUsage;
     private BigDecimal avgPrice;
+    private BigDecimal allInPrice;
     private BigDecimal totalCost;
     private List<Breakdown> breakdown;
     private List<GMDReturnCharge> returnCharge;
@@ -94,4 +95,16 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
 	public void setLastBillDate(String lastBillDate) {
 		this.lastBillDate = lastBillDate;
 	}
+	/**
+	 * @return the allInPrice
+	 */
+	public BigDecimal getAllInPrice() {
+		return allInPrice;
+	}
+	/**
+	 * @param allInPrice the allInPrice to set
+	 */
+	public void setAllInPrice(BigDecimal allInPrice) {
+		this.allInPrice = allInPrice;
+	}	
 }

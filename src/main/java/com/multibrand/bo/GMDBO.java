@@ -93,13 +93,13 @@ public class GMDBO extends BaseAbstractService implements Constants {
 	private AsyncHelper asyncHelper;
 
 	public GMDStatementBreakDownResponse getGMDStatementDetails(String accountNumber, String companyCode, String esiId,
-			String year, String month, String sessionId) {
+			String year, String month, boolean isAllInPriceCall, String sessionId) {
 
 		GMDStatementBreakDownResponse gmdStatementBreakDownResp = new GMDStatementBreakDownResponse();
 
 		try {
 			gmdStatementBreakDownResp = gmdService.getGMDStatementDetails(accountNumber, companyCode, esiId, year,
-					month, sessionId);
+					month, isAllInPriceCall, sessionId);
 
 		} catch (NRGException e) {
 			logger.error("Exception occured in getGMDStatementDetails :{}", e);
