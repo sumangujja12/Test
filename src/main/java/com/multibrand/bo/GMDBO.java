@@ -701,8 +701,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrBPCityPostalCode(oeSignUpDTO.getBillingAddressZipCode());
 		submitEnrollRequest.setStrBPCity(oeSignUpDTO.getBillingAddressCity());
 
-		submitEnrollRequest.setStrPromotionCode(this.appConstMessageSource
-				.getMessage("gmd.promo.web.equivalent." + oeSignUpDTO.getTdspCode(), null, null));
+		submitEnrollRequest.setStrPromotionCode(envMessageReader.getMessage("gmd.promo.web.equivalent." + oeSignUpDTO.getTdspCode()));
 		
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		 
@@ -727,8 +726,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrBPPOSidDLDate(EMPTY);
 		submitEnrollRequest.setStrBPPosPOSidSSNDate(EMPTY);
 
-		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad((this.appConstMessageSource
-				.getMessage("gmd.offer.web.equivalent." + oeSignUpDTO.getTdspCode(), null, null)), 8, "0"));
+		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad((envMessageReader.getMessage("gmd.offer.web.equivalent." + oeSignUpDTO.getTdspCode())), 8, "0"));
 		submitEnrollRequest.setStrProductPriceCode(EMPTY);
 		submitEnrollRequest.setStrIncentiveCode(EMPTY);
 		submitEnrollRequest.setStrmarketSegment("RS");
@@ -1113,17 +1111,13 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		
 		GMDOfferResponse gmdOfferResponse = new GMDOfferResponse();
 		
-		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
-		.getMessage("gmd.offer.efl.equivalent." + tdspCode, null, null));
+		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+legalDocsExt+envMessageReader.getMessage("gmd.offer.efl.equivalent." + tdspCode));
 		
-		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+legalDocsExt +this.appConstMessageSource
-		.getMessage("gmd.offer.tos.equivalent." + tdspCode, null, null));
+		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+legalDocsExt +envMessageReader.getMessage("gmd.offer.tos.equivalent." + tdspCode));
 		
-		gmdOfferResponse.setStrYRAACDocID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
-		.getMessage("gmd.offer.yraac.equivalent." + tdspCode, null, null));	
+		gmdOfferResponse.setStrYRAACDocID(baseURL.trim()+legalDocsExt+envMessageReader.getMessage("gmd.offer.yraac.equivalent." + tdspCode));	
 		
-		gmdOfferResponse.setStrPrepayDisID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
-		.getMessage("gmd.offer.predis.equivalent." + tdspCode, null, null));			
+		gmdOfferResponse.setStrPrepayDisID(baseURL.trim()+legalDocsExt+envMessageReader.getMessage("gmd.offer.predis.equivalent." + tdspCode));			
 		
 		
 		
