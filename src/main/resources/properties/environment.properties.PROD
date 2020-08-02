@@ -186,6 +186,48 @@ CCS_GMD_STMT = http://sapprrci:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/
 CCS_PRICE_STMT = http://sapprrci:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/900/z_e_isu_get_gmd_price/z_e_isu_get_gmd_price
 gmd_price_current_date =04/14/2020	
 
+######################For GMD APP STARTS####################
+gmd.promo.web.equivalent.D0001=ZDYTKM
+gmd.promo.web.equivalent.D0002=ZDYTKM
+gmd.promo.web.equivalent.D0003=ZDYTKM
+gmd.promo.web.equivalent.D0004=ZDYTKM
+gmd.promo.web.equivalent.D0005=ZDYTKM
+
+gmd.offer.web.equivalent.D0001=00011231
+gmd.offer.web.equivalent.D0002=00011232
+gmd.offer.web.equivalent.D0003=00011235
+gmd.offer.web.equivalent.D0004=00011233
+gmd.offer.web.equivalent.D0005=00011234
+
+gmd.offer.efl.equivalent.D0001=09017518825706c2
+gmd.offer.efl.equivalent.D0002=09017518825706c3
+gmd.offer.efl.equivalent.D0003=09017518825706c6
+gmd.offer.efl.equivalent.D0004=09017518825706c4
+gmd.offer.efl.equivalent.D0005=09017518825706c5
+
+
+gmd.offer.tos.equivalent.D0001=09017518825706d6
+gmd.offer.tos.equivalent.D0002=09017518825706d6
+gmd.offer.tos.equivalent.D0003=09017518825706d6
+gmd.offer.tos.equivalent.D0004=09017518825706d6
+gmd.offer.tos.equivalent.D0005=09017518825706d6
+
+
+gmd.offer.yraac.equivalent.D0001=0901751880ebff66
+gmd.offer.yraac.equivalent.D0002=0901751880ebff66
+gmd.offer.yraac.equivalent.D0003=0901751880ebff66
+gmd.offer.yraac.equivalent.D0004=0901751880ebff66
+gmd.offer.yraac.equivalent.D0005=0901751880ebff66
+
+gmd.offer.predis.equivalent.D0001=09017518825706d7
+gmd.offer.predis.equivalent.D0002=09017518825706d7
+gmd.offer.predis.equivalent.D0003=09017518825706d7
+gmd.offer.predis.equivalent.D0004=09017518825706d7
+gmd.offer.predis.equivalent.D0005=09017518825706d7
+
+######################For GMD APP ENDS####################
+
+
 #Content Service 
 content.server.endpoint.url=http://ebxblp01:18081/client/v2/content.svc/
 #Legal Docs File
