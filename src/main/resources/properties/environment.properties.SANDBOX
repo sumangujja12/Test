@@ -175,30 +175,30 @@ CCS_CREATE_MOVE_OUT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_create_moveo
 gmd_price_current_date =04/14/2020
 
 ######################For GMD APP STARTS####################
-gmd.promo.web.equivalent.D0001=ZDYTKM
-gmd.promo.web.equivalent.D0002=ZDYTKM
-gmd.promo.web.equivalent.D0003=ZDYTKM
-gmd.promo.web.equivalent.D0004=ZDYTKM
-gmd.promo.web.equivalent.D0005=ZDYTKM
+gmd.promo.web.equivalent.D0001=ZBZBKZ
+gmd.promo.web.equivalent.D0002=ZBZBM0
+gmd.promo.web.equivalent.D0003=ZBZBM3
+gmd.promo.web.equivalent.D0004=ZBZBM1
+gmd.promo.web.equivalent.D0005=ZBZBM2
 
-gmd.offer.web.equivalent.D0001=00011231
-gmd.offer.web.equivalent.D0002=00011232
-gmd.offer.web.equivalent.D0003=00011235
-gmd.offer.web.equivalent.D0004=00011233
-gmd.offer.web.equivalent.D0005=00011234
+gmd.offer.web.equivalent.D0001=11071
+gmd.offer.web.equivalent.D0002=11072
+gmd.offer.web.equivalent.D0003=11075
+gmd.offer.web.equivalent.D0004=11073
+gmd.offer.web.equivalent.D0005=11074
 
-gmd.offer.efl.equivalent.D0001=09017518825706c2
-gmd.offer.efl.equivalent.D0002=09017518825706c3
-gmd.offer.efl.equivalent.D0003=09017518825706c6
-gmd.offer.efl.equivalent.D0004=09017518825706c4
-gmd.offer.efl.equivalent.D0005=09017518825706c5
+gmd.offer.efl.equivalent.D0001=090175168088b0ce
+gmd.offer.efl.equivalent.D0002=090175168088b0cf
+gmd.offer.efl.equivalent.D0003=090175168088b0d2
+gmd.offer.efl.equivalent.D0004=090175168088b0d0
+gmd.offer.efl.equivalent.D0005=090175168088b0d1
 
 
-gmd.offer.tos.equivalent.D0001=09017518825706d6
-gmd.offer.tos.equivalent.D0002=09017518825706d6
-gmd.offer.tos.equivalent.D0003=09017518825706d6
-gmd.offer.tos.equivalent.D0004=09017518825706d6
-gmd.offer.tos.equivalent.D0005=09017518825706d6
+gmd.offer.tos.equivalent.D0001=090175168088b0cd
+gmd.offer.tos.equivalent.D0002=090175168088b0cd
+gmd.offer.tos.equivalent.D0003=090175168088b0cd
+gmd.offer.tos.equivalent.D0004=090175168088b0cd
+gmd.offer.tos.equivalent.D0005=090175168088b0cd
 
 
 gmd.offer.yraac.equivalent.D0001=0901751880ebff66
@@ -207,11 +207,11 @@ gmd.offer.yraac.equivalent.D0003=0901751880ebff66
 gmd.offer.yraac.equivalent.D0004=0901751880ebff66
 gmd.offer.yraac.equivalent.D0005=0901751880ebff66
 
-gmd.offer.predis.equivalent.D0001=09017518825706d7
-gmd.offer.predis.equivalent.D0002=09017518825706d7
-gmd.offer.predis.equivalent.D0003=09017518825706d7
-gmd.offer.predis.equivalent.D0004=09017518825706d7
-gmd.offer.predis.equivalent.D0005=09017518825706d7
+gmd.offer.predis.equivalent.D0001=090175168088b0cc
+gmd.offer.predis.equivalent.D0002=090175168088b0cc
+gmd.offer.predis.equivalent.D0003=090175168088b0cc
+gmd.offer.predis.equivalent.D0004=090175168088b0cc
+gmd.offer.predis.equivalent.D0005=090175168088b0cc
 
 ######################For GMD APP ENDS####################
 
