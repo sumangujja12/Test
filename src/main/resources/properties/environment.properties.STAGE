@@ -192,11 +192,11 @@ CCS_CREATE_MOVE_OUT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_create_moveo
 gmd_price_current_date =04/14/2020
 
 ######################For GMD APP STARTS####################
-gmd.promo.web.equivalent.D0001=ZBZBKZ
-gmd.promo.web.equivalent.D0002=ZBZBM0
-gmd.promo.web.equivalent.D0003=ZBZBM3
-gmd.promo.web.equivalent.D0004=ZBZBM1
-gmd.promo.web.equivalent.D0005=ZBZBM2
+gmd.promo.web.equivalent.D0001=XE5BPC
+gmd.promo.web.equivalent.D0002=XE5BPC
+gmd.promo.web.equivalent.D0003=XE5BPC
+gmd.promo.web.equivalent.D0004=XE5BPC
+gmd.promo.web.equivalent.D0005=XE5BPC
 
 gmd.offer.web.equivalent.D0001=11071
 gmd.offer.web.equivalent.D0002=11072
