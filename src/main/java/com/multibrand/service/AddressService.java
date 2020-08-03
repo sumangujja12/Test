@@ -144,7 +144,6 @@ public class AddressService extends BaseAbstractService
 	    try {
 	      ProfileDomain proxy = getProfileServiceProxy();
 	      esidProfileResponse = proxy.getESIDProfile(companyCode, strESIID);
-
 	      if (StringUtils.isNotBlank(esidProfileResponse.getErrorMessage())){
 	    	  logger.debug(esidProfileResponse.getErrorMessage());
 	      }

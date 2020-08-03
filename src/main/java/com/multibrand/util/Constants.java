@@ -4,6 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public interface Constants {
+	
+	public static final String PROP_DEFAULT_ENV = "default.env";
+	public static final String ENV_PROD = "PROD";
 
 	public static final String ENV_PROPERTIES_FILE = "classpath:properties/environment";
 	public static final String EMPTY = "";
@@ -1558,4 +1561,7 @@ public interface Constants {
 	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
 	public static final String AFFILIATE_ID_DSI="270519";
 	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
+	
+	public static final String CONST_USE_MOCK_DATA = "usemockdata";
+	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
 }
