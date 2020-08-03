@@ -3049,8 +3049,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			
 			
 			environmentImpactsResponse = profileService.environmentImpacts(accountNumber,companyCode,sessionId);
-			if(environmentImpactsResponse!=null){
+			if(environmentImpactsResponse.getEnvironmentImpacts() !=null && environmentImpactsResponse.getEnvironmentImpacts().length > 0){
+				
 			EnvironmentImpacts[] youngTrees = new EnvironmentImpacts[environmentImpactsResponse.getEnvironmentImpacts().length];
+			
 			youngTrees = environmentImpactsResponse.getEnvironmentImpacts();
 		
 		
