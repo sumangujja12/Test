@@ -14,6 +14,7 @@ public class ProductOfferRequest {
 	
 	private String companyCode;
 	
+
 	private String esiid;
 	
 	
@@ -21,10 +22,10 @@ public class ProductOfferRequest {
 	public String getEsiid() {
 		return esiid;
 	}
-
 	public void setEsiid(String esiid) {
 		this.esiid = esiid;
 	}
+
 
 	public String getCompanyCode() {
 		return companyCode;
