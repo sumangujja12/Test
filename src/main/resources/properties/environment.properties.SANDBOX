@@ -177,9 +177,6 @@ CCS_PRICE_STMT = http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/9
 CCS_CREATE_MOVE_OUT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_create_moveout?sap-client=900
 gmd_price_current_date =04/14/2020
 
-#mongodb config
-mongodb.uri=mongodb://reliantTestData_user:reliantTestData123@wntwebapd1:27017/reliantTestData
-
 ######################For GMD APP STARTS####################
 gmd.promo.web.equivalent.D0001=ZBZBKZ
 gmd.promo.web.equivalent.D0002=ZBZBM0
