@@ -236,6 +236,10 @@ public class OfferService extends BaseAbstractService {
 		promoOfferRequest.setStrTdspCode(productOfferRequest.getTdspCode());
 		promoOfferRequest.setStrDate(sdfDate.format(cal.getTime()));
 		promoOfferRequest.setStrTime(sdfTime.format(cal.getTime()));
+		if(StringUtils.isNotEmpty(productOfferRequest.getEsiid())) {
+			promoOfferRequest.setStrIncentive("X");
+			
+		}
 //		promoOfferRequest.setStrPromoCode(getPromoOfferCode(productOfferRequest));
 		return promoOfferRequest;
 	}
