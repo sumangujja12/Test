@@ -64,8 +64,9 @@ public class ValidationRequestHandler implements Constants {
 			validatePosIdKBARequest.setTokenizedDrl(performPosIdBpRequest.getTokenizedTDL());        
 			validatePosIdKBARequest.setDlrState(DRL_STATE_TX);
 	    } 
-		
-		
+		if(StringUtils.isNotEmpty(performPosIdBpRequest.getAgentID())){
+			validatePosIdKBARequest.setAgentId(performPosIdBpRequest.getAgentID());
+		}
 		
 		validatePosIdKBARequest.setHomePhone(performPosIdBpRequest.getPhoneNum());
 		validatePosIdKBARequest.setEmailAddress(performPosIdBpRequest.getEmail());
