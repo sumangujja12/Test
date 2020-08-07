@@ -1,12 +1,9 @@
 package com.multibrand.dto.request;
 
 import java.io.Serializable;
-
-import javax.ws.rs.FormParam;
-
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
-
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.util.Constants;
@@ -98,5 +95,11 @@ public class ReadContactAlertRequest implements FormEntityRequest, Constants, Se
 		this.userUniqueId = userUniqueId;
 	}
 
-
+	/**
+	 * @return String representation of this request.
+	 */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	}
 }

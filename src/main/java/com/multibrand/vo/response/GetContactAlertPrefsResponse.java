@@ -1,6 +1,9 @@
 package com.multibrand.vo.response;
 
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import com.multibrand.domain.PreferenceInfo;
 import com.multibrand.domain.BillAlertPrefs;
 import com.multibrand.domain.MarketingPrefs;
@@ -120,7 +123,4 @@ public class GetContactAlertPrefsResponse extends GenericResponse {
 	public void setPPTextPref(PrepayTextPrefs prepay) {
 		this.pptextPref = prepay;
 	}
-
-
-
 }
