@@ -8,17 +8,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
-
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -42,8 +39,6 @@ import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
-import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT;
-import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT_Service;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmtResponse;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
@@ -530,13 +525,9 @@ public class GMDService extends BaseAbstractService {
 			logger.error("Exception Occured in RuntimeException  createMoveOut {} ", ex.getMessage());
 			try {
 				
-				String soapFaultRes = ex.getMessage();
-				soapFaultRes = soapFaultRes.replaceAll("<detail>", "");
-				soapFaultRes = soapFaultRes.replaceAll("</detail>", "");
-				
 				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
-						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(soapFaultRes, ZEISUCREATEMOVEOUTRfcException.class);		
-				
+						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(CommonUtil.getTagValue(ex.getMessage(), "detail"), ZEISUCREATEMOVEOUTRfcException.class);		
+
 				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());
 				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
 			} catch (Exception e) {

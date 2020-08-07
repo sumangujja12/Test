@@ -6,7 +6,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -63,6 +62,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -2202,17 +2202,22 @@ public class CommonUtil implements Constants {
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
 		} 
-		public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
-				throws IOException, SOAPException, JAXBException {
-			
-			InputStream targetStream = new ByteArrayInputStream(response.getBytes());
-			
-			JAXBContext JAXBContext = javax.xml.bind.JAXBContext.newInstance(responseClass.getPackage().getName());
-			Unmarshaller unmarshaller = JAXBContext.createUnmarshaller();
-			
-			JAXBElement<T> document = (JAXBElement<T>)unmarshaller.unmarshal( targetStream );
-			 
-			 return document.getValue();
-			
-		}		
+
+	public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
+			throws IOException, SOAPException, JAXBException {
+
+		InputStream targetStream = new ByteArrayInputStream(response.getBytes());
+
+		JAXBContext JAXBContext = javax.xml.bind.JAXBContext.newInstance(responseClass.getPackage().getName());
+		Unmarshaller unmarshaller = JAXBContext.createUnmarshaller();
+
+		JAXBElement<T> document = (JAXBElement<T>) unmarshaller.unmarshal(targetStream);
+
+		return document.getValue();
+
+	}
+	public static String getTagValue(String xml, String tagName){
+	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
+	}	
+	
 }
