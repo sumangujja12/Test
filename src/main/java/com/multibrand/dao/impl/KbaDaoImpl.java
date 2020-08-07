@@ -54,7 +54,7 @@ public class KbaDaoImpl extends AbstractSpringDAO implements KbaDAO, Constants {
 						StringUtils.EMPTY, kbaQuestionResponse.getQuestionList().length, StringUtils.EMPTY,
 						StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY, kbaQuestionResponse.getReturnCode(),
 						kbaQuestionResponse.getReturnMessage(), errorCodeList, errorMsgList, StringUtils.EMPTY);
-			} else if ((kbaQuestionResponse.getQuestionList() != null
+			} else if ((kbaQuestionResponse.getQuestionList() == null
 					|| kbaQuestionResponse.getQuestionList().length == 0)
 					&& null != kbaQuestionResponse.getKbaSubmitAnswerResponseOutput() && (StringUtils
 							.isNotEmpty(kbaQuestionResponse.getKbaSubmitAnswerResponseOutput().getTransactionKey()))) {
