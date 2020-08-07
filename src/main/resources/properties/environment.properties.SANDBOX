@@ -173,7 +173,7 @@ CCS_GMD_STMT=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/z_
 CCS_PRICE_STMT = http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/900/z_e_isu_get_gmd_price/z_e_isu_get_gmd_price
 CCS_CREATE_MOVE_OUT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_create_moveout?sap-client=900
 gmd_price_current_date =04/14/2020
-CRM_KBA_MATRIX = http://sapcmq02:8080/sap/bc/srt/scs/sap/z_e_crm_kba_matrix_update?sap-client=530
+CRM_KBA_MATRIX = http://sapcmq02:8001/sap/bc/srt/scs/sap/z_e_crm_kba_matrix_update?sap-client=530
 
 ######################For GMD APP STARTS####################
 gmd.promo.web.equivalent.D0001=ZBZBKZ

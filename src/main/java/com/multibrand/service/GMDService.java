@@ -1,5 +1,6 @@
 package com.multibrand.service;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -9,20 +10,31 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.namespace.QName;
+import javax.xml.soap.SOAPException;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.multibrand.domain.ContactPrefsResponse;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.JAXBUtil;
 import com.multibrand.vo.response.gmd.Breakdown;
 import com.multibrand.vo.response.gmd.Costs;
 import com.multibrand.vo.response.gmd.Current;
@@ -35,6 +47,8 @@ import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
 import com.multibrand.vo.response.gmd.Pricing;
+import com.multibrand.vo.response.historyResponse.xi.MTGetIntervalDataResponse;
+import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTRfcException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
@@ -42,8 +56,6 @@ import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
-import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT;
-import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT_Service;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmtResponse;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
@@ -533,13 +545,9 @@ public class GMDService extends BaseAbstractService {
 			logger.error("Exception Occured in RuntimeException  createMoveOut {} ", ex.getMessage());
 			try {
 				
-				String soapFaultRes = ex.getMessage();
-				soapFaultRes = soapFaultRes.replaceAll("<detail>", "");
-				soapFaultRes = soapFaultRes.replaceAll("</detail>", "");
-				
 				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
-						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(soapFaultRes, ZEISUCREATEMOVEOUTRfcException.class);		
-				
+						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(CommonUtil.getTagValue(ex.getMessage(), "detail"), ZEISUCREATEMOVEOUTRfcException.class);		
+
 				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());
 				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
 			} catch (Exception e) {

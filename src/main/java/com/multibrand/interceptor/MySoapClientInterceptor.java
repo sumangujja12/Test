@@ -1,25 +1,11 @@
 package com.multibrand.interceptor;
 
-import java.io.StringWriter;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.soap.SoapBody;
-import org.springframework.ws.soap.SoapEnvelope;
-import org.springframework.ws.soap.SoapFault;
-import org.springframework.ws.soap.SoapMessage;
 
 public class MySoapClientInterceptor implements ClientInterceptor {
 
@@ -30,54 +16,70 @@ public class MySoapClientInterceptor implements ClientInterceptor {
     @Override
     public boolean handleRequest(MessageContext messageContext) {
 
+    	logger.info("Request :");
+    	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    	
+	   	 try {
+	   		 
+				messageContext.getRequest().writeTo(outputStream);
+		        String httpMessage = new String(outputStream.toByteArray());
+		        
+		        logger.info("SOAP Request= :{}",httpMessage);
+		        
+			} catch (IOException exception) {
+				logger.error("Exception Occured in RuntimeException  handleRequest {} ", exception);
+			} finally {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					logger.error("Exception Occured in finally closing resources in handleRequest{} ", e);
+				}
+			}
         return true;
     }
 
     @Override
     public boolean handleResponse(MessageContext messageContext) {
 
+    	logger.info("Response :");
+    	
+    	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    	
+    	 try {
+    		 
+			messageContext.getResponse().writeTo(outputStream);
+	        String httpMessage = new String(outputStream.toByteArray());
+	        
+	        logger.info("SOAP Response= :{}",httpMessage);
+	        
+		} catch (IOException exception) {
+			logger.error("Exception Occured in RuntimeException  handleResponse {} ", exception);
+		} finally {
+			try {
+				outputStream.close();
+			} catch (IOException e) {
+				logger.error("Exception Occured in finally closing handleResponse {} ", e);
+			}
+		}
         return true;
     }
 
     @Override
-    public boolean handleFault(MessageContext messageContext) {
+	public boolean handleFault(MessageContext messageContext) {
 
-       	logger.info("intercepted a fault...");
-        SoapBody soapBody = getSoapBody(messageContext);
-        SoapFault soapFault = soapBody.getFault();
-
-        TransformerFactory factory = TransformerFactory.newInstance();
-        
-        Transformer transformer;
-        String strResult = "";
+    	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    	
 		try {
+
+			messageContext.getResponse().writeTo(outputStream);
+	        String httpMessage = new String(outputStream.toByteArray());
+
+			throw new RuntimeException(httpMessage);
 			
-			Source sourceInput = soapFault.getFaultDetail().getSource();
-			
-			StringWriter outWriter = new StringWriter();
-			
-			Result result = new StreamResult(outWriter);
-			
-			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			
-			transformer = factory.newTransformer();
-			transformer.transform(sourceInput, result);
-			strResult = outWriter.getBuffer().toString();
-			
-			throw new RuntimeException( strResult);
-		} catch (TransformerConfigurationException  e) {
-			logger.error("TransformerConfiguration Exception:{}",e);
-		} catch (TransformerException e) {
-			logger.error("Transformer Exception:{}",e);
-		} 
+		} catch (IOException e) {
+			logger.error("IOException Exception:{}", e);
+		}
 		return true;
 
-    }
-
-   
-    private SoapBody getSoapBody(MessageContext messageContext) {
-        SoapMessage soapMessage = (SoapMessage) messageContext.getResponse();
-        SoapEnvelope soapEnvelope = soapMessage.getEnvelope();
-        return soapEnvelope.getBody();
-    }    
+	} 
 }  

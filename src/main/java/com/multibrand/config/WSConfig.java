@@ -28,6 +28,8 @@ public class WSConfig {
 	@Value("${CCS_CREATE_MOVE_OUT}")
 	private String gmdCreateMoveOutEndPoint;
 		
+	@Value("${CRM_KBA_MATRIX}")
+	private String kbaMatrixUpdate;	
 	
 	
 	@Bean
@@ -63,12 +65,12 @@ public class WSConfig {
 		return webServiceTemplate;
 	}
 	
-	@Bean(name = "webServiceTemplateForKBAMatrix")
-	public WebServiceTemplate webServiceTemplateForKBAMatrix() {
+	@Bean(name = "webServiceTemplateForKBAMatrixUpdate")
+	public WebServiceTemplate webServiceTemplateForKBAMatrixUpdate() {
 		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
 		webServiceTemplate.setMarshaller(jaxb2Marshaller());
 		webServiceTemplate.setUnmarshaller(jaxb2Marshaller());
-		webServiceTemplate.setDefaultUri(gmdCreateMoveOutEndPoint);
+		webServiceTemplate.setDefaultUri(kbaMatrixUpdate);
 		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
 		webServiceTemplate.setInterceptors(clientInterceptors);
         
