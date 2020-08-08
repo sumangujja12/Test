@@ -1,5 +1,7 @@
 package com.multibrand.dto.request;
 
+import com.multibrand.util.CommonUtil;
+
 public class MoveOutRequest implements FormEntityRequest {
 	
 	private String contractAccountNumber;
@@ -55,5 +57,8 @@ public class MoveOutRequest implements FormEntityRequest {
 	public void setMoveOutReason(String moveOutReason) {
 		this.moveOutReason = moveOutReason;
 	}
-
+	@Override
+	public String toString() {
+		return CommonUtil.doRender(this);
+	}
 }

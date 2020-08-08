@@ -1,6 +1,10 @@
 package com.multibrand.dto.request;
 
-public class KBAMatrixUpdateRequest implements FormEntityRequest {
+import java.io.Serializable;
+
+import com.multibrand.util.CommonUtil;
+
+public class KBAMatrixUpdateRequest implements FormEntityRequest, Serializable {
 	
 	private String esiId;
 	private String firstName;
@@ -147,5 +151,10 @@ public class KBAMatrixUpdateRequest implements FormEntityRequest {
 	 */
 	public void setDeleteFlag(String deleteFlag) {
 		this.deleteFlag = deleteFlag;
+	}
+	
+	@Override
+	public String toString() {
+		return CommonUtil.doRender(this);
 	}
 }

@@ -92,6 +92,7 @@ import com.nrg.cxfstubs.crmcontactinfoupdate.TableOfZesPhoneNew2;
 import com.nrg.cxfstubs.crmcontactinfoupdate.TableOfZesUnsubReason;
 import com.nrg.cxfstubs.crmcontactinfoupdate.ZECRMBPCONTACTDETAILNEW;
 import com.nrg.cxfstubs.crmcontactinfoupdate.ZECrmBpContactDetailNew_Service;
+import com.nrg.cxfstubs.crmcontactinfoupdate.ZesCommPref2;
 import com.nrg.cxfstubs.crmcontactinfoupdate.ZesEmailsNew2;
 import com.nrg.cxfstubs.environmentalimpact.ZEISUENVIRONMENTALIMPACTS;
 import com.nrg.cxfstubs.environmentalimpact.ZEWSENVIRONMENTALIMPACTS;
@@ -723,7 +724,7 @@ public class ProfileService extends BaseAbstractService {
 	 * Method added for update CRM call
 	 * */
 	public UpdateContactResponse updateContactInfo(
-			UserRegistrationRequest request, String businessPartner,String sessionId,String companyCode) throws RemoteException {
+			UserRegistrationRequest request, String businessPartner,String sessionId,String companyCode, boolean isMarkettingPrefOptIn) throws RemoteException {
 
 		logger.info("Update ContactInfo Call starts..");
 		UpdateContactResponse response = new UpdateContactResponse();
@@ -768,6 +769,22 @@ public class ProfileService extends BaseAbstractService {
 		javax.xml.ws.Holder<TableOfZesPhoneNew2> hTZPhoneNew2 = new javax.xml.ws.Holder<TableOfZesPhoneNew2>();
 		javax.xml.ws.Holder<TableOfZesUnsubReason> hTZUnsubReason = new  javax.xml.ws.Holder<TableOfZesUnsubReason>();
 		javax.xml.ws.Holder<TableOfZesCommPref2> hTZCommPref2 = new  javax.xml.ws.Holder<TableOfZesCommPref2>();
+		
+		TableOfZesCommPref2 tZCommPref2 = new TableOfZesCommPref2();
+		List<ZesCommPref2> tZCommPref2List = tZCommPref2.getItem();
+		if (isMarkettingPrefOptIn) {
+			
+			ZesCommPref2 commPref2s = new ZesCommPref2();
+			
+			commPref2s.setAtnam("MKT_EMAIL");
+			commPref2s.setPartner(businessPartner);
+			commPref2s.setAtwrt("Y");
+			
+			tZCommPref2List.add(commPref2s);
+			
+		}
+		hTZCommPref2.value = tZCommPref2;
+		
 		javax.xml.ws.Holder<TableOfBapiret2> hTBapiret2 = new  javax.xml.ws.Holder<TableOfBapiret2>();
 		
 		long startTime = CommonUtil.getStartTime();

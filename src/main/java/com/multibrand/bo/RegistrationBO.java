@@ -158,7 +158,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 	 */
 	public GenericResponse createUser(String accountNumber, String lastName,
 			String email, String firstName, String userName, String password,
-			String companyCode, String sessionId, String languageCode, String applicationArea, String checkDigit, String source)
+			String companyCode, String sessionId, String languageCode, String applicationArea, String checkDigit, String source, boolean isMarkettingPrefOptIn)
 	{
 		UserRegistrationRequest register = new UserRegistrationRequest();
 		logger.info("START-[RegistrationBO-createUser]");
@@ -216,7 +216,7 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 					logger.info("RegistrationBO- after create user DB Call]"+isUdated);
 					profileService.activateCRM(register,businessPartner, companyCode, sessionId);
 					logger.info("Crm Activation Done....");
-					profileService.updateContactInfo(register, businessPartner,companyCode, sessionId);
+					profileService.updateContactInfo(register, businessPartner,companyCode, sessionId, isMarkettingPrefOptIn);
 					logger.info("Crm profile updation Done....");
 					// sending mail for online account registration
 					HashMap<String, String> templateProps = new HashMap<String,String>();
