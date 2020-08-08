@@ -727,7 +727,7 @@ public class ProfileService extends BaseAbstractService {
 	 * Method added for update CRM call
 	 * */
 	public UpdateContactResponse updateContactInfo(
-			UserRegistrationRequest request, String businessPartner,String sessionId,String companyCode, boolean isMarkettingPrefOptIn) throws RemoteException {
+			UserRegistrationRequest request, String businessPartner,String sessionId,String companyCode, String source, boolean isMarkettingPrefOptIn) throws RemoteException {
 
 		logger.info("Update ContactInfo Call starts..");
 		UpdateContactResponse response = new UpdateContactResponse();
@@ -775,15 +775,18 @@ public class ProfileService extends BaseAbstractService {
 		
 		TableOfZesCommPref2 tZCommPref2 = new TableOfZesCommPref2();
 		List<ZesCommPref2> tZCommPref2List = tZCommPref2.getItem();
-		if (isMarkettingPrefOptIn) {
+		if (source != null && source.equalsIgnoreCase(MOBILE)) {
 			
 			ZesCommPref2 commPref2s = new ZesCommPref2();
 			
-			commPref2s.setAtnam("MKT_EMAIL");
-			commPref2s.setPartner(businessPartner);
-			commPref2s.setAtwrt("Y");
+			if (isMarkettingPrefOptIn) {
+				commPref2s.setAtnam("MKT_EMAIL");
+				commPref2s.setPartner(businessPartner);
+				commPref2s.setAtwrt("Y");
+				tZCommPref2List.add(commPref2s);
+			} 
 			
-			tZCommPref2List.add(commPref2s);
+			
 			
 		}
 		hTZCommPref2.value = tZCommPref2;
