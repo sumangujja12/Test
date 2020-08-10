@@ -1,5 +1,10 @@
 package com.multibrand.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -7,6 +12,7 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import com.multibrand.dto.request.KBAMatrixUpdateDTO;
 import com.multibrand.dto.request.KBAMatrixUpdateRequest;
 import com.multibrand.exception.OAMException;
+import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.response.KBAMatrixUpdateResponse;
 import com.nrg.cxfstubs.kbamatrix.TableOfZesPosidKbaMtEx;
 import com.nrg.cxfstubs.kbamatrix.TableOfZesPosidKbaMtIn;
@@ -44,7 +50,15 @@ public class KBAMatrixUpdateService extends BaseAbstractService {
 			
 			TableOfZesPosidKbaMtIn tableOfZesPosidKbaMtIn = new TableOfZesPosidKbaMtIn();
 			
-			for (KBAMatrixUpdateDTO kbaMatrixUpdateDTO :  request.getKBAMatrixUpdateLst()) {
+			List<KBAMatrixUpdateDTO> kbaMatrixUpdateList = new ArrayList();
+			
+			if(request.getKbaMatrixUpdateList() != null){		
+				ObjectMapper mapper = new ObjectMapper();
+				kbaMatrixUpdateList = mapper.convertValue(request.getKbaMatrixUpdateList(), new TypeReference<List<KBAMatrixUpdateDTO>>() { });
+				
+			}
+			
+			for (KBAMatrixUpdateDTO kbaMatrixUpdateDTO :  kbaMatrixUpdateList) {
 				
 				zesPosidKbaMtIn.setAgentId(kbaMatrixUpdateDTO.getAgentId());
 				zesPosidKbaMtIn.setDeleteFlag(kbaMatrixUpdateDTO.getDeleteFlag());
