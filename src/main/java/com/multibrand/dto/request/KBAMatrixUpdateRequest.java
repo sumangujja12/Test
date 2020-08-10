@@ -1,6 +1,7 @@
 package com.multibrand.dto.request;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import com.multibrand.util.CommonUtil;
 
@@ -9,26 +10,26 @@ public class KBAMatrixUpdateRequest implements FormEntityRequest, Serializable {
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 1L;
 	
-	private List<KBAMatrixUpdateDTO> KBAMatrixUpdateLst;
 	
-	
-	
+	private List<KBAMatrixUpdateDTO> kbaMatrixUpdateList = new ArrayList<>();
+
+
 	/**
-	 * @return the kBAMatrixUpdateLst
+	 * @return the kbaMatrixUpdateList
 	 */
-	public List<KBAMatrixUpdateDTO> getKBAMatrixUpdateLst() {
-		return KBAMatrixUpdateLst;
+	public List<KBAMatrixUpdateDTO> getKbaMatrixUpdateList() {
+		return kbaMatrixUpdateList;
 	}
 
 
-
 	/**
-	 * @param kBAMatrixUpdateLst the kBAMatrixUpdateLst to set
+	 * @param kbaMatrixUpdateList the kbaMatrixUpdateList to set
 	 */
-	public void setKBAMatrixUpdateLst(List<KBAMatrixUpdateDTO> kBAMatrixUpdateLst) {
-		KBAMatrixUpdateLst = kBAMatrixUpdateLst;
+	public void setKbaMatrixUpdateList(List<KBAMatrixUpdateDTO> kbaMatrixUpdateList) {
+		this.kbaMatrixUpdateList = kbaMatrixUpdateList;
 	}
 
 	@Override
