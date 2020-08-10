@@ -1,11 +1,10 @@
 package com.multibrand.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import com.multibrand.dto.request.KBAMatrixUpdateDTO;
 import com.multibrand.dto.request.KBAMatrixUpdateRequest;
 import com.multibrand.exception.OAMException;
 import com.multibrand.vo.response.KBAMatrixUpdateResponse;
@@ -42,21 +41,27 @@ public class KBAMatrixUpdateService extends BaseAbstractService {
 			ZECrmKbaMatrixUpdate_Type zECrmKbaMatrixUpdateType = factory.createZECrmKbaMatrixUpdate_Type();
 			
 			ZesPosidKbaMtIn zesPosidKbaMtIn = new ZesPosidKbaMtIn();
-			zesPosidKbaMtIn.setAgentId(request.getAgentId());
-			zesPosidKbaMtIn.setDeleteFlag(request.getDeleteFlag());
-			zesPosidKbaMtIn.setDob(request.getDateOfBirth());
-			zesPosidKbaMtIn.setDrl(request.getDriverLicenseNumber());
-			zesPosidKbaMtIn.setEmail(request.getEmailId());
-			zesPosidKbaMtIn.setEsid(request.getEsiId());
-			zesPosidKbaMtIn.setFname(request.getFirstName());
-			zesPosidKbaMtIn.setLname(request.getLastName());
-			zesPosidKbaMtIn.setIpaddress(request.getIpAddress());
-			zesPosidKbaMtIn.setSsn(request.getSocialSecurityNumber());
-			zesPosidKbaMtIn.setStateDrlNo(request.getDriverLicenseState());
-			
 			
 			TableOfZesPosidKbaMtIn tableOfZesPosidKbaMtIn = new TableOfZesPosidKbaMtIn();
-			tableOfZesPosidKbaMtIn.getItem().add(zesPosidKbaMtIn);
+			
+			for (KBAMatrixUpdateDTO kbaMatrixUpdateDTO :  request.getKBAMatrixUpdateLst()) {
+				
+				zesPosidKbaMtIn.setAgentId(kbaMatrixUpdateDTO.getAgentId());
+				zesPosidKbaMtIn.setDeleteFlag(kbaMatrixUpdateDTO.getDeleteFlag());
+				zesPosidKbaMtIn.setDob(kbaMatrixUpdateDTO.getDateOfBirth());
+				zesPosidKbaMtIn.setDrl(kbaMatrixUpdateDTO.getDriverLicenseNumber());
+				zesPosidKbaMtIn.setEmail(kbaMatrixUpdateDTO.getEmailId());
+				zesPosidKbaMtIn.setEsid(kbaMatrixUpdateDTO.getEsiId());
+				zesPosidKbaMtIn.setFname(kbaMatrixUpdateDTO.getFirstName());
+				zesPosidKbaMtIn.setLname(kbaMatrixUpdateDTO.getLastName());
+				zesPosidKbaMtIn.setIpaddress(kbaMatrixUpdateDTO.getIpAddress());
+				zesPosidKbaMtIn.setSsn(kbaMatrixUpdateDTO.getSocialSecurityNumber());
+				zesPosidKbaMtIn.setStateDrlNo(kbaMatrixUpdateDTO.getDriverLicenseState());
+				
+				tableOfZesPosidKbaMtIn.getItem().add(zesPosidKbaMtIn);
+				
+			}
+			
 			
 			ZesPosidKbaMtEx zesPosidKbaMtEx = new ZesPosidKbaMtEx();
 			
