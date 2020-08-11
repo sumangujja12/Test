@@ -1580,4 +1580,5 @@ public interface Constants {
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
 	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 	
+	public static final String APPLICATION_SWAP_AREA = "SWAP";
 }

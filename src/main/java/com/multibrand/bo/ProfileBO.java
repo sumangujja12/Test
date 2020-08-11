@@ -1028,12 +1028,13 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 	}
 	
 	
-	public GetContractInfoResponse getContractInfo(String accountNumber,String bpNumber, String esid, String contractId, String languageCode, String companyCode, String brandName, String sessionId) {
+	public GetContractInfoResponse getContractInfo(String accountNumber,String bpNumber, String esid, String contractId, String languageCode, String companyCode, 
+			String brandName, String sessionId, String source, String applicationArea) {
 
 		GetContractInfoResponse response = new GetContractInfoResponse();
 		logger.info("Start getContractINfo - in ProfileBO");
 		try {
-			response = profileService.getContractInfo(accountNumber,bpNumber,esid,contractId,languageCode, companyCode, sessionId);
+			response = profileService.getContractInfo(accountNumber,bpNumber,esid,contractId,languageCode, companyCode, sessionId, applicationArea);
 			
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
