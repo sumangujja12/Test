@@ -71,6 +71,7 @@ public class WSConfig {
 		webServiceTemplate.setMarshaller(jaxb2Marshaller());
 		webServiceTemplate.setUnmarshaller(jaxb2Marshaller());
 		webServiceTemplate.setDefaultUri(kbaMatrixUpdate);
+		
 		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
 		webServiceTemplate.setInterceptors(clientInterceptors);
         
@@ -83,6 +84,10 @@ public class WSConfig {
 		HttpComponentsMessageSender httpComponentsMessageSender = new HttpComponentsMessageSender();
 		// set the basic authorization credentials
 		httpComponentsMessageSender.setCredentials(usernamePasswordCredentials());
+		
+		httpComponentsMessageSender.setReadTimeout(60000);
+		httpComponentsMessageSender.setConnectionTimeout(60000);
+	        
 		
 		return httpComponentsMessageSender;
 	}
