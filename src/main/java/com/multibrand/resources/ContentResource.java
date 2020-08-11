@@ -147,7 +147,7 @@ public class ContentResource implements Constants{
 		
 		Response response = null;
 		logger.info("Start-[ContentResource-getMultiBrandPlanOffers]");
-		ContractOfferPlanContentResponse getContractInfoResponse = contentServiceBO.getMultiBrandPlanOffers(request, httpRequest.getSession(true).getId());
+		ContractOfferPlanContentResponse getContractInfoResponse = contentServiceBO.getMultiBrandPlanOffers(request, httpRequest.getSession(true).getId(), APPLICATION_SWAP_AREA);
 		response = Response.status(200).entity(getContractInfoResponse).build();
 		logger.info("END-[ContentResource-getMultiBrandPlanOffers]");
 		return response;

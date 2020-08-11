@@ -2928,7 +2928,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public CheckSwapEligibilityResponse checkSwapEligibility(String accountNumber, String companyCode, String brandName, String sessionId) {
+	public CheckSwapEligibilityResponse checkSwapEligibility(String accountNumber, String companyCode, String brandName, String sessionId, String applicationArea) {
 		
 		logger.info("START-[BillingBO-checkSwapEligibility]");
 		CheckSwapEligibilityResponse reponse = new CheckSwapEligibilityResponse();
@@ -2959,7 +2959,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			{
 			esid = contractDO[i].getStrESIID();
 			contractId = contractDO[i].getStrContractID();
-				getContractInfoResponse = profileService.getContractInfo(accountNumber, bpNumber, esid,contractId, languageCode, companyCode, sessionId);
+				getContractInfoResponse = profileService.getContractInfo(accountNumber, bpNumber, esid,contractId, languageCode, companyCode, sessionId, applicationArea);
 				gmeContractDO[i] = new GMEContractDO();
 				gmeContractDO[i].setCurrentPlan(contractDO[i].getCurrentPlan());
 				gmeContractDO[i].setStrContractStartDate(contractDO[i].getStrContractStartDate());
