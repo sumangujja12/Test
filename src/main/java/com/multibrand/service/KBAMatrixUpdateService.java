@@ -48,8 +48,11 @@ public class KBAMatrixUpdateService extends BaseAbstractService {
 			
 			List<ZesPosidKbaMtIn> ZesPosidKbaMtInList = new ArrayList<ZesPosidKbaMtIn>();
 			
+			
 			for (KBAMatrixUpdateDTO kbaMatrixUpdateDTO :  request.getKbaMatrixUpdateList()) {
-				
+				if (kbaMatrixUpdateDTO == null) {
+					break;
+				}
 				zesPosidKbaMtIn = new ZesPosidKbaMtIn();
 				zesPosidKbaMtIn.setAgentId(kbaMatrixUpdateDTO.getAgentId());
 				zesPosidKbaMtIn.setDeleteFlag(kbaMatrixUpdateDTO.getDeleteFlag());
@@ -69,13 +72,10 @@ public class KBAMatrixUpdateService extends BaseAbstractService {
 			
 			tableOfZesPosidKbaMtIn.getItem().addAll(ZesPosidKbaMtInList);
 			
-			
             ZesPosidKbaMtEx zesPosidKbaMtEx = new ZesPosidKbaMtEx();
-
 			
 			TableOfZesPosidKbaMtEx tableOfZesPosidKbaMtEx = new TableOfZesPosidKbaMtEx();
 			tableOfZesPosidKbaMtEx.getItem().add(zesPosidKbaMtEx);
-			
 			
 			zECrmKbaMatrixUpdateType.setTInput(tableOfZesPosidKbaMtIn);
 			zECrmKbaMatrixUpdateType.setTOutput(tableOfZesPosidKbaMtEx);
