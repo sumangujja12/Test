@@ -121,9 +121,9 @@ public class AddressQueryParser
     				}
 
     				if (altToken != token.toLowerCase()) {
-    					searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, altToken), 0, 0), Occur.SHOULD));
+    					searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, altToken), 0.6f, 0), Occur.SHOULD));
     				}
-    				searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, token), 0, 0), Occur.SHOULD));
+    				searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, token), 0.6f, 1), Occur.SHOULD));
     			}
     		}
     		return searchQueryBuilder;
@@ -134,7 +134,7 @@ public class AddressQueryParser
 
     public static boolean isNumeric(String token) { 
     	  try {  
-    	    Double.parseDouble(token);  
+    		  Integer.parseInt(token);
     	    return true;
     	  } catch(NumberFormatException e){  
     	    return false;  
