@@ -97,9 +97,7 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants {
 			if (resource instanceof Analyzer) {
 				((Analyzer) resource).close();
 			}
-			if (resource instanceof IndexSearcher) {
-				((IndexSearcher) resource).close();
-			}
+			
 		}
 
 	}
