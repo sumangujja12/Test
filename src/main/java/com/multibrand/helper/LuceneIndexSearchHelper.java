@@ -13,6 +13,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.util.Version;
@@ -95,6 +96,9 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants {
 			}
 			if (resource instanceof Analyzer) {
 				((Analyzer) resource).close();
+			}
+			if (resource instanceof IndexSearcher) {
+				((IndexSearcher) resource).close();
 			}
 		}
 
