@@ -16,7 +16,6 @@ import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
@@ -93,7 +92,7 @@ public class LuceneAddressSearchResource {
 			logger.info("lucene indexed dir location" + filePath);
 			File file = new File(filePath);
 			fsDir = FSDirectory.open(file);
-			reader = DirectoryReader.open(fsDir);
+			reader = IndexReader.open(fsDir);
 			IndexSearcher searcher = new IndexSearcher(reader);
 			analyzer = addressLuceneHelper.BuildLuceneAnalyzer();
 

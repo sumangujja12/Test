@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.analysis.util.CharArraySet;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause.Occur;
@@ -55,9 +55,9 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants {
 	 */
 
 	public Analyzer BuildLuceneAnalyzer() {
-		CharArraySet stopWordSet = new CharArraySet(Version.LUCENE_42, 5, true);
+		CharArraySet stopWordSet = new CharArraySet(Version.LUCENE_35, 5, true);
 		stopWordSet.addAll(getStopWordsList());
-		return new StandardAnalyzer(Version.LUCENE_42, stopWordSet);
+		return new StandardAnalyzer(Version.LUCENE_35, stopWordSet);
 	}
 	/**
 	 * This will form the Query Object for Lucene Searcher 
