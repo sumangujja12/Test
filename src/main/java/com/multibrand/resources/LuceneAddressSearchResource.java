@@ -126,7 +126,11 @@ public class LuceneAddressSearchResource {
 			
 			addressLuceneHelper.closeResources(reader);
 			addressLuceneHelper.closeResources(fsDir);
-			addressLuceneHelper.closeResources(searcher);
+			//addressLuceneHelper.closeResources(searcher);
+			
+			if(searcher!=null)
+				searcher.close();
+			
 			addressLuceneHelper.closeResources(analyzer);
 			
 		}
