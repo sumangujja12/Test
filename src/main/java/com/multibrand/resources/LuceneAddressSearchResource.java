@@ -77,7 +77,7 @@ public class LuceneAddressSearchResource {
 		IndexReader reader = null;
 		Directory fsDir = null;
 		Analyzer analyzer = null;
-		IndexSearcher searcher = null;
+	//	IndexSearcher searcher = null;
 		Set<Location> responseSet = new LinkedHashSet<>();
 		Gson gson = new Gson();
 		try {
@@ -94,7 +94,12 @@ public class LuceneAddressSearchResource {
 			File file = new File(filePath);
 			fsDir = FSDirectory.open(file);
 			reader = IndexReader.open(fsDir);
-			searcher = new IndexSearcher(reader);
+			
+			try (IndexSearcher searcher = new IndexSearcher(reader)) {
+				
+			
+			
+		
 			analyzer = addressLuceneHelper.BuildLuceneAnalyzer();
 
 			BooleanQuery query = addressLuceneHelper.formQuery(state, customerType, queryString, analyzer);
@@ -116,7 +121,14 @@ public class LuceneAddressSearchResource {
 				
 			}
 			}
+			
+			catch (IOException e) {
+				logger.error("Error getting getAddressFromLuceneSearch... " + e);
+			}
+			}
 		}
+		
+		
 		
 		catch (Exception e) {
 			logger.error("Error getting getAddressFromLuceneSearch... " + e);
@@ -126,11 +138,7 @@ public class LuceneAddressSearchResource {
 			
 			addressLuceneHelper.closeResources(reader);
 			addressLuceneHelper.closeResources(fsDir);
-			//addressLuceneHelper.closeResources(searcher);
-			
-			if(searcher!=null)
-				searcher.close();
-			
+		
 			addressLuceneHelper.closeResources(analyzer);
 			
 		}
