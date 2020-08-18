@@ -591,7 +591,7 @@ public class HistoryResource
 	 * @return
 	 */
 	@POST
-	@Path("/getAllTimePrice")
+	@Path("/allTimeEnergyRate")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	public Response getAllTimePrice(@FormParam("accountNumber") String accountNumber,
