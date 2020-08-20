@@ -321,7 +321,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			accountDetailsResp.setZesZesuerStat((ZesZesuerStat)responseMap.get("profileSuerStats"));
 		
 			
-			if(response!= null &&   response.getContractAccountDO() != null)
+			if(response!= null && !StringUtils.isNotBlank(response.getErrorCode()))
 			{
 			response= (ProfileResponse)responseMap.get("profileResponse");			
 			if(response.getContractAccountDO()!=null)
