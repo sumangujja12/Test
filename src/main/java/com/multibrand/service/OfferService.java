@@ -237,8 +237,12 @@ public class OfferService extends BaseAbstractService {
 		promoOfferRequest.setStrDate(sdfDate.format(cal.getTime()));
 		promoOfferRequest.setStrTime(sdfTime.format(cal.getTime()));
 
-		if(StringUtils.isNotEmpty(productOfferRequest.getEsiid())) {
-			promoOfferRequest.setStrIncentive("X");//Commented by Ravi P since this property is not there in oedomain jar and and email send to Ben to remove any unnecessay code
+
+		promoOfferRequest.setStrExcludeIncentive("X");
+		if("X".equalsIgnoreCase(productOfferRequest.getAirlinePromo())) {
+			promoOfferRequest.setStrExcludeIncentive("");
+			promoOfferRequest.setStrMilesOnly("X");
+
 			
 			
 		}
