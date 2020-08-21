@@ -14,17 +14,17 @@ public class ProductOfferRequest {
 	
 	private String companyCode;
 	
-	private String esiid;
+	private String airlinePromo;
 	
 	
-	
-	public String getEsiid() {
-		return esiid;
+	public String getAirlinePromo() {
+		return airlinePromo;
 	}
-	public void setEsiid(String esiid) {
-		this.esiid = esiid;
+
+	public void setAirlinePromo(String airlinePromo) {
+		this.airlinePromo = airlinePromo;
 	}
-	
+
 	public String getCompanyCode() {
 		return companyCode;
 	}
