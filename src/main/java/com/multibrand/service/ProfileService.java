@@ -592,7 +592,7 @@ public class ProfileService extends BaseAbstractService {
 		else if((null == zcaOutputList  || zcaOutputList.size() == 0) && exReturnCode.value == null){
 			
 			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
-		} else if (zesZesuerStat != null && StringUtils.isNotBlank(zesZesuerStat.getStatus()) && ! zesZesuerStat.getStatus().equalsIgnoreCase("00"))  {
+		} else if (companyCode != null && companyCode.equalsIgnoreCase(COMPANY_CODE_GME) && zesZesuerStat != null && StringUtils.isNotBlank(zesZesuerStat.getStatus()) && ! zesZesuerStat.getStatus().equalsIgnoreCase("00"))  {
 			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
 		}
 							
