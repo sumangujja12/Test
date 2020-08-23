@@ -118,6 +118,7 @@ public interface Constants {
 	public static final String BRAND_ID_EE = "EE";
 	public static final String BRAND_ID_DISCOUNTPOWER = "DP";
 	public static final String CCS_BRAND_ID_GME = "GR";
+	public static final String BRAND_ID_GMD = "GMD";
 	
 	public static final String ALT_BRAND_ID_RELIANT = "REL";
 	public static final String ALT_BRAND_ID_GME = "GME";
