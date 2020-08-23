@@ -66,7 +66,7 @@ public class ContentDaoImpl implements ContentDao, DBConstants {
 				+ " TO_CHAR(NON_SCHEDULED_OUTAGE_END, 'yyyy-mm-dd hh24:mi:ss') AS NON_SCHEDULED_OUTAGE_END,MSG_PRIORITY, "
 				+ " MESSAGE_CODE " + " FROM CPDB1_MAIN.COMPONENT_OUTAGE " + " WHERE APPLICATION_TYPE= '"
 				+ request.getApplicationType() + "'" + " AND OUTAGE_STATUS='Y' " + " AND APPLICATION_COMPANY_CODE= '"
-				+ request.getCompanyCode() + "'" + " AND BRAND_ID='" + request.getBrandId() + "'";
+				+ request.getCompanyCode() + "'";
 
 		schedules = cpdbJdbcTemplate.query(maintenanceScheduleQuery, new RowMapper<MaintenanceSchedule>() {
 			public MaintenanceSchedule mapRow(ResultSet rs, int row) throws SQLException {
