@@ -1571,7 +1571,6 @@ public interface Constants {
 
 	public static final String AFFILIATE_ID_DSI="270519";
 	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
-
 	public static final String TEST_DATA_DB = "reliantTestData";
 	public static final String DATA_MOCKUP_HEADER_NAME ="UseDataMockup";
 
@@ -1582,4 +1581,5 @@ public interface Constants {
 	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
+	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
 }
