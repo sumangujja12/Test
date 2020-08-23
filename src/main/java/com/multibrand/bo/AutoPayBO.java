@@ -361,11 +361,15 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 				if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
 					logger.info("Sending mail for successful auto pay enrollment EN");
-					emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_EN, templateProps, companyCode);
+                    if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
+                    	emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_EN, templateProps, companyCode);
+                    }
 				} else{
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 					logger.info("Sending mail for successful auto pay enrollment ES");
-					emailHelper.sendMailWithBCC(email,this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_ES, templateProps, companyCode);
+                    if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
+                    	emailHelper.sendMailWithBCC(email,this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_ES, templateProps, companyCode);
+                    }
 				}
 				
 			}

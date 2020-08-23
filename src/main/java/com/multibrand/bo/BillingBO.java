@@ -775,7 +775,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
 						logger.info("Sending mail for successful payment EN");
+						
 						emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL), "", BILL_PAY_CC_EN, templateProps, companyCode);
+
 					} else{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 						logger.info("Sending mail for successful payment ES");
@@ -788,11 +790,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
 						logger.info("Sending mail for successful payment EN");
-						emailHelper.sendMail(email, "", BILL_PAY_CC_EN, templateProps, companyCode);
+						//Stop triggering emails for GMD product
+						if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
+							emailHelper.sendMail(email, "", BILL_PAY_CC_EN, templateProps, companyCode);
+						}
 					} else{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 						logger.info("Sending mail for successful payment ES");
-						emailHelper.sendMail(email,  "", BILL_PAY_CC_ES, templateProps, companyCode);
+						if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
+							emailHelper.sendMail(email,  "", BILL_PAY_CC_ES, templateProps, companyCode);
+						}
 					}
 				}
 			}
