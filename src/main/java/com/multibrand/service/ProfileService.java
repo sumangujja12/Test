@@ -588,11 +588,7 @@ public class ProfileService extends BaseAbstractService {
 		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)){
 			
 			profileResponse.setErrorCode(Constants.MSG_CCSERR_+exReturnCode.value+Constants._GET_PROFILE);
-		}
-		else if (companyCode != null && companyCode.equalsIgnoreCase(COMPANY_CODE_GME) && zesZesuerStat != null && StringUtils.isNotBlank(zesZesuerStat.getStatus()) && ! zesZesuerStat.getStatus().equalsIgnoreCase("00"))  {
-			profileResponse.setErrorCode(Constants.MSG_IDOC_NOT_PROCESSED);
-		}
-		else if((null == zcaOutputList  || zcaOutputList.size() == 0) && exReturnCode.value == null){
+		} else if((null == zcaOutputList  || zcaOutputList.size() == 0) && exReturnCode.value == null){
 			
 			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
 		} 

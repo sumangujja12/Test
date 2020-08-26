@@ -185,6 +185,7 @@ public interface Constants {
     public static final String RESULT_CODE_TWO="2";
     public static final String RESULT_CODE_THREE="3";
     public static final String RESULT_CODE_FOUR="4"; 
+    public static final String RESULT_CODE_EIGHT="8"; 
         
     public static final String RESULT_CODE_CCS_ERROR="2";
     public static final String RESULT_CODE_SUCCESS="0";

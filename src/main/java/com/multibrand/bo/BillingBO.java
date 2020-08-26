@@ -310,6 +310,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	public GetAccountDetailsResponse getAccountDetails(String accountNumber, String companyCode, String brandName, String sessionId) {
 
 		ProfileResponse response = null;
+		ZesZesuerStat zesZesuerStat = null;
 		GetAccountDetailsResponse accountDetailsResp = new GetAccountDetailsResponse();
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		String averageBillingEligibilty = AVG_BILL_FLAG_NO;
@@ -318,10 +319,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
 			
 			response= (ProfileResponse)responseMap.get("profileResponse");	
-			accountDetailsResp.setZesZesuerStat((ZesZesuerStat)responseMap.get("profileSuerStats"));
+			
+			zesZesuerStat = (ZesZesuerStat)responseMap.get("profileSuerStats");
+			accountDetailsResp.setZesZesuerStat(zesZesuerStat);
 		
 			
-			if(response!= null && !StringUtils.isNotBlank(response.getErrorCode()))
+			if(response!= null && response.getContractAccountDO() != null)
 			{
 			response= (ProfileResponse)responseMap.get("profileResponse");			
 			if(response.getContractAccountDO()!=null)
@@ -451,6 +454,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					accountDetailsResp.setPaymentReceiptPopupShowFlag(FLAG_Y);
 				}
 				//US- || DK || Payment Receipt Validation | 10/31/2018
+				
+				if (companyCode != null && companyCode.equalsIgnoreCase(COMPANY_CODE_GME) && zesZesuerStat != null && StringUtils.isNotBlank(zesZesuerStat.getStatus()) && ! zesZesuerStat.getStatus().equalsIgnoreCase("00"))  {
+					accountDetailsResp.setResultCode(Constants.RESULT_CODE_EIGHT);
+					accountDetailsResp.setResultDescription(Constants.MSG_IDOC_NOT_PROCESSED);
+				}
 			}
 			}
 			else
