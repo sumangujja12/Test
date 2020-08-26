@@ -337,6 +337,7 @@ public interface Constants {
 	public static final String MSG_CCSERR_ = "MSG_CCSERR_";
 	public static final String _GET_PROFILE = "_GET_PROFILE";
 	public static final String MSG_SYSTEM_UNAVAILABLE = "MSG_SYSTEM_UNAVAILABLE";
+	public static final String MSG_IDOC_NOT_PROCESSED = "MSG_IDOC_NOT_PROCESSED";
 	public static final String FLAG_Y = "Y";
 	
 	public static final String FLAG_N = "N";
