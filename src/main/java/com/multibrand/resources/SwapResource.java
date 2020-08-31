@@ -112,7 +112,9 @@ public class SwapResource {
 			@FormParam("contractTerm") String contractTerm,@FormParam("cancelFee") String cancelFee,
 			@FormParam("eflURL") String eflURL, @FormParam("eflSmartCode") String eflSmartCode, @FormParam("tosURL") String tosURL, @FormParam("tosSmartCode") String tosSmartCode,
 			@FormParam("yraacURL") String yraacURL, @FormParam("yraacSmartCode") String yraacSmartCode, @FormParam("disclaimer") String disclaimer, @FormParam("toEmail") String toEmail, @FormParam("productContent") String productContent, @FormParam("promoCode") String promoCode,@FormParam("brandName") String brandName, @FormParam("offerDate") String offerDate, @FormParam("offerTime") String offerTime,
-			@FormParam("clientSource") String clientSource,@FormParam("source") String source){
+			@FormParam("clientSource") String clientSource,@FormParam("source") String source,
+			@FormParam("messageId") String messageId,
+			@FormParam("osType") String osType){
 		logger.debug("START SwapResource.submitSwap :: START");
 		Response response = null;
 		SubmitSwapRequest swapRequest = new SubmitSwapRequest();
@@ -166,6 +168,8 @@ public class SwapResource {
 		swapRequest.setOfferDate(offerDate);
 		swapRequest.setOfferTime(offerTime);
 		swapRequest.setClientSource(clientSource);//CHG0020873
+		swapRequest.setMessageId(messageId);
+		swapRequest.setOsType(osType);
 		SubmitSwapResponse submitSwapResponse = swapBO.submitSwap(swapRequest,httpRequest.getSession(true).getId(), source);
 		response = Response.status(200).entity(submitSwapResponse).build();
 		logger.debug("End SwapResource.submitSwap :: END");	

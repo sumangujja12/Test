@@ -12,6 +12,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -22,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +32,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.naming.Context;
@@ -54,6 +58,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
@@ -2194,4 +2201,71 @@ public class CommonUtil implements Constants {
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
 		}  
+		
+		
+		public static String substituteVariables(String template, Map<String, String> variables) {
+			Pattern pattern = Pattern.compile("\\$\\{|\\[(.+?)\\]|\\}");
+			Matcher matcher = pattern.matcher(template);
+			StringBuffer buffer = new StringBuffer();
+			while (matcher.find()) {
+				if (variables.containsKey(matcher.group(1))) {
+					//System.out.println("Key"+matcher.group(1));
+					
+					String replacement = variables.get(matcher.group(1));
+					//System.out.println("Key"+replacement);
+					// quote to work properly with $ and {,} signs
+					matcher.appendReplacement(buffer, replacement != null ? Matcher.quoteReplacement(replacement) : "null");
+				}
+			}
+			matcher.appendTail(buffer);
+			return buffer.toString();
+		}
+		
+		public static String encodeValue(String value) {
+	        try {
+	            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+	        } catch (UnsupportedEncodingException ex) {
+				logger.error("Error occured in converting encodeValue for the url {}- Exception Cause {}",value, ex.getStackTrace());
+	        }
+	        
+	        return null;
+	    }
+		
+		public static String getPostRequestDetails(Object serviceReqJSONBody, String serviceURL) {
+			Gson gson = new Gson();
+			Map<String, String> serviceHttpHeader = new HashMap<>();
+			Map<String, String> serviceReqParameters = new HashMap<String, String>();
+			Map<String, Object> ServiceDetailRequest = new LinkedHashMap<String, Object>();
+			ServiceDetailRequest.put("serviceUrl", serviceURL);
+			ServiceDetailRequest.put("httpMethod", Constants.HTTP_METHOD_GET);
+			//System.out.println(gson.toJson(serviceHttpHeader).toString());
+			ServiceDetailRequest.put("serviceHttpHeader", serviceHttpHeader);
+			ServiceDetailRequest.put("serviceReqParameters", serviceReqParameters);
+			ServiceDetailRequest.put("serviceReqJSONBody", serviceReqJSONBody);
+			//System.out.println(gson.toJson(ServiceDetailRequest).toString());
+			return gson.toJson(ServiceDetailRequest);
+		}
+		
+		public static HttpEntity<String> getHttpEntity(Object inputJson, String serviceURL) {
+			HttpEntity<String> entity = null;
+			Map<String, String> header = new HashMap<String, String>();
+			header.put(HEADER_CONTENT_TYPE_KEY, MediaType.APPLICATION_JSON_VALUE);
+			header.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+			HttpHeaders httpHeaders = CommonUtil.generateHttpHeadersFromRequest(header);
+			entity = new HttpEntity<String>(getPostRequestDetails(inputJson, serviceURL), httpHeaders);
+			
+			return entity;
+		}
+		
+		public static HttpHeaders generateHttpHeadersFromRequest(Map<String, String> requestParams) {
+			HttpHeaders headers = new HttpHeaders();
+
+			if (requestParams.entrySet() != null) {
+				for (Map.Entry<String, ? extends Object> entry : requestParams.entrySet()) {
+					headers.add(entry.getKey(), requestParams.get(entry.getKey()));
+				}
+			}
+			return headers;
+		}
 }

@@ -1564,4 +1564,37 @@ public interface Constants {
 	
 	public static final String CONST_USE_MOCK_DATA = "usemockdata";
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
+	
+	public static final String TEMPLATE_REPORTSUITE = "template.url.parameter.reportsuite";
+	public static final String BRAND_NAME ="GME";
+	public static final String PARAMETER_VARIABLE_REPORTSUITE ="ReportSuite";
+	public static final String PARAMETER_VARIABLE_BRAND ="BRAND";
+	public static final String PARAMETER_VARIABLE_CANUMBER ="CANumber";
+	public static final String PARAMETER_VARIABLE_COMPANYCODE ="CompanyCode";
+	public static final String PARAMETER_VARIABLE_MSGID ="MsgId";
+	public static final String PARAMETER_VARIABLE_ACTIONDATE ="ActionDate";
+	public static final String PARAMETER_VARIABLE_MESSAGETYPE ="MessageType";
+	public static final String PARAMETER_VARIABLE_MESSAGECAT ="MessageCat";
+	public static final String PARAMETER_VARIABLE_MESSAGE ="Message";
+	public static final String PARAMETER_VARIABLE_MESSAGESTATUS ="MsgStatus";
+	public static final String PARAMETER_VARIABLE_LANGUAGE ="Language";
+	public static final String PARAMETER_VARIABLE_OSTYPE = "OSType";
+	public static final String PARAMETER_VARIABLE_CONTRACTID = "ContractId";
+	public static final String PARAMETER_VARIABLE_BPNUMBER ="BPNumber";
+	public static final String PARAMETER_VARIABLE_ERRORMESSAGE ="ErrorMessage";
+	public static final String CURRENT_DATE_FMT="MMddyyyy";
+	public static final String IOT_POST_URL = "iot.post.url";
+	public static final String HEADER_CONTENT_TYPE_KEY = "content-type";
+	public static final String HEADER_CONTENT_TYPE_VALUE_JSON = "application/json";
+	public static final String HEADER_CONTENT_TYPE_VALUE_URL_ENCODED = "application/x-www-form-urlencoded";
+	public static final String HTTP_METHOD_POST = "POST";
+	public static final String HTTP_METHOD_GET = "GET";
+	public static final String ADOBE_MESSAGE_TYPE = "Submit";
+	public static final String ADOBE_MESSAGE_FUNCTION = "SwapSubmit";
+	public static final String SWAP_SUBMIT_SUCESS = "SWAP_SUBMITTED";
+	public static final String ADOBE_ANALYTIC_TEMPLATE_URL ="adobe.analytic.template.url";
+	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_ONE ="template.url.query.list.parameter.one";
+	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_TWO ="template.url.query.list.parameter.two";
+	public static final String SWAP_SUBMIT_FAIL = "SWAP_SUBMIT_FAIL";
+
 }
