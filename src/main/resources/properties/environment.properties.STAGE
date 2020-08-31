@@ -241,6 +241,15 @@ documentum.endpoint=https://texas.xoomenergy.com/files/{0}.pdf
 
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
+
 # Lucene Search Engine Index Files Directory Location
 lucene.indexed.dir=/apps02/data/stream/address/lucene
 duplicate.payment.check =
+
+
+# Adode Analytics
+adobe.analytic.template.url=https://reliantenergy.sc.omtrdc.net/b/ss/[ReportSuite]/0?
+template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notification&ch=App%20API&server=api.[BRAND].com&vid=[CANumber]&c.&mycocode=[CompanyCode]&myca=[CANumber]&mymsgid=[MsgId]
+template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageType]&mymsgcat=[MessageCat]&mymsg=[Message]&mymsgstatus=[MsgStatus]&mylang=[Language]&myos=[OSType]&mycontractid=[ContractId]&mybp=[BPNumber]&myerrmsg=[ErrorMessage]&.c&AQE=1
+template.url.parameter.reportsuite=relengmestage
+iot.post.url = http://txaixsexbls05/iotproxy/postServiceRequest

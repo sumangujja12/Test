@@ -4,12 +4,15 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.domain.CreateContactLogRequest;
@@ -21,7 +24,9 @@ import com.multibrand.domain.SwapRequest;
 import com.multibrand.domain.SwapResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.EmailHelper;
+import com.multibrand.service.AdodeAnalyticService;
 import com.multibrand.service.BaseAbstractService;
+import com.multibrand.service.BaseRestService;
 import com.multibrand.service.SwapService;
 import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
@@ -47,6 +52,8 @@ public class SwapBO extends BaseAbstractService implements Constants {
 	EmailHelper emailHelper;
 	@Autowired
 	TOSService tosService;
+	@Autowired
+	TaskExecutor taskExecutor;
 	
 
 	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -133,13 +140,15 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			JavaBeanUtil.copy(response, submitSwapResponse);
 			if(submitSwapResponse.getErrorCode()!=null && submitSwapResponse.getErrorCode().equalsIgnoreCase(MSG_ERR_SUBMIT_SWAP))
 			{
-				logger.info(" submitSwap Error code is  ===> "+response.getErrorCode());
+				logger.info(" subswapRequestmitSwap Error code is  ===> "+response.getErrorCode());
 				submitSwapResponse.setResultCode(RESULT_CODE_CCS_ERROR);
 				submitSwapResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				callAdodeAnalytics(request, submitSwapResponse.getErrorCode());
 				return submitSwapResponse;
 			}
 			submitSwapResponse.setResultCode(RESULT_CODE_SUCCESS);
 			submitSwapResponse.setResultDescription(MSG_SUCCESS);
+			callAdodeAnalytics(request, "");
 			// Sending mail for submit swap
 			logger.info("Sending mail for submit swap");
 			HashMap<String, String> templateProps = new HashMap<String,String>();
@@ -510,6 +519,49 @@ public class SwapBO extends BaseAbstractService implements Constants {
 		return pendingSwapResponse;
 
 	}
+	
+	public Map<String, String> getAdopeValueMap(SubmitSwapRequest request, String errorMessage) {
+		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
+
+		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, envMessageReader.getMessage(TEMPLATE_REPORTSUITE));
+		linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
+		linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, request.getAccountNumber());
+		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE);
+		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, request.getMessageId());
+		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
+		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
+		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
+		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "");
+		if (!StringUtils.isNotBlank(errorMessage)) {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
+			linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+		} else {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
+			linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+		}
+		
+		linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
+		linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, request.getOsType());
+		linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, request.getContractId());
+		linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, request.getBpNumber());
+		return linkedHashMap;
+	}
+	
+	public void callAdodeAnalytics(SubmitSwapRequest request, String errorMessage) {
+		StringBuffer strBuffer = new StringBuffer("");
+		strBuffer.append(envMessageReader.getMessage(ADOBE_ANALYTIC_TEMPLATE_URL));
+		strBuffer.append(envMessageReader.getMessage(TEMPLATE_URL_QUERY_LIST_PARAMETER_ONE));
+		strBuffer.append(envMessageReader.getMessage(TEMPLATE_URL_QUERY_LIST_PARAMETER_TWO));
+		String url = CommonUtil.substituteVariables(strBuffer.toString(), getAdopeValueMap(request,errorMessage));
+		logger.info("Tracking URL for the Customer {} -{}", request.getContractId(), url);
+		url = CommonUtil.encodeValue(url);
+		logger.info("Encoded URL for the Customer {} -{}", request.getContractId(), url);
+		Map<String,String> inputJson = new LinkedHashMap<String,String>();
+		AdodeAnalyticService analyticalService = new AdodeAnalyticService(
+				envMessageReader.getMessage(Constants.IOT_POST_URL), url, inputJson);
+		taskExecutor.execute(analyticalService);
+	}
+
 	
 }
 

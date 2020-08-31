@@ -65,7 +65,14 @@
 		class="com.multibrand.web.i18n.WebI18nMessageSource">
 		<property name="basename" value="/WEB-INF/classes/messages/oweRPMFactors" />
 		<property name="cacheSeconds" value="0" />
-	</bean>	
+	</bean>
+
+	<bean id="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="10" />
+		<property name="queueCapacity" value="25" />
+	</bean>
 	
 	<!-- SPRING CONFIG FILES TO DEFINE ALL THE JDBC SESSIONS/TEMPLATES -->
 	<import resource="NRGREST-dao-config.xml" />
