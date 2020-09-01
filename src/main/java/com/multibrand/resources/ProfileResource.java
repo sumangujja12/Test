@@ -312,11 +312,14 @@ public class ProfileResource {
 			                        @FormParam("companyCode") String companyCode,
 			                        @FormParam("brandName") String brandName,
 			                        @FormParam("contractId")String contractId,
-			                        @FormParam("esid")String esid){
+			                        @FormParam("esid")String esid,
+			                        @FormParam("source")String source,
+			                        @FormParam("applicationArea")String applicationArea){
 		
 		Response response = null;
 		logger.info("Start-[ProfileResource-getContractInfo]");
-		GetContractInfoResponse getContractInfoResponse = profileBO.getContractInfo(accountNumber,bpNumber,esid,contractId,languageCode,companyCode,brandName,httpRequest.getSession(true).getId());
+		GetContractInfoResponse getContractInfoResponse = profileBO.getContractInfo(accountNumber,bpNumber,esid,contractId,languageCode,companyCode,brandName,
+				httpRequest.getSession(true).getId(), source, applicationArea);
 		
 
 		response = Response.status(200).entity(getContractInfoResponse).build();

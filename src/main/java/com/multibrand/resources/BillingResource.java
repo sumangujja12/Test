@@ -1259,7 +1259,7 @@ public class BillingResource {
 	public Response checkSwapEligibility(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName){
 		Response response = null;		
 		
-		CheckSwapEligibilityResponse checkSwapEligibilityResponse = billingBO.checkSwapEligibility(accountNumber,companyCode,brandName, httpRequest.getSession(true).getId());
+		CheckSwapEligibilityResponse checkSwapEligibilityResponse = billingBO.checkSwapEligibility(accountNumber,companyCode,brandName, httpRequest.getSession(true).getId(),Constants.APPLICATION_SWAP_AREA );
 		response = Response.status(200).entity(checkSwapEligibilityResponse).build();
 				
 		return response;
