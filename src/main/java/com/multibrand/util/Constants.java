@@ -118,6 +118,7 @@ public interface Constants {
 	public static final String BRAND_ID_EE = "EE";
 	public static final String BRAND_ID_DISCOUNTPOWER = "DP";
 	public static final String CCS_BRAND_ID_GME = "GR";
+	public static final String BRAND_ID_GMD = "GMD";
 	
 	public static final String ALT_BRAND_ID_RELIANT = "REL";
 	public static final String ALT_BRAND_ID_GME = "GME";
@@ -187,6 +188,7 @@ public interface Constants {
     public static final String RESULT_CODE_TWO="2";
     public static final String RESULT_CODE_THREE="3";
     public static final String RESULT_CODE_FOUR="4"; 
+    public static final String RESULT_CODE_EIGHT="8"; 
         
     public static final String RESULT_CODE_CCS_ERROR="2";
     public static final String RESULT_CODE_SUCCESS="0";
@@ -336,6 +338,7 @@ public interface Constants {
 	public static final String MSG_CCSERR_ = "MSG_CCSERR_";
 	public static final String _GET_PROFILE = "_GET_PROFILE";
 	public static final String MSG_SYSTEM_UNAVAILABLE = "MSG_SYSTEM_UNAVAILABLE";
+	public static final String MSG_IDOC_NOT_PROCESSED = "MSG_IDOC_NOT_PROCESSED";
 	public static final String FLAG_Y = "Y";
 	
 	public static final String FLAG_N = "N";
@@ -1483,6 +1486,9 @@ public interface Constants {
 //***************** GMD APP APIs *************************    
    public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
    public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
+   public static final String API_CREATE_GMD_MOVE_OUT = "createMoveOut";
+   
+   public static final String API_KBA_MATRIX_UPDATE = "protected/kbaMatriUpdate";
    
    public static final String GMD_STATEMENT_ENDPOINT_URL_JNDINAME = "CCS_GMD_STMT";
    public static final String GMD_PRICET_ENDPOINT_URL_JNDINAME = "CCS_PRICE_STMT";
@@ -1544,6 +1550,16 @@ public interface Constants {
 	
 	
 	
+	
+
+	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
+	
+	public static final String CONST_GUID= "guId";
+	
+	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
+
+	
+	
 	public static final String XOOM_NNP_EXTERNAL_ID_EN = "XOOM.NNP.UPDATE.CONFIRMATION.EN_US";
 	public static final String XOOM_NNP_EXTERNAL_ID_ES = "XOOM.NNP.UPDATE.CONFIRMATION.ES_US";
 	public static final String XOOM_NNP_TEMPLATE_ID = "HTML";
@@ -1554,16 +1570,22 @@ public interface Constants {
 	public static final String XOOM_NNP_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
 	public static final String XOOM_NNP_DELIVERY_LOCATION = "DELIVERY_LOCATION";
 
-	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
-	
-	public static final String CONST_GUID= "guId";
-	
-	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
+
 	public static final String AFFILIATE_ID_DSI="270519";
 	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
+	public static final String TEST_DATA_DB = "reliantTestData";
+	public static final String DATA_MOCKUP_HEADER_NAME ="UseDataMockup";
+
+
 	
 	public static final String CONST_USE_MOCK_DATA = "usemockdata";
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
+
+	public static final String DATE_FRMT_DB ="dd-MMM-YY";
+	
+	public static final String APPLICATION_SWAP_AREA = "SWAP";
+	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
+
 	
 	public static final String TEMPLATE_REPORTSUITE = "template.url.parameter.reportsuite";
 	public static final String BRAND_NAME ="GME";
@@ -1596,5 +1618,10 @@ public interface Constants {
 	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_ONE ="template.url.query.list.parameter.one";
 	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_TWO ="template.url.query.list.parameter.two";
 	public static final String SWAP_SUBMIT_FAIL = "SWAP_SUBMIT_FAIL";
+	public static final String GET_PLAN_OFFER_FAIL = "GET_PLAN_OFFER_FAIL";
+	public static final String GET_PLAN_OFFER = "GET_PLAN_OFFER";
+	public static final String ADOBE_MESSAGE_PLAN_TYPE = "PLAN_OFFER";
+	public static final String PLAN_OFFER_FUNCTION = "SEARCH_PLAN";
+	public static final String PLAN_OFFER_MESSAGE_TYPE = "PLAN_OFFER";
 
 }

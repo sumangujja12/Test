@@ -2,8 +2,10 @@ package com.multibrand.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -41,6 +43,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.soap.SOAPException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.Charsets;
@@ -62,6 +69,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -87,7 +95,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @Component
 public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
-	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
+	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE, XOOM_COMPANY_CODE};
 	public static HashSet<String> privacyDataParams = null;
 	public static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
@@ -2200,7 +2208,27 @@ public class CommonUtil implements Constants {
 			//toRet = baos.toByteArray();
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
-		}  
+
+		} 
+
+	public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
+			throws IOException, SOAPException, JAXBException {
+
+		InputStream targetStream = new ByteArrayInputStream(response.getBytes());
+
+		JAXBContext JAXBContext = javax.xml.bind.JAXBContext.newInstance(responseClass.getPackage().getName());
+		Unmarshaller unmarshaller = JAXBContext.createUnmarshaller();
+
+		JAXBElement<T> document = (JAXBElement<T>) unmarshaller.unmarshal(targetStream);
+
+		return document.getValue();
+
+	}
+	public static String getTagValue(String xml, String tagName){
+	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
+	}	
+
+		  
 		
 		
 		public static String substituteVariables(String template, Map<String, String> variables) {
@@ -2268,4 +2296,49 @@ public class CommonUtil implements Constants {
 			}
 			return headers;
 		}
+		
+		
+		public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
+				String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource) {
+			Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
+
+			linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE,templateReportsuite);
+			linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
+			linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, accountNumber);
+			linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE);
+			linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
+			linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
+			
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "");
+			if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, PLAN_OFFER_FUNCTION);
+				if (!StringUtils.isNotBlank(errorMessage)) {
+					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS,  GET_PLAN_OFFER);
+					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				} else {
+					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS,GET_PLAN_OFFER_FAIL);
+					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				}
+			} else {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
+				if (!StringUtils.isNotBlank(errorMessage)) {
+					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
+					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				} else {
+					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
+					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				}
+			}
+			
+			
+			linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
+			linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, osType);
+			linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, contractId);
+			linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, bpNumber);
+			return linkedHashMap;
+		}
+
+	
 }

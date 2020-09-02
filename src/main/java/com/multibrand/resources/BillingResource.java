@@ -1256,10 +1256,12 @@ public class BillingResource {
 	@Path("checkSwapEligibility")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response checkSwapEligibility(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName){
+	public Response checkSwapEligibility(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode,
+			@FormParam("brandName") String brandName,@FormParam("messageId") String messageId,
+			@FormParam("osType") String osType){
 		Response response = null;		
 		
-		CheckSwapEligibilityResponse checkSwapEligibilityResponse = billingBO.checkSwapEligibility(accountNumber,companyCode,brandName, httpRequest.getSession(true).getId());
+		CheckSwapEligibilityResponse checkSwapEligibilityResponse = billingBO.checkSwapEligibility(accountNumber,companyCode,brandName,messageId,osType, httpRequest.getSession(true).getId());
 		response = Response.status(200).entity(checkSwapEligibilityResponse).build();
 				
 		return response;
