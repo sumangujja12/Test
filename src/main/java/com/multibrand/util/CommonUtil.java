@@ -2228,117 +2228,112 @@ public class CommonUtil implements Constants {
 	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
 	}	
 
-		  
-		
-		
-		public static String substituteVariables(String template, Map<String, String> variables) {
-			Pattern pattern = Pattern.compile("\\$\\{|\\[(.+?)\\]|\\}");
-			Matcher matcher = pattern.matcher(template);
-			StringBuffer buffer = new StringBuffer();
-			while (matcher.find()) {
-				if (variables.containsKey(matcher.group(1))) {
-					//System.out.println("Key"+matcher.group(1));
-					
-					String replacement = variables.get(matcher.group(1));
-					//System.out.println("Key"+replacement);
-					// quote to work properly with $ and {,} signs
-					matcher.appendReplacement(buffer, replacement != null ? Matcher.quoteReplacement(replacement) : "null");
-				}
+	public static String substituteVariables(String template, Map<String, String> variables) {
+		Pattern pattern = Pattern.compile("\\$\\{|\\[(.+?)\\]|\\}");
+		Matcher matcher = pattern.matcher(template);
+		StringBuffer buffer = new StringBuffer();
+		while (matcher.find()) {
+			if (variables.containsKey(matcher.group(1))) {
+				// System.out.println("Key"+matcher.group(1));
+
+				String replacement = variables.get(matcher.group(1));
+				// System.out.println("Key"+replacement);
+				// quote to work properly with $ and {,} signs
+				matcher.appendReplacement(buffer, replacement != null ? Matcher.quoteReplacement(replacement) : "null");
 			}
-			matcher.appendTail(buffer);
-			return buffer.toString();
 		}
-		
-		public static String encodeValue(String value) {
-	        try {
-	            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-	        } catch (UnsupportedEncodingException ex) {
-				logger.error("Error occured in converting encodeValue for the url {}- Exception Cause {}",value, ex.getStackTrace());
-	        }
-	        
-	        return null;
-	    }
-		
-		public static String getPostRequestDetails(Object serviceReqJSONBody, String serviceURL) {
-			Gson gson = new Gson();
-			Map<String, String> serviceHttpHeader = new HashMap<>();
-			Map<String, String> serviceReqParameters = new HashMap<String, String>();
-			Map<String, Object> ServiceDetailRequest = new LinkedHashMap<String, Object>();
-			ServiceDetailRequest.put("serviceUrl", serviceURL);
-			ServiceDetailRequest.put("httpMethod", Constants.HTTP_METHOD_GET);
-			//System.out.println(gson.toJson(serviceHttpHeader).toString());
-			ServiceDetailRequest.put("serviceHttpHeader", serviceHttpHeader);
-			ServiceDetailRequest.put("serviceReqParameters", serviceReqParameters);
-			ServiceDetailRequest.put("serviceReqJSONBody", serviceReqJSONBody);
-			//System.out.println(gson.toJson(ServiceDetailRequest).toString());
-			return gson.toJson(ServiceDetailRequest);
-		}
-		
-		public static HttpEntity<String> getHttpEntity(Object inputJson, String serviceURL) {
-			HttpEntity<String> entity = null;
-			Map<String, String> header = new HashMap<String, String>();
-			header.put(HEADER_CONTENT_TYPE_KEY, MediaType.APPLICATION_JSON_VALUE);
-			header.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+		matcher.appendTail(buffer);
+		return buffer.toString();
+	}
 
-			HttpHeaders httpHeaders = CommonUtil.generateHttpHeadersFromRequest(header);
-			entity = new HttpEntity<String>(getPostRequestDetails(inputJson, serviceURL), httpHeaders);
-			
-			return entity;
+	public static String encodeValue(String value) {
+		try {
+			return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException ex) {
+			logger.error("Error occured in converting encodeValue for the url {}- Exception Cause {}", value,
+					ex.getStackTrace());
 		}
-		
-		public static HttpHeaders generateHttpHeadersFromRequest(Map<String, String> requestParams) {
-			HttpHeaders headers = new HttpHeaders();
 
-			if (requestParams.entrySet() != null) {
-				for (Map.Entry<String, ? extends Object> entry : requestParams.entrySet()) {
-					headers.add(entry.getKey(), requestParams.get(entry.getKey()));
-				}
+		return null;
+	}
+
+	public static String getPostRequestDetails(Object serviceReqJSONBody, String serviceURL) {
+		Gson gson = new Gson();
+		Map<String, String> serviceHttpHeader = new HashMap<>();
+		Map<String, String> serviceReqParameters = new HashMap<String, String>();
+		Map<String, Object> ServiceDetailRequest = new LinkedHashMap<String, Object>();
+		ServiceDetailRequest.put("serviceUrl", serviceURL);
+		ServiceDetailRequest.put("httpMethod", Constants.HTTP_METHOD_GET);
+		// System.out.println(gson.toJson(serviceHttpHeader).toString());
+		ServiceDetailRequest.put("serviceHttpHeader", serviceHttpHeader);
+		ServiceDetailRequest.put("serviceReqParameters", serviceReqParameters);
+		ServiceDetailRequest.put("serviceReqJSONBody", serviceReqJSONBody);
+		// System.out.println(gson.toJson(ServiceDetailRequest).toString());
+		return gson.toJson(ServiceDetailRequest);
+	}
+
+	public static HttpEntity<String> getHttpEntity(Object inputJson, String serviceURL) {
+		HttpEntity<String> entity = null;
+		Map<String, String> header = new HashMap<String, String>();
+		header.put(HEADER_CONTENT_TYPE_KEY, MediaType.APPLICATION_JSON_VALUE);
+		header.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+		HttpHeaders httpHeaders = CommonUtil.generateHttpHeadersFromRequest(header);
+		entity = new HttpEntity<String>(getPostRequestDetails(inputJson, serviceURL), httpHeaders);
+
+		return entity;
+	}
+
+	public static HttpHeaders generateHttpHeadersFromRequest(Map<String, String> requestParams) {
+		HttpHeaders headers = new HttpHeaders();
+
+		if (requestParams.entrySet() != null) {
+			for (Map.Entry<String, ? extends Object> entry : requestParams.entrySet()) {
+				headers.add(entry.getKey(), requestParams.get(entry.getKey()));
 			}
-			return headers;
 		}
-		
-		
-		public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
-				String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource) {
-			Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
+		return headers;
+	}
 
-			linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE,templateReportsuite);
-			linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
-			linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, accountNumber);
-			linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE);
-			linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
-			linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
-			
-			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "");
-			if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, PLAN_OFFER_FUNCTION);
-				if (!StringUtils.isNotBlank(errorMessage)) {
-					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS,  GET_PLAN_OFFER);
-					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				} else {
-					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS,GET_PLAN_OFFER_FAIL);
-					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				}
+	public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
+			String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource) {
+		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
+
+		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, templateReportsuite);
+		linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
+		linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, accountNumber);
+		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE);
+		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
+		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
+
+		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "");
+		if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, PLAN_OFFER_FUNCTION);
+			if (!StringUtils.isNotBlank(errorMessage)) {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
 			} else {
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
-				if (!StringUtils.isNotBlank(errorMessage)) {
-					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
-					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				} else {
-					linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
-					linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				}
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER_FAIL);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
 			}
-			
-			
-			linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
-			linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, osType);
-			linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, contractId);
-			linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, bpNumber);
-			return linkedHashMap;
+		} else {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
+			if (!StringUtils.isNotBlank(errorMessage)) {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+			} else {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+			}
 		}
 
+		linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
+		linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, osType);
+		linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, contractId);
+		linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, bpNumber);
+		return linkedHashMap;
+	}
 	
 }

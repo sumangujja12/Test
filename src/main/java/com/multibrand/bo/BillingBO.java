@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -25,7 +24,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dao.BillDAO;
@@ -75,7 +73,6 @@ import com.multibrand.helper.BillHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.proxy.BillingProxy;
-import com.multibrand.service.AdodeAnalyticService;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.BillingService;
 import com.multibrand.service.EmailService;
@@ -201,9 +198,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	
 	@Autowired
 	private HistoryBO historyBO;
-	
-	@Autowired
-	private TaskExecutor taskExecutor;
 	
 	//@Autowired
 	//private ReloadableResourceBundleMessageSource appConstMessageSource;
@@ -2934,7 +2928,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param sessionId
 	 * @return
 	 */
-	public CheckSwapEligibilityResponse checkSwapEligibility(String accountNumber, String companyCode, String brandName,String messageId,String osType, String sessionId) {
+	public CheckSwapEligibilityResponse checkSwapEligibility(String accountNumber, String companyCode, String brandName, String sessionId) {
 		
 		logger.info("START-[BillingBO-checkSwapEligibility]");
 		CheckSwapEligibilityResponse reponse = new CheckSwapEligibilityResponse();
@@ -2949,19 +2943,14 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		boolean isProactive = false;
 		ContractDO[] contractDO = new ContractDO[5];
 		OfferDO[] offerDO = new OfferDO[10];
-		 Map<String, String>  adobeValueMap = null;
-		String bpNumber = null;
-		String contractId = null;
-		String templateReportSuite = envMessageReader.getMessage(TEMPLATE_REPORTSUITE);
 		try {	
 		getAccountDetailsResponse = getAccountDetails(accountNumber,companyCode,brandName,sessionId);
 		String youngTreesValue = null;
-		bpNumber = getAccountDetailsResponse.getContractAccountDO().getStrBPNumber();
+		String bpNumber = getAccountDetailsResponse.getContractAccountDO().getStrBPNumber();
 		String esid = null;
-		
+		String contractId = null;
 		String languageCode= "";
-	   
-	    
+		
 		contractDO = getAccountDetailsResponse.getContractAccountDO().getListOfContracts();
 		if(contractDO!=null){
 		if(contractDO.length>0){
@@ -3079,17 +3068,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			reponse.setYearlyTreesAbsorbed(youngTreesValue);
 			reponse.setResultCode(RESULT_CODE_SUCCESS);
 			reponse.setResultDescription(MSG_SUCCESS);
-			
-			adobeValueMap = CommonUtil.getAdopeValueMap(accountNumber, messageId, contractId,
-					bpNumber, osType, templateReportSuite,
-					"",GET_PLAN_OFFER);
-			callAdodeAnalytics(adobeValueMap);
 		}
 			}else{
-				adobeValueMap = CommonUtil.getAdopeValueMap(accountNumber, messageId, "NO_CONTRACT",
-						bpNumber, osType, templateReportSuite,
-						NO_CONTRACT,GET_PLAN_OFFER);
-				callAdodeAnalytics(adobeValueMap);
 				reponse.setResultCode(RESULT_CODE_TWO);
 				reponse.setResultDescription(NO_CONTRACT);
 			
@@ -3099,10 +3079,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				logger.error(e);
 				reponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				reponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-				adobeValueMap = CommonUtil.getAdopeValueMap(accountNumber, messageId, contractId,
-						bpNumber, osType, templateReportSuite,
-						reponse.getErrorDescription(),GET_PLAN_OFFER);
-				callAdodeAnalytics(adobeValueMap);
 		}
 		logger.info("END-[BillingBO- checkSwapEligibility]");		
 		return reponse;
@@ -3893,21 +3869,5 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		
 		return response;
 	}	
-	
-	
-	public void callAdodeAnalytics(Map<String, String> adobeValueMap) { 
-		StringBuffer strBuffer = new StringBuffer("");
-		strBuffer.append(envMessageReader.getMessage(ADOBE_ANALYTIC_TEMPLATE_URL));
-		strBuffer.append(envMessageReader.getMessage(TEMPLATE_URL_QUERY_LIST_PARAMETER_ONE));
-		strBuffer.append(envMessageReader.getMessage(TEMPLATE_URL_QUERY_LIST_PARAMETER_TWO));
-		String url = CommonUtil.substituteVariables(strBuffer.toString(), adobeValueMap);
-		logger.info("Tracking URL for the Customer {} -{}", adobeValueMap.get(PARAMETER_VARIABLE_CONTRACTID), url);
-		//url = CommonUtil.encodeValue(url);
-		logger.info("Encoded URL for the Customer {} -{}", adobeValueMap.get(PARAMETER_VARIABLE_CONTRACTID), url);
-		Map<String,String> inputJson = new LinkedHashMap<String,String>();
-		AdodeAnalyticService analyticalService = new AdodeAnalyticService(
-				envMessageReader.getMessage(Constants.IOT_POST_URL), url, inputJson);
-		taskExecutor.execute(analyticalService);
-	}
 	
 }
