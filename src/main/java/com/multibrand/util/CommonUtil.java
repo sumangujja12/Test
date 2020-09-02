@@ -2302,7 +2302,7 @@ public class CommonUtil implements Constants {
 		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, templateReportsuite);
 		linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
 		linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, accountNumber);
-		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE);
+		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE_GME);
 		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
 		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
 
