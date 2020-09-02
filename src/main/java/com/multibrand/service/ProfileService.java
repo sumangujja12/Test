@@ -5,6 +5,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -140,7 +141,8 @@ public class ProfileService extends BaseAbstractService {
 	
 	@Autowired
 	private ProfileHelper profileHelper;
-
+	
+	private String[] excludeOfferList = {"S", "F"}; 
 	
 	/**
 	 * This will return ProfileDomainProxy and set EndPoint URL
@@ -797,7 +799,7 @@ public class ProfileService extends BaseAbstractService {
 	 */
 
 	public GetContractInfoResponse getContractInfo(String caNumber,
-			String bpNumber, String esid, String contractId, String languageCode, String companyCode, String sessionId)
+			String bpNumber, String esid, String contractId, String languageCode, String companyCode, String sessionId, String applicationArea)
 			throws Exception {
 
 		logger.info("[Profile Service ]::::::getContractInfo");
@@ -874,7 +876,7 @@ public class ProfileService extends BaseAbstractService {
                 }
             }
             
-			response = handleContractInfoResponse(zeiSwapOutput,zeiCampEnvrDetails,zeiOfferCdFlag);
+			response = handleContractInfoResponse(zeiSwapOutput,zeiCampEnvrDetails,zeiOfferCdFlag, applicationArea);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(MSG_SUCCESS);
 			utilityloggerHelper.logTransaction("getContractInfo", false, zeiSwapOfferInputObj,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -889,7 +891,7 @@ public class ProfileService extends BaseAbstractService {
 	}
 
 	private GetContractInfoResponse handleContractInfoResponse(
-		  ZeiSwapOutput zeiSwapOutput,ZeiCampEnviDetails zeiCampEnvrDetails,ZeiOfrcdFlag zeiOfferCdFlag) {
+		  ZeiSwapOutput zeiSwapOutput,ZeiCampEnviDetails zeiCampEnvrDetails,ZeiOfrcdFlag zeiOfferCdFlag, String applicationArea) {
 
 		GetContractInfoResponse response = new GetContractInfoResponse();
 		ZesSwapOutput zesSwapOutput = zeiSwapOutput.getItem().get(0);
@@ -917,49 +919,56 @@ public class ProfileService extends BaseAbstractService {
 		response.setStrDefaultOfferFlag(zesSwapOutput.getZdefaultOfrFlag());
 		response.setPendingSwapDO(pendingSwapDO);
 		if(zesSwapOutput.getEligOffers() != null){
-		   response.setEligibleOffersList(populateEligibleOffers(zesSwapOutput,zesOfferCDFlagList,zesCampEnvDetailsList));
+		   response.setEligibleOffersList(populateEligibleOffers(zesSwapOutput,zesOfferCDFlagList,zesCampEnvDetailsList, applicationArea));
 		}  
 
 		return response;
 	}
 
-	private OfferDO[] populateEligibleOffers(ZesSwapOutput zesSwapOutput,List<ZesOfrcdFlag> zesOfferCDFlagList,List<ZesCampEnviDetails> zesCampEnvDetailsList) {
+	private OfferDO[] populateEligibleOffers(ZesSwapOutput zesSwapOutput,List<ZesOfrcdFlag> zesOfferCDFlagList,List<ZesCampEnviDetails> zesCampEnvDetailsList, String applicationArea) {
 
-		int count = 0;
 		logger.info("Setting eligible offers::::::");
 		List<ZesEligoffer> zesEligibleOfferList = zesSwapOutput.getEligOffers().getItem();
 		
 		
 		logger.info("zesEligibleOfferList:::::: list size {}", zesEligibleOfferList.size());
-		com.multibrand.vo.response.OfferDO[] eligibleOffersList = new com.multibrand.vo.response.OfferDO[zesEligibleOfferList.size()];
 
+		List <OfferDO> eligibleOffersList = new ArrayList<OfferDO>();
+		
 		if (zesEligibleOfferList != null && zesEligibleOfferList.size() > 0) {
 
 			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
 				try {
 					
-					eligibleOffersList[count] = new com.multibrand.vo.response.OfferDO();
+					
+					if( ! org.apache.commons.lang3.StringUtils.isEmpty(applicationArea) &&  applicationArea.equalsIgnoreCase(APPLICATION_SWAP_AREA) &&  zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
+							&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
+								continue;
+							}
+					
+					OfferDO offerDO = new OfferDO();
+					
 					List<Map<String,Object>> offerCategoryLookupDetailsList = offerService.getOfferCategories(zesEligoffer.getOfferCode());
 					String strOfferCategory="";
 					for(Map<String, Object> offerMap: offerCategoryLookupDetailsList){
 						strOfferCategory = (String) offerMap.get(OE_OFFER_CATEGORY);
 						if(StringUtils.isBlank(strOfferCategory)) strOfferCategory = EMPTY;						
 					}
-					eligibleOffersList[count].setStrOfferCategory(strOfferCategory);
-					eligibleOffersList[count].setStrOfferCode(zesEligoffer
+					offerDO.setStrOfferCategory(strOfferCategory);
+					offerDO.setStrOfferCode(zesEligoffer
 							.getOfferCode());
-					eligibleOffersList[count].setStrCampaignCode(zesEligoffer
+					offerDO.setStrCampaignCode(zesEligoffer
 							.getCampaignCd());
-					eligibleOffersList[count].setStrOfferCellTrackCode(zesEligoffer
+					offerDO.setStrOfferCellTrackCode(zesEligoffer
 							.getPromoCd());
 					
-					eligibleOffersList[count].setStrPromoCode(zesEligoffer
+					offerDO.setStrPromoCode(zesEligoffer
 							.getPromoCd());
-					eligibleOffersList[count].setStrTarrifType(zesEligoffer
+					offerDO.setStrTarrifType(zesEligoffer
 							.getTariftyp());
 					//Start : CampEnv Detail & Segment Flag data
-					logger.info("FillingCamp Envr Details"+zesCampEnvDetailsList.size());
+					logger.info("FillingCamp Envr Details{}", zesCampEnvDetailsList.size());
 					List<CampEnvironmentDO> campEnvrDOList = new ArrayList<CampEnvironmentDO>();
 					Iterator<ZesCampEnviDetails> zesEnvCampDetailsItr = zesCampEnvDetailsList.iterator();
 					
@@ -969,7 +978,7 @@ public class ProfileService extends BaseAbstractService {
 						
 						if(zesCampEnvDt.getCcsProductCd().equals(zesEligoffer.getTariftyp()))
 								{
-							logger.info("Camp ENvr Match Found "+zesCampEnvDt.getCcsProductCd());
+							logger.info("Camp ENvr Match Found {}", zesCampEnvDt.getCcsProductCd());
 							CampEnvironmentDO campDO = new CampEnvironmentDO();
 							campDO.setCalcOperand(zesCampEnvDt.getCalcOperand());
 							campDO.setValue(zesCampEnvDt.getValue().toString());
@@ -978,7 +987,7 @@ public class ProfileService extends BaseAbstractService {
 					}
 					int campDtCounter=0;
 					CampEnvironmentDO[] campDOArray = new CampEnvironmentDO[campEnvrDOList.size()];
-					logger.info("CampDO ARRAY Size "+campDOArray.length);
+					logger.info("CampDO ARRAY Size {}", campDOArray.length);
 					
 					for(CampEnvironmentDO campDO:campEnvrDOList)
 					{
@@ -988,7 +997,7 @@ public class ProfileService extends BaseAbstractService {
 					
 					
 					//Filling Segment Flang Data
-					logger.info("Filling Segment Flag Data"+zesOfferCDFlagList.size());
+					logger.info("Filling Segment Flag Data{}", zesOfferCDFlagList.size());
 					List<SegmentedFlagDO> segmentFlagDOList = new ArrayList<SegmentedFlagDO>();
 					Iterator<ZesOfrcdFlag> ofrCDItr = zesOfferCDFlagList.iterator();
 					
@@ -997,7 +1006,7 @@ public class ProfileService extends BaseAbstractService {
 						ZesOfrcdFlag zesOFRCd = ofrCDItr.next();
 						if(zesOFRCd.getOfferCode().equals(zesEligoffer.getOfferCode()))
 						{
-							logger.info("Segmented Flag Array match found "+zesOFRCd.getOfferCode());
+							logger.info("Segmented Flag Array match found{} ", zesOFRCd.getOfferCode());
 							SegmentedFlagDO segmFlagDo = new SegmentedFlagDO();
 							segmFlagDo.setSegmentFlag(zesOFRCd.getSegmentFlag());
 							segmentFlagDOList.add(segmFlagDo);
@@ -1006,58 +1015,59 @@ public class ProfileService extends BaseAbstractService {
 					
 					int segMCounter=0;
 					SegmentedFlagDO[] segmentFlagDOArray = new SegmentedFlagDO[segmentFlagDOList.size()];
-					logger.info("SegmentedFlagDOArray length "+segmentFlagDOArray.length);
+					logger.info("SegmentedFlagDOArray length{} ", segmentFlagDOArray.length);
 					for(SegmentedFlagDO segmDO:segmentFlagDOList)
 					{
 						segmentFlagDOArray[segMCounter] = segmDO;
 						segMCounter++;
 					}
 					
-					eligibleOffersList[count].setCampEnvironmentDetails(campDOArray);
-					eligibleOffersList[count].setSegmentedFlags(segmentFlagDOArray);
+					offerDO.setCampEnvironmentDetails(campDOArray);
+					offerDO.setSegmentedFlags(segmentFlagDOArray);
 					//End : CampEnv Detail & Segment Flag data
 					
-					eligibleOffersList[count].setStrBundlingGroup(zesEligoffer.getCampaignData().getItem().get(0).getBundlingGroup());
-					eligibleOffersList[count].setStrOfferRank(""+ zesEligoffer.getPromoRank());
-					eligibleOffersList[count].setStrEFLIssueDate(zesEligoffer.getCampaignData().getItem().get(0).getEflIssueDate());
-					eligibleOffersList[count].setStrCancelFee(String
+					offerDO.setStrBundlingGroup(zesEligoffer.getCampaignData().getItem().get(0).getBundlingGroup());
+					offerDO.setStrOfferRank(""+ zesEligoffer.getPromoRank());
+					offerDO.setStrEFLIssueDate(zesEligoffer.getCampaignData().getItem().get(0).getEflIssueDate());
+					offerDO.setStrCancelFee(String
 							.valueOf(zesEligoffer.getCampaignData().getItem()
 									.get(0).getPenaltyValue()));
-					eligibleOffersList[count].setStrContractTerm(zesEligoffer
+					offerDO.setStrContractTerm(zesEligoffer
 							.getCampaignData().getItem().get(0)
 							.getContractLength());
-					eligibleOffersList[count].setStrPlanName(zesEligoffer
+					offerDO.setStrPlanName(zesEligoffer
 							.getCampaignData().getItem().get(0).getPlanname().getDescrip());
 
-					eligibleOffersList[count] = this
+					offerDO = this
 							.populatePriceAndDocTypelists(
-									eligibleOffersList[count], zesEligoffer);
+									offerDO, zesEligoffer);
 					/** START Added for Attribute include in response changes */
-					eligibleOffersList[count].setAttribute1(zesEligoffer.getAttribute01());
-					eligibleOffersList[count].setAttribute2(zesEligoffer.getAttribute02());
-					eligibleOffersList[count].setAttribute3(zesEligoffer.getAttribute03());
-					eligibleOffersList[count].setAttribute4(zesEligoffer.getAttribute04());
-					eligibleOffersList[count].setAttribute5(zesEligoffer.getAttribute05());
-					eligibleOffersList[count].setAttribute6(zesEligoffer.getAttribute06());
-					eligibleOffersList[count].setAttribute7(zesEligoffer.getAttribute07());
-					eligibleOffersList[count].setAttribute8(zesEligoffer.getAttribute08());
-					eligibleOffersList[count].setAttribute9(zesEligoffer.getAttribute09());
-					eligibleOffersList[count].setAttribute10(zesEligoffer.getAttribute10());
+					offerDO.setAttribute1(zesEligoffer.getAttribute01());
+					offerDO.setAttribute2(zesEligoffer.getAttribute02());
+					offerDO.setAttribute3(zesEligoffer.getAttribute03());
+					offerDO.setAttribute4(zesEligoffer.getAttribute04());
+					offerDO.setAttribute5(zesEligoffer.getAttribute05());
+					offerDO.setAttribute6(zesEligoffer.getAttribute06());
+					offerDO.setAttribute7(zesEligoffer.getAttribute07());
+					offerDO.setAttribute8(zesEligoffer.getAttribute08());
+					offerDO.setAttribute9(zesEligoffer.getAttribute09());
+					offerDO.setAttribute10(zesEligoffer.getAttribute10());
 					/** END Added for Attribute include in response changes */
 					
 					/** START Added for TDSP code include in response changes */
-					eligibleOffersList[count].setStrTDSPCode(zesEligoffer.getCampaignData().getItem().get(0).getServiceid());
+					offerDO.setStrTDSPCode(zesEligoffer.getCampaignData().getItem().get(0).getServiceid());
 					/** END Added for TDSP code include in response changes */
+					
+					eligibleOffersList.add(offerDO);
 
-					count++;
 				} catch (Exception ex) {
-					logger.error("Exception Occuured while filling data ::"+ex.getMessage());
+					logger.error("Exception Occuured while filling data ::{}", ex.getMessage());
 					
 				}
 			}
 		}
-
-		return eligibleOffersList;
+		
+		return eligibleOffersList.toArray(new OfferDO[eligibleOffersList.size()]);
 	}
 
 
