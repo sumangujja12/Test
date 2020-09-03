@@ -1618,5 +1618,10 @@ public interface Constants {
 	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_ONE ="template.url.query.list.parameter.one";
 	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_TWO ="template.url.query.list.parameter.two";
 	public static final String SWAP_SUBMIT_FAIL = "SWAP_SUBMIT_FAIL";
+	public static final String GET_PLAN_OFFER_FAIL = "GET_PLAN_OFFER_FAIL";
+	public static final String GET_PLAN_OFFER = "GET_PLAN_OFFER";
+	public static final String ADOBE_MESSAGE_PLAN_TYPE = "PLAN_OFFER";
+	public static final String PLAN_OFFER_FUNCTION = "SEARCH_PLAN";
+	public static final String PLAN_OFFER_MESSAGE_TYPE = "PLAN_OFFER";
 
 }

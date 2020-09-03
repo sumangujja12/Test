@@ -138,17 +138,25 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			swapRequest.setClient(request.getClientSource()); //CHG0020873 
 			response = swapService.submitSwap(swapRequest, request.getCompanyCode(), sessionId);
 			JavaBeanUtil.copy(response, submitSwapResponse);
+			String templateReportSuite = envMessageReader.getMessage(TEMPLATE_REPORTSUITE);
+			 Map<String, String>  adobeValueMap = null;
 			if(submitSwapResponse.getErrorCode()!=null && submitSwapResponse.getErrorCode().equalsIgnoreCase(MSG_ERR_SUBMIT_SWAP))
 			{
 				logger.info(" subswapRequestmitSwap Error code is  ===> "+response.getErrorCode());
 				submitSwapResponse.setResultCode(RESULT_CODE_CCS_ERROR);
 				submitSwapResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-				callAdodeAnalytics(request, submitSwapResponse.getErrorCode());
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
+						request.getBpNumber(), request.getOsType(), templateReportSuite,
+						submitSwapResponse.getErrorCode(),"");
+				callAdodeAnalytics(adobeValueMap);
 				return submitSwapResponse;
 			}
 			submitSwapResponse.setResultCode(RESULT_CODE_SUCCESS);
 			submitSwapResponse.setResultDescription(MSG_SUCCESS);
-			callAdodeAnalytics(request, "");
+			adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
+					request.getBpNumber(), request.getOsType(), templateReportSuite,
+					"","");
+			callAdodeAnalytics(adobeValueMap);
 			// Sending mail for submit swap
 			logger.info("Sending mail for submit swap");
 			HashMap<String, String> templateProps = new HashMap<String,String>();
@@ -520,42 +528,17 @@ public class SwapBO extends BaseAbstractService implements Constants {
 
 	}
 	
-	public Map<String, String> getAdopeValueMap(SubmitSwapRequest request, String errorMessage) {
-		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
-
-		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, envMessageReader.getMessage(TEMPLATE_REPORTSUITE));
-		linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
-		linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, request.getAccountNumber());
-		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE);
-		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, request.getMessageId());
-		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
-		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
-		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
-		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "");
-		if (!StringUtils.isNotBlank(errorMessage)) {
-			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
-			linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-		} else {
-			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
-			linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-		}
-		
-		linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
-		linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, request.getOsType());
-		linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, request.getContractId());
-		linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, request.getBpNumber());
-		return linkedHashMap;
-	}
 	
-	public void callAdodeAnalytics(SubmitSwapRequest request, String errorMessage) {
+	
+	public void callAdodeAnalytics(Map<String, String> adobeValueMap) { 
 		StringBuffer strBuffer = new StringBuffer("");
 		strBuffer.append(envMessageReader.getMessage(ADOBE_ANALYTIC_TEMPLATE_URL));
 		strBuffer.append(envMessageReader.getMessage(TEMPLATE_URL_QUERY_LIST_PARAMETER_ONE));
 		strBuffer.append(envMessageReader.getMessage(TEMPLATE_URL_QUERY_LIST_PARAMETER_TWO));
-		String url = CommonUtil.substituteVariables(strBuffer.toString(), getAdopeValueMap(request,errorMessage));
-		logger.info("Tracking URL for the Customer {} -{}", request.getContractId(), url);
-		url = CommonUtil.encodeValue(url);
-		logger.info("Encoded URL for the Customer {} -{}", request.getContractId(), url);
+		String url = CommonUtil.substituteVariables(strBuffer.toString(), adobeValueMap);
+		logger.info("Tracking URL for the Customer {} -{}", adobeValueMap.get(PARAMETER_VARIABLE_CONTRACTID), url);
+		//url = CommonUtil.encodeValue(url);
+		logger.info("Encoded URL for the Customer {} -{}", adobeValueMap.get(PARAMETER_VARIABLE_CONTRACTID), url);
 		Map<String,String> inputJson = new LinkedHashMap<String,String>();
 		AdodeAnalyticService analyticalService = new AdodeAnalyticService(
 				envMessageReader.getMessage(Constants.IOT_POST_URL), url, inputJson);
