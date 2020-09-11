@@ -1370,7 +1370,7 @@ public interface Constants {
     public static final String API_CLEANUP_ADDRESS="cleanup-address";
     public static final String API_GET_HOLD="holds";
     public static final String API_ESID_RESIDENTIAL = "esid/residential";
-    
+   
     
     //Submit new KBA Answers API
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
@@ -1584,6 +1584,7 @@ public interface Constants {
 	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
+
 	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
 
 	
@@ -1623,5 +1624,9 @@ public interface Constants {
 	public static final String ADOBE_MESSAGE_PLAN_TYPE = "PLAN_OFFER";
 	public static final String PLAN_OFFER_FUNCTION = "SEARCH_PLAN";
 	public static final String PLAN_OFFER_MESSAGE_TYPE = "PLAN_OFFER";
+
+
+	
+	 public static final String API_ESID_VALIDATION = "esidValidation";
 
 }
