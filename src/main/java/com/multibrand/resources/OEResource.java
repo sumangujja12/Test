@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
+import com.multibrand.domain.EsidAddressResponse;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -876,5 +877,22 @@ public class OEResource extends BaseResource {
 	 ******************************************************************************** LEGACY SALES APIs ABOVE ****************************************************************
 	 *****************************************************************************************************************************************************************/
 
+	
+	
+	@POST
+	@Path(API_ESID_VALIDATION)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateEsid(@FormParam("esid") String esid) {
+		logger.info("In validateEsid");
+		Response response = null;
+			
+		EsidAddressResponse esidAddressResponse = oeBO.validateESID(esid);
+    	response = Response.status(200).entity(esidAddressResponse).build();
+ 
+		logger.info("Exit validateEsid");
+   		
+       return response;
+	}
 }
 

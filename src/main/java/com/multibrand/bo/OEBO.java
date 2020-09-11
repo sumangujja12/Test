@@ -52,6 +52,8 @@ import com.multibrand.domain.CampEnvironmentOutData;
 import com.multibrand.domain.EnrollmentHold;
 import com.multibrand.domain.EnrollmentHoldInfoRequest;
 import com.multibrand.domain.EnrollmentHoldInfoResponse;
+import com.multibrand.domain.EsidAddressRequest;
+import com.multibrand.domain.EsidAddressResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.GetEsiidResponse;
@@ -6839,6 +6841,14 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return esidResponse;
 
 		}
+
+	public EsidAddressResponse validateESID(String esid) {
+		EsidAddressRequest esidAddressRequest = new EsidAddressRequest();
+		esidAddressRequest.setStrEsid(esid);
+		
+		EsidAddressResponse esidAddressResponse = oeProxy.getESIDAddress(esidAddressRequest);
+		return esidAddressResponse;
+	}
 }
 	
 	
