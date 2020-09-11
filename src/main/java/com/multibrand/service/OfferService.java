@@ -236,6 +236,12 @@ public class OfferService extends BaseAbstractService {
 		promoOfferRequest.setStrTdspCode(productOfferRequest.getTdspCode());
 		promoOfferRequest.setStrDate(sdfDate.format(cal.getTime()));
 		promoOfferRequest.setStrTime(sdfTime.format(cal.getTime()));
+		promoOfferRequest.setStrExcludeIncentive("X");
+		if("X".equalsIgnoreCase(productOfferRequest.getAirlinePromo())) {
+			promoOfferRequest.setStrExcludeIncentive("");
+			promoOfferRequest.setStrMilesOnly("X");
+			
+		}
 //		promoOfferRequest.setStrPromoCode(getPromoOfferCode(productOfferRequest));
 		return promoOfferRequest;
 	}

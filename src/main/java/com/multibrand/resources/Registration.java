@@ -2,6 +2,7 @@ package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -9,12 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.multibrand.bo.RegistrationBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.GenericResponse;
@@ -95,14 +94,16 @@ public class Registration {
 			@FormParam("languageCode")String languageCode,
 			@FormParam("applicationArea")String applicationArea,
 			@FormParam("checkDigit")String checkDigit,
-			@FormParam("source")String source)
+			@FormParam("source")String source,
+			@DefaultValue("false") @FormParam("marketingPref") boolean isMarkettingPrefOptIn
+			)
 	{
 		
 		logger.debug("Inside createUser in Registration Resource");
 		Response response = null;
 		logger.info("START-[Registration-createUser]");
 		GenericResponse responseVo = registrationBO.createUser(accountNumber,
-				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit,source);
+				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit,source, isMarkettingPrefOptIn);
 		response = Response.status(200).entity(responseVo).build();
 		logger.info("END-[Registration-createUser]");
 		return response;
