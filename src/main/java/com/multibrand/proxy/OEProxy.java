@@ -12,6 +12,8 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.domain.EnrollmentHoldInfoRequest;
 import com.multibrand.domain.EnrollmentHoldInfoResponse;
+import com.multibrand.domain.EsidAddressRequest;
+import com.multibrand.domain.EsidAddressResponse;
 import com.multibrand.domain.NewCreditScoreRequest;
 import com.multibrand.domain.NewCreditScoreResponse;
 import com.multibrand.domain.OEDomain;
@@ -180,5 +182,21 @@ public class OEProxy extends BaseAbstractService {
 		}
 		
 		return response;
+	}
+
+	public EsidAddressResponse getESIDAddress(EsidAddressRequest esidAddressRequest) {
+		EsidAddressResponse esidAddressResponse = null;
+		
+		try {
+			esidAddressResponse = oeDomainPortProxy.getESIDAddress(esidAddressRequest);
+
+		} catch (Exception e) {
+			logger.error("Error validateEsiid : " + e.getMessage());
+			esidAddressResponse = new EsidAddressResponse();
+			esidAddressResponse.setStrErrCode("SYSTEM_ERROR");
+		}
+		
+		return esidAddressResponse;
+		
 	}
 }
