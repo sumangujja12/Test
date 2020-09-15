@@ -38,7 +38,7 @@ public class WSConfig {
 	@Bean
 	Jaxb2Marshaller jaxb2Marshaller() {
 		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmdstatement","com.nrg.cxfstubs.kbamatrix","com.nrg.cxfstubs.gmdmoveout");
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmdstatement","com.nrg.cxfstubs.kbamatrix","com.nrg.cxfstubs.gmdmoveout","com.nrg.cxfstubs.gmdpricespike");
 		return jaxb2Marshaller;
 	}
 

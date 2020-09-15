@@ -231,7 +231,7 @@ public class GMDResource extends BaseResource {
 	}
 	
 	@POST
-	@Path("getGmdPriceSpikeAlertData")
+	@Path(API_GET_GMD_PRICE_SPIKE_ALERT_DATA)
 	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getGmdPriceSpikeAlertData() {

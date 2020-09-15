@@ -1484,6 +1484,7 @@ public interface Constants {
    public static final String API_GET_GMD_STATEMENT_DATA = "getGMDStatementData";
    public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
    public static final String API_CREATE_GMD_MOVE_OUT = "createMoveOut";
+   public static final String API_GET_GMD_PRICE_SPIKE_ALERT_DATA = "getGmdPriceSpikeAlertData";
    
    public static final String API_KBA_MATRIX_UPDATE = "protected/kbaMatriUpdate";
    
