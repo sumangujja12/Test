@@ -8,14 +8,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
+
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -31,7 +34,13 @@ import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
+import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 import com.multibrand.vo.response.gmd.Pricing;
+import com.multibrand.vo.response.gmd.ProjectedPrice;
+import com.multibrand.vo.response.gmd.ProjectedPriceItem;
+import com.multibrand.vo.response.gmd.SpikeProjectedPrice;
+import com.multibrand.vo.response.gmd.ZoneCa;
+import com.multibrand.vo.response.gmd.ZoneCaItem;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTRfcException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
@@ -39,6 +48,12 @@ import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
+import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERTResponse;
+import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERT_Type;
+import com.nrg.cxfstubs.gmdpricespike.ZTTGMDZONECA;
+import com.nrg.cxfstubs.gmdpricespike.ZTTZONEPROJPRICE;
+import com.nrg.cxfstubs.gmdpricespike.ZZSGMDZONECA;
+import com.nrg.cxfstubs.gmdpricespike.ZZSZONEPROJPRICE;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmtResponse;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
@@ -66,7 +81,11 @@ public class GMDService extends BaseAbstractService {
 	
 	@Autowired
 	@Qualifier("webServiceTemplateForGMDCreateMoveOut")
-	private WebServiceTemplate webServiceTemplateForGMDCreateMoveOut;  
+	private WebServiceTemplate webServiceTemplateForGMDCreateMoveOut; 
+	
+	@Autowired
+	@Qualifier("webServiceTemplateForGMDPriceSpike")
+	private WebServiceTemplate webServiceTemplateForGMDPriceSpike;
 
 
 	/**
@@ -541,5 +560,90 @@ public class GMDService extends BaseAbstractService {
 			moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
 		return moveOutResponse;
+	}
+	
+	public PriceSpikeAlertResponse getGMDPriceSpikeAlert() {
+
+		PriceSpikeAlertResponse priceSpikeAlertResponse = new PriceSpikeAlertResponse();
+		try {
+			com.nrg.cxfstubs.gmdpricespike.ObjectFactory factory = new com.nrg.cxfstubs.gmdpricespike.ObjectFactory();
+			com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERT_Type wsRequest = factory
+					.createZEISUGMDPRICESPIKEALERT_Type();
+			wsRequest.setIMDATE("");
+			wsRequest.setIMTHRESHOLD(null);
+			wsRequest.setIMTIME(null);
+			wsRequest.setIMZONE("");
+			ZEISUGMDPRICESPIKEALERTResponse response = (ZEISUGMDPRICESPIKEALERTResponse) webServiceTemplateForGMDPriceSpike
+					.marshalSendAndReceive(wsRequest);
+			priceSpikeAlertResponse = setPriceSpikeAlertResponse(response);
+			priceSpikeAlertResponse.setResultCode(RESULT_CODE_SUCCESS);
+			priceSpikeAlertResponse.setResultDescription(MSG_SUCCESS);
+		} catch (Exception ex) {
+			logger.error("Exception Occured in  createMoveOut {} ", ex);
+			priceSpikeAlertResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			priceSpikeAlertResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return priceSpikeAlertResponse;
+	}
+	
+	public PriceSpikeAlertResponse setPriceSpikeAlertResponse(ZEISUGMDPRICESPIKEALERTResponse response) {
+		PriceSpikeAlertResponse priceSpikeAlertResponse = new PriceSpikeAlertResponse();
+		List<ProjectedPriceItem> projectedPriceItems = new ArrayList<>();
+		List<ProjectedPriceItem> spikeProjectedPriceItems = new ArrayList<>();
+		List<ZoneCaItem> zoneCaItems = new ArrayList<>();
+
+		ZTTZONEPROJPRICE price = response.getEXTPROJECTEDPRICE();
+		List<ZZSZONEPROJPRICE> projectedItemList = price.getItem();
+		if (projectedItemList != null && !projectedItemList.isEmpty()) {
+			for (ZZSZONEPROJPRICE priceItem : projectedItemList) {
+				ProjectedPriceItem item = new ProjectedPriceItem();
+				item.setProfDate(priceItem.getPROFDATE());
+				item.setProfTime(priceItem.getPROFTIME());
+				item.setProfValue(priceItem.getPROFVALUE());
+				item.setZone(priceItem.getZZONE());
+				projectedPriceItems.add(item);
+			}
+		}
+
+		ZTTZONEPROJPRICE spikePrice = response.getEXTSPIKEDPROJPRICE();
+		List<ZZSZONEPROJPRICE> spikePriceItemList = spikePrice.getItem();
+		if (spikePriceItemList != null && !spikePriceItemList.isEmpty()) {
+			for (ZZSZONEPROJPRICE spikePriceItem : spikePriceItemList) {
+				ProjectedPriceItem spikeItem = new ProjectedPriceItem();
+				spikeItem.setProfDate(spikePriceItem.getPROFDATE());
+				spikeItem.setProfTime(spikePriceItem.getPROFTIME());
+				spikeItem.setProfValue(spikePriceItem.getPROFVALUE());
+				spikeItem.setZone(spikePriceItem.getZZONE());
+				spikeProjectedPriceItems.add(spikeItem);
+			}
+		}
+
+		ZTTGMDZONECA zoneCaList = response.getEXTZONECA();
+		List<ZZSGMDZONECA> caList = zoneCaList.getItem();
+		if (caList != null && !caList.isEmpty()) {
+			for (ZZSGMDZONECA ca : caList) {
+				ZoneCaItem zoneCaItem = new ZoneCaItem();
+				zoneCaItem.setVkont(ca.getVKONT());
+				zoneCaItem.setZone(ca.getZZONE());
+				zoneCaItems.add(zoneCaItem);
+			}
+		}
+		// setting values
+		priceSpikeAlertResponse.setPriceSpikeFound(response.getEXPRICESPIKEFOUND());
+		priceSpikeAlertResponse.setMessage(response.getEXMESSAGE());
+
+		ProjectedPrice projectedPrice = new ProjectedPrice();
+		projectedPrice.setProjectedPriceItems(spikeProjectedPriceItems);
+
+		SpikeProjectedPrice spikeProjectedPrice = new SpikeProjectedPrice();
+		spikeProjectedPrice.setSpikeProjectedPriceItems(spikeProjectedPriceItems);
+
+		ZoneCa zoneCa = new ZoneCa();
+		zoneCa.setZoneItems(zoneCaItems);
+
+		priceSpikeAlertResponse.setProjectedPrice(projectedPrice);
+		priceSpikeAlertResponse.setSpikeProjectedPrice(spikeProjectedPrice);
+		priceSpikeAlertResponse.setZoneCa(zoneCa);
+		return priceSpikeAlertResponse;
 	}
 }

@@ -59,6 +59,7 @@ import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
+import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
 /**
  * This BO class is to handle all the GMD Related API calls.
@@ -1212,5 +1213,9 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	
 	public MoveOutResponse createMoveOut(MoveOutRequest moveOutRequest){
 		return gmdService.createMoveOut(moveOutRequest);
+	}
+	
+	public PriceSpikeAlertResponse getGMDPriceSpikeAlert() {
+		return gmdService.getGMDPriceSpikeAlert();
 	}
 }

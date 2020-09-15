@@ -34,6 +34,7 @@ import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
+import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
 
 /** This Resource is to handle all the GMD APP Related API calls.
@@ -228,6 +229,20 @@ public class GMDResource extends BaseResource {
 		Response response = Response.status(Response.Status.OK).entity(moveOutResponse).build();
 		return response;
 	}
+	
+	@POST
+	@Path(API_GET_GMD_PRICE_SPIKE_ALERT_DATA)
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getGmdPriceSpikeAlertData() {
+		PriceSpikeAlertResponse priceSpikeAlertResponse = new PriceSpikeAlertResponse();
+		priceSpikeAlertResponse = gmdBO.getGMDPriceSpikeAlert();
+		Response response = Response.status(Response.Status.OK).entity(priceSpikeAlertResponse).build();
+		return response;
+	}	
+	
+	
+	
 	
 		
 }	
