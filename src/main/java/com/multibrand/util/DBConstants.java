@@ -1,7 +1,5 @@
 package com.multibrand.util;
 
-import com.multibrand.dao.mapper.AS;
-
 public interface DBConstants {
 
 	public static final String OUTPUT = "OUTPUT";
