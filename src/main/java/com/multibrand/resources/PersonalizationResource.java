@@ -24,7 +24,7 @@ import com.multibrand.vo.response.TCSPersonalizedFlagsResponse;
  * This resource is used to handle all Community Solar TCS read related API calls.
  */
 @Component
-@Path("/personalizationResource")
+@Path("/personalizationService")
 public class PersonalizationResource implements Constants {
 	
 	@Context 
