@@ -18,9 +18,9 @@ public class TCSPersonalizedFlagsRowMapper implements RowMapper<TCSPersonalizedF
 		tcsPersonalizedFlagsDTO.setOwnershipFlag(rs.getString(DBConstants.DB_OWNERSHIP_FLG));
 		tcsPersonalizedFlagsDTO.setSecurityEligibleFlag(rs.getString(DBConstants.DB_SECURITY_ELIGIBLE_FLG));
 		tcsPersonalizedFlagsDTO.setCashPaymentsFlag(rs.getString(DBConstants.DB_CASH_PAYMENTS_FLG));
-		tcsPersonalizedFlagsDTO.setCashPaymentsFlag(rs.getString(DBConstants.DB_CONTR_ELAPSED_DAYS));
-		tcsPersonalizedFlagsDTO.setCashPaymentsFlag(rs.getString(DBConstants.DB_RELIANT_APP_USER_FLG));
-		tcsPersonalizedFlagsDTO.setCashPaymentsFlag(rs.getString(DBConstants.DB_SECURITY_ACTIVE));
+		tcsPersonalizedFlagsDTO.setContractElapsedDays(rs.getString(DBConstants.DB_CONTR_ELAPSED_DAYS));
+		tcsPersonalizedFlagsDTO.setReliantAppUserFlag(rs.getString(DBConstants.DB_RELIANT_APP_USER_FLG));
+		tcsPersonalizedFlagsDTO.setSecurityActive(rs.getString(DBConstants.DB_SECURITY_ACTIVE));
 		return tcsPersonalizedFlagsDTO;
 		
 	}
