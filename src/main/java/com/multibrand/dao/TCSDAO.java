@@ -1,9 +1,7 @@
 package com.multibrand.dao;
 
-import java.util.List;
-
-import com.multibrand.dto.response.TCSBPDetailsDTO;
+import com.multibrand.dto.response.TCSPersonalizedFlagsDTO;
 
 public interface TCSDAO {
-	public List<TCSBPDetailsDTO> getBPDetails( String agreementId);
+	public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca);
 }
