@@ -156,7 +156,7 @@ public class ContentResource implements Constants{
 	}
 	
 	@POST
-	@Path("/getMaintenanceSchedule")
+	@Path("/public/getMaintenanceSchedule")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getMaintenanceSchedule(MaintenanceScheduleRequest request) {
