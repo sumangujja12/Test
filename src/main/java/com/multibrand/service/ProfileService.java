@@ -892,8 +892,10 @@ public class ProfileService extends BaseAbstractService {
             IsuBapiret2T isuBapiRet2T = zesSwapOutput.getMessageTab();
             
             List<com.nrg.cxfstubs.contractinfo.Bapiret2> bapiRet2T = isuBapiRet2T.getItem();
-            
-            if((zesSwapOutput.getEligOffers()==null) ||(zesSwapOutput.getEligOffers().getItem().size()==0))
+                        
+			response = handleContractInfoResponse(zeiSwapOutput,zeiCampEnvrDetails,zeiOfferCdFlag);
+			
+			if((zesSwapOutput.getEligOffers()==null) ||(!zesSwapOutput.getEligOffers().getItem().isEmpty()))
             {
             	for(com.nrg.cxfstubs.contractinfo.Bapiret2 bapiret2 : bapiRet2T)
                 {
@@ -905,8 +907,7 @@ public class ProfileService extends BaseAbstractService {
                 	}
                 }
             }
-            
-			response = handleContractInfoResponse(zeiSwapOutput,zeiCampEnvrDetails,zeiOfferCdFlag);
+			
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(MSG_SUCCESS);
 			utilityloggerHelper.logTransaction("getContractInfo", false, zeiSwapOfferInputObj,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
