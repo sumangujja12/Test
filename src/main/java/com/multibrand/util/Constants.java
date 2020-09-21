@@ -1367,7 +1367,7 @@ public interface Constants {
     public static final String API_CLEANUP_ADDRESS="cleanup-address";
     public static final String API_GET_HOLD="holds";
     public static final String API_ESID_RESIDENTIAL = "esid/residential";
-    
+   
     
     //Submit new KBA Answers API
     public static final String RETRY_NOT_ALLOWED = "RETRY_NOT_ALLOWED";
@@ -1566,4 +1566,6 @@ public interface Constants {
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
+	
+	 public static final String API_ESID_VALIDATION = "esidValidation";
 }
