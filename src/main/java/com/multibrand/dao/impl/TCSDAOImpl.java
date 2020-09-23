@@ -38,7 +38,7 @@ public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca) {
 
 			String sqlQuery = getSqlMessage().getMessage(DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ,  null, null );		
 			
-			tcsPersonalizedFlagsDTO = getJdbcTemplate().queryForObject(sqlQuery,new Object[] {bp,ca}, new TCSPersonalizedFlagsRowMapper());
+			tcsPersonalizedFlagsDTO = (TCSPersonalizedFlagsDTO) getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca}, new TCSPersonalizedFlagsRowMapper());
 
 		}  catch(DataAccessException de)
 		{
