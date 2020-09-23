@@ -30,6 +30,7 @@ import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.contentResponse.MaintenanceScheduleResponse;
 
 @Component
+@Path("/")
 public class ContentResource implements Constants{
 	
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
