@@ -1560,12 +1560,12 @@ public interface Constants {
 	
 	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
 	public static final String AFFILIATE_ID_DSI="270519";
-	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
-	
+	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";	
 	public static final String CONST_USE_MOCK_DATA = "usemockdata";
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
 	
 	 public static final String API_ESID_VALIDATION = "esidValidation";
+	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 }
