@@ -1566,4 +1566,12 @@ public interface Constants {
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
+	public static final String ERCOT_CHECK_BY_ADDRESS_IOT_CALL_URL="ws.rest.iot.ercot.check.by.address.url";
+	public static final String ERCOT_STREET="street";
+	public static final String ERCOT_CITY="city";
+	public static final String ERCOT_STATE="state";
+	public static final String ERCOT_ZIP="zip";
+	public static final String ERCOT_COMPANY="companyName";	
+	public static final String NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS="iot/ercot/getByAddress";
+	
 }

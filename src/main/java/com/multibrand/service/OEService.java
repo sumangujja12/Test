@@ -10,9 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.Gson;
@@ -43,7 +47,9 @@ import com.multibrand.exception.ServiceException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
+import com.multibrand.vo.request.GetAddressOrEsidFromErcotRequest;
 import com.multibrand.vo.response.AgentDetailsResponse;
+import com.multibrand.vo.response.ErcotCheckByAddressResponse;
 import com.multibrand.vo.response.GiactBankValidationResponse;
 
 
@@ -574,4 +580,56 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 			} 
 			return response;
 		}
+
+	/**
+	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	public ErcotCheckByAddressResponse ercotESIDCheckByAddress(GetAddressOrEsidFromErcotRequest request) throws Exception {
+		logger.debug("START :: OEService.ercotESIDCheckByAddress(..)");
+		ErcotCheckByAddressResponse ercotCheckResponse = new ErcotCheckByAddressResponse();
+
+		String url = getEndPointUrl(ERCOT_CHECK_BY_ADDRESS_IOT_CALL_URL);
+		MultiValueMap<String, String> map = new LinkedMultiValueMap<String, String>();
+
+		StringBuffer streetReqBuf = new StringBuffer();
+		if (StringUtils.isNotBlank(request.getStreetNum())) {
+			streetReqBuf.append(request.getStreetNum());
+		}
+		if (StringUtils.isNotBlank(request.getStreet())) {
+			streetReqBuf.append(" " + request.getStreet());
+		}
+		if (StringUtils.isNotBlank(request.getUnitNum())) {
+			streetReqBuf.append(" " + request.getUnitNum());
+		}
+		map.add(ERCOT_STREET, streetReqBuf.toString());
+		map.add(ERCOT_CITY, request.getCity());
+		map.add(ERCOT_STATE, request.getState());
+		map.add(ERCOT_ZIP, request.getZip());
+		map.add(ERCOT_COMPANY, request.getCompanyName());
+
+		RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC));
+		String responseAsString = restTemplate.postForObject(url, map, String.class);
+		logger.debug("oeService.ercotESIDCheckByAddress(..) returned response as ::>"+ responseAsString);
+		
+		
+	//	RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC));
+	//	HttpHeaders headers = new HttpHeaders();
+    //  headers.add("Authorization", getBasicAuthHeader());
+    //	headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+	//	HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+	//  ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+	//  String responseAsString = null != responseEntity.getBody()?responseEntity.getBody():"";
+	//	logger.debug("oeService.ercotESIDCheckByAddress(..) returned response as ::>"+ responseAsString);
+		
+		Gson gson = new Gson();
+		if (null != responseAsString) {
+			ercotCheckResponse = gson.fromJson(responseAsString, ErcotCheckByAddressResponse.class);
+		}
+		logger.debug("END :: oeService.ercotESIDCheckByAddress(..)");
+		return ercotCheckResponse;
+	}
+
 }

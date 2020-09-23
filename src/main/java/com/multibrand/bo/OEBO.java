@@ -161,12 +161,14 @@ import com.multibrand.vo.request.CharityDetailsVO;
 import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.request.EnrollmentReportDataRequest;
+import com.multibrand.vo.request.GetAddressOrEsidFromErcotRequest;
 import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.request.OESignupVO;
 import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.AffiliateOfferDO;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.CampEnvironmentDO;
+import com.multibrand.vo.response.ErcotCheckByAddressResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
@@ -6839,6 +6841,22 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return esidResponse;
 
 		}
+	
+	/**
+	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
+ 	 * @author Nkatragadda
+	 * @param request
+	 * @return
+	 */
+	public ErcotCheckByAddressResponse ercotESIDCheckByAddress(GetAddressOrEsidFromErcotRequest request) {
+		ErcotCheckByAddressResponse ercotCheckResponse = new ErcotCheckByAddressResponse();
+		try{
+			ercotCheckResponse = oeService.ercotESIDCheckByAddress(request);
+		}catch(Exception e){
+			logger.debug("caught Exception in OEBO::ercotESIDCheckByAddress(..)"+e);
+		}
+		return ercotCheckResponse;
+	}
 }
 	
 	
