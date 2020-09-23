@@ -1,6 +1,8 @@
 
 package com.multibrand.dao.impl;
 
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +35,18 @@ public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca) {
 		String methodName = "Load TCSDAOImpl: getPersonalizedFlags(..)";
 		logger.debug("START:" + methodName);
 	
-		TCSPersonalizedFlagsDTO tcsPersonalizedFlagsDTO = null;
+		List<TCSPersonalizedFlagsDTO> tcsPersonalizedFlagsDTO = null;
 		try {
 
 			String sqlQuery = getSqlMessage().getMessage(DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ,  null, null );		
 			
-			tcsPersonalizedFlagsDTO = (TCSPersonalizedFlagsDTO) getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca}, new TCSPersonalizedFlagsRowMapper());
+			tcsPersonalizedFlagsDTO = getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca}, new TCSPersonalizedFlagsRowMapper());
+			
+			if ( tcsPersonalizedFlagsDTO.isEmpty() ){
+			  return null;
+			}else {
+			  return tcsPersonalizedFlagsDTO.get(0);
+			}
 
 		}  catch(DataAccessException de)
 		{
@@ -46,7 +54,7 @@ public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca) {
 			
 		}			
 		logger.debug("END:" + methodName);
-		return tcsPersonalizedFlagsDTO;
+		return null;
 	}	
 	
 }
