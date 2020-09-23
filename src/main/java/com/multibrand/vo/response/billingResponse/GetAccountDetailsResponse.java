@@ -6,8 +6,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.springframework.stereotype.Component;
 
-
 import com.multibrand.vo.response.GenericResponse;
+import com.nrg.cxfstubs.profile.ZesZesuerStat;
 
 @XmlRootElement(name="AccountDetails")
 @Component
@@ -16,7 +16,7 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	private ContractAccountDO contractAccountDO;
 	//US-F222-DK | 10312018
 	private  String paymentReceiptPopupShowFlag;
-	
+	private  ZesZesuerStat zesZesuerStat;
 
     public String getPaymentReceiptPopupShowFlag() {
 		return paymentReceiptPopupShowFlag;
@@ -72,6 +72,20 @@ public class GetAccountDetailsResponse extends GenericResponse {
 
 	public void setContractAccountDO(ContractAccountDO contractAccountDO) {
 		this.contractAccountDO = contractAccountDO;
+	}
+
+	/**
+	 * @return the zesZesuerStat
+	 */
+	public ZesZesuerStat getZesZesuerStat() {
+		return zesZesuerStat;
+	}
+
+	/**
+	 * @param zesZesuerStat the zesZesuerStat to set
+	 */
+	public void setZesZesuerStat(ZesZesuerStat zesZesuerStat) {
+		this.zesZesuerStat = zesZesuerStat;
 	}
 
 	

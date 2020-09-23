@@ -150,6 +150,7 @@ import com.multibrand.vo.response.historyResponse.PaymentHistoryResponse;
 import com.multibrand.vo.response.historyResponse.SchedulePaymentResponse;
 import com.multibrand.vo.response.profileResponse.PaymentExtensionCheckResponse;
 import com.multibrand.vo.response.profileResponse.PaymentExtensionResponse;
+import com.nrg.cxfstubs.profile.ZesZesuerStat;
 
 
 /**
@@ -309,14 +310,21 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	public GetAccountDetailsResponse getAccountDetails(String accountNumber, String companyCode, String brandName, String sessionId) {
 
 		ProfileResponse response = null;
+		ZesZesuerStat zesZesuerStat = null;
 		GetAccountDetailsResponse accountDetailsResp = new GetAccountDetailsResponse();
 		Map<String, Object> responseMap = new HashMap<String, Object>();
 		String averageBillingEligibilty = AVG_BILL_FLAG_NO;
 		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
 			responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
+			
 			response= (ProfileResponse)responseMap.get("profileResponse");	
-			if(response!= null &&   response.getContractAccountDO() != null)
+			
+			zesZesuerStat = (ZesZesuerStat)responseMap.get("profileSuerStats");
+			accountDetailsResp.setZesZesuerStat(zesZesuerStat);
+		
+			
+			if(response!= null && response.getContractAccountDO() != null)
 			{
 			response= (ProfileResponse)responseMap.get("profileResponse");			
 			if(response.getContractAccountDO()!=null)
@@ -446,6 +454,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					accountDetailsResp.setPaymentReceiptPopupShowFlag(FLAG_Y);
 				}
 				//US- || DK || Payment Receipt Validation | 10/31/2018
+				
+				if (companyCode != null && companyCode.equalsIgnoreCase(COMPANY_CODE_GME) && zesZesuerStat != null && StringUtils.isNotBlank(zesZesuerStat.getStatus()) && ! zesZesuerStat.getStatus().equalsIgnoreCase("00"))  {
+					accountDetailsResp.setResultCode(Constants.RESULT_CODE_EIGHT);
+					accountDetailsResp.setResultDescription(Constants.MSG_IDOC_NOT_PROCESSED);
+				}
 			}
 			}
 			else
@@ -736,7 +749,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		request.setStrCCNumber(ccNumber);
 		if(cvvNumber!=null)
 			request.setStrCVVNumber(cvvNumber);
-		request.setStrDuplicatePayment("X");
+		request.setStrDuplicatePayment(this.envMessageReader.getMessage(DUP_PAYMENT_CHECK));
 		request.setStrExpirationDate(expirationDate);
 		request.setStrPayAmount(paymentAmount);
 		request.setStrBillingZip(billingZip);
@@ -770,7 +783,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
 						logger.info("Sending mail for successful payment EN");
+						
 						emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL), "", BILL_PAY_CC_EN, templateProps, companyCode);
+
 					} else{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 						logger.info("Sending mail for successful payment ES");
@@ -783,11 +798,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
 						logger.info("Sending mail for successful payment EN");
-						emailHelper.sendMail(email, "", BILL_PAY_CC_EN, templateProps, companyCode);
+						//Stop triggering emails for GMD product
+						if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
+							emailHelper.sendMail(email, "", BILL_PAY_CC_EN, templateProps, companyCode);
+						}
 					} else{
 						templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 						logger.info("Sending mail for successful payment ES");
-						emailHelper.sendMail(email,  "", BILL_PAY_CC_ES, templateProps, companyCode);
+						if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
+							emailHelper.sendMail(email,  "", BILL_PAY_CC_ES, templateProps, companyCode);
+						}
 					}
 				}
 			}
@@ -3044,8 +3064,10 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			
 			
 			environmentImpactsResponse = profileService.environmentImpacts(accountNumber,companyCode,sessionId);
-			if(environmentImpactsResponse!=null){
+			if(environmentImpactsResponse.getEnvironmentImpacts() !=null && environmentImpactsResponse.getEnvironmentImpacts().length > 0){
+				
 			EnvironmentImpacts[] youngTrees = new EnvironmentImpacts[environmentImpactsResponse.getEnvironmentImpacts().length];
+			
 			youngTrees = environmentImpactsResponse.getEnvironmentImpacts();
 		
 		

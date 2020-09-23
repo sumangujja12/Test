@@ -697,6 +697,12 @@
 		    <groupId>com.sun.xml.bind</groupId>
 		    <artifactId>jaxb-impl</artifactId>
 		    <version>2.2.7</version>
+		    <exclusions>
+		    	<exclusion>
+		    		<groupId>javax.xml.bind</groupId>
+		    		<artifactId>jsr173_api</artifactId>
+		    	</exclusion>
+		    </exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
 		<dependency>
@@ -929,7 +935,7 @@
  		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-ccs-ws-client-nrg-rest</artifactId>
-			<version>9</version>
+			<version>13-SNAPSHOT</version>
 
  		</dependency>
 		<dependency>
@@ -1067,6 +1073,29 @@
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13</version>
-		</dependency>		
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.ws/spring-ws -->		
+		<dependency>
+            <groupId>org.springframework.ws</groupId>
+            <artifactId>spring-ws-core</artifactId>
+            <version>2.1.4.RELEASE</version>
+        </dependency>
+          <dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+	    	<groupId>org.springframework.ws</groupId>
+	    	<artifactId>spring-ws-test</artifactId>
+	    	<version>2.0.2.RELEASE</version>
+	    	<scope>test</scope>
+		</dependency>	
+		<dependency>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>1.17.1</version>
+		</dependency>
 	</dependencies>
 </project>

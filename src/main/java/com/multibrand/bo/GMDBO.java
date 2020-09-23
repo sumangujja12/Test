@@ -36,6 +36,7 @@ import com.multibrand.domain.UpdatePhoneDO;
 import com.multibrand.dto.GMDPersonDetailsDTO;
 import com.multibrand.dto.GMDServiceLocationDetailsDTO;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
+import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.exception.NRGException;
 import com.multibrand.exception.OAMException;
@@ -57,6 +58,8 @@ import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
+import com.multibrand.vo.response.gmd.MoveOutResponse;
+import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
 /**
  * This BO class is to handle all the GMD Related API calls.
@@ -100,13 +103,13 @@ public class GMDBO extends BaseAbstractService implements Constants {
 	private GMDOEDAOImpl gmdOEDAOImpl;
 
 	public GMDStatementBreakDownResponse getGMDStatementDetails(String accountNumber, String companyCode, String esiId,
-			String year, String month, String sessionId) {
+			String year, String month, boolean isAllInPriceCall, String sessionId) {
 
 		GMDStatementBreakDownResponse gmdStatementBreakDownResp = new GMDStatementBreakDownResponse();
 
 		try {
 			gmdStatementBreakDownResp = gmdService.getGMDStatementDetails(accountNumber, companyCode, esiId, year,
-					month, sessionId);
+					month, isAllInPriceCall, sessionId);
 
 		} catch (NRGException e) {
 			logger.error("Exception occured in getGMDStatementDetails :{}", e);
@@ -699,8 +702,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrBPCityPostalCode(oeSignUpDTO.getBillingAddressZipCode());
 		submitEnrollRequest.setStrBPCity(oeSignUpDTO.getBillingAddressCity());
 
-		submitEnrollRequest.setStrPromotionCode(this.appConstMessageSource
-				.getMessage("gmd.promo.web.equivalent." + oeSignUpDTO.getTdspCode(), null, null));
+		submitEnrollRequest.setStrPromotionCode(envMessageReader.getMessage("gmd.promo.web.equivalent." + oeSignUpDTO.getTdspCode()));
 		
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		 
@@ -725,8 +727,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		submitEnrollRequest.setStrBPPOSidDLDate(EMPTY);
 		submitEnrollRequest.setStrBPPosPOSidSSNDate(EMPTY);
 
-		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad((this.appConstMessageSource
-				.getMessage("gmd.offer.web.equivalent." + oeSignUpDTO.getTdspCode(), null, null)), 8, "0"));
+		submitEnrollRequest.setStrOfferSequenceNumber(StringUtils.leftPad((envMessageReader.getMessage("gmd.offer.web.equivalent." + oeSignUpDTO.getTdspCode())), 8, "0"));
 		submitEnrollRequest.setStrProductPriceCode(EMPTY);
 		submitEnrollRequest.setStrIncentiveCode(EMPTY);
 		submitEnrollRequest.setStrmarketSegment("RS");
@@ -1111,17 +1112,13 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		
 		GMDOfferResponse gmdOfferResponse = new GMDOfferResponse();
 		
-		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
-		.getMessage("gmd.offer.efl.equivalent." + tdspCode, null, null));
+		gmdOfferResponse.setStrEFLDocID(baseURL.trim()+legalDocsExt+envMessageReader.getMessage("gmd.offer.efl.equivalent." + tdspCode));
 		
-		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+legalDocsExt +this.appConstMessageSource
-		.getMessage("gmd.offer.tos.equivalent." + tdspCode, null, null));
+		gmdOfferResponse.setStrTOSDocID(baseURL.trim()+legalDocsExt +envMessageReader.getMessage("gmd.offer.tos.equivalent." + tdspCode));
 		
-		gmdOfferResponse.setStrYRAACDocID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
-		.getMessage("gmd.offer.yraac.equivalent." + tdspCode, null, null));	
+		gmdOfferResponse.setStrYRAACDocID(baseURL.trim()+legalDocsExt+envMessageReader.getMessage("gmd.offer.yraac.equivalent." + tdspCode));	
 		
-		gmdOfferResponse.setStrPrepayDisID(baseURL.trim()+legalDocsExt+this.appConstMessageSource
-		.getMessage("gmd.offer.predis.equivalent." + tdspCode, null, null));			
+		gmdOfferResponse.setStrPrepayDisID(baseURL.trim()+legalDocsExt+envMessageReader.getMessage("gmd.offer.predis.equivalent." + tdspCode));			
 		
 		
 		
@@ -1212,5 +1209,14 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 
 		return gmdServiceLocationDetailsDTO;
 
+	}
+	}
+	
+	public MoveOutResponse createMoveOut(MoveOutRequest moveOutRequest){
+		return gmdService.createMoveOut(moveOutRequest);
+	}
+	
+	public PriceSpikeAlertResponse getGMDPriceSpikeAlert() {
+		return gmdService.getGMDPriceSpikeAlert();
 	}
 }
