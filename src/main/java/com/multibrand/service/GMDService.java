@@ -3,6 +3,7 @@ package com.multibrand.service;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,11 +16,8 @@ import javax.xml.ws.Holder;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.ws.client.core.WebServiceTemplate;
 
-import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -31,33 +29,19 @@ import com.multibrand.vo.response.gmd.GMDReturnCharge;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.HourlyPrice;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
-import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
-import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 import com.multibrand.vo.response.gmd.Pricing;
-import com.multibrand.vo.response.gmd.ProjectedPrice;
-import com.multibrand.vo.response.gmd.ProjectedPriceItem;
-import com.multibrand.vo.response.gmd.SpikeProjectedPrice;
-import com.multibrand.vo.response.gmd.ZoneCa;
-import com.multibrand.vo.response.gmd.ZoneCaItem;
-import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
-import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTRfcException;
-import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
 import com.nrg.cxfstubs.gmdprice.EPROFVALUE;
 import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
-import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERTResponse;
-import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERT_Type;
-import com.nrg.cxfstubs.gmdpricespike.ZTTGMDZONECA;
-import com.nrg.cxfstubs.gmdpricespike.ZTTZONEPROJPRICE;
-import com.nrg.cxfstubs.gmdpricespike.ZZSGMDZONECA;
-import com.nrg.cxfstubs.gmdpricespike.ZZSZONEPROJPRICE;
-import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmtResponse;
-import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
+import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT;
+import com.nrg.cxfstubs.gmdstatement.ZEISUGETGMDSTMT_Service;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
+import com.nrg.cxfstubs.gmdstatement.ZetGmdInvdate;
+import com.nrg.cxfstubs.gmdstatement.ZetGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
 
 
@@ -74,19 +58,8 @@ public class GMDService extends BaseAbstractService {
 
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
-	
-	@Autowired
-	@Qualifier("webServiceTemplateForGMDStatement")
-	private WebServiceTemplate webServiceTemplateForGMDStatement;
-	
-	@Autowired
-	@Qualifier("webServiceTemplateForGMDCreateMoveOut")
-	private WebServiceTemplate webServiceTemplateForGMDCreateMoveOut; 
-	
-	@Autowired
-	@Qualifier("webServiceTemplateForGMDPriceSpike")
-	private WebServiceTemplate webServiceTemplateForGMDPriceSpike;
 
+	private BigDecimal hundred = new BigDecimal(100);
 
 	/**
 	 * This profile call will do the call to the logging framework 
@@ -97,14 +70,13 @@ public class GMDService extends BaseAbstractService {
 	 * @throws Exception 
 	 */
 	public GMDStatementBreakDownResponse getGMDStatementDetails(String accountNumber, String companyCode, 
-			String esiId, String year, String month ,boolean isAllInPriceCall, String sessionId) throws NRGException {
+			String esiId, String year, String month ,String sessionId) throws NRGException {
 		
 		logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::START"); 
 				
 		GMDStatementBreakDownResponse gmdStatementBreakDownResp = null;
 		
 		long startTime = CommonUtil.getStartTime();
-		Long endTime = null;
 		StringBuilder request = new StringBuilder();
 		request
 			.append("accountNumber=")
@@ -115,30 +87,52 @@ public class GMDService extends BaseAbstractService {
 			.append(year)
 			.append("month=")
 			.append(month);
-          		
- 		
+
+		
+		//Start : Added for Redbull CXF upgrade by IJ
+		URL url =  ZEISUGETGMDSTMT_Service.class.getResource("Z_E_ISU_GET_GMD_STMT.wsdl");
+        if (url == null) {
+            java.util.logging.Logger.getLogger(ZEISUGETGMDSTMT_Service.class.getName())
+                .log(java.util.logging.Level.INFO, 
+                     "Can not initialize the default wsdl from {0}", "Z_E_ISU_GET_GMD_STMT.wsdl");
+        }
+        ZEISUGETGMDSTMT_Service gmdStatementService = new ZEISUGETGMDSTMT_Service(url);
+		
+		ZEISUGETGMDSTMT stub = gmdStatementService.getZEISUGETGMDSTMT();
+		 BindingProvider binding = (BindingProvider)stub;
+	    
+	        binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  this.envMessageReader.getMessage(CCS_USER_NAME));
+	        binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  this.envMessageReader.getMessage(CCS_PASSWORD));
+	        binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.envMessageReader.getMessage(GMD_STATEMENT_ENDPOINT_URL_JNDINAME));
+	        
+          logger.info("GMDService.getGMDStatementDetails::::::::::::::::::::before call");
+          
+          ZetGmdInvdate zetGmdInvdate = new ZetGmdInvdate();
+          ZesGmdStmt zesGmdStmt = new ZesGmdStmt();
+          ZetGmdStmt zetGmdStmt = new ZetGmdStmt();  
+          
+         Holder<ZetGmdInvdate>  holderZetGmdInvdate = new Holder<>();
+         holderZetGmdInvdate.value = zetGmdInvdate;
+         
+         Holder<ZettGmdRetchr> holderZettGmdRetchr =  new Holder<>();
+         
+         
+         Holder<BigDecimal> holderAvgPrice = new Holder<>(); 
+         
+         Holder<ZesGmdStmt>  holderZesGmdStmt = new Holder<>();
+         holderZesGmdStmt.value = zesGmdStmt;
+         
+         Holder<ZetGmdStmt>  holderZetGmdStmt = new Holder<>();
+         holderZetGmdStmt.value = zetGmdStmt;
+		
+         Holder<String> holderLastBillDate = new Holder<String>();
+       
+        		 
 		try{
-
 			
-			com.nrg.cxfstubs.gmdstatement.ObjectFactory factory = new com.nrg.cxfstubs.gmdstatement.ObjectFactory();
-			
-			ZEIsuGetGmdStmt_Type wsRequest = factory.createZEIsuGetGmdStmt_Type();
-
-			wsRequest.setCompCode(companyCode);
-			wsRequest.setContAcct(accountNumber);
-			wsRequest.setEsid(esiId);
-			wsRequest.setStmtMonth(month);
-			wsRequest.setStmtYear(year);
-			wsRequest.setAllinPrice(isAllInPriceCall ? "X" :"");
-			
-			startTime = Calendar.getInstance().getTimeInMillis();
-			
-			ZEIsuGetGmdStmtResponse  zEIsuGetGmdStmtResponse = (ZEIsuGetGmdStmtResponse) webServiceTemplateForGMDStatement.marshalSendAndReceive(wsRequest);
-
-			endTime = Calendar.getInstance().getTimeInMillis();
-			logger.info("Time taken by service is ={}" , (endTime - startTime));
-									
-			gmdStatementBreakDownResp = handleGMDStatementResponse(zEIsuGetGmdStmtResponse);
+			stub.zeIsuGetGmdStmt(companyCode, accountNumber, esiId, month, year, holderAvgPrice, holderZetGmdInvdate, holderLastBillDate,holderZettGmdRetchr,  holderZesGmdStmt, holderZetGmdStmt);
+						
+			gmdStatementBreakDownResp = handleGMDStatementResponse(holderZesGmdStmt, holderAvgPrice, holderZettGmdRetchr,holderLastBillDate);
 			
 		}catch(Exception ex){
 			utilityloggerHelper.logTransaction("getGMDStatementDetails", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -246,11 +240,11 @@ public class GMDService extends BaseAbstractService {
 
 	}
 	
-	private List<GMDReturnCharge> getReturnCharge(ZettGmdRetchr holderZettGmdRetchr) {
+	private List<GMDReturnCharge> getReturnCharge(Holder<ZettGmdRetchr> holderZettGmdRetchr) {
 		
 		List<GMDReturnCharge> gmdReturnChargeList = new ArrayList<>();
 				
-		for (ZesGmdRetchr zesGmdRetchr : holderZettGmdRetchr.getItem()) {
+		for (ZesGmdRetchr zesGmdRetchr : holderZettGmdRetchr.value.getItem()) {
 			
 			GMDReturnCharge gmdReturnCharge = new GMDReturnCharge();
 			
@@ -332,23 +326,21 @@ public class GMDService extends BaseAbstractService {
 		return current;
 	}
 	
-	private GMDStatementBreakDownResponse handleGMDStatementResponse(ZEIsuGetGmdStmtResponse zEIsuGetGmdStmtResponse) {
-			
-			//Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr, Holder<String>holderLastBillDate) {
+	private GMDStatementBreakDownResponse handleGMDStatementResponse(Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr, Holder<String>holderLastBillDate) {
 
 		GMDStatementBreakDownResponse response = new GMDStatementBreakDownResponse();
 
-		ZesGmdStmt zesGmdStmt = zEIsuGetGmdStmtResponse.getStmt();
+		ZesGmdStmt zesGmdStmt = holderZesGmdStmt.value ;
 	
 		BigDecimal totalCost = new BigDecimal("0.00");
 		
 		
-		response.setAllInPrice(zEIsuGetGmdStmtResponse.getAllinCharge());
-		response.setAvgPrice(zEIsuGetGmdStmtResponse.getAvgPrice() !=null ? zEIsuGetGmdStmtResponse.getAvgPrice() : null);
+		
+		response.setAvgPrice(holderAvgPrice !=null ? holderAvgPrice.value : null);
 		
 		List<Breakdown> breakdown = new ArrayList<>();
 		
-		List<GMDReturnCharge> gmdReturnChargeList = getReturnCharge(zEIsuGetGmdStmtResponse.getRetChrg());
+		List<GMDReturnCharge> gmdReturnChargeList = getReturnCharge(holderZettGmdRetchr);
 		
 		breakdown.add(energyChargeitemBreakDown(zesGmdStmt, GMD_ENERGY_CHARGE));
 		
@@ -376,7 +368,7 @@ public class GMDService extends BaseAbstractService {
 		response.setBreakdown(breakdown);
 		response.setReturnCharge(gmdReturnChargeList);		
 		response.setTotalUsage(zesGmdStmt.getCusage());
-		response.setLastBillDate(zEIsuGetGmdStmtResponse.getLastBildate() !=null ? zEIsuGetGmdStmtResponse.getLastBildate() : null);
+		response.setLastBillDate(holderLastBillDate !=null ? holderLastBillDate.value : null);
 		return response;
 
 	}
@@ -521,132 +513,5 @@ public class GMDService extends BaseAbstractService {
 		}
 		return 0.0;
 
-	}
-	
-	public MoveOutResponse createMoveOut(MoveOutRequest moveOutRequest) {
-		String moveOutDocId = "";
-		MoveOutResponse moveOutResponse = new MoveOutResponse();
-		try {
-			com.nrg.cxfstubs.gmdmoveout.ObjectFactory factory = new com.nrg.cxfstubs.gmdmoveout.ObjectFactory();
-			ZEISUCREATEMOVEOUT_Type wsRequest = factory.createZEISUCREATEMOVEOUT_Type();
-			wsRequest.setCONTACC(moveOutRequest.getContractAccountNumber());
-			wsRequest.setESID(moveOutRequest.getEsiId());
-			wsRequest.setMOUTDATE(moveOutRequest.getMoveOutDate());
-			wsRequest.setMOUTREASON(moveOutRequest.getMoveOutReason());
-
-			ZEISUCREATEMOVEOUTResponse response = (ZEISUCREATEMOVEOUTResponse) webServiceTemplateForGMDCreateMoveOut
-					.marshalSendAndReceive(wsRequest);
-			moveOutDocId = response.getMOUTDOC();
-			if (moveOutDocId != null) {
-				moveOutResponse.setMoveOutDocNumber(moveOutDocId);
-				moveOutResponse.setResultCode(RESULT_CODE_SUCCESS);
-				moveOutResponse.setResultDescription(MSG_SUCCESS);
-			}
-			
-		}catch (RuntimeException ex) {
-			logger.error("Exception Occured in RuntimeException  createMoveOut {} ", ex.getMessage());
-			try {
-				
-				ZEISUCREATEMOVEOUTRfcException   zEISUCREATEMOVEOUTException = 
-						(ZEISUCREATEMOVEOUTRfcException) CommonUtil.unmarshallSoapFault(CommonUtil.getTagValue(ex.getMessage(), "detail"), ZEISUCREATEMOVEOUTRfcException.class);		
-
-				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());
-				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
-			} catch (Exception e) {
-				logger.error("Exception Occured in  createMoveOut {} ", e);
-				moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			} 
-		} catch (Exception ex) {
-			logger.error("Exception Occured in  createMoveOut {} ", ex);
-			moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-		}
-		return moveOutResponse;
-	}
-	
-	public PriceSpikeAlertResponse getGMDPriceSpikeAlert() {
-
-		PriceSpikeAlertResponse priceSpikeAlertResponse = new PriceSpikeAlertResponse();
-		try {
-			com.nrg.cxfstubs.gmdpricespike.ObjectFactory factory = new com.nrg.cxfstubs.gmdpricespike.ObjectFactory();
-			com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERT_Type wsRequest = factory
-					.createZEISUGMDPRICESPIKEALERT_Type();
-			wsRequest.setIMDATE("");
-			wsRequest.setIMTHRESHOLD(null);
-			wsRequest.setIMTIME(null);
-			wsRequest.setIMZONE("");
-			ZEISUGMDPRICESPIKEALERTResponse response = (ZEISUGMDPRICESPIKEALERTResponse) webServiceTemplateForGMDPriceSpike
-					.marshalSendAndReceive(wsRequest);
-			priceSpikeAlertResponse = setPriceSpikeAlertResponse(response);
-			priceSpikeAlertResponse.setResultCode(RESULT_CODE_SUCCESS);
-			priceSpikeAlertResponse.setResultDescription(MSG_SUCCESS);
-		} catch (Exception ex) {
-			logger.error("Exception Occured in  createMoveOut {} ", ex);
-			priceSpikeAlertResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			priceSpikeAlertResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-		}
-		return priceSpikeAlertResponse;
-	}
-	
-	public PriceSpikeAlertResponse setPriceSpikeAlertResponse(ZEISUGMDPRICESPIKEALERTResponse response) {
-		PriceSpikeAlertResponse priceSpikeAlertResponse = new PriceSpikeAlertResponse();
-		List<ProjectedPriceItem> projectedPriceItems = new ArrayList<>();
-		List<ProjectedPriceItem> spikeProjectedPriceItems = new ArrayList<>();
-		List<ZoneCaItem> zoneCaItems = new ArrayList<>();
-
-		ZTTZONEPROJPRICE price = response.getEXTPROJECTEDPRICE();
-		List<ZZSZONEPROJPRICE> projectedItemList = price.getItem();
-		if (projectedItemList != null && !projectedItemList.isEmpty()) {
-			for (ZZSZONEPROJPRICE priceItem : projectedItemList) {
-				ProjectedPriceItem item = new ProjectedPriceItem();
-				item.setProfDate(priceItem.getPROFDATE());
-				item.setProfTime(priceItem.getPROFTIME());
-				item.setProfValue(priceItem.getPROFVALUE());
-				item.setZone(priceItem.getZZONE());
-				projectedPriceItems.add(item);
-			}
-		}
-
-		ZTTZONEPROJPRICE spikePrice = response.getEXTSPIKEDPROJPRICE();
-		List<ZZSZONEPROJPRICE> spikePriceItemList = spikePrice.getItem();
-		if (spikePriceItemList != null && !spikePriceItemList.isEmpty()) {
-			for (ZZSZONEPROJPRICE spikePriceItem : spikePriceItemList) {
-				ProjectedPriceItem spikeItem = new ProjectedPriceItem();
-				spikeItem.setProfDate(spikePriceItem.getPROFDATE());
-				spikeItem.setProfTime(spikePriceItem.getPROFTIME());
-				spikeItem.setProfValue(spikePriceItem.getPROFVALUE());
-				spikeItem.setZone(spikePriceItem.getZZONE());
-				spikeProjectedPriceItems.add(spikeItem);
-			}
-		}
-
-		ZTTGMDZONECA zoneCaList = response.getEXTZONECA();
-		List<ZZSGMDZONECA> caList = zoneCaList.getItem();
-		if (caList != null && !caList.isEmpty()) {
-			for (ZZSGMDZONECA ca : caList) {
-				ZoneCaItem zoneCaItem = new ZoneCaItem();
-				zoneCaItem.setVkont(ca.getVKONT());
-				zoneCaItem.setZone(ca.getZZONE());
-				zoneCaItems.add(zoneCaItem);
-			}
-		}
-		// setting values
-		priceSpikeAlertResponse.setPriceSpikeFound(response.getEXPRICESPIKEFOUND());
-		priceSpikeAlertResponse.setMessage(response.getEXMESSAGE());
-
-		ProjectedPrice projectedPrice = new ProjectedPrice();
-		projectedPrice.setProjectedPriceItems(spikeProjectedPriceItems);
-
-		SpikeProjectedPrice spikeProjectedPrice = new SpikeProjectedPrice();
-		spikeProjectedPrice.setSpikeProjectedPriceItems(spikeProjectedPriceItems);
-
-		ZoneCa zoneCa = new ZoneCa();
-		zoneCa.setZoneItems(zoneCaItems);
-
-		priceSpikeAlertResponse.setProjectedPrice(projectedPrice);
-		priceSpikeAlertResponse.setSpikeProjectedPrice(spikeProjectedPrice);
-		priceSpikeAlertResponse.setZoneCa(zoneCa);
-		return priceSpikeAlertResponse;
 	}
 }

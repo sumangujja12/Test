@@ -25,10 +25,12 @@ import com.multibrand.util.Constants;
  * @Author bbachin1
  */
 import com.multibrand.vo.request.ContractInfoRequest;
+import com.multibrand.vo.request.MaintenanceScheduleRequest;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
+import com.multibrand.vo.response.contentResponse.MaintenanceScheduleResponse;
 
 @Component
-@Path("personalize")
+@Path("/")
 public class ContentResource implements Constants{
 	
 	private static Logger logger = Logger.getLogger("NRGREST_LOGGER");
@@ -44,7 +46,7 @@ public class ContentResource implements Constants{
 	
 	
 	@POST
-	@Path("offer")
+	@Path("personalize/offer")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response readPersonalizedOffer(ContentOfferRequest request) {
@@ -61,7 +63,7 @@ public class ContentResource implements Constants{
 	
 	
 	@POST
-	@Path("userprefernce/update")
+	@Path("personalize/userprefernce/update")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response updateUserPreference(ContentUserPrefRequest request) {
@@ -80,7 +82,7 @@ public class ContentResource implements Constants{
 	
 	
 	@POST
-	@Path("component/itemid")
+	@Path("personalize/component/itemid")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response readComponentByItemId(ComponentByItemIdRequest request) {
@@ -99,7 +101,7 @@ public class ContentResource implements Constants{
 	
 	
 	@POST
-	@Path("component/itemids")
+	@Path("personalize/component/itemids")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response readComponentByItemIds(ComponentByItemIdsRequest request) {
@@ -117,7 +119,7 @@ public class ContentResource implements Constants{
 	}
 	
 	@POST
-	@Path("gme/messagecontent")
+	@Path("personalize/gme/messagecontent")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response readMessageContent(MessageContentRequest request) {
@@ -140,7 +142,7 @@ public class ContentResource implements Constants{
 	 * @return
 	 */
 	@POST
-	@Path("gme/getPlanOffers")
+	@Path("personalize/gme/getPlanOffers")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON})
 	public Response getMultiBrandPlanOffers(ContractInfoRequest request){
@@ -150,6 +152,19 @@ public class ContentResource implements Constants{
 		ContractOfferPlanContentResponse getContractInfoResponse = contentServiceBO.getMultiBrandPlanOffers(request, httpRequest.getSession(true).getId(), APPLICATION_SWAP_AREA);
 		response = Response.status(200).entity(getContractInfoResponse).build();
 		logger.info("END-[ContentResource-getMultiBrandPlanOffers]");
+		return response;
+	}
+	
+	@POST
+	@Path("/public/getMaintenanceSchedule")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getMaintenanceSchedule(MaintenanceScheduleRequest request) {
+		Response response = null;
+		logger.info("Start-[ContentResource-getMaintenanceSchedule]");
+		MaintenanceScheduleResponse maintenanceScheduleResponse = contentServiceBO.getMaintenanceSchedule(request);
+		response = Response.status(200).entity(maintenanceScheduleResponse).build();
+		logger.info("END-[ContentResource-getMaintenanceSchedule]");
 		return response;
 	}
 	
