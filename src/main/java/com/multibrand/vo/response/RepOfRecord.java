@@ -13,13 +13,13 @@ public class RepOfRecord {
 		return Flag;
 	}
 	public void setFlag(String flag) {
-		Flag = flag;
+		this.Flag = flag;
 	}
 	public String getRoRStartDate() {
 		return RoRStartDate;
 	}
 	public void setRoRStartDate(String roRStartDate) {
-		RoRStartDate = roRStartDate;
+		this.RoRStartDate = roRStartDate;
 	}   
 	
 }

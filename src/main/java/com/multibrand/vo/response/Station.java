@@ -11,13 +11,13 @@ public class Station {
 		return Code;
 	}
 	public void setCode(String code) {
-		Code = code;
+		this.Code = code;
 	}
 	public String getName() {
 		return Name;
 	}
 	public void setName(String name) {
-		Name = name;
+		this.Name = name;
 	}
     
 	  

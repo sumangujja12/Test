@@ -13,25 +13,25 @@ public class MeterRead {
 		return CalculationDate;
 	}
 	public void setCalculationDate(String calculationDate) {
-		CalculationDate = calculationDate;
+		this.CalculationDate = calculationDate;
 	}
 	public String getFlag() {
 		return Flag;
 	}
 	public void setFlag(String flag) {
-		Flag = flag;
+		this.Flag = flag;
 	}
 	public String getCode() {
 		return Code;
 	}
 	public void setCode(String code) {
-		Code = code;
+		this.Code = code;
 	}
 	public String getSettlementAMSIndicator() {
 		return SettlementAMSIndicator;
 	}
 	public void setSettlementAMSIndicator(String settlementAMSIndicator) {
-		SettlementAMSIndicator = settlementAMSIndicator;
+		this.SettlementAMSIndicator = settlementAMSIndicator;
 	}   
 	
 }

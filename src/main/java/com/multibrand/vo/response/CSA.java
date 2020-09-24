@@ -13,13 +13,13 @@ public class CSA {
 		return CsaStartDate;
 	}
 	public void setCsaStartDate(String csaStartDate) {
-		CsaStartDate = csaStartDate;
+		this.CsaStartDate = csaStartDate;
 	}
 	public String getDuns() {
 		return Duns;
 	}
 	public void setDuns(String duns) {
-		Duns = duns;
+		this.Duns = duns;
 	}
     	
 }

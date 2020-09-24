@@ -14,31 +14,31 @@ public class Address {
 		return StreetOverflow;
 	}
 	public void setStreetOverflow(String streetOverflow) {
-		StreetOverflow = streetOverflow;
+		this.StreetOverflow = streetOverflow;
 	}
 	public String getZip() {
 		return Zip;
 	}
 	public void setZip(String zip) {
-		Zip = zip;
+		this.Zip = zip;
 	}
 	public String getState() {
 		return State;
 	}
 	public void setState(String state) {
-		State = state;
+		this.State = state;
 	}
 	public String getStreet() {
 		return Street;
 	}
 	public void setStreet(String street) {
-		Street = street;
+		this.Street = street;
 	}
 	public String getCity() {
 		return City;
 	}
 	public void setCity(String city) {
-		City = city;
+		this.City = city;
 	}   
 	
 }
