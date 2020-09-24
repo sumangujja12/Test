@@ -4,139 +4,139 @@ package com.multibrand.vo.response;
  */
 public class Results {
 	
-    private String tDSPAMSIndicator;
-    private String eSIIDEndDate;
-    private Address address;
-    private String pOLRCustomerClass; 
-    private String switchHoldIndicator;
-    private RepOfRecord repOfRecord;
-    private String eSIIDStatus;
-    private Station station;
-    private String powerRegion;
-    private CSA cSA;
-    private String eSIIDEligibilityDate;
-    private String esiid; 
-    private String duns; 
-    private String eSIIDCreateDate; 
-    private String eSIIDStartDate;
-    private String mpName;
-    private MeterRead meterRead;
-    private String eSIIDPremiseType;
-    private String eSIIDEffectiveDate;
+    private String TDSPAMSIndicator;
+    private String ESIIDEndDate;
+    private Address Address;
+    private String POLRCustomerClass; 
+    private String SwitchHoldIndicator;
+    private RepOfRecord RepOfRecord;
+    private String ESIIDStatus;
+    private Station Station;
+    private String PowerRegion;
+    private CSA CSA;
+    private String ESIIDEligibilityDate;
+    private String Esiid; 
+    private String Duns; 
+    private String ESIIDCreateDate; 
+    private String ESIIDStartDate;
+    private String MpName;
+    private MeterRead MeterRead;
+    private String ESIIDPremiseType;
+    private String ESIIDEffectiveDate;
     
 	public String getTDSPAMSIndicator() {
-		return tDSPAMSIndicator;
+		return TDSPAMSIndicator;
 	}
 	public void setTDSPAMSIndicator(String tDSPAMSIndicator) {
-		this.tDSPAMSIndicator = tDSPAMSIndicator;
+		TDSPAMSIndicator = tDSPAMSIndicator;
 	}
 	public String getESIIDEndDate() {
-		return eSIIDEndDate;
+		return ESIIDEndDate;
 	}
 	public void setESIIDEndDate(String eSIIDEndDate) {
-		this.eSIIDEndDate = eSIIDEndDate;
+		ESIIDEndDate = eSIIDEndDate;
 	}
 	public Address getAddress() {
-		return address;
+		return Address;
 	}
 	public void setAddress(Address address) {
-		this.address = address;
+		Address = address;
 	}
 	public String getPOLRCustomerClass() {
-		return pOLRCustomerClass;
+		return POLRCustomerClass;
 	}
 	public void setPOLRCustomerClass(String pOLRCustomerClass) {
-		this.pOLRCustomerClass = pOLRCustomerClass;
+		POLRCustomerClass = pOLRCustomerClass;
 	}
 	public String getSwitchHoldIndicator() {
-		return switchHoldIndicator;
+		return SwitchHoldIndicator;
 	}
 	public void setSwitchHoldIndicator(String switchHoldIndicator) {
-		this.switchHoldIndicator = switchHoldIndicator;
+		SwitchHoldIndicator = switchHoldIndicator;
 	}
 	public RepOfRecord getRepOfRecord() {
-		return repOfRecord;
+		return RepOfRecord;
 	}
 	public void setRepOfRecord(RepOfRecord repOfRecord) {
-		this.repOfRecord = repOfRecord;
+		RepOfRecord = repOfRecord;
 	}
 	public String getESIIDStatus() {
-		return eSIIDStatus;
+		return ESIIDStatus;
 	}
 	public void setESIIDStatus(String eSIIDStatus) {
-		this.eSIIDStatus = eSIIDStatus;
+		ESIIDStatus = eSIIDStatus;
 	}
 	public Station getStation() {
-		return station;
+		return Station;
 	}
 	public void setStation(Station station) {
-		this.station = station;
+		Station = station;
 	}
 	public String getPowerRegion() {
-		return powerRegion;
+		return PowerRegion;
 	}
 	public void setPowerRegion(String powerRegion) {
-		this.powerRegion = powerRegion;
+		PowerRegion = powerRegion;
 	}
 	public CSA getCSA() {
-		return cSA;
+		return CSA;
 	}
 	public void setCSA(CSA cSA) {
-		this.cSA = cSA;
+		CSA = cSA;
 	}
 	public String getESIIDEligibilityDate() {
-		return eSIIDEligibilityDate;
+		return ESIIDEligibilityDate;
 	}
 	public void setESIIDEligibilityDate(String eSIIDEligibilityDate) {
-		this.eSIIDEligibilityDate = eSIIDEligibilityDate;
+		ESIIDEligibilityDate = eSIIDEligibilityDate;
 	}
 	public String getEsiid() {
-		return esiid;
+		return Esiid;
 	}
 	public void setEsiid(String esiid) {
-		this.esiid = esiid;
+		Esiid = esiid;
 	}
 	public String getDuns() {
-		return duns;
+		return Duns;
 	}
 	public void setDuns(String duns) {
-		this.duns = duns;
+		Duns = duns;
 	}
 	public String getESIIDCreateDate() {
-		return eSIIDCreateDate;
+		return ESIIDCreateDate;
 	}
 	public void setESIIDCreateDate(String eSIIDCreateDate) {
-		this.eSIIDCreateDate = eSIIDCreateDate;
+		ESIIDCreateDate = eSIIDCreateDate;
 	}
 	public String getESIIDStartDate() {
-		return eSIIDStartDate;
+		return ESIIDStartDate;
 	}
 	public void setESIIDStartDate(String eSIIDStartDate) {
-		this.eSIIDStartDate = eSIIDStartDate;
+		ESIIDStartDate = eSIIDStartDate;
 	}
 	public String getMpName() {
-		return mpName;
+		return MpName;
 	}
 	public void setMpName(String mpName) {
-		this.mpName = mpName;
+		MpName = mpName;
 	}
 	public MeterRead getMeterRead() {
-		return meterRead;
+		return MeterRead;
 	}
 	public void setMeterRead(MeterRead meterRead) {
-		this.meterRead = meterRead;
+		MeterRead = meterRead;
 	}
 	public String getESIIDPremiseType() {
-		return eSIIDPremiseType;
+		return ESIIDPremiseType;
 	}
 	public void setESIIDPremiseType(String eSIIDPremiseType) {
-		this.eSIIDPremiseType = eSIIDPremiseType;
+		ESIIDPremiseType = eSIIDPremiseType;
 	}
 	public String getESIIDEffectiveDate() {
-		return eSIIDEffectiveDate;
+		return ESIIDEffectiveDate;
 	}
 	public void setESIIDEffectiveDate(String eSIIDEffectiveDate) {
-		this.eSIIDEffectiveDate = eSIIDEffectiveDate;
-	}
-	
+		ESIIDEffectiveDate = eSIIDEffectiveDate;
+	}   
+    
 }

@@ -6,20 +6,20 @@ package com.multibrand.vo.response;
 
 public class CSA {
 
-    public String csaStartDate;
-    public String duns;
+    private String CsaStartDate;
+    private String Duns;
     
 	public String getCsaStartDate() {
-		return csaStartDate;
+		return CsaStartDate;
 	}
 	public void setCsaStartDate(String csaStartDate) {
-		this.csaStartDate = csaStartDate;
+		CsaStartDate = csaStartDate;
 	}
 	public String getDuns() {
-		return duns;
+		return Duns;
 	}
 	public void setDuns(String duns) {
-		this.duns = duns;
-	}  
-
+		Duns = duns;
+	}
+    	
 }

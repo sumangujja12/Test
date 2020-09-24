@@ -888,7 +888,7 @@ public class OEResource extends BaseResource {
 	@Path(NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response ercotESIDCheckByAddress(GetAddressOrEsidFromErcotRequest request) throws OEException {	
+	public Response ercotESIDCheckByAddress(@Valid GetAddressOrEsidFromErcotRequest request) throws OEException {	
 		
 		Response response = null;
 		ErcotCheckByAddressResponse ercotCheckResponse = oeBO.ercotESIDCheckByAddress(request);

@@ -1,16 +1,26 @@
 package com.multibrand.vo.request;
 
+import java.io.Serializable;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.multibrand.dto.request.FormEntityRequest;
+import com.multibrand.request.validation.BasicConstraint;
+
 /*
  * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2019
  */
 
-public class GetAddressOrEsidFromErcotRequest  {
+public class GetAddressOrEsidFromErcotRequest implements FormEntityRequest , Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	private String esid;
+	
+	@NotBlank(groups = BasicConstraint.class)
 	private String companyName;
+	
 	private String zip;
 	private String state;
 	private String street;

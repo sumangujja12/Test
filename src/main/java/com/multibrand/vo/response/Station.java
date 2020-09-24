@@ -4,19 +4,21 @@ package com.multibrand.vo.response;
  */
 public class Station {
  
-    public String code;
-    public String name;
+    private String Code;
+    private String Name;
     
 	public String getCode() {
-		return code;
+		return Code;
 	}
 	public void setCode(String code) {
-		this.code = code;
+		Code = code;
 	}
 	public String getName() {
-		return name;
+		return Name;
 	}
 	public void setName(String name) {
-		this.name = name;
-	}    
+		Name = name;
+	}
+    
+	  
 }

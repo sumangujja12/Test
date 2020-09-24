@@ -4,33 +4,34 @@ package com.multibrand.vo.response;
  */
 public class MeterRead {
 
-    public String calculationDate;
-    public boolean flag;
-    public String code;
-    public boolean settlementAMSIndicator;
+    private String CalculationDate;
+    private String Flag;
+    private String Code;
+    private String SettlementAMSIndicator;
     
 	public String getCalculationDate() {
-		return calculationDate;
+		return CalculationDate;
 	}
 	public void setCalculationDate(String calculationDate) {
-		this.calculationDate = calculationDate;
+		CalculationDate = calculationDate;
 	}
-	public boolean isFlag() {
-		return flag;
+	public String getFlag() {
+		return Flag;
 	}
-	public void setFlag(boolean flag) {
-		this.flag = flag;
+	public void setFlag(String flag) {
+		Flag = flag;
 	}
 	public String getCode() {
-		return code;
+		return Code;
 	}
 	public void setCode(String code) {
-		this.code = code;
+		Code = code;
 	}
-	public boolean isSettlementAMSIndicator() {
-		return settlementAMSIndicator;
+	public String getSettlementAMSIndicator() {
+		return SettlementAMSIndicator;
 	}
-	public void setSettlementAMSIndicator(boolean settlementAMSIndicator) {
-		this.settlementAMSIndicator = settlementAMSIndicator;
-	}    
+	public void setSettlementAMSIndicator(String settlementAMSIndicator) {
+		SettlementAMSIndicator = settlementAMSIndicator;
+	}   
+	
 }

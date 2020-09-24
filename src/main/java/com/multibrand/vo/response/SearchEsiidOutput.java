@@ -4,14 +4,14 @@ package com.multibrand.vo.response;
  */
 public class SearchEsiidOutput {
 
-	private Results results;
+	private Results Results;
 
 	public Results getResults() {
-		return results;
+		return Results;
 	}
 
 	public void setResults(Results results) {
-		this.results = results;
+		this.Results = results;
 	}	
 	
 }

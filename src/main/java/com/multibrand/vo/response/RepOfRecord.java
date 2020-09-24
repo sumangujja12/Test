@@ -6,19 +6,20 @@ package com.multibrand.vo.response;
 
 public class RepOfRecord {
  
-    public boolean flag; 
-    public String roRStartDate;
+    private String Flag; 
+    private String RoRStartDate;
     
-	public boolean isFlag() {
-		return flag;
+	public String getFlag() {
+		return Flag;
 	}
-	public void setFlag(boolean flag) {
-		this.flag = flag;
+	public void setFlag(String flag) {
+		Flag = flag;
 	}
 	public String getRoRStartDate() {
-		return roRStartDate;
+		return RoRStartDate;
 	}
 	public void setRoRStartDate(String roRStartDate) {
-		this.roRStartDate = roRStartDate;
-	}
+		RoRStartDate = roRStartDate;
+	}   
+	
 }

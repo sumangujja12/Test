@@ -4,40 +4,41 @@ package com.multibrand.vo.response;
  */
 public class Address {
  
-    public String streetOverflow;
-    public int zip; 
-    public String state;
-    public String street;
-    public String city;
+    private String StreetOverflow;
+    private String Zip; 
+    private String State;
+    private String Street;
+    private String City;
     
 	public String getStreetOverflow() {
-		return streetOverflow;
+		return StreetOverflow;
 	}
 	public void setStreetOverflow(String streetOverflow) {
-		this.streetOverflow = streetOverflow;
+		StreetOverflow = streetOverflow;
 	}
-	public int getZip() {
-		return zip;
+	public String getZip() {
+		return Zip;
 	}
-	public void setZip(int zip) {
-		this.zip = zip;
+	public void setZip(String zip) {
+		Zip = zip;
 	}
 	public String getState() {
-		return state;
+		return State;
 	}
 	public void setState(String state) {
-		this.state = state;
+		State = state;
 	}
 	public String getStreet() {
-		return street;
+		return Street;
 	}
 	public void setStreet(String street) {
-		this.street = street;
+		Street = street;
 	}
 	public String getCity() {
-		return city;
+		return City;
 	}
 	public void setCity(String city) {
-		this.city = city;
-	}
+		City = city;
+	}   
+	
 }

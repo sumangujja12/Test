@@ -614,16 +614,6 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 		String responseAsString = restTemplate.postForObject(url, map, String.class);
 		logger.debug("oeService.ercotESIDCheckByAddress(..) returned response as ::>"+ responseAsString);
 		
-		
-	//	RestTemplate restTemplate = new RestTemplate(clientHttpRequestFactoryForBasicAuth(PROP_CS_DEFAULT_WS_TIMEOUT_IN_SEC));
-	//	HttpHeaders headers = new HttpHeaders();
-    //  headers.add("Authorization", getBasicAuthHeader());
-    //	headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-	//	HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<MultiValueMap<String, String>>(map, headers);
-	//  ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
-	//  String responseAsString = null != responseEntity.getBody()?responseEntity.getBody():"";
-	//	logger.debug("oeService.ercotESIDCheckByAddress(..) returned response as ::>"+ responseAsString);
-		
 		Gson gson = new Gson();
 		if (null != responseAsString) {
 			ercotCheckResponse = gson.fromJson(responseAsString, ErcotCheckByAddressResponse.class);
@@ -631,5 +621,5 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 		logger.debug("END :: oeService.ercotESIDCheckByAddress(..)");
 		return ercotCheckResponse;
 	}
-
+ 
 }
