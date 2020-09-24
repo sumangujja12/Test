@@ -1210,7 +1210,6 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 		return gmdServiceLocationDetailsDTO;
 
 	}
-	}
 	
 	public MoveOutResponse createMoveOut(MoveOutRequest moveOutRequest){
 		return gmdService.createMoveOut(moveOutRequest);

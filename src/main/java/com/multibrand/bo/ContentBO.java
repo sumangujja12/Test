@@ -124,22 +124,6 @@ public class ContentBO extends BaseBO implements Constants {
 		return avgUsage;
 	}
 	
-	/**
-	 * @author SMarimuthu
-	 * @param request
-	 * @param sessionId
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<String, String> getNoOfTreeServerd(ContractInfoRequest request, String sessionId) throws Exception {
-		GetContractInfoResponse contractInfoResponse = profileService.getContractInfo(request.getAccountNumber(),
-				request.getBpNumber(), request.getEsid(), request.getContractId(), request.getLanguageCode(),
-				request.getCompanyCode(), sessionId);
-		if (contractInfoResponse == null || contractInfoResponse.getEligibleOffersList() == null) {
-			return new LinkedHashMap<String, String>();
-		}
-		return contentHelper.getContractNoOfTrees(contractInfoResponse.getEligibleOffersList());
-	}
 	
 	public MaintenanceScheduleResponse getMaintenanceSchedule(MaintenanceScheduleRequest request) {
 		List<MaintenanceSchedule> maintenanceSchedules = new ArrayList<MaintenanceSchedule>();

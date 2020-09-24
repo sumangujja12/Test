@@ -105,20 +105,5 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
 	 */
 	public void setAllInPrice(BigDecimal allInPrice) {
 		this.allInPrice = allInPrice;
-	}	
-	/**
-	 * @return lastBillDate
-	 */
-	public String getLastBillDate() {
-		return lastBillDate;
 	}
-	/**
-	 * @param lastBillDate the lastBillDate to set
-	 */
-	public void setLastBillDate(String lastBillDate) {
-		this.lastBillDate = lastBillDate;
-	}
-	
-    
-
 }

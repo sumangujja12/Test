@@ -893,15 +893,8 @@ public class ProfileService extends BaseAbstractService {
             IsuBapiret2T isuBapiRet2T = zesSwapOutput.getMessageTab();
             
             List<com.nrg.cxfstubs.contractinfo.Bapiret2> bapiRet2T = isuBapiRet2T.getItem();
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< releases/gmd-app-phase2-release
             response = handleContractInfoResponse(zeiSwapOutput,zeiCampEnvrDetails,zeiOfferCdFlag, applicationArea);
             if((zesSwapOutput.getEligOffers()==null) ||(zesSwapOutput.getEligOffers().getItem().size()==0))
-========================================================================
-                        
-			response = handleContractInfoResponse(zeiSwapOutput,zeiCampEnvrDetails,zeiOfferCdFlag);
-			
-			if((zesSwapOutput.getEligOffers()==null) ||(!zesSwapOutput.getEligOffers().getItem().isEmpty()))
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> features/gmd/webserice-template
             {
             	for(com.nrg.cxfstubs.contractinfo.Bapiret2 bapiret2 : bapiRet2T)
                 {
@@ -913,11 +906,6 @@ public class ProfileService extends BaseAbstractService {
                 	}
                 }
             }
-<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< releases/gmd-app-phase2-release
-            
-========================================================================
-			
->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> features/gmd/webserice-template
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(MSG_SUCCESS);
 			utilityloggerHelper.logTransaction("getContractInfo", false, zeiSwapOfferInputObj,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
