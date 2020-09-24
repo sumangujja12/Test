@@ -251,3 +251,5 @@ template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notifi
 template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageType]&mymsgcat=[MessageCat]&mymsg=[Message]&mymsgstatus=[MsgStatus]&mylang=[Language]&myos=[OSType]&mycontractid=[ContractId]&mybp=[BPNumber]&myerrmsg=[ErrorMessage]&.c&AQE=1
 template.url.parameter.reportsuite=relengmeprod
 iot.post.url = http://txaixsexbls05/iotproxy/postServiceRequest
+
+ws.rest.iot.ercot.check.by.address.url=http://txaixsexblp05/iotproxy/ercot/getByAddress
