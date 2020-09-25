@@ -100,8 +100,8 @@ public class WSConfig {
 		// set the basic authorization credentials
 		httpComponentsMessageSender.setCredentials(usernamePasswordCredentials());
 		
-		httpComponentsMessageSender.setReadTimeout(60000);
-		httpComponentsMessageSender.setConnectionTimeout(60000);
+		httpComponentsMessageSender.setReadTimeout(20000);
+		httpComponentsMessageSender.setConnectionTimeout(20000);
 	        
 		
 		return httpComponentsMessageSender;
