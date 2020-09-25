@@ -20,11 +20,11 @@ public class PersonalizationService extends BaseAbstractService {
 	/**
 	 * This method is used to get flags related for personalization
 	 */
-	public TCSPersonalizedFlagsDTO  getPersonalizedFlags(String bp, String ca, String co) {
+	public TCSPersonalizedFlagsDTO  getPersonalizedFlags(String bp, String ca) {
 		logger.debug("START - [PersonalizationService-getPersonalizedFlags] method");
 		TCSPersonalizedFlagsDTO tcsPersonalizedFlagsDTO = null;		
 		try {
-			tcsPersonalizedFlagsDTO = tcsDAO.getPersonalizedFlags(bp,ca,co);
+			tcsPersonalizedFlagsDTO = tcsDAO.getPersonalizedFlags(bp,ca);
 			
 		} catch (Exception e) {
 			logger.error("Exception in [PersonalizationService.getPersonalizedFlags()]"+e.getMessage());
