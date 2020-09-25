@@ -23,6 +23,7 @@ import com.multibrand.bo.OEBO;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
 import com.multibrand.dto.request.GMDEsidCalendarRequest;
+import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.exception.OAMException;
@@ -32,6 +33,8 @@ import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.MoveOutResponse;
+import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
 
 /** This Resource is to handle all the GMD APP Related API calls.
@@ -79,11 +82,11 @@ public class GMDResource extends BaseResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	
 	public Response getGMDStatementDetails(@FormParam("contractAccountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
-			@FormParam("esiId") String esiId, @FormParam("year") String year, @FormParam("month") String month) {
+			@FormParam("esiId") String esiId, @FormParam("year") String year, @FormParam("month") String month, @FormParam("isAllInPriceCall") boolean isAllInPriceCall) {
 		
 		logger.info(" START ******* getGMDStatementDetails API**********");
 		Response response = null;
-		GMDStatementBreakDownResponse gmdStatementBreakDownResp = gmdBO.getGMDStatementDetails(accountNumber, companyCode, esiId, year, month, httpRequest.getSession(true).getId());
+		GMDStatementBreakDownResponse gmdStatementBreakDownResp = gmdBO.getGMDStatementDetails(accountNumber, companyCode, esiId, year, month, isAllInPriceCall, httpRequest.getSession(true).getId());
 		
 		response = Response.status(200).entity(gmdStatementBreakDownResp).build();
 		
@@ -216,6 +219,30 @@ public class GMDResource extends BaseResource {
 		return response;
 	}
 		
+	@POST
+	@Path(API_CREATE_GMD_MOVE_OUT)
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response createMoveOut(MoveOutRequest moveOutRequest) {
+		MoveOutResponse moveOutResponse = new MoveOutResponse();
+		moveOutResponse = gmdBO.createMoveOut(moveOutRequest);
+		Response response = Response.status(Response.Status.OK).entity(moveOutResponse).build();
+		return response;
+	}
+	
+	@POST
+	@Path(API_GET_GMD_PRICE_SPIKE_ALERT_DATA)
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getGmdPriceSpikeAlertData() {
+		PriceSpikeAlertResponse priceSpikeAlertResponse = new PriceSpikeAlertResponse();
+		priceSpikeAlertResponse = gmdBO.getGMDPriceSpikeAlert();
+		Response response = Response.status(Response.Status.OK).entity(priceSpikeAlertResponse).build();
+		return response;
+	}	
+	
+	
+	
 	
 		
 }	

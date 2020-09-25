@@ -2,8 +2,10 @@ package com.multibrand.util;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -37,6 +39,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.soap.SOAPException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.Charsets;
@@ -55,6 +62,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -2193,5 +2201,23 @@ public class CommonUtil implements Constants {
 			//toRet = baos.toByteArray();
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
-		}  
+		} 
+
+	public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
+			throws IOException, SOAPException, JAXBException {
+
+		InputStream targetStream = new ByteArrayInputStream(response.getBytes());
+
+		JAXBContext JAXBContext = javax.xml.bind.JAXBContext.newInstance(responseClass.getPackage().getName());
+		Unmarshaller unmarshaller = JAXBContext.createUnmarshaller();
+
+		JAXBElement<T> document = (JAXBElement<T>) unmarshaller.unmarshal(targetStream);
+
+		return document.getValue();
+
+	}
+	public static String getTagValue(String xml, String tagName){
+	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
+	}	
+	
 }

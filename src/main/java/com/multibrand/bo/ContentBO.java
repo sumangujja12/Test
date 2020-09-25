@@ -2,6 +2,7 @@ package com.multibrand.bo;
 
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,16 +15,20 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.multibrand.dao.ContentDao;
 import com.multibrand.domain.AllAlertsResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.ContentHelper;
 import com.multibrand.service.ProfileService;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.ContractInfoRequest;
+import com.multibrand.vo.request.MaintenanceScheduleRequest;
 import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.MonthlyUsageResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
+import com.multibrand.vo.response.contentResponse.MaintenanceSchedule;
+import com.multibrand.vo.response.contentResponse.MaintenanceScheduleResponse;
 
 /**
  * Handle Reuest to get the contents from the Rest Content service
@@ -43,6 +48,9 @@ public class ContentBO extends BaseBO implements Constants {
 	
 	@Autowired
 	private HistoryBO historyBO;
+	
+	@Autowired
+	ContentDao contentDao;
 
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
@@ -114,5 +122,30 @@ public class ContentBO extends BaseBO implements Constants {
 		}
 		
 		return avgUsage;
+	}
+	
+	
+	public MaintenanceScheduleResponse getMaintenanceSchedule(MaintenanceScheduleRequest request) {
+		List<MaintenanceSchedule> maintenanceSchedules = new ArrayList<MaintenanceSchedule>();
+		MaintenanceScheduleResponse response = new MaintenanceScheduleResponse();
+		try {
+			logger.info("STARTED ::::::::::::::: ContentBo ::::: getMaintenanceSchedule");
+			maintenanceSchedules = contentDao.getMaintenanceSchedule(request);
+			if (maintenanceSchedules.size() > 0) {
+				response.setMaintenanceSchedules(maintenanceSchedules);
+				response.setResultCode(RESULT_CODE_SUCCESS);
+				response.setResultDescription(MSG_SUCCESS);
+				logger.info("SUCCESS ::::::::::::::: ContentBo ::::: getMaintenanceSchedule");
+			} else {
+				response.setResultCode(RESULT_CODE_NO_DATA);
+				response.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+				logger.info("NODATA ::::::::::::::: ContentBo ::::: getMaintenanceSchedule");
+			}
+		} catch (Exception e) {
+			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			logger.info("Exception Occured ::::::::::::::: ContentBo ::::: getMaintenanceSchedule" + e);
+		}
+		return response;
 	}
 }
