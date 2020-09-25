@@ -42,13 +42,13 @@ public class PersonalizationResource implements Constants {
 	@Path("getPersonalizedFlags")
 	@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,})
-	public Response getPersonalizedFlags(@FormParam("bp") String bp,@FormParam("ca") String ca){
+	public Response getPersonalizedFlags(@FormParam("bp") String bp,@FormParam("ca") String ca,@FormParam("co") String co){
 		
 		Response response = null;
 
 		TCSPersonalizedFlagsResponse tcsPersonalizedFlagsResponse = new TCSPersonalizedFlagsResponse();
 		
-		TCSPersonalizedFlagsDTO tcsPersonalizedFlagsDTO = personalizationService.getPersonalizedFlags(bp,ca);
+		TCSPersonalizedFlagsDTO tcsPersonalizedFlagsDTO = personalizationService.getPersonalizedFlags(bp,ca,co);
 		
 		tcsPersonalizedFlagsResponse.setTcsPersonalizedFlagsDTO(tcsPersonalizedFlagsDTO);
 
