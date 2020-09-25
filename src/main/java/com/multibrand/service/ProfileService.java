@@ -584,6 +584,9 @@ public class ProfileService extends BaseAbstractService {
 			
 		}
 				
+		
+		
+		
 		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)){
 			
 			profileResponse.setErrorCode(Constants.MSG_CCSERR_+exReturnCode.value+Constants._GET_PROFILE);

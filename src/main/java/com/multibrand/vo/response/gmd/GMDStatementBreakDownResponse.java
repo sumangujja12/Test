@@ -105,8 +105,5 @@ public class GMDStatementBreakDownResponse extends GenericResponse{
 	 */
 	public void setAllInPrice(BigDecimal allInPrice) {
 		this.allInPrice = allInPrice;
-	}	
-	
-    
-
+	}
 }

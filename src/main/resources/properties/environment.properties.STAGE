@@ -10,6 +10,9 @@ default.env=STG
 CCSPASSWORD=CustAlrt01
 CCSUSERNAME=WEBCPIC
 
+http.max.connection.per.route = 50
+http.max.total.connection = 50
+
 #Salesforce
 salesforce.grant.type=password
 salesforce.client.id=3MVG9CEn_O3jvv0wAHR1FBkcZYMf_6DD8IXddxyfvwNhCBEvtpBgZFp63fPkAjLDOFt8ivNjyfqiDxqugi2QK
