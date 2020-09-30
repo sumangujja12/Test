@@ -935,7 +935,7 @@
  		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-ccs-ws-client-nrg-rest</artifactId>
-			<version>13.1-SNAPSHOT</version>
+			<version>13</version>
 
  		</dependency>
 		<dependency>
