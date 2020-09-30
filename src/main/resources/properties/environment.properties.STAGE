@@ -12,7 +12,7 @@ CCSUSERNAME=WEBCPIC
 
 http.max.connection.per.route = 50
 http.max.total.connection = 50
-http.stocket.connection.timeout = 45
+http.stocket.connection.timeout = 15
 
 #Salesforce
 salesforce.grant.type=password
