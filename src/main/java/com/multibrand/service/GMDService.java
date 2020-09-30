@@ -41,6 +41,7 @@ import com.multibrand.vo.response.gmd.ProjectedPriceItem;
 import com.multibrand.vo.response.gmd.SpikeProjectedPrice;
 import com.multibrand.vo.response.gmd.ZoneCa;
 import com.multibrand.vo.response.gmd.ZoneCaItem;
+import com.nrg.cxfstubs.gmdmoveout.BAPIRET2;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTRfcException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
@@ -59,6 +60,7 @@ import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
+import com.sap.document.sap.soap.functions.mc_style.contact_detail_new.Bapiret2;
 
 
 /**
@@ -533,11 +535,17 @@ public class GMDService extends BaseAbstractService {
 
 			ZEISUCREATEMOVEOUTResponse response = (ZEISUCREATEMOVEOUTResponse) webServiceTemplateForGMDCreateMoveOut
 					.marshalSendAndReceive(wsRequest);
-			moveOutDocId = response.getMOUTDOC();
-			if (moveOutDocId != null) {
-				moveOutResponse.setMoveOutDocNumber(moveOutDocId);
-				moveOutResponse.setResultCode(RESULT_CODE_SUCCESS);
-				moveOutResponse.setResultDescription(MSG_SUCCESS);
+			
+			if ( response.getRETURN() != null && response.getRETURN().getTYPE().equalsIgnoreCase(TYPE_E)) {
+				   moveOutResponse.setResultCode(response.getRETURN().getNUMBER());
+					moveOutResponse.setResultDescription(response.getRETURN().getMESSAGE());
+			} else {				
+				moveOutDocId = response.getMOUTDOC();
+				if (moveOutDocId != null) {
+					moveOutResponse.setMoveOutDocNumber(moveOutDocId);
+					moveOutResponse.setResultCode(RESULT_CODE_SUCCESS);
+					moveOutResponse.setResultDescription(MSG_SUCCESS);
+				}
 			}
 			
 		}catch (RuntimeException ex) {
