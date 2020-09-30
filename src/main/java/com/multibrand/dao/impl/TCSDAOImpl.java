@@ -30,7 +30,7 @@ public class TCSDAOImpl extends AbstractSpringDAO  implements TCSDAO, Constants 
 		init(TCSDAOImpl.class);
 	}
 	
-public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca) {
+public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca, String co) {
 		
 		String methodName = "Load TCSDAOImpl: getPersonalizedFlags(..)";
 		logger.debug("START:" + methodName);
@@ -40,7 +40,7 @@ public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca) {
 
 			String sqlQuery = getSqlMessage().getMessage(DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ,  null, null );		
 			
-			tcsPersonalizedFlagsDTO = getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca}, new TCSPersonalizedFlagsRowMapper());
+			tcsPersonalizedFlagsDTO = getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca,co}, new TCSPersonalizedFlagsRowMapper());
 			
 			if ( tcsPersonalizedFlagsDTO.isEmpty() ){
 			  return null;
