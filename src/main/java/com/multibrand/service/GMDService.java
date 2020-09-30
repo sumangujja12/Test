@@ -8,17 +8,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
-
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -41,7 +38,6 @@ import com.multibrand.vo.response.gmd.ProjectedPriceItem;
 import com.multibrand.vo.response.gmd.SpikeProjectedPrice;
 import com.multibrand.vo.response.gmd.ZoneCa;
 import com.multibrand.vo.response.gmd.ZoneCaItem;
-import com.nrg.cxfstubs.gmdmoveout.BAPIRET2;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTResponse;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUTRfcException;
 import com.nrg.cxfstubs.gmdmoveout.ZEISUCREATEMOVEOUT_Type;
@@ -50,7 +46,6 @@ import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
 import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERTResponse;
-import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERT_Type;
 import com.nrg.cxfstubs.gmdpricespike.ZTTGMDZONECA;
 import com.nrg.cxfstubs.gmdpricespike.ZTTZONEPROJPRICE;
 import com.nrg.cxfstubs.gmdpricespike.ZZSGMDZONECA;
@@ -60,7 +55,6 @@ import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
-import com.sap.document.sap.soap.functions.mc_style.contact_detail_new.Bapiret2;
 
 
 /**
