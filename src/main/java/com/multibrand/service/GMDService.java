@@ -8,17 +8,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
-
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -49,7 +46,6 @@ import com.nrg.cxfstubs.gmdprice.TEPROFVALUES;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE;
 import com.nrg.cxfstubs.gmdprice.ZEISUGETGMDPRICE_Service;
 import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERTResponse;
-import com.nrg.cxfstubs.gmdpricespike.ZEISUGMDPRICESPIKEALERT_Type;
 import com.nrg.cxfstubs.gmdpricespike.ZTTGMDZONECA;
 import com.nrg.cxfstubs.gmdpricespike.ZTTZONEPROJPRICE;
 import com.nrg.cxfstubs.gmdpricespike.ZZSGMDZONECA;
@@ -533,11 +529,17 @@ public class GMDService extends BaseAbstractService {
 
 			ZEISUCREATEMOVEOUTResponse response = (ZEISUCREATEMOVEOUTResponse) webServiceTemplateForGMDCreateMoveOut
 					.marshalSendAndReceive(wsRequest);
-			moveOutDocId = response.getMOUTDOC();
-			if (moveOutDocId != null) {
-				moveOutResponse.setMoveOutDocNumber(moveOutDocId);
-				moveOutResponse.setResultCode(RESULT_CODE_SUCCESS);
-				moveOutResponse.setResultDescription(MSG_SUCCESS);
+			
+			if ( response.getRETURN() != null && response.getRETURN().getTYPE().equalsIgnoreCase(TYPE_E)) {
+				   moveOutResponse.setResultCode(response.getRETURN().getNUMBER());
+					moveOutResponse.setResultDescription(response.getRETURN().getMESSAGE());
+			} else {				
+				moveOutDocId = response.getMOUTDOC();
+				if (moveOutDocId != null) {
+					moveOutResponse.setMoveOutDocNumber(moveOutDocId);
+					moveOutResponse.setResultCode(RESULT_CODE_SUCCESS);
+					moveOutResponse.setResultDescription(MSG_SUCCESS);
+				}
 			}
 			
 		}catch (RuntimeException ex) {

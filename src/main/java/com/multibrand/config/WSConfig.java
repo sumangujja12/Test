@@ -48,6 +48,9 @@ public class WSConfig {
 	@Value("${http.max.total.connection}")
 	private int defaultMaxTotalConnection;
 	
+	@Value("${http.stocket.connection.timeout}")
+	private int httpConnectTimeout;
+	
 	
 	@Bean
 	Jaxb2Marshaller jaxb2Marshaller() {
@@ -110,12 +113,10 @@ public class WSConfig {
 
 	@Bean
 	public HttpComponentsMessageSender httpComponentsMessageSender() {
-		HttpComponentsMessageSender httpComponentsMessageSender = new HttpComponentsMessageSender();
+		CustomHttpComponentsMessageSender httpComponentsMessageSender = new CustomHttpComponentsMessageSender(httpClient());
 		// set the basic authorization credentials
 		httpComponentsMessageSender.setCredentials(usernamePasswordCredentials());
 		
-		httpComponentsMessageSender.setReadTimeout(20000);
-		httpComponentsMessageSender.setConnectionTimeout(20000);
 	        
 		
 		return httpComponentsMessageSender;
@@ -135,12 +136,12 @@ public class WSConfig {
 		connectionManager.setMaxTotal(defaultMaxTotalConnection);
 		connectionManager.setMaxPerRoute(new HttpRoute(new HttpHost(gmdStatementEndPoint)), defaultMaxConnectionPerRoute);
 		connectionManager.setMaxPerRoute(new HttpRoute(new HttpHost(kbaMatrixUpdate)), defaultMaxConnectionPerRoute);
-		
+
 
 		RequestConfig config = RequestConfig.custom()
-				  .setConnectTimeout(20 * 1000)
-				  .setConnectionRequestTimeout(20 * 1000)
-				  .setSocketTimeout(20 * 1000).build();
+				  .setConnectTimeout(httpConnectTimeout * 1000)
+				  .setConnectionRequestTimeout(httpConnectTimeout * 1000)
+				  .setSocketTimeout(httpConnectTimeout * 1000).build();
 		
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(AuthScope.ANY,
@@ -148,8 +149,9 @@ public class WSConfig {
 		
 		return HttpClientBuilder.create()
 				 .setDefaultRequestConfig(config)
-				  .setConnectionManager(connectionManager)
+				  .setConnectionManager(connectionManager).addInterceptorFirst(new ContentLengthHeaderRemover())
 				  .setDefaultCredentialsProvider(credsProvider)
 				  .build();
-	}		
+	}	
+
 }
