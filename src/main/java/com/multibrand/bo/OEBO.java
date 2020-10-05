@@ -82,6 +82,8 @@ import com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.domain.PromoOfferTDSPCharge;
+import com.multibrand.domain.ProspectEFLRequest;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.SegmentedFlagsOutData;
@@ -6848,6 +6850,25 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		
 		EsidAddressResponse esidAddressResponse = oeProxy.getESIDAddress(esidAddressRequest);
 		return esidAddressResponse;
+	}
+	
+	public ProspectEFLResponse getProspectEfl(ProspectEFLRequest prospectEFLRequest) {
+		
+		ProspectEFLResponse prospectEFLResponse = oeService.getProspectEFL(prospectEFLRequest);
+		/*if (StringUtils.isEmpty(promoOfferResponse.getStrErrCode())) {
+			Map<String, Object> offerMap = offerService.getOfferInfoFromSDL(getResidentialOfferCodeList(promoOfferResponse), productOfferRequest.getLangCode());
+			if (offerMap.get(ERROR) != null) {
+				residentialProductOfferResponse.setErrorMessage((String)offerMap.get(ERROR));
+				return residentialProductOfferResponse;
+			} else {
+				residentialProductOfferResponse.setPlans(offerService.constructResidentalOfferPlan(promoOfferResponse, offerMap , productOfferRequest));
+			}
+		} else {
+			logger.error("Error: getResidentialOfferData:" + promoOfferResponse.getStrErrCode());
+			residentialProductOfferResponse.setErrorMessage(promoOfferResponse.getStrErrCode());
+		}*/
+		return prospectEFLResponse;
+	
 	}
 }
 	

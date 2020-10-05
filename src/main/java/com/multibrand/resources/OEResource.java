@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
 import com.multibrand.domain.EsidAddressResponse;
+import com.multibrand.domain.ProspectEFLRequest;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -605,6 +607,21 @@ public class OEResource extends BaseResource {
 		return response;
 	}
 	
+	/**
+	 * get Prospect EFL PDF byte array
+	 * @param productOfferRequest
+	 * @return response
+	 */
+	@POST
+	@Path("getProspectEfl")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getProspectEfl(@RequestBody ProspectEFLRequest prospectEFLRequest) {
+		logger.info("Get Prospect Efl Method. ");
+		ProspectEFLResponse prospectEFLResponse = oeBO.getProspectEfl(prospectEFLRequest);
+			return StringUtils.isEmpty(prospectEFLResponse.getErrMessage()) ?  Response.status(Status.ACCEPTED).entity(prospectEFLResponse).build()
+					:  Response.status(Status.BAD_REQUEST).entity(prospectEFLResponse).build();
+	}
 	/*****************************************************************************************************************************************************************
 	 ******************************************************************************** LEGACY SALES APIs BELOW ****************************************************************
 	 *****************************************************************************************************************************************************************/
