@@ -1637,5 +1637,6 @@ public interface Constants {
 	public static final String ERCOT_ZIP="zip";
 	public static final String ERCOT_COMPANY="companyName";	
 	public static final String NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS="iot/ercot/getByAddress";
-	
+	public static final String CONST_DEFL = "/defl/";
+	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 }

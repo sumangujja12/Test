@@ -83,6 +83,8 @@ import com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.domain.PromoOfferTDSPCharge;
+import com.multibrand.domain.ProspectEFLRequest;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.SegmentedFlagsOutData;
@@ -4348,12 +4350,22 @@ public class OEBO extends OeBoHelper implements Constants{
 					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
 					affiliateOfferDO.setContractTerm(ZERO);
 				}
-
+				
+				String docId = offerDO.getStrEFLDocID();
+				String smartCode = offerDO.getStrEFLSmartCode();
 				String webURL = getWebURL(request.getCompanyCode(),
 						request.getBrandId());
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
-				affiliateOfferDO.setEflURL(webURL + CONST_FILES
-						+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+				if(!StringUtils.isEmpty(docId)) {
+					affiliateOfferDO.setEflURL(webURL + CONST_FILES
+							+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+				}else if(!StringUtils.isEmpty(smartCode)){
+					affiliateOfferDO.setEflURL(webURL + CONST_DEFL
+							+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+				}else {
+					affiliateOfferDO.setEflURL(EFL_URL_ERROR);
+					
+				}
 				affiliateOfferDO.setTosURL(webURL + CONST_FILES
 						+ offerDO.getStrTOSDocID() + CONST_DOT_PDF);
 				affiliateOfferDO.setYraacURL(webURL + CONST_FILES
@@ -6851,6 +6863,25 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		
 		EsidAddressResponse esidAddressResponse = oeProxy.getESIDAddress(esidAddressRequest);
 		return esidAddressResponse;
+	}
+	
+	public ProspectEFLResponse getProspectEfl(ProspectEFLRequest prospectEFLRequest) {
+		
+		ProspectEFLResponse prospectEFLResponse = oeService.getProspectEFL(prospectEFLRequest);
+		/*if (StringUtils.isEmpty(promoOfferResponse.getStrErrCode())) {
+			Map<String, Object> offerMap = offerService.getOfferInfoFromSDL(getResidentialOfferCodeList(promoOfferResponse), productOfferRequest.getLangCode());
+			if (offerMap.get(ERROR) != null) {
+				residentialProductOfferResponse.setErrorMessage((String)offerMap.get(ERROR));
+				return residentialProductOfferResponse;
+			} else {
+				residentialProductOfferResponse.setPlans(offerService.constructResidentalOfferPlan(promoOfferResponse, offerMap , productOfferRequest));
+			}
+		} else {
+			logger.error("Error: getResidentialOfferData:" + promoOfferResponse.getStrErrCode());
+			residentialProductOfferResponse.setErrorMessage(promoOfferResponse.getStrErrCode());
+		}*/
+		return prospectEFLResponse;
+	
 	}
 
 	

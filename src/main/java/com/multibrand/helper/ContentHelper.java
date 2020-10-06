@@ -489,7 +489,13 @@ public class ContentHelper implements Constants {
 		contractOffer.setEFLSmartCode(offerDO.getStrEFLSmartCode());
 		contractOffer.setYRAACSmartCode(offerDO.getStrYRAACSmartCode());
 		contractOffer.setTOSSmartCode(offerDO.getStrTOSSmartCode());
-		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
+		if(!StringUtils.isEmpty(offerDO.getStrEFLDocID())) {
+			contractOffer.setEflURL(getURL(offerDO.getStrEFLDocID()));
+		}else if(!StringUtils.isEmpty(offerDO.getStrEFLSmartCode())){
+			contractOffer.setEflURL(getDeflURL(offerDO.getStrEFLSmartCode()));
+		}else {
+			contractOffer.setEflURL(EFL_URL_ERROR);
+		}
 		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
 		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
 		contractOffer.setPromoCode(offerDO.getStrPromoCode());
@@ -821,5 +827,18 @@ public class ContentHelper implements Constants {
 				snippetMap.put(snippetName, snippetValue);
 			}
 			return snippetMap;
+	}
+	/**
+	 * @author SMarimuthu
+	 * @param documentName
+	 * @return
+	 */
+	private String getDeflURL(String smartCode) {
+		if(StringUtils.isBlank(smartCode)) {
+			return BLANK;
+		}
+		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
+		baseURL = baseURL.trim() +CONST_DEFL+smartCode+CONST_DOT_PDF;
+		return baseURL;
 	}
 }

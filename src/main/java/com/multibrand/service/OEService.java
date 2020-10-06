@@ -34,6 +34,8 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.domain.ProspectEFLRequest;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.UpdateCRMAgentInfoRequest;
@@ -621,5 +623,21 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 		logger.debug("END :: oeService.ercotESIDCheckByAddress(..)");
 		return ercotCheckResponse;
 	}
- 
+		
+
+	public ProspectEFLResponse getProspectEFL(ProspectEFLRequest prospectEFLRequest)   {
+	
+		ProspectEFLResponse  prospectEFLResponse = null;
+		try {
+			OEDomain proxyclient = getOEServiceProxy();
+			prospectEFLResponse= proxyclient.getProspectEFL(prospectEFLRequest);
+			System.out.println("prospectEFLResponse.getPdfByteStream().toString() " + prospectEFLResponse.getPdfByteStream().toString());
+			String pdfString = new String(prospectEFLResponse.getPdfByteStream());
+			System.out.println("pdfString " + pdfString);
+			logger.info("pdfString ", pdfString );
+		} catch (Exception e) {
+			logger.error("Error in method: getProspectEFL");
+		} 
+		return prospectEFLResponse;
+	}
 }

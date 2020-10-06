@@ -181,7 +181,7 @@ public class OfferHelper implements Constants{
 				
 				if (docid.getDoctype().equalsIgnoreCase(EFL)) {
 					smallBusinessOfferDO.setStrEFLDocID(docid.getDocid());
-					smallBusinessOfferDO.setStrEFLDocLink(getDocURlwithID(docid.getDocid()));
+					//smallBusinessOfferDO.setStrEFLDocLink(docid.getStrEflUrl());
 					smallBusinessOfferDO.setStrEFLSmartCode(docid.getSmartcode());
 				}
 				if (docid.getDoctype().equalsIgnoreCase(TEFLF)) {
