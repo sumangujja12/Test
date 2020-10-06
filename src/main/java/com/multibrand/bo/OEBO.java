@@ -4347,12 +4347,22 @@ public class OEBO extends OeBoHelper implements Constants{
 					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
 					affiliateOfferDO.setContractTerm(ZERO);
 				}
-
+				
+				String docId = offerDO.getStrEFLDocID();
+				String smartCode = offerDO.getStrEFLSmartCode();
 				String webURL = getWebURL(request.getCompanyCode(),
 						request.getBrandId());
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
-				affiliateOfferDO.setEflURL(webURL + CONST_FILES
-						+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+				if(!StringUtils.isEmpty(docId)) {
+					affiliateOfferDO.setEflURL(webURL + CONST_FILES
+							+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+				}else if(!StringUtils.isEmpty(smartCode)){
+					affiliateOfferDO.setEflURL(webURL + CONST_DEFL
+							+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+				}else {
+					affiliateOfferDO.setEflURL(EFL_URL_ERROR);
+					
+				}
 				affiliateOfferDO.setTosURL(webURL + CONST_FILES
 						+ offerDO.getStrTOSDocID() + CONST_DOT_PDF);
 				affiliateOfferDO.setYraacURL(webURL + CONST_FILES
