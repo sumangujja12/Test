@@ -132,7 +132,7 @@ gm.content.server.endpoint.url=http://txaixebxindxp01:13180/cd-service/gme/cdws/
 content.rest.server.url=http://txaixebxindxp02:13180/contentService/content/getContentData
 pw.content.server.endpoint=http://ebxblp01:18081/client/v2/content.svc/
 ce.content.server.endpoint=http://txaixebxindxp01:13180/cd-service/cirro/cdws/odata.svc/
-re.content.server.endpoint.url=http://ebxblp01:8081/client/v2/content.svc/
+re.content.server.endpoint.url=https://content.nrg.com/reliant/content/client/v2/content.svc/
 
 #Tempalte Id's
 re.tempalte.id_desktop=111201
