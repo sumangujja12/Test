@@ -1526,6 +1526,7 @@ public class OERequestHandler implements Constants {
 		kbaQuestionRequest.setBrandName(brandName);
 		kbaQuestionRequest.setChannel(CHANNEL);
 		kbaQuestionRequest.setChannelType(CHANNEL_TYPE_AA);
+		kbaQuestionRequest.setAffiliateId(getOEKBAQuestionsRequest.getAffiliateId());
 		String langCode = (StringUtils.equalsIgnoreCase(getOEKBAQuestionsRequest.getLanguageCode(), LANG_ES))? LANG_ES:LANG_EN;
 		kbaQuestionRequest.setLanguageCode(langCode);
 		
