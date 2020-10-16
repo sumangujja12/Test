@@ -1002,7 +1002,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-			<version>21-SNAPSHOT</version>
+			<version>24</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
