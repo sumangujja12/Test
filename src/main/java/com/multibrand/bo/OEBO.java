@@ -6865,7 +6865,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return esidAddressResponse;
 	}
 	
-	public ProspectEFLResponse getProspectEfl(ProspectEFLRequest prospectEFLRequest) {
+	public ProspectEFLResponse getProspectEfl(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
 		
 		return oeService.getProspectEFL(prospectEFLRequest);
 	

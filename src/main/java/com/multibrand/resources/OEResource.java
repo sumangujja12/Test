@@ -49,6 +49,7 @@ import com.multibrand.dto.request.EsidCalendarRequest;
 import com.multibrand.dto.request.GiactBankValidationRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProductOfferRequest;
+import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -83,6 +84,7 @@ import com.multibrand.vo.response.SmallBusinessProductOfferResponse;
 import com.multibrand.vo.response.TdspResponse;
 import com.multibrand.vo.response.TokenizedResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
+import com.sun.jersey.api.core.InjectParam;
 
 /**
  * This Resource is to handle all the Online Enrollment API calls.
@@ -617,9 +619,9 @@ public class OEResource extends BaseResource {
 	 */
 	@GET
 	@Path("getProspectEfl")
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getProspectEfl(@RequestBody ProspectEFLRequest prospectEFLRequest) {
+	//@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON }) 
+	public Response getProspectEfl(@InjectParam com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
 		logger.info("Get Prospect Efl Method. ");
 		ProspectEFLResponse prospectEFLResponse = oeBO.getProspectEfl(prospectEFLRequest);
 			return (prospectEFLResponse.getErrCode().equalsIgnoreCase("00")) ?  Response.status(Status.ACCEPTED).entity(prospectEFLResponse).build()
