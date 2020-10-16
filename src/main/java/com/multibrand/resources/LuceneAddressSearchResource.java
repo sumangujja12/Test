@@ -38,7 +38,7 @@ import com.multibrand.vo.response.lucenesearch.Location;
  */
 
 @Component
-@Path("luceneSearch")
+@Path("public/luceneSearch")
 public class LuceneAddressSearchResource {
 
 	private static Logger logger = LogManager.getLogger(LuceneAddressSearchResource.class);
