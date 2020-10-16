@@ -6864,21 +6864,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 	
 	public ProspectEFLResponse getProspectEfl(ProspectEFLRequest prospectEFLRequest) {
 		
-		ProspectEFLResponse prospectEFLResponse = oeService.getProspectEFL(prospectEFLRequest);
-		/*if (StringUtils.isEmpty(promoOfferResponse.getStrErrCode())) {
-			Map<String, Object> offerMap = offerService.getOfferInfoFromSDL(getResidentialOfferCodeList(promoOfferResponse), productOfferRequest.getLangCode());
-			if (offerMap.get(ERROR) != null) {
-				residentialProductOfferResponse.setErrorMessage((String)offerMap.get(ERROR));
-				return residentialProductOfferResponse;
-			} else {
-				residentialProductOfferResponse.setPlans(offerService.constructResidentalOfferPlan(promoOfferResponse, offerMap , productOfferRequest));
-			}
-		} else {
-			logger.error("Error: getResidentialOfferData:" + promoOfferResponse.getStrErrCode());
-			residentialProductOfferResponse.setErrorMessage(promoOfferResponse.getStrErrCode());
-		}*/
-		return prospectEFLResponse;
-	
+		return oeService.getProspectEFL(prospectEFLRequest);
 	}
 }
 	

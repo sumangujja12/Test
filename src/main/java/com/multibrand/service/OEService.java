@@ -2,6 +2,7 @@ package com.multibrand.service;
 
 import java.rmi.RemoteException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -581,14 +582,10 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 	
 		ProspectEFLResponse  prospectEFLResponse = null;
 		try {
-			OEDomain proxyclient = getOEServiceProxy();
-			prospectEFLResponse= proxyclient.getProspectEFL(prospectEFLRequest);
-			System.out.println("prospectEFLResponse.getPdfByteStream().toString() " + prospectEFLResponse.getPdfByteStream().toString());
-			String pdfString = new String(prospectEFLResponse.getPdfByteStream());
-			System.out.println("pdfString " + pdfString);
-			logger.info("pdfString ", pdfString );
+			prospectEFLResponse= oeDomainPortProxy.getProspectEFL(prospectEFLRequest);
+			logger.debug("getProspectEFL  Response message"+prospectEFLResponse.getErrMessage());
 		} catch (Exception e) {
-			logger.error("Error in method: getProspectEFL");
+			logger.error("Error in method: getProspectEFL"+e.getMessage());
 		} 
 		return prospectEFLResponse;
 	}
