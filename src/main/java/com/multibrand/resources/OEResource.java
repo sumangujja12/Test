@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -614,14 +615,14 @@ public class OEResource extends BaseResource {
 	 * @param productOfferRequest
 	 * @return response
 	 */
-	@POST
+	@GET
 	@Path("getProspectEfl")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response getProspectEfl(@RequestBody ProspectEFLRequest prospectEFLRequest) {
 		logger.info("Get Prospect Efl Method. ");
 		ProspectEFLResponse prospectEFLResponse = oeBO.getProspectEfl(prospectEFLRequest);
-			return StringUtils.isEmpty(prospectEFLResponse.getErrMessage()) ?  Response.status(Status.ACCEPTED).entity(prospectEFLResponse).build()
+			return (prospectEFLResponse.getErrCode().equalsIgnoreCase("00")) ?  Response.status(Status.ACCEPTED).entity(prospectEFLResponse).build()
 					:  Response.status(Status.BAD_REQUEST).entity(prospectEFLResponse).build();
 	}
 	/*****************************************************************************************************************************************************************
