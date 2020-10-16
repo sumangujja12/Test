@@ -1576,4 +1576,9 @@ public interface Constants {
 	 public static final String API_ESID_VALIDATION = "esidValidation";
 	public static final String DATE_FRMT_DB ="dd-MMM-YY";	
 	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
+	
+	public static final String PLAN_TYPE_INDEXED = "Indexed";
+	public static final String TOU = "TOU";
+	public static final String IND = "IND";
+	public static final String RATETYPE_VARIABLE = "00FIX";
 }
