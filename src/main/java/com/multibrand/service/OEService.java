@@ -578,11 +578,20 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 			return response;
 		}
 
-	public ProspectEFLResponse getProspectEFL(ProspectEFLRequest prospectEFLRequest)   {
+	public ProspectEFLResponse getProspectEFL(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest)   {
 	
 		ProspectEFLResponse  prospectEFLResponse = null;
 		try {
-			prospectEFLResponse= oeDomainPortProxy.getProspectEFL(prospectEFLRequest);
+			ProspectEFLRequest prospectEFLSoapRequest = new ProspectEFLRequest();
+			prospectEFLSoapRequest.setCompanyCode(prospectEFLRequest.getCompanyCode());
+			prospectEFLSoapRequest.setEnrollDate(prospectEFLRequest.getEnrollDate());
+			prospectEFLSoapRequest.setEnrollFrom(prospectEFLRequest.getEnrollFrom());
+			prospectEFLSoapRequest.setErrorMsg(prospectEFLRequest.getErrorMsg());
+			prospectEFLSoapRequest.setOfferCode(prospectEFLRequest.getOfferCode());
+			prospectEFLSoapRequest.setNrgBrand(prospectEFLRequest.getNrgBrand());
+			prospectEFLSoapRequest.setSmartCode(prospectEFLRequest.getSmartCode());
+			
+			prospectEFLResponse= oeDomainPortProxy.getProspectEFL(prospectEFLSoapRequest);
 			logger.debug("getProspectEFL  Response message"+prospectEFLResponse.getErrMessage());
 		} catch (Exception e) {
 			logger.error("Error in method: getProspectEFL"+e.getMessage());
