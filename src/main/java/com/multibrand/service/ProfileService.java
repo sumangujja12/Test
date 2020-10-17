@@ -242,6 +242,7 @@ public class ProfileService extends BaseAbstractService {
 				if (EFL.equalsIgnoreCase(docType)) {
 					offerDO.setStrEFLDocID(zesDocid.getDocId());
 					offerDO.setStrEFLSmartCode(zesDocid.getSmartCode());
+					offerDO.setStrEflUrl(CommonUtil.getDynamicEflUrl(zesDocid.getDocId(), zesDocid.getSmartCode()));
 				} else if (TOS.equalsIgnoreCase(docType)) {
 					offerDO.setStrTOSDocID(zesDocid.getDocId());
 					offerDO.setStrTOSSmartCode(zesDocid.getSmartCode());
@@ -1120,6 +1121,7 @@ public class ProfileService extends BaseAbstractService {
 			if (EFL.equalsIgnoreCase(docType)) {
 				offerDO.setStrEFLDocID(zesDocid.getDocId());
 				offerDO.setStrEFLSmartCode(zesDocid.getSmartCode());
+				offerDO.setStrEflUrl(CommonUtil.getDynamicEflUrl(zesDocid.getDocId(), zesDocid.getSmartCode()));
 			} else if (TOS.equalsIgnoreCase(docType)) {
 				offerDO.setStrTOSDocID(zesDocid.getDocId());
 				offerDO.setStrTOSSmartCode(zesDocid.getSmartCode());
