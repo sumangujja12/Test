@@ -51,6 +51,8 @@ public class ContractDO {
     
     private java.lang.String yraacSmartCode="";
     
+    private java.lang.String strEflUrl="";
+    
     private String strTouFlag;
     
     private String strSourceMoveOutDate; 
@@ -263,6 +265,14 @@ public class ContractDO {
 	 */
 	public void setStrSourceMoveOutDate(String strSourceMoveOutDate) {
 		this.strSourceMoveOutDate = strSourceMoveOutDate;
+	}
+
+	public java.lang.String getStrEflUrl() {
+		return strEflUrl;
+	}
+
+	public void setStrEflUrl(java.lang.String strEflUrl) {
+		this.strEflUrl = strEflUrl;
 	}
 
 	

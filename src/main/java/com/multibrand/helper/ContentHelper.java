@@ -838,7 +838,7 @@ public class ContentHelper implements Constants {
 			return BLANK;
 		}
 		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
-		baseURL = baseURL.trim() +CONST_DEFL+smartCode+CONST_DOT_PDF;
+		baseURL = baseURL.trim() +SMARTCODE_URL_SUB_STR+smartCode+CONST_DOT_PDF;
 		return baseURL;
 	}
 }

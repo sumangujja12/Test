@@ -1576,6 +1576,8 @@ public interface Constants {
 	 public static final String API_ESID_VALIDATION = "esidValidation";
 	public static final String DATE_FRMT_DB ="dd-MMM-YY";	
 	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
-	public static final String CONST_DEFL = "/defl/";
+	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
+	public static final String DOCID_URL_SUB_STR = "/files/";
+	
 }

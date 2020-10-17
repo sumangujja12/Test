@@ -2220,4 +2220,20 @@ public class CommonUtil implements Constants {
 	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
 	}	
 	
+	public static String getDynamicEflUrl(String docId,String smartCode) {
+		StringBuilder eflUrlBuilder = new StringBuilder();
+		if(!StringUtils.isEmpty(docId)) {
+			eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
+			.append(docId)
+			.append(Constants.CONST_DOT_PDF);
+		}else if(!StringUtils.isEmpty(smartCode)){
+			eflUrlBuilder.append(Constants.SMARTCODE_URL_SUB_STR)
+			.append(smartCode)
+			.append(Constants.CONST_DOT_PDF);
+		}
+		String eflUrl = eflUrlBuilder.toString();
+		logger.debug("Invalid CA/BP - all zeros in PaymentRequest");
+		return eflUrl;
+	}
+	
 }

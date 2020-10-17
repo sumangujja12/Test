@@ -1055,6 +1055,8 @@ public class OEBO extends OeBoHelper implements Constants{
 							.getStrProductCode());
 					offerDO.setStrProductPriceCode(promoOfferOutData
 							.getStrProductPriceCode());
+					offerDO.setStrEflUrl(CommonUtil.getDynamicEflUrl(promoOfferOutData.getStrEFLDocID(), promoOfferOutData.getStrEFLSmartCode()));
+					
 					// setting Environment data
 					if (null != promoOfferResponse
 							.getCampEnvironmentDetailsOuts()) {
@@ -4355,10 +4357,10 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
 				if(!StringUtils.isEmpty(docId)) {
 					affiliateOfferDO.setEflURL(webURL + CONST_FILES
-							+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+							+ docId + CONST_DOT_PDF);
 				}else if(!StringUtils.isEmpty(smartCode)){
-					affiliateOfferDO.setEflURL(webURL + CONST_DEFL
-							+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
+					affiliateOfferDO.setEflURL(webURL + SMARTCODE_URL_SUB_STR
+							+ smartCode + CONST_DOT_PDF);
 				}else {
 					affiliateOfferDO.setEflURL(EFL_URL_ERROR);
 					
