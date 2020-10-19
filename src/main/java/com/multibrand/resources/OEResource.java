@@ -624,8 +624,7 @@ public class OEResource extends BaseResource {
 	public Response getProspectEfl(@InjectParam com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
 		logger.info("Get Prospect Efl Method. ");
 		ProspectEFLResponse prospectEFLResponse = oeBO.getProspectEfl(prospectEFLRequest);
-			return (prospectEFLResponse.getErrCode().equalsIgnoreCase("00")) ?  Response.status(Status.ACCEPTED).entity(prospectEFLResponse).build()
-					:  Response.status(Status.BAD_REQUEST).entity(prospectEFLResponse).build();
+			return (Response.status(Status.ACCEPTED).entity(prospectEFLResponse).build());
 	}
 	/*****************************************************************************************************************************************************************
 	 ******************************************************************************** LEGACY SALES APIs BELOW ****************************************************************
