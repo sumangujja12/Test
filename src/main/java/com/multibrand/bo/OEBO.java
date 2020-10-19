@@ -1254,7 +1254,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			}
 			
 			if(promoOfferOutDataAvgPriceMapEntry.getKey().equals(PROD_TYPE)){  
-				offerPriceDO.setPriceTypeValue(promoOfferOutDataAvgPriceMapEntry.getValue().getString1());
+				offerPriceDO.setProdTypeString(promoOfferOutDataAvgPriceMapEntry.getValue().getString1());
 			}
 			
 			offerPriceDO.setStartDate(promoOfferOutDataAvgPriceMapEntry
@@ -4344,10 +4344,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				int intContractTerm = Integer.parseInt(contractTerm);
 
 				if (intContractTerm > 1) {
-					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
 					affiliateOfferDO.setContractTerm(contractTerm);
 				} else {
-					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
 					affiliateOfferDO.setContractTerm(ZERO);
 				}
 
@@ -4640,17 +4638,17 @@ public class OEBO extends OeBoHelper implements Constants{
 	}
 	
 	private String getProdType(OfferDO offerDO){
-		return getProdTypeValue(offerDO,PROD_TYPE);
+		return getProdTypeString(offerDO,PROD_TYPE);
 	}
 	
 	/*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
-	private String getProdTypeValue(OfferDO offerDO, String key){
+	private String getProdTypeString(OfferDO offerDO, String key){
 		String avgPrice = StringUtils.EMPTY;
 		List<OfferPriceWraperDO> offerPriceList =  offerDO.getAvgPriceMap();
 		
 		for(OfferPriceWraperDO offerPrice :offerPriceList ) {
 			if(StringUtils.equalsIgnoreCase(offerPrice.getKey(), key)) {
-				avgPrice = offerPrice.getValue().getPriceTypeValue();
+				avgPrice = offerPrice.getValue().getProdTypeString();
 				break;
 			}
 		}
