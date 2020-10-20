@@ -1642,4 +1642,8 @@ public interface Constants {
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
 	
+	public static final String PLAN_TYPE_INDEXED = "Indexed";
+	public static final String TOU = "TOU";
+	public static final String IND = "IND";
+	public static final String RATETYPE_VARIABLE = "00FIX";
 }
