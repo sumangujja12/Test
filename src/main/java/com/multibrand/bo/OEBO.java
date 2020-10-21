@@ -1254,7 +1254,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			}
 			
 			if(promoOfferOutDataAvgPriceMapEntry.getKey().equals(PROD_TYPE)){  
-				offerPriceDO.setProdTypeString(promoOfferOutDataAvgPriceMapEntry.getValue().getString1());
+				offerPriceDO.setPriceTypeValue(promoOfferOutDataAvgPriceMapEntry.getValue().getString1());
 			}
 			
 			offerPriceDO.setStartDate(promoOfferOutDataAvgPriceMapEntry
@@ -4648,7 +4648,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 		for(OfferPriceWraperDO offerPrice :offerPriceList ) {
 			if(StringUtils.equalsIgnoreCase(offerPrice.getKey(), key)) {
-				avgPrice = offerPrice.getValue().getProdTypeString();
+				avgPrice = offerPrice.getValue().getPriceTypeValue();
 				break;
 			}
 		}
