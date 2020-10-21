@@ -46,6 +46,7 @@ public class ValidationRequestHandler implements Constants {
 		
 		validatePosIdKBARequest.setBrandName(brandName);
 		validatePosIdKBARequest.setChannel(CALLER_WEB);
+		validatePosIdKBARequest.setAffiliateId(performPosIdBpRequest.getAffiliateId());
 		
 		validatePosIdKBARequest.setChannelType(StringUtils.equalsIgnoreCase(performPosIdBpRequest.getChannelType(),CHANNEL_TYPE_AA) ? CHANNEL_TYPE_AA : EMPTY );
 		String langCode = (StringUtils.equalsIgnoreCase(performPosIdBpRequest.getLanguageCode(), EN_US)? E:S);
