@@ -320,15 +320,6 @@ public interface DBConstants {
 	public static final String DB_CONTRACT_ACCOUNT_NUMBER ="CONTRACT_ACCOUNT_NUMBER";
 	public static final String DB_COMPANY_CODE ="COMPANY_CODE";
 	
-	public static final String DB_OWNERSHIP_FLG="OWNERSHIP_FLG";
-	public static final String DB_SECURITY_ELIGIBLE_FLG="SECURITY_ELIGIBLE_FLG";
-	public static final String DB_CASH_PAYMENTS_FLG="CASH_PAYMENTS_FLG";
-	public static final String DB_CONTR_ELAPSED_DAYS="CONTR_ELAPSED_DAYS";
-	public static final String DB_RELIANT_APP_USER_FLG="RELIANT_APP_USER_FLG";
-	public static final String DB_SECURITY_ACTIVE="SECURITY_ACTIVE";
-	
-	public static final String DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase";
-	
     public static final String in_invoice_no = "in_invoice_no";
     public static final String in_contract_id = "in_contract_id";
     public static final String in_current_ar_amount = "in_current_ar_amount";
@@ -416,4 +407,15 @@ public interface DBConstants {
 
 	public static final String GMD_PERSON_SEQ = "GME_CHOICE.GMD_PERSON_ID_SEQ";
 	public static final String GMD_TRACKING_SEQ = "GME_CHOICE.GMD_TRACKING_NUMBER_SEQ";
+	
+
+	public static final String DB_OWNERSHIP_FLG="OWNERSHIP_FLG";
+	public static final String DB_SECURITY_ELIGIBLE_FLG="SECURITY_ELIGIBLE_FLG";
+	public static final String DB_CASH_PAYMENTS_FLG="CASH_PAYMENTS_FLG";
+	public static final String DB_CONTR_ELAPSED_DAYS="CONTR_ELAPSED_DAYS";
+	public static final String DB_RELIANT_APP_USER_FLG="RELIANT_APP_USER_FLG";
+	public static final String DB_SECURITY_ACTIVE="SECURITY_ACTIVE";
+	public static final String DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase";
+
+
 }
