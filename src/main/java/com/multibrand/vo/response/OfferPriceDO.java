@@ -12,7 +12,6 @@ public class OfferPriceDO
   private String price;
   private String offerPriceCode;
   private String season;
-  private String prodTypeString;
 
   public String getPriceType()
   {
@@ -59,12 +58,5 @@ public class OfferPriceDO
   public void setOfferPriceCode(String offerPriceCode) {
 		this.offerPriceCode = offerPriceCode;
 	}
-public String getProdTypeString() {
-	return prodTypeString;
-}
-public void setProdTypeString(String prodTypeString) {
-	this.prodTypeString = prodTypeString;
-}
-  
-  
+ 
 }
