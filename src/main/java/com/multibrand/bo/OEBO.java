@@ -982,7 +982,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug("OEBO.constructOffers() promoOfferOutDataArr.length:"
 						+ promoOfferOutDataArr.length);
 				for (PromoOfferOutData promoOfferOutData : promoOfferOutDataArr) {
-					List<OfferPriceWraperDO> offerPriceDOList = populatePriceInfo(promoOfferOutData);
+					List<OfferPriceWraperDO> offerPriceDOList = populatePriceInfo(promoOfferOutData,oeSignupVO.getCompanyCode());
 					OfferDO offerDO = new OfferDO();
 					offerDO.setStrOfferCode(promoOfferOutData.getStrOfferCode());
 					if (null != relevantCategoryMap) {
@@ -1202,7 +1202,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 * @return List<OfferPriceWraperDO>
 	 */
 	private List<OfferPriceWraperDO> populatePriceInfo(
-			PromoOfferOutData matchingCCSOffer) {
+			PromoOfferOutData matchingCCSOffer,String companyCode) {
 		logger.debug("OEBO.populatePriceInfo() start");
 		PromoOfferOutDataAvgPriceMapEntry[] priceArr = matchingCCSOffer
 				.getAvgPriceMap();
@@ -1253,7 +1253,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 			}
 			
-			if(promoOfferOutDataAvgPriceMapEntry.getKey().equals(PROD_TYPE)){  
+			if(StringUtils.equals(companyCode, COMPANY_CODE_RELIANT) && promoOfferOutDataAvgPriceMapEntry.getKey().equals(PROD_TYPE)){  
 				offerPriceDO.setPriceTypeValue(promoOfferOutDataAvgPriceMapEntry.getValue().getString1());
 			}
 			
@@ -4344,20 +4344,23 @@ public class OEBO extends OeBoHelper implements Constants{
 				int intContractTerm = Integer.parseInt(contractTerm);
 
 				if (intContractTerm > 1) {
+					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
 					affiliateOfferDO.setContractTerm(contractTerm);
 				} else {
+					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
 					affiliateOfferDO.setContractTerm(ZERO);
 				}
 
-                String prodType = getProdType(offerDO);
-				
-				/*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
+                /*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
+				if(StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_RELIANT)){
+				String prodType = getProdType(offerDO);
 				if (StringUtils.contains(prodType,Constants.TOU) || StringUtils.contains(prodType,Constants.IND)) {
 					affiliateOfferDO.setPlanType(PLAN_TYPE_INDEXED);
 				}else if (StringUtils.startsWithIgnoreCase(prodType,Constants.RATETYPE_VARIABLE)) {
 					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
 				}else {
 					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
+				}
 				}
 				/*END | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
 				
