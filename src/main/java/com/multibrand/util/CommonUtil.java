@@ -2209,6 +2209,7 @@ public class CommonUtil implements Constants {
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
 
+
 		} 
 
 	public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
@@ -2227,7 +2228,7 @@ public class CommonUtil implements Constants {
 	public static String getTagValue(String xml, String tagName){
 	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
 	}	
-
+		
 	public static String substituteVariables(String template, Map<String, String> variables) {
 		Pattern pattern = Pattern.compile("\\$\\{|\\[(.+?)\\]|\\}");
 		Matcher matcher = pattern.matcher(template);
@@ -2295,6 +2296,7 @@ public class CommonUtil implements Constants {
 		return headers;
 	}
 
+
 	public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
 			String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource) {
 		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
@@ -2306,16 +2308,22 @@ public class CommonUtil implements Constants {
 		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
 		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
 
-		linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "");
+		
 		if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
 			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
 			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, PLAN_OFFER_FUNCTION);
+			
 			if (!StringUtils.isNotBlank(errorMessage)) {
 				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER);
 				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "User Retrieved Plan Offer");
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId + "_" + "User Retrieved Plan Offer");
+
 			} else {
 				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER_FAIL);
 				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId + "_" + errorMessage);
 			}
 		} else {
 			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
@@ -2323,9 +2331,13 @@ public class CommonUtil implements Constants {
 			if (!StringUtils.isNotBlank(errorMessage)) {
 				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
 				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, SWAP_SUBMIT_SUCESS);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId + "_" + SWAP_SUBMIT_SUCESS);
 			} else {
 				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
 				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId + "_" + errorMessage);
 			}
 		}
 
@@ -2333,7 +2345,9 @@ public class CommonUtil implements Constants {
 		linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, osType);
 		linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, contractId);
 		linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, bpNumber);
+
 		return linkedHashMap;
 	}
 	
+
 }

@@ -101,7 +101,8 @@ public class SwapBO extends BaseAbstractService implements Constants {
 		String serviceCity ="";
 		String serviceState ="";
 		String serviceZipCode ="";
-		
+		 Map<String, String>  adobeValueMap = null;
+		 String templateReportSuite ="";
 		try {
 
 			SwapRequest swapRequest = new SwapRequest();
@@ -138,8 +139,8 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			swapRequest.setClient(request.getClientSource()); //CHG0020873 
 			response = swapService.submitSwap(swapRequest, request.getCompanyCode(), sessionId);
 			JavaBeanUtil.copy(response, submitSwapResponse);
-			String templateReportSuite = envMessageReader.getMessage(TEMPLATE_REPORTSUITE);
-			 Map<String, String>  adobeValueMap = null;
+			templateReportSuite = envMessageReader.getMessage(TEMPLATE_REPORTSUITE);
+			
 			if(submitSwapResponse.getErrorCode()!=null && submitSwapResponse.getErrorCode().equalsIgnoreCase(MSG_ERR_SUBMIT_SWAP))
 			{
 				logger.info(" subswapRequestmitSwap Error code is  ===> "+response.getErrorCode());
@@ -296,6 +297,10 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			submitSwapResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			submitSwapResponse
 					.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
+					request.getBpNumber(), request.getOsType(), templateReportSuite,
+					submitSwapResponse.getResultCode(),"");
+			callAdodeAnalytics(adobeValueMap);
 			throw new OAMException(200, e.getMessage(), submitSwapResponse);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
