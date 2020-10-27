@@ -1002,9 +1002,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-oe-domain</artifactId>
-
 			<version>23-SNAPSHOT</version>
-
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
@@ -1041,7 +1039,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-swap-domain</artifactId>
-			<version>7-SNAPSHOT</version>
+			<version>7</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
@@ -1053,7 +1051,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-validation-domain</artifactId>
-			<version>10-SNAPSHOT</version>
+			<version>10</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 
