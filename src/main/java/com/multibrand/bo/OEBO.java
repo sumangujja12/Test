@@ -4352,19 +4352,11 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				String docId = offerDO.getStrEFLDocID();
 				String smartCode = offerDO.getStrEFLSmartCode();
+				String eflUri = CommonUtil.getDynamicEflUrl(docId, smartCode);
 				String webURL = getWebURL(request.getCompanyCode(),
 						request.getBrandId());
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
-				if(!StringUtils.isEmpty(docId)) {
-					affiliateOfferDO.setEflURL(webURL + CONST_FILES
-							+ docId + CONST_DOT_PDF);
-				}else if(!StringUtils.isEmpty(smartCode)){
-					affiliateOfferDO.setEflURL(webURL + SMARTCODE_URL_SUB_STR
-							+ smartCode + CONST_DOT_PDF);
-				}else {
-					affiliateOfferDO.setEflURL(EFL_URL_ERROR);
-					
-				}
+				affiliateOfferDO.setEflURL(webURL + eflUri);
 				affiliateOfferDO.setTosURL(webURL + CONST_FILES
 						+ offerDO.getStrTOSDocID() + CONST_DOT_PDF);
 				affiliateOfferDO.setYraacURL(webURL + CONST_FILES

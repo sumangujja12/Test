@@ -1551,6 +1551,16 @@ public interface Constants {
 	
 	
 	
+	
+
+	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
+	
+	public static final String CONST_GUID= "guId";
+	
+	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
+
+	
+	
 	public static final String XOOM_NNP_EXTERNAL_ID_EN = "XOOM.NNP.UPDATE.CONFIRMATION.EN_US";
 	public static final String XOOM_NNP_EXTERNAL_ID_ES = "XOOM.NNP.UPDATE.CONFIRMATION.ES_US";
 	public static final String XOOM_NNP_TEMPLATE_ID = "HTML";
@@ -1561,21 +1571,72 @@ public interface Constants {
 	public static final String XOOM_NNP_DELIVERY_METHOD = "BILL_DELIVERY_METHOD";
 	public static final String XOOM_NNP_DELIVERY_LOCATION = "DELIVERY_LOCATION";
 
-	public static final String TOGGLZ_ENROLLMENT_FRAUDULENT_CHECK = "salesapi.enrollment.fraudulent.check";
-	
-	public static final String CONST_GUID= "guId";
-	
-	public static final String AFFILIATE_ID_COMPAREPOWER="232793";
+
 	public static final String AFFILIATE_ID_DSI="270519";
-	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";	
+	public static final String TOGGLZ_ENROLLMENT_MADATORY_CALL_CHECK = "salesapi.enrollment.mandatorycall.check";
+	public static final String TEST_DATA_DB = "reliantTestData";
+	public static final String DATA_MOCKUP_HEADER_NAME ="UseDataMockup";
+
+
+	
 	public static final String CONST_USE_MOCK_DATA = "usemockdata";
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
+
+	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
+
+	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
+
+	
+	public static final String TEMPLATE_REPORTSUITE = "template.url.parameter.reportsuite";
+	public static final String BRAND_NAME ="GME";
+	public static final String PARAMETER_VARIABLE_REPORTSUITE ="ReportSuite";
+	public static final String PARAMETER_VARIABLE_BRAND ="BRAND";
+	public static final String PARAMETER_VARIABLE_CANUMBER ="CANumber";
+	public static final String PARAMETER_VARIABLE_COMPANYCODE ="CompanyCode";
+	public static final String PARAMETER_VARIABLE_MSGID ="MsgId";
+	public static final String PARAMETER_VARIABLE_ACTIONDATE ="ActionDate";
+	public static final String PARAMETER_VARIABLE_MESSAGETYPE ="MessageType";
+	public static final String PARAMETER_VARIABLE_MESSAGECAT ="MessageCat";
+	public static final String PARAMETER_VARIABLE_MESSAGE ="Message";
+	public static final String PARAMETER_VARIABLE_MESSAGESTATUS ="MsgStatus";
+	public static final String PARAMETER_VARIABLE_LANGUAGE ="Language";
+	public static final String PARAMETER_VARIABLE_OSTYPE = "OSType";
+	public static final String PARAMETER_VARIABLE_CONTRACTID = "ContractId";
+	public static final String PARAMETER_VARIABLE_BPNUMBER ="BPNumber";
+	public static final String PARAMETER_VARIABLE_ERRORMESSAGE ="ErrorMessage";
+	public static final String CURRENT_DATE_FMT="MMddyyyy";
+	public static final String IOT_POST_URL = "iot.post.url";
+	public static final String HEADER_CONTENT_TYPE_KEY = "content-type";
+	public static final String HEADER_CONTENT_TYPE_VALUE_JSON = "application/json";
+	public static final String HEADER_CONTENT_TYPE_VALUE_URL_ENCODED = "application/x-www-form-urlencoded";
+	public static final String HTTP_METHOD_POST = "POST";
+	public static final String HTTP_METHOD_GET = "GET";
+	public static final String ADOBE_MESSAGE_TYPE = "Submit";
+	public static final String ADOBE_MESSAGE_FUNCTION = "SwapSubmit";
+	public static final String SWAP_SUBMIT_SUCESS = "SWAP_SUBMITTED";
+	public static final String ADOBE_ANALYTIC_TEMPLATE_URL ="adobe.analytic.template.url";
+	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_ONE ="template.url.query.list.parameter.one";
+	public static final String TEMPLATE_URL_QUERY_LIST_PARAMETER_TWO ="template.url.query.list.parameter.two";
+	public static final String SWAP_SUBMIT_FAIL = "SWAP_SUBMIT_FAIL";
+	public static final String GET_PLAN_OFFER_FAIL = "GET_PLAN_OFFER_FAIL";
+	public static final String GET_PLAN_OFFER = "GET_PLAN_OFFER";
+	public static final String ADOBE_MESSAGE_PLAN_TYPE = "PLAN_OFFER";
+	public static final String PLAN_OFFER_FUNCTION = "SEARCH_PLAN";
+	public static final String PLAN_OFFER_MESSAGE_TYPE = "PLAN_OFFER";
+
+
 	
 	 public static final String API_ESID_VALIDATION = "esidValidation";
-	public static final String DATE_FRMT_DB ="dd-MMM-YY";	
-	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
+
+	public static final String ERCOT_CHECK_BY_ADDRESS_IOT_CALL_URL="ws.rest.iot.ercot.check.by.address.url";
+	public static final String ERCOT_STREET="street";
+	public static final String ERCOT_CITY="city";
+	public static final String ERCOT_STATE="state";
+	public static final String ERCOT_ZIP="zip";
+	public static final String ERCOT_COMPANY="companyName";	
+	public static final String NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS="iot/ercot/getByAddress";
 	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
