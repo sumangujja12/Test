@@ -1040,7 +1040,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-swap-domain</artifactId>
-			<version>2</version>
+			<version>7</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>
