@@ -6887,8 +6887,6 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		EsidAddressResponse esidAddressResponse = oeProxy.getESIDAddress(esidAddressRequest);
 		return esidAddressResponse;
 	}
-
-		}
 	
 	/**
 	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
