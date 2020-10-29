@@ -2224,7 +2224,7 @@ public class CommonUtil implements Constants {
 		StringBuilder eflUrlBuilder = new StringBuilder();
 		if(!StringUtils.isEmpty(docId)) {
 			//eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
-			eflUrlBuilder.append("DOCID")
+			eflUrlBuilder.append("/DOCID/")
 			.append(docId)
 			.append(Constants.CONST_DOT_PDF);
 		}else if(!StringUtils.isEmpty(smartCode)){
