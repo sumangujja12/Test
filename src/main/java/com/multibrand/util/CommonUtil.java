@@ -2233,7 +2233,7 @@ public class CommonUtil implements Constants {
 			.append(Constants.CONST_DOT_PDF);
 		}
 		String eflUrl = eflUrlBuilder.toString();
-		logger.debug("Invalid CA/BP - all zeros in PaymentRequest");
+		logger.debug("Efl URL returned from getDynamicEflUrl is  "+eflUrl);
 		return eflUrl;
 	}
 	
