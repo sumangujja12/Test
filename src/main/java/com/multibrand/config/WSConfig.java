@@ -38,6 +38,9 @@ public class WSConfig {
 	
 	@Value("${CCS_GMD_PRICE_SPIKE_ALERT}")
 	private String gmdPriceSpikeEndPoint;
+	
+	@Value("${CCS_GMD_MD_STMT}")
+	private String gmdMdStmtEndPoint;
 		
 	@Value("${CRM_KBA_MATRIX}")
 	private String kbaMatrixUpdate;	
@@ -55,7 +58,7 @@ public class WSConfig {
 	@Bean
 	Jaxb2Marshaller jaxb2Marshaller() {
 		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmdstatement","com.nrg.cxfstubs.kbamatrix","com.nrg.cxfstubs.gmdmoveout","com.nrg.cxfstubs.gmdpricespike");
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmdstatement","com.nrg.cxfstubs.kbamatrix","com.nrg.cxfstubs.gmdmoveout","com.nrg.cxfstubs.gmdpricespike","com.nrg.cxfstubs.md.gmdstatement");
 		return jaxb2Marshaller;
 	}
 
@@ -109,7 +112,19 @@ public class WSConfig {
         
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
-	}	
+	}
+	@Bean(name = "webServiceTemplateForMDStmt")
+	public WebServiceTemplate webServiceTemplateForMDStmt() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		webServiceTemplate.setMarshaller(jaxb2Marshaller());
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller());
+		webServiceTemplate.setDefaultUri(gmdMdStmtEndPoint);
+		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
+		webServiceTemplate.setInterceptors(clientInterceptors);
+        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+		return webServiceTemplate;
+	}
+	
 
 	@Bean
 	public HttpComponentsMessageSender httpComponentsMessageSender() {

@@ -12,10 +12,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
+
+import com.multibrand.dto.request.GmdMdStmtRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -26,6 +29,7 @@ import com.multibrand.vo.response.gmd.Current;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDReturnCharge;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.HourlyPrice;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
@@ -50,11 +54,14 @@ import com.nrg.cxfstubs.gmdpricespike.ZTTGMDZONECA;
 import com.nrg.cxfstubs.gmdpricespike.ZTTZONEPROJPRICE;
 import com.nrg.cxfstubs.gmdpricespike.ZZSGMDZONECA;
 import com.nrg.cxfstubs.gmdpricespike.ZZSZONEPROJPRICE;
+import com.nrg.cxfstubs.gmdstatement.ObjectFactory;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmtResponse;
 import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
+import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmtResponse;
+import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmt_Type;
 
 
 /**
@@ -82,6 +89,10 @@ public class GMDService extends BaseAbstractService {
 	@Autowired
 	@Qualifier("webServiceTemplateForGMDPriceSpike")
 	private WebServiceTemplate webServiceTemplateForGMDPriceSpike;
+	
+	@Autowired
+	@Qualifier("webServiceTemplateForMDStmt")
+	private WebServiceTemplate webServiceTemplateForMDStmt;
 
 
 	/**
@@ -647,5 +658,24 @@ public class GMDService extends BaseAbstractService {
 		priceSpikeAlertResponse.setSpikeProjectedPrice(spikeProjectedPrice);
 		priceSpikeAlertResponse.setZoneCa(zoneCa);
 		return priceSpikeAlertResponse;
+	}
+	
+	public GmdMdStmtResponse getGmdMdStmt(GmdMdStmtRequest gmdMdStmtRequest) {
+		com.nrg.cxfstubs.md.gmdstatement.ObjectFactory factory = new com.nrg.cxfstubs.md.gmdstatement.ObjectFactory();
+		ZEIsuGetGmdMdStmt_Type  wsRequest = factory.createZEIsuGetGmdMdStmt_Type();
+		wsRequest.setCompCode(gmdMdStmtRequest.getCompanyCode());
+		wsRequest.setContAcct(gmdMdStmtRequest.getContractAccountNumber());
+		wsRequest.setEsid(gmdMdStmtRequest.getEsiId());
+		wsRequest.setFromDay(gmdMdStmtRequest.getFromDay());
+		wsRequest.setFromMonth(gmdMdStmtRequest.getFromMonth());
+		wsRequest.setFromYear(gmdMdStmtRequest.getFromYear());
+		wsRequest.setStmtType(gmdMdStmtRequest.getStmtType());
+		wsRequest.setToDay(gmdMdStmtRequest.getToDay());
+		wsRequest.setToMonth(gmdMdStmtRequest.getToMonth());
+		wsRequest.setToYear(gmdMdStmtRequest.getToYear());
+		
+		ZEIsuGetGmdMdStmtResponse response = (ZEIsuGetGmdMdStmtResponse) webServiceTemplateForMDStmt.marshalSendAndReceive(wsRequest);
+		System.out.println(ToStringBuilder.reflectionToString(response));
+		return null;
 	}
 }

@@ -23,6 +23,7 @@ import com.multibrand.bo.OEBO;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
 import com.multibrand.dto.request.GMDEsidCalendarRequest;
+import com.multibrand.dto.request.GmdMdStmtRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
@@ -33,6 +34,7 @@ import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
@@ -242,7 +244,16 @@ public class GMDResource extends BaseResource {
 	}	
 	
 	
-	
+	@POST
+	@Path(API_GET_GMD_MD_STMT_DATA)
+	@Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getGmdMdStmtData(GmdMdStmtRequest request) {
+		GmdMdStmtResponse gmdMdStmtResponse = new GmdMdStmtResponse();
+		gmdMdStmtResponse = gmdBO.getGmdMdStmtData(request);
+		Response response = Response.status(Response.Status.OK).entity(gmdMdStmtResponse).build();
+		return response;
+	}	
 	
 		
 }	
