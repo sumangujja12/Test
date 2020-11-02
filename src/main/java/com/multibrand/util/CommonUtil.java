@@ -2341,10 +2341,10 @@ public class CommonUtil implements Constants {
 	public static String getDynamicEflUrl(String docId,String smartCode) {
 		StringBuilder eflUrlBuilder = new StringBuilder();
 		if(!StringUtils.isEmpty(docId)) {
-			//eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
-			eflUrlBuilder.append("/DOCID/")
+			eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
 			.append(docId)
-			.append(Constants.CONST_DOT_PDF);
+			.append(Constants.CONST_DOT_PDF)
+			.append("?project=DYN_EFL");
 		}else if(!StringUtils.isEmpty(smartCode)){
 			eflUrlBuilder.append(Constants.SMARTCODE_URL_SUB_STR)
 			.append(smartCode)
