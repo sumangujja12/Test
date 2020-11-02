@@ -125,7 +125,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			else
 				swapRequest.setOfferTime(sdfTime.format(Calendar.getInstance().getTime()));
 			swapRequest.setPromoCode(request.getPromoCode());
-			String rOEffectiveDate = setROEffectiveDate(request.getCurrentContractEndDate(), request.getLanguageCode(), request.getBrandName(),request.getCampaignCode());
+			String rOEffectiveDate = setROEffectiveDate(request.getCurrentContractEndDate(), request.getLanguageCode(), request.getBrandName(),request.getCampaignCode(), request.getCompanyCode());
 			swapRequest.setRoEffectiveDate(rOEffectiveDate);
 			swapRequest.setStrCompanyCode(request.getCompanyCode());
 			swapRequest.setClient(request.getClientSource()); //CHG0020873 
@@ -358,7 +358,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 	 * @return
 	 */
 	@SuppressWarnings("deprecation")
-	public String setROEffectiveDate(String contractEndDate, String locale, String brandName, String campaignCode) {
+	public String setROEffectiveDate(String contractEndDate, String locale, String brandName, String campaignCode, String companyCode) {
 		logger.info("SwapHelper:setROEffectiveDate() start");
 		java.util.Date today = new java.util.Date();
 		String strRequestDate = null;
@@ -405,7 +405,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 					}
 				}
 				
-				if ( campaignCode != null && campaignCode.endsWith("7")) {
+				if ( StringUtils.equalsIgnoreCase(companyCode, GME_COMPANY_CODE) && campaignCode != null && campaignCode.endsWith("7")) {
 					swapROEffectiveDate = enSdf.format(today);
 				}
 			}
