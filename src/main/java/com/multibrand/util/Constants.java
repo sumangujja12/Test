@@ -1488,6 +1488,7 @@ public interface Constants {
    public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
    public static final String API_CREATE_GMD_MOVE_OUT = "createMoveOut";
    public static final String API_GET_GMD_PRICE_SPIKE_ALERT_DATA = "getGmdPriceSpikeAlertData";
+   public static final String API_GET_GMD_MD_STMT_DATA = "getGmdMdStmtData";
    
    public static final String API_KBA_MATRIX_UPDATE = "protected/kbaMatriUpdate";
    
@@ -1499,7 +1500,7 @@ public interface Constants {
    public static final String GMD_USAGE_TRUE_UP = "Usage True-up";
    
    public static final String SOLAR_RECS = "Solar Recs";
-   public static final String FIXED_RATE_THIRD_PARTY_CHRG = "Fixed Rate Third Party Charges";
+   public static final String FIXED_RATE_THIRD_PARTY_CHRG = "Fixed ERCOT Charges";
    public static final String ANCILLARY_SERVICES = "Ancillary Services";
    public static final String ELECTRICITY_USAGE = "Electricity Usage";
    

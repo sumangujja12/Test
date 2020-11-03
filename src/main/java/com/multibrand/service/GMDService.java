@@ -7,6 +7,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
@@ -16,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
+
+import com.itextpdf.text.pdf.AcroFields.Item;
+import com.multibrand.dto.request.GmdMdStmtRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -26,6 +30,10 @@ import com.multibrand.vo.response.gmd.Current;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDReturnCharge;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.GmdMdDailyStmtResponse;
+import com.multibrand.vo.response.gmd.GmdMdMonthlyStmtItemResponse;
+import com.multibrand.vo.response.gmd.GmdMdMonthlyStmtResponse;
+import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.HourlyPrice;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
@@ -55,6 +63,9 @@ import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
+import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmtResponse;
+import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmt_Type;
+import com.nrg.cxfstubs.md.gmdstatement.ZesGmdMnlyStmt;
 
 
 /**
@@ -82,6 +93,10 @@ public class GMDService extends BaseAbstractService {
 	@Autowired
 	@Qualifier("webServiceTemplateForGMDPriceSpike")
 	private WebServiceTemplate webServiceTemplateForGMDPriceSpike;
+	
+	@Autowired
+	@Qualifier("webServiceTemplateForMDStmt")
+	private WebServiceTemplate webServiceTemplateForMDStmt;
 
 
 	/**
@@ -647,5 +662,102 @@ public class GMDService extends BaseAbstractService {
 		priceSpikeAlertResponse.setSpikeProjectedPrice(spikeProjectedPrice);
 		priceSpikeAlertResponse.setZoneCa(zoneCa);
 		return priceSpikeAlertResponse;
+	}
+	
+	public GmdMdStmtResponse getGmdMdStmt(GmdMdStmtRequest gmdMdStmtRequest) {
+		GmdMdStmtResponse gmdMdStmtResponse = new GmdMdStmtResponse();
+		try {
+			com.nrg.cxfstubs.md.gmdstatement.ObjectFactory factory = new com.nrg.cxfstubs.md.gmdstatement.ObjectFactory();
+			ZEIsuGetGmdMdStmt_Type wsRequest = factory.createZEIsuGetGmdMdStmt_Type();
+			wsRequest.setCompCode(gmdMdStmtRequest.getCompanyCode());
+			wsRequest.setContAcct(gmdMdStmtRequest.getContractAccountNumber());
+			wsRequest.setEsid(gmdMdStmtRequest.getEsiId());
+			wsRequest.setFromDay(gmdMdStmtRequest.getFromDay());
+			wsRequest.setFromMonth(gmdMdStmtRequest.getFromMonth());
+			wsRequest.setFromYear(gmdMdStmtRequest.getFromYear());
+			wsRequest.setStmtType(gmdMdStmtRequest.getStmtType());
+			wsRequest.setToDay(gmdMdStmtRequest.getToDay());
+			wsRequest.setToMonth(gmdMdStmtRequest.getToMonth());
+			wsRequest.setToYear(gmdMdStmtRequest.getToYear());
+
+			ZEIsuGetGmdMdStmtResponse response = (ZEIsuGetGmdMdStmtResponse) webServiceTemplateForMDStmt
+					.marshalSendAndReceive(wsRequest);
+			if (response == null) {
+				gmdMdStmtResponse.setResultCode(RESULT_CODE_NO_DATA);
+				gmdMdStmtResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+			} else {
+				gmdMdStmtResponse = setGmdMdStmtData(response);
+				gmdMdStmtResponse.setResultCode(RESULT_CODE_SUCCESS);
+				gmdMdStmtResponse.setResultDescription(MSG_SUCCESS);
+			}
+		} catch (Exception e) {
+			logger.error("Exception Occured in  getGmdMdStmt {} ", e);
+			gmdMdStmtResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			gmdMdStmtResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+
+		}
+		return gmdMdStmtResponse;
+	}
+	
+	public GmdMdStmtResponse setGmdMdStmtData(ZEIsuGetGmdMdStmtResponse response) {
+		List<GmdMdMonthlyStmtItemResponse> items = new ArrayList<>();
+		GmdMdMonthlyStmtResponse stmtMonthlyData = new GmdMdMonthlyStmtResponse();
+		GmdMdStmtResponse gmdMdStmtResponse = new GmdMdStmtResponse();
+		GmdMdDailyStmtResponse stmtDailyData = new GmdMdDailyStmtResponse();
+
+		if (response.getStmtDailyData() != null) {
+
+			stmtDailyData.setAnciFee(response.getStmtDailyData().getAnciFee());
+			stmtDailyData.setAnclServ(response.getStmtDailyData().getAnclServ());
+			stmtDailyData.setBillingAmount(response.getStmtDailyData().getBillAmt());
+			stmtDailyData.setCardRev(response.getStmtDailyData().getCardRev());
+			stmtDailyData.setcUsage(response.getStmtDailyData().getCusage());
+			stmtDailyData.setcUsageAdj(response.getStmtDailyData().getCusageAdj());
+			stmtDailyData.setFromDate(response.getStmtDailyData().getFromDate());
+			stmtDailyData.setIsoFee(response.getStmtDailyData().getIsoFee());
+			stmtDailyData.setLoss(response.getStmtDailyData().getLoss());
+			stmtDailyData.setMembershipFee(response.getStmtDailyData().getMemFee());
+			stmtDailyData.setRucLrs(response.getStmtDailyData().getRucLrs());
+			stmtDailyData.setServQual(response.getStmtDailyData().getServQual());
+			stmtDailyData.setSolarFee(response.getStmtDailyData().getSolarFee());
+			stmtDailyData.setTax(response.getStmtDailyData().getTax());
+			stmtDailyData.setTdspAdj(response.getStmtDailyData().getTdspAdj());
+			stmtDailyData.setTduDely(response.getStmtDailyData().getTduDely());
+			stmtDailyData.setToDate(response.getStmtDailyData().getToDate());
+			stmtDailyData.setUseChrg(response.getStmtDailyData().getUseChrg());
+		}
+
+		List<ZesGmdMnlyStmt> montlyStmts = response.getStmtMonthlyData().getItem();
+
+		if (montlyStmts != null && montlyStmts.size() > 0) {
+			for (ZesGmdMnlyStmt zesGmdMnlyStmt : montlyStmts) {
+				GmdMdMonthlyStmtItemResponse item = new GmdMdMonthlyStmtItemResponse();
+				item.setAnciFee(zesGmdMnlyStmt.getAnciFee());
+				item.setAnclServ(zesGmdMnlyStmt.getAnclServ());
+				item.setBillAmount(zesGmdMnlyStmt.getBillAmt());
+				item.setCardRev(zesGmdMnlyStmt.getCardRev());
+				item.setcUsage(zesGmdMnlyStmt.getCusage());
+				item.setcUsageAdj(zesGmdMnlyStmt.getCusageAdj());
+				item.setIsoFee(zesGmdMnlyStmt.getIsoFee());
+				item.setLoss(zesGmdMnlyStmt.getLoss());
+				item.setMembershipFee(zesGmdMnlyStmt.getMemFee());
+				item.setRucLrs(zesGmdMnlyStmt.getRucLrs());
+				item.setServQual(zesGmdMnlyStmt.getServQual());
+				item.setStartMonth(zesGmdMnlyStmt.getSmonth());
+				item.setStartYear(zesGmdMnlyStmt.getSyear());
+				item.setTax(zesGmdMnlyStmt.getTax());
+				item.setTdspAdj(zesGmdMnlyStmt.getTdspAdj());
+				item.setTduDely(zesGmdMnlyStmt.getTduDely());
+				item.setUseChrg(zesGmdMnlyStmt.getUseChrg());
+				item.setSolarFee(zesGmdMnlyStmt.getSolarFee());
+				items.add(item);
+			}
+
+		}
+		stmtMonthlyData.setItems(items);
+		gmdMdStmtResponse.setStmtDailyData(stmtDailyData);
+		gmdMdStmtResponse.setStmtMonthlyData(stmtMonthlyData);
+
+		return gmdMdStmtResponse;
 	}
 }
