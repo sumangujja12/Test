@@ -6899,14 +6899,6 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return esidAddressResponse;
 	}
 	
-	public ProspectEFLResponse getProspectEfl(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
-		
-		return oeService.getProspectEFL(prospectEFLRequest);
-	
-
-	}
-
-	
 	/**
 	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
  	 * @author Nkatragadda
@@ -6921,6 +6913,14 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			logger.debug("caught Exception in OEBO::ercotESIDCheckByAddress(..)"+e);
 		}
 		return ercotCheckResponse;
+
+	}
+	
+	public ProspectEFLResponse getProspectEfl(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
+		
+		return oeService.getProspectEFL(prospectEFLRequest);
+	
+
 	}
 }
 

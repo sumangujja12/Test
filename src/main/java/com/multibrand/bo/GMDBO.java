@@ -36,6 +36,7 @@ import com.multibrand.domain.UpdatePhoneDO;
 import com.multibrand.dto.GMDPersonDetailsDTO;
 import com.multibrand.dto.GMDServiceLocationDetailsDTO;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
+import com.multibrand.dto.request.GmdMdStmtRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.exception.NRGException;
@@ -57,6 +58,7 @@ import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
@@ -1217,5 +1219,9 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	
 	public PriceSpikeAlertResponse getGMDPriceSpikeAlert() {
 		return gmdService.getGMDPriceSpikeAlert();
+	}
+	
+	public GmdMdStmtResponse getGmdMdStmtData(GmdMdStmtRequest request) {
+		return gmdService.getGmdMdStmt(request);
 	}
 }
