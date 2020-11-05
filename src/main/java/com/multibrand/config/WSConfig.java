@@ -41,6 +41,9 @@ public class WSConfig {
 	
 	@Value("${CCS_GMD_MD_STMT}")
 	private String gmdMdStmtEndPoint;
+	
+	@Value("${CCS_GMD_LMP_PRICE_SPIKE}")
+	private String gmdLmpPriceSpike;
 		
 	@Value("${CRM_KBA_MATRIX}")
 	private String kbaMatrixUpdate;	
@@ -99,6 +102,20 @@ public class WSConfig {
 		webServiceTemplate.setMarshaller(jaxb2Marshaller);
 		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
 		webServiceTemplate.setDefaultUri(gmdMdStmtEndPoint);
+		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
+		webServiceTemplate.setInterceptors(clientInterceptors);
+        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+        return webServiceTemplate;
+	}
+	
+	@Bean(name = "webServiceTemplateForLmpPriceSpike")
+	public WebServiceTemplate webServiceTemplateForLmpPriceSpike() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.lmp.gmdpricespike");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+		webServiceTemplate.setDefaultUri(gmdLmpPriceSpike);
 		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
 		webServiceTemplate.setInterceptors(clientInterceptors);
         webServiceTemplate.setMessageSender(httpComponentsMessageSender());

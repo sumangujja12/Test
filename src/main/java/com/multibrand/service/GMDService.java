@@ -34,8 +34,14 @@ import com.multibrand.vo.response.gmd.GmdMdDailyStmtResponse;
 import com.multibrand.vo.response.gmd.GmdMdMonthlyStmtItemResponse;
 import com.multibrand.vo.response.gmd.GmdMdMonthlyStmtResponse;
 import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
+import com.multibrand.vo.response.gmd.GmdZoneCa;
+import com.multibrand.vo.response.gmd.GmdZoneCaResponse;
 import com.multibrand.vo.response.gmd.HourlyPrice;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
+import com.multibrand.vo.response.gmd.LmpAllZonesPriceResponse;
+import com.multibrand.vo.response.gmd.LmpPriceItem;
+import com.multibrand.vo.response.gmd.LmpPriceSpikeResponse;
+import com.multibrand.vo.response.gmd.LmpSpikedPriceResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PastSeries;
 import com.multibrand.vo.response.gmd.PredictedSeries;
@@ -63,6 +69,8 @@ import com.nrg.cxfstubs.gmdstatement.ZEIsuGetGmdStmt_Type;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdRetchr;
 import com.nrg.cxfstubs.gmdstatement.ZesGmdStmt;
 import com.nrg.cxfstubs.gmdstatement.ZettGmdRetchr;
+import com.nrg.cxfstubs.lmp.gmdpricespike.ZEISUGMDLMPPRICESPIKEResponse;
+import com.nrg.cxfstubs.lmp.gmdpricespike.ZEISUGMDLMPPRICESPIKE_Type;
 import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmtResponse;
 import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmt_Type;
 import com.nrg.cxfstubs.md.gmdstatement.ZesGmdMnlyStmt;
@@ -97,6 +105,10 @@ public class GMDService extends BaseAbstractService {
 	@Autowired
 	@Qualifier("webServiceTemplateForMDStmt")
 	private WebServiceTemplate webServiceTemplateForMDStmt;
+	
+	@Autowired
+	@Qualifier("webServiceTemplateForLmpPriceSpike")
+	private WebServiceTemplate webServiceTemplateForLmpPriceSpike;
 
 
 	/**
@@ -759,5 +771,102 @@ public class GMDService extends BaseAbstractService {
 		gmdMdStmtResponse.setStmtMonthlyData(stmtMonthlyData);
 
 		return gmdMdStmtResponse;
+	}
+	
+	public LmpPriceSpikeResponse getGmdLmpPriceSpike(String buckers) {
+		LmpPriceSpikeResponse lmpPriceSpikeResponse = new LmpPriceSpikeResponse();
+		try {
+			com.nrg.cxfstubs.lmp.gmdpricespike.ObjectFactory factory = new com.nrg.cxfstubs.lmp.gmdpricespike.ObjectFactory();
+			ZEISUGMDLMPPRICESPIKE_Type wsRequest = factory.createZEISUGMDLMPPRICESPIKE_Type();
+			wsRequest.setIMBUKRS(buckers);
+
+			ZEISUGMDLMPPRICESPIKEResponse response = (ZEISUGMDLMPPRICESPIKEResponse) webServiceTemplateForLmpPriceSpike
+					.marshalSendAndReceive(wsRequest);
+
+			System.out.println("response ::: " + response);
+
+			if (response == null) {
+				lmpPriceSpikeResponse.setResultCode(RESULT_CODE_NO_DATA);
+				lmpPriceSpikeResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+			} else {
+				lmpPriceSpikeResponse = getLmpPriceData(response);
+				lmpPriceSpikeResponse.setResultCode(RESULT_CODE_SUCCESS);
+				lmpPriceSpikeResponse.setResultDescription(MSG_SUCCESS);
+			}
+		} catch (Exception e) {
+			logger.error("Exception Occured in  getGmdLmpPriceSpike {} ", e);
+			lmpPriceSpikeResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			lmpPriceSpikeResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return lmpPriceSpikeResponse;
+	}
+	
+	public LmpPriceSpikeResponse getLmpPriceData(ZEISUGMDLMPPRICESPIKEResponse response) {
+
+		LmpPriceSpikeResponse lmpPriceSpikeResponse = new LmpPriceSpikeResponse();
+
+		lmpPriceSpikeResponse.setExMessage(response.getEXMESSAGE());
+		lmpPriceSpikeResponse.setExPriceSpikeFound(response.getEXPRICESPIKEFOUND());
+
+		List<LmpPriceItem> items = new ArrayList<>();
+		List<LmpPriceItem> spikeItems = new ArrayList<>();
+		List<GmdZoneCa> zoneCaList = new ArrayList<GmdZoneCa>();
+
+		LmpAllZonesPriceResponse extAllZonesPrice = new LmpAllZonesPriceResponse();
+		LmpSpikedPriceResponse extSpikedPrice = new LmpSpikedPriceResponse();
+		GmdZoneCaResponse extZoneCa = new GmdZoneCaResponse();
+
+		if (response.getEXTSPIKEDPRICE() != null) {
+			List<com.nrg.cxfstubs.lmp.gmdpricespike.ZZSZONEPROJPRICE> extAllZoneItems = response.getEXTALLZONESPRICE()
+					.getItem();
+			if (extAllZoneItems != null && !extAllZoneItems.isEmpty()) {
+				for (com.nrg.cxfstubs.lmp.gmdpricespike.ZZSZONEPROJPRICE zoneProjPrice : extAllZoneItems) {
+					LmpPriceItem item = new LmpPriceItem();
+					item.setProfdate(zoneProjPrice.getPROFDATE());
+					item.setProftime(zoneProjPrice.getPROFTIME().toString());
+					item.setProfvalue(zoneProjPrice.getPROFVALUE());
+					item.setZzone(zoneProjPrice.getZZONE());
+					items.add(item);
+
+				}
+			}
+		}
+
+		if (response.getEXTSPIKEDPRICE() != null) {
+			List<com.nrg.cxfstubs.lmp.gmdpricespike.ZZSZONEPROJPRICE> spikedPrices = response.getEXTSPIKEDPRICE()
+					.getItem();
+			if (spikedPrices != null && !spikedPrices.isEmpty()) {
+				for (com.nrg.cxfstubs.lmp.gmdpricespike.ZZSZONEPROJPRICE spikeProjPrice : spikedPrices) {
+					LmpPriceItem item = new LmpPriceItem();
+					item.setProfdate(spikeProjPrice.getPROFDATE());
+					item.setProftime(spikeProjPrice.getPROFTIME().toString());
+					item.setProfvalue(spikeProjPrice.getPROFVALUE());
+					item.setZzone(spikeProjPrice.getZZONE());
+					spikeItems.add(item);
+				}
+			}
+		}
+
+		if (response.getEXTZONECA() != null) {
+			List<com.nrg.cxfstubs.lmp.gmdpricespike.ZZSGMDZONECA> zoneCas = response.getEXTZONECA().getItem();
+			if (zoneCas != null && !zoneCas.isEmpty()) {
+				for (com.nrg.cxfstubs.lmp.gmdpricespike.ZZSGMDZONECA gmdZoneCa : zoneCas) {
+					GmdZoneCa item = new GmdZoneCa();
+					item.setVkont(gmdZoneCa.getVKONT());
+					item.setZzone(gmdZoneCa.getZZONE());
+					zoneCaList.add(item);
+				}
+			}
+		}
+
+		extAllZonesPrice.setItems(items);
+		extSpikedPrice.setItems(spikeItems);
+		extZoneCa.setItem(zoneCaList);
+
+		lmpPriceSpikeResponse.setExtAllZonesPrice(extAllZonesPrice);
+		lmpPriceSpikeResponse.setExtSpikedPrice(extSpikedPrice);
+		lmpPriceSpikeResponse.setExtZoneCa(extZoneCa);
+
+		return lmpPriceSpikeResponse;
 	}
 }
