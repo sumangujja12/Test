@@ -60,6 +60,7 @@ import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
+import com.multibrand.vo.response.gmd.LmpPriceSpikeResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
@@ -1224,4 +1225,8 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	public GmdMdStmtResponse getGmdMdStmtData(GmdMdStmtRequest request) {
 		return gmdService.getGmdMdStmt(request);
 	}
+	
+	public LmpPriceSpikeResponse getGmdLmpPriceSpike(String buckers) {
+		return gmdService.getGmdLmpPriceSpike(buckers);
+	} 
 }

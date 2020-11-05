@@ -35,6 +35,7 @@ import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
+import com.multibrand.vo.response.gmd.LmpPriceSpikeResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
@@ -255,6 +256,16 @@ public class GMDResource extends BaseResource {
 	}	
 	
 	
+	@POST
+	@Path(API_GET_GMD_LMP_PRICE_SPIKE)
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getGmdLmpPriceSpike(@FormParam("buckers") String buckers) {
+		LmpPriceSpikeResponse lmpPriceSpikeResponse = new LmpPriceSpikeResponse();
+		lmpPriceSpikeResponse = gmdBO.getGmdLmpPriceSpike(buckers);
+		Response response = Response.status(Response.Status.OK).entity(lmpPriceSpikeResponse).build();
+		return response;
+	}	
 	
 	
 		
