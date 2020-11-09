@@ -9,15 +9,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
 import com.google.gson.Gson;
-import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.impl.GMDOEDAOImpl;
 import com.multibrand.domain.AlertPrefDTO;
@@ -647,7 +644,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 
 		if (oeSignUpDTO.getPreferredLanguageCode() != null) {
-			if ((oeSignUpDTO.getPreferredLanguageCode()).equalsIgnoreCase(ES)) {
+			if (oeSignUpDTO.getPreferredLanguageCode().equalsIgnoreCase(ES) || oeSignUpDTO.getPreferredLanguageCode().equalsIgnoreCase(S)) {
 				submitEnrollRequest.setStrlanguagePref(S);
 			}
 
