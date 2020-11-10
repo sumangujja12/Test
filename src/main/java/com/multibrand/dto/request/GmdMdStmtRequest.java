@@ -5,11 +5,11 @@ public class GmdMdStmtRequest implements FormEntityRequest {
 	private String companyCode;
 	private String contractAccountNumber;
 	private String esiId;
-	private String fromDay;
+	private String stmtFromDate;
 	private String fromMonth;
 	private String fromYear;
 	private String stmtType; // M/D
-	private String toDay;
+	private String stmtToDate;
 	private String toMonth;
 	private String toYear;
 
@@ -37,14 +37,6 @@ public class GmdMdStmtRequest implements FormEntityRequest {
 		this.esiId = esiId;
 	}
 
-	public String getFromDay() {
-		return fromDay;
-	}
-
-	public void setFromDay(String fromDay) {
-		this.fromDay = fromDay;
-	}
-
 	public String getFromMonth() {
 		return fromMonth;
 	}
@@ -69,14 +61,6 @@ public class GmdMdStmtRequest implements FormEntityRequest {
 		this.stmtType = stmtType;
 	}
 
-	public String getToDay() {
-		return toDay;
-	}
-
-	public void setToDay(String toDay) {
-		this.toDay = toDay;
-	}
-
 	public String getToMonth() {
 		return toMonth;
 	}
@@ -92,5 +76,24 @@ public class GmdMdStmtRequest implements FormEntityRequest {
 	public void setToYear(String toYear) {
 		this.toYear = toYear;
 	}
+
+	public String getStmtFromDate() {
+		return stmtFromDate;
+	}
+
+	public void setStmtFromDate(String stmtFromDate) {
+		this.stmtFromDate = stmtFromDate;
+	}
+
+	public String getStmtToDate() {
+		return stmtToDate;
+	}
+
+	public void setStmtToDate(String stmtToDate) {
+		this.stmtToDate = stmtToDate;
+	}
+	
+	
+	
 
 }

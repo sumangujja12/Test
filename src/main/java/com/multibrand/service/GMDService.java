@@ -684,11 +684,11 @@ public class GMDService extends BaseAbstractService {
 			wsRequest.setCompCode(gmdMdStmtRequest.getCompanyCode());
 			wsRequest.setContAcct(gmdMdStmtRequest.getContractAccountNumber());
 			wsRequest.setEsid(gmdMdStmtRequest.getEsiId());
-			wsRequest.setFromDay(gmdMdStmtRequest.getFromDay());
+			wsRequest.setFromDay(gmdMdStmtRequest.getStmtFromDate());
 			wsRequest.setFromMonth(gmdMdStmtRequest.getFromMonth());
 			wsRequest.setFromYear(gmdMdStmtRequest.getFromYear());
 			wsRequest.setStmtType(gmdMdStmtRequest.getStmtType());
-			wsRequest.setToDay(gmdMdStmtRequest.getToDay());
+			wsRequest.setToDay(gmdMdStmtRequest.getStmtToDate());
 			wsRequest.setToMonth(gmdMdStmtRequest.getToMonth());
 			wsRequest.setToYear(gmdMdStmtRequest.getToYear());
 
