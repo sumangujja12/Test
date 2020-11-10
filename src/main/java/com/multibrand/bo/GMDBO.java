@@ -1221,7 +1221,15 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	}
 	
 	public GmdMdStmtResponse getGmdMdStmtData(GmdMdStmtRequest request) {
-		return gmdService.getGmdMdStmt(request);
+		GmdMdStmtResponse response = gmdService.getGmdMdStmt(request);
+		if("D".equalsIgnoreCase(request.getStmtType())) {
+			response.setStmtMonthlyData(null);
+		} 
+		
+		if("M".equalsIgnoreCase(request.getStmtType())) {
+			response.setStmtDailyData(null);
+		}
+		return response;
 	}
 	
 	public LmpPriceSpikeResponse getGmdLmpPriceSpike(String buckers) {
