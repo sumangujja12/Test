@@ -844,13 +844,17 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			if (submitEnrollResponse.getStrBPNumber() == null) {
 				logger.debug(enrollmentRequest.getEsiId() , "bp numbr is null {}");
 			}
-			GMDPersonDetailsDTO personDetailsDTO = getGMDPersonDetailsDTO(submitEnrollRequest,submitEnrollResponse,enrollmentRequest);
-			GMDServiceLocationDetailsDTO serviceLocationDetailsDTO = getGMDServiceLocationDetailsDTO(
-					submitEnrollRequest, submitEnrollResponse, enrollmentRequest,
-					personDetailsDTO.getPersonId());
-			boolean isReutrn = gmdOEDAOImpl.inserPersonDetails(personDetailsDTO);
-			if (isReutrn) {
-				gmdOEDAOImpl.insertServiceLocationLocation(serviceLocationDetailsDTO);
+			try {
+				GMDPersonDetailsDTO personDetailsDTO = getGMDPersonDetailsDTO(submitEnrollRequest,submitEnrollResponse,enrollmentRequest);
+				GMDServiceLocationDetailsDTO serviceLocationDetailsDTO = getGMDServiceLocationDetailsDTO(
+						submitEnrollRequest, submitEnrollResponse, enrollmentRequest,
+						personDetailsDTO.getPersonId());
+				boolean isReutrn = gmdOEDAOImpl.inserPersonDetails(personDetailsDTO);
+				if (isReutrn) {
+					gmdOEDAOImpl.insertServiceLocationLocation(serviceLocationDetailsDTO);
+				}
+			} catch (Exception e ) {
+				logger.error("Problem occurred while storing Enrollement information to GMD Choice Schema{}", e.getMessage());
 			}
 
 		}
