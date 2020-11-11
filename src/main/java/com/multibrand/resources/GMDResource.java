@@ -1,5 +1,7 @@
 package com.multibrand.resources;
 
+import java.math.BigDecimal;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -34,6 +36,7 @@ import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.GmdHourHeadsSpikeResponse;
 import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.LmpPriceSpikeResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
@@ -267,6 +270,16 @@ public class GMDResource extends BaseResource {
 		return response;
 	}	
 	
+	@POST
+	@Path(API_GET_GMD_HOURHEAD_SPIKE)
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getGmdLmpPriceSpike(@FormParam("imThreshold") BigDecimal imThreshold) {
+		GmdHourHeadsSpikeResponse gmdHourHeadsSpikeResponse = new GmdHourHeadsSpikeResponse();
+		gmdHourHeadsSpikeResponse = gmdBO.getGmdHourHeadSpikeData(imThreshold);
+		Response response = Response.status(Response.Status.OK).entity(gmdHourHeadsSpikeResponse).build();
+		return response;
+	}	
 	
 		
 }	
