@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,16 +79,19 @@ public class ContentBO extends BaseBO implements Constants {
 			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
 		
 			
-			if(offerCode != null && offerCode.size() > 0)
+			if(offerCode != null && offerCode.size() > 0 && StringUtils.isNotBlank(request.getMessageId())) {
 				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
 						request.getBpNumber(), request.getOsType(), templateReportSuite,
 						"",GET_PLAN_OFFER);
-			else 
+				callAdodeAnalytics(adobeValueMap);
+			} else if(StringUtils.isNotBlank(request.getMessageId())) {
 				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
 						request.getBpNumber(), request.getOsType(), templateReportSuite,
 						"NO Offer Code",GET_PLAN_OFFER);
+				callAdodeAnalytics(adobeValueMap);
+			}
 				
-			callAdodeAnalytics(adobeValueMap);
+			
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);

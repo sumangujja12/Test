@@ -146,18 +146,22 @@ public class SwapBO extends BaseAbstractService implements Constants {
 				logger.info(" subswapRequestmitSwap Error code is  ===> "+response.getErrorCode());
 				submitSwapResponse.setResultCode(RESULT_CODE_CCS_ERROR);
 				submitSwapResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
-						request.getBpNumber(), request.getOsType(), templateReportSuite,
-						submitSwapResponse.getErrorCode(),"");
-				callAdodeAnalytics(adobeValueMap);
+				if (StringUtils.isNotBlank(request.getMessageId())) {
+					adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(),
+							request.getContractId(), request.getBpNumber(), request.getOsType(), templateReportSuite,
+							submitSwapResponse.getErrorCode(), "");
+					callAdodeAnalytics(adobeValueMap);
+				}
 				return submitSwapResponse;
 			}
 			submitSwapResponse.setResultCode(RESULT_CODE_SUCCESS);
 			submitSwapResponse.setResultDescription(MSG_SUCCESS);
-			adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
-					request.getBpNumber(), request.getOsType(), templateReportSuite,
-					"","");
-			callAdodeAnalytics(adobeValueMap);
+			if (StringUtils.isNotBlank(request.getMessageId())) {
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(),
+						request.getContractId(), request.getBpNumber(), request.getOsType(), templateReportSuite, "",
+						"");
+				callAdodeAnalytics(adobeValueMap);
+			}
 			// Sending mail for submit swap
 			logger.info("Sending mail for submit swap");
 			HashMap<String, String> templateProps = new HashMap<String,String>();
@@ -297,10 +301,12 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			submitSwapResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			submitSwapResponse
 					.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
-					request.getBpNumber(), request.getOsType(), templateReportSuite,
-					submitSwapResponse.getResultCode(),"");
-			callAdodeAnalytics(adobeValueMap);
+			if (StringUtils.isNotBlank(request.getMessageId())) {
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(),
+						request.getContractId(), request.getBpNumber(), request.getOsType(), templateReportSuite,
+						submitSwapResponse.getResultCode(), "");
+				callAdodeAnalytics(adobeValueMap);
+			}
 			throw new OAMException(200, e.getMessage(), submitSwapResponse);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -308,6 +314,12 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			submitSwapResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			submitSwapResponse
 					.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			if (StringUtils.isNotBlank(request.getMessageId())) {
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(),
+						request.getContractId(), request.getBpNumber(), request.getOsType(), templateReportSuite,
+						submitSwapResponse.getResultCode(), "");
+				callAdodeAnalytics(adobeValueMap);
+			}
 			throw new OAMException(200, e.getMessage(), submitSwapResponse);
 		}
 		

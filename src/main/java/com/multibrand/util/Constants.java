@@ -1622,7 +1622,7 @@ public interface Constants {
 	public static final String GET_PLAN_OFFER = "GET_PLAN_OFFER";
 	public static final String ADOBE_MESSAGE_PLAN_TYPE = "PLAN_OFFER";
 	public static final String PLAN_OFFER_FUNCTION = "SEARCH_PLAN";
-	public static final String PLAN_OFFER_MESSAGE_TYPE = "PLAN_OFFER";
+	public static final String PLAN_OFFER_MESSAGE_TYPE = "OPEN";
 	public static final String PARAMETER_VARIABLE_MSGINSTANCE = "msgInstance";
 
 
