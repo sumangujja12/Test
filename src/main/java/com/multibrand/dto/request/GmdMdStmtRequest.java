@@ -1,18 +1,16 @@
 package com.multibrand.dto.request;
 
+
 public class GmdMdStmtRequest implements FormEntityRequest {
 
 	private String companyCode;
 	private String contractAccountNumber;
 	private String esiId;
 	private String stmtFromDate;
-	private String fromMonth;
-	private String fromYear;
-	private String stmtType; // M/D
 	private String stmtToDate;
-	private String toMonth;
-	private String toYear;
-
+	private String stmtType; // M/D
+	
+	
 	public String getCompanyCode() {
 		return companyCode;
 	}
@@ -37,44 +35,12 @@ public class GmdMdStmtRequest implements FormEntityRequest {
 		this.esiId = esiId;
 	}
 
-	public String getFromMonth() {
-		return fromMonth;
-	}
-
-	public void setFromMonth(String fromMonth) {
-		this.fromMonth = fromMonth;
-	}
-
-	public String getFromYear() {
-		return fromYear;
-	}
-
-	public void setFromYear(String fromYear) {
-		this.fromYear = fromYear;
-	}
-
 	public String getStmtType() {
 		return stmtType;
 	}
 
 	public void setStmtType(String stmtType) {
 		this.stmtType = stmtType;
-	}
-
-	public String getToMonth() {
-		return toMonth;
-	}
-
-	public void setToMonth(String toMonth) {
-		this.toMonth = toMonth;
-	}
-
-	public String getToYear() {
-		return toYear;
-	}
-
-	public void setToYear(String toYear) {
-		this.toYear = toYear;
 	}
 
 	public String getStmtFromDate() {
@@ -92,6 +58,8 @@ public class GmdMdStmtRequest implements FormEntityRequest {
 	public void setStmtToDate(String stmtToDate) {
 		this.stmtToDate = stmtToDate;
 	}
+
+	
 	
 	
 	

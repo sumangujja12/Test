@@ -7,23 +7,24 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import com.itextpdf.text.pdf.AcroFields.Item;
 import com.multibrand.dto.request.GmdMdStmtRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.DateUtil;
 import com.multibrand.vo.response.gmd.Breakdown;
 import com.multibrand.vo.response.gmd.Costs;
 import com.multibrand.vo.response.gmd.Current;
@@ -685,18 +686,20 @@ public class GMDService extends BaseAbstractService {
 	public GmdMdStmtResponse getGmdMdStmt(GmdMdStmtRequest gmdMdStmtRequest) {
 		GmdMdStmtResponse gmdMdStmtResponse = new GmdMdStmtResponse();
 		try {
+			SimpleDateFormat format = new SimpleDateFormat(yyyy_MM_dd);
+			
 			com.nrg.cxfstubs.md.gmdstatement.ObjectFactory factory = new com.nrg.cxfstubs.md.gmdstatement.ObjectFactory();
 			ZEIsuGetGmdMdStmt_Type wsRequest = factory.createZEIsuGetGmdMdStmt_Type();
 			wsRequest.setCompCode(gmdMdStmtRequest.getCompanyCode());
 			wsRequest.setContAcct(gmdMdStmtRequest.getContractAccountNumber());
 			wsRequest.setEsid(gmdMdStmtRequest.getEsiId());
-			wsRequest.setFromDay(gmdMdStmtRequest.getStmtFromDate());
-			wsRequest.setFromMonth(gmdMdStmtRequest.getFromMonth());
-			wsRequest.setFromYear(gmdMdStmtRequest.getFromYear());
+			wsRequest.setFromDay(format.format(DateUtil.getDate(gmdMdStmtRequest.getStmtFromDate(),yyyy_MM_dd)));
+			wsRequest.setFromMonth(Integer.toString(DateUtil.getMonthInt(DateUtil.getDate(gmdMdStmtRequest.getStmtFromDate(),yyyy_MM_dd))));
+			wsRequest.setFromYear(DateUtil.getYear(DateUtil.getDate(gmdMdStmtRequest.getStmtFromDate(),yyyy_MM_dd)));
 			wsRequest.setStmtType(gmdMdStmtRequest.getStmtType());
-			wsRequest.setToDay(gmdMdStmtRequest.getStmtToDate());
-			wsRequest.setToMonth(gmdMdStmtRequest.getToMonth());
-			wsRequest.setToYear(gmdMdStmtRequest.getToYear());
+			wsRequest.setToDay(format.format(DateUtil.getDate(gmdMdStmtRequest.getStmtToDate(),yyyy_MM_dd)));
+			wsRequest.setToMonth(Integer.toString(DateUtil.getMonthInt(DateUtil.getDate(gmdMdStmtRequest.getStmtToDate(),yyyy_MM_dd))));
+			wsRequest.setToYear(DateUtil.getYear(DateUtil.getDate(gmdMdStmtRequest.getStmtToDate(),yyyy_MM_dd)));
 
 			ZEIsuGetGmdMdStmtResponse response = (ZEIsuGetGmdMdStmtResponse) webServiceTemplateForMDStmt
 					.marshalSendAndReceive(wsRequest);
