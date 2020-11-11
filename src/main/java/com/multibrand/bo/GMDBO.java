@@ -56,6 +56,7 @@ import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.GmdHourHeadsSpikeResponse;
 import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
 import com.multibrand.vo.response.gmd.LmpPriceSpikeResponse;
@@ -1239,4 +1240,8 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	public LmpPriceSpikeResponse getGmdLmpPriceSpike(String buckers) {
 		return gmdService.getGmdLmpPriceSpike(buckers);
 	}
+	
+	public GmdHourHeadsSpikeResponse getGmdHourHeadSpikeData(BigDecimal imThreshold) {
+		return gmdService.getGmdHourHeadSpikeAlert(imThreshold);
+	} 
 }

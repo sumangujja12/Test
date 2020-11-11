@@ -44,6 +44,9 @@ public class WSConfig {
 	
 	@Value("${CCS_GMD_LMP_PRICE_SPIKE}")
 	private String gmdLmpPriceSpike;
+	
+	@Value("${CCS_GMD_HOURHEAD_SPIKE}")
+	private String gmdHourHeadSpike;
 		
 	@Value("${CRM_KBA_MATRIX}")
 	private String kbaMatrixUpdate;	
@@ -116,6 +119,21 @@ public class WSConfig {
 		webServiceTemplate.setMarshaller(jaxb2Marshaller);
 		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
 		webServiceTemplate.setDefaultUri(gmdLmpPriceSpike);
+		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
+		webServiceTemplate.setInterceptors(clientInterceptors);
+        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+        return webServiceTemplate;
+	}
+	
+	
+	@Bean(name = "webServiceTemplateForGmdHourHeadSpike")
+	public WebServiceTemplate webServiceTemplateForGmdHourHeadSpike() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmd.hourahead.spike");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+		webServiceTemplate.setDefaultUri(gmdHourHeadSpike);
 		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
 		webServiceTemplate.setInterceptors(clientInterceptors);
         webServiceTemplate.setMessageSender(httpComponentsMessageSender());
