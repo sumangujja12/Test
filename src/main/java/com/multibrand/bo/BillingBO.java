@@ -3031,7 +3031,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						
 					}
 								
-					if(offerDO!=null&&isEligible&&!(gmeContractDO[i].isPendingSwap()))
+					if(offerDO!= null && offerDO.length > 0 &&isEligible&&!(gmeContractDO[i].isPendingSwap()))
 					{
 						if(isRenewable){
 							gmeContractDO[i].setRenewalOffers(true);
