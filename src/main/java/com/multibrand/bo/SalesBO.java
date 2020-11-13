@@ -28,6 +28,7 @@ import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
 
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
+import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.ValidateAddressRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
@@ -36,6 +37,7 @@ import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
+import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.ValidateAddressResponse;
@@ -411,6 +413,17 @@ public class SalesBO extends OeBoHelper implements Constants {
 		}
 		return salesCleanupAddressResponse;
 	}
+
+	public SalesOfferDetailsResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest){
 	
+		SalesOfferDetailsResponse salesEnrollmentresponse = new SalesOfferDetailsResponse();
+		try {
+			salesEnrollmentresponse = oeBO.getOfferDetails(salesOfferDetailsRequest);
+		} catch (Exception e) {
+			logger.error("Exception in SalesBO.getOfferDetails" + e.getMessage());
+			throw e;
+		}
+		return salesEnrollmentresponse;
+	}
 
 }

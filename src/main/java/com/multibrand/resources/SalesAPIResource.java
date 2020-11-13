@@ -32,12 +32,14 @@ import com.multibrand.dto.request.SalesCreditReCheckRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesHoldLookupRequest;
+import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
+import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -400,6 +402,24 @@ public class SalesAPIResource extends BaseResource {
    			logger.error(e.fillInStackTrace());
    		}finally{
    			utilityloggerHelper.logSalesAPITransaction(API_GET_HOLD, false, request, response, CommonUtil.getElapsedTime(startTime), request.getCaNumber(), EMPTY, request.getAffiliateId(), EMPTY);
+   		}
+       return response;
+	}
+	@GET
+	@Path(API_OFFER_DETAILS)	
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getOfferDetails(@InjectParam SalesOfferDetailsRequest request ) {			
+		logger.info("SalesOfferDetailsRequest : {}", request);
+		
+		Response response=null;
+		try{		
+			SalesOfferDetailsResponse salesOfferDetailsResponse = salesBO.getOfferDetails(request);
+			Response.Status status = salesOfferDetailsResponse.getHttpStatus() != null ? salesOfferDetailsResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(salesOfferDetailsResponse).build();
+	    
+		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
    		}
        return response;
 	}
