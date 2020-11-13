@@ -32,6 +32,7 @@ import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDReturnCharge;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
 import com.multibrand.vo.response.gmd.GmdHourHeadsSpikeResponse;
+import com.multibrand.vo.response.gmd.GmdMdDailyStmtItemResponse;
 import com.multibrand.vo.response.gmd.GmdMdDailyStmtResponse;
 import com.multibrand.vo.response.gmd.GmdMdMonthlyStmtItemResponse;
 import com.multibrand.vo.response.gmd.GmdMdMonthlyStmtResponse;
@@ -76,6 +77,7 @@ import com.nrg.cxfstubs.lmp.gmdpricespike.ZEISUGMDLMPPRICESPIKEResponse;
 import com.nrg.cxfstubs.lmp.gmdpricespike.ZEISUGMDLMPPRICESPIKE_Type;
 import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmtResponse;
 import com.nrg.cxfstubs.md.gmdstatement.ZEIsuGetGmdMdStmt_Type;
+import com.nrg.cxfstubs.md.gmdstatement.ZesGmdDaywiseStmt;
 import com.nrg.cxfstubs.md.gmdstatement.ZesGmdMnlyStmt;
 
 
@@ -721,7 +723,11 @@ public class GMDService extends BaseAbstractService {
 	}
 	
 	public GmdMdStmtResponse setGmdMdStmtData(ZEIsuGetGmdMdStmtResponse response) {
+		
 		List<GmdMdMonthlyStmtItemResponse> items = new ArrayList<>();
+		List<GmdMdDailyStmtItemResponse> stmtDailyDaywiseList = new ArrayList<>();
+		
+		
 		GmdMdMonthlyStmtResponse stmtMonthlyData = new GmdMdMonthlyStmtResponse();
 		GmdMdStmtResponse gmdMdStmtResponse = new GmdMdStmtResponse();
 		GmdMdDailyStmtResponse stmtDailyData = new GmdMdDailyStmtResponse();
@@ -747,6 +753,39 @@ public class GMDService extends BaseAbstractService {
 			stmtDailyData.setToDate(response.getStmtDailyData().getToDate());
 			stmtDailyData.setUseChrg(response.getStmtDailyData().getUseChrg());
 		}
+		
+		List<ZesGmdDaywiseStmt> dayWiseStmts = response.getStmtDailyDaywise().getItem();
+		
+		if (dayWiseStmts != null && !dayWiseStmts.isEmpty()) {
+			
+			for (ZesGmdDaywiseStmt zesGmdDaywiseStmt : dayWiseStmts) {
+				
+				GmdMdDailyStmtItemResponse item = new GmdMdDailyStmtItemResponse();
+				
+				item.setAnciFee(zesGmdDaywiseStmt.getAnciFee());
+				item.setAnclServ(zesGmdDaywiseStmt.getAnclServ());
+				item.setBillAmount(zesGmdDaywiseStmt.getBillAmt());
+				item.setCardRev(zesGmdDaywiseStmt.getCardRev());
+				item.setcUsage(zesGmdDaywiseStmt.getCusage());
+				item.setcUsageAdj(zesGmdDaywiseStmt.getCusageAdj());
+				item.setIsoFee(zesGmdDaywiseStmt.getIsoFee());
+				item.setLoss(zesGmdDaywiseStmt.getLoss());
+				item.setMembershipFee(zesGmdDaywiseStmt.getMemFee());
+				item.setRucLrs(zesGmdDaywiseStmt.getRucLrs());
+				item.setServQual(zesGmdDaywiseStmt.getServQual());
+				item.setStmtDate(zesGmdDaywiseStmt.getDate());
+				item.setTax(zesGmdDaywiseStmt.getTax());
+				item.setTdspAdj(zesGmdDaywiseStmt.getTdspAdj());
+				item.setTduDely(zesGmdDaywiseStmt.getTduDely());
+				item.setUseChrg(zesGmdDaywiseStmt.getUseChrg());
+				item.setSolarFee(zesGmdDaywiseStmt.getSolarFee());
+				stmtDailyDaywiseList.add(item);
+			}
+			
+			stmtDailyData.setStmtDailyDaywise(stmtDailyDaywiseList);
+
+		}
+		
 
 		List<ZesGmdMnlyStmt> montlyStmts = response.getStmtMonthlyData().getItem();
 
