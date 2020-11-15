@@ -33,6 +33,7 @@ import com.multibrand.exception.OAMException;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
@@ -279,7 +280,5 @@ public class GMDResource extends BaseResource {
 		gmdHourHeadsSpikeResponse = gmdBO.getGmdHourHeadSpikeData(imThreshold);
 		Response response = Response.status(Response.Status.OK).entity(gmdHourHeadsSpikeResponse).build();
 		return response;
-	}	
-	
-		
+	}		
 }	
