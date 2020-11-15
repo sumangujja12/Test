@@ -52,6 +52,7 @@ public interface DBConstants {
 	public static String PROJECTEDBILL_PROC_AVG = "SMART_SYNC.WP_WEB_UTIL.WP_CALC_AVG_WTHR_PRC";
 
 	public static String WP_GET_DLY_USG_GME = "SMART_SYNC.WP_WEB_UTIL.WP_GET_DLY_USG_GME";
+	public static String WP_GET_15MIN_USG_COST = "SMART_SYNC.WP_WEB_UTIL.WP_GET_15MIN_USG_COST";
 	public static String ESIID_IN_V = "esiid_in_v";
 	public static String CONTRACT_ACT_ID_IN_V = "contract_act_id_in_v";
 	public static String RET_TYP_OUT_V = "ret_typ_out_v";
@@ -80,7 +81,7 @@ public interface DBConstants {
 	public static String WEEKLYUSAGE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_WSE_GME";
 	public static String DAILYWEEKLYUSAGE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_DLYWKY_USG_GME";
 	
-	public static String GMDSMART_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_SMART_RTP_PRICE";
+	public static String GMDSMART_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_15MIN_SMART_RTP_PRICE";
 	public static String GMDSMART_ZONE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_ZONE_ID";
 	public static String GMDSMART_ALL_TIME_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_ALL_TIME_PRICE";
 	// END : OAM :KD

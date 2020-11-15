@@ -7,18 +7,16 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.ws.client.core.WebServiceTemplate;
-
 import com.multibrand.dto.request.GmdMdStmtRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.exception.NRGException;
@@ -321,26 +319,30 @@ public class GMDService extends BaseAbstractService {
 		SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cal = Calendar.getInstance();
 		
+		
+		
 		if (response.getHourlyPriceList() != null)  {
 			for (HourlyPrice hourlyPrice : response.getHourlyPriceList()) {
 				
 				
 				for (int i = cal.get(Calendar.HOUR_OF_DAY) ; i > 0 ;i--) {
 					
-					String methodName = "getPriceHr"+StringUtils.leftPad(String.valueOf(i), 2, '0');
 					
-					String price = (String) getMethodRun(hourlyPrice, methodName);
-	
-					PastSeries pastSeries = new PastSeries();
-					
-					if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
-						pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
-						pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":00:00.000");
+					for (int j = 0; j <= 45; j += 15) {
+												
+						String methodName = "getPriceHr"+StringUtils.leftPad(String.valueOf(i), 2, '0')+StringUtils.leftPad(String.valueOf(j), 2, '0');
+						String price = (String) getMethodRun(hourlyPrice, methodName);
 						
-						pastSeriesList.add(pastSeries);
+						PastSeries pastSeries = new PastSeries();
+						
+						if (org.apache.commons.lang3.StringUtils.isNotBlank(price) ) {
+							pastSeries.setPrice(new BigDecimal(String.format("%.5f", Double.parseDouble(price))));
+							pastSeries.setTime(formatter.format(cal.getTime())+"T"+i+":"+j+":00.000");
+							
+							pastSeriesList.add(pastSeries);
+						}
+						
 					}
-					
-				
 				}
 			}
 		
