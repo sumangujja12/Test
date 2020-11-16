@@ -134,7 +134,7 @@ GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount.greenmountain.com/ResetPasswo
 #Content server props
 gm.content.server.endpoint.url=http://txaixebxindxp01:13180/cd-service/gme/cdws/odata.svc/
 content.rest.server.url=http://txaixebxindxp02:13180/contentService/content/getContentData
-pw.content.server.endpoint=http://ebxblp01:18081/client/v2/content.svc/
+pw.content.server.endpoint=https://content.nrg.com/mb/content/client/v2/content.svc/
 ce.content.server.endpoint=http://txaixebxindxp01:13180/cd-service/cirro/cdws/odata.svc/
 re.content.server.endpoint.url=https://content.nrg.com/reliant/content/client/v2/content.svc/
 
@@ -240,7 +240,7 @@ gmd.offer.predis.equivalent.D0005=09017518825706d7
 
 
 #Content Service 
-content.server.endpoint.url=http://ebxblp01:18081/client/v2/content.svc/
+content.server.endpoint.url=https://content.nrg.com/mb/content/client/v2/content.svc/
 #Legal Docs File
 documentum.endpoint=https://texas.xoomenergy.com/files/{0}.pdf
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
