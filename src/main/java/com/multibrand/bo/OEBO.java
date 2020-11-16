@@ -4467,15 +4467,31 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				String baseCharge = getBaseCharge(offerDO);
 				
+				//Start : PBI 76839 | Single Offer API | 11-16-2020 
+				String usageCharge = getKeyPrice(offerDO, S_CUSTCHR2);
+				affiliateOfferDO.setUsageCharge(usageCharge);
+				//End : PBI 76839 | Single Offer API | 11-16-2020 
+				
 				if (!StringUtils.isEmpty(baseCharge)) {
+					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseCharge(baseCharge);
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
+					
 					String baseChargeText = msgSource.getMessage(
 							BASE_CHARGE_PER_MONTH, new String[] { baseCharge },
 							CommonUtil.localeCode(request.getLanguageCode()));
 					if (StringUtils.isEmpty(usageAmt)) {
-						affiliateOfferDO
-								.setBaseUsageChargeText(baseChargeText);
+						affiliateOfferDO.setBaseUsageChargeText(baseChargeText);
+						//Start : PBI 76839 | Single Offer API | 11-16-2020 
+						affiliateOfferDO.setUsageChargeThreshold(StringUtils.EMPTY);
+						//End : PBI 76839 | Single Offer API | 11-16-2020 
 					} else {
-
+					
+						//Start : PBI 76839 | Single Offer API | 11-16-2020 
+						affiliateOfferDO.setUsageChargeThreshold(usageAmt);
+						//End : PBI 76839 | Single Offer API | 11-16-2020 
+						
 						DecimalFormat decimalformat = new DecimalFormat("#0");
 						usageAmt = decimalformat.format(Double
 								.parseDouble(usageAmt));
@@ -4485,15 +4501,16 @@ public class OEBO extends OeBoHelper implements Constants{
 										getKeyPrice(offerDO, S_CUSTCHR2),
 										usageAmt }, CommonUtil
 										.localeCode(request.getLanguageCode()));
-						;
 						affiliateOfferDO
 								.setBaseUsageChargeText(baseChargeText + "; "
 										+ usageChargeText);
 					}
 
 				} else {
-					affiliateOfferDO
-							.setBaseUsageChargeText(StringUtils.EMPTY);					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseCharge(StringUtils.EMPTY);
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseUsageChargeText(StringUtils.EMPTY);					
 				}
 				
 				boolean validOffer = checkMandatoryFields(affiliateOfferDO, energyCharge);
