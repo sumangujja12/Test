@@ -6995,12 +6995,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						affiliateOfferRequest.getBrandId(), affiliateOfferRequest.getLanguageCode());
 				affiliateOfferResponse.setCmsErrorOffers(cmsErrorOffers);	
 				affiliateOfferResponse.setAffiliateOfferList(affiliateOfferList.toArray(new AffiliateOfferDO[affiliateOfferList.size()]));
+				
 			}
 			
 			if(affiliateOfferResponse.getAffiliateOfferList() == null || affiliateOfferResponse.getAffiliateOfferList() .length ==0){
 				affiliateOfferResponse.setStatusCode(Constants.STATUS_CODE_STOP);				
 			}
-			
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
