@@ -34,6 +34,7 @@ import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
+import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
@@ -413,9 +414,9 @@ public class SalesAPIResource extends BaseResource {
 		
 		Response response=null;
 		try{		
-			SalesOfferDetailsResponse salesOfferDetailsResponse = salesBO.getOfferDetails(request);
-			Response.Status status = salesOfferDetailsResponse.getHttpStatus() != null ? salesOfferDetailsResponse.getHttpStatus() :Response.Status.OK;
-			response = Response.status(status).entity(salesOfferDetailsResponse).build();
+			AffiliateOfferResponse affiliateOfferResponse = salesBO.getOfferDetails(request);
+			Response.Status status = affiliateOfferResponse.getHttpStatus() != null ? affiliateOfferResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(affiliateOfferResponse).build();
 	    
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();

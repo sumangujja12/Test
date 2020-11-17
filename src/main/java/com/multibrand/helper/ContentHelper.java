@@ -776,8 +776,10 @@ public class ContentHelper implements Constants {
 					affiliateOfferDO.setCmsGreenFlag(String.valueOf(productOffer.isGreenPlan()));
 					affiliateOfferDO.setCmsSmartMeterFlag(String.valueOf(productOffer.isSmartMeterRequired()));
 					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
 					affiliateOfferDO.setCmsLegalese(productOffer.getStrLegalEase());
 					affiliateOfferDO.setCmsAdditionalPricingText(productOffer.getStrAdditionalPricingText());
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
 					
 					OfferBanner offerBanner = productOffer.getOfferBanner();
 					if(offerBanner != null){

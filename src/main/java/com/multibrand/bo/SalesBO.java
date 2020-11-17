@@ -414,16 +414,16 @@ public class SalesBO extends OeBoHelper implements Constants {
 		return salesCleanupAddressResponse;
 	}
 
-	public SalesOfferDetailsResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest){
+	public AffiliateOfferResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest){
 	
-		SalesOfferDetailsResponse salesEnrollmentresponse = new SalesOfferDetailsResponse();
+		AffiliateOfferResponse affiliateOfferResponse = new AffiliateOfferResponse();
 		try {
-			salesEnrollmentresponse = oeBO.getOfferDetails(salesOfferDetailsRequest);
+			affiliateOfferResponse = oeBO.getOfferDetails(salesOfferDetailsRequest);
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.getOfferDetails" + e.getMessage());
 			throw e;
 		}
-		return salesEnrollmentresponse;
+		return affiliateOfferResponse;
 	}
 
 }
