@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
 import com.multibrand.domain.EsidAddressResponse;
+import com.multibrand.domain.SmallBusinessOfferResponse;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -914,6 +915,25 @@ public class OEResource extends BaseResource {
 		Response response = null;
 		ErcotCheckByAddressResponse ercotCheckResponse = oeBO.ercotESIDCheckByAddress(request);
 		response = Response.status(Response.Status.OK).entity(ercotCheckResponse).build();
+		
+       return response;
+	}
+	
+	/**
+	 * Start | PBI 53655 | MBAR: Sprint 21 - GME GET SMB OFFERS | Jyothi | 11/17/2020
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@POST
+	@Path("getSMBPlans")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response callGetSMBPlans(ProductOfferRequest smbPlansRequest) throws OEException {	
+		
+		Response response = null;
+		SmallBusinessOfferResponse smallBusinessOfferResponse = oeBO.callGetSMBPlans(smbPlansRequest);
+		response = Response.status(Response.Status.OK).entity(smallBusinessOfferResponse).build();
 		
        return response;
 	}

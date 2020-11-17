@@ -6904,6 +6904,19 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return ercotCheckResponse;
 
 	}
+	
+	/**
+	 * Start | PBI 53655 | MBAR: Sprint 21 - GME GET SMB OFFERS | Jyothi | 11/17/2020
+ 	*/
+	public SmallBusinessOfferResponse callGetSMBPlans(ProductOfferRequest smbPlansRequest) {
+		SmallBusinessOfferResponse response = new SmallBusinessOfferResponse();
+		try{
+			response = offerService.getSMBOfferFromNRGWS(smbPlansRequest);
+		}catch(Exception e){
+			logger.debug("caught Exception in OEBO::callGetSMBPlans(..)"+e);
+		}
+		return response;
+	}
 }
 	
 	
