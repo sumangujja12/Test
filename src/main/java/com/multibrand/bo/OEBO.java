@@ -7017,8 +7017,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			} else {
 				offerResponse.setOfferDOList(offerDOArray);
 			}
+			
 			offerResponse.setStrErrorCode((String) responseMap.get(CCS_ERROR));
-
+			offerResponse.setOfferDate(oeSignupVO.getOfferDate());
+			offerResponse.setOfferTime(oeSignupVO.getOfferTime());
+			offerResponse.setStrTDSPCode(oeSignupVO.getTdspCodeCCS());
+			
 			AffiliateOfferRequest affiliateOfferRequest = constructAffiliateOfferRequestForOfferDetails(salesOfferDetailsRequest);
 			affiliateOfferResponse = constructAffiliateOfferResponse(offerResponse,affiliateOfferRequest);
 			
