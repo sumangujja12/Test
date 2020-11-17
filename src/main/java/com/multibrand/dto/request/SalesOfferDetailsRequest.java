@@ -9,7 +9,6 @@ public class SalesOfferDetailsRequest extends  SalesBaseRequest{
 	private static final long serialVersionUID = 1L;
 
 	@QueryParam(value = "tdspCodeCCS")
-	@NotEmpty
 	private String tdspCodeCCS;
 	
 	@QueryParam(value = "offerCode")

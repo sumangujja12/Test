@@ -6936,9 +6936,11 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		oeSignupVO.setBrandId(salesOfferDetailsRequest.getBrandId());
 		oeSignupVO.setLocale(salesOfferDetailsRequest.getLanguageCode());
 		oeSignupVO.setPromoCodeEntered(salesOfferDetailsRequest.getPromoCode());
-		oeSignupVO.setTdspCodeCCS(salesOfferDetailsRequest.getTdspCodeCCS());
-		oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."+ oeSignupVO.getTdspCodeCCS(),null, null));
-		oeSignupVO.setTdspName(this.appConstMessageSource.getMessage(oeSignupVO.getTdspCodeCCS(), null,null));
+		if(StringUtils.isNotBlank(salesOfferDetailsRequest.getTdspCodeCCS())){
+			oeSignupVO.setTdspCodeCCS(salesOfferDetailsRequest.getTdspCodeCCS());
+			oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."+ oeSignupVO.getTdspCodeCCS(),null, null));
+			oeSignupVO.setTdspName(this.appConstMessageSource.getMessage(oeSignupVO.getTdspCodeCCS(), null,null));
+		}
 		return oeSignupVO;
 	}
 
