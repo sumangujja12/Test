@@ -1642,7 +1642,8 @@ public interface Constants {
 	public static final String ERCOT_ZIP="zip";
 	public static final String ERCOT_COMPANY="companyName";	
 	public static final String NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS="iot/ercot/getByAddress";
-		public static final String SMARTCODE_URL_SUB_STR = "/defl/";
+
+	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
 	
@@ -1650,4 +1651,5 @@ public interface Constants {
 	public static final String TOU = "TOU";
 	public static final String IND = "IND";
 	public static final String RATETYPE_VARIABLE = "00FIX";
+	public static final String API_OFFER_DETAILS = "offer-details";
 }

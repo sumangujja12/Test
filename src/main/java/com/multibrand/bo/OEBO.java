@@ -121,6 +121,7 @@ import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProductOfferRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.SalesHoldLookupRequest;
+import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -138,6 +139,7 @@ import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
+import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -4476,15 +4478,31 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				String baseCharge = getBaseCharge(offerDO);
 				
+				//Start : PBI 76839 | Single Offer API | 11-16-2020 
+				String usageCharge = getKeyPrice(offerDO, S_CUSTCHR2);
+				affiliateOfferDO.setUsageCharge(usageCharge);
+				//End : PBI 76839 | Single Offer API | 11-16-2020 
+				
 				if (!StringUtils.isEmpty(baseCharge)) {
+					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseCharge(baseCharge);
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
+					
 					String baseChargeText = msgSource.getMessage(
 							BASE_CHARGE_PER_MONTH, new String[] { baseCharge },
 							CommonUtil.localeCode(request.getLanguageCode()));
 					if (StringUtils.isEmpty(usageAmt)) {
-						affiliateOfferDO
-								.setBaseUsageChargeText(baseChargeText);
+						affiliateOfferDO.setBaseUsageChargeText(baseChargeText);
+						//Start : PBI 76839 | Single Offer API | 11-16-2020 
+						affiliateOfferDO.setUsageChargeThreshold(StringUtils.EMPTY);
+						//End : PBI 76839 | Single Offer API | 11-16-2020 
 					} else {
-
+					
+						//Start : PBI 76839 | Single Offer API | 11-16-2020 
+						affiliateOfferDO.setUsageChargeThreshold(usageAmt);
+						//End : PBI 76839 | Single Offer API | 11-16-2020 
+						
 						DecimalFormat decimalformat = new DecimalFormat("#0");
 						usageAmt = decimalformat.format(Double
 								.parseDouble(usageAmt));
@@ -4494,15 +4512,16 @@ public class OEBO extends OeBoHelper implements Constants{
 										getKeyPrice(offerDO, S_CUSTCHR2),
 										usageAmt }, CommonUtil
 										.localeCode(request.getLanguageCode()));
-						;
 						affiliateOfferDO
 								.setBaseUsageChargeText(baseChargeText + "; "
 										+ usageChargeText);
 					}
 
 				} else {
-					affiliateOfferDO
-							.setBaseUsageChargeText(StringUtils.EMPTY);					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseCharge(StringUtils.EMPTY);
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseUsageChargeText(StringUtils.EMPTY);					
 				}
 				
 				boolean validOffer = checkMandatoryFields(affiliateOfferDO, energyCharge);
@@ -6920,15 +6939,106 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		
 		return oeService.getProspectEFL(prospectEFLRequest);
 	
+	}
+
+	public OESignupVO populateOESignupVOForOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
+		
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdfDate = new SimpleDateFormat(MM_dd_yyyy);
+		SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
+		
+		OESignupVO oeSignupVO = new OESignupVO();
+		oeSignupVO.setOfferDate(sdfDate.format(cal.getTime()));
+		oeSignupVO.setOfferTime(sdfTime.format(cal.getTime()));
+		oeSignupVO.setBrandId(salesOfferDetailsRequest.getBrandId());
+		oeSignupVO.setLocale(salesOfferDetailsRequest.getLanguageCode());
+		oeSignupVO.setPromoCodeEntered(salesOfferDetailsRequest.getPromoCode());
+		if(StringUtils.isNotBlank(salesOfferDetailsRequest.getTdspCodeCCS())){
+			oeSignupVO.setTdspCodeCCS(salesOfferDetailsRequest.getTdspCodeCCS());
+			oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."+ oeSignupVO.getTdspCodeCCS(),null, null));
+			oeSignupVO.setTdspName(this.appConstMessageSource.getMessage(oeSignupVO.getTdspCodeCCS(), null,null));
+		}
+		return oeSignupVO;
+	}
+
+	public OfferPricingRequest constructOfferPricingRequestForOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest){
+		
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdfDate = new SimpleDateFormat(MM_dd_yyyy);
+		SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
+		
+		OfferPricingRequest offerPricingRequest = new OfferPricingRequest();
+		offerPricingRequest.setStrCompanyCode(salesOfferDetailsRequest.getCompanyCode());
+		offerPricingRequest.setStrDate(sdfDate.format(cal.getTime()));
+		offerPricingRequest.setStrTime(sdfTime.format(cal.getTime()));
+		OfferRequestDTO[] offerRequest =  new OfferRequestDTO[1];
+		OfferRequestDTO offerRequestDTO = null;
+		offerRequestDTO = new OfferRequestDTO();
+		offerRequestDTO.setStrOfferCode(salesOfferDetailsRequest.getOfferCode());
+		offerRequestDTO.setStrCampaignCode(salesOfferDetailsRequest.getCampaignCode());
+		
+		offerRequestDTO.setStrPromoCode(salesOfferDetailsRequest.getPromoCode());
+		offerRequest[0] = offerRequestDTO;
+		
+		offerPricingRequest.setOfferRequestDTOs(offerRequest);
+		offerPricingRequest.setStrLanguage(salesOfferDetailsRequest.getLanguageCode());
+		return offerPricingRequest;
+	}
+
+	private AffiliateOfferRequest constructAffiliateOfferRequestForOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
+		
+		AffiliateOfferRequest affiliateOfferRequest = new AffiliateOfferRequest();
+		affiliateOfferRequest.setAffiliateId(salesOfferDetailsRequest.getAffiliateId());
+		affiliateOfferRequest.setBrandId(salesOfferDetailsRequest.getBrandId());
+		affiliateOfferRequest.setChannelType(salesOfferDetailsRequest.getChannelType());
+		affiliateOfferRequest.setCompanyCode(salesOfferDetailsRequest.getCompanyCode());
+		affiliateOfferRequest.setLanguageCode(salesOfferDetailsRequest.getLanguageCode());
+		affiliateOfferRequest.setPromoCode(salesOfferDetailsRequest.getPromoCode());
+		affiliateOfferRequest.setTdspCodeCCS(salesOfferDetailsRequest.getTdspCodeCCS());
+		return affiliateOfferRequest;
+	}
+	
+	public AffiliateOfferResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
+
+		AffiliateOfferResponse affiliateOfferResponse = null;
+		OESignupVO oeSignupVO = populateOESignupVOForOfferDetails(salesOfferDetailsRequest);
+		OfferPricingRequest offerPricingRequest = constructOfferPricingRequestForOfferDetails(salesOfferDetailsRequest);
+		
+		try {	
+			PromoOfferResponse promoOfferResponse = this.offerService.getOfferPricingFromCCS(offerPricingRequest);
+			
+			Map<String, Object> responseMap = constructOffers(promoOfferResponse, oeSignupVO);
+			OfferResponse offerResponse = new OfferResponse();
+			OfferDO[] offerDOArray = null;
+			List<OfferDO> offersList = (List<OfferDO>) responseMap.get(OFFERS_LIST);
+			if ((offersList != null) && !offersList.isEmpty()) {
+				offerDOArray = offersList.toArray(new OfferDO[offersList.size()]);
+				offerResponse.setOfferDOList(offerDOArray);
+			} else {
+				offerResponse.setOfferDOList(offerDOArray);
+			}
+			offerResponse.setStrErrorCode((String) responseMap.get(CCS_ERROR));
+
+			AffiliateOfferRequest affiliateOfferRequest = constructAffiliateOfferRequestForOfferDetails(salesOfferDetailsRequest);
+			affiliateOfferResponse = constructAffiliateOfferResponse(offerResponse,affiliateOfferRequest);
+			
+			if(affiliateOfferResponse.getAffiliateOfferList() != null && affiliateOfferResponse.getAffiliateOfferList().length>0)
+			{				
+				List<AffiliateOfferDO> affiliateOfferList =  new ArrayList<>(Arrays.asList(affiliateOfferResponse.getAffiliateOfferList())); 			
+				String cmsErrorOffers = contentHelper.fillAndFilterSDLContentOffer(affiliateOfferList, affiliateOfferRequest.getCompanyCode(), 
+						affiliateOfferRequest.getBrandId(), affiliateOfferRequest.getLanguageCode());
+				affiliateOfferResponse.setCmsErrorOffers(cmsErrorOffers);	
+				affiliateOfferResponse.setAffiliateOfferList(affiliateOfferList.toArray(new AffiliateOfferDO[affiliateOfferList.size()]));
+				
+			}
+			
+			if(affiliateOfferResponse.getAffiliateOfferList() == null || affiliateOfferResponse.getAffiliateOfferList() .length ==0){
+				affiliateOfferResponse.setStatusCode(Constants.STATUS_CODE_STOP);				
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return affiliateOfferResponse;	
 
 	}
 }
-
-	
-	
-
-	
-
-
-
-	
