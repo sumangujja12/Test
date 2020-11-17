@@ -6979,9 +6979,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return affiliateOfferRequest;
 	}
 	
-	public SalesOfferDetailsResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
+	public AffiliateOfferResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
 
-		
+		AffiliateOfferResponse affiliateOfferResponse = null;
 		OESignupVO oeSignupVO = populateOESignupVOForOfferDetails(salesOfferDetailsRequest);
 		OfferPricingRequest offerPricingRequest = constructOfferPricingRequestForOfferDetails(salesOfferDetailsRequest);
 		
@@ -6990,7 +6990,6 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			
 			Map<String, Object> responseMap = constructOffers(promoOfferResponse, oeSignupVO);
 			OfferResponse offerResponse = new OfferResponse();
-			offerResponse.getStrOfferFetchSource();
 			OfferDO[] offerDOArray = null;
 			List<OfferDO> offersList = (List<OfferDO>) responseMap.get(OFFERS_LIST);
 			if ((offersList != null) && !offersList.isEmpty()) {
@@ -7002,10 +7001,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			offerResponse.setStrErrorCode((String) responseMap.get(CCS_ERROR));
 
 			AffiliateOfferRequest affiliateOfferRequest = constructAffiliateOfferRequestForOfferDetails(salesOfferDetailsRequest);
-			AffiliateOfferResponse affiliateOfferResponse = constructAffiliateOfferResponse(offerResponse,affiliateOfferRequest);
+			affiliateOfferResponse = constructAffiliateOfferResponse(offerResponse,affiliateOfferRequest);
 			
-			boolean isCMSEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_CMS_OFFER_DATA, salesOfferDetailsRequest.getCompanyCode(), salesOfferDetailsRequest.getBrandId());			
-			if(isCMSEnabled && affiliateOfferResponse.getAffiliateOfferList() != null & affiliateOfferResponse.getAffiliateOfferList().length>0)
+			if(affiliateOfferResponse.getAffiliateOfferList() != null && affiliateOfferResponse.getAffiliateOfferList().length>0)
 			{				
 				List<AffiliateOfferDO> affiliateOfferList =  new ArrayList<>(Arrays.asList(affiliateOfferResponse.getAffiliateOfferList())); 			
 				String cmsErrorOffers = contentHelper.fillAndFilterSDLContentOffer(affiliateOfferList, affiliateOfferRequest.getCompanyCode(), 
@@ -7021,18 +7019,6 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		
-		return null;
-
+		return affiliateOfferResponse;
 	}
-
-
 }
-	
-	
-
-	
-
-
-
-	

@@ -48,11 +48,13 @@ public class AffiliateOfferDO {
 	private String energyChargeOther;
 	private String tdspChargeOther;
 	
+	//Start : PBI 76839 | Single Offer API | 11-16-2020 
 	private String cmsAdditionalPricingText;
 	private String cmsLegalese;
 	private String baseCharge;
 	private String usageCharge;
 	private String usageChargeThreshold;
+	//End : PBI 76839 | Single Offer API | 11-16-2020 
 
 	public String getSapPlanName() {
 		return sapPlanName;
@@ -329,7 +331,8 @@ public class AffiliateOfferDO {
 	public void setTdspChargeMo(String tdspChargeMo) {
 		this.tdspChargeMo = tdspChargeMo;
 	}
-		
+	
+	//Start : PBI 76839 | Single Offer API | 11-16-2020
 	public String getBaseCharge() {
 		return baseCharge;
 	}
@@ -360,6 +363,5 @@ public class AffiliateOfferDO {
 	public void setCmsLegalese(String cmsLegalese) {
 		this.cmsLegalese = cmsLegalese;
 	}
-
-		
+	//End : PBI 76839 | Single Offer API | 11-16-2020 
 }
