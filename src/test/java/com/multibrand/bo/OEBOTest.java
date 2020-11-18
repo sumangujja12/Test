@@ -2,23 +2,29 @@ package com.multibrand.bo;
 
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-/*import org.junit.Assert;
+import javax.xml.rpc.ServiceException;
+/*
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;*/
-import org.mockito.InjectMocks;
+import org.junit.Test;
+*/import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.Assert;
+//import org.testng.annotations.BeforeClass;
+//import org.testng.annotations.BeforeMethod;
+//import org.testng.annotations.Test;
 import com.multibrand.domain.KbaQuestionDTO;
 import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
@@ -34,6 +40,11 @@ import com.multibrand.domain.KbaResponseOutputDTO;
 import com.multibrand.domain.KbaResponseReasonDTO;
 import com.multibrand.domain.KbaSubmitAnswerRequest;
 import com.multibrand.domain.KbaSubmitAnswerResponse;
+import com.multibrand.domain.OfferPricingRequest;
+import com.multibrand.domain.PromoOfferAvgPriceData;
+import com.multibrand.domain.PromoOfferOutData;
+import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.domain.PromoOfferTDSPCharge;
 import com.multibrand.dto.AddressDTO;
 import com.multibrand.dto.ESIDDTO;
 import com.multibrand.dto.KBASubmitResultsDTO;
@@ -43,9 +54,11 @@ import com.multibrand.dto.request.EnrollmentRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
+import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
 import com.multibrand.service.OEService;
+import com.multibrand.service.OfferService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnrollmentFraud.ENROLLMENT_FRAUD_ENUM;
@@ -54,9 +67,11 @@ import com.multibrand.util.TogglzUtil;
 import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
+import com.multibrand.vo.response.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.request.EnrollmentReportDataRequest;
+import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.PersonResponse;
@@ -109,18 +124,36 @@ public class OEBOTest implements Constants{
 	@Mock
 	private TogglzUtil togglzUtil;
 
+	@Mock 
+	OfferService offerService;
+	
+	@Spy
+	ReloadableResourceBundleMessageSource appConstMessageSource = new ReloadableResourceBundleMessageSource();
+	
 	String apiCallExecuted = API_CHECK_CREDIT+"|"+API_LEGACY_SUBMIT_UCC_DATA+"|"+API_RECHECK_CREDIT+"|"+API_LEGACY_PERFORM_CREDIT_CHECK+"|"+API_AVAILABLE_DATES+"|"+API_LEGACY_GET_ESID_AND_CALENDAR_DATES;
 	
 	@BeforeClass
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		when(logger.isDebugEnabled()).thenReturn(true);
+		appConstMessageSource.setUseCodeAsDefaultMessage(true);
+		appConstMessageSource.setDefaultEncoding("UTF-8");
+		appConstMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
+		appConstMessageSource.setUseCodeAsDefaultMessage(true);
+		appConstMessageSource.setBasenames("/WEB-INF/classes/properties/appConstants");
+    
 	}
 
 	@BeforeMethod
 	public void initMethod() {
 		MockitoAnnotations.initMocks(this);
 		when(logger.isDebugEnabled()).thenReturn(true);
+		appConstMessageSource.setUseCodeAsDefaultMessage(true);
+		appConstMessageSource.setDefaultEncoding("UTF-8");
+		appConstMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
+		appConstMessageSource.setUseCodeAsDefaultMessage(true);
+		appConstMessageSource.setBasenames("/WEB-INF/classes/properties/appConstants");
+    
 	}
 
 	// FOR JUNIT
@@ -728,11 +761,96 @@ public class OEBOTest implements Constants{
 	}
 	
 	@Test
-	public void testIsMandatoryCallExecuted_NoSkip(){
+	public void testIsMandatoryCallExecutedNoSkip(){
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		String callExecutedFromDB = "identity|check-credit|submitUCCData|available-dates";
 		enrollmentFraudEnum = oebo.isMandatoryCallExecuted(callExecutedFromDB);
 		Assert.assertEquals(enrollmentFraudEnum, null);
 	}
+	
+	@Test
+	public void testGetOfferDetailsNoOfferFromCCS() throws ServiceException{
 		
+		SalesOfferDetailsRequest salesOfferDetailsRequest = new SalesOfferDetailsRequest();
+		salesOfferDetailsRequest.setAffiliateId("012345");
+		salesOfferDetailsRequest.setBrandId("RE");
+		salesOfferDetailsRequest.setCampaignCode("SFFSFDS");
+		salesOfferDetailsRequest.setChannelType("AFF");
+		salesOfferDetailsRequest.setCompanyCode("0121");
+		salesOfferDetailsRequest.setLanguageCode("E");
+		salesOfferDetailsRequest.setOfferCode("1939294");
+		salesOfferDetailsRequest.setPromoCode("3498093");
+		salesOfferDetailsRequest.setTdspCodeCCS("");
+		PromoOfferResponse promoOfferResponse = new PromoOfferResponse();
+		PromoOfferOutData[] promoOfferOutDataArr =  new PromoOfferOutData[1];
+		PromoOfferOutData promoOffer =  new PromoOfferOutData();
+		PromoOfferTDSPCharge[] promoTdspCharges = new PromoOfferTDSPCharge[1];
+		PromoOfferTDSPCharge promoTdspCharge = new PromoOfferTDSPCharge();
+		promoTdspCharge.setStrBundlingGroup("AQ");
+		promoTdspCharges[0] = promoTdspCharge;
+		promoOffer.setOfferTDSPCharges(promoTdspCharges);
+		promoOffer.setStrCampaignCode("SFFSFDS");
+		promoOffer.setStrCampaignDescription("iu34u9u4");
+		promoOffer.setStrContractTerm("12");
+		promoOffer.setStrEflUrl("");
+		promoOffer.setStrIncentiveCode("Incentive1212");
+		promoOffer.setStrEFLSmartCode("SC1313");
+		promoOffer.setStrOfferCode("1939294");
+		promoOffer.setStrPlanName("Pay As You Go");
+		promoOffer.setStrPlanType("PREPAY");
+		promoOffer.setStrProductCode("1000244");
+		promoOffer.setStrCancelFee(new BigDecimal("120"));
+		promoOffer.setStrCustClass("");
+		promoOffer.setStrCustomerSegment("");
+		promoOffer.setStrDwellingType("");
+		promoOffer.setStrEFLDocID("");
+		promoOffer.setStrEFLSmartCode("");
+		promoOffer.setStrIncentiveCode("");
+		promoOffer.setStrMarketSegment("");
+		promoOffer.setStrCustomerSegment("");
+		promoOffer.setStrYRAACSmartCode("");
+		promoOffer.setStrYRAACDocID("");
+		promoOffer.setStrWebOfferRank("1");
+		promoOffer.setStrValidToDate("09092021");
+		promoOffer.setStrValidFromDate("09092020");
+		promoOffer.setStrTOSSmartCode("");
+		promoOffer.setStrTOSDocID("");
+		promoOffer.setStrPromoCode("");
+		promoOffer.setStrProductPriceCode("");
+		promoOffer.setStrProductCode("");
+		promoOffer.setStrIncentiveDescription("");
+		promoOffer.setStrIncentiveValue(new BigDecimal(8.1));
+		promoOffer.setStrInvoiceOptions("");
+		promoOffer.setStrOfferCellTrackCode("");
+		promoOffer.setStrOfferCellTrackCode("");
+		promoOffer.setStrOfferCode("10034793");
+		promoOffer.setStrOfferCodeTitle("Pay As You Go");
+		promoOffer.setStrOfferTeaser("");
+		promoOffer.setStrPayOptions("S");
+		promoOffer.setStrPenaltyDesciption("");
+		promoOffer.setStrPenaltyValue(new BigDecimal(0.0));
+		promoOffer.setStrMarketSegment("");
+		com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry[] promoOfferOutDataAvgPriceMapEntry = new com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry[1];
+		com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry promoOfferOutDataAvgPrice = new com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry();
+		BigDecimal avgPrice = new BigDecimal("13.0");
+		PromoOfferAvgPriceData promoOfferAvgPriceData = new PromoOfferAvgPriceData();
+		promoOfferAvgPriceData.setAvgPrice(avgPrice);
+		promoOfferAvgPriceData.setPriceType("P");
+		promoOfferAvgPriceData.setDateEnd("09092021");
+		promoOfferAvgPriceData.setDateStart("09092020");
+		promoOfferAvgPriceData.setString1("Y");
+		promoOfferOutDataAvgPrice.setKey(Constants.PROD_TYPE);
+		promoOfferOutDataAvgPrice.setValue(promoOfferAvgPriceData);
+		promoOfferOutDataAvgPriceMapEntry[0] = promoOfferOutDataAvgPrice;
+		
+		promoOffer.setAvgPriceMap(promoOfferOutDataAvgPriceMapEntry);
+		promoOfferOutDataArr[0] = promoOffer;
+		promoOfferResponse.setOfferOuts(promoOfferOutDataArr);
+		when(appConstMessageSource.getMessage("0121" + ".web.url" , null,null)).thenReturn("https://www.reliant.com");
+		when(this.offerService.getOfferPricingFromCCS(Matchers.any(OfferPricingRequest.class))).thenReturn(promoOfferResponse);
+		
+		AffiliateOfferResponse affilaiteResponse = oebo.getOfferDetails(salesOfferDetailsRequest);
+		Assert.assertEquals(STATUS_CODE_STOP, affilaiteResponse.getStatusCode());
+	
+	}
 }
