@@ -2059,6 +2059,9 @@ public class CommonUtil implements Constants {
 			case CHANNEL_WEB:
 				channel = CHANNEL_WEB;
 					break;			
+			case CHANNEL_WEB_CLOUD:
+				channel = CHANNEL_WEB_CLOUD;
+					break;			
 			default:
 				break;
 		}

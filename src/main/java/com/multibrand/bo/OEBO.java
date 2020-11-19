@@ -4479,7 +4479,10 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				//Start : PBI 76839 | Single Offer API | 11-16-2020 
 				String usageCharge = getKeyPrice(offerDO, S_CUSTCHR2);
-				affiliateOfferDO.setUsageCharge(usageCharge);
+				if(StringUtils.isEmpty(usageCharge))
+					affiliateOfferDO.setUsageCharge(null);
+				else
+					affiliateOfferDO.setUsageCharge(null);
 				//End : PBI 76839 | Single Offer API | 11-16-2020 
 				
 				if (!StringUtils.isEmpty(baseCharge)) {
@@ -4494,7 +4497,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					if (StringUtils.isEmpty(usageAmt)) {
 						affiliateOfferDO.setBaseUsageChargeText(baseChargeText);
 						//Start : PBI 76839 | Single Offer API | 11-16-2020 
-						affiliateOfferDO.setUsageChargeThreshold(StringUtils.EMPTY);
+						affiliateOfferDO.setUsageChargeThreshold(null);
 						//End : PBI 76839 | Single Offer API | 11-16-2020 
 					} else {
 					
@@ -4518,7 +4521,7 @@ public class OEBO extends OeBoHelper implements Constants{
 
 				} else {
 					//Start : PBI 76839 | Single Offer API | 11-16-2020 
-					affiliateOfferDO.setBaseCharge(StringUtils.EMPTY);
+					affiliateOfferDO.setBaseCharge(null);
 					//End : PBI 76839 | Single Offer API | 11-16-2020 
 					affiliateOfferDO.setBaseUsageChargeText(StringUtils.EMPTY);					
 				}
