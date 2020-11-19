@@ -1589,5 +1589,8 @@ public interface Constants {
 	public static final String ERCOT_ZIP="zip";
 	public static final String ERCOT_COMPANY="companyName";	
 	public static final String NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS="iot/ercot/getByAddress";
+	
 	public static final String API_OFFER_DETAILS = "offer-details";
+	public static final String CHANNEL_WEB_CLOUD = "WEBCLOUD";
+	
 }
