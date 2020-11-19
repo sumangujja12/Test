@@ -16,7 +16,7 @@ public class ChannelTypeValidator implements
 	
     private List<String> channelTypeList = null;
     
-    protected static final String[] channelTypeArray = {CHANNEL_WEB,CHANNEL_AA,CHANNEL_AFF, CHANNEL_WEB_CLOUD};
+    protected static final String[] channelTypeArray = {CHANNEL_WEB,CHANNEL_AA,CHANNEL_AFF };
     
     @Override
 	public boolean isValid(String channelType, ConstraintValidatorContext arg1) {
