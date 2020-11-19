@@ -4394,7 +4394,6 @@ public class OEBO extends OeBoHelper implements Constants{
 						.getStrTOSSmartCode());
 				affiliateOfferDO.setYraacSmartCode(offerDO
 						.getStrYRAACSmartCode());
-
 				
 				//Start - Alt Channels US8596 | Pratyush
 				affiliateOfferDO.setAverageEFLPrice1000(getAveragePriceEFL1000(offerDO));
@@ -4721,7 +4720,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		return url;		
 	}
 	
-//Start || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
+	//Start || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
 	private String getAllBrandResponseMessage(String companyCode, String brandId, String textMessageCode, String locale){
 		
 		String responseMessage=StringUtils.EMPTY;
@@ -6951,7 +6950,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		oeSignupVO.setOfferDate(sdfDate.format(cal.getTime()));
 		oeSignupVO.setOfferTime(sdfTime.format(cal.getTime()));
 		oeSignupVO.setBrandId(salesOfferDetailsRequest.getBrandId());
-		oeSignupVO.setLocale(salesOfferDetailsRequest.getLanguageCode());
+		
+		oeSignupVO.setLocale(setLanguageCode(salesOfferDetailsRequest.getLanguageCode()));
+		
 		oeSignupVO.setPromoCodeEntered(salesOfferDetailsRequest.getPromoCode());
 		if(StringUtils.isNotBlank(salesOfferDetailsRequest.getTdspCodeCCS())){
 			oeSignupVO.setTdspCodeCCS(salesOfferDetailsRequest.getTdspCodeCCS());
@@ -6976,12 +6977,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		offerRequestDTO = new OfferRequestDTO();
 		offerRequestDTO.setStrOfferCode(salesOfferDetailsRequest.getOfferCode());
 		offerRequestDTO.setStrCampaignCode(salesOfferDetailsRequest.getCampaignCode());
-		
 		offerRequestDTO.setStrPromoCode(salesOfferDetailsRequest.getPromoCode());
 		offerRequest[0] = offerRequestDTO;
-		
 		offerPricingRequest.setOfferRequestDTOs(offerRequest);
-		offerPricingRequest.setStrLanguage(salesOfferDetailsRequest.getLanguageCode());
+		
+		offerPricingRequest.setStrLanguage(setLanguageCode(salesOfferDetailsRequest.getLanguageCode()));
+		
 		return offerPricingRequest;
 	}
 
@@ -6992,10 +6993,22 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		affiliateOfferRequest.setBrandId(salesOfferDetailsRequest.getBrandId());
 		affiliateOfferRequest.setChannelType(salesOfferDetailsRequest.getChannelType());
 		affiliateOfferRequest.setCompanyCode(salesOfferDetailsRequest.getCompanyCode());
-		affiliateOfferRequest.setLanguageCode(salesOfferDetailsRequest.getLanguageCode());
+		affiliateOfferRequest.setLanguageCode(setLanguageCode(salesOfferDetailsRequest.getLanguageCode()));
 		affiliateOfferRequest.setPromoCode(salesOfferDetailsRequest.getPromoCode());
 		affiliateOfferRequest.setTdspCodeCCS(salesOfferDetailsRequest.getTdspCodeCCS());
 		return affiliateOfferRequest;
+	}
+	
+	public String setLanguageCode(String langCode){
+		String langauageCodeReturned;
+		if ((StringUtils.isNotBlank(langCode))
+				&& ((ES_US.equalsIgnoreCase(langCode)) 
+				|| (LANGUAGE_CODE_ES.equalsIgnoreCase(langCode)))) {
+			langauageCodeReturned = LANGUAGE_CODE_ES;
+		} else {
+			langauageCodeReturned = LANGUAGE_CODE_EN;
+		}
+		return langauageCodeReturned;
 	}
 	
 	public AffiliateOfferResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {

@@ -1651,5 +1651,8 @@ public interface Constants {
 	public static final String TOU = "TOU";
 	public static final String IND = "IND";
 	public static final String RATETYPE_VARIABLE = "00FIX";
+
 	public static final String API_OFFER_DETAILS = "offer-details";
+	public static final String CHANNEL_WEB_CLOUD = "WEBCLOUD";
+	
 }
