@@ -238,8 +238,8 @@ gmd.offer.predis.equivalent.D0005=090175168088b0cc
 #Content Service 
 content.server.endpoint.url=http://txaixebxbls01:18081/client/v2/content.svc/
 #File
-documentum.endpoint=https://texas.xoomenergy.com/files/{0}.pdf
-documentum.efl.endpoint=https://texas.xoomenergy.com{0}
+documentum.endpoint=https://stg-texas.xoomenergy.com/files/{0}.pdf
+documentum.efl.endpoint=https://stg-texas.xoomenergy.com{0}
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
 duplicate.payment.check =
