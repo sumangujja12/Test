@@ -792,7 +792,7 @@ public class OEBOTest implements Constants{
 		promoOffer.setStrCampaignCode("SFFSFDS");
 		promoOffer.setStrCampaignDescription("iu34u9u4");
 		promoOffer.setStrContractTerm("12");
-		promoOffer.setStrEflUrl("");
+		//promoOffer.setStrEflUrl("");
 		promoOffer.setStrIncentiveCode("Incentive1212");
 		promoOffer.setStrEFLSmartCode("SC1313");
 		promoOffer.setStrOfferCode("1939294");
@@ -803,8 +803,8 @@ public class OEBOTest implements Constants{
 		promoOffer.setStrCustClass("");
 		promoOffer.setStrCustomerSegment("");
 		promoOffer.setStrDwellingType("");
-		promoOffer.setStrEFLDocID("");
-		promoOffer.setStrEFLSmartCode("");
+		//promoOffer.setStrEFLDocID("");
+		//promoOffer.setStrEFLSmartCode("");
 		promoOffer.setStrIncentiveCode("");
 		promoOffer.setStrMarketSegment("");
 		promoOffer.setStrCustomerSegment("");
