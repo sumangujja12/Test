@@ -102,7 +102,8 @@ public class LocaleRequestFilter implements ContainerRequestFilter {
 					if (StringUtils.isNotEmpty(langValue)
 							&& (Constants.LOCALE_LANGUAGE_CODE_E
 									.equalsIgnoreCase(langValue) || Constants.LOCALE_LANGUAGE_CODE_S
-									.equalsIgnoreCase(langValue))) {
+									.equalsIgnoreCase(langValue)
+									|| Constants.ES_US.equalsIgnoreCase(langValue))) {
 						LOGGER.debug("Found languageCode as a Form parameter of HTTP POST method.");
 						languageCode = CommonUtil.localeCode(langValue);
 						// languageCode = langValue;
@@ -120,8 +121,9 @@ public class LocaleRequestFilter implements ContainerRequestFilter {
 							Constants.LOCALE_LANGUAGE_CODE_PARAM).get(0);
 					if (StringUtils.isNotEmpty(langValue)
 							&& (Constants.LOCALE_LANGUAGE_CODE_E
-									.equalsIgnoreCase(langValue) || Constants.LOCALE_LANGUAGE_CODE_S
-									.equalsIgnoreCase(langValue))) {
+									.equalsIgnoreCase(langValue) 
+									|| Constants.LOCALE_LANGUAGE_CODE_S.equalsIgnoreCase(langValue)
+									|| Constants.ES_US.equalsIgnoreCase(langValue))) {
 						LOGGER.debug("Found languageCode as a Query parameter of HTTP GET method.");
 						languageCode = CommonUtil.localeCode(langValue);
 						// languageCode = langValue;
@@ -137,8 +139,9 @@ public class LocaleRequestFilter implements ContainerRequestFilter {
 							.equalsIgnoreCase(cookieName)
 							&& StringUtils.isNotEmpty(cookieValue)
 							&& (Constants.LOCALE_LANGUAGE_CODE_E
-									.equalsIgnoreCase(cookieValue) || Constants.LOCALE_LANGUAGE_CODE_S
-									.equalsIgnoreCase(cookieValue))) {
+									.equalsIgnoreCase(cookieValue) 
+									|| Constants.LOCALE_LANGUAGE_CODE_S.equalsIgnoreCase(cookieValue)
+									|| Constants.ES_US.equalsIgnoreCase(cookieValue))) {
 						LOGGER.debug("Found languageCode in Cookie.");
 						languageCode = cookieValue;
 						break;
