@@ -780,7 +780,6 @@ public class OEBOTest implements Constants{
 		salesOfferDetailsRequest.setLanguageCode("E");
 		salesOfferDetailsRequest.setOfferCode("1939294");
 		salesOfferDetailsRequest.setPromoCode("3498093");
-		salesOfferDetailsRequest.setTdspCodeCCS("");
 		PromoOfferResponse promoOfferResponse = new PromoOfferResponse();
 		PromoOfferOutData[] promoOfferOutDataArr =  new PromoOfferOutData[1];
 		PromoOfferOutData promoOffer =  new PromoOfferOutData();
