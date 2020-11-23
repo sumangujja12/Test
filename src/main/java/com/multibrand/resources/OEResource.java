@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.ValidationBO;
 import com.multibrand.domain.EsidAddressResponse;
+import com.multibrand.domain.ValidatePosIdKBARequest;
+import com.multibrand.domain.ValidatePosIdKBAResponse;
 import com.multibrand.dto.request.AddPersonRequest;
 import com.multibrand.dto.request.AddServiceLocationRequest;
 import com.multibrand.dto.request.AffiliateOfferRequest;
@@ -914,6 +916,22 @@ public class OEResource extends BaseResource {
 		Response response = null;
 		ErcotCheckByAddressResponse ercotCheckResponse = oeBO.ercotESIDCheckByAddress(request);
 		response = Response.status(Response.Status.OK).entity(ercotCheckResponse).build();
+		
+       return response;
+	}
+	
+	/*
+	 * Start | PBI 77693 | MBAR: Sprint 21 -EquiFax POSID REST IMPL | Jyothi | 11/23/2020
+	 */
+	@POST
+	@Path(VALIDATE_POSID_WITH_KBA_REST)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validatePOSIdwithKBA(ValidatePosIdKBARequest vaidationRequest) throws OEException {	
+		
+		Response response = null;
+		ValidatePosIdKBAResponse validatePosIdKBAResponse = validationBO.validatePOSIdwithKBA(vaidationRequest);
+		response = Response.status(Response.Status.OK).entity(validatePosIdKBAResponse).build();
 		
        return response;
 	}
