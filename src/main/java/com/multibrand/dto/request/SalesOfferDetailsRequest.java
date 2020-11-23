@@ -7,9 +7,6 @@ import com.multibrand.request.validation.NotEmpty;
 public class SalesOfferDetailsRequest extends  SalesBaseRequest{
 	
 	private static final long serialVersionUID = 1L;
-
-	@QueryParam(value = "tdspCodeCCS")
-	private String tdspCodeCCS;
 	
 	@QueryParam(value = "offerCode")
 	@NotEmpty
@@ -22,14 +19,6 @@ public class SalesOfferDetailsRequest extends  SalesBaseRequest{
 	@QueryParam(value = "campaignCode")
 	@NotEmpty
 	private String campaignCode;
-	
-	public String getTdspCodeCCS() {
-		return tdspCodeCCS;
-	}
-	
-	public void setTdspCodeCCS(String tdspCodeCCS) {
-		this.tdspCodeCCS = tdspCodeCCS;
-	}
 	
 	public String getOfferCode() {
 		return offerCode;
