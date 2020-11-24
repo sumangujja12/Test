@@ -441,7 +441,7 @@ public class SalesAPIResource extends BaseResource {
 		Response response = null;
 		try{
 			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
-			SalesTDSPResponse salesTDSPResponse = salesBO.getTDSP(request);
+			SalesTDSPResponse salesTDSPResponse = salesBO.getTDSP(request, httpRequest.getSession(true).getId());
 			
 			Response.Status status = salesTDSPResponse.getHttpStatus() != null ? salesTDSPResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status)
