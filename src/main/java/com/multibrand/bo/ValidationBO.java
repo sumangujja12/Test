@@ -1320,4 +1320,17 @@ public class ValidationBO extends BaseBO {
 		}
 		
 	}
+	
+	/**
+	 * Start | PBI 77693 | MBAR: Sprint 21 - EquiFax POSID REST IMPL | Jyothi | 11/23/2020
+	 */
+	public ValidatePosIdKBAResponse validatePOSIdwithKBA(ValidatePosIdKBARequest vaidationRequest) {
+		ValidatePosIdKBAResponse validatePosIdKBAResponse = new ValidatePosIdKBAResponse();
+		try{
+			validatePosIdKBAResponse = validationService.validatePosIdWihKBA(vaidationRequest);
+		}catch(Exception e){
+			logger.debug("caught Exception in ValidationBO::validatePOSIdwithKBA(..)"+e);
+		}
+		return validatePosIdKBAResponse;
+	}
 }
