@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -429,13 +430,13 @@ public class SalesBO extends OeBoHelper implements Constants {
 		return affiliateOfferResponse;
 	}
 
-	public SalesTDSPResponse getTDSP(SalesTDSPRequest salesTDSPRequest) {
+	public SalesTDSPResponse getTDSP(SalesTDSPRequest salesTDSPRequest, String sessionId) {
 		SalesTDSPResponse salesTDSPResponse = new SalesTDSPResponse();
 		try {
 		
 			EsidDetailsRequest esidDetailsRequest = new EsidDetailsRequest();
 			BeanUtils.copyProperties(salesTDSPRequest, esidDetailsRequest);
-			EsidDetailsResponse esidDetailsResponse = oeBO.getEsidDetails(esidDetailsRequest, null);
+			EsidDetailsResponse esidDetailsResponse = oeBO.getEsidDetails(esidDetailsRequest, sessionId);
 			BeanUtils.copyProperties(esidDetailsResponse, salesTDSPResponse);
 		}catch(Exception e){
 			logger.error("Exception in SalesBO.getTDSP()", e);
