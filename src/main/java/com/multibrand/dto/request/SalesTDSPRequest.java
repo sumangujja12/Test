@@ -1,11 +1,13 @@
 package com.multibrand.dto.request;
 
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
 
+import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 
 public class SalesTDSPRequest extends SalesBaseRequest{
+
+	private static final long serialVersionUID = 1L;
 
 	private String servStreetNum;
 
@@ -14,7 +16,7 @@ public class SalesTDSPRequest extends SalesBaseRequest{
 	@Length(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
-	@NotBlank
+	@NotEmpty
 	@Length(min = 5, max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 
