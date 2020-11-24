@@ -17,7 +17,7 @@ import com.multibrand.dto.request.AffiliateOfferRequest;
 
 import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EnrollmentRequest;
-
+import com.multibrand.dto.request.EsidDetailsRequest;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
@@ -30,15 +30,18 @@ import com.multibrand.dto.request.SalesEnrollmentRequest;
 import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
+import com.multibrand.dto.request.SalesTDSPRequest;
 import com.multibrand.dto.request.ValidateAddressRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
+import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
+import com.multibrand.dto.response.SalesTDSPResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.ValidateAddressResponse;
 import com.multibrand.request.handlers.OERequestHandler;
@@ -424,6 +427,21 @@ public class SalesBO extends OeBoHelper implements Constants {
 			throw e;
 		}
 		return affiliateOfferResponse;
+	}
+
+	public SalesTDSPResponse getTDSP(SalesTDSPRequest salesTDSPRequest) {
+		SalesTDSPResponse salesTDSPResponse = new SalesTDSPResponse();
+		try {
+		
+			EsidDetailsRequest esidDetailsRequest = new EsidDetailsRequest();
+			BeanUtils.copyProperties(salesTDSPRequest, esidDetailsRequest);
+			EsidDetailsResponse esidDetailsResponse = oeBO.getEsidDetails(esidDetailsRequest, null);
+			BeanUtils.copyProperties(esidDetailsResponse, salesTDSPResponse);
+		}catch(Exception e){
+			logger.error("Exception in SalesBO.getTDSP()", e);
+			throw e;
+		}
+		return salesTDSPResponse;
 	}
 
 }
