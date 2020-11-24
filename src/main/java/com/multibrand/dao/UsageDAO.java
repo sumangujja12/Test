@@ -20,6 +20,7 @@ import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 public interface UsageDAO
 {
 	public DailyHourlyUsageResponseVO getHourlyUsageFromDB(UsageRequestVO request, String companyCode, String sessionId);
+	public DailyHourlyUsageResponseVO getGMDHourlyUsageFromDB(UsageRequestVO request, String companyCode, String sessionId);
 	public MonthlyUsageResponseList getMonthlyUsageDetails(MonthlyUsageRequestVO monthlyUsageReq, String companyCode, String sessionId);
 	public WeeklyUsageResponseList getWeeklyUsageDetails(WeeklyUsageRequestVO weekUsageReq, String companyCode, String sessionId);
 	public DailyWeeklyUsageResponseList getDailyWeeklyUsageDetails(DailyWeeklyUsageRequestVO dailyWeeklyUsageReq, String companyCode, String sessionId);

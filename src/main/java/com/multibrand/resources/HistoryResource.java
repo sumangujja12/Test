@@ -603,5 +603,45 @@ public class HistoryResource
 		response = Response.status(200).entity(allTimePriceResponse).build();
 		return response;
 
+	}
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param zoneId
+	 * @param curDtInd
+	 * @param curDayInd
+	 * @param dyHrInd
+	 * @param companyCode
+	 * @return
+	 */
+	@POST
+	@Path("/getGMDDailyHourlyUsage")
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+	public Response getGMDDailyHourlyUsage(
+			@FormParam("accountNumber") String accountNumber,
+			@FormParam("contractId") String contractId,
+			@FormParam("esid") String esid,
+			@FormParam("zoneId") String zoneId,
+			@FormParam("currentDate") String curDtInd,
+			@FormParam("curDayInd") String curDayInd,
+			@FormParam("dyHrInd") String dyHrInd,
+			@FormParam("companyCode") String companyCode)
+	{
+		
+		logger.debug("Inside getGMDDailyHourlyUsage in History Resource");
+		Response response = null;
+		logger.info("START-[HistoryResourse-getGMDDailyHourlyUsage]");
+		GenericResponse usageResponse = historyBO
+					.getGMDUsage(accountNumber, contractId, esid,zoneId,curDtInd,curDayInd,dyHrInd,
+							  httpRequest.getSession(true).getId(),companyCode);
+		
+	
+		response = Response.status(200).entity(usageResponse).build();
+		logger.info("END-[HistoryResourse-getUsage]");
+		logger.debug("Exiting getUsage in History Resource");
+		return response;
 	}	
 }
