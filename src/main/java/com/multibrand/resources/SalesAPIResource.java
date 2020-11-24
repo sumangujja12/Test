@@ -34,6 +34,7 @@ import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
+import com.multibrand.dto.request.SalesTDSPRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
@@ -42,6 +43,7 @@ import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
 import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
+import com.multibrand.dto.response.SalesTDSPResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
@@ -424,5 +426,32 @@ public class SalesAPIResource extends BaseResource {
    		}
        return response;
 	}
+	/**
+	 * @author HChoudhary
+	 * Api to fetch tdsp details
+	 * @param request
+	 * @return
+	 */
+	@POST
+	@Path(API_TDSP)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response getTDSP(SalesTDSPRequest request) {
+		logger.info("SalesTDSPRequest : {}", request);
+		Response response = null;
+		try{
+			if (StringUtils.isBlank(request.getLanguageCode())) request.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
+			SalesTDSPResponse salesTDSPResponse = salesBO.getTDSP(request);
+			
+			Response.Status status = salesTDSPResponse.getHttpStatus() != null ? salesTDSPResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status)
+					.entity(salesTDSPResponse).build();
+		} catch (Exception e) {
+   			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesBaseResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+   		}
+       return response;
+	}
+	
 
 }
