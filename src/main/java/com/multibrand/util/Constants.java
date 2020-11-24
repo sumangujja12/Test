@@ -1654,6 +1654,8 @@ public interface Constants {
 
 	public static final String API_OFFER_DETAILS = "offer-details";
 	public static final String CHANNEL_WEB_CLOUD = "WEBCLOUD";
+
 	public static final String VALIDATE_POSID_WITH_KBA_REST = "validatePOSIdwithKBA";
-	
+
+	public static final String API_TDSP = "tdsp";
 }
