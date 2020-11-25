@@ -64,7 +64,7 @@ public class BaseAbstractService implements Constants{
 	 */
 	public HttpHeaders getBasicAuthSpringHttpHeadersForCCS() {
 		
-		String plainCreds = this.envMessageReader.getMessage(CCS_USER_NAME)+":"+ this.envMessageReader.getMessage(CCS_PASSWORD);
+		String plainCreds = this.envMessageReader.getMessage(CCS_USER_NAME)+":"+ this.envMessageReader.getMessage(CCS_PSD);
 		byte[] plainCredsBytes = plainCreds.getBytes();
 		byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
 		String base64Creds = new String(base64CredsBytes);
@@ -362,7 +362,7 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 		 */
 		protected String getBasicAuthHeader() {
 			String user = getEnvMessageReader().getMessage(REST_API_USER_NAME);
-			String password = getEnvMessageReader().getMessage(REST_API_PASSWORD);
+			String password = getEnvMessageReader().getMessage(REST_API_PSD);
 			String token = user + ":" + password;
 
 			byte[] encodedToken = Base64.encodeBase64(token.getBytes());

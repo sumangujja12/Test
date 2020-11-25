@@ -195,7 +195,7 @@ public class ProfileService extends BaseAbstractService {
 				this.envMessageReader.getMessage(CCS_USER_NAME));
 
 		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,
-				this.envMessageReader.getMessage(CCS_PASSWORD));
+				this.envMessageReader.getMessage(CCS_PSD));
 
 		binding.getRequestContext().put(
 				BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
@@ -316,7 +316,7 @@ public class ProfileService extends BaseAbstractService {
 		 BindingProvider binding = (BindingProvider)stub;
 	    
 	        binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,  this.envMessageReader.getMessage(CCS_USER_NAME));
-	        binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  this.envMessageReader.getMessage(CCS_PASSWORD));
+	        binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,  this.envMessageReader.getMessage(CCS_PSD));
 	        binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.envMessageReader.getMessage(PROFILE_CADATA_ENDPOINT_URL_JNDINAME));
           logger.info("ProfileService.getProfile::::::::::::::::::::before call");
           
@@ -332,7 +332,7 @@ public class ProfileService extends BaseAbstractService {
 	        AuthorizationPolicy authPolicy = http.getAuthorization();
 	       
 	        authPolicy.setUserName(this.envMessageReader.getMessage(CCS_USER_NAME));
-	        authPolicy.setPassword( this.envMessageReader.getMessage(CCS_PASSWORD));*/
+	        authPolicy.setPassword( this.envMessageReader.getMessage(CCS_PSD));*/
           
         String imCaOnly = null;
 		String imVkont = accountNumber; //CA Number
@@ -744,7 +744,7 @@ public class ProfileService extends BaseAbstractService {
 
 		binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,this.envMessageReader.getMessage(CCS_USER_NAME));
 
-		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PASSWORD));
+		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PSD));
 
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,this.envMessageReader.getMessage(CONTACT_DETAIL_ENDPOINT_URL_JNDINAME));
 
@@ -854,7 +854,7 @@ public class ProfileService extends BaseAbstractService {
 				this.envMessageReader.getMessage(CCS_USER_NAME));
 
 		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,
-				this.envMessageReader.getMessage(CCS_PASSWORD));
+				this.envMessageReader.getMessage(CCS_PSD));
 
 		binding.getRequestContext().put(
 				BindingProvider.ENDPOINT_ADDRESS_PROPERTY,
@@ -1206,7 +1206,7 @@ public class ProfileService extends BaseAbstractService {
 		ZECRMVASWEBPRODUPDATE stub = port.getZECRMVASWEBPRODUPDATE();
        BindingProvider binding = (BindingProvider)stub;
        binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY, this.envMessageReader.getMessage(CCS_USER_NAME));       
-       binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, this.envMessageReader.getMessage(CCS_PASSWORD));       
+       binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY, this.envMessageReader.getMessage(CCS_PSD));       
        binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.envMessageReader.getMessage(CCS_CRM_PROD_UPDATE));
        BigDecimal bd = new BigDecimal(1);
        ZetEnrollProd zetEnrollProd = new ZetEnrollProd();
@@ -1399,7 +1399,7 @@ public class ProfileService extends BaseAbstractService {
 		BindingProvider binding = (BindingProvider)stub;
 		
 		binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,this.envMessageReader.getMessage(CCS_USER_NAME));
-		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PASSWORD));
+		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PSD));
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,this.envMessageReader.getMessage(ENVIRONMENT_IMPACT_ENDPOINT_URL_JNDINAME));
 
 		javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.ZetEnviDetails> hTZETEnviDetails = new javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.ZetEnviDetails>();
@@ -1502,7 +1502,7 @@ public class ProfileService extends BaseAbstractService {
 		
 		binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,this.envMessageReader.getMessage(CCS_USER_NAME));
 		
-		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PASSWORD));
+		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PSD));
 		
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,this.envMessageReader.getMessage(CCS_SECONDARY_NAME_UPDATE_JNDINAME));
 
