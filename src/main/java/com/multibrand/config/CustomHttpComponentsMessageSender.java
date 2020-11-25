@@ -38,7 +38,7 @@ public class CustomHttpComponentsMessageSender extends HttpComponentsMessageSend
 		
 		CredentialsProvider credsProvider = new BasicCredentialsProvider();
 		credsProvider.setCredentials(AuthScope.ANY,
-				new UsernamePasswordCredentials(envMessageReader.getMessage(CCS_USER_NAME), envMessageReader.getMessage(CCS_PASSWORD)));
+				new UsernamePasswordCredentials(envMessageReader.getMessage(CCS_USER_NAME), envMessageReader.getMessage(CCS_PSD)));
 
 		AuthCache authCache = new BasicAuthCache();
 		BasicScheme basicAuth = new BasicScheme();
