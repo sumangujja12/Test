@@ -1,14 +1,5 @@
-variables:
-  release_notes_wiki_path: NRG-Rest-Services/release-notes.md  # <app-name>/release-notes.md
-
-resources:
-  repositories:
-    - repository: templates
-      type: git
-      name: Digital-IT-Projects/azure-build-templates
 
 pool:
-  #vmImage: 'ubuntu-16.04'
   name: '$(param.agent.pool.name)'  
 
 trigger:
@@ -23,23 +14,48 @@ trigger:
 
 stages:
   - stage:
-    displayName: Checkout
+    displayName: Build and Scan
     jobs:
-      - job:
-        displayName: Checkout App
-
-  - stage:
-    displayName: Generate release notes N trigger Jenkins
-    jobs:
-      - template: create_release_notes_n_autotag.yml@templates
-
-      - job:
-        displayName: Trigger Jenkins
+      - job: Build
+        displayName: Build
         steps:
-          - task: JenkinsQueueJob@2
-            displayName: 'Queue Jenkins job: Services/nrg-rest-services'
-            inputs:
-              serverEndpoint: 'Prod Jenkins'
-              jobName: 'Services/nrg-rest-services'
-              isMultibranchJob: true
-              multibranchPipelineBranch: '$(Build.SourceBranch)'
+        - task: SonarQubePrepare@4
+          inputs:
+            SonarQube: 'PROD-SONAR'
+            scannerMode: 'CLI'
+            configMode: 'file'
+            extraProperties: |
+              # Additional properties that will be passed to the scanner, 
+              # Put one key=value per line, example:
+              # sonar.exclusions=**/*.bin
+              sonar.pullrequest.vsts.instanceUrl=$(azureDevOpsOrganizationURL)
+              sonar.pullrequest.vsts.project=$(System.TeamProject)
+              sonar.pullrequest.vsts.repository=$(Build.Repository.Name)
+
+        - task: Maven@3
+          inputs:
+            mavenPomFile: 'pom.xml'
+            mavenOptions: '-Xmx512m'
+            goals: 'clean dependency:copy-dependencies package'
+            publishJUnitResults: true
+            testResultsFiles: '**/surefire-reports/TEST-*.xml'
+            javaHomeOption: 'JDKVersion'
+            mavenVersionOption: 'Default'
+            mavenAuthenticateFeed: false
+            effectivePomSkip: true
+            sonarQubeRunAnalysis: false
+            sqMavenPluginVersionChoice: 'latest'
+            
+        - task: SonarQubeAnalyze@4
+          displayName: 'Run Sonar Analysis'
+
+        # - task: CopyFiles@2
+        #   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+        #   inputs:
+        #     SourceFolder: '$(System.DefaultWorkingDirectory)'
+        #     Contents: '**/dependency/*.jar'
+        #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        # - task: WhiteSource Bolt@20
+        #   displayName: 'WhiteSource Scan'
+        #   inputs:
+        #     cwd: '$(Build.ArtifactStagingDirectory)'
