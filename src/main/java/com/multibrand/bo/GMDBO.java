@@ -9,11 +9,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
 import com.google.gson.Gson;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.impl.GMDOEDAOImpl;
@@ -646,7 +648,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 
 		if (oeSignUpDTO.getPreferredLanguageCode() != null) {
-			if (oeSignUpDTO.getPreferredLanguageCode().equalsIgnoreCase(ES) || oeSignUpDTO.getPreferredLanguageCode().equalsIgnoreCase(S)) {
+			if ((oeSignUpDTO.getPreferredLanguageCode()).equalsIgnoreCase(ES)) {
 				submitEnrollRequest.setStrlanguagePref(S);
 			}
 
@@ -846,6 +848,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 				logger.debug(enrollmentRequest.getEsiId() , "bp numbr is null {}");
 			}
 			try {
+				
 				GMDPersonDetailsDTO personDetailsDTO = getGMDPersonDetailsDTO(submitEnrollRequest,submitEnrollResponse,enrollmentRequest);
 				GMDServiceLocationDetailsDTO serviceLocationDetailsDTO = getGMDServiceLocationDetailsDTO(
 						submitEnrollRequest, submitEnrollResponse, enrollmentRequest,
@@ -855,7 +858,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 					gmdOEDAOImpl.insertServiceLocationLocation(serviceLocationDetailsDTO);
 				}
 			} catch (Exception e ) {
-				logger.error("Problem occurred while storing Enrollement information to GMD Choice Schema{}", e.getMessage());
+				logger.warn("Problem occurred while storing Enrollement information to GMD Choice Schema{}", e.getMessage());
 			}
 
 		}
@@ -1239,7 +1242,7 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	
 	public LmpPriceSpikeResponse getGmdLmpPriceSpike(String buckers) {
 		return gmdService.getGmdLmpPriceSpike(buckers);
-	}
+	} 
 	
 	public GmdHourHeadsSpikeResponse getGmdHourHeadSpikeData(BigDecimal imThreshold) {
 		return gmdService.getGmdHourHeadSpikeAlert(imThreshold);
