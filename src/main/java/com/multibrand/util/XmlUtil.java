@@ -29,6 +29,7 @@ import java.io.StringWriter;
 
 import java.net.URL;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,13 +66,20 @@ public class XmlUtil {
 
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, ""); 
+            documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
             // URL url = XmlUtil.class.getClassLoader().getResource(fileName);
             is = new FileInputStream(new File(fileName));
 
             Document     doc        = documentBuilderFactory.newDocumentBuilder().parse(is);
             StringWriter stw        = new StringWriter();
-            Transformer  serializer = TransformerFactory.newInstance().newTransformer();
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, ""); 
+            
+            Transformer  serializer = transformerFactory.newTransformer();
+           
 
             serializer.transform(new DOMSource(doc), new StreamResult(stw));
             convertedString = stw.toString();
@@ -200,6 +208,9 @@ public class XmlUtil {
         	
         	System.out.println("creating Dom Document Builder");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
             // factory.setValidating(validation);
             factory.setNamespaceAware(false);
