@@ -949,8 +949,15 @@
 		  <artifactId>jaxrpc-api</artifactId>
 		  <version>1.1</version>
   		</dependency>	
-
 		<!-- START: WS Client -->
+		<dependency>
+	     <groupId>nrg-nei-cxfstubs</groupId>
+			<artifactId>nrg-nei-cxfstubs</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/lib/nrg-nei-cxfstubs.jar</systemPath>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-payment-domain</artifactId>
