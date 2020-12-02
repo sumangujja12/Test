@@ -36,6 +36,7 @@ import com.multibrand.domain.UpdatePhoneDO;
 import com.multibrand.dto.GMDPersonDetailsDTO;
 import com.multibrand.dto.GMDServiceLocationDetailsDTO;
 import com.multibrand.dto.request.GMDEnrollmentRequest;
+import com.multibrand.dto.request.GmdMdStmtRequest;
 import com.multibrand.dto.request.MoveOutRequest;
 import com.multibrand.dto.response.GMDEnrollmentResponse;
 import com.multibrand.exception.NRGException;
@@ -57,7 +58,10 @@ import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.gmd.GMDOfferResponse;
 import com.multibrand.vo.response.gmd.GMDPricingResponse;
 import com.multibrand.vo.response.gmd.GMDStatementBreakDownResponse;
+import com.multibrand.vo.response.gmd.GmdHourHeadsSpikeResponse;
+import com.multibrand.vo.response.gmd.GmdMdStmtResponse;
 import com.multibrand.vo.response.gmd.HourlyPriceResponse;
+import com.multibrand.vo.response.gmd.LmpPriceSpikeResponse;
 import com.multibrand.vo.response.gmd.MoveOutResponse;
 import com.multibrand.vo.response.gmd.PriceSpikeAlertResponse;
 
@@ -843,13 +847,18 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			if (submitEnrollResponse.getStrBPNumber() == null) {
 				logger.debug(enrollmentRequest.getEsiId() , "bp numbr is null {}");
 			}
-			GMDPersonDetailsDTO personDetailsDTO = getGMDPersonDetailsDTO(submitEnrollRequest,submitEnrollResponse,enrollmentRequest);
-			GMDServiceLocationDetailsDTO serviceLocationDetailsDTO = getGMDServiceLocationDetailsDTO(
-					submitEnrollRequest, submitEnrollResponse, enrollmentRequest,
-					personDetailsDTO.getPersonId());
-			boolean isReutrn = gmdOEDAOImpl.inserPersonDetails(personDetailsDTO);
-			if (isReutrn) {
-				gmdOEDAOImpl.insertServiceLocationLocation(serviceLocationDetailsDTO);
+			try {
+				
+				GMDPersonDetailsDTO personDetailsDTO = getGMDPersonDetailsDTO(submitEnrollRequest,submitEnrollResponse,enrollmentRequest);
+				GMDServiceLocationDetailsDTO serviceLocationDetailsDTO = getGMDServiceLocationDetailsDTO(
+						submitEnrollRequest, submitEnrollResponse, enrollmentRequest,
+						personDetailsDTO.getPersonId());
+				boolean isReutrn = gmdOEDAOImpl.inserPersonDetails(personDetailsDTO);
+				if (isReutrn) {
+					gmdOEDAOImpl.insertServiceLocationLocation(serviceLocationDetailsDTO);
+				}
+			} catch (Exception e ) {
+				logger.warn("Problem occurred while storing Enrollement information to GMD Choice Schema{}", e.getMessage());
 			}
 
 		}
@@ -1218,4 +1227,24 @@ public PpdCreateRequest createPrepayDocCreateRequest(GMDEnrollmentResponse respo
 	public PriceSpikeAlertResponse getGMDPriceSpikeAlert() {
 		return gmdService.getGMDPriceSpikeAlert();
 	}
+	
+	public GmdMdStmtResponse getGmdMdStmtData(GmdMdStmtRequest request) {
+		GmdMdStmtResponse response = gmdService.getGmdMdStmt(request);
+		if("D".equalsIgnoreCase(request.getStmtType())) {
+			response.setStmtMonthlyData(null);
+		} 
+		
+		if("M".equalsIgnoreCase(request.getStmtType())) {
+			response.setStmtDailyData(null);
+		}
+		return response;
+	}
+	
+	public LmpPriceSpikeResponse getGmdLmpPriceSpike(String buckers) {
+		return gmdService.getGmdLmpPriceSpike(buckers);
+	} 
+	
+	public GmdHourHeadsSpikeResponse getGmdHourHeadSpikeData(BigDecimal imThreshold) {
+		return gmdService.getGmdHourHeadSpikeAlert(imThreshold);
+	} 
 }

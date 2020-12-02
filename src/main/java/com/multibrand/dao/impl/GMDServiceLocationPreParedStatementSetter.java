@@ -33,15 +33,16 @@ public class GMDServiceLocationPreParedStatementSetter implements PreparedStatem
 		ps.setString(11, serviceLocationDTO.getServState());
 		ps.setString(12, serviceLocationDTO.getServZipCode());
 		
-		ps.setString(13, serviceLocationDTO.getAddressBillSameAsServiceFlag());
 		ps.setString(14, serviceLocationDTO.getServiceAddressOverrideFlag());
 		if(Constants.FLAG_YES.equalsIgnoreCase(serviceLocationDTO.getAddressBillSameAsServiceFlag())) {
+			ps.setString(13, "Y" );
 			ps.setString(15, serviceLocationDTO.getServAddressLine1());
 			ps.setString(16, serviceLocationDTO.getServAddressLine2());
 			ps.setString(17, serviceLocationDTO.getServCity());
 			ps.setString(18, serviceLocationDTO.getServState());
 			ps.setString(19, serviceLocationDTO.getServZipCode());
 		} else {
+			ps.setString(13, "N" );
 			ps.setString(15, serviceLocationDTO.getBillAddressLine1());
 			ps.setString(16, serviceLocationDTO.getBillAddressLine2());
 			ps.setString(17, serviceLocationDTO.getBillCity());

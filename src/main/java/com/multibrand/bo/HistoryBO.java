@@ -1520,6 +1520,149 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 
 		}
 		return allTimePriceResponse;
+	}
+	
+	/**
+	 * 
+	 * @param accountNumber
+	 * @param contractId
+	 * @param esid
+	 * @param zoneId
+	 * @param curDtInd
+	 * @param curDayInd
+	 * @param dyHrInd
+	 * @param sessionId
+	 * @param CompanyCode
+	 * @return
+	 * @throws OAMException
+	 */
+	public GenericResponse getGMDUsage(String accountNumber, String contractId,
+			String esid, String zoneId, String curDtInd, String curDayInd,
+			String dyHrInd, String sessionId, String companyCode)
+			throws OAMException
+	{
+		
+			
+		logger.info(" START of the getUsage() Helpermethod");
+		UsageRequestVO usageRequestVO = new UsageRequestVO();
+		usageRequestVO.setContractAcctId(CommonUtil.paddedCa(accountNumber));
+		usageRequestVO.setContractId(contractId);
+		usageRequestVO.setEsiId(esid);
+		usageRequestVO.setCurDtInd(curDtInd);
+		usageRequestVO.setCurDayInd(curDayInd);
+		usageRequestVO.setDyHrInd(dyHrInd);
+		usageRequestVO.setZoneId(zoneId);
+		DailyHourlyUsageResponseVO usageResp = null;
+		DailyUsageResponse dailyResponse = null;
+		HourlyUsageResponse hourlyResponse = null;
+		long startTime = CommonUtil.getStartTime();
+		try {
+
+			usageResp = usageHelper.getGMDHourlyUsageFromDB(usageRequestVO,sessionId, companyCode);
+
+			if (usageResp != null && (usageResp.getDailyUsageList() != null
+					&& usageResp.getDailyUsageList().size() > 0 )
+					) {
+				dailyResponse = new DailyUsageResponse();
+				dailyResponse.setResultCode(RESULT_CODE_SUCCESS);
+				dailyResponse.setResultDescription(MSG_SUCCESS);
+				dailyResponse.setDailyUsageList(usageResp.getDailyUsageList());
+				utilityloggerHelper.logTransaction("getUsage", false,
+						usageRequestVO, dailyResponse,
+						dailyResponse.getResultDescription(),
+						CommonUtil.getElapsedTime(startTime), "", sessionId,
+						companyCode);
+				if(logger.isDebugEnabled()){
+					logger.debug(XmlUtil.pojoToXML(usageRequestVO));
+					logger.debug(XmlUtil.pojoToXML(dailyResponse));
+				}
+				logger.info(" END of the getUsage() Helpermethod");
+				return dailyResponse;
+			} else if(usageResp != null && 
+					 usageResp.getHourlyUsageList() != null
+					&& usageResp.getHourlyUsageList().size() > 0) {
+				hourlyResponse = new HourlyUsageResponse();
+				hourlyResponse.setResultCode(RESULT_CODE_SUCCESS);
+				hourlyResponse.setResultDescription(MSG_SUCCESS);
+				hourlyResponse.setHourlyUsageList(usageResp.getHourlyUsageList());
+				utilityloggerHelper.logTransaction("getUsage", false,
+						usageRequestVO, hourlyResponse,
+						hourlyResponse.getResultDescription(),
+						CommonUtil.getElapsedTime(startTime), "", sessionId,
+						companyCode);
+				if(logger.isDebugEnabled()){
+					logger.debug(XmlUtil.pojoToXML(usageRequestVO));
+					logger.debug(XmlUtil.pojoToXML(hourlyResponse));
+				}
+				logger.info(" END of the getUsage() Helpermethod");
+				return hourlyResponse;
+			} else {
+				if (Constants.DAILY_INDICATOR.equalsIgnoreCase(usageRequestVO.getDyHrInd())) {
+					dailyResponse = new DailyUsageResponse();
+					dailyResponse.setResultCode(RESULT_CODE_THREE);
+					dailyResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+					//dailyResponse.setDailyUsageList(usageResp.getDailyUsageList());
+					utilityloggerHelper.logTransaction("getUsage", false,
+							usageRequestVO, dailyResponse,
+							dailyResponse.getResultDescription(),
+							CommonUtil.getElapsedTime(startTime), "", sessionId,
+							companyCode);
+					if(logger.isDebugEnabled()){
+						logger.debug(XmlUtil.pojoToXML(usageRequestVO));
+						logger.debug(XmlUtil.pojoToXML(dailyResponse));
+					}
+					logger.info(" END of the getUsage() Helpermethod");
+					return dailyResponse;
+				} else {
+					hourlyResponse = new HourlyUsageResponse();
+					hourlyResponse.setResultCode(RESULT_CODE_THREE);
+					hourlyResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+					//hourlyResponse.setHourlyUsageList(usageResp.getHourlyUsageList());
+					utilityloggerHelper.logTransaction("getUsage", false,
+							usageRequestVO, hourlyResponse,
+							hourlyResponse.getResultDescription(),
+							CommonUtil.getElapsedTime(startTime), "", sessionId,
+							companyCode);
+					if(logger.isDebugEnabled()){
+						logger.debug(XmlUtil.pojoToXML(usageRequestVO));
+						logger.debug(XmlUtil.pojoToXML(hourlyResponse));
+					}
+					logger.info(" END of the getUsage() Helpermethod");
+					return hourlyResponse;
+				}
+				
+			}
+			
+			
+		} catch (Exception e) {
+			logger.error(" Error "+e.getMessage());
+			if (Constants.DAILY_INDICATOR.equalsIgnoreCase(usageRequestVO.getDyHrInd())) {
+				dailyResponse = new DailyUsageResponse();
+				dailyResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				dailyResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				//dailyResponse.setDailyUsageList(usageResp.getDailyUsageList());
+				utilityloggerHelper.logTransaction("getUsage", false,
+						usageRequestVO, dailyResponse,
+						dailyResponse.getResultDescription(),
+						CommonUtil.getElapsedTime(startTime), "", sessionId,
+						companyCode);
+				throw new OAMException(200, e.getMessage(), dailyResponse);
+			} else {
+				hourlyResponse = new HourlyUsageResponse();
+				hourlyResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				hourlyResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+				//hourlyResponse.setHourlyUsageList(usageResp.getHourlyUsageList());
+				utilityloggerHelper.logTransaction("getUsage", false,
+						usageRequestVO, hourlyResponse,
+						hourlyResponse.getResultDescription(),
+						CommonUtil.getElapsedTime(startTime), "", sessionId,
+						companyCode);
+				throw new OAMException(200, e.getMessage(), hourlyResponse);
+				
+			}
+			
+			
+		}
 	}	
 }
 	

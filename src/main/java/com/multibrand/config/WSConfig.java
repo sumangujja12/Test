@@ -38,6 +38,15 @@ public class WSConfig {
 	
 	@Value("${CCS_GMD_PRICE_SPIKE_ALERT}")
 	private String gmdPriceSpikeEndPoint;
+	
+	@Value("${CCS_GMD_MD_STMT}")
+	private String gmdMdStmtEndPoint;
+	
+	@Value("${CCS_GMD_LMP_PRICE_SPIKE}")
+	private String gmdLmpPriceSpike;
+	
+	@Value("${CCS_GMD_HOURHEAD_SPIKE}")
+	private String gmdHourHeadSpike;
 		
 	@Value("${CRM_KBA_MATRIX}")
 	private String kbaMatrixUpdate;	
@@ -52,23 +61,26 @@ public class WSConfig {
 	private int httpConnectTimeout;
 	
 	
-	@Bean
-	Jaxb2Marshaller jaxb2Marshaller() {
-		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmdstatement","com.nrg.cxfstubs.kbamatrix","com.nrg.cxfstubs.gmdmoveout","com.nrg.cxfstubs.gmdpricespike");
-		return jaxb2Marshaller;
-	}
+	
+	  @Bean Jaxb2Marshaller jaxb2Marshaller() { 
+		  Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		  jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.kbamatrix","com.nrg.cxfstubs.gmdmoveout","com.nrg.cxfstubs.gmdpricespike"); 
+		  return jaxb2Marshaller; 
+	  }
+	 
 
 	@Bean(name = "webServiceTemplateForGMDStatement")
 	public WebServiceTemplate webServiceTemplateForGMDStatement() {
 		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
-		webServiceTemplate.setMarshaller(jaxb2Marshaller());
-		webServiceTemplate.setUnmarshaller(jaxb2Marshaller());
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmdstatement");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
 		webServiceTemplate.setDefaultUri(gmdStatementEndPoint);
 		// set the Apache HttpClient which provides support for basic
 		// authentication
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
-
+		
 		return webServiceTemplate;
 	}
 	
@@ -83,6 +95,49 @@ public class WSConfig {
         
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
+	}
+	
+	@Bean(name = "webServiceTemplateForMDStmt")
+	public WebServiceTemplate webServiceTemplateForMDStmt() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.md.gmdstatement");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+		webServiceTemplate.setDefaultUri(gmdMdStmtEndPoint);
+		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
+		webServiceTemplate.setInterceptors(clientInterceptors);
+        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+        return webServiceTemplate;
+	}
+	
+	@Bean(name = "webServiceTemplateForLmpPriceSpike")
+	public WebServiceTemplate webServiceTemplateForLmpPriceSpike() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.lmp.gmdpricespike");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+		webServiceTemplate.setDefaultUri(gmdLmpPriceSpike);
+		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
+		webServiceTemplate.setInterceptors(clientInterceptors);
+        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+        return webServiceTemplate;
+	}
+	
+	
+	@Bean(name = "webServiceTemplateForGmdHourHeadSpike")
+	public WebServiceTemplate webServiceTemplateForGmdHourHeadSpike() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmd.hourahead.spike");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+		webServiceTemplate.setDefaultUri(gmdHourHeadSpike);
+		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
+		webServiceTemplate.setInterceptors(clientInterceptors);
+        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+        return webServiceTemplate;
 	}
 	
 	@Bean(name = "webServiceTemplateForGMDPriceSpike")

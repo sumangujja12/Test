@@ -35,6 +35,12 @@ public class UsageHelper
 		logger.info(" START getHourlyUsageFromDB Method");
 		return usageDAOImpl.getHourlyUsageFromDB(request,sessionId, companyCode);
 	}
+	
+	public DailyHourlyUsageResponseVO getGMDHourlyUsageFromDB(UsageRequestVO request,String sessionId, String companyCode)
+	{
+		logger.info(" START getGMDHourlyUsageFromDB Method");
+		return usageDAOImpl.getGMDHourlyUsageFromDB(request,sessionId, companyCode);
+	}	
 
 	/**
 	 * This will call the Usage DAO for the Weekly Usage Details
