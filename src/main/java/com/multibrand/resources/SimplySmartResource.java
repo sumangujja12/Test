@@ -33,8 +33,8 @@ public class SimplySmartResource {
 	@Autowired
 	ErrorContentHelper errorContentHelper;
 
-//	@Autowired
-//	public SimplySmartService simplySmartService;
+	@Autowired
+	public SimplySmartService simplySmartService;
 
 	/**
 	 * @author ahanda1
@@ -67,7 +67,6 @@ public class SimplySmartResource {
 		Response response = null;
 
 		try {
-			SimplySmartService simplySmartService = new SimplySmartService();
 			simplySmartService.createBPCADetails(companyCode, esiId, httpRequest.getSession(true).getId());
 		} catch (NRGException e) {
 			logger.error("Exception occured in getGMDStatementDetails :{}", e);
