@@ -57,7 +57,7 @@ public class NEISimplySmartService extends BaseAbstractService {
 		
 		Holder<Bapiret2> exBapiret2Resp =new Holder<Bapiret2>();
 		Holder<String> acctNumberResp =new Holder<String>();
-		Holder<String> BPResp =new Holder<String>();
+		Holder<String> bpResp =new Holder<String>();
 		
 		logger.debug("{}::Invoking a CCS call: {} " , sessionId, endPoint);
 		logger.debug("{}::Request: {}" ,sessionId,bpcaRequest);
@@ -87,12 +87,12 @@ public class NEISimplySmartService extends BaseAbstractService {
 					 				bpcaRequest.getSrvcStreet(),
 					 				bpcaRequest.getSrvcZip(),
 					 				bpcaRequest.getUtility(),
-					 				exBapiret2Resp, acctNumberResp, BPResp);
+					 				exBapiret2Resp, acctNumberResp, bpResp);
 			
 						
 			bpcaCreateResp.setExBapiret2(exBapiret2Resp.value);
 			bpcaCreateResp.setOAcctNumber(acctNumberResp.value);
-			bpcaCreateResp.setOBusinessPartner(BPResp.value);
+			bpcaCreateResp.setOBusinessPartner(bpResp.value);
 			
 			if(logger.isDebugEnabled()) {
 			 logger.debug("{}:Response: {}", sessionId, new ObjectMapper().writeValueAsString(bpcaCreateResp));
