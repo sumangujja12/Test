@@ -261,5 +261,5 @@ template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notifi
 template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageType]&mymsgcat=[MessageCat]&mymsg=[Message]&mymsgstatus=[MsgStatus]&mylang=[Language]&myos=[OSType]&mycontractid=[ContractId]&mybp=[BPNumber]&msginstance=[msgInstance]&myerrmsg=[ErrorMessage]&.c&AQE=1
 template.url.parameter.reportsuite=relengmemobile.appprod
 iot.post.url = http://txaixsexblp05/iotproxy/postServiceRequestURL
-
+adobe.messageId.message = Your contract will expire on [date].Log on to find clean electricity plans available for you
 ws.rest.iot.ercot.check.by.address.url=http://txaixsexblp05/iotproxy/ercot/getByAddress

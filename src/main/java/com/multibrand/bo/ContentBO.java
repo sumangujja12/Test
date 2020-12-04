@@ -70,6 +70,7 @@ public class ContentBO extends BaseBO implements Constants {
 
 		logger.info("::::::::::: Entering in to the ContractOfferPlanContentResponse Method :::::::::::");
 		String templateReportSuite = envMessageReader.getMessage(TEMPLATE_REPORTSUITE);
+		String messageIdMsg = envMessageReader.getMessage("adobe.messageId.message");
 		ContractOfferPlanContentResponse response = new ContractOfferPlanContentResponse();
 		 Map<String, String>  adobeValueMap = null;
 		try {
@@ -86,17 +87,17 @@ public class ContentBO extends BaseBO implements Constants {
 			offerCode = contentHelper.getContractOffer(contractInfoResponse, allRequestResponse,response);
 			contentHelper.getOfferContent(offerCode,response,request);
 			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
-		
 			
 			if(offerCode != null && offerCode.size() > 0 && StringUtils.isNotBlank(request.getMessageId())) {
 				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
 						request.getBpNumber(), request.getOsType(), templateReportSuite,
-						"",GET_PLAN_OFFER);
+						"",GET_PLAN_OFFER,messageIdMsg);
 				callAdodeAnalytics(adobeValueMap);
 			} else if(StringUtils.isNotBlank(request.getMessageId())) {
+				
 				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
 						request.getBpNumber(), request.getOsType(), templateReportSuite,
-						"NO Offer Code",GET_PLAN_OFFER);
+						"NO Offer Code",GET_PLAN_OFFER,messageIdMsg);
 				callAdodeAnalytics(adobeValueMap);
 			}
 				
@@ -104,18 +105,22 @@ public class ContentBO extends BaseBO implements Constants {
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
-					request.getBpNumber(), request.getOsType(), templateReportSuite,
-					response.getErrorDescription(),GET_PLAN_OFFER);
-			callAdodeAnalytics(adobeValueMap);
+			if (StringUtils.isNotBlank(request.getMessageId())) {
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(),
+						request.getContractId(), request.getBpNumber(), request.getOsType(), templateReportSuite,
+						response.getErrorDescription(), GET_PLAN_OFFER,messageIdMsg);
+				callAdodeAnalytics(adobeValueMap);
+			}
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (Exception e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
-					request.getBpNumber(), request.getOsType(), templateReportSuite,
-					response.getErrorDescription(),GET_PLAN_OFFER);
-			callAdodeAnalytics(adobeValueMap);
+			if (StringUtils.isNotBlank(request.getMessageId())) {
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(),
+						request.getContractId(), request.getBpNumber(), request.getOsType(), templateReportSuite,
+						response.getErrorDescription(), GET_PLAN_OFFER,messageIdMsg);
+				callAdodeAnalytics(adobeValueMap);
+			}
 			throw new OAMException(200, e.getMessage(), response);
 		}
 
