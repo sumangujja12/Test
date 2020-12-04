@@ -94,7 +94,9 @@ public class NEISimplySmartService extends BaseAbstractService {
 			bpcaCreateResp.setOAcctNumber(acctNumberResp.value);
 			bpcaCreateResp.setOBusinessPartner(BPResp.value);
 			
-			logger.debug("{}:Response: {}", sessionId, new ObjectMapper().writeValueAsString(bpcaCreateResp));
+			if(logger.isDebugEnabled()) {
+			 logger.debug("{}:Response: {}", sessionId, new ObjectMapper().writeValueAsString(bpcaCreateResp));
+			}
 			
 		} catch (Exception ex) { 
 			
