@@ -2298,7 +2298,7 @@ public class CommonUtil implements Constants {
 
 
 	public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
-			String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource) {
+			String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource, String messageIdMsg) {
 		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
 
 		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, templateReportsuite);
@@ -2307,7 +2307,17 @@ public class CommonUtil implements Constants {
 		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE_GME);
 		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
 		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
-
+		if(StringUtils.contains(messageId,"$")) {
+			String [] messageIdAr = messageId.split("\\$");
+			if(messageIdAr.length > 0) {
+				String date = CommonUtil.changeDateFormat(messageIdAr[1], "MMddyyyy",
+							   "MM/dd/yyyy");
+				messageIdMsg = StringUtils.replace(messageIdMsg, "[date]", date);
+				String tempString = messageIdAr[0] + "_" + messageIdMsg;
+				messageId = tempString;
+			}
+			
+		}
 		
 		if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
 			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
