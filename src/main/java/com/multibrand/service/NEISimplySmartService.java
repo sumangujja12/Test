@@ -56,7 +56,7 @@ public class NEISimplySmartService extends BaseAbstractService {
 		ZEISUNEICREATEBPCA stub = port.getZEISUNEICREATEBPCABIND();
         BindingProvider binding = (BindingProvider) stub;
         binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,this.envMessageReader.getMessage(CCS_USER_NAME));
-		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PASSWORD));
+		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PSD));
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,endPoint);
 		
 		Holder<Bapiret2> exBapiret2Resp =new Holder<Bapiret2>();
