@@ -951,11 +951,10 @@
   		</dependency>	
 		<!-- START: WS Client -->
 		<dependency>
-	     <groupId>nrg-nei-cxfstubs</groupId>
-			<artifactId>nrg-nei-cxfstubs</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/src/lib/nrg-nei-cxfstubs.jar</systemPath>
+		  <groupId>nrg-ccs-ws-client-nei</groupId>
+		  <artifactId>com.nrg.services.clients</artifactId>
+		  <version>0.1</version>
+		  <scope>${dependency.scope}</scope>
 		</dependency>
 		
 		<dependency>
