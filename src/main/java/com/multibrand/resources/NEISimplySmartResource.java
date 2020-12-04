@@ -60,7 +60,7 @@ public class NEISimplySmartResource {
 		try {
 			ccsResponse = nEISimplySmartService.createNEIBPCA(request, httpRequest.getSession(true).getId());
 		} catch (NRGException e) {
-			logger.error("Exception occured in NEISimplySmartResource:createNEIBPCA :{}", e);
+			logger.error("Exception occured in NEISimplySmartResource:createNEIBPCA :", e);
 		}
 		response = Response.status(Response.Status.OK).entity(ccsResponse).build();
 		logger.debug("End NEISimplySmartService.createNEIBPCA :: END");

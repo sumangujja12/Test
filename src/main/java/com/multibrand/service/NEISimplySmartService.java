@@ -5,8 +5,6 @@ import java.net.URL;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +29,6 @@ public class NEISimplySmartService extends BaseAbstractService {
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 
-	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
-    
 	/**
 	 * 
 	 * @param bpcaRequest
@@ -43,7 +39,7 @@ public class NEISimplySmartService extends BaseAbstractService {
 	public ZEIsuNeiCreateBpCaResponse createNEIBPCA(NeiBPCARequest bpcaRequest, String sessionId) throws NRGException {
 		
 		long startTime = CommonUtil.getStartTime();
-		logger.info(sessionId+":****NEISimplySmartService.createNEIBPCA::::::::::::::::::::Start:" );
+		logger.info("{}:****NEISimplySmartService.createNEIBPCA::::::::::::::::::::Start:", sessionId );
 
 		String companyCode ="NEI";
 
@@ -63,34 +59,34 @@ public class NEISimplySmartService extends BaseAbstractService {
 		Holder<String> acctNumberResp =new Holder<String>();
 		Holder<String> BPResp =new Holder<String>();
 		
-		logger.debug(sessionId+":Invoking a CCS call: " +endPoint);
-		logger.debug(sessionId+":Request: " +bpcaRequest);
+		logger.debug("{}::Invoking a CCS call: {} " , sessionId, endPoint);
+		logger.debug("{}::Request: {}" ,sessionId,bpcaRequest);
 		try {
-			stub.zeIsuNeiCreateBpCa(bpcaRequest.getIAcctNumber(),
-									bpcaRequest.getIAutopay(), 
-					 				bpcaRequest.getIBillCity(),
-					 				bpcaRequest.getIBillCountry(), 
-					 				bpcaRequest.getIBillDistrict(), 
-					 				bpcaRequest.getIBillHouseNum1(),
-					 				bpcaRequest.getIBillState(),
-					 				bpcaRequest.getIBillStreet(),
-					 				bpcaRequest.getIBillZip(), 
-					 				bpcaRequest.getIEbill(), 
-					 				bpcaRequest.getIEmailAddr(), 
-					 				bpcaRequest.getIFirstName(),
-					 				bpcaRequest.getIFullName(),
-					 				bpcaRequest.getILastName(),
-					 				bpcaRequest.getIPhoneNumber(), 
-					 				bpcaRequest.getIPlanId(), 
-					 				bpcaRequest.getIPlanName(),
-					 				bpcaRequest.getISrvcCity(), 
-					 				bpcaRequest.getISrvcCountry(), 
-					 				bpcaRequest.getISrvcDistrict(), 
-					 				bpcaRequest.getISrvcHouseNum1(),
-					 				bpcaRequest.getISrvcState(),
-					 				bpcaRequest.getISrvcStreet(),
-					 				bpcaRequest.getISrvcZip(),
-					 				bpcaRequest.getIUtility(),
+			stub.zeIsuNeiCreateBpCa(bpcaRequest.getAcctNumber(),
+									bpcaRequest.getAutopay(), 
+					 				bpcaRequest.getBillCity(),
+					 				bpcaRequest.getBillCountry(), 
+					 				bpcaRequest.getBillDistrict(), 
+					 				bpcaRequest.getBillHouseNum1(),
+					 				bpcaRequest.getBillState(),
+					 				bpcaRequest.getBillStreet(),
+					 				bpcaRequest.getBillZip(), 
+					 				bpcaRequest.getEbill(), 
+					 				bpcaRequest.getEmailAddr(), 
+					 				bpcaRequest.getFirstName(),
+					 				bpcaRequest.getFullName(),
+					 				bpcaRequest.getLastName(),
+					 				bpcaRequest.getPhoneNumber(), 
+					 				bpcaRequest.getPlanId(), 
+					 				bpcaRequest.getPlanName(),
+					 				bpcaRequest.getSrvcCity(), 
+					 				bpcaRequest.getSrvcCountry(), 
+					 				bpcaRequest.getSrvcDistrict(), 
+					 				bpcaRequest.getSrvcHouseNum1(),
+					 				bpcaRequest.getSrvcState(),
+					 				bpcaRequest.getSrvcStreet(),
+					 				bpcaRequest.getSrvcZip(),
+					 				bpcaRequest.getUtility(),
 					 				exBapiret2Resp, acctNumberResp, BPResp);
 			
 						
@@ -98,17 +94,17 @@ public class NEISimplySmartService extends BaseAbstractService {
 			bpcaCreateResp.setOAcctNumber(acctNumberResp.value);
 			bpcaCreateResp.setOBusinessPartner(BPResp.value);
 			
-			logger.debug(sessionId+":Response: " + new ObjectMapper().writeValueAsString(bpcaCreateResp));
+			logger.debug("{}:Response: {}", sessionId, new ObjectMapper().writeValueAsString(bpcaCreateResp));
 			
 		} catch (Exception ex) { 
 			
-			logger.error(sessionId+":createNEIBPCA : Exception while fetching Offers:", ex);
+			logger.error(String.format("%s :createNEIBPCA : Exception while fetching Offers:", sessionId), ex);
 			utilityloggerHelper.logTransaction("NEISimplySmartService:createNEIBPCA", false, bpcaRequest, ex, "",
 					CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 			throw new NRGException(ex);
 
 		}
-		logger.info(sessionId+":****NEISimplySmartService.createNEIBPCA:End:: Execution Time:"+CommonUtil.getElapsedTime(startTime));
+		logger.info("{}:****NEISimplySmartService.createNEIBPCA:End:: Execution Time:{}", sessionId,CommonUtil.getElapsedTime(startTime));
 		
 		return bpcaCreateResp;
 
