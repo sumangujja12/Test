@@ -949,8 +949,14 @@
 		  <artifactId>jaxrpc-api</artifactId>
 		  <version>1.1</version>
   		</dependency>	
-
 		<!-- START: WS Client -->
+		<dependency>
+		  <groupId>nrg-ccs-ws-client-nei</groupId>
+		  <artifactId>com.nrg.services.clients</artifactId>
+		  <version>0.1</version>
+		  <scope>${dependency.scope}</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-payment-domain</artifactId>
