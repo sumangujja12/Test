@@ -43,7 +43,7 @@ public class TPVService extends BaseAbstractService {
 		System.out.println("Setting Client Timeout = " + timeOutInMs);
 		s.setTimeout(timeOutInMs); // Setting the client timeout in millsec explicitly.. this overrides the default 60sec axis timeout.
 		s.setUsername(this.envMessageReader.getMessage(CCS_USER_NAME));
-		s.setPassword(this.envMessageReader.getMessage(CCS_PASSWORD));
+		s.setPassword(this.envMessageReader.getMessage(CCS_PSD));
 		
 		// Fire the service call
 		ZesNeReturn output = port.ZEIsuNewsTpvApiTransUpd(ivAcctNum, 
