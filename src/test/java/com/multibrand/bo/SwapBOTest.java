@@ -16,6 +16,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.task.TaskExecutor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.multibrand.domain.SwapResponse;
@@ -63,9 +64,9 @@ public class SwapBOTest implements Constants{
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 
-	@BeforeMethod
+	@BeforeTest
 	public void initMethod() {
-		//Mockito.reset(swapService);
+		Mockito.reset(swapService);
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
