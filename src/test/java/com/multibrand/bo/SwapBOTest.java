@@ -65,7 +65,7 @@ public class SwapBOTest implements Constants{
 
 	@BeforeMethod
 	public void initMethod() {
-		Mockito.reset(swapService);
+		//Mockito.reset(swapService);
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	

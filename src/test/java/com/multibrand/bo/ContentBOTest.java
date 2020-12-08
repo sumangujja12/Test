@@ -86,7 +86,7 @@ public class ContentBOTest implements Constants {
 	@BeforeMethod
 	public void initMethod() {
 		when(logger.isDebugEnabled()).thenReturn(true);
-		Mockito.reset(profileService);
+		//Mockito.reset(profileService);
 	}
 
 	@Test
