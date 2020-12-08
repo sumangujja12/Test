@@ -68,5 +68,7 @@ public class NEISimplySmartResource {
 		return response;
 
 	}
-
+	public void setHttpRequest(HttpServletRequest httpRequest) {
+        this.httpRequest = httpRequest;
+    }
 }
