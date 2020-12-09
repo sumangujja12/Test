@@ -65,7 +65,7 @@ public class NeiBPCARequest implements FormEntityRequest, Constants, Serializabl
 	
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Length(max = 1, groups = SizeConstraint.class)
 	private String planId;
 	
 	@NotBlank(groups = BasicConstraint.class)

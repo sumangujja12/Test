@@ -44,17 +44,17 @@ public class NEISimplySmartService extends BaseAbstractService {
 		logger.info("{}:****NEISimplySmartService.createNEIBPCA::::::::::::::::::::Start:", sessionId );
 
 		String companyCode ="NEI";
+		String endpoint = envMessageReader.getMessage(NEI_CREATE_BPCA_CCS_ENDPOINT_URL)	;
 
 		ZEIsuNeiCreateBpCaResponse bpcaCreateResp = new ZEIsuNeiCreateBpCaResponse();
 
-		stub = getZEISUNEICREATEBPCA();
-				
+		stub = getZEISUNEICREATEBPCAStub(endpoint);
 		
 		Holder<Bapiret2> exBapiret2Resp =new Holder<Bapiret2>();
 		Holder<String> acctNumberResp =new Holder<String>();
 		Holder<String> bpResp =new Holder<String>();
 		
-	//	logger.debug("{}::Invoking a CCS call: {} " , sessionId, endPoint);
+	    logger.debug("{}::Invoking a CCS call: {} " , sessionId, endpoint);
 		logger.debug("{}::Request: {}" ,sessionId,bpcaRequest);
 		try {
 			stub.zeIsuNeiCreateBpCa(bpcaRequest.getAcctNumber(),
@@ -95,7 +95,7 @@ public class NEISimplySmartService extends BaseAbstractService {
 			
 		} catch (Exception ex) { 
 			
-			logger.error(String.format("%s :createNEIBPCA : Exception while fetching Offers:", sessionId), ex);
+			logger.error(String.format("%s :Exception in NEISimplySmartService:createNEIBPCA:", sessionId), ex);
 			utilityloggerHelper.logTransaction("NEISimplySmartService:createNEIBPCA", false, bpcaRequest, ex, "",
 					CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 			throw new NRGException(ex);
@@ -107,7 +107,7 @@ public class NEISimplySmartService extends BaseAbstractService {
 
 	}
 	
-	public ZEISUNEICREATEBPCA  getZEISUNEICREATEBPCA () {
+	public ZEISUNEICREATEBPCA  getZEISUNEICREATEBPCAStub (String endpoint) {
 		URL url = ZEISUNEICREATEBPCA_Service.class.getResource("Z_E_ISU_NEI_CREATE_BP_CA.wsdl");
 		
 		ZEISUNEICREATEBPCA_Service port = new ZEISUNEICREATEBPCA_Service(url);
@@ -115,7 +115,7 @@ public class NEISimplySmartService extends BaseAbstractService {
         BindingProvider binding = (BindingProvider) stub;
         binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,this.envMessageReader.getMessage(CCS_USER_NAME));
 		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PSD));
-		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,envMessageReader.getMessage(NEI_CREATE_BPCA_CCS_ENDPOINT_URL));
+		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,endpoint);
 		return stub;
 	}
     
