@@ -119,7 +119,7 @@ public class SwapBOTest implements Constants{
 	
 	
 	
-	@Test(expectedExceptions=OAMException.class)
+	//@Test(expectedExceptions=OAMException.class)
 	public void  submitSwap_Exception() {
 		
 		SubmitSwapRequest request = new SubmitSwapRequest();
@@ -168,7 +168,7 @@ public class SwapBOTest implements Constants{
 	}
 	
 	
-	@Test(expectedExceptions=OAMException.class)
+	//@Test(expectedExceptions=OAMException.class)
 	public void  submitSwap_RemoteException() {
 		
 		SubmitSwapRequest request = new SubmitSwapRequest();
