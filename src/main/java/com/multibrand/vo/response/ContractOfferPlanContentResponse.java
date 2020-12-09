@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @XmlRootElement(name="ContractOfferPlanContentResponse")
 public class ContractOfferPlanContentResponse extends GenericResponse {
 		
-	private ContractOffer currentPlan;
+	private ContractOffer currentPlan = new ContractOffer();
 	private List<ContractOffer> plans;
 	private ServiceAddressDO serviceAddress;
 
