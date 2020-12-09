@@ -80,7 +80,7 @@ public class ContentBOTest implements Constants {
 	@BeforeMethod
 	public void initMethod() {
 		when(logger.isDebugEnabled()).thenReturn(true);
-		//Mockito.reset(profileService);
+		Mockito.reset(profileService);
 	}
 
 	@Test
@@ -146,9 +146,8 @@ public class ContentBOTest implements Constants {
 	}
 	
 	
-	
-	
-	//@Test
+		
+	@Test
 	public void getMultiBrandPlanOffers_NoOfferCode() {
 		ContractInfoRequest request = new ContractInfoRequest();
 		request.setAccountNumber("000003040103");
@@ -211,7 +210,7 @@ public class ContentBOTest implements Constants {
 	}
 	
 	
-	//@Test(expectedExceptions=OAMException.class)
+	@Test(expectedExceptions=OAMException.class)
 	public void getMultiBrandPlanOffers_RemoteException() {
 		ContractInfoRequest request = new ContractInfoRequest();
 		request.setAccountNumber("000003040103");
@@ -275,7 +274,7 @@ public class ContentBOTest implements Constants {
 	}
 	
 	
-	//@Test(expectedExceptions=OAMException.class)
+	@Test(expectedExceptions=OAMException.class)
 	public void getMultiBrandPlanOffers_Exception() {
 		ContractInfoRequest request = new ContractInfoRequest();
 		request.setAccountNumber("000003040103");

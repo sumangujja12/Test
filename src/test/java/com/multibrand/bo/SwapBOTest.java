@@ -65,7 +65,7 @@ public class SwapBOTest implements Constants{
 
 	@BeforeMethod
 	public void initMethod() {
-		//Mockito.reset(swapService);
+		Mockito.reset(swapService);
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
@@ -119,7 +119,7 @@ public class SwapBOTest implements Constants{
 	
 	
 	
-	//@Test(expectedExceptions=OAMException.class)
+	@Test(expectedExceptions=OAMException.class)
 	public void  submitSwap_Exception() {
 		
 		SubmitSwapRequest request = new SubmitSwapRequest();
@@ -168,7 +168,7 @@ public class SwapBOTest implements Constants{
 	}
 	
 	
-	//@Test(expectedExceptions=OAMException.class)
+	@Test(expectedExceptions=OAMException.class)
 	public void  submitSwap_RemoteException() {
 		
 		SubmitSwapRequest request = new SubmitSwapRequest();
