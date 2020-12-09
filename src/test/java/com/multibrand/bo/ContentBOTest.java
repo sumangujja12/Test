@@ -1,9 +1,6 @@
 package com.multibrand.bo;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
@@ -21,7 +18,6 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.task.TaskExecutor;
 import org.testng.annotations.BeforeClass;
@@ -31,13 +27,11 @@ import org.testng.annotations.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAlertsRequest;
 import com.multibrand.domain.AllAlertsResponse;
 import com.multibrand.domain.ContractAccountDO;
 import com.multibrand.domain.ContractDO;
-import com.multibrand.dto.response.OfferDO;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.ContentHelper;
 import com.multibrand.service.AdodeAnalyticService;
@@ -50,7 +44,7 @@ import com.multibrand.vo.response.ContractOfferPlanContentResponse;
 import com.multibrand.vo.response.GetContractInfoResponse;
 import com.multibrand.vo.response.MonthlyUsageResponse;
 import com.multibrand.vo.response.MonthlyUsageResponseList;
-
+@Test(singleThreaded = true)
 public class ContentBOTest implements Constants {
 
 	/** Object of ProfileBO class. */
@@ -86,7 +80,7 @@ public class ContentBOTest implements Constants {
 	@BeforeMethod
 	public void initMethod() {
 		when(logger.isDebugEnabled()).thenReturn(true);
-		Mockito.reset(profileService);
+		//Mockito.reset(profileService);
 	}
 
 	@Test
@@ -150,7 +144,6 @@ public class ContentBOTest implements Constants {
 		ContractOfferPlanContentResponse response =	contentBO.getMultiBrandPlanOffers(request, null, null);
 		assertEquals("0", response.getResultCode());
 	}
-	
 	
 	
 	

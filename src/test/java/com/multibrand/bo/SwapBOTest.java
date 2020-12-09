@@ -29,7 +29,7 @@ import com.multibrand.util.EnvMessageReader;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.vo.request.SubmitSwapRequest;
 import com.multibrand.vo.response.SubmitSwapResponse;
-
+@Test(singleThreaded = true)
 public class SwapBOTest implements Constants{
 
 	
@@ -65,7 +65,7 @@ public class SwapBOTest implements Constants{
 
 	@BeforeMethod
 	public void initMethod() {
-		Mockito.reset(swapService);
+		//Mockito.reset(swapService);
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
