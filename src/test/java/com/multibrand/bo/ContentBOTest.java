@@ -26,7 +26,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.task.TaskExecutor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -84,7 +83,7 @@ public class ContentBOTest implements Constants {
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 
-	@BeforeTest
+	@BeforeMethod
 	public void initMethod() {
 		when(logger.isDebugEnabled()).thenReturn(true);
 		Mockito.reset(profileService);

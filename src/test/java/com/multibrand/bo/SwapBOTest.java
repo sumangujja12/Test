@@ -16,7 +16,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.task.TaskExecutor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.multibrand.domain.SwapResponse;
@@ -64,15 +63,15 @@ public class SwapBOTest implements Constants{
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 
-	@BeforeTest
+	@BeforeMethod
 	public void initMethod() {
-		Mockito.reset(swapService);
+		//Mockito.reset(swapService);
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
 	@Test
 	public void  submitSwap() {
-		
+		Mockito.reset(swapService);
 		SubmitSwapRequest request = new SubmitSwapRequest();
 		new SubmitSwapRequest();
 		request.setAccountNumber("");
@@ -122,7 +121,7 @@ public class SwapBOTest implements Constants{
 	
 	@Test(expectedExceptions=OAMException.class)
 	public void  submitSwap_Exception() {
-		
+		Mockito.reset(swapService);
 		SubmitSwapRequest request = new SubmitSwapRequest();
 		new SubmitSwapRequest();
 		request.setAccountNumber("");
@@ -171,7 +170,7 @@ public class SwapBOTest implements Constants{
 	
 	@Test(expectedExceptions=OAMException.class)
 	public void  submitSwap_RemoteException() {
-		
+		Mockito.reset(swapService);
 		SubmitSwapRequest request = new SubmitSwapRequest();
 		new SubmitSwapRequest();
 		request.setAccountNumber("");
