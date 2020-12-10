@@ -118,6 +118,7 @@ import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.ProductOfferRequest;
 import com.multibrand.dto.request.ProspectDataRequest;
 import com.multibrand.dto.request.SalesHoldLookupRequest;
+import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.TLPOfferRequest;
 import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
@@ -135,6 +136,7 @@ import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
+import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -4381,7 +4383,6 @@ public class OEBO extends OeBoHelper implements Constants{
 						.getStrTOSSmartCode());
 				affiliateOfferDO.setYraacSmartCode(offerDO
 						.getStrYRAACSmartCode());
-
 				
 				//Start - Alt Channels US8596 | Pratyush
 				affiliateOfferDO.setAverageEFLPrice1000(getAveragePriceEFL1000(offerDO));
@@ -4465,15 +4466,34 @@ public class OEBO extends OeBoHelper implements Constants{
 				
 				String baseCharge = getBaseCharge(offerDO);
 				
+				//Start : PBI 76839 | Single Offer API | 11-16-2020 
+				String usageCharge = getKeyPrice(offerDO, S_CUSTCHR2);
+				if(StringUtils.isEmpty(usageCharge))
+					affiliateOfferDO.setUsageCharge(null);
+				else
+					affiliateOfferDO.setUsageCharge(null);
+				//End : PBI 76839 | Single Offer API | 11-16-2020 
+				
 				if (!StringUtils.isEmpty(baseCharge)) {
+					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseCharge(baseCharge);
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
+					
 					String baseChargeText = msgSource.getMessage(
 							BASE_CHARGE_PER_MONTH, new String[] { baseCharge },
 							CommonUtil.localeCode(request.getLanguageCode()));
 					if (StringUtils.isEmpty(usageAmt)) {
-						affiliateOfferDO
-								.setBaseUsageChargeText(baseChargeText);
+						affiliateOfferDO.setBaseUsageChargeText(baseChargeText);
+						//Start : PBI 76839 | Single Offer API | 11-16-2020 
+						affiliateOfferDO.setUsageChargeThreshold(null);
+						//End : PBI 76839 | Single Offer API | 11-16-2020 
 					} else {
-
+					
+						//Start : PBI 76839 | Single Offer API | 11-16-2020 
+						affiliateOfferDO.setUsageChargeThreshold(usageAmt);
+						//End : PBI 76839 | Single Offer API | 11-16-2020 
+						
 						DecimalFormat decimalformat = new DecimalFormat("#0");
 						usageAmt = decimalformat.format(Double
 								.parseDouble(usageAmt));
@@ -4483,15 +4503,16 @@ public class OEBO extends OeBoHelper implements Constants{
 										getKeyPrice(offerDO, S_CUSTCHR2),
 										usageAmt }, CommonUtil
 										.localeCode(request.getLanguageCode()));
-						;
 						affiliateOfferDO
 								.setBaseUsageChargeText(baseChargeText + "; "
 										+ usageChargeText);
 					}
 
 				} else {
-					affiliateOfferDO
-							.setBaseUsageChargeText(StringUtils.EMPTY);					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseCharge(null);
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setBaseUsageChargeText(StringUtils.EMPTY);					
 				}
 				
 				boolean validOffer = checkMandatoryFields(affiliateOfferDO, energyCharge);
@@ -4691,7 +4712,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		return url;		
 	}
 	
-//Start || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
+	//Start || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
 	private String getAllBrandResponseMessage(String companyCode, String brandId, String textMessageCode, String locale){
 		
 		String responseMessage=StringUtils.EMPTY;
@@ -6904,12 +6925,117 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return ercotCheckResponse;
 
 	}
+
+	public OESignupVO populateOESignupVOForOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
+		
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdfDate = new SimpleDateFormat(MM_dd_yyyy);
+		SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
+		
+		OESignupVO oeSignupVO = new OESignupVO();
+		oeSignupVO.setOfferDate(sdfDate.format(cal.getTime()));
+		oeSignupVO.setOfferTime(sdfTime.format(cal.getTime()));
+		oeSignupVO.setBrandId(salesOfferDetailsRequest.getBrandId());
+		
+		oeSignupVO.setLocale(setLanguageCode(salesOfferDetailsRequest.getLanguageCode()));
+		
+		oeSignupVO.setPromoCodeEntered(salesOfferDetailsRequest.getPromoCode());
+		
+		return oeSignupVO;
+	}
+
+	public OfferPricingRequest constructOfferPricingRequestForOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest){
+		
+		Calendar cal = Calendar.getInstance();
+		SimpleDateFormat sdfDate = new SimpleDateFormat(MM_dd_yyyy);
+		SimpleDateFormat sdfTime = new SimpleDateFormat(TIME_FORMAT);
+		
+		OfferPricingRequest offerPricingRequest = new OfferPricingRequest();
+		offerPricingRequest.setStrCompanyCode(salesOfferDetailsRequest.getCompanyCode());
+		offerPricingRequest.setStrDate(sdfDate.format(cal.getTime()));
+		offerPricingRequest.setStrTime(sdfTime.format(cal.getTime()));
+		OfferRequestDTO[] offerRequest =  new OfferRequestDTO[1];
+		OfferRequestDTO offerRequestDTO = null;
+		offerRequestDTO = new OfferRequestDTO();
+		offerRequestDTO.setStrOfferCode(salesOfferDetailsRequest.getOfferCode());
+		offerRequestDTO.setStrCampaignCode(salesOfferDetailsRequest.getCampaignCode());
+		offerRequestDTO.setStrPromoCode(salesOfferDetailsRequest.getPromoCode());
+		offerRequest[0] = offerRequestDTO;
+		offerPricingRequest.setOfferRequestDTOs(offerRequest);
+		
+		offerPricingRequest.setStrLanguage(setLanguageCode(salesOfferDetailsRequest.getLanguageCode()));
+		
+		return offerPricingRequest;
+	}
+
+	private AffiliateOfferRequest constructAffiliateOfferRequestForOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
+		
+		AffiliateOfferRequest affiliateOfferRequest = new AffiliateOfferRequest();
+		affiliateOfferRequest.setAffiliateId(salesOfferDetailsRequest.getAffiliateId());
+		affiliateOfferRequest.setBrandId(salesOfferDetailsRequest.getBrandId());
+		affiliateOfferRequest.setChannelType(salesOfferDetailsRequest.getChannelType());
+		affiliateOfferRequest.setCompanyCode(salesOfferDetailsRequest.getCompanyCode());
+		affiliateOfferRequest.setLanguageCode(setLanguageCode(salesOfferDetailsRequest.getLanguageCode()));
+		affiliateOfferRequest.setPromoCode(salesOfferDetailsRequest.getPromoCode());
+		return affiliateOfferRequest;
+	}
+	
+	public String setLanguageCode(String langCode){
+		String langauageCodeReturned;
+		if ((StringUtils.isNotBlank(langCode))
+				&& ((ES_US.equalsIgnoreCase(langCode)) 
+				|| (LANGUAGE_CODE_ES.equalsIgnoreCase(langCode)))) {
+			langauageCodeReturned = LANGUAGE_CODE_ES;
+		} else {
+			langauageCodeReturned = LANGUAGE_CODE_EN;
+		}
+		return langauageCodeReturned;
+	}
+	
+	public AffiliateOfferResponse getOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {
+
+		AffiliateOfferResponse affiliateOfferResponse = null;
+		OESignupVO oeSignupVO = populateOESignupVOForOfferDetails(salesOfferDetailsRequest);
+		OfferPricingRequest offerPricingRequest = constructOfferPricingRequestForOfferDetails(salesOfferDetailsRequest);
+		
+		try {	
+			PromoOfferResponse promoOfferResponse = this.offerService.getOfferPricingFromCCS(offerPricingRequest);
+			
+			Map<String, Object> responseMap = constructOffers(promoOfferResponse, oeSignupVO);
+			OfferResponse offerResponse = new OfferResponse();
+			OfferDO[] offerDOArray = null;
+			List<OfferDO> offersList = (List<OfferDO>) responseMap.get(OFFERS_LIST);
+			if ((offersList != null) && !offersList.isEmpty()) {
+				offerDOArray = offersList.toArray(new OfferDO[offersList.size()]);
+				offerResponse.setOfferDOList(offerDOArray);
+			} else {
+				offerResponse.setOfferDOList(offerDOArray);
+			}
+			
+			offerResponse.setStrErrorCode((String) responseMap.get(CCS_ERROR));
+			offerResponse.setOfferDate(oeSignupVO.getOfferDate());
+			offerResponse.setOfferTime(oeSignupVO.getOfferTime());
+			offerResponse.setStrTDSPCode(oeSignupVO.getTdspCodeCCS());
+			
+			AffiliateOfferRequest affiliateOfferRequest = constructAffiliateOfferRequestForOfferDetails(salesOfferDetailsRequest);
+			affiliateOfferResponse = constructAffiliateOfferResponse(offerResponse,affiliateOfferRequest);
+			
+			if(affiliateOfferResponse.getAffiliateOfferList() != null && affiliateOfferResponse.getAffiliateOfferList().length>0)
+			{				
+				List<AffiliateOfferDO> affiliateOfferList =  new ArrayList<>(Arrays.asList(affiliateOfferResponse.getAffiliateOfferList())); 			
+				String cmsErrorOffers = contentHelper.fillAndFilterSDLContentOffer(affiliateOfferList, affiliateOfferRequest.getCompanyCode(), 
+						affiliateOfferRequest.getBrandId(), affiliateOfferRequest.getLanguageCode());
+				affiliateOfferResponse.setCmsErrorOffers(cmsErrorOffers);	
+				affiliateOfferResponse.setAffiliateOfferList(affiliateOfferList.toArray(new AffiliateOfferDO[affiliateOfferList.size()]));
+				
+			}
+			
+			if(affiliateOfferResponse.getAffiliateOfferList() == null || affiliateOfferResponse.getAffiliateOfferList() .length ==0){
+				affiliateOfferResponse.setStatusCode(Constants.STATUS_CODE_STOP);				
+			}
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
+		return affiliateOfferResponse;
+	}
 }
-	
-	
-
-	
-
-
-
-	
