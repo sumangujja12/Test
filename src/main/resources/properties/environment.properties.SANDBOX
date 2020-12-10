@@ -231,3 +231,11 @@ gmd.offer.predis.equivalent.D0005=090175168088b0cc
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
 duplicate.payment.check =X
+
+
+0121.web.url=https://stg1-www.reliant.com
+0271.web.url=https://stg-signup.greenmountain.com
+#0391.web.url=https://www.pennywisepower.com
+0391.web.url=https://stg-www.discountpowertx.com
+0391.CE.web.url=https://stg-signup.cirroenergy.com
+0400.web.url=https://stg-www.everythingenergytx.com
