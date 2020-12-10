@@ -263,3 +263,10 @@ template.url.parameter.reportsuite=relengmemobile.appprod
 iot.post.url = http://txaixsexblp05/iotproxy/postServiceRequestURL
 adobe.messageId.message = Your contract will expire on [date].Log on to find clean electricity plans available for you
 ws.rest.iot.ercot.check.by.address.url=http://txaixsexblp05/iotproxy/ercot/getByAddress
+
+0121.web.url=https://www.reliant.com
+0271.web.url=https://signup.greenmountain.com
+#0391.web.url=https://www.pennywisepower.com
+0391.web.url=https://www.discountpowertx.com
+0391.CE.web.url=https://signup.cirroenergy.com
+0400.web.url=https://www.everythingenergytx.com

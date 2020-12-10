@@ -283,6 +283,10 @@ public class OEBO extends OeBoHelper implements Constants{
 	protected static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
 	protected static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
 	
+	@Autowired
+	@Qualifier("environmentMessageSource")
+	private ReloadableResourceBundleMessageSource environmentMessageSource;
+	
 	/**
 	 * Method to return Company Code + Brand Id specific offers based on TDSP code or address or esid
 	 * @param locale
@@ -4707,16 +4711,16 @@ public class OEBO extends OeBoHelper implements Constants{
 		return avgPrice;
 	}
 	
-	private String getWebURL(String companyCode, String brandId){
+	public String getWebURL(String companyCode, String brandId){
 		String url = StringUtils.EMPTY;
 		
 		if(StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) && StringUtils.equals(brandId, CIRRO_BRAND_NAME) ) {
 			
-			url = appConstMessageSource.getMessage(CIRRO_COMPANY_CODE+"."+CIRRO_BRAND_NAME+".web.url", null,null);
+			url =  environmentMessageSource.getMessage(CIRRO_COMPANY_CODE+"."+CIRRO_BRAND_NAME+".web.url", null,null);
 					
 		} else {
 			
-			url = appConstMessageSource.getMessage(companyCode+".web.url", null,null);
+			url = environmentMessageSource.getMessage(companyCode+".web.url", null,null);
 			
 		}
 		
