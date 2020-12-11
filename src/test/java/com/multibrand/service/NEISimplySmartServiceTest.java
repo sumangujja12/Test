@@ -1,5 +1,6 @@
 package com.multibrand.service;
 
+import static org.junit.Assert.assertTrue;
 
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
@@ -8,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -22,19 +24,21 @@ import com.nrg.cxfstubs.nei.bpca.ZEIsuNeiCreateBpCaResponse;
 
 public class NEISimplySmartServiceTest {
 
+	boolean thrown = false;
+
 	@InjectMocks
 	public NEISimplySmartService nEISimplySmartService;
-	
+
 	@Spy
 	ZEISUNEICREATEBPCA_Service service;
-	
+
 	public ZEISUNEICREATEBPCA stub;
-	
-	
-	
+
+	public NeiBPCARequest neiBPCARequest;
+
 	@Mock
 	EnvMessageReader envMessageReader;
-	
+
 	@Mock
 	ReloadableResourceBundleMessageSource environmentMessageSource;
 
@@ -47,14 +51,9 @@ public class NEISimplySmartServiceTest {
 	public void initMethod() {
 		MockitoAnnotations.initMocks(this);
 		stub = service.getZEISUNEICREATEBPCABIND();
-	
-	}
 
-	@Test
-	public void testCreateNEIBPCA() {
-
-		NeiBPCARequest neiBPCARequest = new NeiBPCARequest();
-		neiBPCARequest.setAcctNumber("1234");
+		neiBPCARequest = new NeiBPCARequest();
+		neiBPCARequest.setAcctNumber("8759");
 		neiBPCARequest.setBillCity("Houston");
 		neiBPCARequest.setBillCountry("US");
 		neiBPCARequest.setBillDistrict("billDistrict");
@@ -77,61 +76,51 @@ public class NEISimplySmartServiceTest {
 		neiBPCARequest.setSrvcStreet("iSrvcStreet");
 		neiBPCARequest.setSrvcZip("77002");
 		neiBPCARequest.setUtility("Test");
-		
-		ZEIsuNeiCreateBpCaResponse ccsResponse = new ZEIsuNeiCreateBpCaResponse();
-		
-		  try {
-			//  ZEISUNEICREATEBPCA_Service port = new ZEISUNEICREATEBPCA_Service();
-			//	ZEISUNEICREATEBPCA stub = port.getZEISUNEICREATEBPCABIND();
-		
-			  Mockito.when(envMessageReader.getMessage(Constants.CCS_USER_NAME)).thenReturn("WEBCPIC");
-			  Mockito.when(envMessageReader.getMessage(Constants.CCS_PSD)).thenReturn("CustAlrt01");
-			  Mockito.when(envMessageReader.getMessage(Constants.NEI_CREATE_BPCA_CCS_ENDPOINT_URL)).thenReturn("http://saprpm01.reinternal.com:8080/sap/bc/srt/rfc/sap/z_e_isu_nei_create_bp_ca/900/z_e_isu_nei_create_bp_ca/z_e_isu_nei_create_bp_ca_bind");
-			  
-				  ((ZEISUNEICREATEBPCA) Mockito.when((ZEISUNEICREATEBPCA)stub)).zeIsuNeiCreateBpCa(
-						     Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),
-		            		 Matchers.any(String.class),            		 
-		            		 Matchers.any(javax.xml.ws.Holder.class),
-		            		 Matchers.any(javax.xml.ws.Holder.class),
-		            		 Matchers.any(javax.xml.ws.Holder.class)
-		            		 );
+		neiBPCARequest.setPhoneNumber("746487989");
 
-	             } catch (Exception e) {
-	                    // TODO Auto-generated catch block
-	                    e.printStackTrace();
-	             }
-		
+	}
+
+	@Test
+	public void testCreateNEIBPCA() {
+
+		ZEIsuNeiCreateBpCaResponse ccsResponse = new ZEIsuNeiCreateBpCaResponse();
+
 		try {
+
+			Mockito.when(envMessageReader.getMessage(Constants.CCS_USER_NAME)).thenReturn("WEBCPIC");
+			Mockito.when(envMessageReader.getMessage(Constants.CCS_PSD)).thenReturn("CustAlrt01");
+			Mockito.when(envMessageReader.getMessage(Constants.NEI_CREATE_BPCA_CCS_ENDPOINT_URL)).thenReturn(
+					"http://saprpm01.reinternal.com:8080/sap/bc/srt/rfc/sap/z_e_isu_nei_create_bp_ca/900/z_e_isu_nei_create_bp_ca/z_e_isu_nei_create_bp_ca_bind");
+
 			ccsResponse = nEISimplySmartService.createNEIBPCA(neiBPCARequest, "Session1");
+
 		} catch (NRGException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		//   AssertJUnit.assertEquals
+		AssertJUnit.assertEquals(ccsResponse.getOAcctNumber(), "");
+	}
+
+	@Test
+	public void testCreateNEIBPCA_Exception() {
+
+		NeiBPCARequest neiBPCARequest1 = new NeiBPCARequest();
+		neiBPCARequest1.setAcctNumber("5678");
+
+		try {
+
+			Mockito.when(envMessageReader.getMessage(Constants.CCS_USER_NAME)).thenReturn("WEBCPIC");
+			Mockito.when(envMessageReader.getMessage(Constants.CCS_PSD)).thenReturn("CustAlrt01");
+			Mockito.when(envMessageReader.getMessage(Constants.NEI_CREATE_BPCA_CCS_ENDPOINT_URL)).thenReturn(
+					"http://saprpm01.reinternal.com:8080/sap/bc/srt/rfc/sap/z_e_isu_nei_create_bp_ca/900/z_e_isu_nei_create_bp_ca/z_e_isu_nei_create_bp_ca_bind");
+
+			nEISimplySmartService.createNEIBPCA(neiBPCARequest1, "Session1");
+
+		} catch (Exception e) {
+			thrown = true;
+			e.printStackTrace();
+		}
+
+		assertTrue(thrown);
 
 	}
 
