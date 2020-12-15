@@ -4509,7 +4509,6 @@ public class OEBO extends OeBoHelper implements Constants{
 										getKeyPrice(offerDO, S_CUSTCHR2),
 										usageAmt }, CommonUtil
 										.localeCode(request.getLanguageCode()));
-						;
 						affiliateOfferDO
 								.setBaseUsageChargeText(baseChargeText + "; "
 										+ usageChargeText);
