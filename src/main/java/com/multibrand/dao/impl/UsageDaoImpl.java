@@ -19,6 +19,7 @@ import com.multibrand.dao.mapper.DailyUsageRowMapper;
 import com.multibrand.dao.mapper.DailyWeeklyUsageRowMapper;
 import com.multibrand.dao.mapper.GMDAllTimePriceRowMapper;
 import com.multibrand.dao.mapper.GMDHourlyPriceRowMapper;
+import com.multibrand.dao.mapper.GMDHourlyUsageRowMapper;
 import com.multibrand.dao.mapper.HourlyUsageRowMapper;
 import com.multibrand.dao.mapper.MonthlyUsageRowMapper;
 import com.multibrand.dao.mapper.SmartMeterUsageRowMapper;
@@ -195,6 +196,122 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		logger.info("Exiting getHourlyUsageFromDB in UsageDaoImpl");
 		return response;
 	}
+	
+	/**
+	 * This method get the hourly usage of the smart meter for predefined date.
+	 * 
+	 */
+	@Override
+	public DailyHourlyUsageResponseVO getGMDHourlyUsageFromDB(UsageRequestVO request, String sessionId, String companyCode) {
+		logger.info("Inside getGMDHourlyUsageFromDB in UsageDaoImpl");
+		long startTime = CommonUtil.getStartTime();
+		
+		DailyHourlyUsageResponseVO response = new DailyHourlyUsageResponseVO();
+		logger.info("ca in the request is {}",request.getContractAcctId());
+		logger.info("esiid in the request is {}",request.getEsiId());
+		logger.info("co in the request is {}",request.getContractId());
+		
+		Map<String, Object> inParams = new LinkedHashMap<String, Object>();
+		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<String, Integer>();
+		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<String, ResultObject>();
+		BaseStoredProcedure storedProc = null;
+		
+		inParamsTypeMap.put(ESIID_IN_V,OracleTypes.VARCHAR );
+		inParamsTypeMap.put(CONTRACT_ID_IN_V,OracleTypes.VARCHAR );
+		inParamsTypeMap.put(CONTRACT_ACT_ID_IN_V, OracleTypes.VARCHAR);
+		inParamsTypeMap.put(ZONE_ID_IN_V, OracleTypes.VARCHAR);
+		inParamsTypeMap.put(CUR_DT_IN_V,OracleTypes.DATE);
+		inParamsTypeMap.put(CUR_DAY_IND_IN_V,OracleTypes.VARCHAR);
+		inParamsTypeMap.put(DYHR_IND_IN_V,OracleTypes.VARCHAR);
+		
+       
+		inParams.put(ESIID_IN_V,request.getEsiId() );
+		inParams.put(CONTRACT_ID_IN_V,request.getContractId() );
+		inParams.put(CONTRACT_ACT_ID_IN_V, request.getContractAcctId());
+		inParams.put(ZONE_ID_IN_V, request.getZoneId());
+		if (request.getCurDtInd() != null && !request.getCurDtInd().equals("")) {
+			inParams.put(CUR_DT_IN_V, CommonUtil.getSqlDate(
+					request.getCurDtInd(), Constants.DT_FMT_REQUEST));
+		} else {
+			inParams.put(CUR_DT_IN_V, "");
+		}
+		inParams.put(CUR_DAY_IND_IN_V,request.getCurDayInd());
+		inParams.put(DYHR_IND_IN_V,request.getDyHrInd());
+		
+		
+		
+		if (Constants.DAILY_INDICATOR.equalsIgnoreCase(request.getDyHrInd())) {
+			outParamsTypeMap.put(DYHR_OUT_REC, new ResultObject(
+					OracleTypes.CURSOR, new DailyUsageRowMapper()));
+		} else {
+			outParamsTypeMap.put(DYHR_OUT_REC, new ResultObject(
+					OracleTypes.CURSOR, new GMDHourlyUsageRowMapper()));
+		}
+		outParamsTypeMap.put(RET_TYP_OUT_V, new ResultObject(OracleTypes.VARCHAR));
+		
+		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
+		storedProc = storedProcedure
+				.createStoredProcedure(smartJdbcTemplate, WP_GET_15MIN_USG_COST,
+						inParams, inParamsTypeMap, outParamsTypeMap);
+		
+		// START (TIME LOG)
+		long entryTime;
+		long elapsedTime;
+		entryTime = System.currentTimeMillis();
+		
+		Map<String, Object> storedProcResult = storedProc.execute();
+
+			
+		// Elapsed time in minutes (TIME LOG)
+		elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
+		String elapsedTimeDisp = elapsedTime > 0 ? elapsedTime + " seconds."
+				: "less than a second.";
+		logger.info(PROJECTEDBILL_PROC + "-" + elapsedTimeDisp);
+
+		// END (TIME LOG)
+		
+		
+		logger.info("hai"+storedProcResult.get("RET_TYP_OUT_V"));
+		if (storedProcResult != null
+				&& (storedProcResult.get("RET_TYP_OUT_V") == null || storedProcResult
+						.get("RET_TYP_OUT_V").equals(""))) {
+			
+			
+			if (Constants.DAILY_INDICATOR.equalsIgnoreCase(request.getDyHrInd())) {
+				
+				List<DailyResponseVO> storeResponseList = (List<DailyResponseVO>) storedProcResult
+						.get(DYHR_OUT_REC);
+				
+				
+				if (storeResponseList != null) {
+					response.setDailyUsageList(storeResponseList);
+				}
+			} else {
+				List<HourlyUsage> storeResponseList = (List<HourlyUsage>) storedProcResult
+						.get(DYHR_OUT_REC);
+				
+				
+				if (storeResponseList != null) {
+					response.setHourlyUsageList(storeResponseList);
+					logger.info("SIZE of the List"+storeResponseList.size());
+				}
+				
+			}
+			
+			
+			
+		}		
+	
+		utilityloggerHelper.logTransaction("getHourlyUsageFromDB", false,
+				request, response, "", CommonUtil.getElapsedTime(startTime),
+				"", sessionId, companyCode);
+		if(logger.isDebugEnabled()){
+			logger.debug(XmlUtil.pojoToXML(request));
+			logger.debug(XmlUtil.pojoToXML(response));
+		}
+		logger.info("Exiting getHourlyUsageFromDB in UsageDaoImpl");
+		return response;
+	}	
 	
 		
 		@Override

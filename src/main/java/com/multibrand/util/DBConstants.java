@@ -53,6 +53,7 @@ public interface DBConstants {
 	public static String PROJECTEDBILL_PROC_AVG = "SMART_SYNC.WP_WEB_UTIL.WP_CALC_AVG_WTHR_PRC";
 
 	public static String WP_GET_DLY_USG_GME = "SMART_SYNC.WP_WEB_UTIL.WP_GET_DLY_USG_GME";
+	public static String WP_GET_15MIN_USG_COST = "SMART_SYNC.WP_WEB_UTIL.WP_GET_15MIN_USG_COST";
 	public static String ESIID_IN_V = "esiid_in_v";
 	public static String CONTRACT_ACT_ID_IN_V = "contract_act_id_in_v";
 	public static String RET_TYP_OUT_V = "ret_typ_out_v";
@@ -81,7 +82,7 @@ public interface DBConstants {
 	public static String WEEKLYUSAGE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_WSE_GME";
 	public static String DAILYWEEKLYUSAGE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_DLYWKY_USG_GME";
 	
-	public static String GMDSMART_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_SMART_RTP_PRICE";
+	public static String GMDSMART_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_15MIN_SMART_RTP_PRICE";
 	public static String GMDSMART_ZONE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_ZONE_ID";
 	public static String GMDSMART_ALL_TIME_PRICE_PROC = "SMART_SYNC.WP_WEB_UTIL.WP_GET_ALL_TIME_PRICE";
 	// END : OAM :KD
@@ -409,5 +410,13 @@ public interface DBConstants {
 	
 	public static final String GMD_PERSON_SEQ = "GME_CHOICE.GMD_PERSON_ID_SEQ";
 	public static final String GMD_TRACKING_SEQ = "GME_CHOICE.GMD_TRACKING_NUMBER_SEQ";
+	
+	public static final String DB_OWNERSHIP_FLG="OWNERSHIP_FLG";
+	public static final String DB_SECURITY_ELIGIBLE_FLG="SECURITY_ELIGIBLE_FLG";
+	public static final String DB_CASH_PAYMENTS_FLG="CASH_PAYMENTS_FLG";
+	public static final String DB_CONTR_ELAPSED_DAYS="CONTR_ELAPSED_DAYS";
+	public static final String DB_RELIANT_APP_USER_FLG="RELIANT_APP_USER_FLG";
+	public static final String DB_SECURITY_ACTIVE="SECURITY_ACTIVE";
+	public static final String DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase";
 
 }

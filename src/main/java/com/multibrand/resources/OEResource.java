@@ -70,7 +70,9 @@ import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
+import com.multibrand.vo.request.GetAddressOrEsidFromErcotRequest;
 import com.multibrand.vo.response.AgentDetailsResponse;
+import com.multibrand.vo.response.ErcotCheckByAddressResponse;
 import com.multibrand.vo.response.EsidInfoTdspCalendarResponse;
 import com.multibrand.vo.response.GMEEnviornmentalImpact;
 import com.multibrand.vo.response.GenericResponse;
@@ -913,6 +915,25 @@ public class OEResource extends BaseResource {
  
 		logger.info("Exit validateEsid");
    		
+       return response;
+	}
+
+	/**
+	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@POST
+	@Path(NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response ercotESIDCheckByAddress(@Valid GetAddressOrEsidFromErcotRequest request) throws OEException {	
+		
+		Response response = null;
+		ErcotCheckByAddressResponse ercotCheckResponse = oeBO.ercotESIDCheckByAddress(request);
+		response = Response.status(Response.Status.OK).entity(ercotCheckResponse).build();
+		
        return response;
 	}
 }

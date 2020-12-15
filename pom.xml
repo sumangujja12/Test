@@ -935,7 +935,7 @@
  		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-ccs-ws-client-nrg-rest</artifactId>
-			<version>12</version>
+			<version>16</version>
 
  		</dependency>
 		<dependency>
@@ -1051,7 +1051,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-validation-domain</artifactId>
-			<version>8</version>
+			<version>10</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 
@@ -1097,5 +1097,23 @@
 			<artifactId>jersey-multipart</artifactId>
 			<version>1.17.1</version>
 		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>3.5.0</version>
+		 </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser -->
+			<dependency>
+			    <groupId>org.apache.lucene</groupId>
+			    <artifactId>lucene-queryparser</artifactId>
+			    <version>3.5.0</version>
+			</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-common -->
+			<dependency>
+			    <groupId>org.apache.lucene</groupId>
+			    <artifactId>lucene-analyzers</artifactId>
+			    <version>3.5.0</version>
+			</dependency>		
 	</dependencies>
 </project>

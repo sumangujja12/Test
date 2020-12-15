@@ -48,6 +48,13 @@ public class AffiliateOfferDO {
 	private String energyChargeOther;
 	private String tdspChargeOther;
 	
+	//Start : PBI 76839 | Single Offer API | 11-16-2020 
+	private String cmsAdditionalPricingText;
+	private String cmsLegalese;
+	private String baseCharge;
+	private String usageCharge;
+	private String usageChargeThreshold;
+	//End : PBI 76839 | Single Offer API | 11-16-2020 
 
 	public String getSapPlanName() {
 		return sapPlanName;
@@ -324,6 +331,37 @@ public class AffiliateOfferDO {
 	public void setTdspChargeMo(String tdspChargeMo) {
 		this.tdspChargeMo = tdspChargeMo;
 	}
-		
-		
+	
+	//Start : PBI 76839 | Single Offer API | 11-16-2020
+	public String getBaseCharge() {
+		return baseCharge;
+	}
+	public void setBaseCharge(String baseCharge) {
+		this.baseCharge = baseCharge;
+	}
+	public String getUsageCharge() {
+		return usageCharge;
+	}
+	public void setUsageCharge(String usageCharge) {
+		this.usageCharge = usageCharge;
+	}
+	public String getUsageChargeThreshold() {
+		return usageChargeThreshold;
+	}
+	public void setUsageChargeThreshold(String usageChargeThreshold) {
+		this.usageChargeThreshold = usageChargeThreshold;
+	}
+	public String getCmsAdditionalPricingText() {
+		return cmsAdditionalPricingText;
+	}
+	public void setCmsAdditionalPricingText(String cmsAdditionalPricingText) {
+		this.cmsAdditionalPricingText = cmsAdditionalPricingText;
+	}
+	public String getCmsLegalese() {
+		return cmsLegalese;
+	}
+	public void setCmsLegalese(String cmsLegalese) {
+		this.cmsLegalese = cmsLegalese;
+	}
+	//End : PBI 76839 | Single Offer API | 11-16-2020 
 }

@@ -762,7 +762,8 @@ public class ContentHelper implements Constants {
 			logger.debug("SDL Offer Data Request "+			contentDataRequest		);			
 			ContentDataResponse contentDataResponse = ContentDataService.getContentData(contentDataRequest);			
 			int index = 0;
-			for(ProductOffer productOffer : contentDataResponse.getProductOfferList()){				
+			
+			for(ProductOffer productOffer : contentDataResponse.getProductOfferList()){	
 				logger.debug("SDL Offer Response ProductOffer : "+productOffer);				
 				AffiliateOfferDO affiliateOfferDO = offerList.get(index);
 				if(StringUtils.isEmpty(productOffer.getStrProductTagLine())){					
@@ -773,6 +774,12 @@ public class ContentHelper implements Constants {
 					affiliateOfferDO.setCmsProductMarketingDetails(CommonUtil.removeHTMLTags(productOffer.getStrAdditionalText()));
 					affiliateOfferDO.setCmsGreenFlag(String.valueOf(productOffer.isGreenPlan()));
 					affiliateOfferDO.setCmsSmartMeterFlag(String.valueOf(productOffer.isSmartMeterRequired()));
+					
+					//Start : PBI 76839 | Single Offer API | 11-16-2020 
+					affiliateOfferDO.setCmsLegalese(productOffer.getStrLegalEase());
+					affiliateOfferDO.setCmsAdditionalPricingText(productOffer.getStrAdditionalPricingText());
+					//End : PBI 76839 | Single Offer API | 11-16-2020 
+					
 					OfferBanner offerBanner = productOffer.getOfferBanner();
 					if(offerBanner != null){
 						affiliateOfferDO.setCmsBannerTitle(offerBanner.getTitle());

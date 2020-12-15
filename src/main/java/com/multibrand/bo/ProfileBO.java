@@ -222,7 +222,7 @@ public class ProfileBO extends BaseBO {
 				updatePasswordResponse.setResultDescription(MSG_SUCCESS);
 			 }else{
 				updatePasswordResponse.setResultCode(RESULT_CODE_FOUR);
-				updatePasswordResponse.setResultDescription(RESULT_CODE_DESC_PWD_MISMATCH);
+				updatePasswordResponse.setResultDescription(RESULT_CODE_DESC_PSD_MISMATCH);
 			 }
 			}
 			else
@@ -411,7 +411,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 					  	if(EMAIL_VERIFIED&&LDAPEmailValidation&&accountCallEmailValidation&&(getAccountDetailsResponse.getEmailID().equalsIgnoreCase(emailID))){
 						String TransID = profileDAO.insertTransaction(userUniqueID, companyCode);
 						
-						String resetPasswordURL = envMessageReader.getMessage(GME_MYACCOUNT_PASSWORD_RESET_URL)+TransID;
+						String resetPasswordURL = envMessageReader.getMessage(GME_MYACCOUNT_PSD_RESET_URL)+TransID;
 						logger.info("Reset URL ="+resetPasswordURL);
 						
 						String nonZeroAccountNumber = CommonUtil.stripLeadingZeros(accountNumber);
@@ -433,14 +433,14 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		                	if(languageCode.equalsIgnoreCase(ES)){
 		                		resetPasswordURL = resetPasswordURL+"/ES";;
 		                		 templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
-		                		status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_ES_US, templateProperties, companyCode);
+		                		status = EmailHelper.sendMail( emailID ,"", GME_PSD_CHANGE_ES_US, templateProperties, companyCode);
 		                		logger.info("Spanish Conf mail send for Password reset: " + status);
 								}else{
  		
 			                		logger.info("Setting languageCode to English");
 			                		resetPasswordURL = resetPasswordURL+"/EN";
 			                		 templateProperties.put("RESET_PASSWORD_URL",resetPasswordURL);
-			                		status = EmailHelper.sendMail( emailID ,"", GME_PASSWORD_CHANGE_EN_US, templateProperties, companyCode);
+			                		status = EmailHelper.sendMail( emailID ,"", GME_PSD_CHANGE_EN_US, templateProperties, companyCode);
 									logger.info("English Conf mail send for Password reset: " + status);
 		
 		                	}
@@ -2011,7 +2011,7 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 
 								try {
 
-									Boolean status = EmailHelper.sendMail(email, "", CIRRO_PASSWORD_CHANGE_EXTERNAL_ID,
+									Boolean status = EmailHelper.sendMail(email, "", CIRRO_PSD_CHANGE_EXTERNAL_ID,
 											templateProperties, companyCode);
 
 									logger.info("Email for password change sent status : " + status);
@@ -2181,7 +2181,7 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 				logger.info("Password validation is success");
 			} else {
 				passwordValidityResponse.setResultCode(RESULT_CODE_FOUR);
-				passwordValidityResponse.setResultDescription(RESULT_CODE_DESC_PWD_MISMATCH);
+				passwordValidityResponse.setResultDescription(RESULT_CODE_DESC_PSD_MISMATCH);
 				logger.info("Old Password Mismatch");
 			}
 		} catch (Exception e) {

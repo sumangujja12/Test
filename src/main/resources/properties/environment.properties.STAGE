@@ -10,6 +10,10 @@ default.env=STG
 CCSPASSWORD=CustAlrt01
 CCSUSERNAME=WEBCPIC
 
+http.max.connection.per.route = 50
+http.max.total.connection = 50
+http.stocket.connection.timeout = 15
+
 #Salesforce
 salesforce.grant.type=password
 salesforce.client.id=3MVG9CEn_O3jvv0wAHR1FBkcZYMf_6DD8IXddxyfvwNhCBEvtpBgZFp63fPkAjLDOFt8ivNjyfqiDxqugi2QK
@@ -130,8 +134,8 @@ GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-test.greenmountain.com/ResetP
 #Content server props
 gm.content.server.endpoint.url=http://txaixebxindxs01:13180/cd-service/gme/cdws/odata.svc/
 content.rest.server.url=http://txaixebxindxs02:13180/contentService/content/getContentData
-re.content.server.endpoint.url=http://txaixebxbls01:8081/client/v2/content.svc/
-pw.content.server.endpoint=http://txaixebxbls01:18081/client/v2/content.svc/
+re.content.server.endpoint.url=https://stg-content.nrg.com/reliant/content/client/v2/content.svc/
+pw.content.server.endpoint=https://stg-content.nrg.com/mb/content/client/v2/content.svc/
 ce.content.server.endpoint=http://txaixebxindxs01:13180/cd-service/cirro/cdws/odata.svc/
 
 #Tempalte Id's
@@ -190,6 +194,9 @@ CCS_GMD_STMT=http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_stmt/900/z_
 CCS_PRICE_STMT = http://saprpm01:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/900/z_e_isu_get_gmd_price/z_e_isu_get_gmd_price
 CCS_CREATE_MOVE_OUT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_create_moveout?sap-client=900
 CCS_GMD_PRICE_SPIKE_ALERT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_price_spike_alert?sap-client=900
+CCS_GMD_MD_STMT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_get_gmd_md_stmt?sap-client=900
+CCS_GMD_LMP_PRICE_SPIKE=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_lmp_price_spike?sap-client=900
+CCS_GMD_HOURHEAD_SPIKE=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_hour_ahead_spike?sap-client=900
 gmd_price_current_date =04/14/2020
 CRM_KBA_MATRIX = http://sapcmq02:8001/sap/bc/srt/scs/sap/z_e_crm_kba_matrix_update?sap-client=530
 
@@ -213,11 +220,11 @@ gmd.offer.efl.equivalent.D0004=090175168088b0d0
 gmd.offer.efl.equivalent.D0005=090175168088b0d1
 
 
-gmd.offer.tos.equivalent.D0001=090175168088b0cd
-gmd.offer.tos.equivalent.D0002=090175168088b0cd
-gmd.offer.tos.equivalent.D0003=090175168088b0cd
-gmd.offer.tos.equivalent.D0004=090175168088b0cd
-gmd.offer.tos.equivalent.D0005=090175168088b0cd
+gmd.offer.tos.equivalent.D0001=09017516808eaa72
+gmd.offer.tos.equivalent.D0002=09017516808eaa72
+gmd.offer.tos.equivalent.D0003=09017516808eaa72
+gmd.offer.tos.equivalent.D0004=09017516808eaa72
+gmd.offer.tos.equivalent.D0005=09017516808eaa72
 
 
 gmd.offer.yraac.equivalent.D0001=0901751880ebff66
@@ -226,20 +233,22 @@ gmd.offer.yraac.equivalent.D0003=0901751880ebff66
 gmd.offer.yraac.equivalent.D0004=0901751880ebff66
 gmd.offer.yraac.equivalent.D0005=0901751880ebff66
 
-gmd.offer.predis.equivalent.D0001=090175168088b0cc
-gmd.offer.predis.equivalent.D0002=090175168088b0cc
-gmd.offer.predis.equivalent.D0003=090175168088b0cc
-gmd.offer.predis.equivalent.D0004=090175168088b0cc
-gmd.offer.predis.equivalent.D0005=090175168088b0cc
+gmd.offer.predis.equivalent.D0001=09017516808ec85f
+gmd.offer.predis.equivalent.D0002=09017516808ec85f
+gmd.offer.predis.equivalent.D0003=09017516808ec85f
+gmd.offer.predis.equivalent.D0004=09017516808ec85f
+gmd.offer.predis.equivalent.D0005=09017516808ec85f
 
 ######################For GMD APP ENDS####################
 
 
 #Content Service 
-content.server.endpoint.url=http://txaixebxbls01:18081/client/v2/content.svc/
+content.server.endpoint.url=https://stg-content.nrg.com/mb/content/client/v2/content.svc/
 #File
 documentum.endpoint=https://stg-texas.xoomenergy.com/files/{0}.pdf
 documentum.efl.endpoint=https://stg-texas.xoomenergy.com{0}
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
+
 duplicate.payment.check =
+ws.rest.iot.ercot.check.by.address.url=http://txaixsexbls05/iotproxy/ercot/getByAddress

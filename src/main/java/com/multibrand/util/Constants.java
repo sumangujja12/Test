@@ -48,7 +48,7 @@ public interface Constants {
 		
 	public static final int WEBSERVICE_CALL_TIMEOUT=45;
 	public static final String CCS_USER_NAME = "CCSUSERNAME";
-    public static final String CCS_PASSWORD = "CCSPASSWORD";
+    public static final String CCS_PSD = "CCSPASSWORD";
     public static final String CCS_CRM_PROD_UPDATE = "CCS_CRM_PROD_UPDATE";
     public static final String CONTACT_DETAIL_ENDPOINT_URL_JNDINAME="CCS_CRM_CONTACT_DETAILS";
     public static final String PENDING_SWAP_ENDPOINT_URL_JNDINAME="CCS_GET_PENDING_SWAP_DETAILS";
@@ -165,7 +165,7 @@ public interface Constants {
 	public static final String XI_INTERVAL_DATA_ENDPOINT_URL_QUERY_PARAM   = "&interface=os_getIntervalData&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	
 	public static final String EBILL_DOCUMENTUM_WS_USER_NAME= "EBILL_DOCUMENTUM_WS_USER_NAME";
-	public static final String EBILL_DOCUMENTUM_WS_PWD ="EBILL_DOCUMENTUM_WS_PWD";
+	public static final String EBILL_DOCUMENTUM_WS_PSD ="EBILL_DOCUMENTUM_WS_PWD";
 	public static final String EBILL_DOCUMENTUM_END_POINT_URL ="EBILL_DOCUMENTUM_END_POINT_URL";
 	public static final String UTILITY_SERVICE_ENDPOINT_URL = "UTILITY_SERVICE_ENDPOINT_URL";
 	public static final String DEFAULT_DOCTYPE="GMEINV";
@@ -221,7 +221,7 @@ public interface Constants {
     public static final String RESULT_DESCRIPTION_DEENROLL_FAILED="De-enroll is failed";
     public static final String RESULT_CODE_DATA_ALREADY_DESCRIPTION="User Name Already Available";
     public static final String RESULT_CODE_DESCRIPTION_NO_DATA="No Data";
-    public static final String RESULT_CODE_DESC_PWD_MISMATCH="Old Password Mismatch";
+    public static final String RESULT_CODE_DESC_PSD_MISMATCH="Old Password Mismatch";
     public static final String RESULT_CODE_DESC_AVG_TEMP="Average Temperature information is unavailable";
     
     public static final String RESULT_CODE_CCS_ERROR_DESCRIPTION_01 ="Invalid Contract Account";
@@ -898,7 +898,7 @@ public interface Constants {
 	//nnp
 	public static final String NNP_SUBJECT = "";
 	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my contract related notices by email only (Paperless)";
-	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electr�nico (sin papel)";
+	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electrónico (sin papel)";
 	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_EN ="Receive my contract related notices by mail only";
 	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_ES ="Recibir mis avisos relacionados con el contrato solo por correo";
 	
@@ -929,7 +929,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -973,7 +973,7 @@ public interface Constants {
 	public static final String GRANNT_TYPE = "grant_type";
 	public static final String CLIENT_ID = "client_id";
 	public static final String CLIENT_SECRET = "client_secret";
-	public static final String PASSWORD = "password";
+	public static final String PSD = "password";
 	public static final String PWRD = "password"; //change this to check
 	public static final String USER_NAME = "username";
 	public static final String SALESFORCE_LEASE_ID = "LeaseId";
@@ -986,7 +986,7 @@ public interface Constants {
 	public static final String SALESFORCE_CLIENT_ID = "salesforce.client.id";
 	public static final String SALESFORCE_CLIENT_SECRET = "salesforce.client.secret";
 	public static final String SALESFORCE_USER_NAME = "salesforce.username";
-	public static final String SALESFORCE_USER_PASSWORD = "salesforce.user.password";
+	public static final String SALESFORCE_USER_PSD = "salesforce.user.password";
 	
 	public static final String BASIC_AUTH_HEADER_NAME = "Authorization";
 	public static final String AUTH_TYPE_BASIC = "Basic";
@@ -1044,7 +1044,7 @@ public interface Constants {
 	
 	public static final String CIRRO_NEW_SERVICE_ADDRESS_ADD_EXTERNAL_ID="CE.ADD.NEW.SERVICE.ADDED.EN_US";
 	
-	public static final String CIRRO_PASSWORD_CHANGE_EXTERNAL_ID="CE.PASSWORD.CHANGE.EN_US";
+	public static final String CIRRO_PSD_CHANGE_EXTERNAL_ID="CE.PASSWORD.CHANGE.EN_US";
 	
 	// Start : Validate for Power Genius Online Affiliates by KB
 	public static final String POWER_GENIUS_ENROLL_CONF_EN="POWER.GENIUS.ENROLL.CONF.EN_US";	
@@ -1092,7 +1092,7 @@ public interface Constants {
 	public static final String MESSAGE_TEXT_PERSON_NOT_UPDATED = "Person details are not updated";
 	public static final String MESSAGE_TEXT_PERSON_NOT_FOUND = "Person details are not found";
 	public static final String MESSAGE_CODE_INFO_MISMATCH = "INFO_MISMATCH";
-	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information�previously�used for�this enrollment.";
+	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
 	
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
 	
@@ -1123,12 +1123,12 @@ public interface Constants {
 	 //Refresh Token 
 	 public static final int REFRESH_TOKEN_LENGTH = 250;
 	 
-	 public static final String GME_PASSWORD_CHANGE_EN_US="GME.PASSWORD.CHANGE.EN_US";
-	 public static final String GME_PASSWORD_CHANGE_ES_US="GME.PASSWORD.CHANGE.ES_US";
+	 public static final String GME_PSD_CHANGE_EN_US="GME.PASSWORD.CHANGE.EN_US";
+	 public static final String GME_PSD_CHANGE_ES_US="GME.PASSWORD.CHANGE.ES_US";
 	 public static final String GME_USERNAME_EN_US = "GME.USERNAME.EN_US";
 	 public static final String GME_USERNAME_ES_US = "GME.USERNAME.ES_US";
 	 
-	 public static final String GME_MYACCOUNT_PASSWORD_RESET_URL ="GME.MYACCOUNT.PASSWORD.RESET.URL";
+	 public static final String GME_MYACCOUNT_PSD_RESET_URL ="GME.MYACCOUNT.PASSWORD.RESET.URL";
 	 public static final String GME_MYACCOUNT_LOGIN_URL="GME.MYACCOUNT.LOGIN.URL";
 	 
 	 //Added for GME Mobile
@@ -1287,7 +1287,7 @@ public interface Constants {
     public static final String MESSAGE_CODE_INVALID_AGENT_ID = "INVALID_AGENT_ID";
     
     public static final String REST_API_USER_NAME="rest.api.user.name";
-	public static final String REST_API_PASSWORD="rest.api.password";
+	public static final String REST_API_PSD="rest.api.password";
 	public static final String REST_API_AUTHORIZATION="Authorization";
 	public static final String REST_IOT_ENROLLMENT_REPORT_DATA_SUBMIT_URL = "rest.ws.endpointURL.iot.enrollment.report.data.submit";
 	public static final String IOT_ENROLLMENT_REPORT_DATA_SUBMIT_REST_TIME_OUT_IN_SEC = "iot.enrollment.report.data.submit.rest.timeout.in.sec";
@@ -1408,7 +1408,7 @@ public interface Constants {
 	public static final String DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO= "0.0";
 	
 	public static final String SYMBOL_DOLLAR = "$";
-	public static final String SYMBOL_CENTS = "�";
+	public static final String SYMBOL_CENTS = "¢";
 
 	public static final String CREDFREEZE = "CREDFREEZE";
 	public static final String CCSD = "CCSD";
@@ -1488,6 +1488,9 @@ public interface Constants {
    public static final String API_GET_GMD_PRICE_DATA = "getGMDPrice";
    public static final String API_CREATE_GMD_MOVE_OUT = "createMoveOut";
    public static final String API_GET_GMD_PRICE_SPIKE_ALERT_DATA = "getGmdPriceSpikeAlertData";
+   public static final String API_GET_GMD_MD_STMT_DATA = "getGmdMdStmtData";
+   public static final String API_GET_GMD_LMP_PRICE_SPIKE = "getGmdLmpPriceSpike";
+   public static final String API_GET_GMD_HOURHEAD_SPIKE = "getGmdHourHeadSpike";
    
    public static final String API_KBA_MATRIX_UPDATE = "protected/kbaMatriUpdate";
    
@@ -1499,7 +1502,7 @@ public interface Constants {
    public static final String GMD_USAGE_TRUE_UP = "Usage True-up";
    
    public static final String SOLAR_RECS = "Solar Recs";
-   public static final String FIXED_RATE_THIRD_PARTY_CHRG = "Fixed Rate Third Party Charges";
+   public static final String FIXED_RATE_THIRD_PARTY_CHRG = "Fixed ERCOT Charges";
    public static final String ANCILLARY_SERVICES = "Ancillary Services";
    public static final String ELECTRICITY_USAGE = "Electricity Usage";
    
@@ -1581,12 +1584,8 @@ public interface Constants {
 	
 	public static final String CONST_USE_MOCK_DATA = "usemockdata";
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
-
-	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
-
-	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
 
 	
 	public static final String TEMPLATE_REPORTSUITE = "template.url.parameter.reportsuite";
@@ -1629,6 +1628,13 @@ public interface Constants {
 
 	
 	 public static final String API_ESID_VALIDATION = "esidValidation";
+	public static final String DATE_FRMT_DB ="dd-MMM-YY";	
+	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
+	
+	public static final String PLAN_TYPE_INDEXED = "Indexed";
+	public static final String TOU = "TOU";
+	public static final String IND = "IND";
+	public static final String RATETYPE_VARIABLE = "00FIX";
 
 	public static final String ERCOT_CHECK_BY_ADDRESS_IOT_CALL_URL="ws.rest.iot.ercot.check.by.address.url";
 	public static final String ERCOT_STREET="street";
@@ -1641,4 +1647,8 @@ public interface Constants {
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
 	
+	public static final String API_OFFER_DETAILS = "offer-details";
+	public static final String CHANNEL_WEB_CLOUD = "WEBCLOUD";
+	
+	public static final String API_TDSP = "tdsp";
 }
