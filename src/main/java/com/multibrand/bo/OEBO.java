@@ -139,7 +139,6 @@ import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
-import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -4398,6 +4397,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						.getStrTOSSmartCode());
 				affiliateOfferDO.setYraacSmartCode(offerDO
 						.getStrYRAACSmartCode());
+
 				
 				//Start - Alt Channels US8596 | Pratyush
 				affiliateOfferDO.setAverageEFLPrice1000(getAveragePriceEFL1000(offerDO));
@@ -4480,7 +4480,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				String usageAmt = getKeyPrice(offerDO, LPP_CAP);
 				
 				String baseCharge = getBaseCharge(offerDO);
-				
+
 				//Start : PBI 76839 | Single Offer API | 11-16-2020 
 				String usageCharge = getKeyPrice(offerDO, S_CUSTCHR2);
 				if(StringUtils.isEmpty(usageCharge))
@@ -4490,11 +4490,11 @@ public class OEBO extends OeBoHelper implements Constants{
 				//End : PBI 76839 | Single Offer API | 11-16-2020 
 				
 				if (!StringUtils.isEmpty(baseCharge)) {
-					
+
 					//Start : PBI 76839 | Single Offer API | 11-16-2020 
 					affiliateOfferDO.setBaseCharge(baseCharge);
 					//End : PBI 76839 | Single Offer API | 11-16-2020 
-					
+
 					String baseChargeText = msgSource.getMessage(
 							BASE_CHARGE_PER_MONTH, new String[] { baseCharge },
 							CommonUtil.localeCode(request.getLanguageCode()));
@@ -4504,11 +4504,11 @@ public class OEBO extends OeBoHelper implements Constants{
 						affiliateOfferDO.setUsageChargeThreshold(null);
 						//End : PBI 76839 | Single Offer API | 11-16-2020 
 					} else {
-					
+
 						//Start : PBI 76839 | Single Offer API | 11-16-2020 
 						affiliateOfferDO.setUsageChargeThreshold(usageAmt);
 						//End : PBI 76839 | Single Offer API | 11-16-2020 
-						
+
 						DecimalFormat decimalformat = new DecimalFormat("#0");
 						usageAmt = decimalformat.format(Double
 								.parseDouble(usageAmt));
@@ -4676,7 +4676,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	private String getBaseCharge(OfferDO offerDO){
 		return getKeyPrice(offerDO,S_CUSTCHRG);
 	}
-	
+
 	private String getProdType(OfferDO offerDO){
 		return getProdTypeString(offerDO,PROD_TYPE);
 	}
@@ -4727,7 +4727,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		return url;		
 	}
 	
-	//Start || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
+//Start || US23692: Affiliate API  ESID and BP Restriction for All Brands || atiwari || 04/12/2019
 	private String getAllBrandResponseMessage(String companyCode, String brandId, String textMessageCode, String locale){
 		
 		String responseMessage=StringUtils.EMPTY;
@@ -6924,6 +6924,11 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return esidAddressResponse;
 	}
 	
+	public ProspectEFLResponse getProspectEfl(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
+		
+		return oeService.getProspectEFL(prospectEFLRequest);
+	}
+
 	/**
 	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
  	 * @author Nkatragadda
@@ -6939,12 +6944,6 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		}
 		return ercotCheckResponse;
 
-	}
-	
-	public ProspectEFLResponse getProspectEfl(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
-		
-		return oeService.getProspectEFL(prospectEFLRequest);
-	
 	}
 
 	public OESignupVO populateOESignupVOForOfferDetails(SalesOfferDetailsRequest salesOfferDetailsRequest) {

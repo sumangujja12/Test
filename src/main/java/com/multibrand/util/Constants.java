@@ -1590,7 +1590,6 @@ public interface Constants {
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
 
 	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
-
 	
 	public static final String TEMPLATE_REPORTSUITE = "template.url.parameter.reportsuite";
 	public static final String BRAND_NAME ="GME";
@@ -1642,7 +1641,6 @@ public interface Constants {
 	public static final String ERCOT_ZIP="zip";
 	public static final String ERCOT_COMPANY="companyName";	
 	public static final String NRG_API_IOT_ERCOT_ESID_CHECK_BYADDRESS="iot/ercot/getByAddress";
-
 	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
