@@ -100,5 +100,24 @@ public class TOSSubmitEligibleProductsRequest {
 	public void setProduct10(String product10) {
 		this.product10 = product10;
 	}
+	
+	@Override
+	public String toString() {
+		return "TOSSubmitEligibleProductsRequest [esid=" + esid +
+				", caNumber=" + caNumber + ","
+				 + " coNumber=" + coNumber + ""
+				 +" , companyCode= " + companyCode + ""
+				 +" , product1= " + product1 + ""
+				 +" , product2= " + product2 + ""
+				 +" , product3= " + product3 + ""
+				 +" , product4= " + product4 + ""
+				 +" , product5= " + product5 + ""
+				 +" , product6= " + product6 + ""
+				 +" , product7= " + product7 + ""
+				 +" , product8= " + product8 + ""
+				 +" , product9= " + product9 + ""
+				 +" , product10= " + product10 + ""
+				 +"]";
+	}
 		
 }
