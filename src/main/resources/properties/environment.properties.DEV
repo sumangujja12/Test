@@ -251,3 +251,10 @@ doc.inv.url.timeout=20
 
 duplicate.payment.check =X
 ws.rest.iot.ercot.check.by.address.url=http://txaixsexbls05/iotproxy/ercot/getByAddress
+# Adode Analytics
+adobe.analytic.template.url=https://reliantenergy.sc.omtrdc.net/b/ss/[ReportSuite]/0?
+template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notification&ch=App%20API&server=api.[BRAND].com&vid=[CANumber]&c.&mycocode=[CompanyCode]&myca=[CANumber]&mymsgid=[MsgId]
+template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageType]&mymsgcat=[MessageCat]&mymsg=[Message]&mymsgstatus=[MsgStatus]&mylang=[Language]&myos=[OSType]&mycontractid=[ContractId]&mybp=[BPNumber]&msginstance=[msgInstance]&myerrmsg=[ErrorMessage]&.c&AQE=1
+template.url.parameter.reportsuite=relengmemobile.appstage
+iot.post.url = http://txaixsexbls05/iotproxy/postServiceRequestURL
+adobe.messageId.message = Your contract will expire on [date].Log on to find clean electricity plans available for you

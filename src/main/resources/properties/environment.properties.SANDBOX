@@ -231,3 +231,9 @@ gmd.offer.predis.equivalent.D0005=090175168088b0cc
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
 duplicate.payment.check =X
+# Adode Analytics
+adobe.analytic.template.url=https://reliantenergy.sc.omtrdc.net/b/ss/[ReportSuite]/0?
+template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notification&ch=App%20API&server=api.[BRAND].com&vid=[CANumber]&c.&mycocode=[CompanyCode]&myca=[CANumber]&mymsgid=[MsgId]
+template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageType]&mymsgcat=[MessageCat]&mymsg=[Message]&mymsgstatus=[MsgStatus]&mylang=[Language]&myos=[OSType]&mycontractid=[ContractId]&mybp=[BPNumber]&msginstance=[msgInstance]&myerrmsg=[ErrorMessage]&.c&AQE=1
+template.url.parameter.reportsuite=relengmemobile.appstage
+iot.post.url = http://txaixsexbls05/iotproxy/postServiceRequestURL
