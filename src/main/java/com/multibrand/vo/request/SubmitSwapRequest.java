@@ -65,6 +65,8 @@ public class SubmitSwapRequest implements Serializable {
 	private String offerDate;
 	private String offerTime;	
 	private String clientSource;//CHG0020873 
+	private String messageId;
+	private String osType = "";
 	
 	//CHG0020873 
 	public String getClientSource() {
@@ -368,4 +370,29 @@ public class SubmitSwapRequest implements Serializable {
 	public void setToEmail(String toEmail) {
 		this.toEmail = toEmail;
 	}
+	/**
+	 * @return the messageId
+	 */
+	public String getMessageId() {
+		return messageId;
+	}
+	/**
+	 * @param messageId the messageId to set
+	 */
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
+	/**
+	 * @return the osType
+	 */
+	public String getOsType() {
+		return osType;
+	}
+	/**
+	 * @param osType the osType to set
+	 */
+	public void setOsType(String osType) {
+		this.osType = osType;
+	}
+	
 }
