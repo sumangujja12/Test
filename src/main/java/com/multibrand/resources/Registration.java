@@ -10,10 +10,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.apache.logging.log4j.LogManager;
+
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.multibrand.bo.RegistrationBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.response.GenericResponse;
@@ -103,7 +105,7 @@ public class Registration {
 		Response response = null;
 		logger.info("START-[Registration-createUser]");
 		GenericResponse responseVo = registrationBO.createUser(accountNumber,
-				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit,source, isMarkettingPrefOptIn);
+				lastName, email, firstName, userName, password, companyCode,httpRequest.getSession(true).getId(),languageCode,applicationArea,checkDigit,source , isMarkettingPrefOptIn);
 		response = Response.status(200).entity(responseVo).build();
 		logger.info("END-[Registration-createUser]");
 		return response;

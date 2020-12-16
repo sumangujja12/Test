@@ -1584,9 +1584,12 @@ public interface Constants {
 	
 	public static final String CONST_USE_MOCK_DATA = "usemockdata";
 	public static final String CONST_IS_MOCK_RESPONSE = "isMockResponse";
+
+	public static final String DATE_FRMT_DB ="dd-MMM-YY";
 	
 	public static final String APPLICATION_SWAP_AREA = "SWAP";
 
+	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
 	
 	public static final String TEMPLATE_REPORTSUITE = "template.url.parameter.reportsuite";
 	public static final String BRAND_NAME ="GME";
@@ -1623,18 +1626,13 @@ public interface Constants {
 	public static final String GET_PLAN_OFFER = "GET_PLAN_OFFER";
 	public static final String ADOBE_MESSAGE_PLAN_TYPE = "PLAN_OFFER";
 	public static final String PLAN_OFFER_FUNCTION = "SEARCH_PLAN";
-	public static final String PLAN_OFFER_MESSAGE_TYPE = "PLAN_OFFER";
+	public static final String PLAN_OFFER_MESSAGE_TYPE = "OPEN";
+	public static final String PARAMETER_VARIABLE_MSGINSTANCE = "msgInstance";
+
 
 
 	
 	 public static final String API_ESID_VALIDATION = "esidValidation";
-	public static final String DATE_FRMT_DB ="dd-MMM-YY";	
-	public static final String DUP_PAYMENT_CHECK = "duplicate.payment.check";
-	
-	public static final String PLAN_TYPE_INDEXED = "Indexed";
-	public static final String TOU = "TOU";
-	public static final String IND = "IND";
-	public static final String RATETYPE_VARIABLE = "00FIX";
 
 	public static final String ERCOT_CHECK_BY_ADDRESS_IOT_CALL_URL="ws.rest.iot.ercot.check.by.address.url";
 	public static final String ERCOT_STREET="street";
@@ -1647,8 +1645,19 @@ public interface Constants {
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
 	
+	public static final String PLAN_TYPE_INDEXED = "Indexed";
+	public static final String TOU = "TOU";
+	public static final String IND = "IND";
+	public static final String RATETYPE_VARIABLE = "00FIX";
+
 	public static final String API_OFFER_DETAILS = "offer-details";
 	public static final String CHANNEL_WEB_CLOUD = "WEBCLOUD";
-	
+
+	public static final String VALIDATE_POSID_WITH_KBA_REST = "validatePOSIdwithKBA";
+
 	public static final String API_TDSP = "tdsp";
+	
+	public static final String NEI_CREATE_BPCA_CCS_ENDPOINT_URL="ccs.nei.bpca.create";
+
 }
+	

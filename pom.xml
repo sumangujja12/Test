@@ -949,8 +949,14 @@
 		  <artifactId>jaxrpc-api</artifactId>
 		  <version>1.1</version>
   		</dependency>	
-
 		<!-- START: WS Client -->
+		<dependency>
+		  <groupId>nrg-ccs-ws-client-nei</groupId>
+		  <artifactId>com.nrg.services.clients</artifactId>
+		  <version>0.1</version>
+		  <scope>${dependency.scope}</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-payment-domain</artifactId>
@@ -1069,10 +1075,12 @@
 			<version>11.2.0.3</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.itextpdf</groupId>
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13</version>
+
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.ws/spring-ws -->		
 		<dependency>
@@ -1080,6 +1088,23 @@
             <artifactId>spring-ws-core</artifactId>
             <version>2.1.4.RELEASE</version>
         </dependency>
+		 <dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>3.5.0</version>
+		 </dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-queryparser -->
+			<dependency>
+			    <groupId>org.apache.lucene</groupId>
+			    <artifactId>lucene-queryparser</artifactId>
+			    <version>3.5.0</version>
+			</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-analyzers-common -->
+			<dependency>
+			    <groupId>org.apache.lucene</groupId>
+			    <artifactId>lucene-analyzers</artifactId>
+			    <version>3.5.0</version>
+			</dependency>
           <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
@@ -1091,7 +1116,7 @@
 	    	<artifactId>spring-ws-test</artifactId>
 	    	<version>2.0.2.RELEASE</version>
 	    	<scope>test</scope>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-multipart</artifactId>

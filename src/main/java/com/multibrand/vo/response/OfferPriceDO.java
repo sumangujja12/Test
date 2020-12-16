@@ -58,4 +58,5 @@ public class OfferPriceDO
   public void setOfferPriceCode(String offerPriceCode) {
 		this.offerPriceCode = offerPriceCode;
 	}
+ 
 }

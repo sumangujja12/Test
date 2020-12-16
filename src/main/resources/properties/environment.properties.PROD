@@ -194,6 +194,7 @@ CCS_PRICE_STMT = http://sapprrci:8080/sap/bc/srt/rfc/sap/z_e_isu_get_gmd_price/9
 
 CCS_CREATE_MOVE_OUT=http://sapprrci:8080/sap/bc/srt/scs/sap/z_e_isu_create_moveout?sap-client=900
 CCS_GMD_PRICE_SPIKE_ALERT=http://sapprrci:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_price_spike_alert?sap-client=900
+CCS_GMD_MD_STMT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_get_gmd_md_stmt?sap-client=900
 CRM_KBA_MATRIX = http://sapcmp01:8080/sap/bc/srt/scs/sap/z_e_crm_kba_matrix_update?sap-client=530
 CCS_GMD_MD_STMT=http://sapprrci:8080/sap/bc/srt/scs/sap/z_e_isu_get_gmd_md_stmt?sap-client=900
 CCS_GMD_LMP_PRICE_SPIKE=http://sapprrci:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_lmp_price_spike?sap-client=900
@@ -250,5 +251,22 @@ documentum.efl.endpoint=https://texas.xoomenergy.com{0}
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
 
+# Lucene Search Engine Index Files Directory Location
+lucene.indexed.dir=/apps02/data/stream/address/lucene
 duplicate.payment.check =X
+
+# Adode Analytics
+adobe.analytic.template.url=https://reliantenergy.sc.omtrdc.net/b/ss/[ReportSuite]/0?
+template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notification&ch=App%20API&server=api.[BRAND].com&vid=[CANumber]&c.&mycocode=[CompanyCode]&myca=[CANumber]&mymsgid=[MsgId]
+template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageType]&mymsgcat=[MessageCat]&mymsg=[Message]&mymsgstatus=[MsgStatus]&mylang=[Language]&myos=[OSType]&mycontractid=[ContractId]&mybp=[BPNumber]&msginstance=[msgInstance]&myerrmsg=[ErrorMessage]&.c&AQE=1
+template.url.parameter.reportsuite=relengmemobile.appprod
+iot.post.url = http://txaixsexblp05/iotproxy/postServiceRequestURL
+adobe.messageId.message = Your contract will expire on [date].Log on to find clean electricity plans available for you
 ws.rest.iot.ercot.check.by.address.url=http://txaixsexblp05/iotproxy/ercot/getByAddress
+
+0121.web.url=https://www.reliant.com
+0271.web.url=https://signup.greenmountain.com
+#0391.web.url=https://www.pennywisepower.com
+0391.web.url=https://www.discountpowertx.com
+0391.CE.web.url=https://signup.cirroenergy.com
+0400.web.url=https://www.everythingenergytx.com

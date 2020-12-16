@@ -297,6 +297,7 @@ public class PaymentService extends BaseAbstractService {
 		
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,this.envMessageReader.getMessage(AUTOPAY_DEENROLL_ENDPOINT_URL_JNDINAME));
 		
+		
 		long startTime = CommonUtil.getStartTime();
 		String request = "connId="+connId+",accountNumber="+accountNumber;
 		

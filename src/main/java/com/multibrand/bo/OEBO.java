@@ -55,6 +55,7 @@ import com.multibrand.domain.EnrollmentHoldInfoResponse;
 import com.multibrand.domain.EsidAddressRequest;
 import com.multibrand.domain.EsidAddressResponse;
 import com.multibrand.domain.EsidProfileResponse;
+import com.multibrand.domain.Esiddo;
 import com.multibrand.domain.FactorDetailDO;
 import com.multibrand.domain.GetEsiidResponse;
 import com.multibrand.domain.KbaAnswerDTO;
@@ -280,6 +281,10 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	protected static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
 	protected static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
+	
+	@Autowired
+	@Qualifier("environmentMessageSource")
+	private ReloadableResourceBundleMessageSource environmentMessageSource;
 	
 	/**
 	 * Method to return Company Code + Brand Id specific offers based on TDSP code or address or esid
@@ -987,7 +992,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug("OEBO.constructOffers() promoOfferOutDataArr.length:"
 						+ promoOfferOutDataArr.length);
 				for (PromoOfferOutData promoOfferOutData : promoOfferOutDataArr) {
-					List<OfferPriceWraperDO> offerPriceDOList = populatePriceInfo(promoOfferOutData);
+					List<OfferPriceWraperDO> offerPriceDOList = populatePriceInfo(promoOfferOutData,oeSignupVO.getCompanyCode());
 					OfferDO offerDO = new OfferDO();
 					offerDO.setStrOfferCode(promoOfferOutData.getStrOfferCode());
 					if (null != relevantCategoryMap) {
@@ -1209,7 +1214,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	 * @return List<OfferPriceWraperDO>
 	 */
 	private List<OfferPriceWraperDO> populatePriceInfo(
-			PromoOfferOutData matchingCCSOffer) {
+			PromoOfferOutData matchingCCSOffer,String companyCode) {
 		logger.debug("OEBO.populatePriceInfo() start");
 		PromoOfferOutDataAvgPriceMapEntry[] priceArr = matchingCCSOffer
 				.getAvgPriceMap();
@@ -1259,7 +1264,8 @@ public class OEBO extends OeBoHelper implements Constants{
 
 				
 			}
-			if(promoOfferOutDataAvgPriceMapEntry.getKey().equals(PROD_TYPE)){  
+			
+			if(StringUtils.equals(companyCode, COMPANY_CODE_RELIANT) && promoOfferOutDataAvgPriceMapEntry.getKey().equals(PROD_TYPE)){  
 				offerPriceDO.setPriceTypeValue(promoOfferOutDataAvgPriceMapEntry.getValue().getString1());
 			}
 			
@@ -4356,14 +4362,10 @@ public class OEBO extends OeBoHelper implements Constants{
 					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
 					affiliateOfferDO.setContractTerm(ZERO);
 				}
-				
-				String docId = offerDO.getStrEFLDocID();
-				String smartCode = offerDO.getStrEFLSmartCode();
-				String eflUri = CommonUtil.getDynamicEflUrl(docId, smartCode);
 
+                /*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
+				if(StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_RELIANT)){
 				String prodType = getProdType(offerDO);
-				
-				/*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
 				if (StringUtils.contains(prodType,Constants.TOU) || StringUtils.contains(prodType,Constants.IND)) {
 					affiliateOfferDO.setPlanType(PLAN_TYPE_INDEXED);
 				}else if (StringUtils.startsWithIgnoreCase(prodType,Constants.RATETYPE_VARIABLE)) {
@@ -4371,8 +4373,15 @@ public class OEBO extends OeBoHelper implements Constants{
 				}else {
 					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
 				}
+
+				}
+
 				/*END | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
 				
+
+				String docId = offerDO.getStrEFLDocID();
+				String smartCode = offerDO.getStrEFLSmartCode();
+				String eflUri = CommonUtil.getDynamicEflUrl(docId, smartCode);
 				String webURL = getWebURL(request.getCompanyCode(),
 						request.getBrandId());
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
@@ -4669,11 +4678,11 @@ public class OEBO extends OeBoHelper implements Constants{
 	}
 
 	private String getProdType(OfferDO offerDO){
-		return getProdTypeValue(offerDO,PROD_TYPE);
+		return getProdTypeString(offerDO,PROD_TYPE);
 	}
 	
 	/*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
-	private String getProdTypeValue(OfferDO offerDO, String key){
+	private String getProdTypeString(OfferDO offerDO, String key){
 		String avgPrice = StringUtils.EMPTY;
 		List<OfferPriceWraperDO> offerPriceList =  offerDO.getAvgPriceMap();
 		
@@ -4702,16 +4711,16 @@ public class OEBO extends OeBoHelper implements Constants{
 		return avgPrice;
 	}
 	
-	private String getWebURL(String companyCode, String brandId){
+	public String getWebURL(String companyCode, String brandId){
 		String url = StringUtils.EMPTY;
 		
 		if(StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) && StringUtils.equals(brandId, CIRRO_BRAND_NAME) ) {
 			
-			url = appConstMessageSource.getMessage(CIRRO_COMPANY_CODE+"."+CIRRO_BRAND_NAME+".web.url", null,null);
+			url =  environmentMessageSource.getMessage(CIRRO_COMPANY_CODE+"."+CIRRO_BRAND_NAME+".web.url", null,null);
 					
 		} else {
 			
-			url = appConstMessageSource.getMessage(companyCode+".web.url", null,null);
+			url = environmentMessageSource.getMessage(companyCode+".web.url", null,null);
 			
 		}
 		
@@ -7047,6 +7056,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		} catch (ServiceException e) {
 			e.printStackTrace();
 		}
-		return affiliateOfferResponse;
+		return affiliateOfferResponse;	
+
 	}
 }

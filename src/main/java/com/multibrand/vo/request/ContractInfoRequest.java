@@ -11,6 +11,8 @@ public class ContractInfoRequest extends BaseRequest {
 	private String contractId;
 	private String esid;
 	private String zoneId;
+	private String messageId="";
+	private String osType="";
 	
 	public String getZoneId() {
 		return zoneId;
@@ -79,6 +81,30 @@ public class ContractInfoRequest extends BaseRequest {
 	 */
 	public void setEsid(String esid) {
 		this.esid = esid;
+	}
+	/**
+	 * @return the messageId
+	 */
+	public String getMessageId() {
+		return messageId;
+	}
+	/**
+	 * @param messageId the messageId to set
+	 */
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
+	}
+	/**
+	 * @return the osType
+	 */
+	public String getOsType() {
+		return osType;
+	}
+	/**
+	 * @param osType the osType to set
+	 */
+	public void setOsType(String osType) {
+		this.osType = osType;
 	}
 
 	

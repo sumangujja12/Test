@@ -133,6 +133,7 @@ public class ValidationService extends BaseAbstractService {
 			logger.debug(" START *******ValidationService:: validatePosIdWihKBA API**********");
 			try{
 				
+
 				response = validationDomainPortProxy.validatePosidWithKBA(validatePosIdKBAReq);
 				logger.debug("inside service validatePosIdWihKBA:: after call ::"+CommonUtil.doRender(validatePosIdKBAReq));
 				logger.debug("inside validatePosIdWihKBA:: response is :: "+CommonUtil.doRender(response));

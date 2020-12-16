@@ -1,0 +1,3576 @@
+{
+    "resultCode": "0",
+    "resultDescription": "Success",
+    "errorCode": "",
+    "errorDescription": "",
+    "messageCode": "",
+    "messageText": "",
+    "resultDisplayText": "",
+    "statusCode": "00",
+    "strDefaultOfferFlag": "",
+    "pendingSwapDO": {
+        "strBPNumber": "0006220026",
+        "strCANumber": "000009963676",
+        "strCampaignCode": "",
+        "strContractID": "0039205595",
+        "strESIID": "1008901001531632905100",
+        "strEndDate": "00000000",
+        "strOfferCellCd": "",
+        "strOfferCellDesc": "",
+        "strOfferCode": "00000000",
+        "strProductDesc": "",
+        "strSignedDate": "00000000",
+        "strStartDate": "00000000",
+        "strProductCd": ""
+    },
+    "eligibleOffersList": [
+        {
+            "strCancelFee": "150.0",
+            "strContractTerm": "12",
+            "strEFLDocID": "09017518820147de",
+            "strEFLSmartCode": "G1F00118686577G",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free 12",
+            "strCampaignCode": "20J8BR01C2",
+            "strPromoCode": "XDBRWG",
+            "strOfferCode": "50874316",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XDBRWG",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF44629",
+            "strBundlingGroup": "101",
+            "strOfferRank": "1",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "9.0252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.3",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DELAY_F",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.1",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.3",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "101",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001345617",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_ENRGPB_P",
+                    "priceTypeValue": "5001345618",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.090252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "004009",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSSEC",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "R",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "375.0",
+            "strContractTerm": "12",
+            "strEFLDocID": "0901751882117dc2",
+            "strEFLSmartCode": "G1F00119185627A",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free Cruise Control 12",
+            "strCampaignCode": "19LBBR01C2",
+            "strPromoCode": "XC9UN1",
+            "strOfferCode": "50920277",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC9UN1",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF60562",
+            "strBundlingGroup": "104",
+            "strOfferRank": "2",
+            "strEFLIssueDate": "2019-10-29",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "18.8",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20191114",
+                    "price": "0.946",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FIXEDCHG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "375.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DELAY_F",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "75.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "18.8",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "37.5",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "104",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "008009",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "E_GME_B31",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSPRED",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "DISPL_GRP",
+                    "priceTypeValue": "USAGE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "R",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "150.0",
+            "strContractTerm": "12",
+            "strEFLDocID": "09017518820147ff",
+            "strEFLSmartCode": "G1F00118686599G",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free 12",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50874327",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF44640",
+            "strBundlingGroup": "101",
+            "strOfferRank": "5",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "12.6252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "16.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DELAY_F",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "17.7",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "16.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "17.2",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "101",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001345639",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_ENRGPB_P",
+                    "priceTypeValue": "5001345640",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.126252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "004009",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSSEC",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "R",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "200.0",
+            "strContractTerm": "24",
+            "strEFLDocID": "0901751882016a7a",
+            "strEFLSmartCode": "G1F00118694531G",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free All Nighter 24",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50878293",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF45514",
+            "strBundlingGroup": "103",
+            "strOfferRank": "6",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ETOUFLG",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "16.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "16.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "17.4",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_OFFPK1",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_ONPK",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "24.184",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "24.184",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DELAY_F",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "16.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "103",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "24TOU001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001353571",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "STOUPRICE2",
+                    "priceTypeValue": "5001353572",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.24184",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUPPTUP",
+                    "priceTypeValue": "E0000.000H",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSTWFW",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUNOTOU",
+                    "priceTypeValue": "SMNOTOU_RN",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "STOUPRICE1",
+                    "priceTypeValue": "SMTOU_FNTS",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "TOU",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "022009",
+                    "season": null
+                },
+                {
+                    "priceType": "DISPL_GRP",
+                    "priceTypeValue": "TOUFN",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "24TOU001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "R",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "150.0",
+            "strContractTerm": "12",
+            "strEFLDocID": "0901751882014a70",
+            "strEFLSmartCode": "G1F00118687113H",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free Loyalty 12",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50874584",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF44897",
+            "strBundlingGroup": "101",
+            "strOfferRank": "13",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "15.4",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "10.3252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "101",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001346153",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_ENRGPB_P",
+                    "priceTypeValue": "5001346154",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.103252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "004009",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSSEC",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "S",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "200.0",
+            "strContractTerm": "24",
+            "strEFLDocID": "0901751882014af9",
+            "strEFLSmartCode": "G1F00118687247H",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free Loyalty 24",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50874651",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF44964",
+            "strBundlingGroup": "101",
+            "strOfferRank": "14",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.3",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "15.1",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "10.0252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.3",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "101",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "24FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001346287",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_ENRGPB_P",
+                    "priceTypeValue": "5001346288",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.100252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "004009",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSSEC",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "24FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "S",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "200.0",
+            "strContractTerm": "24",
+            "strEFLDocID": "0901751882016368",
+            "strEFLSmartCode": "G1F00118692815G",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free Weekend Warrior 24",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50877435",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF45336",
+            "strBundlingGroup": "102",
+            "strOfferRank": "15",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "ETOUFLG",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "16.0612",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.2",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.7",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_OFFPK1",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_ONPK",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "16.0612",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DELAY_F",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_TFWKND",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "102",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "24TOU001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001351855",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "STOUPRICE2",
+                    "priceTypeValue": "5001351856",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.160612",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AF",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUNOTOU",
+                    "priceTypeValue": "E000.0000H",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUPPTUP",
+                    "priceTypeValue": "E0000.000H",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSTWFW",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "STOUPRICE1",
+                    "priceTypeValue": "SMTOU_FWKD",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "TOU",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "010009",
+                    "season": null
+                },
+                {
+                    "priceType": "DISPL_GRP",
+                    "priceTypeValue": "TOUFW",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "24TOU001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "S",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "0.0",
+            "strContractTerm": "00",
+            "strEFLDocID": "0901751882015e48",
+            "strEFLSmartCode": "G1F00118691589G",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50876822",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF45131",
+            "strBundlingGroup": "101",
+            "strOfferRank": "16",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.4",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "9.3252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "00FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "101",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001350629",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_ENRGPB_P",
+                    "priceTypeValue": "5001350630",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.093252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "004009",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSSEC",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "00FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "S",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "150.0",
+            "strContractTerm": "12",
+            "strEFLDocID": "09017518820149df",
+            "strEFLSmartCode": "G1F00118686969G",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free e-Plus 12",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50874512",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF44825",
+            "strBundlingGroup": "101",
+            "strOfferRank": "18",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "9.0252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.3",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DELAY_F",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "14.1",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.3",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.6",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "101",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001346009",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_ENRGPB_P",
+                    "priceTypeValue": "5001346010",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.090252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "004019",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSSEC",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "12FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "F",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        },
+        {
+            "strCancelFee": "0.0",
+            "strContractTerm": "00",
+            "strEFLDocID": "0901751882015ecc",
+            "strEFLSmartCode": "G1F00118691721G",
+            "strYRAACDocID": "0901751880d2266d",
+            "strYRAACSmartCode": "G1F0011A",
+            "strTOSDocID": "0901751881d794d6",
+            "strTOSSmartCode": "G1F0050A",
+            "strPlanName": "Pollution Free Preferred",
+            "strCampaignCode": "19IIBR01C2",
+            "strPromoCode": "XC59GK",
+            "strOfferCode": "50876888",
+            "strProductCode": "",
+            "strOfferCellTrackCode": "XC59GK",
+            "strProductPriceCode": "",
+            "strIncentiveCode": "",
+            "strValidToDate": "",
+            "strValidFromDate": "",
+            "strCustomerSegment": "",
+            "strMarketSegment": "",
+            "strPlanType": "",
+            "strInvoiceOptions": "",
+            "strPayOptions": "",
+            "strIncentiveDescription": "",
+            "strOfferTeaser": "",
+            "strIncentiveValue": "",
+            "strCampaignDescription": "",
+            "strCustClass": "",
+            "strPenaltyDesciption": "",
+            "strOfferCodeTitle": "",
+            "strPenaltyValue": "",
+            "strDwellingType": "",
+            "avgPriceMap": null,
+            "strTarrifType": "RCNPF45197",
+            "strBundlingGroup": "101",
+            "strOfferRank": "19",
+            "strEFLIssueDate": "2020-01-21",
+            "strOfferCategory": "",
+            "strPlanDesc": "",
+            "offerPriceEntry": [
+                {
+                    "priceType": "E_INC_DF",
+                    "priceTypeValue": "",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR1000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.2",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR2000",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "12.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "EFL_BR500",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "13.7",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_GME_UNB",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "8.6252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_GME_P",
+                    "priceTypeValue": "000",
+                    "startDate": "20191115",
+                    "endDate": "20201119",
+                    "price": "0.9463",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "CO2KWH",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "20201119",
+                    "price": "1.501",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CUSTCHRG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_CON_CONS",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2000.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "S_BUNDLE",
+                    "priceTypeValue": "000",
+                    "startDate": "20200121",
+                    "endDate": "99991231",
+                    "price": "12.9",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "GRTPUCAFLG",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PRICE_MTHD",
+                    "priceTypeValue": "000",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "2.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "PROD_TYPE",
+                    "priceTypeValue": "00FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BUND_GRP",
+                    "priceTypeValue": "101",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_CUSTQ_BG",
+                    "priceTypeValue": "5001350761",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_ENRGPB_P",
+                    "priceTypeValue": "5001350762",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.086252",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "SMTOUGROUP",
+                    "priceTypeValue": "AA",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_FAMILY",
+                    "priceTypeValue": "BASE",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "004009",
+                    "season": null
+                },
+                {
+                    "priceType": "E_DEMKVA_B",
+                    "priceTypeValue": "E000.0000A",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P",
+                    "priceTypeValue": "E_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_BRAND",
+                    "priceTypeValue": "GME",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "ORF_TYPE",
+                    "priceTypeValue": "GMRSSEC",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_RRD_P_OR",
+                    "priceTypeValue": "O_LIDA_HLP",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "E_SEGMENT",
+                    "priceTypeValue": "RSREG",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "0.0",
+                    "offerPriceCode": "",
+                    "season": null
+                },
+                {
+                    "priceType": "RENEW_PCT",
+                    "priceTypeValue": "00FIX001",
+                    "startDate": "20000101",
+                    "endDate": "99991231",
+                    "price": "100.0",
+                    "offerPriceCode": "",
+                    "season": null
+                }
+            ],
+            "campEnvironmentDetails": [
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_1000",
+                    "value": "16240.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYCO2AV_2000",
+                    "value": "32481.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_1000",
+                    "value": "19654.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYMND_2000",
+                    "value": "39309.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_1000",
+                    "value": "1717.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYTREES_2000",
+                    "value": "3435.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_1000",
+                    "value": "4253.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "YRLYNEWS_2000",
+                    "value": "8506.0"
+                },
+                {
+                    "productCode": "",
+                    "calcOperand": "RENEW_PERCENT_CD",
+                    "value": "1.0"
+                }
+            ],
+            "segmentedFlags": [
+                {
+                    "segmentFlag": "ESENMAIL"
+                },
+                {
+                    "segmentFlag": "RRWL"
+                }
+            ],
+            "attribute1": "F",
+            "attribute2": "GM",
+            "attribute3": "0271",
+            "attribute4": "",
+            "attribute5": "",
+            "attribute6": "",
+            "attribute7": "",
+            "attribute8": "",
+            "attribute9": "",
+            "attribute10": "",
+            "strTDSPCode": "D0001",
+            "tdspChargeDO": null
+        }
+    ]
+}

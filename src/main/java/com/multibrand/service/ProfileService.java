@@ -584,7 +584,7 @@ public class ProfileService extends BaseAbstractService {
 			
 			
 		}
-		
+				
 		
 		
 		
@@ -727,7 +727,7 @@ public class ProfileService extends BaseAbstractService {
 	 * Method added for update CRM call
 	 * */
 	public UpdateContactResponse updateContactInfo(
-			UserRegistrationRequest request, String businessPartner,String sessionId,String companyCode,String source, boolean isMarkettingPrefOptIn) throws RemoteException {
+			UserRegistrationRequest request, String businessPartner,String sessionId,String companyCode, String source, boolean isMarkettingPrefOptIn) throws RemoteException {
 
 		logger.info("Update ContactInfo Call starts..");
 		UpdateContactResponse response = new UpdateContactResponse();
@@ -792,6 +792,7 @@ public class ProfileService extends BaseAbstractService {
 		hTZCommPref2.value = tZCommPref2;
 		
 		javax.xml.ws.Holder<TableOfBapiret2> hTBapiret2 = new  javax.xml.ws.Holder<TableOfBapiret2>();
+		
 		long startTime = CommonUtil.getStartTime();
 		stub.zeCrmBpContactDetailNew(imRequestType, imSubscriberId, hTZCommPref2, hTZEmailNew2, hTZPhoneNew2, hTBapiret2, hTZUnsubReason);
 		
@@ -907,6 +908,7 @@ public class ProfileService extends BaseAbstractService {
                 	}
                 }
             }
+            
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(MSG_SUCCESS);
 			utilityloggerHelper.logTransaction("getContractInfo", false, zeiSwapOfferInputObj,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);

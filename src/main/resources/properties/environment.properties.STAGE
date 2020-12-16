@@ -104,6 +104,8 @@ xi.history.endpointURL=http://sapxiq02:8001/sap/xi/adapter_plain?namespace=http:
 ws.rest.ccs.get.cslr.profile.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_SOLAR_ARGREEMENT_SRV/SolarArDetailsSet(LeaseId={0},Partner={1},ContractAcct={2})?sap-client=530&%24format=json;
 ws.rest.ccs.update.cslr.billing.address.at.bp.level.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_BP_BILL_ADDRESS_UPDATE_SRV/BPDetailsSet(Addrnumber={0},City1={1},Country={2},HouseNum1={3},HouseNum2={4},LeaseId={5},NameCo={6},Partner={7},PostCode1={8},PoBox={9},Region={10},Street={11},Vkont={12})?&$format=json
 ccs.tpv.api.trans.upd.wsdl.url=http://sapcmq02:8080/sap/bc/srt/scs/sap/z_e_news_tpv_api_trans_upd
+###### NEI CCS CREATE BPCA  URL
+ccs.nei.bpca.create=http://saprpm01.reinternal.com:8080/sap/bc/srt/rfc/sap/z_e_isu_nei_create_bp_ca/900/z_e_isu_nei_create_bp_ca/z_e_isu_nei_create_bp_ca_bind
 #################
 
 ws.rest.ccs.read.reliant.customer.status.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB_CUSTOMER_ACTIVE_CHECK_SRV/CustomerDetailsSet(EmailId={0},FirstName={1},LastName={2},Street={3},HouseNo={4},ApartmentNo={5},City={6},State={7},Zipcode={8})?sap-client=53024format=json
@@ -213,11 +215,11 @@ gmd.offer.web.equivalent.D0003=11075
 gmd.offer.web.equivalent.D0004=11073
 gmd.offer.web.equivalent.D0005=11074
 
-gmd.offer.efl.equivalent.D0001=090175168088b0ce
-gmd.offer.efl.equivalent.D0002=090175168088b0cf
-gmd.offer.efl.equivalent.D0003=090175168088b0d2
-gmd.offer.efl.equivalent.D0004=090175168088b0d0
-gmd.offer.efl.equivalent.D0005=090175168088b0d1
+gmd.offer.efl.equivalent.D0001=09017516808ecf17
+gmd.offer.efl.equivalent.D0002=09017516808ecf18
+gmd.offer.efl.equivalent.D0003=09017516808ecf1b
+gmd.offer.efl.equivalent.D0004=09017516808ecf19
+gmd.offer.efl.equivalent.D0005=09017516808ecf1a
 
 
 gmd.offer.tos.equivalent.D0001=09017516808eaa72
@@ -250,5 +252,23 @@ documentum.efl.endpoint=https://stg-texas.xoomenergy.com{0}
 custom.inv.error.message=We're sorry, but we were unable to retrieve your document. Please try again later.
 doc.inv.url.timeout=20
 
+# Lucene Search Engine Index Files Directory Location
+lucene.indexed.dir=/apps02/data/stream/address/lucene
 duplicate.payment.check =
+
+# Adode Analytics
+adobe.analytic.template.url=https://reliantenergy.sc.omtrdc.net/b/ss/[ReportSuite]/0?
+template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notification&ch=App%20API&server=api.[BRAND].com&vid=[CANumber]&c.&mycocode=[CompanyCode]&myca=[CANumber]&mymsgid=[MsgId]
+template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageType]&mymsgcat=[MessageCat]&mymsg=[Message]&mymsgstatus=[MsgStatus]&mylang=[Language]&myos=[OSType]&mycontractid=[ContractId]&mybp=[BPNumber]&msginstance=[msgInstance]&myerrmsg=[ErrorMessage]&.c&AQE=1
+template.url.parameter.reportsuite=relengmemobile.appstage
+iot.post.url = http://txaixsexbls05/iotproxy/postServiceRequestURL
+adobe.messageId.message = Your contract will expire on [date].Log on to find clean electricity plans available for you
 ws.rest.iot.ercot.check.by.address.url=http://txaixsexbls05/iotproxy/ercot/getByAddress
+
+
+0121.web.url=https://stg1-www.reliant.com
+0271.web.url=https://stg-signup.greenmountain.com
+#0391.web.url=https://www.pennywisepower.com
+0391.web.url=https://stg-www.discountpowertx.com
+0391.CE.web.url=https://stg-signup.cirroenergy.com
+0400.web.url=https://stg-www.everythingenergytx.com

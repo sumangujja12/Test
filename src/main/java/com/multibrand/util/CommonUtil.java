@@ -14,6 +14,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.net.InetAddress;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -24,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +34,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.naming.Context;
@@ -61,6 +65,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.NodeList;
 
@@ -88,7 +95,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @Component
 public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
-	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
+	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE, XOOM_COMPANY_CODE};
 	public static HashSet<String> privacyDataParams = null;
 	public static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
@@ -2204,6 +2211,8 @@ public class CommonUtil implements Constants {
 			//toRet = baos.toByteArray();
 			logger.debug("Exiting getInvoiceException..");
 			return baos;
+
+
 		} 
 
 	public static <T> Object unmarshallSoapFault(String response, Class<T> responseClass)
@@ -2222,6 +2231,136 @@ public class CommonUtil implements Constants {
 	public static String getTagValue(String xml, String tagName){
 	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
 	}	
+		
+	public static String substituteVariables(String template, Map<String, String> variables) {
+		Pattern pattern = Pattern.compile("\\$\\{|\\[(.+?)\\]|\\}");
+		Matcher matcher = pattern.matcher(template);
+		StringBuffer buffer = new StringBuffer();
+		while (matcher.find()) {
+			if (variables.containsKey(matcher.group(1))) {
+				// System.out.println("Key"+matcher.group(1));
+
+				String replacement = variables.get(matcher.group(1));
+				// System.out.println("Key"+replacement);
+				// quote to work properly with $ and {,} signs
+				matcher.appendReplacement(buffer, replacement != null ? Matcher.quoteReplacement(replacement) : "null");
+			}
+		}
+		matcher.appendTail(buffer);
+		return buffer.toString();
+	}
+
+	public static String encodeValue(String value) {
+		try {
+			return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException ex) {
+			logger.error("Error occured in converting encodeValue for the url {}- Exception Cause {}", value,
+					ex.getStackTrace());
+		}
+
+		return null;
+	}
+
+	public static String getPostRequestDetails(Object serviceReqJSONBody, String serviceURL) {
+		Gson gson = new Gson();
+		Map<String, String> serviceHttpHeader = new HashMap<>();
+		Map<String, String> serviceReqParameters = new HashMap<String, String>();
+		Map<String, Object> ServiceDetailRequest = new LinkedHashMap<String, Object>();
+		ServiceDetailRequest.put("serviceUrl", serviceURL);
+		ServiceDetailRequest.put("httpMethod", Constants.HTTP_METHOD_GET);
+		// System.out.println(gson.toJson(serviceHttpHeader).toString());
+		ServiceDetailRequest.put("serviceHttpHeader", serviceHttpHeader);
+		ServiceDetailRequest.put("serviceReqParameters", serviceReqParameters);
+		ServiceDetailRequest.put("serviceReqJSONBody", serviceReqJSONBody);
+		// System.out.println(gson.toJson(ServiceDetailRequest).toString());
+		return gson.toJson(ServiceDetailRequest);
+	}
+
+	public static HttpEntity<String> getHttpEntity(Object inputJson, String serviceURL) {
+		HttpEntity<String> entity = null;
+		Map<String, String> header = new HashMap<String, String>();
+		header.put(HEADER_CONTENT_TYPE_KEY, MediaType.APPLICATION_JSON_VALUE);
+		header.put("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+		HttpHeaders httpHeaders = CommonUtil.generateHttpHeadersFromRequest(header);
+		entity = new HttpEntity<String>(getPostRequestDetails(inputJson, serviceURL), httpHeaders);
+
+		return entity;
+	}
+
+	public static HttpHeaders generateHttpHeadersFromRequest(Map<String, String> requestParams) {
+		HttpHeaders headers = new HttpHeaders();
+
+		if (requestParams.entrySet() != null) {
+			for (Map.Entry<String, ? extends Object> entry : requestParams.entrySet()) {
+				headers.add(entry.getKey(), requestParams.get(entry.getKey()));
+			}
+		}
+		return headers;
+	}
+
+
+	public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
+			String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource, String messageIdMsg) {
+		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
+
+		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, templateReportsuite);
+		linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
+		linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, accountNumber);
+		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE_GME);
+		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
+		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
+		if(StringUtils.contains(messageId,"$")) {
+			String [] messageIdAr = messageId.split("\\$");
+			if(messageIdAr.length > 0) {
+				String date = CommonUtil.changeDateFormat(messageIdAr[1], "MMddyyyy",
+							   "MM/dd/yyyy");
+				messageIdMsg = StringUtils.replace(messageIdMsg, "[date]", date);
+				String tempString = messageIdAr[0] + "_" + messageIdMsg;
+				messageId = tempString;
+			}
+			
+		}
+		
+		if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, PLAN_OFFER_FUNCTION);
+			
+			if (!StringUtils.isNotBlank(errorMessage)) {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "User Retrieved Plan Offer");
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+
+			} else {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER_FAIL);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+			}
+		} else {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
+			if (!StringUtils.isNotBlank(errorMessage)) {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, SWAP_SUBMIT_SUCESS);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+			} else {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+			}
+		}
+
+		linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
+		linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, osType);
+		linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, contractId);
+		linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, bpNumber);
+
+		return linkedHashMap;
+	}
 	
 	public static String getDynamicEflUrl(String docId,String smartCode) {
 		StringBuilder eflUrlBuilder = new StringBuilder();
@@ -2240,4 +2379,5 @@ public class CommonUtil implements Constants {
 		return eflUrl;
 	}
 	
+
 }

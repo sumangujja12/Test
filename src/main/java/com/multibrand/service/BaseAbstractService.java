@@ -2,10 +2,13 @@ package com.multibrand.service;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Hashtable;
 import java.util.Locale;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,6 +26,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.google.gson.Gson;
 import com.multibrand.util.CommonUtil;
@@ -97,6 +102,7 @@ public class BaseAbstractService implements Constants{
 					Method method = srvProxyClass.getSuperclass().getDeclaredMethod("setTimeout", Integer.TYPE);
 				    method.invoke(proxyObject, WEBSERVICE_CALL_TIMEOUT * 1000);
 				    
+				    populateMockDataRequestHeader(proxyObject);
 				}
 				catch(Exception e) {
 					logger.error("Setting timeout has been failed:"+e.getMessage());
@@ -364,4 +370,20 @@ public <T> String createAndCallServiceReturnStatus(T requestObject, String restU
 			return "Basic " + new String(encodedToken);
 		}
 	 
+
+		public Object populateMockDataRequestHeader (Object proxyObject){
+
+	        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	        logger.info("Service header "+httpServletRequest.getHeader(DATA_MOCKUP_HEADER_NAME));
+	        if(httpServletRequest.getHeader(DATA_MOCKUP_HEADER_NAME) != null){
+	      		org.apache.axis.client.Stub proxyObjectStub = (org.apache.axis.client.Stub) proxyObject;
+	      		Hashtable<String, String> headers = new Hashtable<String, String>();
+	      		headers.put(DATA_MOCKUP_HEADER_NAME, httpServletRequest.getHeader(DATA_MOCKUP_HEADER_NAME));
+	      		proxyObjectStub._setProperty(HTTPConstants.REQUEST_HEADERS, headers);
+
+	        }
+			
+			return proxyObject;
+		}
+
 }

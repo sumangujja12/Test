@@ -1,6 +1,5 @@
 package com.multibrand.util;
 
-
 public interface DBConstants {
 
 	public static final String OUTPUT = "OUTPUT";
@@ -322,8 +321,6 @@ public interface DBConstants {
 	public static final String DB_CONTRACT_ACCOUNT_NUMBER ="CONTRACT_ACCOUNT_NUMBER";
 	public static final String DB_COMPANY_CODE ="COMPANY_CODE";
 	
-	public static final String DB_TCS_CA_BP_FROM_LEASE_ID ="db.tcs.ca.bp.from.leaseid";
-	
     public static final String in_invoice_no = "in_invoice_no";
     public static final String in_contract_id = "in_contract_id";
     public static final String in_current_ar_amount = "in_current_ar_amount";
@@ -393,6 +390,7 @@ public interface DBConstants {
 	//END || PBI 15786: Update ESID Call || atiwari
 	
 	public static final String OE_UPDATE_ERROR_SLA_QUERY = "db.choice.reliant.updateerrorinsla";
+	
 	//columns of component_outage table
 	public static final String COL_OUTAGE_STATUS = "OUTAGE_STATUS";
 	public static final String COL_OUTAGE_MESSAGE = "OUTAGE_MESSAGE";
@@ -407,10 +405,11 @@ public interface DBConstants {
 	public static final String COL_NON_SCHEDULED_OUTAGE_END = "NON_SCHEDULED_OUTAGE_END";
 	public static final String COL_MSG_PRIORITY = "MSG_PRIORITY";
 	public static final String COL_MESSAGE_CODE = "MESSAGE_CODE";
-	
+
 	public static final String GMD_PERSON_SEQ = "GME_CHOICE.GMD_PERSON_ID_SEQ";
 	public static final String GMD_TRACKING_SEQ = "GME_CHOICE.GMD_TRACKING_NUMBER_SEQ";
 	
+
 	public static final String DB_OWNERSHIP_FLG="OWNERSHIP_FLG";
 	public static final String DB_SECURITY_ELIGIBLE_FLG="SECURITY_ELIGIBLE_FLG";
 	public static final String DB_CASH_PAYMENTS_FLG="CASH_PAYMENTS_FLG";
@@ -418,5 +417,6 @@ public interface DBConstants {
 	public static final String DB_RELIANT_APP_USER_FLG="RELIANT_APP_USER_FLG";
 	public static final String DB_SECURITY_ACTIVE="SECURITY_ACTIVE";
 	public static final String DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase";
+
 
 }

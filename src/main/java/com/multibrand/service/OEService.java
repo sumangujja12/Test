@@ -584,26 +584,6 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 			return response;
 		}
 
-	public ProspectEFLResponse getProspectEFL(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest)   {
-	
-		ProspectEFLResponse  prospectEFLResponse = null;
-		try {
-			ProspectEFLRequest prospectEFLSoapRequest = new ProspectEFLRequest();
-			prospectEFLSoapRequest.setCompanyCode(prospectEFLRequest.getCompanyCode());
-			prospectEFLSoapRequest.setEnrollDate(prospectEFLRequest.getEnrollDate());
-			prospectEFLSoapRequest.setEnrollFrom(prospectEFLRequest.getEnrollFrom());
-			prospectEFLSoapRequest.setErrorMsg(prospectEFLRequest.getErrorMsg());
-			prospectEFLSoapRequest.setOfferCode(prospectEFLRequest.getOfferCode());
-			prospectEFLSoapRequest.setNrgBrand(prospectEFLRequest.getNrgBrand());
-			prospectEFLSoapRequest.setSmartCode(prospectEFLRequest.getSmartCode());
-			
-			prospectEFLResponse= oeDomainPortProxy.getProspectEFL(prospectEFLSoapRequest);
-			logger.debug("getProspectEFL  Response message"+prospectEFLResponse.getErrMessage());
-		} catch (Exception e) {
-			logger.error("Error in method: getProspectEFL"+e.getMessage());
-		} 
-		return prospectEFLResponse;
-	}
 	/**
 	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
 	 * @param request
@@ -644,5 +624,26 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 		logger.debug("END :: oeService.ercotESIDCheckByAddress(..)");
 		return ercotCheckResponse;
 	}
- 
+
+
+	public ProspectEFLResponse getProspectEFL(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest)   {
+	
+		ProspectEFLResponse  prospectEFLResponse = null;
+		try {
+			ProspectEFLRequest prospectEFLSoapRequest = new ProspectEFLRequest();
+			prospectEFLSoapRequest.setCompanyCode(prospectEFLRequest.getCompanyCode());
+			prospectEFLSoapRequest.setEnrollDate(prospectEFLRequest.getEnrollDate());
+			prospectEFLSoapRequest.setEnrollFrom(prospectEFLRequest.getEnrollFrom());
+			prospectEFLSoapRequest.setErrorMsg(prospectEFLRequest.getErrorMsg());
+			prospectEFLSoapRequest.setOfferCode(prospectEFLRequest.getOfferCode());
+			prospectEFLSoapRequest.setNrgBrand(prospectEFLRequest.getNrgBrand());
+			prospectEFLSoapRequest.setSmartCode(prospectEFLRequest.getSmartCode());
+			
+			prospectEFLResponse= oeDomainPortProxy.getProspectEFL(prospectEFLSoapRequest);
+			logger.debug("getProspectEFL  Response message"+prospectEFLResponse.getErrMessage());
+		} catch (Exception e) {
+			logger.error("Error in method: getProspectEFL"+e.getMessage());
+		} 
+		return prospectEFLResponse;
+	}
 }

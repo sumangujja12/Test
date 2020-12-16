@@ -13,17 +13,19 @@ public class ProductOfferRequest {
 	private String langCode;
 	
 	private String companyCode;
-	
+
 	private String airlinePromo;
 	
 	
 	public String getAirlinePromo() {
 		return airlinePromo;
+
 	}
 
 	public void setAirlinePromo(String airlinePromo) {
 		this.airlinePromo = airlinePromo;
 	}
+
 
 	public String getCompanyCode() {
 		return companyCode;
