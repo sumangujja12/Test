@@ -130,6 +130,9 @@ public class OEBOTest implements Constants{
 	@Spy
 	ReloadableResourceBundleMessageSource appConstMessageSource = new ReloadableResourceBundleMessageSource();
 	
+	@Spy 
+	private ReloadableResourceBundleMessageSource environmentMessageSource = new ReloadableResourceBundleMessageSource() ;
+	
 	String apiCallExecuted = API_CHECK_CREDIT+"|"+API_LEGACY_SUBMIT_UCC_DATA+"|"+API_RECHECK_CREDIT+"|"+API_LEGACY_PERFORM_CREDIT_CHECK+"|"+API_AVAILABLE_DATES+"|"+API_LEGACY_GET_ESID_AND_CALENDAR_DATES;
 	
 	@BeforeClass
@@ -141,6 +144,13 @@ public class OEBOTest implements Constants{
 		appConstMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
 		appConstMessageSource.setUseCodeAsDefaultMessage(true);
 		appConstMessageSource.setBasenames("/WEB-INF/classes/properties/appConstants");
+		
+		
+		environmentMessageSource.setUseCodeAsDefaultMessage(true);
+		environmentMessageSource.setDefaultEncoding("UTF-8");
+		environmentMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
+		environmentMessageSource.setUseCodeAsDefaultMessage(true);
+		environmentMessageSource.setBasenames("/WEB-INF/classes/properties/environment");
     
 	}
 
@@ -153,6 +163,12 @@ public class OEBOTest implements Constants{
 		appConstMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
 		appConstMessageSource.setUseCodeAsDefaultMessage(true);
 		appConstMessageSource.setBasenames("/WEB-INF/classes/properties/appConstants");
+		
+		environmentMessageSource.setUseCodeAsDefaultMessage(true);
+		environmentMessageSource.setDefaultEncoding("UTF-8");
+		environmentMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
+		environmentMessageSource.setUseCodeAsDefaultMessage(true);
+		environmentMessageSource.setBasenames("/WEB-INF/classes/properties/environment");
     
 	}
 
@@ -851,5 +867,26 @@ public class OEBOTest implements Constants{
 		AffiliateOfferResponse affilaiteResponse = oebo.getOfferDetails(salesOfferDetailsRequest);
 		Assert.assertEquals(STATUS_CODE_STOP, affilaiteResponse.getStatusCode());
 	
+	}
+	
+	@Test
+	public void testGetWebURL() {
+		when(environmentMessageSource.getMessage("0121" + ".web.url" , null,null)).thenReturn("https://www.reliant.com");
+		String webURL = oebo.getWebURL("0121", "RE");
+		Assert.assertEquals(webURL, "https://www.reliant.com");
+	}
+	
+	@Test
+	public void testGetWebURLCirro() {
+		when(environmentMessageSource.getMessage("0391.CE.web.url" , null,null)).thenReturn("https://stg-signup.cirroenergy.com");
+		String webURL = oebo.getWebURL("0391", "CE");
+		Assert.assertEquals(webURL, "https://stg-signup.cirroenergy.com");
+	}
+	
+	@Test
+	public void testGetWebURLDE() {
+		when(environmentMessageSource.getMessage("0391.web.url" , null,null)).thenReturn("https://stg-www.discountpowertx.com");
+		String webURL = oebo.getWebURL("0391", "DE");
+		Assert.assertEquals(webURL, "https://stg-www.discountpowertx.com");
 	}
 }
