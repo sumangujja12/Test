@@ -23,8 +23,9 @@ import com.multibrand.service.NEISimplySmartService;
 import com.nrg.cxfstubs.nei.bpca.ZEIsuNeiCreateBpCaResponse;
 
 
+
 @Component
-@Path("nei")
+@Path("/nei")
 public class NEISimplySmartResource {
 
 	private Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -44,7 +45,7 @@ public class NEISimplySmartResource {
 	@Produces({ MediaType.TEXT_PLAIN })
 	public Response getLive() {
 		Response response = null;
-		response = Response.status(200).entity("Service is up and running").build();
+		response = Response.status(200).entity("Service is Up and Running").build();
 		return response;
 	}
 
