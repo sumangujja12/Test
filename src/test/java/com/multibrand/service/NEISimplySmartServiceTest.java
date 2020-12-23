@@ -121,8 +121,6 @@ public class NEISimplySmartServiceTest {
 			e.printStackTrace();
 		}
 
-		// assertTrue(thrown);
-
 	}
 
 }
