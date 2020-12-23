@@ -102,6 +102,8 @@ public class NEISimplySmartServiceTest {
 	@Test
 	public void testCreateNEIBPCA_Exception() {
 		
+		ZEIsuNeiCreateBpCaResponse ccsResponse = new ZEIsuNeiCreateBpCaResponse();
+		
 		NeiBPCARequest neiBPCARequest1 = new NeiBPCARequest();
 		neiBPCARequest1.setAcctNumber("5678");
 	
@@ -114,7 +116,7 @@ public class NEISimplySmartServiceTest {
 
 			//Mockito.when(stub.zeIsuNeiCreateBpCa(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject(), Mockito.anyObject());
 			
-			nEISimplySmartService.createNEIBPCA(neiBPCARequest, "Session1");
+			ccsResponse = nEISimplySmartService.createNEIBPCA(neiBPCARequest, "Session1");
 
 		} catch (Exception e) {
 			thrown = true;
