@@ -1636,5 +1636,6 @@ public interface Constants {
 	public static final String PLAN_OFFER_FUNCTION = "SEARCH_PLAN";
 	public static final String PLAN_OFFER_MESSAGE_TYPE = "OPEN";
 	public static final String PARAMETER_VARIABLE_MSGINSTANCE = "msgInstance";
+	public static final String SALES_API_ESID_VALIDATION = "esidValidation";
 
 }
