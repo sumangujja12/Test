@@ -72,7 +72,9 @@ public class ContentBO extends BaseBO implements Constants {
 		String templateReportSuite = envMessageReader.getMessage(TEMPLATE_REPORTSUITE);
 		String messageIdMsg = envMessageReader.getMessage("adobe.messageId.message");
 		ContractOfferPlanContentResponse response = new ContractOfferPlanContentResponse();
-		 Map<String, String>  adobeValueMap = null;
+
+		Map<String, String>  adobeValueMap = null;
+		 
 		try {
 			if (contentHelper.handleValidationContentRequest(request, response)) {
 				return response;
@@ -87,7 +89,20 @@ public class ContentBO extends BaseBO implements Constants {
 			offerCode = contentHelper.getContractOffer(contractInfoResponse, allRequestResponse,response);
 			contentHelper.getOfferContent(offerCode,response,request);
 			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
-			
+		
+			if(offerCode != null && offerCode.size() > 0 && StringUtils.isNotBlank(request.getMessageId())) {
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
+						request.getBpNumber(), request.getOsType(), templateReportSuite,
+						"",GET_PLAN_OFFER,messageIdMsg);
+				callAdodeAnalytics(adobeValueMap);
+			} else if(StringUtils.isNotBlank(request.getMessageId())) {
+				
+				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
+						request.getBpNumber(), request.getOsType(), templateReportSuite,
+						"NO Offer Code",GET_PLAN_OFFER,messageIdMsg);
+				callAdodeAnalytics(adobeValueMap);
+			}
+
 			if(offerCode != null && offerCode.size() > 0 && StringUtils.isNotBlank(request.getMessageId())) {
 				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
 						request.getBpNumber(), request.getOsType(), templateReportSuite,
@@ -141,7 +156,7 @@ public class ContentBO extends BaseBO implements Constants {
 				contractInfo.getContractId(), contractInfo.getEsid(), contractInfo.getZoneId(), currentDate,
 				contractInfo.getCompanyCode(), sessionId);
 		List<MonthlyUsageResponse> monthlyUsageList = monthlyUsage.getMonthlyUsageResponse();
-		if (!monthlyUsageList.isEmpty() && monthlyUsageList.size() > 0) {
+		if (monthlyUsageList != null && !monthlyUsageList.isEmpty() && monthlyUsageList.size() > 0) {
 			double totMontlyUsageKwh = 0;
 			int numberOfMonths = 0;
 			for (MonthlyUsageResponse usage : monthlyUsageList) {

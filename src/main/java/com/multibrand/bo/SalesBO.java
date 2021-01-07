@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.helper.OeBoHelper;
+import com.multibrand.domain.EsidAddressResponse;
 import com.multibrand.dto.request.AffiliateOfferRequest;
 
 import com.multibrand.dto.request.CreditCheckRequest;
@@ -36,6 +37,7 @@ import com.multibrand.dto.request.ValidateAddressRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
+import com.multibrand.dto.response.EsidValidationAddressResponse;
 import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
@@ -443,6 +445,33 @@ public class SalesBO extends OeBoHelper implements Constants {
 			throw e;
 		}
 		return salesTDSPResponse;
+	}
+
+	public EsidValidationAddressResponse validateESID(String esid) {
+		EsidValidationAddressResponse esidValidationAddressResponse  = new EsidValidationAddressResponse();
+		EsidAddressResponse esidAddressResponse = oeBO.validateESID(esid);
+		esidValidationAddressResponse = constructEsidValidationResponse(esidAddressResponse,esidValidationAddressResponse);
+		return esidValidationAddressResponse;
+	}
+	
+	private EsidValidationAddressResponse constructEsidValidationResponse(EsidAddressResponse esidAddressResponse,
+			EsidValidationAddressResponse esidValidationAddressResponse) {
+	    esidValidationAddressResponse.setStrAddressLine1(esidAddressResponse.getStrAddressLine1());
+		esidValidationAddressResponse.setStrAddressLine2(esidAddressResponse.getStrAddressLine2());
+		esidValidationAddressResponse.setStrAptNumber(esidAddressResponse.getStrAptNumber());
+		esidValidationAddressResponse.setStrCity(esidAddressResponse.getStrCity());
+		esidValidationAddressResponse.setStrErrCode(esidAddressResponse.getStrErrCode());
+		esidValidationAddressResponse.setStrErrMessage(esidAddressResponse.getStrErrMessage());
+		esidValidationAddressResponse.setStrEsidClass(esidAddressResponse.getStrEsidClass());
+		esidValidationAddressResponse.setStrEsidDeposit(esidAddressResponse.getStrEsidDeposit());
+		esidValidationAddressResponse.setStrEsidTdsp(esidAddressResponse.getStrEsidTdsp());
+		esidValidationAddressResponse.setStrPremiseType(esidAddressResponse.getStrPremiseType());
+		esidValidationAddressResponse.setStrState(esidAddressResponse.getStrState());
+		esidValidationAddressResponse.setStrStatus(esidAddressResponse.getStrStatus());
+		esidValidationAddressResponse.setStrZip(esidAddressResponse.getStrZip());
+		esidValidationAddressResponse.setStrZipFour(esidAddressResponse.getStrZipFour());
+		
+		return esidValidationAddressResponse;
 	}
 
 }
