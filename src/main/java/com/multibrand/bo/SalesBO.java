@@ -455,7 +455,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 	}
 	
 	private EsidValidationAddressResponse constructEsidValidationResponse(EsidAddressResponse esidAddressResponse,
-			EsidValidationAddressResponse esidValidationAddressResponse) {
+			EsidValidationAddressResponse esidValidationAddressResponse){
 	    esidValidationAddressResponse.setStrAddressLine1(esidAddressResponse.getStrAddressLine1());
 		esidValidationAddressResponse.setStrAddressLine2(esidAddressResponse.getStrAddressLine2());
 		esidValidationAddressResponse.setStrAptNumber(esidAddressResponse.getStrAptNumber());

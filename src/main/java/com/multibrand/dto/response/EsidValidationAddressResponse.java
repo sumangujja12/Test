@@ -13,7 +13,6 @@ public class EsidValidationAddressResponse extends SalesBaseResponse{
 	private String strPremiseType;
 	private String strErrCode;
 	private String strErrMessage;
-	//START :Sprint10 :US1424 :Kdeshmu1
 	private String strEsidTdsp;
 	private String strEsidClass;
 	private String strEsidDeposit;
