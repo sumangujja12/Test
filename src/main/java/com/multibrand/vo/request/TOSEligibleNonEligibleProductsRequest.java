@@ -56,14 +56,4 @@ public class TOSEligibleNonEligibleProductsRequest {
 		this.companyCode = companyCode;
 	}
 	
-	@Override
-	public String toString() {
-		return "TOSEligibleNonEligibleProductsRequest [esid=" + esid +
-				", zipCode=" + zipCode + ", caNumber=" + caNumber + ","
-				 + " coNumber=" + coNumber + ""
-				 + ", offerCode= " + offerCode + " "
-				 + ", promoCode= " + promoCode + ", "
-				 +" , companyCode= " + companyCode + "]";
-	}
-	
 }

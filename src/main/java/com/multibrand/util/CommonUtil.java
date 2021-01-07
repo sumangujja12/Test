@@ -69,6 +69,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.NodeList;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -2231,89 +2232,6 @@ public class CommonUtil implements Constants {
 	    return xml.split("<"+tagName+">")[1].split("</"+tagName+">")[0];
 	}	
 		
-	
-	
-	public static String getDynamicEflUrl(String docId,String smartCode) {
-		StringBuilder eflUrlBuilder = new StringBuilder();
-		if(!StringUtils.isEmpty(docId)) {
-			eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
-			.append(docId)
-			.append(Constants.CONST_DOT_PDF)
-			.append("?project=DYN_EFL");
-		}else if(!StringUtils.isEmpty(smartCode)){
-			eflUrlBuilder.append(Constants.SMARTCODE_URL_SUB_STR)
-			.append(smartCode)
-			.append(Constants.CONST_DOT_PDF);
-		}
-		String eflUrl = eflUrlBuilder.toString();
-		logger.debug("Efl URL returned from getDynamicEflUrl is  "+eflUrl);
-		return eflUrl;
-	}
-
-		
-	
-	public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
-			String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource, String messageIdMsg) {
-		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
-
-		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, templateReportsuite);
-		linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
-		linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, accountNumber);
-		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE_GME);
-		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
-		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
-		if(StringUtils.contains(messageId,"$")) {
-			String [] messageIdAr = messageId.split("\\$");
-			if(messageIdAr.length > 0) {
-				String date = CommonUtil.changeDateFormat(messageIdAr[1], "yyyyMMdd",
-							   "MM/dd/yyyy");
-				messageIdMsg = StringUtils.replace(messageIdMsg, "[date]", date);
-				String tempString = messageIdAr[0] + "_" + messageIdMsg;
-				messageId = tempString;
-			}
-			
-		}
-		
-		if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
-			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
-			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, PLAN_OFFER_FUNCTION);
-			
-			if (!StringUtils.isNotBlank(errorMessage)) {
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER);
-				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "User Retrieved Plan Offer");
-				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
-
-			} else {
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER_FAIL);
-				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
-				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
-			}
-		} else {
-			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
-			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
-			if (!StringUtils.isNotBlank(errorMessage)) {
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
-				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, SWAP_SUBMIT_SUCESS);
-				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
-			} else {
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
-				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
-				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
-				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
-			}
-		}
-
-		linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
-		linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, osType);
-		linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, contractId);
-		linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, bpNumber);
-
-		return linkedHashMap;
-	}
-	
 	public static String substituteVariables(String template, Map<String, String> variables) {
 		Pattern pattern = Pattern.compile("\\$\\{|\\[(.+?)\\]|\\}");
 		Matcher matcher = pattern.matcher(template);
@@ -2380,5 +2298,86 @@ public class CommonUtil implements Constants {
 		}
 		return headers;
 	}
-}
 
+
+	public static Map<String, String> getAdopeValueMap(String accountNumber, String messageId, String contractId,
+			String bpNumber, String osType, String templateReportsuite, String errorMessage, String strSource, String messageIdMsg) {
+		Map<String, String> linkedHashMap = new LinkedHashMap<String, String>();
+
+		linkedHashMap.put(PARAMETER_VARIABLE_REPORTSUITE, templateReportsuite);
+		linkedHashMap.put(PARAMETER_VARIABLE_BRAND, BRAND_NAME);
+		linkedHashMap.put(PARAMETER_VARIABLE_CANUMBER, accountNumber);
+		linkedHashMap.put(PARAMETER_VARIABLE_COMPANYCODE, COMPANY_CODE_GME);
+		linkedHashMap.put(PARAMETER_VARIABLE_MSGID, messageId);
+		linkedHashMap.put(PARAMETER_VARIABLE_ACTIONDATE, CommonUtil.getCurrentDateFormatted(CURRENT_DATE_FMT));
+		if(StringUtils.contains(messageId,"$")) {
+			String [] messageIdAr = messageId.split("\\$");
+			if(messageIdAr.length > 0) {
+				String date = CommonUtil.changeDateFormat(messageIdAr[1], "MMddyyyy",
+							   "MM/dd/yyyy");
+				messageIdMsg = StringUtils.replace(messageIdMsg, "[date]", date);
+				String tempString = messageIdAr[0] + "_" + messageIdMsg;
+				messageId = tempString;
+			}
+			
+		}
+		
+		if (StringUtils.equalsIgnoreCase(GET_PLAN_OFFER, strSource)) {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, PLAN_OFFER_MESSAGE_TYPE);
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, PLAN_OFFER_FUNCTION);
+			
+			if (!StringUtils.isNotBlank(errorMessage)) {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, "User Retrieved Plan Offer");
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+
+			} else {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, GET_PLAN_OFFER_FAIL);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+			}
+		} else {
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGETYPE, ADOBE_MESSAGE_TYPE);
+			linkedHashMap.put(PARAMETER_VARIABLE_MESSAGECAT, ADOBE_MESSAGE_FUNCTION);
+			if (!StringUtils.isNotBlank(errorMessage)) {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_SUCESS);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, SWAP_SUBMIT_SUCESS);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+			} else {
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGESTATUS, SWAP_SUBMIT_FAIL);
+				linkedHashMap.put(PARAMETER_VARIABLE_ERRORMESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MESSAGE, errorMessage);
+				linkedHashMap.put(PARAMETER_VARIABLE_MSGINSTANCE, messageId);
+			}
+		}
+
+		linkedHashMap.put(PARAMETER_VARIABLE_LANGUAGE, LANGUAGE_CODE_EN);
+		linkedHashMap.put(PARAMETER_VARIABLE_OSTYPE, osType);
+		linkedHashMap.put(PARAMETER_VARIABLE_CONTRACTID, contractId);
+		linkedHashMap.put(PARAMETER_VARIABLE_BPNUMBER, bpNumber);
+
+		return linkedHashMap;
+	}
+	
+	public static String getDynamicEflUrl(String docId,String smartCode) {
+		StringBuilder eflUrlBuilder = new StringBuilder();
+		if(!StringUtils.isEmpty(docId)) {
+			eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
+			.append(docId)
+			.append(Constants.CONST_DOT_PDF)
+			.append("?project=DYN_EFL");
+		}else if(!StringUtils.isEmpty(smartCode)){
+			eflUrlBuilder.append(Constants.SMARTCODE_URL_SUB_STR)
+			.append(smartCode)
+			.append(Constants.CONST_DOT_PDF);
+		}
+		String eflUrl = eflUrlBuilder.toString();
+		logger.debug("Efl URL returned from getDynamicEflUrl is  "+eflUrl);
+		return eflUrl;
+	}
+	
+
+}
