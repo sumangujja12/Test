@@ -51,7 +51,6 @@ public class SwapBO extends BaseAbstractService implements Constants {
 	EmailHelper emailHelper;
 	@Autowired
 	TOSService tosService;
-	
 	@Autowired
 	TaskExecutor taskExecutor;
 	
@@ -101,10 +100,10 @@ public class SwapBO extends BaseAbstractService implements Constants {
 		String serviceCity ="";
 		String serviceState ="";
 		String serviceZipCode ="";
-
 		 Map<String, String>  adobeValueMap = null;
 		String templateReportSuite ="";
 		String messageIdMsg = envMessageReader.getMessage("adobe.messageId.message");
+
 		try {
 
 			SwapRequest swapRequest = new SwapRequest();
@@ -158,7 +157,6 @@ public class SwapBO extends BaseAbstractService implements Constants {
 			}
 			submitSwapResponse.setResultCode(RESULT_CODE_SUCCESS);
 			submitSwapResponse.setResultDescription(MSG_SUCCESS);
-			
 			if (StringUtils.isNotBlank(request.getMessageId())) {
 				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(),
 						request.getContractId(), request.getBpNumber(), request.getOsType(), templateReportSuite, "",
@@ -551,8 +549,8 @@ public class SwapBO extends BaseAbstractService implements Constants {
 
 		return pendingSwapResponse;
 
-
 	}
+	
 	
 	
 	public void callAdodeAnalytics(Map<String, String> adobeValueMap) { 
@@ -568,7 +566,6 @@ public class SwapBO extends BaseAbstractService implements Constants {
 		AdodeAnalyticService analyticalService = new AdodeAnalyticService(
 				envMessageReader.getMessage(Constants.IOT_POST_URL), url, inputJson);
 		taskExecutor.execute(analyticalService);
-
 	}
 
 	
