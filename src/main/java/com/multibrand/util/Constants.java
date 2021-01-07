@@ -1658,6 +1658,7 @@ public interface Constants {
 	public static final String API_TDSP = "tdsp";
 	
 	public static final String NEI_CREATE_BPCA_CCS_ENDPOINT_URL="ccs.nei.bpca.create";
+	public static final String SALES_API_ESID_VALIDATION = "esidValidation"; 
 
 }
 	

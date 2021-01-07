@@ -35,8 +35,10 @@ import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.SalesTDSPRequest;
+import com.multibrand.dto.request.ValidateEsidRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.dto.response.EsidValidationAddressResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
@@ -55,7 +57,6 @@ import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
-
 /**
  * This Resource is to handle all the Online Enrollment API calls.
  * 
@@ -452,6 +453,27 @@ public class SalesAPIResource extends BaseResource {
    		}
        return response;
 	}
-	
+	@POST
+	@Path(SALES_API_ESID_VALIDATION)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateEsid(ValidateEsidRequest validateEsidRequest) {
+		logger.info("In validateEsid");
+		Response response = null;
+			
+		try {
+			EsidValidationAddressResponse esidAddressResponse = salesBO.validateESID(validateEsidRequest.getEsid());
+			Response.Status status = esidAddressResponse.getHttpStatus() != null ? esidAddressResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status)
+					.entity(esidAddressResponse).build();
+			response = Response.status(200).entity(esidAddressResponse).build();
+ 
+			logger.info("Exit validateEsid");
+		} catch (Exception e) {
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new EsidValidationAddressResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateEsidRequest.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+		}
+       return response;
+	}
 
 }
