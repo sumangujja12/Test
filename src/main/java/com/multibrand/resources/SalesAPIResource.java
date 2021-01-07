@@ -475,7 +475,6 @@ public class SalesAPIResource extends BaseResource {
 			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new EsidValidationAddressResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateEsidRequest.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
 		}
-   		
        return response;
 	}
 	

@@ -3,7 +3,6 @@ package com.multibrand.dto.request;
 import javax.ws.rs.QueryParam;
 
 public class ValidateEsidRequest extends SalesBaseRequest{
-
 	/**
 	 * 
 	 */
