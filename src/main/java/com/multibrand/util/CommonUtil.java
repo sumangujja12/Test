@@ -2359,6 +2359,23 @@ public class CommonUtil implements Constants {
 		return headers;
 	}
 
+	public static String getDynamicEflUrl(String docId,String smartCode) {
+		StringBuilder eflUrlBuilder = new StringBuilder();
+		if(!StringUtils.isEmpty(docId)) {
+			eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
+			.append(docId)
+			.append(Constants.CONST_DOT_PDF)
+			.append("?project=DYN_EFL");
+		}else if(!StringUtils.isEmpty(smartCode)){
+			eflUrlBuilder.append(Constants.SMARTCODE_URL_SUB_STR)
+			.append(smartCode)
+			.append(Constants.CONST_DOT_PDF);
+		}
+		String eflUrl = eflUrlBuilder.toString();
+		logger.debug("Efl URL returned from getDynamicEflUrl is  "+eflUrl);
+		return eflUrl;
+	}
 	
+
 	
 }
