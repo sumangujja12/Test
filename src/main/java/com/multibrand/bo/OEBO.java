@@ -82,6 +82,8 @@ import com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.domain.PromoOfferTDSPCharge;
+import com.multibrand.domain.ProspectEFLRequest;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.SegmentedFlagsOutData;
@@ -1061,6 +1063,7 @@ public class OEBO extends OeBoHelper implements Constants{
 							.getStrProductCode());
 					offerDO.setStrProductPriceCode(promoOfferOutData
 							.getStrProductPriceCode());
+					offerDO.setStrEflUrl(CommonUtil.getDynamicEflUrl(promoOfferOutData.getStrEFLDocID(), promoOfferOutData.getStrEFLSmartCode()));
 					// setting Environment data
 					if (null != promoOfferResponse
 							.getCampEnvironmentDetailsOuts()) {
@@ -4370,10 +4373,13 @@ public class OEBO extends OeBoHelper implements Constants{
 					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
 				}
 				/*END | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
-				
+				String docId = offerDO.getStrEFLDocID();
+				String smartCode = offerDO.getStrEFLSmartCode();
+				String eflUri = CommonUtil.getDynamicEflUrl(docId, smartCode);
 				String webURL = getWebURL(request.getCompanyCode(),
 						request.getBrandId());
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
+				affiliateOfferDO.setEflURL(webURL + eflUri);
 				affiliateOfferDO.setEflURL(webURL + CONST_FILES
 						+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
 				affiliateOfferDO.setTosURL(webURL + CONST_FILES
@@ -6911,6 +6917,11 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		
 		EsidAddressResponse esidAddressResponse = oeProxy.getESIDAddress(esidAddressRequest);
 		return esidAddressResponse;
+	}
+
+	public ProspectEFLResponse getProspectEfl(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest) {
+		
+		return oeService.getProspectEFL(prospectEFLRequest);
 	}
 	
 	/**
