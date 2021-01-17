@@ -181,7 +181,7 @@ public class OfferHelper implements Constants{
 				
 				if (docid.getDoctype().equalsIgnoreCase(EFL)) {
 					smallBusinessOfferDO.setStrEFLDocID(docid.getDocid());
-					smallBusinessOfferDO.setStrEFLDocLink(getDocURlwithID(docid.getDocid()));
+					smallBusinessOfferDO.setStrEFLDocLink(getEflURl(docid.getStrEflUrl()));
 					smallBusinessOfferDO.setStrEFLSmartCode(docid.getSmartcode());
 				}
 				if (docid.getDoctype().equalsIgnoreCase(TEFLF)) {
@@ -247,5 +247,9 @@ public class OfferHelper implements Constants{
 
 	public String getDocURlwithID(String strEFLDocID) {
 		return environmentMessageSource.getMessage("documentum.endpoint", new Object[] {strEFLDocID}, null);
+	}
+	
+	public String getEflURl(String strEFLDocID) {
+		return environmentMessageSource.getMessage("documentum.efl.endpoint", new Object[] {strEFLDocID}, null);
 	}
 }

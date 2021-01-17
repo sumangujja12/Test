@@ -59,6 +59,8 @@ public class OfferDO {
   private String attribute10 = "";
   
   private String strTDSPCode = "";
+  
+  private String strEflUrl="";
 
   private TDSPChargeDO tdspChargeDO;
   
@@ -468,6 +470,12 @@ public TDSPChargeDO getTdspChargeDO() {
 }
 public void setTdspChargeDO(TDSPChargeDO tdspChargeDO) {
 	this.tdspChargeDO = tdspChargeDO;
+}
+public String getStrEflUrl() {
+	return strEflUrl;
+}
+public void setStrEflUrl(String strEflUrl) {
+	this.strEflUrl = strEflUrl;
 }
 
   

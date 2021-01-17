@@ -430,7 +430,7 @@ public List<ResidentialOfferPlanDTO> constructResidentalOfferPlan(PromoOfferResp
 			offerPlan.setStrEFLDocID(promoOfferOutData.getStrEFLDocID());
 			offerPlan.setStrYRAACDocID(promoOfferOutData.getStrYRAACDocID());
 		    offerPlan.setStrTOSDocID(promoOfferOutData.getStrTOSDocID());
-			offerPlan.setStrEFLDocLink(offerHelper.getDocURlwithID(promoOfferOutData.getStrEFLDocID()));
+			offerPlan.setStrEFLDocLink(offerHelper.getEflURl(promoOfferOutData.getStrEflUrl()));
 		    offerPlan.setStrYRAACDocLink(offerHelper.getDocURlwithID(promoOfferOutData.getStrYRAACDocID()));
 		    offerPlan.setStrTOSDocLink(offerHelper.getDocURlwithID(promoOfferOutData.getStrTOSDocID()));
 		    offerPlan.setStrCampaignCode(promoOfferOutData.getStrCampaignCode());

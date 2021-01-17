@@ -26,6 +26,8 @@ public class GMEContractDO {
 	private java.lang.String yraacDocID="";
     
 	private java.lang.String strESIID;
+	
+	private java.lang.String strEflUrl="";
     
 	private boolean renewalOffers;
     
@@ -162,6 +164,14 @@ public class GMEContractDO {
   	public void setPendingSwap(boolean pendingSwap) {
   		PendingSwap = pendingSwap;
   	}
+
+	public java.lang.String getStrEflUrl() {
+		return strEflUrl;
+	}
+
+	public void setStrEflUrl(java.lang.String strEflUrl) {
+		this.strEflUrl = strEflUrl;
+	}
 
     
 }
