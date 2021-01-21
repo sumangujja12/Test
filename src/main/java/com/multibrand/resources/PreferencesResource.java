@@ -27,6 +27,7 @@ import com.multibrand.dto.request.SendNewActivateRequest;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.vo.request.OptInOptOutRequest;
 import com.multibrand.vo.request.PrivacyPreferencesRequest;
+import com.multibrand.vo.request.PushNotifiPreferenceRequest;
 import com.multibrand.vo.request.SMSOptInOutEligibilityRequest;
 import com.multibrand.vo.response.ActivationResponse;
 import com.multibrand.vo.response.DeactivationResponse;
@@ -35,6 +36,8 @@ import com.multibrand.vo.response.GetContactAlertPrefsResponse;
 import com.multibrand.vo.response.GetContactInfoResponse;
 import com.multibrand.vo.response.OptInOptOutResponse;
 import com.multibrand.vo.response.PrivacyPreferenceResponse;
+import com.multibrand.vo.response.PushNotificationPrefReadResponse;
+import com.multibrand.vo.response.PushNotificationPrefUpdateResponse;
 import com.multibrand.vo.response.SMSOptInOutEligibilityResponse;
 import com.multibrand.vo.response.UpdationResponse;
 
@@ -267,4 +270,29 @@ public class PreferencesResource {
 		
 	}
 	/** END | US12884 - DK | SMS ALERTS | 10/16/2018 **/
+	
+	@POST
+	@Path("readPushNotiPreference")
+	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+	public Response pushNotificationPreferences(PushNotifiPreferenceRequest request) {
+		Response response = null;
+		PushNotificationPrefReadResponse pushNotiPrefReadRes = preferenceBO.pushNotificationPreferences(request);
+		response = Response.status(200).entity(pushNotiPrefReadRes).build();
+		return response;
+	}
+	
+	@POST
+	@Path("updatePushNotiPreference")
+	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+	public Response updatePushNotificationPreferences(PushNotifiPreferenceRequest request) {
+		Response response = null;
+		PushNotificationPrefUpdateResponse pushNotiPrefUpdateRes = preferenceBO.updatePushNotificationPreferences(request);
+		response = Response.status(200).entity(pushNotiPrefUpdateRes).build();
+		return response;
+	}
+	
+			
+			
 }
