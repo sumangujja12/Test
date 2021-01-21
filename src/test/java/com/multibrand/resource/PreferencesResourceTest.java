@@ -26,7 +26,7 @@ public class PreferencesResourceTest {
 		request.setCompanyCode("0271");
 		request.setContractAccountNumber("10580093");
 		
-		URL url = new URL("http://localhost:8080/nrgrest/rest/preferences/readPushNotiPreference");
+		URL url = new URL("https://stg1-service.nrg.com/NRGREST/rest/preferences/readPushNotiPreference");
  
 		String response = given().
         contentType("application/json").
