@@ -4,8 +4,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -49,7 +47,6 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
 import com.multibrand.vo.request.OptInOptOutRequest;
 import com.multibrand.vo.request.PrivacyPreferencesRequest;
-import com.multibrand.vo.request.PushNotifiPreferenceRequest;
 import com.multibrand.vo.request.SMSOptInOutEligibilityRequest;
 import com.multibrand.vo.response.ActivationResponse;
 import com.multibrand.vo.response.DeactivationResponse;
@@ -59,8 +56,6 @@ import com.multibrand.vo.response.GetContactInfoResponse;
 import com.multibrand.vo.response.OptInOptOutResponse;
 import com.multibrand.vo.response.PhoneInformation;
 import com.multibrand.vo.response.PrivacyPreferenceResponse;
-import com.multibrand.vo.response.PushNotificationPrefReadResponse;
-import com.multibrand.vo.response.PushNotificationPrefUpdateResponse;
 import com.multibrand.vo.response.SMSOptInOutEligibilityResponse;
 import com.multibrand.vo.response.UpdationResponse;
 
@@ -822,14 +817,4 @@ public class PreferenceBO implements Constants {
 		return request;
 	}
 	/** END US12884 - DK | SMS ALERTS | 10/15/2018 **/	
-	
-	
-	public PushNotificationPrefReadResponse pushNotificationPreferences(PushNotifiPreferenceRequest request) {
-		PushNotificationPrefReadResponse response = prefService.pushNotificationPreferences(request);
-		return response;
-	}
-	
-	public PushNotificationPrefUpdateResponse updatePushNotificationPreferences(PushNotifiPreferenceRequest request) {
-		return prefService.updatePushNotificationPreferences(request);
-	}
 }

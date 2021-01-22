@@ -48,12 +48,6 @@ public class WSConfig {
 	@Value("${CCS_GMD_HOURHEAD_SPIKE}")
 	private String gmdHourHeadSpike;
 	
-	@Value("${CCS_GMD_PUSH_NOTIFICATION_PREF_READ}")
-	private String pushNotificationPrefRead;
-	
-	@Value("${CCS_GMD_PUSH_NOTIFICATION_PREF_UPDATE}")
-	private String pushNotificationPrefUpdate;
-		
 	@Value("${CRM_KBA_MATRIX}")
 	private String kbaMatrixUpdate;	
 	
@@ -125,35 +119,6 @@ public class WSConfig {
 		webServiceTemplate.setMarshaller(jaxb2Marshaller);
 		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
 		webServiceTemplate.setDefaultUri(gmdLmpPriceSpike);
-		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
-		webServiceTemplate.setInterceptors(clientInterceptors);
-        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
-        return webServiceTemplate;
-	}
-	
-	
-	@Bean(name = "webServiceTemplateForGmdReadPushPreferences")
-	public WebServiceTemplate webServiceTemplateForGmdPushNotificationRead() {
-		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
-		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmd.read.push.pref");
-		webServiceTemplate.setMarshaller(jaxb2Marshaller);
-		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
-		webServiceTemplate.setDefaultUri(pushNotificationPrefRead);
-		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
-		webServiceTemplate.setInterceptors(clientInterceptors);
-        webServiceTemplate.setMessageSender(httpComponentsMessageSender());
-        return webServiceTemplate;
-	}
-	
-	@Bean(name = "webServiceTemplateForGmdUpdatePushPreferences")
-	public WebServiceTemplate webServiceTemplateForGmdUpdatePushPreferences() {
-		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
-		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmd.upd.push.pref");
-		webServiceTemplate.setMarshaller(jaxb2Marshaller);
-		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
-		webServiceTemplate.setDefaultUri(pushNotificationPrefUpdate);
 		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
 		webServiceTemplate.setInterceptors(clientInterceptors);
         webServiceTemplate.setMessageSender(httpComponentsMessageSender());
