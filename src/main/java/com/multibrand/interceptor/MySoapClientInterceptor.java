@@ -24,15 +24,15 @@ public class MySoapClientInterceptor implements ClientInterceptor {
 				messageContext.getRequest().writeTo(outputStream);
 		        String httpMessage = new String(outputStream.toByteArray());
 		        
-		        logger.info("SOAP Request= :{}",httpMessage);
+		        logger.debug("SOAP Request= :{}",httpMessage);
 		        
 			} catch (IOException exception) {
-				logger.error("Exception Occured in RuntimeException  handleRequest {} ", exception);
+				logger.error("Exception Occured in RuntimeException  handleRequest {} ", exception.getMessage());
 			} finally {
 				try {
 					outputStream.close();
 				} catch (IOException e) {
-					logger.error("Exception Occured in finally closing resources in handleRequest{} ", e);
+					logger.error("Exception Occured in finally closing resources in handleRequest{} ", e.getMessage());
 				}
 			}
         return true;
@@ -50,15 +50,15 @@ public class MySoapClientInterceptor implements ClientInterceptor {
 			messageContext.getResponse().writeTo(outputStream);
 	        String httpMessage = new String(outputStream.toByteArray());
 	        
-	        logger.info("SOAP Response= :{}",httpMessage);
+	        logger.debug("SOAP Response= :{}",httpMessage);
 	        
 		} catch (IOException exception) {
-			logger.error("Exception Occured in RuntimeException  handleResponse {} ", exception);
+			logger.error("Exception Occured in RuntimeException  handleResponse {} ", exception.getMessage());
 		} finally {
 			try {
 				outputStream.close();
 			} catch (IOException e) {
-				logger.error("Exception Occured in finally closing handleResponse {} ", e);
+				logger.error("Exception Occured in finally closing handleResponse {} ", e.getMessage());
 			}
 		}
         return true;
@@ -77,7 +77,7 @@ public class MySoapClientInterceptor implements ClientInterceptor {
 			throw new RuntimeException(httpMessage);
 			
 		} catch (IOException e) {
-			logger.error("IOException Exception:{}", e);
+			logger.error("IOException Exception:{}", e.getMessage());
 		}
 		return true;
 
