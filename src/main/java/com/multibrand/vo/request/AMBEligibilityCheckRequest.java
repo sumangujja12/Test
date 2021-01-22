@@ -2,6 +2,8 @@ package com.multibrand.vo.request;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import com.multibrand.dto.request.FormEntityRequest;
 import com.multibrand.util.Constants;
 
@@ -43,4 +45,11 @@ Serializable {
 		this.companyCode = companyCode;
 	}
 	
+	/**
+	 * @return String representation of this request.
+	 */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	}	
 }
