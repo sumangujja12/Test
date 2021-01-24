@@ -3,6 +3,8 @@ package com.multibrand.helper;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
+
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import org.mockito.InjectMocks;
@@ -57,6 +59,9 @@ public class LDAPHelperTest implements Constants {
 			doReturn(dirContext).when(authenticatorSpy).getLDAPDirContext();
 
 			Attributes attributes = Mockito.mock(Attributes.class);
+			
+			attributes.put("customLockOut", "2");
+			attributes.put("invalidlogincount", "5");
 
 			doReturn(attributes).when(dirContext).getAttributes(Mockito.anyString());
 
@@ -73,4 +78,25 @@ public class LDAPHelperTest implements Constants {
 		}
 
 	}
+	
+	@Test
+	public void testGetUserAttrValue() {
+
+		try {
+
+			Attributes mockAttributes = Mockito.mock(Attributes.class);
+			Attribute mockAttribute = Mockito.mock(Attribute.class);
+
+			when(mockAttributes.get(Mockito.anyString())).thenReturn(mockAttribute);
+			when(mockAttributes.get("customLockOut")).thenReturn(mockAttribute);
+			
+			when(mockAttribute.get()).thenReturn("2");
+
+			assertNotNull(ldapHelper.getUserAttrValue(mockAttributes, "customLockOut"));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}	
 }
