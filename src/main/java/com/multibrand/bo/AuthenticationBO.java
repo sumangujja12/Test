@@ -1,6 +1,8 @@
 package com.multibrand.bo;
 
 import java.util.Map;
+
+import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
@@ -11,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import com.multibrand.domain.SyncLDAPRequest;
+import com.multibrand.helper.LDAPHelper;
 import com.multibrand.service.LDAPService;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnvMessageReader;
@@ -32,6 +35,9 @@ public class AuthenticationBO implements Constants{
 	
 	@Autowired
 	private LDAPService ldapService;
+	
+	@Autowired
+	private LDAPHelper ldapHelper;
 	
 	
 	@Autowired
@@ -175,14 +181,24 @@ public class AuthenticationBO implements Constants{
 					+ "customLockOutValue[{}] "
 					+ "SSO_FAILURECOUNT[{}] failureCount :[{}]", uid, uuid, ldapNoUserInLDAP, ldapCustomLockOutFlag, customLockOutValue, ldapInvalidLoginCount, failureCount);
 			
+			logger.debug("::::::::::::::::Calling the LDAP:::::::::::::::::::");			
 			//Setting various error codes based on the SiteMinder Header (or Cookie) values to send back to the caller 
 			loginFailureResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			if(null != ldapNoUserInLDAP && StringUtils.isNotBlank(ldapNoUserInLDAP) && ldapNoUserInLDAP.equalsIgnoreCase(FLAG_TRUE)) {
+			if(StringUtils.isEmpty(uid) ) {
 				loginFailureResponse.setResultDescription(USER_NOT_FOUND_ERROR_CODE);
 				loginFailureResponse.setErrorCode(MSG_USER_NOT_FOUND);
 				logger.info("User ID[{}] >> User Not Found in LDAP", uid);
 			} else {
-				if(customLockOutValue > 0 ) {
+				
+				Attributes attrs = ldapHelper.getLdapUserinfo(uid);
+				
+				String customLockedOut = ldapHelper.getUserAttrValue(attrs, "customLockOut");
+				logger.info("::::::::::::::::checking lockedout status:::::::::::::::::::{}"
+						, customLockedOut);
+				
+				failureCount = getValueAsInteger(ldapHelper.getUserAttrValue(attrs, "invalidlogincount"));
+				
+				if(org.apache.commons.lang3.StringUtils.isNotEmpty(customLockedOut) && Integer.parseInt(customLockedOut) > 0 ) {
 					failureCount++;
 					logger.info("User ID[{}] >> User Account is in Locked state. Error code sent back is:[MSG_LOCKED]",uid);
 					loginFailureResponse.setResultDescription(USER_LOCKEDOUT_STATUS_ERROR_CODE);
@@ -202,14 +218,14 @@ public class AuthenticationBO implements Constants{
 						logger.info("User ID[{}] >> Invalid Credentials. Failure Count is [{}] Error code sent back is:[MSG_BAD_LOGIN]",uid, failureCount);
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
 						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
-						loginFailureResponse.setInvalidLoginCount(failureCount+"");
-						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (failureCount+""), req);
+						loginFailureResponse.setInvalidLoginCount(String.valueOf(failureCount));
+						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(failureCount)), req);
 					} else if(failureCount == (oamMaxInvalidLoginCount-1)) {
 						logger.info("User ID[{}] >> Invalid Credentials. Account is about to Lock. Failure Count is [{}] Error code sent back is:[MSG_LOCK_PENDING]", uid, failureCount);
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
 						loginFailureResponse.setErrorCode(MSG_LOCK_PENDING_ERROR_CODE);
-						loginFailureResponse.setInvalidLoginCount(failureCount+"");
-						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (failureCount+""), req);
+						loginFailureResponse.setInvalidLoginCount(String.valueOf(failureCount));
+						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(failureCount)), req);
 					}
 				}
 			}
