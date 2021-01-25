@@ -50,15 +50,6 @@ public class PreferenceService extends BaseAbstractService {
 
 	
 private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
-
-	@Autowired
-	@Qualifier("webServiceTemplateForGmdReadPushPreferences")
-	private WebServiceTemplate webServiceTemplateForGmdReadPushPreferences;
-	
-	@Autowired
-	@Qualifier("webServiceTemplateForGmdUpdatePushPreferences")
-	private WebServiceTemplate webServiceTemplateForGmdUpdatePushPreferences;
-	
 	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
