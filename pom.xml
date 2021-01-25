@@ -628,6 +628,12 @@
 			<version>3</version>
 		</dependency>
 		<dependency>
+			<groupId>nrg-ccs-ws-client-nei</groupId>
+			<artifactId>com.nrg.services.clients.nei</artifactId>
+			<version>1.0</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>2.10.0</version>

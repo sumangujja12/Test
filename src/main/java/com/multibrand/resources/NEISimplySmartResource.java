@@ -16,60 +16,68 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.multibrand.dto.request.NeiBPCARequest;
-import com.multibrand.exception.NRGException;
+import com.multibrand.dto.request.NEIPaypalPaymentRequest;
+import com.multibrand.dto.response.NEIPaypalPaymentResponse;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.service.NEISimplySmartService;
-import com.nrg.cxfstubs.nei.bpca.ZEIsuNeiCreateBpCaResponse;
-
-
 
 @Component
-@Path("/nei")
-public class NEISimplySmartResource {
+@Path("nei")
+public class NEISimplySmartResource extends BaseResource {
 
-	private Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	/**
+	 * 
+	 */
+	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+
+	boolean thrown = false;
+
+	@Autowired
+	public NEISimplySmartService neiSimplySmartService;
 
 	@Context
-	private HttpServletRequest httpRequest;
+	public HttpServletRequest httpRequest;
 
 	@Autowired
 	ErrorContentHelper errorContentHelper;
 
-	@Autowired
-	public NEISimplySmartService nEISimplySmartService;
-
 	
 	@GET
-	@Path("/health")
+	@Path("health")
 	@Produces({ MediaType.TEXT_PLAIN })
 	public Response getLive() {
 		Response response = null;
-		response = Response.status(200).entity("Service is Up and Running").build();
+		response = Response.status(200).entity("PayPal Pay Bill Resouse Health Up and Running").build();
 		return response;
 	}
 
 	@POST
-	@Path("/createBPCA")
+	@Path("paypalPayment")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response createNEIBPCA(@Valid NeiBPCARequest request) {
-		logger.debug("Start NEISimplySmartService.createNEIBPCA :: START");
+	public Response paypalPayment(@Valid NEIPaypalPaymentRequest request) {
+        
+		String sessionId = httpRequest.getSession(true).getId();
+		logger.debug("{} START:NEISimplySmartResource:paypalPayment", sessionId);
 		Response response = null;
-		
-		ZEIsuNeiCreateBpCaResponse ccsResponse = null;
-		try {
-			ccsResponse = nEISimplySmartService.createNEIBPCA(request, httpRequest.getSession(true).getId());
-		} catch (NRGException e) {
-			logger.error("Exception occured in NEISimplySmartResource:createNEIBPCA :", e);
-		}
-		response = Response.status(Response.Status.OK).entity(ccsResponse).build();
-		logger.debug("End NEISimplySmartService.createNEIBPCA :: END");
+		NEIPaypalPaymentResponse paymentResponse = null;
 
+		try {
+			paymentResponse = neiSimplySmartService.paypalPayment(request,sessionId);
+
+		} catch (Exception e) {
+			response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity("").build();
+			logger.error(e.fillInStackTrace());
+		}
+		
+		response = Response.status(Response.Status.OK).entity(paymentResponse).build();
+		logger.debug("{} END:NEISimplySmartResource:paypalPayment", sessionId);
 		return response;
 
 	}
+
 	public void setHttpRequest(HttpServletRequest httpRequest) {
-        this.httpRequest = httpRequest;
-    }
+		this.httpRequest = httpRequest;
+	}
+
 }
