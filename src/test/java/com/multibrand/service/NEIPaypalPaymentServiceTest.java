@@ -22,6 +22,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.multibrand.dto.request.NEIPaypalPaymentRequest;
+import com.multibrand.dto.response.NEIPaypalPaymentResponse;
 import com.multibrand.util.EnvMessageReader;
 import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENTResponse;
 
@@ -32,7 +33,7 @@ public class NEIPaypalPaymentServiceTest {
 	private Validator validator;
 
 	@InjectMocks
-	public NEIPaypalPaymentService paypalPaymentService;
+	public NEISimplySmartService neiSimplySmartService;
 
 	public NEIPaypalPaymentRequest paypalPaymentRequest;
 
@@ -43,8 +44,8 @@ public class NEIPaypalPaymentServiceTest {
 	ReloadableResourceBundleMessageSource environmentMessageSource;
 
 	@Mock
-	@Qualifier("webServiceTemplateForPaypalPayment")
-	private WebServiceTemplate webServiceTemplateForPaypalPayment;
+	@Qualifier("webServiceTemplateForNeiPaypalPayment")
+	private WebServiceTemplate webServiceTemplateForNeiPaypalPayment;
 
 	@BeforeClass
 	public void init() {
@@ -90,23 +91,23 @@ public class NEIPaypalPaymentServiceTest {
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
-		ZEISUNEIPAYPALPAYMENTResponse zResVruPaypalPaymentResponse = new ZEISUNEIPAYPALPAYMENTResponse();
-		zResVruPaypalPaymentResponse.setEOTBDID("000000000000");
-		zResVruPaypalPaymentResponse.setXCODE("07");
+		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
+		neiPaypalPaymentResponse.setEOTBDID("000000000000");
+		neiPaypalPaymentResponse.setXCODE("07");
 		
-		ZEISUNEIPAYPALPAYMENTResponse ccsResponse = new ZEISUNEIPAYPALPAYMENTResponse();
+		
 
 		try {
 
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForPaypalPayment
-					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(zResVruPaypalPaymentResponse);
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
+					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
 
-		  paypalPaymentService.paypalBillPayment(paypalPaymentRequest, "Session1");
+		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals( "07", zResVruPaypalPaymentResponse.getXCODE());
+		assertEquals( "07", neiPaypalPaymentResponse.getXCODE());
 	}
 	
 	@Test
@@ -116,23 +117,21 @@ public class NEIPaypalPaymentServiceTest {
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("InvalidPayment****");
 		paypalPaymentRequest.setSsId("SSID1");
-		ZEISUNEIPAYPALPAYMENTResponse zResVruPaypalPaymentResponse = new ZEISUNEIPAYPALPAYMENTResponse();
-		zResVruPaypalPaymentResponse.setEOTBDID("000000000000");
-		zResVruPaypalPaymentResponse.setXCODE("54");
+		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
+		neiPaypalPaymentResponse.setEOTBDID("000000000000");
+		neiPaypalPaymentResponse.setXCODE("54");
 		
-		ZEISUNEIPAYPALPAYMENTResponse ccsResponse = new ZEISUNEIPAYPALPAYMENTResponse();
-
 		try {
 
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForPaypalPayment
-					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(zResVruPaypalPaymentResponse);
+			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
+					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
 
-		  paypalPaymentService.paypalBillPayment(paypalPaymentRequest, "Session1");
+		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals( "54", zResVruPaypalPaymentResponse.getXCODE());
+		assertEquals( "54", neiPaypalPaymentResponse.getXCODE());
 	}
 	
 	
@@ -144,23 +143,21 @@ public class NEIPaypalPaymentServiceTest {
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("56.37");
 		paypalPaymentRequest.setSsId("InvalidSSID1****");
-		ZEISUNEIPAYPALPAYMENTResponse zResVruPaypalPaymentResponse = new ZEISUNEIPAYPALPAYMENTResponse();
-		zResVruPaypalPaymentResponse.setEOTBDID("000000000000");
-		zResVruPaypalPaymentResponse.setXCODE("54");
+		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
+		neiPaypalPaymentResponse.setEOTBDID("000000000000");
+		neiPaypalPaymentResponse.setXCODE("54");
 		
-		ZEISUNEIPAYPALPAYMENTResponse ccsResponse = new ZEISUNEIPAYPALPAYMENTResponse();
-
 		try {
 
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForPaypalPayment
-					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(zResVruPaypalPaymentResponse);
+			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
+					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
 
-		  paypalPaymentService.paypalBillPayment(paypalPaymentRequest, "Session1");
+		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals( "54", zResVruPaypalPaymentResponse.getXCODE());
+		assertEquals( "54", neiPaypalPaymentResponse.getXCODE());
 	}
 
 
@@ -171,16 +168,16 @@ public class NEIPaypalPaymentServiceTest {
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
-		ZEISUNEIPAYPALPAYMENTResponse ccsResponse = new ZEISUNEIPAYPALPAYMENTResponse();
-		ccsResponse.setEOTBDID("000000000000");
-		ccsResponse.setXCODE("07");
+		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
+		neiPaypalPaymentResponse.setEOTBDID("000000000000");
+		neiPaypalPaymentResponse.setXCODE("07");
 
 		try {
 
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForPaypalPayment
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
 					.marshalSendAndReceive(paypalPaymentRequest)).thenThrow(new Exception());
 
-			ccsResponse = paypalPaymentService.paypalBillPayment(paypalPaymentRequest, "Session1");
+			neiPaypalPaymentResponse = neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 
 		} catch (Exception e) {
 			thrown = true;

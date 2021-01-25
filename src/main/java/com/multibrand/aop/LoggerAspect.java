@@ -47,7 +47,7 @@ public class LoggerAspect {
 	@Autowired
 	private ErrorContentHelper errorContentHelper;
 
-	@Pointcut("execution(public * com.multibrand.resources.*.*(..))" + "&& !within(com.multibrand.resources.SalesAPIResource)" +"&& !within(com.multibrand.resources.NEIPaypalPaymentResource)" )
+	@Pointcut("execution(public * com.multibrand.resources.*.*(..))" + "&& !within(com.multibrand.resources.SalesAPIResource)" +"&& !within(com.multibrand.resources.NEISimplySmartResource)" )
 	public void resourceMethods() {
 	}
 

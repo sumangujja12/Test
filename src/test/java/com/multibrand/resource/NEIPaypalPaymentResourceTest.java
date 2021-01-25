@@ -13,8 +13,8 @@ import org.testng.annotations.Test;
 
 import com.multibrand.dto.request.NEIPaypalPaymentRequest;
 import com.multibrand.dto.response.NEIPaypalPaymentResponse;
-import com.multibrand.resources.NEIPaypalPaymentResource;
-import com.multibrand.service.NEIPaypalPaymentService;
+import com.multibrand.resources.NEISimplySmartResource;
+import com.multibrand.service.NEISimplySmartService;
 import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENTResponse;
 
 public class NEIPaypalPaymentResourceTest {
@@ -22,10 +22,10 @@ public class NEIPaypalPaymentResourceTest {
 	boolean thrown = false;
 
 	@InjectMocks
-	private NEIPaypalPaymentResource paypalPaymentResource;
+	private NEISimplySmartResource neiSimplySmartResource;
 
 	@Mock
-	public NEIPaypalPaymentService paypalPaymentService;
+	public NEISimplySmartService neiSimplySmartService;
 
 	@BeforeClass
 	public void init() {
@@ -36,7 +36,7 @@ public class NEIPaypalPaymentResourceTest {
 	@BeforeMethod
 	public void initMethod() {
 		MockitoAnnotations.initMocks(this);
-		paypalPaymentResource.setHttpRequest(new MockHttpServletRequest());
+		neiSimplySmartResource.setHttpRequest(new MockHttpServletRequest());
 	}
 
 	@Test
@@ -57,14 +57,13 @@ public class NEIPaypalPaymentResourceTest {
 
 		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
 
-		neiPaypalPaymentResponse.setEotbdId("000000000");
-		neiPaypalPaymentResponse.setXcode("00");
-		neiPaypalPaymentResponse.setMessage("SUCCESSFULPAYMENT");
-
+		neiPaypalPaymentResponse.setEOTBDID("000000000");
+		neiPaypalPaymentResponse.setXCODE("00");
+		
 		try {
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)paypalPaymentService.paypalBillPayment(paypalPaymentRequest, "SessionId1"))
-					.thenReturn(zResVruPaypalPaymentResponse);
-			 paypalPaymentResource.paypalPayment(paypalPaymentRequest);
+			Mockito.when((NEIPaypalPaymentResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "SessionId1"))
+					.thenReturn(neiPaypalPaymentResponse);
+			 neiSimplySmartResource.paypalPayment(paypalPaymentRequest);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -89,15 +88,15 @@ public class NEIPaypalPaymentResourceTest {
 
 		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
 
-		neiPaypalPaymentResponse.setEotbdId("000000000");
-		neiPaypalPaymentResponse.setXcode("07");
-		neiPaypalPaymentResponse.setMessage("SYSTEMERROR");
+		neiPaypalPaymentResponse.setEOTBDID("000000000");
+		neiPaypalPaymentResponse.setXCODE("07");
+		
 
 
 		try {
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)paypalPaymentService.paypalBillPayment(paypalPaymentRequest, "SessionId1"))
-					.thenReturn(zResVruPaypalPaymentResponse);
-			 paypalPaymentResource.paypalPayment(paypalPaymentRequest);
+			Mockito.when((NEIPaypalPaymentResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "SessionId1"))
+					.thenReturn(neiPaypalPaymentResponse);
+			 neiSimplySmartResource.paypalPayment(paypalPaymentRequest);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -122,15 +121,14 @@ public class NEIPaypalPaymentResourceTest {
 
 		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
 
-		neiPaypalPaymentResponse.setEotbdId("000000000");
-		neiPaypalPaymentResponse.setXcode("54");
-		neiPaypalPaymentResponse.setMessage("FAILEDPAYMENT");
-
+		neiPaypalPaymentResponse.setEOTBDID("000000000");
+		neiPaypalPaymentResponse.setXCODE("54");
+		
 
 		try {
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)paypalPaymentService.paypalBillPayment(paypalPaymentRequest, "SessionId1"))
-					.thenReturn(zResVruPaypalPaymentResponse);
-			 paypalPaymentResource.paypalPayment(paypalPaymentRequest);
+			Mockito.when((NEIPaypalPaymentResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "SessionId1"))
+					.thenReturn(neiPaypalPaymentResponse);
+			 neiSimplySmartResource.paypalPayment(paypalPaymentRequest);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -155,14 +153,13 @@ public class NEIPaypalPaymentResourceTest {
 
 		NEIPaypalPaymentResponse neiPaypalPaymentResponse = new NEIPaypalPaymentResponse();
 
-		neiPaypalPaymentResponse.setEotbdId("000000000");
-		neiPaypalPaymentResponse.setXcode("54");
-		neiPaypalPaymentResponse.setMessage("FAILEDPAYMENT");
-
+		neiPaypalPaymentResponse.setEOTBDID("000000000");
+		neiPaypalPaymentResponse.setXCODE("54");
+		
 		try {
-			Mockito.when(paypalPaymentService.paypalBillPayment(paypalPaymentRequest, Mockito.anyString()))
+			Mockito.when(neiSimplySmartService.paypalPayment(paypalPaymentRequest, Mockito.anyString()))
 					.thenThrow(new Exception());
-			 paypalPaymentResource.paypalPayment(paypalPaymentRequest);
+			 neiSimplySmartResource.paypalPayment(paypalPaymentRequest);
 		} catch (Exception e) {
 			thrown = true;
 		}
