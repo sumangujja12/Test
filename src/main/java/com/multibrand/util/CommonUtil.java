@@ -2364,8 +2364,8 @@ public class CommonUtil implements Constants {
 		if(!StringUtils.isEmpty(docId)) {
 			eflUrlBuilder.append(Constants.DOCID_URL_SUB_STR)
 			.append(docId)
-			.append(Constants.CONST_DOT_PDF)
-			.append("?project=DYN_EFL");
+			.append(Constants.CONST_DOT_PDF);
+			//.append("?project=DYN_EFL");
 		}else if(!StringUtils.isEmpty(smartCode)){
 			eflUrlBuilder.append(Constants.SMARTCODE_URL_SUB_STR)
 			.append(smartCode)
