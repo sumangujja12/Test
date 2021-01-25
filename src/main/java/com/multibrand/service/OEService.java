@@ -2,6 +2,7 @@ package com.multibrand.service;
 
 import java.rmi.RemoteException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -34,6 +35,8 @@ import com.multibrand.domain.PermitCheckRequest;
 import com.multibrand.domain.PermitCheckResponse;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
+import com.multibrand.domain.ProspectEFLRequest;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
 import com.multibrand.domain.UpdateCRMAgentInfoRequest;
@@ -621,5 +624,27 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 		logger.debug("END :: oeService.ercotESIDCheckByAddress(..)");
 		return ercotCheckResponse;
 	}
+	
+	public ProspectEFLResponse getProspectEFL(com.multibrand.dto.request.ProspectEFLRequest prospectEFLRequest)   {
+	
+		ProspectEFLResponse  prospectEFLResponse = null;
+		try {
+			ProspectEFLRequest prospectEFLSoapRequest = new ProspectEFLRequest();
+			prospectEFLSoapRequest.setCompanyCode(prospectEFLRequest.getCompanyCode());
+			prospectEFLSoapRequest.setEnrollDate(prospectEFLRequest.getEnrollDate());
+			prospectEFLSoapRequest.setEnrollFrom(prospectEFLRequest.getEnrollFrom());
+			prospectEFLSoapRequest.setErrorMsg(prospectEFLRequest.getErrorMsg());
+			prospectEFLSoapRequest.setOfferCode(prospectEFLRequest.getOfferCode());
+			prospectEFLSoapRequest.setNrgBrand(prospectEFLRequest.getNrgBrand());
+			prospectEFLSoapRequest.setSmartCode(prospectEFLRequest.getSmartCode());
+			
+			prospectEFLResponse= oeDomainPortProxy.getProspectEFL(prospectEFLSoapRequest);
+			logger.debug("getProspectEFL  Response message"+prospectEFLResponse.getErrMessage());
+		} catch (Exception e) {
+			logger.error("Error in method: getProspectEFL"+e.getMessage());
+		} 
+		return prospectEFLResponse;
+	}
+
  
 }

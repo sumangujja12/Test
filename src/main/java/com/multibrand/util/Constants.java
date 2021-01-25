@@ -1638,4 +1638,8 @@ public interface Constants {
 	public static final String PARAMETER_VARIABLE_MSGINSTANCE = "msgInstance";
 	public static final String SALES_API_ESID_VALIDATION = "esidValidation"; 
 
+	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
+	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
+	public static final String DOCID_URL_SUB_STR = "/files/";
+
 }
