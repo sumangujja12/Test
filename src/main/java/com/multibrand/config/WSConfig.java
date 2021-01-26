@@ -59,10 +59,10 @@ public class WSConfig {
 	
 	@Value("${http.stocket.connection.timeout}")
 	private int httpConnectTimeout;
-	/*
+	
 	@Value("${CCS_NEI_PAYPAL}")
 	private String NeiPaypalPaymentEndPoint;
-	*/
+	
 	
 	
 	@Bean Jaxb2Marshaller jaxb2Marshaller() { 
