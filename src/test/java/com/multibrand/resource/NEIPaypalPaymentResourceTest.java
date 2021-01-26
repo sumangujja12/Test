@@ -42,7 +42,7 @@ public class NEIPaypalPaymentResourceTest {
 	@Test
 	public void testPaypalPayment() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("");
+		paypalPaymentRequest.setUsername("");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
@@ -73,7 +73,7 @@ public class NEIPaypalPaymentResourceTest {
 	@Test
 	public void testPaypalPayment_SYSTEMERROR() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("");
+		paypalPaymentRequest.setUsername("");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
@@ -106,7 +106,7 @@ public class NEIPaypalPaymentResourceTest {
 	@Test
 	public void testPaypalPayment_FAILEDPAYMENT() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("");
+		paypalPaymentRequest.setUsername("");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
@@ -137,7 +137,7 @@ public class NEIPaypalPaymentResourceTest {
 	@Test
 	public void testPaypalPayment_Exception() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("");
+		paypalPaymentRequest.setUsername("");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");

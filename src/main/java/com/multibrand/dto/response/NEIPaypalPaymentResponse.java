@@ -24,21 +24,20 @@ public class NEIPaypalPaymentResponse  extends ZEISUNEIPAYPALPAYMENTResponse{
 	 * @return the message
 	 */
 	public String getMessage() {
+		System.out.println("xcode :"+xcode) ;
 		
 		if(xcode != null) {
 			switch(xcode) {
-				case "00" : return "Successful Payment";
-				case "01" : return "Retry Payment";
-				case "52" : return "Duplicate Payment";
-				case "53" : return "Bank Routing Error";
-				case "54" : return "Failed Payment"; 
-				case "03" : return "Invalid bank route #";
-				case "04" : return "Invalid bank acct #";
-				case "07" : return "System error";
-				case "98" : return "# of max lines exceeded";
-				case "08" : return "Number range error";
-				default : return message;
-					 
+				case "00" : message =  "Successful Payment";break;
+				case "01" : message =  "Retry Payment";break;
+				case "52" : message =  "Duplicate Payment";break;
+				case "53" : message =  "Bank Routing Error";break;
+				case "54" : message =  "Failed Payment"; break;
+				case "03" : message =  "Invalid bank route #";break;
+				case "04" : message = "Invalid bank acct #";break;
+				case "07" : message =  "System error";break;
+				case "98" : message =  "# of max lines exceeded";break;
+				case "08" : message =  "Number range error";break;
 			}
 		 }
 		return message;
@@ -48,7 +47,7 @@ public class NEIPaypalPaymentResponse  extends ZEISUNEIPAYPALPAYMENTResponse{
 	
 	@Override
 	public String toString() {
-		return "NEIPaypalPaymentResponse [eotbdId=" + eotbdid + ", xcode=" + xcode + ", message=" + message + "]";
+		return "NEIPaypalPaymentResponse [eotbdId=" + eotbdid + ", xcode=" + xcode + ", message=" + getMessage() + "]";
 	}
 	
 }
