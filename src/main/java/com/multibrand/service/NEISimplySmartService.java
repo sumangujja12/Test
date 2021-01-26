@@ -1,28 +1,30 @@
 package com.multibrand.service;
 
+import java.net.URL;
 import java.util.Calendar;
 
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Holder;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.ws.client.core.WebServiceTemplate;
 
 import com.multibrand.dto.request.NEIPaypalPaymentRequest;
 import com.multibrand.dto.response.NEIPaypalPaymentResponse;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
-import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENTResponse;
-import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENT_Type;
+import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENT;
+import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENT_Service;
 
 @Service
 public class NEISimplySmartService extends BaseAbstractService {
 
-	@Autowired
-	@Qualifier("webServiceTemplateForNeiPaypalPayment")
-	private WebServiceTemplate webServiceTemplateForNeiPaypalPayment;
+	private static final String CCS_NEI_PAYPAL = "CCS_NEI_PAYPAL";
 
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
+	
+	ZEISUNEIPAYPALPAYMENT stub;
 
 	/**
 	 * This profile call will do the call to the logging framework
@@ -42,28 +44,33 @@ public class NEISimplySmartService extends BaseAbstractService {
 		long startTime = CommonUtil.getStartTime();
 		Long endTime = null;
 		String companyCode = "NEI";
-		ZEISUNEIPAYPALPAYMENTResponse zResVruPaypalPaymentResponse = null;
 		NEIPaypalPaymentResponse paymentResponse = null;
 
 		try {
 			logger.debug("{}:****NEISimplySmartService:paypalPayment: Request:{}", sessionId, paypalPaymentRequest);
-			com.nrg.cxfstubs.nei.paypal.ObjectFactory factory = new com.nrg.cxfstubs.nei.paypal.ObjectFactory();
+			String endpoint = envMessageReader.getMessage(CCS_NEI_PAYPAL)	;
 
-			ZEISUNEIPAYPALPAYMENT_Type wsRequest = factory.createZEISUNEIPAYPALPAYMENT_Type();
+			stub = getPaypalPaymentCCSStub(endpoint);
 			
-
-			wsRequest.setIMUSERNAME(paypalPaymentRequest.getUsername());
-			wsRequest.setIPAYMENT(paypalPaymentRequest.getPayment());
-			wsRequest.setIPPALAUTH(paypalPaymentRequest.getPpalauth());
-			wsRequest.setISSID(paypalPaymentRequest.getSsId());
-
+			//Holder<Bapiret2> exBapiret2Resp =new Holder<Bapiret2>();
+			Holder<String> eOTBDID =new Holder<String>();
+			Holder<String> xcode =new Holder<String>();
+			
 			startTime = CommonUtil.getStartTime();
-			logger.debug("{}:****NEISimplySmartService:paypalPayment: CCS ENDPOINT {}", sessionId, webServiceTemplateForNeiPaypalPayment.getDefaultUri());
-			zResVruPaypalPaymentResponse = (ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
-					.marshalSendAndReceive(wsRequest);
-
+			logger.debug("{}:****NEISimplySmartService:paypalPayment: CCS ENDPOINT {}", sessionId, endpoint);
+			stub.zEISUNEIPAYPALPAYMENT(paypalPaymentRequest.getUsername(),
+									   paypalPaymentRequest.getPayment(),
+									   paypalPaymentRequest.getPpalauth(),
+									   paypalPaymentRequest.getSsId(),
+									   eOTBDID,
+									   xcode
+									   
+					);
+			
 			endTime = Calendar.getInstance().getTimeInMillis();
-			paymentResponse = new NEIPaypalPaymentResponse(zResVruPaypalPaymentResponse);
+			paymentResponse = new NEIPaypalPaymentResponse();
+			paymentResponse.setEOTBDID(eOTBDID.value);
+			paymentResponse.setXCODE(xcode.value);
 			logger.debug("{}:****NEISimplySmartService:paypalPayment: PaypalpaymentResponse: {}", sessionId, paymentResponse);
 			logger.debug("Time taken by service is ={}", (endTime - startTime));
 		} catch (Exception ex) {
@@ -77,6 +84,18 @@ public class NEISimplySmartService extends BaseAbstractService {
 
 		return paymentResponse;
 
+	}
+	
+	public ZEISUNEIPAYPALPAYMENT  getPaypalPaymentCCSStub (String endpoint) {
+		URL url = ZEISUNEIPAYPALPAYMENT_Service.class.getResource("Z_E_ISU_NEI_PAYPAL_PAYMENT.wsdl");
+		
+		ZEISUNEIPAYPALPAYMENT_Service port = new ZEISUNEIPAYPALPAYMENT_Service(url);
+		stub = port.getZEISUNEIPAYPALPAYMENT();
+        BindingProvider binding = (BindingProvider) stub;
+        binding.getRequestContext().put(BindingProvider.USERNAME_PROPERTY,this.envMessageReader.getMessage(CCS_USER_NAME));
+		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PSD));
+		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,endpoint);
+		return stub;
 	}
 
 }
