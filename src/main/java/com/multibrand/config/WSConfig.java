@@ -168,7 +168,7 @@ public class WSConfig {
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
 	}
-	/*
+	
 	@Bean(name = "webServiceTemplateForNeiPaypalPayment")
 	public WebServiceTemplate webServiceTemplateForNeiPaypalPayment() {
 		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
@@ -179,7 +179,7 @@ public class WSConfig {
 		webServiceTemplate.setDefaultUri(NeiPaypalPaymentEndPoint);
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
-	}*/
+	}
 
 	@Bean
 	public HttpComponentsMessageSender httpComponentsMessageSender() {
