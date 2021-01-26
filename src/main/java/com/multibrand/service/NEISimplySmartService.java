@@ -58,7 +58,7 @@ public class NEISimplySmartService extends BaseAbstractService {
 			wsRequest.setISSID(paypalPaymentRequest.getSsId());
 
 			startTime = CommonUtil.getStartTime();
-			logger.debug("{}:****NEISimplySmartService:paypalPayment: CCS ENDPOINT {}", webServiceTemplateForNeiPaypalPayment.getDefaultUri());
+			logger.debug("{}:****NEISimplySmartService:paypalPayment: CCS ENDPOINT {}", sessionId, webServiceTemplateForNeiPaypalPayment.getDefaultUri());
 			zResVruPaypalPaymentResponse = (ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
 					.marshalSendAndReceive(wsRequest);
 
