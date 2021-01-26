@@ -71,6 +71,7 @@ public class NEISimplySmartService extends BaseAbstractService {
 			paymentResponse = new NEIPaypalPaymentResponse();
 			paymentResponse.setEOTBDID(eOTBDID.value);
 			paymentResponse.setXCODE(xcode.value);
+			paymentResponse.loadMessage();
 			logger.debug("{}:****NEISimplySmartService:paypalPayment: PaypalpaymentResponse: {}", sessionId, paymentResponse);
 			logger.debug("Time taken by service is ={}", (endTime - startTime));
 		} catch (Exception ex) {

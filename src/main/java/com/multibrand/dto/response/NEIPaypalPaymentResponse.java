@@ -19,15 +19,10 @@ public class NEIPaypalPaymentResponse  extends ZEISUNEIPAYPALPAYMENTResponse{
     
 	private String message;
 	
+	public void loadMessage() {
 		
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		System.out.println("xcode :"+xcode) ;
-		
-		if(xcode != null) {
-			switch(xcode) {
+		if(getXCODE() != null) {
+			switch(getXCODE()) {
 				case "00" : message =  "Successful Payment";break;
 				case "01" : message =  "Retry Payment";break;
 				case "52" : message =  "Duplicate Payment";break;
@@ -40,6 +35,13 @@ public class NEIPaypalPaymentResponse  extends ZEISUNEIPAYPALPAYMENTResponse{
 				case "08" : message =  "Number range error";break;
 			}
 		 }
+	}
+		
+	/**
+	 * @return the message
+	 */
+	public String getMessage() {
+				
 		return message;
 				
 	}
