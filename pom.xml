@@ -629,13 +629,6 @@
 			<version>3</version>
 		</dependency>
 		<dependency>
-			<groupId>nrg-ccs-ws-client-nei</groupId>
-			<artifactId>com.nrg.services.clients.nei</artifactId>
-			<version>1.0</version>
-		</dependency>
-		
-		
-		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
 			<version>2.10.0</version>
@@ -1061,6 +1054,11 @@
 			<artifactId>nrg-validation-domain</artifactId>
 			<version>10</version>
 			<scope>${dependency.scope}</scope>
+		</dependency>
+		<dependency>
+		  <groupId>com.nrg.services.clients</groupId>
+		  <artifactId>nrg-ccs-ws-client-nei-paypal</artifactId>
+		  <version>1.0</version>
 		</dependency>
 
 		<!--END: WS Client -->	
