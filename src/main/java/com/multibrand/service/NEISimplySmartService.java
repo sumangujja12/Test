@@ -52,12 +52,13 @@ public class NEISimplySmartService extends BaseAbstractService {
 			ZEISUNEIPAYPALPAYMENT_Type wsRequest = factory.createZEISUNEIPAYPALPAYMENT_Type();
 			
 
-			wsRequest.setIMUSERNAME(paypalPaymentRequest.getUername());
+			wsRequest.setIMUSERNAME(paypalPaymentRequest.getUsername());
 			wsRequest.setIPAYMENT(paypalPaymentRequest.getPayment());
 			wsRequest.setIPPALAUTH(paypalPaymentRequest.getPpalauth());
 			wsRequest.setISSID(paypalPaymentRequest.getSsId());
 
 			startTime = CommonUtil.getStartTime();
+			logger.debug("{}:****NEISimplySmartService:paypalPayment: CCS ENDPOINT {}", webServiceTemplateForNeiPaypalPayment.getDefaultUri());
 			zResVruPaypalPaymentResponse = (ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
 					.marshalSendAndReceive(wsRequest);
 

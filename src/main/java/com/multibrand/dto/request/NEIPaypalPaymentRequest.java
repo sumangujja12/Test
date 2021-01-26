@@ -23,11 +23,11 @@ public class NEIPaypalPaymentRequest implements FormEntityRequest, Constants, Se
 
 
 	@Length(max = 12, groups = SizeConstraint.class)
-	private String uername;
+	private String username;
 
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 13, groups = SizeConstraint.class)
-	@Pattern(regexp = " ^0$|^[1-9]\\d*$|^\\.\\d+$|^0\\.\\d*$|^[1-9]\\d*\\.\\d*$", groups = FormatConstraint.class, message=" is  invalid")
+	@Pattern(regexp = " ^0$|^[1-9]\\d*$|^\\.\\d+$|^0\\.\\d*$|^[1-9]\\d*\\.\\d*$", groups = FormatConstraint.class, message=" Field Payment is invalid")
 	private String payment;
 
 	@NotBlank(groups = BasicConstraint.class)
@@ -39,17 +39,17 @@ public class NEIPaypalPaymentRequest implements FormEntityRequest, Constants, Se
 	private String ssId;
 
 	/**
-	 * @return the uername
+	 * @return the username
 	 */
-	public String getUername() {
-		return uername;
+	public String getUsername() {
+		return username;
 	}
 
 	/**
-	 * @param uername the uername to set
+	 * @param username the username to set
 	 */
-	public void setUername(String uername) {
-		this.uername = uername;
+	public void setUsername(String uername) {
+		this.username = uername;
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class NEIPaypalPaymentRequest implements FormEntityRequest, Constants, Se
 
 	@Override
 	public String toString() {
-		return "PaypalPaymentRequest [uername=" + uername + ", payment=" + payment + ", ppalauth=" + ppalauth
+		return "PaypalPaymentRequest [username=" + username + ", payment=" + payment + ", ppalauth=" + ppalauth
 				+ ", ssId=" + ssId + "]";
 	}
 

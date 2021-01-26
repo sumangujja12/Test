@@ -65,7 +65,7 @@ public class NEIPaypalPaymentServiceTest {
 	public void brokenIfNullUsernameGiven()
 	{
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("user1");
+		paypalPaymentRequest.setUsername("user1");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
@@ -87,7 +87,7 @@ public class NEIPaypalPaymentServiceTest {
 	@Test
 	public void testpaypalBillPayment() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("");
+		paypalPaymentRequest.setUsername("");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
@@ -113,7 +113,7 @@ public class NEIPaypalPaymentServiceTest {
 	@Test
 	public void testpaypalBillPayment_withoutPayment() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("usernam1");
+		paypalPaymentRequest.setUsername("usernam1");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("InvalidPayment****");
 		paypalPaymentRequest.setSsId("SSID1");
@@ -139,7 +139,7 @@ public class NEIPaypalPaymentServiceTest {
 	@Test
 	public void testpaypalBillPayment_withoutSSID() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("usernam1");
+		paypalPaymentRequest.setUsername("usernam1");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("56.37");
 		paypalPaymentRequest.setSsId("InvalidSSID1****");
@@ -164,7 +164,7 @@ public class NEIPaypalPaymentServiceTest {
 	@Test
 	public void testpaypalBillPayment_Exception() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
-		paypalPaymentRequest.setUername("");
+		paypalPaymentRequest.setUsername("");
 		paypalPaymentRequest.setPpalauth("1234567890");
 		paypalPaymentRequest.setPayment("45.00");
 		paypalPaymentRequest.setSsId("SSID1");
