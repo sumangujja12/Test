@@ -248,3 +248,6 @@ template.url.query.list.parameter.two=&myreaddt=[ActionDate]&mymsgtype=[MessageT
 template.url.parameter.reportsuite=relengmemobile.appstage
 iot.post.url = http://txaixsexbls05/iotproxy/postServiceRequestURL
 adobe.messageId.message = Your contract will expire on [date].Log on to find clean electricity plans available for you
+
+# Lucene Search Engine Index Files Directory Location
+lucene.indexed.dir=/apps01/files/stream/address/lucene
