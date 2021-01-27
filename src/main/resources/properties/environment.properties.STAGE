@@ -269,4 +269,4 @@ iot.post.url = http://txaixsexbls05/iotproxy/postServiceRequestURL
 adobe.messageId.message = Your contract will expire on [date].Log on to find clean electricity plans available for you
 
 # Lucene Search Engine Index Files Directory Location
-lucene.indexed.dir=/apps01/files/stream/address/lucene
+lucene.indexed.dir=/apps02/files/stream/address/lucene
