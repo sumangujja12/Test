@@ -393,6 +393,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							contract.setTosSmartCode(offer.getStrTOSSmartCode());
 							contract.setYraacDocID(offer.getStrYRAACDocID());
 							contract.setYraacSmartCode(offer.getStrYRAACSmartCode());
+							contract.setStrEflUrl(CommonUtil.getDynamicEflUrl(offer.getStrEFLDocID(), offer.getStrEFLSmartCode()));
 						}else{
 							logger.info("Inactive contract!! MVO Date :: " +mvoDate);
 						}
@@ -2993,6 +2994,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				gmeContractDO[i].setEflDocID(contractDO[i].getEflDocID());
 				gmeContractDO[i].setTosDocID(contractDO[i].getTosDocID());
 				gmeContractDO[i].setYraacDocID(contractDO[i].getYraacDocID());
+				gmeContractDO[i].setStrEflUrl(CommonUtil.getDynamicEflUrl(contractDO[i].getEflDocID(), contractDO[i].getEflSmartCode()));
 			if(getContractInfoResponse!=null){
 					offerDO = getContractInfoResponse.getEligibleOffersList();
 				if(getContractInfoResponse.getPendingSwapDO()!= null && !(getContractInfoResponse.getPendingSwapDO().getStrStartDate().equalsIgnoreCase(EMPTY_DATE))){

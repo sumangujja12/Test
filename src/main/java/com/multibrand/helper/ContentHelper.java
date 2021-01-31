@@ -489,7 +489,7 @@ public class ContentHelper implements Constants {
 		contractOffer.setEFLSmartCode(offerDO.getStrEFLSmartCode());
 		contractOffer.setYRAACSmartCode(offerDO.getStrYRAACSmartCode());
 		contractOffer.setTOSSmartCode(offerDO.getStrTOSSmartCode());
-		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
+		contractOffer.setEflURL(getDeflURL(offerDO.getStrEFLDocID(),offerDO.getStrEFLSmartCode()));
 		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
 		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
 		contractOffer.setPromoCode(offerDO.getStrPromoCode());
@@ -580,7 +580,6 @@ public class ContentHelper implements Constants {
 		contractOffer.setEflURL(getURL(contractOffer.getEflDocId()));
 		contractOffer.setTosURL(getURL(contractOffer.getTosDocId()));
 		contractOffer.setYraacURL(getURL(contractOffer.getYrracDocId()));
-		
 		com.multibrand.domain.OfferPriceDO[] offerPriceEntry = offerDO.getOfferPriceEntry();
 		if (offerPriceEntry != null) {
 			for (com.multibrand.domain.OfferPriceDO priceType : offerPriceEntry) {
@@ -828,5 +827,20 @@ public class ContentHelper implements Constants {
 				snippetMap.put(snippetName, snippetValue);
 			}
 			return snippetMap;
+	}
+	/**
+	 * @author SMarimuthu
+	 * @param string 
+	 * @param documentName
+	 * @return
+	 */
+	private String getDeflURL(String docId, String smartCode) {
+		String eflUri = CommonUtil.getDynamicEflUrl(docId, smartCode);
+		if(StringUtils.isBlank(smartCode)) {
+			return BLANK;
+		}
+		String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
+		baseURL = baseURL.trim()+eflUri;
+		return baseURL;
 	}
 }
