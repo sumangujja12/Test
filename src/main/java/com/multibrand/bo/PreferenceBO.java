@@ -58,6 +58,7 @@ import com.multibrand.vo.response.OptInOptOutResponse;
 import com.multibrand.vo.response.PhoneInformation;
 import com.multibrand.vo.response.PrivacyPreferenceResponse;
 import com.multibrand.vo.response.PushNotificationPrefReadResponse;
+import com.multibrand.vo.response.PushNotificationPrefUpdateResponse;
 import com.multibrand.vo.response.SMSOptInOutEligibilityResponse;
 import com.multibrand.vo.response.UpdationResponse;
 
@@ -823,5 +824,9 @@ public class PreferenceBO implements Constants {
 	public PushNotificationPrefReadResponse readPushNotiPreference(PushNotifiPreferenceRequest request) {
 		PushNotificationPrefReadResponse response = prefService.readPushNotiPreference(request);
 		return response;
+	}
+	
+	public PushNotificationPrefUpdateResponse updatePushNotificationPreferences(PushNotifiPreferenceRequest request) {
+		return prefService.updatePushNotificationPreferences(request);
 	}
 }

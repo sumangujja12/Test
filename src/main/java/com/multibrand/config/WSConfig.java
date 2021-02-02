@@ -54,6 +54,9 @@ public class WSConfig {
 	@Value("${CCS_GMD_READ_PUSH_NOTIFICATION_PREF}")
 	private String pushNotificationPrefRead;
 	
+	@Value("${CCS_GMD_UPDATE_PUSH_NOTIFICATION_PREF}")
+	private String pushNotificationPrefUpdate;
+	
 	@Value("${http.max.connection.per.route}")
 	private int defaultMaxConnectionPerRoute;
 	
@@ -191,6 +194,20 @@ public class WSConfig {
 		webServiceTemplate.setMarshaller(jaxb2Marshaller);
 		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
 		webServiceTemplate.setDefaultUri(pushNotificationPrefRead);
+		ClientInterceptor[] clientInterceptors = { new MySoapClientInterceptor() };
+		webServiceTemplate.setInterceptors(clientInterceptors);
+		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+		return webServiceTemplate;
+	}
+	
+	@Bean(name = "webServiceTemplateForGmdUpdatePushPreferences")
+	public WebServiceTemplate webServiceTemplateForGmdUpdatePushPreferences() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmd.upd.push.pref");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+		webServiceTemplate.setDefaultUri(pushNotificationPrefUpdate);
 		ClientInterceptor[] clientInterceptors = { new MySoapClientInterceptor() };
 		webServiceTemplate.setInterceptors(clientInterceptors);
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());

@@ -42,10 +42,13 @@ import com.multibrand.vo.request.PushNotifiPreferenceRequest;
 import com.multibrand.vo.request.PushNotificationStatus;
 import com.multibrand.vo.request.SMSOptInOutEligibilityRequest;
 import com.multibrand.vo.response.PushNotificationPrefReadResponse;
+import com.multibrand.vo.response.PushNotificationPrefUpdateResponse;
 import com.nrg.cxfstubs.gmd.read.push.pref.TABLEOFZESPUSHALERTSTATUS;
 import com.nrg.cxfstubs.gmd.read.push.pref.ZECRMGMDREADPUSHPREFResponse;
 import com.nrg.cxfstubs.gmd.read.push.pref.ZESPUSHALERTSTATUS;
 import com.nrg.cxfstubs.gmd.read.push.pref.ZTTPUSHALERTID;
+import com.nrg.cxfstubs.gmd.upd.push.pref.ZECRMGMDUPDATEPUSHPREFResponse;
+import com.nrg.cxfstubs.gmd.upd.push.pref.ZTTPUSHALERTSTATUS;
 
 /**
  * 
@@ -60,6 +63,10 @@ public class PreferenceService extends BaseAbstractService {
 	@Autowired
 	@Qualifier("webServiceTemplateForGmdReadPushPreferences")
 	WebServiceTemplate webServiceTemplateForGmdReadPushPreferences;
+	
+	@Autowired
+	@Qualifier("webServiceTemplateForGmdUpdatePushPreferences")
+	WebServiceTemplate webServiceTemplateForGmdUpdatePushPreferences;
 
 	
 private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -515,6 +522,49 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 		readResponse.setMessage(response.getEXMESSAGE());
 		readResponse.setPushStatusTab(pushStatusList);
 		return readResponse;
+	}
+	
+	public PushNotificationPrefUpdateResponse updatePushNotificationPreferences(PushNotifiPreferenceRequest request) {
+
+		PushNotificationPrefUpdateResponse res = new PushNotificationPrefUpdateResponse();
+		try {
+			com.nrg.cxfstubs.gmd.upd.push.pref.ObjectFactory factory = new com.nrg.cxfstubs.gmd.upd.push.pref.ObjectFactory();
+			com.nrg.cxfstubs.gmd.upd.push.pref.ZECRMGMDUPDATEPUSHPREF_Type wsRequest = factory
+					.createZECRMGMDUPDATEPUSHPREF_Type();
+			ZTTPUSHALERTSTATUS notiAlertStatus = new ZTTPUSHALERTSTATUS();
+			List<PushNotificationStatus> statusList = request.getPushStatTabs();
+
+			if (statusList != null && !statusList.isEmpty()) {
+				for (PushNotificationStatus pushNotiStatus : statusList) {
+					com.nrg.cxfstubs.gmd.upd.push.pref.ZESPUSHALERTSTATUS alertStatus = new com.nrg.cxfstubs.gmd.upd.push.pref.ZESPUSHALERTSTATUS();
+					alertStatus.setALERTID(pushNotiStatus.getAlertId());
+					alertStatus.setPUSHACTIVE(pushNotiStatus.getStatus());
+					notiAlertStatus.getItem().add(alertStatus);
+				}
+			}
+
+			wsRequest.setIMBRAND(request.getBrandName());
+			wsRequest.setIMBUKRS(request.getCompanyCode());
+			wsRequest.setIMVKONT(request.getContractAccountNumber());
+			wsRequest.setIMPUSHALERTSTATTAB(notiAlertStatus);
+
+			ZECRMGMDUPDATEPUSHPREFResponse response = (ZECRMGMDUPDATEPUSHPREFResponse) webServiceTemplateForGmdUpdatePushPreferences
+					.marshalSendAndReceive(wsRequest);
+			if (response == null) {
+				res.setResultCode(RESULT_CODE_NO_DATA);
+				res.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+			} else {
+				res.setMessage(response.getEXMESSAGE());
+				res.setResultCode(RESULT_CODE_SUCCESS);
+				res.setResultDescription(MSG_SUCCESS);
+			}
+
+		} catch (Exception e) {
+			logger.error(e);
+			res.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			res.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return res;
 	}
 
 }

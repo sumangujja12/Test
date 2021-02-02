@@ -37,6 +37,7 @@ import com.multibrand.vo.response.GetContactInfoResponse;
 import com.multibrand.vo.response.OptInOptOutResponse;
 import com.multibrand.vo.response.PrivacyPreferenceResponse;
 import com.multibrand.vo.response.PushNotificationPrefReadResponse;
+import com.multibrand.vo.response.PushNotificationPrefUpdateResponse;
 import com.multibrand.vo.response.SMSOptInOutEligibilityResponse;
 import com.multibrand.vo.response.UpdationResponse;
 
@@ -278,6 +279,17 @@ public class PreferencesResource {
 		Response response = null;
 		PushNotificationPrefReadResponse pushNotiPrefReadRes = preferenceBO.readPushNotiPreference(request);
 		response = Response.status(200).entity(pushNotiPrefReadRes).build();
+		return response;
+	}
+	
+	@POST
+	@Path("updatePushNotiPreference")
+	@Consumes({MediaType.APPLICATION_FORM_URLENCODED, MediaType.APPLICATION_JSON})
+	@Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+	public Response updatePushNotificationPreferences(PushNotifiPreferenceRequest request) {
+		Response response = null;
+		PushNotificationPrefUpdateResponse pushNotiPrefUpdateRes = preferenceBO.updatePushNotificationPreferences(request);
+		response = Response.status(200).entity(pushNotiPrefUpdateRes).build();
 		return response;
 	}
 	
