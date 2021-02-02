@@ -201,8 +201,8 @@ CCS_GMD_PRICE_SPIKE_ALERT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_pr
 CCS_GMD_MD_STMT=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_get_gmd_md_stmt?sap-client=900
 CCS_GMD_LMP_PRICE_SPIKE=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_lmp_price_spike?sap-client=900
 CCS_GMD_HOURHEAD_SPIKE=http://saprpm01:8080/sap/bc/srt/scs/sap/z_e_isu_gmd_hour_ahead_spike?sap-client=900
-CCS_GMD_READ_PUSH_NOTIFICATION_PREF=http://sapcmq02.retail.nrgenergy.com:8080/sap/bc/srt/scs/sap/z_e_crm_gmd_read_push_pref?sap-client=530
-CCS_GMD_UPDATE_PUSH_NOTIFICATION_PREF=http://sapcmq02.retail.nrgenergy.com:8080/sap/bc/srt/scs/sap/z_e_crm_gmd_update_push_pref?sap-client=530
+CCS_GMD_READ_PUSH_NOTIFICATION_PREF=http://sapcmq02:8001/sap/bc/srt/scs/sap/z_e_crm_gmd_read_push_pref?sap-client=530
+CCS_GMD_UPDATE_PUSH_NOTIFICATION_PREF=http://sapcmq02:8001/sap/bc/srt/scs/sap/z_e_crm_gmd_update_push_pref?sap-client=530
 gmd_price_current_date =04/14/2020
 CRM_KBA_MATRIX = http://sapcmq02:8001/sap/bc/srt/scs/sap/z_e_crm_kba_matrix_update?sap-client=530
 
