@@ -1,6 +1,8 @@
 package com.multibrand.service;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,7 +38,14 @@ import com.multibrand.domain.SmsOptInOutResponse;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
+import com.multibrand.vo.request.PushNotifiPreferenceRequest;
+import com.multibrand.vo.request.PushNotificationStatus;
 import com.multibrand.vo.request.SMSOptInOutEligibilityRequest;
+import com.multibrand.vo.response.PushNotificationPrefReadResponse;
+import com.nrg.cxfstubs.gmd.read.push.pref.TABLEOFZESPUSHALERTSTATUS;
+import com.nrg.cxfstubs.gmd.read.push.pref.ZECRMGMDREADPUSHPREFResponse;
+import com.nrg.cxfstubs.gmd.read.push.pref.ZESPUSHALERTSTATUS;
+import com.nrg.cxfstubs.gmd.read.push.pref.ZTTPUSHALERTID;
 
 /**
  * 
@@ -47,6 +56,10 @@ import com.multibrand.vo.request.SMSOptInOutEligibilityRequest;
 
 @Service
 public class PreferenceService extends BaseAbstractService {
+	
+	@Autowired
+	@Qualifier("webServiceTemplateForGmdReadPushPreferences")
+	WebServiceTemplate webServiceTemplateForGmdReadPushPreferences;
 
 	
 private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -448,4 +461,60 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	}
 	/** END | US12887 - DK | SMS ALERTS | 10/15/2018 **/
 	
+	public PushNotificationPrefReadResponse readPushNotiPreference(PushNotifiPreferenceRequest request) {
+		PushNotificationPrefReadResponse res = new PushNotificationPrefReadResponse();
+		try {
+			com.nrg.cxfstubs.gmd.read.push.pref.ObjectFactory factory = new com.nrg.cxfstubs.gmd.read.push.pref.ObjectFactory();
+
+			com.nrg.cxfstubs.gmd.read.push.pref.ZECRMGMDREADPUSHPREF_Type wsRequest = factory
+					.createZECRMGMDREADPUSHPREF_Type();
+
+			TABLEOFZESPUSHALERTSTATUS pushAlertReadStatus = new TABLEOFZESPUSHALERTSTATUS();
+			ZTTPUSHALERTID alertId = new ZTTPUSHALERTID();
+
+			wsRequest.setIMVKONT(request.getContractAccountNumber());
+			wsRequest.setEXPUSHSTATTAB(pushAlertReadStatus);
+			wsRequest.setIMBRAND(request.getBrandName());
+			wsRequest.setIMBUKRS(request.getCompanyCode());
+			wsRequest.setIMPUSHALERTIDTAB(alertId);
+
+			ZECRMGMDREADPUSHPREFResponse response = (ZECRMGMDREADPUSHPREFResponse) webServiceTemplateForGmdReadPushPreferences
+					.marshalSendAndReceive(wsRequest);
+			if (response == null) {
+				res.setResultCode(RESULT_CODE_NO_DATA);
+				res.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
+			}
+			res = getPushNotificationPrefReadResponse(response);
+			res.setResultCode(RESULT_CODE_SUCCESS);
+			res.setResultDescription(MSG_SUCCESS);
+		} catch (Exception e) {
+			logger.error(e);
+			res.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			res.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+		}
+		return res;
+	}
+
+	public PushNotificationPrefReadResponse getPushNotificationPrefReadResponse(ZECRMGMDREADPUSHPREFResponse response) {
+		PushNotificationPrefReadResponse readResponse = new PushNotificationPrefReadResponse();
+		List<PushNotificationStatus> pushStatusList = new ArrayList<>();
+
+		TABLEOFZESPUSHALERTSTATUS tableOfAlertStatus = response.getEXPUSHSTATTAB();
+		if (tableOfAlertStatus != null) {
+			List<ZESPUSHALERTSTATUS> alertStatusLit = tableOfAlertStatus.getItem();
+			if (alertStatusLit != null && !alertStatusLit.isEmpty()) {
+				for (ZESPUSHALERTSTATUS status : alertStatusLit) {
+					PushNotificationStatus pushNotiStatus = new PushNotificationStatus();
+					pushNotiStatus.setAlertId(status.getALERTID());
+					pushNotiStatus.setStatus(status.getPUSHACTIVE());
+					pushStatusList.add(pushNotiStatus);
+				}
+			}
+		}
+		readResponse.setExPushActive(response.getEXPUSHACTIVE());
+		readResponse.setMessage(response.getEXMESSAGE());
+		readResponse.setPushStatusTab(pushStatusList);
+		return readResponse;
+	}
+
 }

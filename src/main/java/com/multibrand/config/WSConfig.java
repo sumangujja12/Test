@@ -51,6 +51,9 @@ public class WSConfig {
 	@Value("${CRM_KBA_MATRIX}")
 	private String kbaMatrixUpdate;	
 	
+	@Value("${CCS_GMD_READ_PUSH_NOTIFICATION_PREF}")
+	private String pushNotificationPrefRead;
+	
 	@Value("${http.max.connection.per.route}")
 	private int defaultMaxConnectionPerRoute;
 	
@@ -179,6 +182,21 @@ public class WSConfig {
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
 	}
+	
+	@Bean(name = "webServiceTemplateForGmdReadPushPreferences")
+	public WebServiceTemplate webServiceTemplateForGmdPushNotificationRead() {
+		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
+		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
+		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.gmd.read.push.pref");
+		webServiceTemplate.setMarshaller(jaxb2Marshaller);
+		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
+		webServiceTemplate.setDefaultUri(pushNotificationPrefRead);
+		ClientInterceptor[] clientInterceptors = { new MySoapClientInterceptor() };
+		webServiceTemplate.setInterceptors(clientInterceptors);
+		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
+		return webServiceTemplate;
+	}
+	
 
 	@Bean
 	public HttpComponentsMessageSender httpComponentsMessageSender() {
