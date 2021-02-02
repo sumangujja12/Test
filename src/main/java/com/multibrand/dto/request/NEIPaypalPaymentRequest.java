@@ -22,7 +22,7 @@ public class NEIPaypalPaymentRequest implements FormEntityRequest, Constants, Se
 	private static final long serialVersionUID = 5573962052855620479L;
 
 
-	@Length(max = 12, groups = SizeConstraint.class)
+	@Length(max = 40, groups = SizeConstraint.class)
 	private String username;
 
 	@NotBlank(groups = BasicConstraint.class)
