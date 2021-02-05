@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -554,10 +555,14 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 			if (response == null) {
 				res.setResultCode(RESULT_CODE_NO_DATA);
 				res.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
-			} else {
+			} else if(StringUtils.contains(response.getEXMESSAGE(),SUCCESSFULLY_UPDATED)) {
 				res.setMessage(response.getEXMESSAGE());
 				res.setResultCode(RESULT_CODE_SUCCESS);
 				res.setResultDescription(MSG_SUCCESS);
+			} else {
+				res.setMessage(response.getEXMESSAGE());
+				res.setResultCode(RESULT_CODE_NO_MATCH);
+				res.setResultDescription(RESULT_CODE_NO_MATCH_DESCRIPTION);
 			}
 
 		} catch (Exception e) {
