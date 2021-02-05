@@ -497,7 +497,6 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 			res.setResultDescription(MSG_SUCCESS);
 		} catch (Exception e) {
 			logger.error("Exception Occured in ::: readPushNotiPreference ::: " +e.getMessage());
-			e.printStackTrace();
 			res.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			res.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
@@ -567,7 +566,6 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
 		} catch (Exception e) {
 			logger.error("Exception Occured in updatePushNotificationPreferences ::: " +e.getMessage());
-			e.printStackTrace();
 			res.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			res.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
