@@ -1243,14 +1243,20 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 				// Start | Sprint16 -US13873 | Pratyush -- 11/12/2018
 				else if (StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE)
-						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), EC)
+						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), E_ENRGPB_P)
 						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_GME_UNB)
 						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE2)) 	
 				{
-					offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
+					if(StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), E_ENRGPB_P)) {
+						offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
 							.valueOf(promoOfferOutDataAvgPriceMapEntry
-									.getValue().getAvgPrice().toString())));
-				
+									.getValue().getAvgPrice().toString())*100));
+					} else {
+						offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
+								.valueOf(promoOfferOutDataAvgPriceMapEntry
+										.getValue().getAvgPrice().toString())));
+					}
+		
 				}
 				else {
 
@@ -4377,7 +4383,6 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 
 				/*END | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
-				
 
 				String docId = offerDO.getStrEFLDocID();
 				String smartCode = offerDO.getStrEFLSmartCode();
@@ -4386,6 +4391,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						request.getBrandId());
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
 				affiliateOfferDO.setEflURL(webURL + eflUri);
+
 				affiliateOfferDO.setTosURL(webURL + CONST_FILES
 						+ offerDO.getStrTOSDocID() + CONST_DOT_PDF);
 				affiliateOfferDO.setYraacURL(webURL + CONST_FILES
@@ -4663,11 +4669,11 @@ public class OEBO extends OeBoHelper implements Constants{
 		}else if(StringUtils.equals(companyCode, COMPANY_CODE_GME)) {
 			operandName = S_GME_UNB;
 		}else {
-			operandName = EC;
+			operandName = E_ENRGPB_P;
 		}
-		
 		return getKeyPrice(offerDO,operandName);
 	}
+	
 	
 	private String getEnergyCharge2(OfferDO offerDO){
 		return getKeyPrice(offerDO,S_UNBUNDLE2);
@@ -6928,6 +6934,8 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		
 		return oeService.getProspectEFL(prospectEFLRequest);
 	}
+
+
 
 	/**
 	 * Start | PBI 52935 | MBAR: Sprint 17 -ERCOT ESID LOOKUP REST IMPL | Jyothi | 9/21/2020
