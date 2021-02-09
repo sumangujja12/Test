@@ -3597,7 +3597,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		} catch (RemoteException e) {
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::{}" ,e);
+			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::{}" ,e.getMessage());
 		} catch (Exception e) {
 			logger.error("Exception Occured in submitBankPayment : " +e.getStackTrace());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -3625,7 +3625,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			response.setPaymentExtension(false);
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::{}" ,e);
+			logger.error("Exception Occured in ProfileBO.getPaymentExtension :::{}" ,e.getMessage());
 			return response;
 		}
 		

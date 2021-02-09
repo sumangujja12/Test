@@ -828,7 +828,7 @@ public class BillingResource {
        
 			logger.debug("Throwing the values to output");
         } catch(SocketTimeoutException e){
-        	logger.error("SocketTimeoutException -- :{}", e);
+        	logger.error("SocketTimeoutException -- :{}", e.getMessage());
         	ByteArrayOutputStream outputStream = CommonUtil.getInvoiceTimeOutException(customErrorMessage);
 			out.write(outputStream.toByteArray());
 			out.flush();
