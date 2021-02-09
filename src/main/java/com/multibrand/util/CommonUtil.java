@@ -967,7 +967,7 @@ public class CommonUtil implements Constants {
 				try {
 					parser.close();
 				} catch (IOException e) {
-					logger.error("isValidJson jsonText failed.", e.getMessage());
+					logger.error("isValidJson jsonText failed.{}", e.getMessage());
 				}
 			}
 		}
