@@ -21,25 +21,16 @@ public static enum CREDIT_AGENCY_ENUM{
 			return code;
 		}
 
-		public void setCode(String code) {
-			this.code = code;
-		}
 
 		public String getName() {
 			return name;
 		}
 
-		public void setName(String name) {
-			this.name = name;
-		}
 
 		public String getPhoneNumber() {
 			return phoneNumber;
 		}
 
-		public void setPhoneNumber(String phoneNumber) {
-			this.phoneNumber = phoneNumber;
-		}
 	}
 	
 	
@@ -61,23 +52,13 @@ public static enum CREDIT_AGENCY_ENUM{
 		public String getCode() {
 			return code;
 		}
-		public void setCode(String code) {
-			this.code = code;
-		}
 
 		public String getMultiCompanyEmail() {
 			return multiCompanyEmail;
 		}
 
-		public void setMultiCompanyEmail(String multiCompanyEmail) {
-			this.multiCompanyEmail = multiCompanyEmail;
-		}
 		public String getMultiCompanyPhoneNumber() {
 			return multiCompanyPhoneNumber;
-		}
-
-		public void setMultiCompanyPhoneNumber(String multiCompanyPhoneNumber) {
-			this.multiCompanyPhoneNumber = multiCompanyPhoneNumber;
 		}	
 	}
 }

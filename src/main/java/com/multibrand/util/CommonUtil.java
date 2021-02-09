@@ -951,8 +951,9 @@ public class CommonUtil implements Constants {
 	 */
 	public static boolean isValidJson(String jsonText) {
 		boolean valid = false;
+		JsonParser parser = null;
 		try {
-			JsonParser parser = new ObjectMapper().getJsonFactory()
+			parser = new ObjectMapper().getJsonFactory()
 					.createJsonParser(jsonText);
 			while (parser.nextToken() != null) {
 			}
@@ -961,6 +962,14 @@ public class CommonUtil implements Constants {
 			jpe.printStackTrace();
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
+		} finally {
+			if ( parser != null) {
+				try {
+					parser.close();
+				} catch (IOException e) {
+					logger.error("isValidJson jsonText failed.", e.getMessage());
+				}
+			}
 		}
 		return valid;
 	}

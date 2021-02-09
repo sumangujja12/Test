@@ -116,7 +116,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 					month, isAllInPriceCall, sessionId);
 
 		} catch (NRGException e) {
-			logger.error("Exception occured in getGMDStatementDetails :{}", e);
+			logger.error("Exception occured in getGMDStatementDetails :{}", e.getMessage());
 			gmdStatementBreakDownResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			gmdStatementBreakDownResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), gmdStatementBreakDownResp);
@@ -137,7 +137,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 			gmdPricingResp = gmdService.getGMDPriceDetails(accountNumber, contractId, companyCode, esiId, sessionId, response);
 
 		} catch (NRGException e) {
-			logger.error("Exception occured in getGMDPriceDetails :{}", e);
+			logger.error("Exception occured in getGMDPriceDetails :{}", e.getMessage());
 			gmdPricingResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			gmdPricingResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), gmdPricingResp);
@@ -937,7 +937,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 		} catch (Exception ex) {
 			logger.error(
-					" Error updating Contact Preferences. Skipping and continuing{}" , ex);
+					" Error updating Contact Preferences. Skipping and continuing{}" , ex.getMessage());
 		}
 
 		logger.debug("End:{}" , methodName);
@@ -983,7 +983,7 @@ public class GMDBO extends BaseAbstractService implements Constants {
 		{
 			pPDCreateResponse.setErrorCode("MSG_ERR_SUBMIT_ENROLLMENT");
 			pPDCreateResponse.setErrorMessage(e.getMessage());
-			logger.error("inside enrollmentService:: in prepayDocCreate() ::prepayDocCreate Call Failed with error ::{}",e);
+			logger.error("inside enrollmentService:: in prepayDocCreate() ::prepayDocCreate Call Failed with error ::{}",e.getMessage());
 			
 		}
 		
