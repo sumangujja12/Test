@@ -843,7 +843,7 @@ public interface Constants {
 	public static final String EFL_1R0500 = "EFL_1R0500";
 	public static final String EFL_1R1000 = "EFL_1R1000";
 	public static final String EFL_1R2000 = "EFL_1R2000";
-	public static final String EC="EC";
+	public static final String E_ENRGPB_P="E_ENRGPB_P";
 	public static final String S_GME_UNB = "S_GME_UNB";
 	public static final String TDSP_CHRG1="TDSP_CHRG1";
 	public static final String TDSP_CHRG2="TDSP_CHRG2";
