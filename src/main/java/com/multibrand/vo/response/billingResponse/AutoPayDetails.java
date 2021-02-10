@@ -1,13 +1,13 @@
 package com.multibrand.vo.response.billingResponse;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 
@@ -34,14 +34,8 @@ public class AutoPayDetails {
 
     private java.lang.String payment;
     
-    @XmlElements(
-      {
-         @XmlElement(name = "bpid"),
-         @XmlElement(name = "businessPartnerId")
-      })
   	private String bpid;
-    
-    
+  	  
 
 	public java.lang.String getBankAccountNumber() {
 		return bankAccountNumber;
@@ -133,6 +127,4 @@ public class AutoPayDetails {
 	public void setBpid(String bpid) {
 		this.bpid = bpid;
 	}
-	
-	
 }
