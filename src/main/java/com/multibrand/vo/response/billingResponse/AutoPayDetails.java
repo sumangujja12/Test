@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 
@@ -30,11 +32,10 @@ public class AutoPayDetails {
 
     private java.lang.String payment;
     
-
+    @JsonProperty("bpid")
+    @JsonAlias({"bpid", "businessPartnerId"})
   	private String bpid;
     
-   
-	private String businessPartnerId;
     
 
 	public java.lang.String getBankAccountNumber() {
@@ -127,12 +128,4 @@ public class AutoPayDetails {
 	public void setBpid(String bpid) {
 		this.bpid = bpid;
 	}
-	public String getBusinessPartnerId() {
-		return bpid;
-	}
-	public void setBusinessPartnerId(String businessPartnerId) {
-		this.businessPartnerId = bpid;
-	}
-   
-
 }
