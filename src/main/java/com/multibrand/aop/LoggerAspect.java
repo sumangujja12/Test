@@ -202,8 +202,10 @@ public class LoggerAspect {
 		Object obj = output.getEntity();
 		if (obj != null && obj.getClass().getSuperclass().isAssignableFrom(GenericResponse.class)) {
 			String resultCode;
+			String invalidLoginCount;
 			try {				
 				resultCode =  isReplace(isParentMethod(obj, "getResultCode", null));
+				invalidLoginCount =  isReplace(isParentMethod(obj, "getInvalidLoginCount", null));
 				String errorCodeActual = isParentMethod(obj, "getErrorCode", null);
 				String errorCode = isReplace(errorCodeActual);
 				StringBuffer key = new StringBuffer();
@@ -251,6 +253,9 @@ public class LoggerAspect {
 					String genericError = errorContentHelper.getErrorMessage(key.toString());
 					String errorDescription = isParentMethod(obj, "getErrorDescription", null);
 
+					if ( org.apache.commons.lang3.StringUtils.isNotEmpty(invalidLoginCount)) {
+						errorDescription.replace("$invalidLoginCount", invalidLoginCount);
+					}
 					if ((StringUtils.isNotBlank(genericError)
 							&& genericError.equalsIgnoreCase(Constants.ERROR_CONTENT_DEFAULT))
 							&& StringUtils.isNotBlank(errorDescription)) {
