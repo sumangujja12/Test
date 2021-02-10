@@ -1,5 +1,7 @@
 package com.multibrand.vo.response.billingResponse;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,8 +34,11 @@ public class AutoPayDetails {
 
     private java.lang.String payment;
     
-    @JsonProperty("bpid")
-    @JsonAlias({"bpid", "businessPartnerId"})
+    @XmlElements(
+      {
+         @XmlElement(name = "bpid"),
+         @XmlElement(name = "businessPartnerId")
+      })
   	private String bpid;
     
     
