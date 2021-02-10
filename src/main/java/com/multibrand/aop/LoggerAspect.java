@@ -254,7 +254,7 @@ public class LoggerAspect {
 					String errorDescription = isParentMethod(obj, "getErrorDescription", null);
 
 					if ( org.apache.commons.lang3.StringUtils.isNotEmpty(invalidLoginCount)) {
-						errorDescription.replace("$invalidLoginCount", invalidLoginCount);
+						errorDescription = errorDescription.replace("$invalidLoginCount", invalidLoginCount);
 					}
 					if ((StringUtils.isNotBlank(genericError)
 							&& genericError.equalsIgnoreCase(Constants.ERROR_CONTENT_DEFAULT))
