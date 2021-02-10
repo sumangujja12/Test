@@ -101,15 +101,18 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
+				response = new SalesforceTokenResponse();
 				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
 		} catch (HttpClientErrorException e) {
-			logger.error(" CSLRSalesforceService - createRestTokenTemplateAndCallService() ::: "+e.getMessage());
+			logger.error(" CSLRSalesforceService - createRestTokenTemplateAndCallService() ::: {}",e.getMessage());
+			response = new SalesforceTokenResponse();
 			response.setResultCode(e.getStatusCode().toString());
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 	   } catch (Exception ex) {
-			logger.error(" CSLRSalesforceService - createRestTokenTemplateAndCallService() ::: "+ex.getMessage()); 
+			logger.error(" CSLRSalesforceService - createRestTokenTemplateAndCallService() ::: {}",ex.getMessage()); 
+			response = new SalesforceTokenResponse();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
 		}
@@ -149,6 +152,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
+				response = new SalesforceAccountResponse();
 				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
@@ -199,15 +203,18 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
+				response = new SalesforceAccountResponse();
 				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
 		} catch (HttpClientErrorException e) {
 			logger.error(" CSLRSalesforceService - createRestAccRegAndCallService() ::: "+e.getMessage());
+			response = new SalesforceAccountResponse();
 			response.setResultCode(e.getStatusCode().toString());
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		} catch (Exception ex) {
 			logger.error(" CSLRSalesforceService - createRestAccRegAndCallService() ::: "+ex.getMessage()); 
+			response = new SalesforceAccountResponse();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
@@ -252,16 +259,18 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
+				response = new SalesforceDashboardResponse();
 				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
 		} catch (HttpClientErrorException e) {
 			logger.error(" CSLRSalesforceService - createRestDashboardAndCallService() ::: "+e.getMessage()); 
-			
+			response = new SalesforceDashboardResponse();
 			response.setResultCode(e.getStatusCode().toString());
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		} catch (Exception ex) {
 			logger.error(" CSLRSalesforceService - createRestDashboardAndCallService() ::: "+ex.getMessage()); 
+			response = new SalesforceDashboardResponse();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
@@ -314,6 +323,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				
 			} else {
+				response = new SalesforceUpdateAccountResponse();
 				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
@@ -321,11 +331,13 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			
 		} catch (HttpClientErrorException e) {
 			logger.error(" CSLRSalesforceService - createRestUpdateAccountAndCallService() ::: "+e.getMessage());
+			response = new SalesforceUpdateAccountResponse();
 			response.setResultCode(e.getStatusCode().toString());
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		} catch (Exception ex) {
 
 			logger.error(" CSLRSalesforceService - createRestUpdateAccountAndCallService() ::: "+ex.getMessage()); 
+			response = new SalesforceUpdateAccountResponse();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
@@ -401,7 +413,7 @@ public class CSLRSalesforceService extends BaseAbstractService {
 				logger.debug(" Update user name in DB");
 				logger.debug(" Step4 : Update user in webdatabse");
 				
-				Map<String, Object> resultList = cslrProfileDAO.UpdateUserDetails(request.getOldEmailAddress() ,request.getNewEmailAddress());
+				Map<String, Object> resultList = cslrProfileDAO.updateUserDetails(request.getOldEmailAddress() ,request.getNewEmailAddress());
 				
 				if ( resultList.get(ERR_CODE_KEY) != null && !((String)resultList.get(ERR_CODE_KEY)).equalsIgnoreCase("0")) {
 	    			

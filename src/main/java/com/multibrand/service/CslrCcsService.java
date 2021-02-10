@@ -84,11 +84,13 @@ public class CslrCcsService extends BaseAbstractService {
 			}
 			
 			if(!isCcsResponseSuccess) {
+				cslrUpdateBillinlgAddrResponse = new CslrUpdateBillinlgAddrResponse();
 				cslrUpdateBillinlgAddrResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				cslrUpdateBillinlgAddrResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}
 			
 		} catch (Exception ex) {
+			cslrUpdateBillinlgAddrResponse = new CslrUpdateBillinlgAddrResponse();
 			cslrUpdateBillinlgAddrResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			cslrUpdateBillinlgAddrResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			logger.error("Error occured while Updating Billing Address in CCS for CSLR.", ex);

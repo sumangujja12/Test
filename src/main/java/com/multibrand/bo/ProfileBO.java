@@ -206,7 +206,7 @@ public class ProfileBO extends BaseBO {
 	public UpdatePasswordResponse updatePasswordBehindLogin(String userId, String newPassword,String oldPassword, String companyCode, String sessionId) {
 
 		long startTime = CommonUtil.getStartTime();
-		String request = "userId="+userId+",companyCode="+companyCode+",cred=###########"+",oldPassword=###########";
+		String request = "userId="+userId+",companyCode="+companyCode+",cred=###########"+",oldCred=###########";
 		
 		com.multibrand.vo.response.UpdatePasswordResponse updatePasswordResponse = new com.multibrand.vo.response.UpdatePasswordResponse();
 		com.multibrand.vo.request.ValidateUserNameRequest validateUserReq = new ValidateUserNameRequest();

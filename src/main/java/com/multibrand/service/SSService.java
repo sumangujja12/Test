@@ -79,7 +79,8 @@ public class SSService extends BaseAbstractService {
 				
 		} catch (Exception e) {
 			logger.error("SSService.checkPrepayOffer : Exception from NRGWS Service call:"+ e.getMessage());
-			utilityloggerHelper.logTransaction("checkPrepayOffer", false, checkPrepayOfferRequest,checkPrepayOfferResponse, checkPrepayOfferResponse.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, checkPrepayOfferRequest.getCompanyCode());
+			utilityloggerHelper.logTransaction("checkPrepayOffer", false, checkPrepayOfferRequest,checkPrepayOfferResponse, 
+					checkPrepayOfferResponse != null ? checkPrepayOfferResponse.getErrorMessage() :"", CommonUtil.getElapsedTime(startTime), "", sessionId, checkPrepayOfferRequest.getCompanyCode());
 			throw new ServiceException("MSG_ERR_CHECK_PREPYA_OFFER_CCS");
 		} 
 		utilityloggerHelper.logTransaction("checkPrepayOffer", false, checkPrepayOfferRequest,checkPrepayOfferResponse, checkPrepayOfferResponse.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, checkPrepayOfferRequest.getCompanyCode());
