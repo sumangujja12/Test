@@ -372,7 +372,9 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 			utilityloggerHelper.logTransaction("saveUpdateContactPrefs", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
 		}
 		
-		utilityloggerHelper.logTransaction("saveUpdateContactPrefs", false, request,response, response.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+		if (response != null) {
+			utilityloggerHelper.logTransaction("saveUpdateContactPrefs", false, request,response, response.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getCompanyCode());
+		}
 		if(logger.isDebugEnabled()){
 			logger.debug(XmlUtil.pojoToXML(request));
 			logger.debug(XmlUtil.pojoToXML(response));
@@ -460,7 +462,9 @@ private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 			utilityloggerHelper.logTransaction("optInOutService", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getBukrs());
 		}
 		
-		utilityloggerHelper.logTransaction("optInOutService", false, request,response, response.getMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getBukrs());
+		if (response != null) {
+			utilityloggerHelper.logTransaction("optInOutService", false, request,response, response.getMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, request.getBukrs());
+		}
 		if(logger.isDebugEnabled()){
 			logger.debug(XmlUtil.pojoToXML(request));
 			logger.debug(XmlUtil.pojoToXML(response));

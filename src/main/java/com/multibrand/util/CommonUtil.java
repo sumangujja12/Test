@@ -97,7 +97,7 @@ public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
 	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
 	protected static HashSet<String> privacyDataParams = null;
-	public static HashSet<String> logExcludeResponseMethodList = null;
+	protected static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
 	private static final char[] alphanumeric = alphanumeric();
 	private static final String DATE_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";

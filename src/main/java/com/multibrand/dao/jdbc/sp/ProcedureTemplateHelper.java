@@ -66,8 +66,7 @@ class ProcedureTemplateHelper {
 			 * ProcedureConfigCache.getInstance() + "'");
 			 */
 		} else if (!initialisedProcedureConfig) {
-			LOGGER.debug("Procedure with class name : '" + clazz.getName()
-					+ "' is not configured in cache. Initialising now ...");
+			LOGGER.debug("Procedure with class name : {} is not configured in cache. Initialising now ..." , clazz);
 			String clazzName = clazz.getName();
 			if (clazz.isAnnotationPresent(Procedure.class)) {
 				ProcedureConfigCache cache = ProcedureConfigCache.getInstance();

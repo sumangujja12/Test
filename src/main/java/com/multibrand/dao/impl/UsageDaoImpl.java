@@ -384,12 +384,12 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 			logger.info("inside the loop");
 			if (storeResponseList != null) {
 				responseList.setMonthlyUsageResponse(storeResponseList);
-				logger.info("inside the loop"+storeResponseList.size());
+				logger.info("inside the loop:{}",storeResponseList.size());
 			} 
 		}
 		utilityloggerHelper.logTransaction("getMonthlyUsageDetails", false,
 				monthlyUsageReq, responseList,
-				responseList.getResultDescription(),
+				responseList != null ? responseList.getResultDescription():"",
 				CommonUtil.getElapsedTime(startTime), "", sessionId,
 				companyCode);
 		if(logger.isDebugEnabled()){
@@ -478,7 +478,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		
 		utilityloggerHelper.logTransaction("getWeeklyUsageDetails", false,
 				weeklyUsageReq, weeklyUsageResponseList,
-				weeklyUsageResponseList.getResultDescription(),
+				weeklyUsageResponseList != null ? weeklyUsageResponseList.getResultDescription():"",
 				CommonUtil.getElapsedTime(startTime), "", sessionId,
 				companyCode);
 		if(logger.isDebugEnabled()){
@@ -572,7 +572,7 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		
 		utilityloggerHelper.logTransaction("getDailyWeeklyUsageDetails", false,
 				dailyWeeklyUsageReq, dailyWeeklyUsageResponseList,
-				dailyWeeklyUsageResponseList.getResultDescription(),
+				dailyWeeklyUsageResponseList != null ? dailyWeeklyUsageResponseList.getResultDescription():"",
 				CommonUtil.getElapsedTime(startTime), "", sessionId,
 				companyCode);
 		if(logger.isDebugEnabled()){
