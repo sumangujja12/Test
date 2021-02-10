@@ -46,7 +46,7 @@ public class KBAMatrixUpdateService extends BaseAbstractService {
 			
 			TableOfZesPosidKbaMtIn tableOfZesPosidKbaMtIn = new TableOfZesPosidKbaMtIn();
 			
-			List<ZesPosidKbaMtIn> ZesPosidKbaMtInList = new ArrayList<ZesPosidKbaMtIn>();
+			List<ZesPosidKbaMtIn> ZesPosidKbaMtInList = new ArrayList();
 			
 			
 			for (KBAMatrixUpdateDTO kbaMatrixUpdateDTO :  request.getKbaMatrixUpdateList()) {
@@ -89,7 +89,7 @@ public class KBAMatrixUpdateService extends BaseAbstractService {
 			kbaMatrixUpdateResponse.setTableOfZesPosidKbaMtEx(response.getTOutput());
 
 		} catch (RuntimeException ex) {
-			logger.error("Exception Occured in RuntimeException  kbaMatriUpdate {} ", ex);
+			logger.error("Exception Occured in RuntimeException  kbaMatriUpdate {} ", ex.getMessage());
 			kbaMatrixUpdateResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
 			kbaMatrixUpdateResponse.setErrorDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, ex.getMessage(), kbaMatrixUpdateResponse);

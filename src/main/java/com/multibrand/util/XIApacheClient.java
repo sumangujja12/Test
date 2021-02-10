@@ -41,7 +41,7 @@ public class XIApacheClient {
 	            // marshalling request
 	            String reqString = JAXBUtil.marshal(request);
 	            
-	            logger.debug("Request : " + request);
+	            logger.debug("Request : {}" , request);
 	            logger.debug(reqString);
 	            logger.info(reqString);
 	            
@@ -59,9 +59,9 @@ public class XIApacheClient {
 	            int result = httpclient.executeMethod(post);
 
 	            // Display status code
-	            logger.debug("Response Status code: " + result);
+	            logger.debug("Response Status code: {}" , result);
 	            responseString = post.getResponseBodyAsString();
-	            logger.debug("Response body: " + responseString);
+	            logger.debug("Response body: {}" , responseString);
 	            logger.debug("****************************************************");
 	        } catch (Exception e) {
 	        	e.printStackTrace();
@@ -69,7 +69,9 @@ public class XIApacheClient {
 	        } finally {
 
 	            // Release current connection to the connection pool
-	            post.releaseConnection();
+	        	if ( post != null) {
+	        		post.releaseConnection();
+	        	}
 	        }
 
 	        return responseString;
