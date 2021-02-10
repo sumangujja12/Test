@@ -285,9 +285,13 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 		
 		
 		if(UPDATE_BANK_INFO_ADD.equalsIgnoreCase(updateFlag)){
-			String query = "select max(online_pay_account_id) from ol_pay_account where bp_number ="+ bpid;
-			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForInt(query))+1;
-			logger.info("maxOnlinePayAccountId :::: " + maxOnlinePayAccountId);
+			String query = "select NVL(MAX(ONLINE_PAY_ACCOUNT_ID),0)+1 from ol_pay_account where bp_number = ?";
+			
+			Object[] maxidArgs = new Object[] { bpid};
+			
+			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForObject(query, maxidArgs, Integer.class)) ;
+
+			logger.info("maxOnlinePayAccountId :::: {}" , maxOnlinePayAccountId);
 			Date creationDate = Calendar.getInstance().getTime();
 			query = "INSERT INTO ol_pay_account (BP_NUMBER, ONLINE_PAY_ACCOUNT_ID, PAY_ACCOUNT_NICKNAME, DEFAULT_FLAG,"+
                     "ROUTING_NUMBER, TOKEN_BANK_ACCT_NUMBER, BANK_ACCT_TYPE, BANK_ACCT_HOLDER_TYPE, NAME_ON_ACCOUNT, CREATION_DATE, ONLINE_PAY_ACCOUNT_TYPE)"+
@@ -311,7 +315,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 			if(rows==1)
 				response.setOnlinePayAccountId(String.valueOf(maxOnlinePayAccountId));
 			
-			logger.info("No of rows added : " + rows);
+			logger.info("No of rows added : {}" , rows);
 			
 		}
 		if(UPDATE_BANK_INFO_UPDATE.equalsIgnoreCase(updateFlag)){
@@ -331,7 +335,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 			args[8] = bpid;
 			args[9] = onlinePayAccountId;
 			int rows = svtJdbcTemplate.update(query, args);
-			logger.info("no. of rows updated ::: " + rows);
+			logger.info("no. of rows updated ::: {}" , rows);
 			
 		}
 		if(UPDATE_BANK_INFO_DELETE.equalsIgnoreCase(updateFlag)){
@@ -343,7 +347,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 			args[1] = onlinePayAccountId;
 			
 			int rows = svtJdbcTemplate.update(query, args);
-			logger.info("no. of rows updated ::: " + rows);
+			logger.info("no. of rows updated :::{} " , rows);
 			
 		}
 		
@@ -362,9 +366,13 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 		
 		
 		if(UPDATE_CC_INFO_ADD.equalsIgnoreCase(updateFlag)){
-			String query = "select max(online_pay_account_id) from ol_pay_account where bp_number ="+ bpid;
-			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForInt(query))+1;
-			logger.info("maxOnlinePayAccountId :::: " + maxOnlinePayAccountId);
+			String query = "select NVL(MAX(ONLINE_PAY_ACCOUNT_ID),0)+1 from ol_pay_account where bp_number = ?";
+			
+			Object[] maxidArgs = new Object[] { bpid};
+			
+			int maxOnlinePayAccountId = (svtJdbcTemplate.queryForObject(query, maxidArgs, Integer.class)) ;
+			
+			logger.info("maxOnlinePayAccountId :::: {}" , maxOnlinePayAccountId);
 			Date creationDate = Calendar.getInstance().getTime();
 			query = "INSERT INTO ol_pay_account (BP_NUMBER, ONLINE_PAY_ACCOUNT_ID, PAY_ACCOUNT_NICKNAME, DEFAULT_FLAG,"+
                     "CC_TYPE, TOKEN_CC_NUMBER, CC_EXP_MONTH, CC_EXP_YEAR, NAME_ON_ACCOUNT, CREATION_DATE, ONLINE_PAY_ACCOUNT_TYPE, CC_BILLING_ZIP_CODE)"+
@@ -389,7 +397,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 			if(rows==1)
 				response.setOnlinePayAccountId(String.valueOf(maxOnlinePayAccountId));
 			
-			logger.info("No of rows added : " + rows);
+			logger.info("No of rows added : {}" , rows);
 			
 		}
 		if(UPDATE_CC_INFO_UPDATE.equalsIgnoreCase(updateFlag)){
@@ -410,7 +418,7 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 			args[9] = bpid;
 			args[10] = onlinePayAccountId;
 			int rows = svtJdbcTemplate.update(query, args);
-			logger.info("no. of rows updated ::: " + rows);
+			logger.info("no. of rows updated ::: {}" , rows);
 			
 		}
 		if(UPDATE_CC_INFO_DELETE.equalsIgnoreCase(updateFlag)){
@@ -422,74 +430,13 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 			args[1] = onlinePayAccountId;
 			
 			int rows = svtJdbcTemplate.update(query, args);
-			logger.info("no. of rows updated ::: " + rows);
+			logger.info("no. of rows updated ::: {}" , rows);
 			
 		}
 		
 		
 		return response;
 	}
-	/*   *//**
-	    * Method main.
-	    * @param argz String[]
-	 * @throws Exception 
-	    *//*
-	   public static void main(String[] argz) throws SQLException
-	{
-		   ClassPathXmlApplicationContext file = new ClassPathXmlApplicationContext(
-				"NRGREST-dao-config.xml");
-
-		JdbcTemplate jdbcTemplate = (JdbcTemplate) file
-				.getBean("smartMainJdbcTemplate");
-
-	BillDAOImpl iviewDAO = new BillDAOImpl(jdbcTemplate);
-	ProjectedBillRequestVO billRequestVO = new ProjectedBillRequestVO();
-	billRequestVO.setContractAccountNumber("000006656233");
-	billRequestVO.setEsIid("10443720009162582");
-	iviewDAO.getProjectedBillDetails(billRequestVO, "", "");
-		AvgTempRequestVO avgInVo = new AvgTempRequestVO();
-		avgInVo.setBillEndDate("20130920");
-		avgInVo.setBillStartDate("20131019");
-		avgInVo.setZoneId("HOUST");
-		iviewDAO.getAverageTempBill(avgInVo, "");
-		//billStartDate=20130920&billEndDate=20131019&zoneId=HOUST
-		System.out.println("");
-		
-	}*/
-/*	
-	public static void main(String[] argz) throws Exception
-	{
-	 FileSystemXmlApplicationContext file = new FileSystemXmlApplicationContext(
-				"G:/ashish/ashish_workspace/NRGREST/WebContent/WEB-INF/spring/NRGREST-appContext.xml");
-
-	 System.out.println("file :::: "+ file);
-	 
-		BillDAOImpl billDao = (BillDAOImpl) file
-				.getBean("billDao");
-		System.out.println("billDao ::: " + billDao);
-		
-		// bank add
-		//System.out.println(billDao.updateBankInfoDB("0001057000", "7Z0S2SMS-250", "321075947", "I", "bankAccount1", "No", "Saving",
-			//	"person", "test1", "", "0391", "CE", ""));
-		// bank update
-		//System.out.println(billDao.updateBankInfoDB("0001057000", "7Z0S2SMS-250", "321075947", "U", "bankAccount1", "No", "Saving",
-			//	"person", "test1", "1", "0391", "CE", ""));
-		// bank delete
-		//System.out.println(billDao.updateBankInfoDB("0001057000", "", "", "D", "", "", "",
-			//	"", "", "1", "0391", "CE", ""));
-		
-		// CC add		
-//		System.out.println(billDao.updateCCInfoDB ("0001057000", "ZMCD", "54-ewPa1j-2318", "08", "2014", "11000", "I", "CC1",
-	//			"Yes", "test2", "", "0391","CE",""));
-		// update CC
-	//	System.out.println(billDao.updateCCInfoDB ("0001057000", "ZMCD", "54-4asmsx-6481", "08", "2014", "11000", "U", "CC1",
-	//			"No", "test2", "3", "0391","CE",""));
-		
-		// delete CC
-		//System.out.println(billDao.updateCCInfoDB ("0001057000", "", "", "", "", "", "D", "",
-			//				"", "", "2", "0391","CE",""));
-		
-	}*/
 
 	/**
 	 * @author ahanda1

@@ -430,7 +430,6 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			}
     		
 		} catch(Exception e) {
-				e.printStackTrace();
 				logger.error(e);
 				response.setResultCode(SF_SYNC_ERROR_CODE05);
 				response.setResultDescription(SF_SYNC_ERROR_CODE05_DESC);

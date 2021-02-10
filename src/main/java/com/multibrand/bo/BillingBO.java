@@ -2069,12 +2069,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			
 			
 		} catch (RemoteException e) {
-			logger.error("Exception occured in ambeligibilityCheck : " +e.getStackTrace());
+			logger.error("Exception occured in ambeligibilityCheck : {}", e.getMessage());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (Exception e) {
-			logger.error("Exception occured in ambeligibilityCheck : " +e.getStackTrace());
+			logger.error("Exception occured in ambeligibilityCheck :{}", e.getMessage());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
@@ -2149,19 +2149,18 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				executorService.shutdown();
 			} else {
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
-				response.setResultDescription(responseService.getErrCode());
+				response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
 			}
 
 		} catch (RemoteException e) {
-			logger.error("Exception occured in saveAMBSignUp : " + e.getStackTrace());
+			logger.error("Exception occured in saveAMBSignUp : {}" , e.getMessage());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), response);
 		} catch (Exception e) {
-			logger.error("Exception occured in saveAMBSignUp : " + e.getStackTrace());
+			logger.error("Exception occured in saveAMBSignUp : {}" , e.getMessage());
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			executorService.shutdown();
 			throw new OAMException(200, e.getMessage(), response);
 		} finally {
 			if (executorService != null) {
