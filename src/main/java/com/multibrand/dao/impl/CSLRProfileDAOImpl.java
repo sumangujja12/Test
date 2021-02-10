@@ -100,7 +100,7 @@ public class CSLRProfileDAOImpl extends AbstractSpringDAO  implements Constants 
 			
 		} catch(Exception ex){
 			dbErrCode= "-1";
-			logger.error("Error in :{} :{}" , methodName , ex);
+			logger.error("Error in :{} :{}" , methodName , ex.getMessage());
 			resultMap.put(Constants.ERR_CODE_KEY, dbErrCode);
 		}
 		

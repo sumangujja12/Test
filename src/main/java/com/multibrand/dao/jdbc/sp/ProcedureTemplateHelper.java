@@ -67,8 +67,9 @@ class ProcedureTemplateHelper {
 			 */
 		} else if (!initialisedProcedureConfig) {
 			LOGGER.debug("Procedure with class name : {} is not configured in cache. Initialising now ..." , clazz);
-			String clazzName = clazz.getName();
-			if (clazz.isAnnotationPresent(Procedure.class)) {
+			if (clazz != null && clazz.isAnnotationPresent(Procedure.class)) {
+				String clazzName = clazz.getName();
+				
 				ProcedureConfigCache cache = ProcedureConfigCache.getInstance();
 
 				// Load procedure message source:
@@ -183,11 +184,6 @@ class ProcedureTemplateHelper {
 					}
 				}
 			}
-			LOGGER.debug("Procedure: '"
-					+ ProcedureConfigCache.getInstance().get(
-							getProcedureNameConfigKey(clazz.getName()))
-					+ "' is now configured in cache: '"
-					+ ProcedureConfigCache.getInstance() + "'");
 		}
 	}
 

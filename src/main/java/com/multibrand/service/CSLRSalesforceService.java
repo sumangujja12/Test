@@ -160,10 +160,12 @@ public class CSLRSalesforceService extends BaseAbstractService {
 			
 		} catch (HttpClientErrorException e) {
 				logger.error(" CSLRSalesforceService - createRestGetAccountAndCallService() ::: "+e.getMessage()); 
+				response = new SalesforceAccountResponse();
 				response.setResultCode(e.getStatusCode().toString());
 				response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		} catch (Exception ex) {
 			logger.error(" CSLRSalesforceService - createRestGetAccountAndCallService() ::: "+ex.getMessage()); 
+			response = new SalesforceAccountResponse();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
