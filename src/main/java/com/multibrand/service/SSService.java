@@ -151,22 +151,9 @@ public class SSService extends BaseAbstractService {
 	private ClientHttpRequestFactory clientHttpRequestFactory() {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         int timeOut = 20*1000;
-        if(logger.isDebugEnabled()){logger.debug("TIME OUT FOR THE REST CALL::::::"+timeOut);}
+        if(logger.isDebugEnabled()){logger.debug("TIME OUT FOR THE REST CALL::::::{}",timeOut);}
         factory.setReadTimeout(timeOut);
         factory.setConnectTimeout(timeOut);
         return factory;
     }
-	
-	
-	public static void main(String[] args) {
-		SSService sr = new SSService();
-		CheckPrepayOfferRequest checkIfPrepayOfferRequest = new CheckPrepayOfferRequest();
-		checkIfPrepayOfferRequest.setOfferCode("0027365");
-		try {
-			sr.checkPrepayOffer(checkIfPrepayOfferRequest, "");
-		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 }

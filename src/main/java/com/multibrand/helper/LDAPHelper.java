@@ -119,7 +119,7 @@ public class LDAPHelper extends BaseAbstractService{
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(":::::::createUser Exception Occured::::::::{}",e.getMessage());
 		}
 
 		return "";
@@ -152,10 +152,9 @@ public class LDAPHelper extends BaseAbstractService{
 			ctx.close();
 
 		} catch (NamingException e) {
-			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.info("::::::Exception occured while making connection:::::::::{}",e.getMessage());
 		} catch (Exception e) {
-			logger.info(":::::::Service Exception Occured::::::::");
+			logger.info(":::::::Service Exception Occured::::::::{}",e.getMessage());
 		}
 		return response;
 	}
@@ -199,8 +198,7 @@ public class LDAPHelper extends BaseAbstractService{
 			dirCtx.rename(oldGroupDn.toString(), newGroupDn.toString());
 			response.setErrorCode(Constants.SUCCESS_CODE);
 		} catch (NamingException e) {
-			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.info("::::::Exception occured while making connection:::::::::{}",e.getMessage());
 			response.setErrorCode(Constants.MSG_ERR_UPDATE_USER);
 		} catch (Exception e) {
 			logger.info(":::::::Service Exception Occured::::::::");
@@ -300,8 +298,7 @@ public class LDAPHelper extends BaseAbstractService{
 	 		dirCtx.close();
 	 		
 		} catch (NamingException e) {
-			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.info("::::::Exception occured while making connection:::::::::{}", e.getMessage());
 			response.setErrorCode(Constants.MSG_ERR_DELETE_USER);
 		} catch (Exception e) {
 			logger.info(":::::::Service Exception Occured::::::::");

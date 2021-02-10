@@ -179,7 +179,7 @@ public class CommonUtil implements Constants {
 				try {
 					strDate = format2.format(format1.parse(strDate));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 			}
 		}
@@ -195,7 +195,7 @@ public class CommonUtil implements Constants {
 			try {
 				strDate = format2.format(format1.parse(strDate));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -532,7 +532,7 @@ public class CommonUtil implements Constants {
 		try {
 			date = sdf.parse(strDate);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 			return null;
 		}
 
@@ -590,14 +590,11 @@ public class CommonUtil implements Constants {
 		try {
 			json = ow.writeValueAsString(response.getEntity());
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return json;
@@ -959,9 +956,9 @@ public class CommonUtil implements Constants {
 			}
 			valid = true;
 		} catch (JsonParseException jpe) {
-			jpe.printStackTrace();
+			logger.error(jpe.getMessage(), jpe);
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.error(ioe.getMessage(), ioe);
 		} finally {
 			if ( parser != null) {
 				try {

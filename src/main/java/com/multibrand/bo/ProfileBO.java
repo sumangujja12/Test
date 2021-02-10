@@ -152,7 +152,7 @@ public class ProfileBO extends BaseBO {
 		int update =0;
 		com.multibrand.vo.response.UpdatePasswordResponse updatePasswordResponse = new com.multibrand.vo.response.UpdatePasswordResponse();
 		long startTime = CommonUtil.getStartTime();
-		String request = "userId="+userId+",newPassword=##########"+",companyCode="+companyCode;
+		String request = "userId="+userId+",cred=##########"+",companyCode="+companyCode;
 
 		try{
 		
@@ -206,7 +206,7 @@ public class ProfileBO extends BaseBO {
 	public UpdatePasswordResponse updatePasswordBehindLogin(String userId, String newPassword,String oldPassword, String companyCode, String sessionId) {
 
 		long startTime = CommonUtil.getStartTime();
-		String request = "userId="+userId+",companyCode="+companyCode+",newPassword=###########"+",oldPassword=###########";
+		String request = "userId="+userId+",companyCode="+companyCode+",cred=###########"+",oldPassword=###########";
 		
 		com.multibrand.vo.response.UpdatePasswordResponse updatePasswordResponse = new com.multibrand.vo.response.UpdatePasswordResponse();
 		com.multibrand.vo.request.ValidateUserNameRequest validateUserReq = new ValidateUserNameRequest();
@@ -236,11 +236,6 @@ public class ProfileBO extends BaseBO {
 				logger.debug(XmlUtil.pojoToXML(updatePasswordResponse));
 			}
 		}
-//		catch (NamingException e) {
-//			updatePasswordResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-//			updatePasswordResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-//			throw new OAMException(200, e.getMessage(),updatePasswordResponse);
-//		}
 		catch (Exception e) {
 			logger.error(e);
 			updatePasswordResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);

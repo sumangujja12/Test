@@ -436,14 +436,11 @@ public class LoggerUtil {
 				} 
 												
 			} catch (IllegalArgumentException e) {
-				//logInfo("Problem logging method="+method2.getName());
-				e.printStackTrace();
+				this.error(e);
 			} catch (IllegalAccessException e) {
-				//logInfo("Problem logging method="+method2.getName());
-				e.printStackTrace();
+				this.error(e);
 			} catch (InvocationTargetException e) {
-				//logInfo("Problem logging method="+method2.getName());
-				e.printStackTrace();
+				this.error(e);
 				}
 			}
 		strRequestString = requestString.toString();

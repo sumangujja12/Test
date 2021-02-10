@@ -64,7 +64,6 @@ public class XIApacheClient {
 	            logger.debug("Response body: {}" , responseString);
 	            logger.debug("****************************************************");
 	        } catch (Exception e) {
-	        	e.printStackTrace();
 	        	throw new Exception("getResponseBody() Failed while connecting through Http: ", e);
 	        } finally {
 
