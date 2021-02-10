@@ -206,6 +206,7 @@ public class AuthenticationBO implements Constants{
 					loginFailureResponse.setInvalidLoginCount(failureCount+"");
 					synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (failureCount+""), req);					
 				} else {
+					
 					// Update failureCount to 1 if its actual value recived from LDAP is greater or equal to 4.  
 					// This is required to for the scenario where user tried 6th time but SiteMinder sends 
 					// SSO_LOCKEDFLAG=0 with actual failure count
@@ -213,8 +214,15 @@ public class AuthenticationBO implements Constants{
 					//---------------------------
 					//failureCount = (failureCount >= (oamMaxInvalidLoginCount - 1) ? 1 : ++failureCount);
 					failureCount++;
-					
-					if(failureCount < (oamMaxInvalidLoginCount-1)) {
+					logger.info("failureCount in else :{}",failureCount);
+					if ( failureCount > oamMaxInvalidLoginCount) {
+						
+						logger.info("Inside failureCount greater than oamMaxInvalidLoginCount" );
+						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
+						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
+						loginFailureResponse.setInvalidLoginCount("1");
+						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(failureCount)), req);
+					} else if(failureCount < (oamMaxInvalidLoginCount-1)) {
 						logger.info("User ID[{}] >> Invalid Credentials. Failure Count is [{}] Error code sent back is:[MSG_BAD_LOGIN]",uid, failureCount);
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
 						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
