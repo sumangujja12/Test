@@ -133,4 +133,6 @@ public class AutoPayDetails {
 	public void setBpid(String bpid) {
 		this.bpid = bpid;
 	}
+	
+	
 }
