@@ -170,7 +170,7 @@ public class AddressService extends BaseAbstractService
       if ((tdspDetailsResponse != null) && (tdspDetailsResponse.getStrTdspCodes() != null) && (tdspDetailsResponse.getStrTdspCodes().length > 1)) {
         tdspDetailsResponse.setMultiTdsp(true);
       }
-      if (StringUtils.isNotBlank(tdspDetailsResponse.getStrErrMessage())){
+      if (tdspDetailsResponse != null && StringUtils.isNotBlank(tdspDetailsResponse.getStrErrMessage())){
     	  logger.debug(tdspDetailsResponse.getStrErrMessage());  
       }
         
