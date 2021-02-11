@@ -225,7 +225,7 @@ public class AuthenticationBO implements Constants{
 					} else if(failureCount < (oamMaxInvalidLoginCount-1)) {
 						logger.info("User ID[{}] >> Invalid Credentials. Failure Count is [{}] Error code sent back is:[MSG_BAD_LOGIN]",uid, failureCount);
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
-						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
+						loginFailureResponse.setErrorCode(String.valueOf(failureCount));
 						loginFailureResponse.setInvalidLoginCount(String.valueOf(failureCount));
 						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(failureCount)), req);
 					} else if(failureCount == (oamMaxInvalidLoginCount-1)) {
