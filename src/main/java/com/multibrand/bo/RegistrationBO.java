@@ -121,7 +121,9 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 			else
 			{
 				validateAccountResponse.setResultCode(RESULT_CODE_THREE);
+				if(null != response){
 				validateAccountResponse.setResultDescription(response.getErrorCode());
+				}
 			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
