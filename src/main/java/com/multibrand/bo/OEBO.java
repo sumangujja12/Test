@@ -745,8 +745,10 @@ public class OEBO extends OeBoHelper implements Constants{
 						oeSignupVO.setEsidDO(esidDO);
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
 					} else {
+						if(esidResponse != null){
 						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED:"
 								+ esidResponse.getStrErrCode());
+						}
 					}
 				} catch (ServiceException localServiceException) {
 					logger.error("ServiceException in OEBO.getESIDInformation():"
@@ -1605,7 +1607,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					tdspResponse.setTdspData(tdspDOList);
 	          }
 	        } else {
+	        	if(null != tdspDetailsResponse){
 		          logger.debug("OEBO.getTDSPDetails() addressService.getTDSP() call results an Error: " + tdspDetailsResponse.getStrErrMessage());
+	        	}
 		          tdspResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		          tdspResponse.setResultDescription("Error while getting TDSP code from Database");
 	        }
@@ -2615,7 +2619,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					logger.debug("OEBO.getESIDInfo() ESID PROFILE SUCESSFUL");
 				}
 			} else {
+				if(null != esidResponse){
 				logger.debug("OEBO.getESIDInfo() GETTING ESID FAILED:"+ esidResponse.getStrErrCode());
+				}
 			}
 		} catch (ServiceException localServiceException) {
 			logger.error("ServiceException in OEBO.getESIDInfo():"
@@ -4168,7 +4174,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		request.setEndDate(df.format(DateUtils.addDays(today.getTime(), 59)));
 		request.setStrCompanyCode(companyCode);
 		//START : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-		if(StringUtils.isNotEmpty(esidDo.getEsidNumber())){
+		if(null != esidDo && StringUtils.isNotEmpty(esidDo.getEsidNumber())){
 			request.setEsiid(esidDo.getEsidNumber());
 		}else{
 			request.setEsiid(EMPTY);
@@ -5395,7 +5401,9 @@ public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
 		     			requestData.setErrorCdList("$blank$");
 		     		}
 		             requestData.setSystemNotes(StringUtils.join(systemNotesList,SYMBOL_PIPE));
+		             if(null != serviceLoationResponse){
 		             requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
+		             }
 		            this.updateServiceLocation(requestData);
 		        }
 			}catch(Exception e){
@@ -5618,7 +5626,9 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
 				updateServiceLocationRequest.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
 				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());
+				if(null != serviceLocationResponse){
 				updateServiceLocationRequest.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(getOEKBAQuestionsRequest.getCallExecuted(), serviceLocationResponse.getCallExecutedFromDB()));
+				}
 				this.updateServiceLocation(updateServiceLocationRequest);
 			}
 		}catch(Exception e){

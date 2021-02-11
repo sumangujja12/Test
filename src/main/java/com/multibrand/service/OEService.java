@@ -274,7 +274,8 @@ public class OEService extends BaseAbstractService {
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 					} else {
-						response.setResultCode(RESULT_CODE_SUCCESS);
+						if(null != response)
+							response.setResultCode(RESULT_CODE_SUCCESS);
 					}
 				}
 				
@@ -334,7 +335,7 @@ public class OEService extends BaseAbstractService {
 				Gson gson = new Gson();
 				if(null != responseAsString) {
 					response = gson.fromJson(responseAsString, UpdateETFFlagToCRMResponse.class);
-					if(null != response && response.getUpdateETFFlagToCRMResponseOutData().getActivateETF().getMsgType()!=CONSTANT_S){
+					if(null != response && !response.getUpdateETFFlagToCRMResponseOutData().getActivateETF().getMsgType().equals(CONSTANT_S)){
 						
 						response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 						
