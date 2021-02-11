@@ -14,9 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.ws.client.core.WebServiceTemplate;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -35,17 +33,18 @@ public class NEIPaypalPaymentServiceTest {
 	@InjectMocks
 	public NEISimplySmartService neiSimplySmartService;
 
-	public NEIPaypalPaymentRequest paypalPaymentRequest;
-
 	@Mock
 	EnvMessageReader envMessageReader;
 
 	@Mock
 	ReloadableResourceBundleMessageSource environmentMessageSource;
 
-	@Mock
-	@Qualifier("webServiceTemplateForNeiPaypalPayment")
-	private WebServiceTemplate webServiceTemplateForNeiPaypalPayment;
+	/*
+	 * @Mock
+	 * 
+	 * @Qualifier("webServiceTemplateForNeiPaypalPayment") private
+	 * WebServiceTemplate webServiceTemplateForNeiPaypalPayment;
+	 */
 
 	@BeforeClass
 	public void init() {
@@ -99,8 +98,15 @@ public class NEIPaypalPaymentServiceTest {
 
 		try {
 
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
-					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
+			/*
+			 * Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)
+			 * webServiceTemplateForNeiPaypalPayment
+			 * .marshalSendAndReceive(paypalPaymentRequest)).thenReturn(
+			 * neiPaypalPaymentResponse);
+			 */
+			
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
+			.thenReturn(neiPaypalPaymentResponse);
 
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
@@ -123,8 +129,14 @@ public class NEIPaypalPaymentServiceTest {
 		
 		try {
 
-			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
-					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
+			/*
+			 * Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
+			 * .marshalSendAndReceive(paypalPaymentRequest)).thenReturn(
+			 * neiPaypalPaymentResponse);
+			 */
+			
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
+			.thenReturn(neiPaypalPaymentResponse);
 
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
@@ -149,8 +161,15 @@ public class NEIPaypalPaymentServiceTest {
 		
 		try {
 
-			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
-					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
+			
+			/*
+			 * Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
+			 * .marshalSendAndReceive(paypalPaymentRequest)).thenReturn(
+			 * neiPaypalPaymentResponse);
+			 */
+			
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
+			.thenReturn(neiPaypalPaymentResponse);
 
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
@@ -174,9 +193,15 @@ public class NEIPaypalPaymentServiceTest {
 
 		try {
 
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
-					.marshalSendAndReceive(paypalPaymentRequest)).thenThrow(new Exception());
+			/*
+			 * Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)
+			 * webServiceTemplateForNeiPaypalPayment
+			 * .marshalSendAndReceive(paypalPaymentRequest)).thenThrow(new Exception());
+			 */
 
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
+			.thenReturn(neiPaypalPaymentResponse);
+			
 			neiPaypalPaymentResponse = neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 
 		} catch (Exception e) {

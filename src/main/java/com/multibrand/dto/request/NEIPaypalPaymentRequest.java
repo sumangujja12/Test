@@ -27,7 +27,6 @@ public class NEIPaypalPaymentRequest implements FormEntityRequest, Constants, Se
 
 	@NotBlank(groups = BasicConstraint.class)
 	@Length(max = 13, groups = SizeConstraint.class)
-	@Pattern(regexp = " ^0$|^[1-9]\\d*$|^\\.\\d+$|^0\\.\\d*$|^[1-9]\\d*\\.\\d*$", groups = FormatConstraint.class, message=" Field Payment is invalid")
 	private String payment;
 
 	@NotBlank(groups = BasicConstraint.class)
