@@ -220,7 +220,7 @@ public class AuthenticationBO implements Constants{
 						logger.info("Inside failureCount greater than oamMaxInvalidLoginCount" );
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
 						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
-						loginFailureResponse.setResultCode(String.valueOf(failureCount));
+						loginFailureResponse.setResultCode(String.valueOf("1"));
 						loginFailureResponse.setInvalidLoginCount("1");
 						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(1)), req);
 					} else if(failureCount < (oamMaxInvalidLoginCount-1)) {
@@ -228,6 +228,7 @@ public class AuthenticationBO implements Constants{
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
 						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
 						loginFailureResponse.setInvalidLoginCount(String.valueOf(failureCount));
+						loginFailureResponse.setResultCode(String.valueOf(failureCount));
 						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(failureCount)), req);
 					} else if(failureCount == (oamMaxInvalidLoginCount-1)) {
 						logger.info("User ID[{}] >> Invalid Credentials. Account is about to Lock. Failure Count is [{}] Error code sent back is:[MSG_LOCK_PENDING]", uid, failureCount);
