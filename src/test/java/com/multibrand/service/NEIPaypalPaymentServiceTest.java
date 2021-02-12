@@ -1,7 +1,6 @@
 package com.multibrand.service;
 
 import static org.junit.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
@@ -14,7 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.ws.client.core.WebServiceTemplate;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -22,7 +23,9 @@ import org.testng.annotations.Test;
 import com.multibrand.dto.request.NEIPaypalPaymentRequest;
 import com.multibrand.dto.response.NEIPaypalPaymentResponse;
 import com.multibrand.util.EnvMessageReader;
+import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENT;
 import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENTResponse;
+import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENT_Service;
 
 public class NEIPaypalPaymentServiceTest {
 
@@ -33,18 +36,25 @@ public class NEIPaypalPaymentServiceTest {
 	@InjectMocks
 	public NEISimplySmartService neiSimplySmartService;
 
+	public NEIPaypalPaymentRequest paypalPaymentRequest;
+
 	@Mock
 	EnvMessageReader envMessageReader;
 
 	@Mock
 	ReloadableResourceBundleMessageSource environmentMessageSource;
+	
+	@Mock 
+	ZEISUNEIPAYPALPAYMENT stub;
+	 
+	@Mock 
+	ZEISUNEIPAYPALPAYMENT_Service zeISUNEIPAYPALPAYMENT_Service;
+	 
+	 
 
-	/*
-	 * @Mock
-	 * 
-	 * @Qualifier("webServiceTemplateForNeiPaypalPayment") private
-	 * WebServiceTemplate webServiceTemplateForNeiPaypalPayment;
-	 */
+	@Mock
+	@Qualifier("webServiceTemplateForNeiPaypalPayment")
+	private WebServiceTemplate webServiceTemplateForNeiPaypalPayment;
 
 	@BeforeClass
 	public void init() {
@@ -56,6 +66,8 @@ public class NEIPaypalPaymentServiceTest {
 	@BeforeMethod
 	public void initMethod() {
 		MockitoAnnotations.initMocks(this);
+		//envMessageReader = new EnvMessageReader();
+	    //ReflectionTestUtils.setField(neiSimplySmartService, "envMessageReader", envMessageReader);
 	
 	}
 	
@@ -70,15 +82,7 @@ public class NEIPaypalPaymentServiceTest {
 		paypalPaymentRequest.setSsId("SSID1");
 		
 		
-		 Set<ConstraintViolation<NEIPaypalPaymentRequest>> constraintViolations = validator.validate(paypalPaymentRequest);	
-	
-	//	 assertEquals(constraintViolations.size(), 1);
-//		 ConstraintViolation<PaypalPaymentRequest> violiation = constraintViolations.iterator().next();
-//		 
-//		 assertEquals("uername",violiation.getMessage());
-//		 
-//		 
-		// assertFalse(constraintViolations.isEmpty());
+		 Set<ConstraintViolation<NEIPaypalPaymentRequest>> constraintViolations = validator.validate(paypalPaymentRequest);
 
 	}
 	
@@ -98,22 +102,24 @@ public class NEIPaypalPaymentServiceTest {
 
 		try {
 
-			/*
-			 * Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)
-			 * webServiceTemplateForNeiPaypalPayment
-			 * .marshalSendAndReceive(paypalPaymentRequest)).thenReturn(
-			 * neiPaypalPaymentResponse);
-			 */
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
+					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
 			
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
-			.thenReturn(neiPaypalPaymentResponse);
+			Mockito.when(envMessageReader.getMessage("CCSUSERNAME")).thenReturn("testUser");
+			Mockito.when(envMessageReader.getMessage("CCSPASSWORD")).thenReturn("testPwd");
+			
+			Mockito.when(envMessageReader.getMessage("CCS_NEI_PAYPAL")).thenReturn("");
+			
+			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) Mockito.anyObject());
+			
+			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject());
 
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals( "07", neiPaypalPaymentResponse.getXCODE());
+		assertTrue(thrown);
 	}
 	
 	@Test
@@ -129,21 +135,28 @@ public class NEIPaypalPaymentServiceTest {
 		
 		try {
 
-			/*
-			 * Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
-			 * .marshalSendAndReceive(paypalPaymentRequest)).thenReturn(
-			 * neiPaypalPaymentResponse);
-			 */
-			
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
-			.thenReturn(neiPaypalPaymentResponse);
+			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
+					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
 
-		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
+			Mockito.when(envMessageReader.getMessage("CCSUSERNAME")).thenReturn("testUser");
+			
+			Mockito.when(envMessageReader.getMessage("CCSPASSWORD")).thenReturn("testPwd");
+			
+			
+			Mockito.when(envMessageReader.getMessage("CCS_NEI_PAYPAL")).thenReturn("");
+
+			
+			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) stub);
+			
+			
+			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject());
+			
+			neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			thrown = true;
 		}
-		assertEquals( "54", neiPaypalPaymentResponse.getXCODE());
+		assertTrue(thrown);
 	}
 	
 	
@@ -161,22 +174,24 @@ public class NEIPaypalPaymentServiceTest {
 		
 		try {
 
+			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
+					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
 			
-			/*
-			 * Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
-			 * .marshalSendAndReceive(paypalPaymentRequest)).thenReturn(
-			 * neiPaypalPaymentResponse);
-			 */
+			Mockito.when(envMessageReader.getMessage("CCSUSERNAME")).thenReturn("testUser");
+			Mockito.when(envMessageReader.getMessage("CCSPASSWORD")).thenReturn("testPwd");
 			
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
-			.thenReturn(neiPaypalPaymentResponse);
+			Mockito.when(envMessageReader.getMessage("CCS_NEI_PAYPAL")).thenReturn("");
+			
+			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) Mockito.anyObject());
+			
+			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject());
 
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		assertEquals( "54", neiPaypalPaymentResponse.getXCODE());
+		assertTrue(thrown);
 	}
 
 
@@ -193,15 +208,9 @@ public class NEIPaypalPaymentServiceTest {
 
 		try {
 
-			/*
-			 * Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)
-			 * webServiceTemplateForNeiPaypalPayment
-			 * .marshalSendAndReceive(paypalPaymentRequest)).thenThrow(new Exception());
-			 */
+			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
+					.marshalSendAndReceive(paypalPaymentRequest)).thenThrow(new Exception());
 
-			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse)neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1"))
-			.thenReturn(neiPaypalPaymentResponse);
-			
 			neiPaypalPaymentResponse = neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 
 		} catch (Exception e) {
