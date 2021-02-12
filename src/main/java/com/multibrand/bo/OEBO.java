@@ -4537,33 +4537,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					continue;
 				}
 				
-				if(StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_CIRRO)){
-					String perMonthValue = getKeyPrice(offerDO, TDSP_CHRG1);
-					String perKWValue = getKeyPrice(offerDO, TDSP_CHRG2);
-					if (StringUtils.isEmpty(perMonthValue)
-							&& StringUtils.isEmpty(perKWValue)) {
-						affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
-					} else {
-						
-						Float perMonthFloatValue = Float.parseFloat(perMonthValue);
-						Float perKWFloatValue = Float.parseFloat(perKWValue);
-						if(perMonthFloatValue >0 || perKWFloatValue >0){
-						
-						affiliateOfferDO.setTdspChargeText(msgSource
-								.getMessage(TDSP_CHARGE_TEXT,
-										new String[] {
-											perMonthValue,
-											perKWValue },
-										CommonUtil.localeCode(request
-												.getLanguageCode())));
-						affiliateOfferDO.setTdspChargeKWh(perKWValue+SYMBOL_CENTS);
-						affiliateOfferDO.setTdspChargeMo(SYMBOL_DOLLAR+perMonthValue);
-						} else {
-							affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
-						}
-					}
-					
-				} else {
+
 					if (StringUtils.isEmpty(offerDO.getTdspChargeDO()
 							.getPerMonthValue())
 							&& StringUtils.isEmpty(offerDO.getTdspChargeDO()
@@ -4589,8 +4563,6 @@ public class OEBO extends OeBoHelper implements Constants{
 						}
 						
 					}
-				
-				}
 				
 				affiliateOfferDOList.add(affiliateOfferDO);
 			}
