@@ -1,6 +1,7 @@
 package com.multibrand.service;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doNothing;
 
 import java.util.Set;
 
@@ -8,8 +9,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.xml.ws.Holder;
 
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -112,12 +115,17 @@ public class NEIPaypalPaymentServiceTest {
 			
 			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) Mockito.anyObject());
 			
-			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject());
-
+			Holder<String> eOTBDID =new Holder<String>();
+			Holder<String> xcode =new Holder<String>();
+			eOTBDID.value = "000000000000";
+			xcode.value = "54";
+			
+			doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
+			
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			thrown = true;
 		}
 		assertTrue(thrown);
 	}
@@ -149,7 +157,14 @@ public class NEIPaypalPaymentServiceTest {
 			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) stub);
 			
 			
-			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject());
+			Holder<String> eOTBDID =new Holder<String>();
+			Holder<String> xcode =new Holder<String>();
+			eOTBDID.value = "000000000000";
+			xcode.value = "54";
+			
+//			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
+			
+			doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
 			
 			neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
@@ -184,12 +199,17 @@ public class NEIPaypalPaymentServiceTest {
 			
 			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) Mockito.anyObject());
 			
-			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyObject(), Mockito.anyObject());
-
+			Holder<String> eOTBDID =new Holder<String>();
+			Holder<String> xcode =new Holder<String>();
+			eOTBDID.value = "000000000000";
+			xcode.value = "54";
+			
+			doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
+			
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			thrown = true;
 		}
 		assertTrue(thrown);
 	}
