@@ -2,10 +2,12 @@ package com.multibrand.vo.response.billingResponse;
 
 
 
+import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.springframework.stereotype.Component;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.multibrand.vo.response.GenericResponse;
 import com.nrg.cxfstubs.profile.ZesZesuerStat;
 
@@ -17,6 +19,10 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	//US-F222-DK | 10312018
 	private  String paymentReceiptPopupShowFlag;
 	private  ZesZesuerStat zesZesuerStat;
+	private  boolean isEVPlan = false;
+	private  String smartCarToken;
+	private  List<String> smartCarVehicleIdList;
+
 
     public String getPaymentReceiptPopupShowFlag() {
 		return paymentReceiptPopupShowFlag;
@@ -88,7 +94,48 @@ public class GetAccountDetailsResponse extends GenericResponse {
 		this.zesZesuerStat = zesZesuerStat;
 	}
 
+	/**
+	 * @return the isEVPlan
+	 */
 	
-	
-	
+	@XmlElement(name = "isTouPlan")
+	@JsonProperty(value="isTouPlan")
+	public boolean isEVPlan() {
+		return isEVPlan;
+	}
+
+	/**
+	 * @param isEVPlan the isEVPlan to set
+	 */
+	public void setEVPlan(boolean isEVPlan) {
+		this.isEVPlan = isEVPlan;
+	}
+
+	/**
+	 * @return the smartCarToken
+	 */
+	public String getSmartCarToken() {
+		return smartCarToken;
+	}
+
+	/**
+	 * @param smartCarToken the smartCarToken to set
+	 */
+	public void setSmartCarToken(String smartCarToken) {
+		this.smartCarToken = smartCarToken;
+	}
+
+	/**
+	 * @return the smartCarVehicleIdList
+	 */
+	public List<String> getSmartCarVehicleIdList() {
+		return smartCarVehicleIdList;
+	}
+
+	/**
+	 * @param smartCarVehicleIdList the smartCarVehicleIdList to set
+	 */
+	public void setSmartCarVehicleIdList(List<String> smartCarVehicleIdList) {
+		this.smartCarVehicleIdList = smartCarVehicleIdList;
+	}
 }
