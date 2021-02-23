@@ -1,7 +1,7 @@
 package com.multibrand.service;
 
 import static org.junit.Assert.assertTrue;
-import static org.testng.Assert.assertEquals;
+import static org.mockito.Mockito.doNothing;
 
 import java.util.Set;
 
@@ -9,8 +9,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import javax.xml.ws.Holder;
 
 import org.mockito.InjectMocks;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -24,7 +26,9 @@ import org.testng.annotations.Test;
 import com.multibrand.dto.request.NEIPaypalPaymentRequest;
 import com.multibrand.dto.response.NEIPaypalPaymentResponse;
 import com.multibrand.util.EnvMessageReader;
+import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENT;
 import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENTResponse;
+import com.nrg.cxfstubs.nei.paypal.ZEISUNEIPAYPALPAYMENT_Service;
 
 public class NEIPaypalPaymentServiceTest {
 
@@ -42,6 +46,14 @@ public class NEIPaypalPaymentServiceTest {
 
 	@Mock
 	ReloadableResourceBundleMessageSource environmentMessageSource;
+	
+	@Mock 
+	ZEISUNEIPAYPALPAYMENT stub;
+	 
+	@Mock 
+	ZEISUNEIPAYPALPAYMENT_Service zeISUNEIPAYPALPAYMENT_Service;
+	 
+	 
 
 	@Mock
 	@Qualifier("webServiceTemplateForNeiPaypalPayment")
@@ -57,6 +69,8 @@ public class NEIPaypalPaymentServiceTest {
 	@BeforeMethod
 	public void initMethod() {
 		MockitoAnnotations.initMocks(this);
+		//envMessageReader = new EnvMessageReader();
+	    //ReflectionTestUtils.setField(neiSimplySmartService, "envMessageReader", envMessageReader);
 	
 	}
 	
@@ -71,15 +85,7 @@ public class NEIPaypalPaymentServiceTest {
 		paypalPaymentRequest.setSsId("SSID1");
 		
 		
-		 Set<ConstraintViolation<NEIPaypalPaymentRequest>> constraintViolations = validator.validate(paypalPaymentRequest);	
-	
-	//	 assertEquals(constraintViolations.size(), 1);
-//		 ConstraintViolation<PaypalPaymentRequest> violiation = constraintViolations.iterator().next();
-//		 
-//		 assertEquals("uername",violiation.getMessage());
-//		 
-//		 
-		// assertFalse(constraintViolations.isEmpty());
+		 Set<ConstraintViolation<NEIPaypalPaymentRequest>> constraintViolations = validator.validate(paypalPaymentRequest);
 
 	}
 	
@@ -101,13 +107,27 @@ public class NEIPaypalPaymentServiceTest {
 
 			Mockito.when((ZEISUNEIPAYPALPAYMENTResponse) webServiceTemplateForNeiPaypalPayment
 					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
-
+			
+			Mockito.when(envMessageReader.getMessage("CCSUSERNAME")).thenReturn("testUser");
+			Mockito.when(envMessageReader.getMessage("CCSPASSWORD")).thenReturn("testPwd");
+			
+			Mockito.when(envMessageReader.getMessage("CCS_NEI_PAYPAL")).thenReturn("");
+			
+			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) Mockito.anyObject());
+			
+			Holder<String> eOTBDID =new Holder<String>();
+			Holder<String> xcode =new Holder<String>();
+			eOTBDID.value = "000000000000";
+			xcode.value = "54";
+			
+			doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
+			
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			thrown = true;
 		}
-		assertEquals( "07", neiPaypalPaymentResponse.getXCODE());
+		assertTrue(thrown);
 	}
 	
 	@Test
@@ -126,12 +146,32 @@ public class NEIPaypalPaymentServiceTest {
 			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
 					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
 
-		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
+			Mockito.when(envMessageReader.getMessage("CCSUSERNAME")).thenReturn("testUser");
+			
+			Mockito.when(envMessageReader.getMessage("CCSPASSWORD")).thenReturn("testPwd");
+			
+			
+			Mockito.when(envMessageReader.getMessage("CCS_NEI_PAYPAL")).thenReturn("");
+
+			
+			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) stub);
+			
+			
+			Holder<String> eOTBDID =new Holder<String>();
+			Holder<String> xcode =new Holder<String>();
+			eOTBDID.value = "000000000000";
+			xcode.value = "54";
+			
+//			Mockito.doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
+			
+			doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
+			
+			neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			thrown = true;
 		}
-		assertEquals( "54", neiPaypalPaymentResponse.getXCODE());
+		assertTrue(thrown);
 	}
 	
 	
@@ -151,13 +191,27 @@ public class NEIPaypalPaymentServiceTest {
 
 			Mockito.when((NEIPaypalPaymentResponse) webServiceTemplateForNeiPaypalPayment
 					.marshalSendAndReceive(paypalPaymentRequest)).thenReturn(neiPaypalPaymentResponse);
-
+			
+			Mockito.when(envMessageReader.getMessage("CCSUSERNAME")).thenReturn("testUser");
+			Mockito.when(envMessageReader.getMessage("CCSPASSWORD")).thenReturn("testPwd");
+			
+			Mockito.when(envMessageReader.getMessage("CCS_NEI_PAYPAL")).thenReturn("");
+			
+			Mockito.when(zeISUNEIPAYPALPAYMENT_Service.getZEISUNEIPAYPALPAYMENT()).thenReturn((ZEISUNEIPAYPALPAYMENT) Mockito.anyObject());
+			
+			Holder<String> eOTBDID =new Holder<String>();
+			Holder<String> xcode =new Holder<String>();
+			eOTBDID.value = "000000000000";
+			xcode.value = "54";
+			
+			doNothing().when(stub).zEISUNEIPAYPALPAYMENT(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), eOTBDID, xcode);
+			
 		  neiSimplySmartService.paypalPayment(paypalPaymentRequest, "Session1");
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			thrown = true;
 		}
-		assertEquals( "54", neiPaypalPaymentResponse.getXCODE());
+		assertTrue(thrown);
 	}
 
 

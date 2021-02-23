@@ -66,10 +66,6 @@ public class WSConfig {
 	@Value("${http.stocket.connection.timeout}")
 	private int httpConnectTimeout;
 	
-	@Value("${CCS_NEI_PAYPAL}")
-	private String NeiPaypalPaymentEndPoint;
-	
-	
 	
 	@Bean Jaxb2Marshaller jaxb2Marshaller() { 
 		  Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
@@ -170,18 +166,6 @@ public class WSConfig {
 		ClientInterceptor[] clientInterceptors = {new MySoapClientInterceptor()};
 		webServiceTemplate.setInterceptors(clientInterceptors);
         
-		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
-		return webServiceTemplate;
-	}
-	
-	@Bean(name = "webServiceTemplateForNeiPaypalPayment")
-	public WebServiceTemplate webServiceTemplateForNeiPaypalPayment() {
-		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
-		Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-		jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.nei.paypal");
-		webServiceTemplate.setMarshaller(jaxb2Marshaller);
-		webServiceTemplate.setUnmarshaller(jaxb2Marshaller);
-		webServiceTemplate.setDefaultUri(NeiPaypalPaymentEndPoint);
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
 	}
