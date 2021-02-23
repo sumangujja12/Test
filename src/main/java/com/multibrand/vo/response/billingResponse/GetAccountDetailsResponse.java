@@ -2,6 +2,7 @@ package com.multibrand.vo.response.billingResponse;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -19,8 +20,8 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	//US-F222-DK | 10312018
 	private  String paymentReceiptPopupShowFlag;
 	private  ZesZesuerStat zesZesuerStat;
-	private  boolean isEVPlan = false;
-	private  String smartCarToken;
+	private  boolean isEVPlan = true;
+	private  String smartCarToken ="6f4732ba-9b5c-426c-9f48-260fe0ae8750";
 	private  List<String> smartCarVehicleIdList;
 
 
@@ -98,8 +99,8 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	 * @return the isEVPlan
 	 */
 	
-	@XmlElement(name = "isTouPlan")
-	@JsonProperty(value="isTouPlan")
+	@XmlElement(name = "isEVPlan")
+	@JsonProperty(value="isEVPlan")
 	public boolean isEVPlan() {
 		return isEVPlan;
 	}
@@ -129,6 +130,8 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	 * @return the smartCarVehicleIdList
 	 */
 	public List<String> getSmartCarVehicleIdList() {
+		smartCarVehicleIdList = new ArrayList();
+		smartCarVehicleIdList.add("c6cf7cdb-d8e0-4780-a775-7529560dc583");
 		return smartCarVehicleIdList;
 	}
 
