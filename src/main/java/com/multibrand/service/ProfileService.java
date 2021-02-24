@@ -175,7 +175,6 @@ public class ProfileService extends BaseAbstractService {
 					throws Exception {
 
 		logger.info("[Profile Service ]::::::getCurrentOfferDocs");
-		//GetContractInfoResponse response = new GetContractInfoResponse();
 		long startTime = CommonUtil.getStartTime();
 		String request = "caNumber="+caNumber+",bpNumber="+bpNumber+",esid="+esid+",contractId="+contractId+",languageCode="+languageCode;
 	 
@@ -183,7 +182,7 @@ public class ProfileService extends BaseAbstractService {
 				.getResource("Z_E_ISU_GET_OFFERDATA_FOR_SWAP-RPM.wsdl");
 
 		if (url == null)
-			logger.info("WSDL not initialised");
+			logger.info("Z_E_ISU_GET_OFFERDATA_FOR_SWAP not initialised");
 
 		ZEISUGETOFFERDATAFORSWAP_Service port = new ZEISUGETOFFERDATAFORSWAP_Service(
 				url);
@@ -212,14 +211,14 @@ public class ProfileService extends BaseAbstractService {
 		zesSwapofferInput.setVkont(CommonUtil.paddedCa(caNumber));
 		zesSwapOfferInputList.add(zesSwapofferInput);
 
-		String im_caller = WEB_SUBSCRIBER_ID;		
-		javax.xml.ws.Holder<ZeiCampEnviDetails> hZeiCampEnvrDetails = new javax.xml.ws.Holder<ZeiCampEnviDetails>();
-		javax.xml.ws.Holder<ZeiSwapOutput> hZeiSwapOutput = new javax.xml.ws.Holder<ZeiSwapOutput>();
-		javax.xml.ws.Holder<ZeiOfrcdFlag> hZeiOffrCDFlag = new javax.xml.ws.Holder<ZeiOfrcdFlag>();
+		String imCaller = WEB_SUBSCRIBER_ID;		
+		javax.xml.ws.Holder<ZeiCampEnviDetails> hZeiCampEnvrDetails = new javax.xml.ws.Holder();
+		javax.xml.ws.Holder<ZeiSwapOutput> hZeiSwapOutput = new javax.xml.ws.Holder();
+		javax.xml.ws.Holder<ZeiOfrcdFlag> hZeiOffrCDFlag = new javax.xml.ws.Holder();
 
 
 		try{
-		stub.zeIsuGetOfferdataForSwap(im_caller, zeiSwapOfferInputObj, "", null, hZeiCampEnvrDetails, hZeiSwapOutput, hZeiOffrCDFlag);
+		stub.zeIsuGetOfferdataForSwap(imCaller, zeiSwapOfferInputObj, "", null, hZeiCampEnvrDetails, hZeiSwapOutput, hZeiOffrCDFlag);
 		}catch(Exception ex){
 			if(logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
@@ -231,7 +230,7 @@ public class ProfileService extends BaseAbstractService {
 		
 		ZesSwapOutput zesSwapOutput = zeiSwapOutput.getItem().get(0);
 				
-		if(zesSwapOutput.getCurrCodata()!=null && zesSwapOutput.getCurrCodata().getCampaignData()!=null && zesSwapOutput.getCurrCodata().getCampaignData().getItem().size()>0)
+		if(zesSwapOutput.getCurrCodata()!=null && zesSwapOutput.getCurrCodata().getCampaignData()!=null && !zesSwapOutput.getCurrCodata().getCampaignData().getItem().isEmpty())
 		{
 			logger.info("[Profile Service ]::::::getCurrentOfferDocs:::inside if");
 			List<ZesDocid> zesDocidList = zesSwapOutput.getCurrCodata().getCampaignData().getItem().get(0).getDocidTab().getItem();
@@ -251,7 +250,17 @@ public class ProfileService extends BaseAbstractService {
 					offerDO.setStrYRAACSmartCode(zesDocid.getSmartCode());
 				}
 			}
+			
+			List<ZesAvgPrice> zesAvgPriceList = zesSwapOutput.getCurrCodata().getCampaignData().getItem().get(0).getAvgPriceTab().getItem();
 
+			for (ZesAvgPrice zesAvgPrice : zesAvgPriceList) {
+				
+				String avgPriceType = zesAvgPrice.getAvgPriceType();
+				
+				if (PROD_TYPE.equalsIgnoreCase(avgPriceType)) {
+					offerDO.setStrProductType(zesAvgPrice.getString1());
+				}
+			}
 		}
 		else
 		{

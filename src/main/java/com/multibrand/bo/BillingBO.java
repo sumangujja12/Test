@@ -312,7 +312,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		ProfileResponse response = null;
 		ZesZesuerStat zesZesuerStat = null;
 		GetAccountDetailsResponse accountDetailsResp = new GetAccountDetailsResponse();
-		Map<String, Object> responseMap = new HashMap<String, Object>();
+		Map<String, Object> responseMap = new HashMap();
 		String averageBillingEligibilty = AVG_BILL_FLAG_NO;
 		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
@@ -340,7 +340,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				for(ContractDO contract:contractDO)
 				{
 					
-					logger.info("contract MVO date :::::: " + contract.getStrMoveOutDate());
+					logger.info("contract MVO date :::::: {}" , contract.getStrMoveOutDate());
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 					////US US12202 Changes - DK - 09/19/2019
 					if(StringUtils.isNotBlank(contract.getStrContractID()))
@@ -353,7 +353,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							if(contract.getStrContractID().equalsIgnoreCase(co))
 							{
 								contract.setStrTouFlag(strTouFlag);
-								logger.info("strTouFlag :::::: " +strTouFlag);
+								logger.info("strTouFlag :::::: {}" ,strTouFlag);
 							}
 						}
 					}
@@ -363,7 +363,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						if(null != contract.getCurrentPlan() && StringUtils.isNotBlank(contract.getCurrentPlan().getStrOfferCode())) {
 							contract.getCurrentPlan().setStrOfferCategory(EMPTY); // set default offer category as empty instead of 'null'
 							List<Map<String, Object>> offerCategoryLookupDetailsList = offerService.getOfferCategories(contract.getCurrentPlan().getStrOfferCode());
-							if(null != offerCategoryLookupDetailsList && offerCategoryLookupDetailsList.size() > 0) {
+							if(null != offerCategoryLookupDetailsList && !offerCategoryLookupDetailsList.isEmpty()) {
 								Map<String, Object> offerCategoryMap =  offerCategoryLookupDetailsList.get(0);
 								if(null != offerCategoryMap && offerCategoryMap.containsKey(OE_OFFER_CATEGORY) ) {
 									if(null != offerCategoryMap.get(OE_OFFER_CATEGORY)) {
@@ -374,17 +374,17 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						}
 						//END::GME Residential OE Phase-II
 					}catch(Exception ex){
-						logger.error("Error in getting current plan offer category! Skip and continue." +ex.getMessage());
+						logger.error("Error in getting current plan offer category! Skip and continue.{}" , ex.getMessage());
 					}
 					
 					if(contract.getStrMoveOutDate()!=null && !contract.getStrMoveOutDate().equals(""))
 					{
 						Date mvoDate = sdf.parse(contract.getStrMoveOutDate());
-						logger.info("Parsed Date object : " + mvoDate );
+						logger.info("Parsed Date object : {}" , mvoDate );
 						Date currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
 						if(mvoDate.after(currentDate)|| mvoDate.equals(currentDate))
 						{
-							logger.info("Active Contract!! MVO Date :: "+ mvoDate);
+							logger.info("Active Contract!! MVO Date ::{}",  mvoDate);
 							com.multibrand.vo.response.OfferDO offer = new com.multibrand.vo.response.OfferDO();
 							offer = profileService.getCurrentOfferDocs(accountNumber, accountDetailsResp.getContractAccountDO().getStrBPNumber(), contract.getStrESIID(), contract.getStrContractID(), accountDetailsResp.getContractAccountDO().getStrLanguageCode(), companyCode, offer, sessionId);
 							contract.setEflDocID(offer.getStrEFLDocID());
@@ -394,13 +394,16 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							contract.setYraacDocID(offer.getStrYRAACDocID());
 							contract.setYraacSmartCode(offer.getStrYRAACSmartCode());
 							contract.setStrEflUrl(CommonUtil.getDynamicEflUrl(offer.getStrEFLDocID(), offer.getStrEFLSmartCode()));
+							if (!StringUtils.isEmpty(offer.getStrProductType()) && offer.getStrProductType().substring(offer.getStrProductType().length() -4).equalsIgnoreCase(Constants.EV_PRODUCT_TYPE_LAST_THREE)) {
+								accountDetailsResp.setEVPlan(true);
+							}
 						}else{
-							logger.info("Inactive contract!! MVO Date :: " +mvoDate);
+							logger.info("Inactive contract!! MVO Date ::{}" ,mvoDate);
 						}
 					}
 					else
 					{
-						logger.info("Inactive contract!! MVO Date :: " +contract.getStrMoveOutDate()+" or Company code is "+companyCode);
+						logger.info("Inactive contract!! MVO Date ::{} or Company code is {} ", contract.getStrMoveOutDate(), companyCode);
 					}
 				
 						// Setting Average Billing Eligibility & Average Billing
@@ -437,7 +440,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				crmProfileRequest.setStrCANumber(accountNumber);
 				if(response != null && CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)&& StringUtils.isNotEmpty(response.getSuperBPID())){
 					logger.info("Brand name :::: CE :::::::");
-					logger.info("Super BPID :::: "+ response.getSuperBPID());
+					logger.info("Super BPID ::::{} ", response.getSuperBPID());
 					crmProfileRequest.setStrBPNumber(response.getSuperBPID());
 				} else{
 				    crmProfileRequest.setStrBPNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
@@ -468,12 +471,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				accountDetailsResp.setResultDescription(response.getErrorCode());
 			}				
 		} catch (RemoteException e) {
-			logger.error("Exception occured in getAccountDetails : " +e.getStackTrace());
+			logger.error("Exception occured in getAccountDetails :{}" , e.getMessage());
 			accountDetailsResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			accountDetailsResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), accountDetailsResp);
 		} catch (Exception e) {
-			logger.error("Exception occured in getAccountDetails : " +e.getStackTrace());
+			logger.error("Exception occured in getAccountDetails :{}" ,e.getMessage());
 			accountDetailsResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			accountDetailsResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), accountDetailsResp);
