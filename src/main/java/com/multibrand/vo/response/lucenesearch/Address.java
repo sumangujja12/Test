@@ -8,19 +8,19 @@ import com.multibrand.util.StreamLuceneConstants;
  */
 
 public class Address {
-	private String line1;
+	private String line1 = "";
 
-	private String line2;
+	private String line2 = "";
 
-	private String unitNumber;
+	private String unitNumber = "";
 
-	private String city;
+	private String city = "";
 
-	private String stateAbbreviation;
+	private String stateAbbreviation = "";
 
-	private String postalCode5;
+	private String postalCode5 = "";
 
-	private String postalCodePlus4;
+	private String postalCodePlus4 = "";
 
 	private boolean isDeliverable;
 
