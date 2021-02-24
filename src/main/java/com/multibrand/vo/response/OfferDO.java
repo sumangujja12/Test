@@ -61,6 +61,7 @@ public class OfferDO {
   private String strTDSPCode = "";
   
   private String strEflUrl="";
+  private String strProductType="";
 
   private TDSPChargeDO tdspChargeDO;
   
@@ -477,7 +478,16 @@ public String getStrEflUrl() {
 public void setStrEflUrl(String strEflUrl) {
 	this.strEflUrl = strEflUrl;
 }
-
-  
-  
+/**
+ * @return the strProductType
+ */
+public String getStrProductType() {
+	return strProductType;
+}
+/**
+ * @param strProductType the strProductType to set
+ */
+public void setStrProductType(String strProductType) {
+	this.strProductType = strProductType;
+}  
 }

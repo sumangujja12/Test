@@ -66,6 +66,7 @@ public interface Constants {
     public static final String EFL = "EFL";
 	public static final String TOS = "TOS";
 	public static final String YRAAC = "YRAAC";
+	public static final String EV_PRODUCT_TYPE_LAST_THREE = "004";
 	
 	// TPV Service Implementation : Start : KB
 	public static final String TPV_CCS_URL = "ccs.tpv.api.trans.upd.wsdl.url";
