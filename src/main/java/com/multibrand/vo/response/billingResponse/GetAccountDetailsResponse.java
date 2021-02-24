@@ -20,7 +20,7 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	//US-F222-DK | 10312018
 	private  String paymentReceiptPopupShowFlag;
 	private  ZesZesuerStat zesZesuerStat;
-	private  boolean isEVPlan = true;
+	private  boolean isEVPlan = false;
 	private  String smartCarToken ="6f4732ba-9b5c-426c-9f48-260fe0ae8750";
 	private  List<String> smartCarVehicleIdList;
 
