@@ -1055,6 +1055,11 @@
 			<version>10</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
+		<dependency>
+		  <groupId>com.nrg.services.clients</groupId>
+		  <artifactId>nrg-ccs-ws-client-nei-paypal</artifactId>
+		  <version>1.0</version>
+		</dependency>
 
 		<!--END: WS Client -->	
 		<!-- https://mvnrepository.com/artifact/org.formcept/sqljdbc4 -->
