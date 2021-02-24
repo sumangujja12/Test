@@ -8,27 +8,27 @@ package com.multibrand.vo.response.lucenesearch;
 public class Capabilities {
 	
 
-    private String capabilityType;
+    private String capabilityType = "";
 
-    private String esiId;
+    private String esiId = "";
 
-    private String tdu;
+    private String tdu = "";
 
-    private String meterType;
+    private String meterType = "";
 
-    private String address;
+    private String address = "";
 
-    private String addressOverflow;
+    private String addressOverflow = "";
 
-    private String city;
+    private String city = "";
 
-    private String state;
+    private String state = "";
 
-    private String zipcode;
+    private String zipcode = "";
     
-    private String aglcPremisesNumber ;
+    private String aglcPremisesNumber = "" ;
     
-    private String aglcAccountNumber ;
+    private String aglcAccountNumber = "";
     
     public void setCapabilityType(String capabilityType){
         this.capabilityType = capabilityType;
