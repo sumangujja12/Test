@@ -417,6 +417,8 @@ public interface DBConstants {
 	public static final String DB_RELIANT_APP_USER_FLG="RELIANT_APP_USER_FLG";
 	public static final String DB_SECURITY_ACTIVE="SECURITY_ACTIVE";
 	public static final String DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase";
+	
+	public static final String QUERY_GET_SMART_CAR_USER_PROFILE = "query.get.smart.car.profile.sqlQuery";
 
 
 }

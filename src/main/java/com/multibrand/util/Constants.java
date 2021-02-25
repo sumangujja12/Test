@@ -1663,6 +1663,7 @@ public interface Constants {
 	
 	public static final String SUCCESSFULLY_UPDATED = "Updated Successfully";
 
+	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
 
 }
 	
