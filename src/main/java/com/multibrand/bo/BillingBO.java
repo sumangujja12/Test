@@ -403,6 +403,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 								List<Map<String, Object>> resultList = smartCarDAO.getUserSmartCarTokens(userUniqueId);
 								for (Map<String, Object> rowMap : resultList) {
 									accountDetailsResp.setSmartCarToken((String)rowMap.get(ACCESS_TOKEN));
+									accountDetailsResp.setSmartCarVehicleIdList(Arrays.asList((String)rowMap.get(VEHICLE_ID)));
 								}
 								
 							}

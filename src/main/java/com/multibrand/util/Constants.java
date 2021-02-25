@@ -1644,6 +1644,5 @@ public interface Constants {
 	public static final String DOCID_URL_SUB_STR = "/files/";
 	
 	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
-	
-
+	public static final String VEHICLE_ID = "VEHICLE_ID";
 }
