@@ -178,10 +178,12 @@ public class BillingResource {
 	@Path("getAccountDetails")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response getAccountDetails(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName){
+	public Response getAccountDetails(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("brandName") String brandName,
+			 @FormParam("userUniqueId") String userUniqueId){
 		logger.info(" START ******* getAccountDetails API**********");
 		Response response = null;
-		GetAccountDetailsResponse getAccountDetailsResp = billingBO.getAccountDetails(accountNumber, companyCode,brandName, httpRequest.getSession(true).getId());
+		GetAccountDetailsResponse getAccountDetailsResp = billingBO.getAccountDetails(accountNumber, companyCode,brandName,
+				httpRequest.getSession(true).getId(), userUniqueId);
 		
 		response = Response.status(200).entity(getAccountDetailsResp).build();
 		

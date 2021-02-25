@@ -12,6 +12,11 @@
 
 	  
 	 <!-- Jndi lookups -->
+	 
+	<jee:jndi-lookup id="smartCarDataSource"
+		jndi-name="jdbc/smartiot_user" cache="true" resource-ref="true"
+		lookup-on-startup="false" proxy-interface="javax.sql.DataSource" />
+			 
 	<jee:jndi-lookup id="gmdChoiceDataSource"
 		jndi-name="jdbc/gme_choice_user" cache="true" resource-ref="true"
 		lookup-on-startup="false" proxy-interface="javax.sql.DataSource" />
@@ -213,5 +218,10 @@
 		<property name="dataSource" ref="gmdChoiceDataSource"/>
 		<qualifier value="choiceGMDJdbcTemplate"/>
 	</bean>
+	
+	<bean id="smartCarJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">	    
+		<property name="dataSource" ref="smartCarDataSource"/>
+		<qualifier value="smartCarJdbcTemplate"/>
+	</bean>	
 	
 </beans>

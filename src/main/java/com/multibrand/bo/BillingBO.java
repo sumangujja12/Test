@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dao.BillDAO;
+import com.multibrand.dao.SmartCarDAO;
 import com.multibrand.domain.ActEbillRequest;
 import com.multibrand.domain.ActEbillResponse;
 import com.multibrand.domain.AddressDO;
@@ -197,6 +198,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	@Autowired 
 	private BillDAO billDao;
 	
+	@Autowired 
+	private SmartCarDAO smartCarDAO;	
+	
 	@Autowired
 	private HistoryBO historyBO;
 	
@@ -307,7 +311,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param accountNumber
 	 * @return
 	 */
-	public GetAccountDetailsResponse getAccountDetails(String accountNumber, String companyCode, String brandName, String sessionId) {
+	public GetAccountDetailsResponse getAccountDetails(String accountNumber, String companyCode, String brandName, String sessionId, String userUniqueId) {
 
 		ProfileResponse response = null;
 		ZesZesuerStat zesZesuerStat = null;
@@ -394,8 +398,13 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							contract.setYraacDocID(offer.getStrYRAACDocID());
 							contract.setYraacSmartCode(offer.getStrYRAACSmartCode());
 							contract.setStrEflUrl(CommonUtil.getDynamicEflUrl(offer.getStrEFLDocID(), offer.getStrEFLSmartCode()));
-							if (!StringUtils.isEmpty(offer.getStrProductType()) && offer.getStrProductType().substring(offer.getStrProductType().length() -4).equalsIgnoreCase(Constants.EV_PRODUCT_TYPE_LAST_THREE)) {
+							if (!StringUtils.isEmpty(offer.getStrProductType()) && offer.getStrProductType().substring(offer.getStrProductType().length() -3).equalsIgnoreCase(Constants.EV_PRODUCT_TYPE_LAST_THREE)) {
 								accountDetailsResp.setEVPlan(true);
+								List<Map<String, Object>> resultList = smartCarDAO.getUserSmartCarTokens(userUniqueId);
+								for (Map<String, Object> rowMap : resultList) {
+									accountDetailsResp.setSmartCarToken((String)rowMap.get(ACCESS_TOKEN));
+								}
+								
 							}
 						}else{
 							logger.info("Inactive contract!! MVO Date ::{}" ,mvoDate);
@@ -2632,7 +2641,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					
 			
 			
-			accountDetailsResponse = getAccountDetails(contractAccountNumber, companyCode, brandName, sessionId);
+			accountDetailsResponse = getAccountDetails(contractAccountNumber, companyCode, brandName, sessionId,"");
 			
 			if(accountDetailsResponse!=null && (accountDetailsResponse.getResultCode().equalsIgnoreCase("0"))){
 			String NCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
@@ -2968,7 +2977,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		ContractDO[] contractDO = new ContractDO[5];
 		OfferDO[] offerDO = new OfferDO[10];
 		try {	
-		getAccountDetailsResponse = getAccountDetails(accountNumber,companyCode,brandName,sessionId);
+		getAccountDetailsResponse = getAccountDetails(accountNumber,companyCode,brandName,sessionId,"");
 		String youngTreesValue = null;
 		String bpNumber = getAccountDetailsResponse.getContractAccountDO().getStrBPNumber();
 		String esid = null;
@@ -3212,7 +3221,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		String checkDigitVal = "";
 
 		GetAccountDetailsResponse accountDetails = getAccountDetails(request.getAccountNumber(),
-				request.getCompanyCode(), request.getBrandName(), sessionId);
+				request.getCompanyCode(), request.getBrandName(), sessionId,"");
 
 		// set billing address details
 		billingAddressDetails = getBillingAddressInfo(request, accountDetails);
