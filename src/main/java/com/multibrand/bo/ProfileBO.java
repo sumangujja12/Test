@@ -401,7 +401,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				    
 				        
 				    if((CommonUtil.trimZipCode(billingAddressResp.getStrZip()).equalsIgnoreCase(zip.trim()))&&StringUtils.isNotEmpty(billingAddressResp.getStrZip())){
-				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId);
+				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId,"");
 				    
 				  	    // Verification code comes here
 				    	boolean EMAIL_VERIFIED=true;
