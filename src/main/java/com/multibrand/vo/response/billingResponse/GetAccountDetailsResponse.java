@@ -1,10 +1,6 @@
 package com.multibrand.vo.response.billingResponse;
 
-
-
-import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.springframework.stereotype.Component;
@@ -21,7 +17,7 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	private  String paymentReceiptPopupShowFlag;
 	private  ZesZesuerStat zesZesuerStat;
 	private  boolean isEVPlan = false;
-	private  String smartCarToken ="6f4732ba-9b5c-426c-9f48-260fe0ae8750";
+	private  String smartCarToken ="";
 	private  List<String> smartCarVehicleIdList;
 
 
@@ -130,8 +126,6 @@ public class GetAccountDetailsResponse extends GenericResponse {
 	 * @return the smartCarVehicleIdList
 	 */
 	public List<String> getSmartCarVehicleIdList() {
-		smartCarVehicleIdList = new ArrayList();
-		smartCarVehicleIdList.add("c6cf7cdb-d8e0-4780-a775-7529560dc583");
 		return smartCarVehicleIdList;
 	}
 
