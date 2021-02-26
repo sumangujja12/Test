@@ -19,6 +19,14 @@ public class TCSPersonalizedFlagsDTO implements Serializable{
 	private String contractElapsedDays;
 	private String reliantAppUserFlag;
 	private String securityActive;
+	private String polrCustomer;
+	
+	public String getPolrCustomer() {
+		return polrCustomer;
+	}
+	public void setPolrCustomer(String polrCustomer) {
+		this.polrCustomer = polrCustomer;
+	}
 	public String getOwnershipFlag() {
 		return ownershipFlag;
 	}
