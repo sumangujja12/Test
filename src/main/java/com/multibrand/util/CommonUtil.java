@@ -271,7 +271,7 @@ public class CommonUtil implements Constants {
 			confirmationNumber = currentHostAddress + "-" + obfuscate(36, ts);
 		} catch (Exception e) {
 			confirmationNumber = obfuscate(36, ts);
-			e.printStackTrace();
+			logger.error("Exception ",e); 
 		}
 		return confirmationNumber;
 	}

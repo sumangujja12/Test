@@ -1333,7 +1333,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					}
 					offerCodeList.add(promoOfferOutData[i].getStrOfferCode());
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Exception - ", e);
 				}
 			}
 			if (logger.isDebugEnabled()) {
@@ -1684,7 +1684,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 		 }catch (Exception e) {
 			 logger.error("Exception in get Charity Details ::", e);
-			e.printStackTrace();
 		}
 		 
 		return removedCharityDetailsVO.toArray(new CharityDetailsVO[voCount]);	//ENTCR 13315 APPCR_104998 Promo Code by Thabitha Sethurman
@@ -1758,8 +1757,8 @@ public class OEBO extends OeBoHelper implements Constants{
 									throw new ServiceException();
 								}
 							}
-							if (null != dtPrevReqStartDate
-									&& !dtPrevReqStartDate.equals(""))
+							if (null != dtPrevReqStartDate)
+									//&& !dtPrevReqStartDate.equals(""))
 								dtStartDate = sdf.format(dtPrevReqStartDate);
 							pendingServiceRequestDTO
 									.setPreviousProviderName(previousProviderName);
@@ -4500,8 +4499,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				String usageCharge = getKeyPrice(offerDO, S_CUSTCHR2);
 				if(StringUtils.isEmpty(usageCharge))
 					affiliateOfferDO.setUsageCharge(null);
-				else
-					affiliateOfferDO.setUsageCharge(null);
+				//else
+					//affiliateOfferDO.setUsageCharge(null);
 				//End : PBI 76839 | Single Offer API | 11-16-2020 
 				
 				if (!StringUtils.isEmpty(baseCharge)) {
@@ -7047,7 +7046,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				affiliateOfferResponse.setStatusCode(Constants.STATUS_CODE_STOP);				
 			}
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			logger.error("Exception", e);
 		}
 		return affiliateOfferResponse;	
 
