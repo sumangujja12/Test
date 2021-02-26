@@ -282,9 +282,6 @@ public class OEBO extends OeBoHelper implements Constants{
 	protected static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
 	protected static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
 	
-	protected static final List<String>  FREEZE_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE = Arrays.asList("A", "B" ,"F");
-	protected static final List<String> FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE = Arrays.asList ("01","05","06","07","03","02","V","X","W","N","Q","R","T");
-	
 	@Autowired
 	@Qualifier("environmentMessageSource")
 	private ReloadableResourceBundleMessageSource environmentMessageSource;
