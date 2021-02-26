@@ -201,12 +201,15 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 					register.setUniqueId(uniqueId);
 					Map<String, Object> responseMap = new HashMap<String, Object>();
 					ProfileResponse profileRes = null;
+					ContractAccountDO ctrdo = null;
 					responseMap = profileService.getProfile(accountNumber,companyCode,sessionId);
 					if(responseMap!= null && responseMap.size()!= 0)
 					{
 						profileRes= (ProfileResponse)responseMap.get("profileResponse");
 					}
-				    ContractAccountDO ctrdo = profileRes.getContractAccountDO();
+					if(null != profileRes){
+				     ctrdo = profileRes.getContractAccountDO();
+					}
 				    if(ctrdo==null) {
 				    	throw new OAMException(200, "Profile is not available", genricResp);
 				    }
