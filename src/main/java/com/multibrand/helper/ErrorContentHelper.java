@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.ContentDao;
 import com.multibrand.dto.MobileContentDto;
 import com.multibrand.util.Constants;
@@ -23,13 +22,12 @@ public class ErrorContentHelper {
 	private ContentDao contentDaoImpl;
 
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
-	// public static final String GME_ERROR_CONTENT_CACHE ="contentpackage";
-	public static List<MobileContentDto> slist;
+	private List<MobileContentDto> slist;
 
 	@Cacheable(value = Constants.ERROR_CONTENT_CACHE, key = "#key")
 	public String getErrorMessage(String key) {
 
-		logger.info("Key value is : " + key);
+		logger.info("Key value is :{} " , key);
 		String value = Constants.ERROR_CONTENT_DEFAULT;
 
 		if (key.isEmpty())
@@ -37,7 +35,7 @@ public class ErrorContentHelper {
 
 		List<MobileContentDto> mobileContentData = getErrorContentList();
 
-		if (mobileContentData != null && mobileContentData.size() > 0) {
+		if (mobileContentData != null && !mobileContentData.isEmpty()) {
 			for (MobileContentDto content : mobileContentData) {
 				if (!content.getName().isEmpty() && content.getName().equalsIgnoreCase(key)) {
 					value = content.getValue();
@@ -45,7 +43,7 @@ public class ErrorContentHelper {
 				}
 			}
 		} else {
-			logger.info("Database Mapping for key is not available" + key);
+			logger.info("Database Mapping for key is not available{}" , key);
 
 		}
 
@@ -74,7 +72,7 @@ public class ErrorContentHelper {
 		MobileContentResponse mobileResponse = new MobileContentResponse();
 		try {
 			List<MobileContentDto> mobileContentData = contentDaoImpl.getMobileContentData();
-			if (mobileContentData != null && mobileContentData.size() > 0) {
+			if (mobileContentData != null && !mobileContentData.isEmpty()) {
 				for (MobileContentDto content : mobileContentData) {
 					if (Constants.ERRORS.equalsIgnoreCase(content.getArea())) {
 						if (Constants.EN.equalsIgnoreCase(content.getLanuage())) {
@@ -90,7 +88,7 @@ public class ErrorContentHelper {
 			}
 			mobileResponse.setErrors(errors);
 		} catch (Exception e) {
-			logger.error("Exception Occured while getting mobile content data.. " + e);
+			logger.error("Exception Occured while getting mobile content data.. {}" , e.getMessage());
 			mobileResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
 			mobileResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
 		}

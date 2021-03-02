@@ -74,7 +74,7 @@ public class AuthenticationResource implements Constants  {
 		logger.debug("Inside loginSuccessCall of AuthenticationResource");
 		Response response = null;
 		
-		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(userId,hh, request);
+		LoginResponse loginSuccessCallResponse = authenticationBO.loginSuccessCall(hh, request);
 		
 		
 		response = Response.status(200).entity(loginSuccessCallResponse).build();
@@ -94,7 +94,7 @@ public class AuthenticationResource implements Constants  {
 	public Response loginFailureCall(@FormParam("userId") String userId,@Context HttpHeaders hh, @Context HttpServletRequest request){
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
 		Response response = null;
-		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(userId,hh, request);
+		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
 		
 		
 		response = Response.status(200).entity(loginFailureCallResponse).build();
@@ -116,16 +116,15 @@ public class AuthenticationResource implements Constants  {
 			authResponse.setRefreshVal(refreshVal);
 			
 			
-			logger.debug("User Session Extended on [" + sdf.format(now.getTime()) + "]");
+			logger.debug("User Session Extended on [{}]" ,sdf.format(now.getTime()));
 			
 		} catch (Exception e) {
-			logger.debug("Error getting while refreshing authentication token... " +e);
+			logger.debug("Error getting while refreshing authentication token... {}" ,e.getMessage());
 			authResponse.setErrorCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
 			authResponse.setErrorDescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
 			
 		}
-		Response response = Response.status(200).entity(authResponse).build();
-		return response;
+		return Response.status(200).entity(authResponse).build();
 
 	}
 	

@@ -235,7 +235,6 @@ private static Logger logger = LogManager.getLogger(CSLRSalesforceResource.class
 		} catch (Exception ex) {
 			response = null;
 			logger.error("Error occured while retrieving the Lease Agreement PDF for doc id ["+contractDocumentId+"]", ex);
-			ex.printStackTrace();
 		}
 		
 		logger.debug("END CSLRSalesforceResource.getAgreementPDF :: END");

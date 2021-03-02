@@ -88,14 +88,14 @@ public class LoggerAspect {
 		// Jackson mapper for JSON
 		ObjectMapper mapper = new ObjectMapper();
 
-		logger.info("###########START-" + logMessagePrefix + "-###########");
+		logger.info("###########START-{} -###########" , logMessagePrefix );
 
 		long startTime = System.currentTimeMillis();
 		try {
 			output = (Response) methodPoint.proceed();
 			getErrorDisplay(output,methodName);
 		} catch (Exception ex) {
-			logger.info("System Exception: " + ex.getMessage());
+			logger.info("System Exception: {}" , ex.getMessage());
 			logger.error("ERROR LOG:", ex);
 			/**
 			 * Handling General/unknown/Runtime Exception which is thrown from Resource
@@ -108,17 +108,15 @@ public class LoggerAspect {
 		long endTime = System.currentTimeMillis();
 		long elapsedTime = endTime - startTime;
 
-		logger.info("Execution Time: " + elapsedTime + " ms " + "-API URL: " + CommonUtil.getFullURL(request));
-		// logger.info("Execution Time: " + elapsedTime + " milliseconds.");
-		logger.info("Request: " + buildParameterMap(methodPoint));
+		logger.info("Execution Time: {} ms -API URL: {} " , elapsedTime , CommonUtil.getFullURL(request));
+		logger.info("Request: {}" , buildParameterMap(methodPoint));
 		if (output != null) {
-			// logger.info(output);
-			logger.info("Response status code: " + output.getStatus());
+			logger.info("Response status code:{} " , output.getStatus());
 			if (!CommonUtil.shouldExcludeResponseLog(methodName)) {
-				logger.info("Response: " + mapper.writeValueAsString(output.getEntity()));
+				logger.info("Response: {}" , mapper.writeValueAsString(output.getEntity()));
 			}
 		}
-		logger.info("###########END-" + logMessagePrefix + "-###########");
+		logger.info("###########END-{} -########### " , logMessagePrefix);
 
 		return output;
 	}
@@ -137,7 +135,7 @@ public class LoggerAspect {
 	 */
 	private String buildParameterMap(ProceedingJoinPoint methodPoint) {
 
-		StringBuffer parameterData = new StringBuffer();
+		StringBuilder parameterData = new StringBuilder();
 
 		// Build Request parameters
 		MethodSignature sig = (MethodSignature) methodPoint.getSignature();
@@ -206,7 +204,7 @@ public class LoggerAspect {
 				resultCode =  isReplace(isParentMethod(obj, "getResultCode", null));
 				String errorCodeActual = isParentMethod(obj, "getErrorCode", null);
 				String errorCode = isReplace(errorCodeActual);
-				StringBuffer key = new StringBuffer();
+				StringBuilder key = new StringBuilder();
 
 				if (((StringUtils.isBlank(errorCode) || errorCode.equalsIgnoreCase(Constants.ZERO))
 					&& StringUtils.isNotBlank(resultCode)) && !resultCode.equalsIgnoreCase(Constants.ZERO)) {
@@ -267,14 +265,14 @@ public class LoggerAspect {
 				}
 
 			} catch (Exception ex) {
-				logger.info("System Exception: " + ex.getMessage());
+				logger.info("System Exception: {}" , ex.getMessage());
 			}
 		}
 		logger.info("###########END- getErrorDisplay -###########");
 	}
 
 	private Method getSuperClassMethod(Object obj, String methodName, Class<?> param)
-			throws NoSuchMethodException, SecurityException {
+			throws NoSuchMethodException {
 		if (param != null) {
 			return obj.getClass().getSuperclass().getDeclaredMethod(methodName, param);
 		}
@@ -283,7 +281,7 @@ public class LoggerAspect {
 	}
 
 	private Object getMethodRun(Method method, Object obj, String param)
-			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			throws IllegalAccessException, InvocationTargetException {
 		method.setAccessible(true);
 		if (param == null) {
 			return method.invoke(obj);
@@ -302,25 +300,21 @@ public class LoggerAspect {
 
 			strReturn = (String) getMethodRun(obj.getClass().getDeclaredMethod(methodName), obj, null);
 		} catch (Exception e) {
-			logger.info("DOES NOT HAVE Method " + methodName + " in Object " + obj.toString()
-					+ " so going to look in parent");
+			logger.info("DOES NOT HAVE Method {} in Object{}  so going to look in parent" , methodName , obj);
 			try {
 				return (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
 			} catch (Exception e1) {
-				logger.info("DOES NOT HAVE Method in Child " + methodName + " in Object " + obj.toString()
-						+ " so return blank string");
+				logger.info("DOES NOT HAVE Method {} in Object{}  so going to look in parent" , methodName , obj);
 			}
 			return strReturn;
 		}
 
 		if (StringUtils.isBlank(strReturn)) {
-			logger.info("Value is null in child Method " + methodName + " in Object " + obj.toString()
-					+ " so going to look in parent");
+			logger.info("Value is null in child Method {} in Object {}  so going to look in parent" , methodName , obj);
 			try {
 				strReturn = (String) getMethodRun(getSuperClassMethod(obj, methodName, param), obj, null);
 			} catch (Exception e1) {
-				logger.info("DOES NOT HAVE Method in super class " + methodName + " in Object " + obj.toString()
-						+ " so return blank string");
+				logger.info("DOES NOT HAVE Method in super class {} in Object  {}  so return blank string" , methodName , obj);
 			}
 		}
 

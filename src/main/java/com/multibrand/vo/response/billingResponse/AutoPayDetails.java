@@ -1,9 +1,7 @@
 package com.multibrand.vo.response.billingResponse;
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.commons.lang.StringUtils;
-
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 
@@ -30,13 +28,10 @@ public class AutoPayDetails {
 
     private java.lang.String payment;
     
-
   	private String bpid;
-    
-   
-	private String businessPartnerId;
-    
-
+  	  
+  	private String businessPartnerId;
+  	
 	public java.lang.String getBankAccountNumber() {
 		return bankAccountNumber;
 	}
@@ -126,13 +121,14 @@ public class AutoPayDetails {
 
 	public void setBpid(String bpid) {
 		this.bpid = bpid;
-	}
-	public String getBusinessPartnerId() {
-		return bpid;
-	}
-	public void setBusinessPartnerId(String businessPartnerId) {
 		this.businessPartnerId = bpid;
 	}
-   
+	
 
+	public String getBusinessPartnerId() {
+		return businessPartnerId;
+	}
+	public void setBusinessPartnerId(String businessPartnerId) {
+		this.businessPartnerId = businessPartnerId;
+	}
 }
