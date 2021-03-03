@@ -21,6 +21,7 @@ public class TCSPersonalizedFlagsRowMapper implements RowMapper<TCSPersonalizedF
 		tcsPersonalizedFlagsDTO.setContractElapsedDays(rs.getString(DBConstants.DB_CONTR_ELAPSED_DAYS));
 		tcsPersonalizedFlagsDTO.setReliantAppUserFlag(rs.getString(DBConstants.DB_RELIANT_APP_USER_FLG));
 		tcsPersonalizedFlagsDTO.setSecurityActive(rs.getString(DBConstants.DB_SECURITY_ACTIVE));
+		tcsPersonalizedFlagsDTO.setPolrCustomer(rs.getString(DBConstants.DB_POLR_CUST));
 		return tcsPersonalizedFlagsDTO;
 		
 	}
