@@ -96,8 +96,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
 	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
-	public static HashSet<String> privacyDataParams = null;
-	public static HashSet<String> logExcludeResponseMethodList = null;
+	protected static HashSet<String> privacyDataParams = null;
+	protected static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
 	private static final char[] alphanumeric = alphanumeric();
 	private static final String DATE_FORMAT_YYYY_MM_DD = "yyyy-MM-dd";
@@ -179,7 +179,7 @@ public class CommonUtil implements Constants {
 				try {
 					strDate = format2.format(format1.parse(strDate));
 				} catch (ParseException e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 			}
 		}
@@ -195,7 +195,7 @@ public class CommonUtil implements Constants {
 			try {
 				strDate = format2.format(format1.parse(strDate));
 			} catch (ParseException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
 			}
 		}
 
@@ -532,7 +532,7 @@ public class CommonUtil implements Constants {
 		try {
 			date = sdf.parse(strDate);
 		} catch (ParseException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 			return null;
 		}
 
@@ -590,14 +590,11 @@ public class CommonUtil implements Constants {
 		try {
 			json = ow.writeValueAsString(response.getEntity());
 		} catch (JsonGenerationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (JsonMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return json;
@@ -951,16 +948,25 @@ public class CommonUtil implements Constants {
 	 */
 	public static boolean isValidJson(String jsonText) {
 		boolean valid = false;
+		JsonParser parser = null;
 		try {
-			JsonParser parser = new ObjectMapper().getJsonFactory()
+			parser = new ObjectMapper().getJsonFactory()
 					.createJsonParser(jsonText);
 			while (parser.nextToken() != null) {
 			}
 			valid = true;
 		} catch (JsonParseException jpe) {
-			jpe.printStackTrace();
+			logger.error(jpe.getMessage(), jpe);
 		} catch (IOException ioe) {
-			ioe.printStackTrace();
+			logger.error(ioe.getMessage(), ioe);
+		} finally {
+			if ( parser != null) {
+				try {
+					parser.close();
+				} catch (IOException e) {
+					logger.error("isValidJson jsonText failed.{}", e.getMessage());
+				}
+			}
 		}
 		return valid;
 	}

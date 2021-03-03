@@ -119,7 +119,7 @@ public class LDAPHelper extends BaseAbstractService{
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(":::::::createUser Exception Occured::::::::{}",e.getMessage());
 		}
 
 		return "";
@@ -152,10 +152,9 @@ public class LDAPHelper extends BaseAbstractService{
 			ctx.close();
 
 		} catch (NamingException e) {
-			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.info("::::::Exception occured while making connection:::::::::{}",e.getMessage());
 		} catch (Exception e) {
-			logger.info(":::::::Service Exception Occured::::::::");
+			logger.info(":::::::Service Exception Occured::::::::{}",e.getMessage());
 		}
 		return response;
 	}
@@ -199,8 +198,7 @@ public class LDAPHelper extends BaseAbstractService{
 			dirCtx.rename(oldGroupDn.toString(), newGroupDn.toString());
 			response.setErrorCode(Constants.SUCCESS_CODE);
 		} catch (NamingException e) {
-			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.info("::::::Exception occured while making connection:::::::::{}",e.getMessage());
 			response.setErrorCode(Constants.MSG_ERR_UPDATE_USER);
 		} catch (Exception e) {
 			logger.info(":::::::Service Exception Occured::::::::");
@@ -300,8 +298,7 @@ public class LDAPHelper extends BaseAbstractService{
 	 		dirCtx.close();
 	 		
 		} catch (NamingException e) {
-			logger.info("::::::Exception occured while making connection:::::::::");
-			e.printStackTrace();
+			logger.info("::::::Exception occured while making connection:::::::::{}", e.getMessage());
 			response.setErrorCode(Constants.MSG_ERR_DELETE_USER);
 		} catch (Exception e) {
 			logger.info(":::::::Service Exception Occured::::::::");
@@ -550,5 +547,56 @@ public UserInfoResponseWebAgent getUserInfoForWebAgent(String userId,String comp
 			throw ex;
 		}
 	}
+	/**
+	 * This function get user information from LDAP for given user id
+	 * 
+	 * @param uid
+	 * @return Attributes
+	 * @throws NamingException
+	 */
+	public Attributes getLdapUserinfo(String uid) {
+		logger.debug("Inside getLdapUserinfo");
+		DirContext ctx = null;
+		try {
+			ctx = getLdapConnection();
+			Attributes attrs = ctx.getAttributes("uid=" + uid+ ",ou=People,o="+Constants.LDAP_ORGANISATION);
+			ctx.close();
 
+			return attrs;
+		}
+		catch (NamingException e) {
+			logger.error("Problem getting attribute:{} ",uid);
+		} finally {
+			if(null != ctx) {
+				try {
+					ctx.close();
+					ctx=null;
+				} catch (Exception ex) {
+					logger.error("Error in closing the LDAP Context at getLdapUserinfo(..):{}" , ex.getMessage());
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * This function get user information from LDAP for given user id
+	 * 
+	 * @param uid
+	 * @return Attributes
+	 * @throws NamingException
+	 */
+	public String getUserAttrValue(Attributes attrs, String attrinfo) {
+		if (attrs==null) { return null ;}
+		Attribute attrlo = attrs.get(attrinfo);
+		String outVal = null;
+		if (attrlo != null) {
+			try{
+				outVal = (String)attrlo.get();
+			} catch(NamingException n) {
+				logger.error("Invalid attribute{} -{} ",attrinfo ,n.getMessage());
+			}
+		} else { logger.debug("Invalid attribute:{}",attrinfo); }
+		return outVal;
+	}	
 }

@@ -522,7 +522,7 @@ public class HistoryService extends BaseAbstractService {
 		if(zelistBillHistory!=null && zelistBillHistory.size()>0)
 			ccsData = zelistBillHistory.size();
 		
-		logger.info("Bill History List "+zelistBillHistory.size());
+		logger.info("Bill History List {}",zelistBillHistory);
 		BillPaymentHistory[] billPaymentHistory = new BillPaymentHistory[ccsData];
 		int count=0;
 		Date actualStartDate = null;
