@@ -80,14 +80,20 @@ public class ContentBO extends BaseBO implements Constants {
 			GetContractInfoResponse contractInfoResponse = profileService.getContractInfo(request.getAccountNumber(),
 					request.getBpNumber(), request.getEsid(), request.getContractId(), request.getLanguageCode(),
 					request.getCompanyCode(), sessionId, applicationArea);
-			
+			if (StringUtils.isNotBlank(contractInfoResponse.getResultCode())
+					&& !Constants.ZERO.equalsIgnoreCase(contractInfoResponse.getResultCode())) {
+				response.setResultCode(contractInfoResponse.getResultCode());
+				response.setResultDescription(contractInfoResponse.getResultDescription());
+				return response;
+			}
 			/*** call get getContractInfoParallel NRGWS details  **/
 			AllAlertsResponse allRequestResponse = profileService.getContractInfoParallel(contentHelper.getContractInfoParallelRequest(request), sessionId);
 			Set<String> offerCode = new TreeSet<String>();
 			offerCode = contentHelper.getContractOffer(contractInfoResponse, allRequestResponse,response);
 			contentHelper.getOfferContent(offerCode,response,request);
-			response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
-			
+			if ( response.getCurrentPlan() != null) {
+				response.getCurrentPlan().setAverageMonthlyPlanUsage(String.valueOf(getAverageMonthlyBilling(request, sessionId)));
+			}
 			if(offerCode != null && offerCode.size() > 0 && StringUtils.isNotBlank(request.getMessageId())) {
 				adobeValueMap = CommonUtil.getAdopeValueMap(request.getAccountNumber(), request.getMessageId(), request.getContractId(),
 						request.getBpNumber(), request.getOsType(), templateReportSuite,
