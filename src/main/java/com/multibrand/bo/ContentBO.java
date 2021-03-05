@@ -147,7 +147,7 @@ public class ContentBO extends BaseBO implements Constants {
 				contractInfo.getContractId(), contractInfo.getEsid(), contractInfo.getZoneId(), currentDate,
 				contractInfo.getCompanyCode(), sessionId);
 		List<MonthlyUsageResponse> monthlyUsageList = monthlyUsage.getMonthlyUsageResponse();
-		if (!monthlyUsageList.isEmpty() && monthlyUsageList.size() > 0) {
+		if (monthlyUsageList != null && !monthlyUsageList.isEmpty() && monthlyUsageList.size() > 0) {
 			double totMontlyUsageKwh = 0;
 			int numberOfMonths = 0;
 			for (MonthlyUsageResponse usage : monthlyUsageList) {
