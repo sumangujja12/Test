@@ -14,30 +14,39 @@ public class PersonalizationRequest implements FormEntityRequest, Constants, Ser
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String bp;
-	private String ca;
-	private String co;
-	public String getBp() {
-		return bp;
+	private String bpNumber;
+	private String caNumber;
+	private String coNumber;
+	private String customerType;
+	
+	public String getBpNumber() {
+		return bpNumber;
 	}
-	public void setBp(String bp) {
-		this.bp = bp;
+	public void setBpNumber(String bpNumber) {
+		this.bpNumber = bpNumber;
 	}
-	public String getCa() {
-		return ca;
+	public String getCaNumber() {
+		return caNumber;
 	}
-	public void setCa(String ca) {
-		this.ca = ca;
+	public void setCaNumber(String caNumber) {
+		this.caNumber = caNumber;
 	}
-	public String getCo() {
-		return co;
+	public String getCoNumber() {
+		return coNumber;
 	}
-	public void setCo(String co) {
-		this.co = co;
+	public void setCoNumber(String coNumber) {
+		this.coNumber = coNumber;
+	}
+	public String getCustomerType() {
+		return customerType;
+	}
+	public void setCustomerType(String customerType) {
+		this.customerType = customerType;
 	}
 	@Override
 	public String toString() {
-		return "PersonalizationRequest [bp=" + bp + ", ca=" + ca + ", co=" + co + "]";
+		return "PersonalizationRequest [bpNumber=" + bpNumber + ", caNumber=" + caNumber + ", coNumber=" + coNumber
+				+ ", customerType=" + customerType + "]";
 	}
 	
 }

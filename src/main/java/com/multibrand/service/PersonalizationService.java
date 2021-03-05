@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.multibrand.dao.impl.TCSDAOImpl;
 import com.multibrand.dto.response.TCSPersonalizedFlagsDTO;
+import com.multibrand.dto.response.TCSPersonalizedFlagsSMBDTO;
 
 
 @Service("personalizationService")
@@ -20,11 +21,22 @@ public class PersonalizationService extends BaseAbstractService {
 	/**
 	 * This method is used to get flags related for personalization
 	 */
-	public TCSPersonalizedFlagsDTO  getPersonalizedFlags(String bp, String ca, String co) {
+	public TCSPersonalizedFlagsDTO  getPersonalizedFlags(String bp, String ca, String co, String customerType) {
 		logger.debug("START - [PersonalizationService-getPersonalizedFlags] method");
 		TCSPersonalizedFlagsDTO tcsPersonalizedFlagsDTO = null;		
 		try {
-			tcsPersonalizedFlagsDTO = tcsDAO.getPersonalizedFlags(bp,ca,co);
+			logger.debug("customerType:{0}",customerType);
+			if(null != customerType && customerType.equalsIgnoreCase(BUSINESS)) {
+				TCSPersonalizedFlagsSMBDTO tcsPersonalizedFlagsSMBDTO = tcsDAO.getPersonalizedFlagsSmb(bp,ca,co);
+				if(null != tcsPersonalizedFlagsSMBDTO) {
+					tcsPersonalizedFlagsDTO = new TCSPersonalizedFlagsDTO();
+					tcsPersonalizedFlagsDTO.setPolrCustomer(tcsPersonalizedFlagsSMBDTO.getPolrCustomer());
+				}
+				
+			} else {
+				tcsPersonalizedFlagsDTO = tcsDAO.getPersonalizedFlags(bp,ca,co);
+			}
+			
 			
 		} catch (Exception e) {
 			logger.error("Exception in [PersonalizationService.getPersonalizedFlags()]"+e.getMessage());
