@@ -8,7 +8,7 @@ import java.io.Serializable;
 import com.multibrand.util.Constants;
 
 
-public class PersonalizationRequest implements FormEntityRequest, Constants, Serializable {
+public class PersonalizationDTO implements FormEntityRequest, Constants, Serializable {
 
 	/**
 	 * 
@@ -45,7 +45,7 @@ public class PersonalizationRequest implements FormEntityRequest, Constants, Ser
 	}
 	@Override
 	public String toString() {
-		return "PersonalizationRequest [bpNumber=" + bpNumber + ", caNumber=" + caNumber + ", coNumber=" + coNumber
+		return "PersonalizationDTO [bpNumber=" + bpNumber + ", caNumber=" + caNumber + ", coNumber=" + coNumber
 				+ ", customerType=" + customerType + "]";
 	}
 	

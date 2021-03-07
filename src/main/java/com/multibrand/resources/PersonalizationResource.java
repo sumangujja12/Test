@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.multibrand.dto.request.PersonalizationRequest;
+import com.multibrand.dto.request.PersonalizationDTO;
 import com.multibrand.dto.response.TCSPersonalizedFlagsDTO;
 import com.multibrand.service.PersonalizationService;
 import com.multibrand.util.Constants;
@@ -43,7 +43,7 @@ public class PersonalizationResource implements Constants {
 	@Path("getPersonalizedFlags")
 	@Consumes({MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML,})
-	public Response getPersonalizedFlags(@Valid PersonalizationRequest request){
+	public Response getPersonalizedFlags(@Valid PersonalizationDTO request){
 		
 		Response response = null;
 
