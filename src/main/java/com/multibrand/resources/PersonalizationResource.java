@@ -49,7 +49,7 @@ public class PersonalizationResource implements Constants {
 
 		TCSPersonalizedFlagsResponse tcsPersonalizedFlagsResponse = new TCSPersonalizedFlagsResponse();
 		
-		TCSPersonalizedFlagsDTO tcsPersonalizedFlagsDTO = personalizationService.getPersonalizedFlags(request.getBpNumber(),request.getCaNumber(),request.getCoNumber(),request.getCustomerType());
+		TCSPersonalizedFlagsDTO tcsPersonalizedFlagsDTO = personalizationService.getPersonalizedFlags(request.getPolrBP(),request.getPolrCA(),request.getPolrCO(),request.getCustomerType());
 		
 		tcsPersonalizedFlagsResponse.setTcsPersonalizedFlagsDTO(tcsPersonalizedFlagsDTO);
 
