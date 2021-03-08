@@ -14,28 +14,29 @@ public class PersonalizationDTO implements FormEntityRequest, Constants, Seriali
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String bpNumber;
-	private String caNumber;
-	private String coNumber;
+	private String polrBP;	
+	private String polrCA;
+	private String polrCO;
 	private String customerType;
 	
-	public String getBpNumber() {
-		return bpNumber;
+	
+	public String getPolrBP() {
+		return polrBP;
 	}
-	public void setBpNumber(String bpNumber) {
-		this.bpNumber = bpNumber;
+	public void setPolrBP(String polrBP) {
+		this.polrBP = polrBP;
 	}
-	public String getCaNumber() {
-		return caNumber;
+	public String getPolrCA() {
+		return polrCA;
 	}
-	public void setCaNumber(String caNumber) {
-		this.caNumber = caNumber;
+	public void setPolrCA(String polrCA) {
+		this.polrCA = polrCA;
 	}
-	public String getCoNumber() {
-		return coNumber;
+	public String getPolrCO() {
+		return polrCO;
 	}
-	public void setCoNumber(String coNumber) {
-		this.coNumber = coNumber;
+	public void setPolrCO(String polrCO) {
+		this.polrCO = polrCO;
 	}
 	public String getCustomerType() {
 		return customerType;
@@ -45,8 +46,8 @@ public class PersonalizationDTO implements FormEntityRequest, Constants, Seriali
 	}
 	@Override
 	public String toString() {
-		return "PersonalizationDTO [bpNumber=" + bpNumber + ", caNumber=" + caNumber + ", coNumber=" + coNumber
-				+ ", customerType=" + customerType + "]";
+		return "PersonalizationDTO [polrBP=" + polrBP + ", polrCA=" + polrCA + ", polrCO=" + polrCO + ", customerType="
+				+ customerType + "]";
 	}
 	
 }
