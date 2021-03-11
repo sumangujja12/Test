@@ -1,45 +1,36 @@
-variables:
-  release_notes_wiki_path: NRG-Rest-Services/release-notes.md  # <app-name>/release-notes.md
-
+# This pipeline performs build, test and sonar-scan for all the branches except the 'develop' branch and generates release-note on master merge.
 resources:
   repositories:
     - repository: templates
       type: git
       name: Digital-IT-Projects/azure-build-templates
 
+variables:
+  agentPoolName: $(param.agent.pool.name)
+  mavenPomFile: 'pom.xml'
+  mavenGoal: 'clean test dependency:copy-dependencies -Pserver-profile -U -T 1C'
+  release_notes_wiki_path: NRG-Rest-Services/release-notes.md # <app-name>/release-notes.md
+  isMainBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+  isDeployBranch: $[contains(variables['Build.SourceBranch'], 'refs/heads/develop')]
+
 pool:
-  #vmImage: 'ubuntu-16.04'
   name: '$(param.agent.pool.name)'  
 
 trigger:
   branches:
     include:
-    - develop
     - master
     - features/*
+    
   paths:
     exclude:
     - README.md
+    - azure-pipelines.yml
+    - azure-pipelines-trigger-jenkins.yml
 
 stages:
-  - stage:
-    displayName: Checkout
-    jobs:
-      - job:
-        displayName: Checkout App
-
-  - stage:
-    displayName: Generate release notes N trigger Jenkins
-    jobs:
-      - template: create_release_notes_n_autotag.yml@templates
-
-      - job:
-        displayName: Trigger Jenkins
-        steps:
-          - task: JenkinsQueueJob@2
-            displayName: 'Queue Jenkins job: Services/nrg-rest-services'
-            inputs:
-              serverEndpoint: 'Prod Jenkins'
-              jobName: 'Services/nrg-rest-services'
-              isMultibranchJob: true
-              multibranchPipelineBranch: '$(Build.SourceBranch)'
+  - template: hybrid_pipeline/include-hybrid-pipeline-for-java-sonarqube.yml@templates
+    parameters:
+      agent_pool_name: $(agentPoolName)
+      maven_pom_file: $(mavenPomFile)
+      maven_goal: $(mavenGoal)              
