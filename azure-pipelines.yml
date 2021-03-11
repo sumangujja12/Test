@@ -43,3 +43,49 @@ stages:
               jobName: 'Services/nrg-rest-services'
               isMultibranchJob: true
               multibranchPipelineBranch: '$(Build.SourceBranch)'
+
+
+
+
+
+
+
+
+
+
+# This pipeline performs build, test and sonar-scan for all the branches except the 'develop' branch and generates release-note on master merge.
+resources:
+  repositories:
+    - repository: templates
+      type: git
+      name: Digital-IT-Projects/azure-build-templates
+
+variables:
+  agentPoolName: $(param.agent.pool.name)
+  mavenPomFile: 'pom.xml'
+  mavenGoal: 'clean test dependency:copy-dependencies -Pserver-profile -U -T 1C'
+  release_notes_wiki_path: NRG-Rest-Services/release-notes.md # <app-name>/release-notes.md
+  isMainBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
+  isDeployBranch: $[contains(variables['Build.SourceBranch'], 'refs/heads/develop')]
+
+pool:
+  name: '$(param.agent.pool.name)'  
+
+trigger:
+  branches:
+    include:
+    - master
+    - features/*
+    
+  paths:
+    exclude:
+    - README.md
+    - azure-pipelines.yml
+    - azure-pipelines-trigger-jenkins.yml
+
+stages:
+  - template: hybrid_pipeline/include-hybrid-pipeline-for-java-sonarqube.yml@templates
+    parameters:
+      agent_pool_name: $(agentPoolName)
+      maven_pom_file: $(mavenPomFile)
+      maven_goal: $(mavenGoal)              
