@@ -419,5 +419,5 @@ public interface DBConstants {
 	public static final String DB_SECURITY_ACTIVE="SECURITY_ACTIVE";
 	public static final String DB_POLR_CUST="POLR_CUST";
 	public static final String DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase";
-
+	public static final String DB_TCS_SMB_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase.smb";
 }
