@@ -1,5 +1,5 @@
 @Library('nrg-commons')
-//Jenkinsfile version-2.1
+//Jenkinsfile version-2.2
 
 def args = [
 	//##### Config param #####
