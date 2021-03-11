@@ -3,7 +3,7 @@
 
 def args = [
 	//##### Config param #####
-	emailRecepients: 'NRGDigitalIT-All@nrg.com, saurabh.tripathi@nrg.com, Sanjesh.Malviya@nrg.com, BBARMAN@nrg.com',
+	emailRecepients: 'NRGDigitalIT-All@nrg.com',
 	buildTimeOut: 60, //MINUTES
 	stgPromotionApvrlWaitTime: 15,//MINUTES
 	projectArtifact: 'target/nrgrest.war, src/main/resources/properties/environment.properties*',
@@ -28,7 +28,7 @@ def args = [
 	
 	//##### Maven commands #####
 	mvnCompileTest: 'clean test -Pserver-profile -U -T 1C',
-	mvnVerify: 'verify -Pserver-profile -U -T 1C',
+	mvnVerify: 'clean verify dependency:copy-dependencies -Pserver-profile -U -T 1C',
 	mvnPackage: 'clean package -Pserver-profile -U -T 1C',
 
 	//##### Batch commands #####
