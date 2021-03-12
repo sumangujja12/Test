@@ -1,4 +1,4 @@
-# This pipeline performs build, test and sonar-scan for all the branches except the 'develop' branch and generates release-note on master merge.
+# This pipeline triggers the Jenkins pipeline and runs only for the 'develop' branch.
 resources:
   repositories:
     - repository: templates
@@ -6,10 +6,8 @@ resources:
       name: Digital-IT-Projects/azure-build-templates
 
 variables:
+  jenkinsJobName: 'Services/nrg-rest-services/'
   agentPoolName: $(param.agent.pool.name)
-  mavenPomFile: 'pom.xml'
-  mavenGoal: 'clean test dependency:copy-dependencies -Pserver-profile -U -T 1C'
-  release_notes_wiki_path: NRG-Rest-Services/release-notes.md # <app-name>/release-notes.md
   isMainBranch: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
   isDeployBranch: $[contains(variables['Build.SourceBranch'], 'refs/heads/develop')]
 
@@ -19,18 +17,16 @@ pool:
 trigger:
   branches:
     include:
-    - master
-    - features/*
-    
+    - develop
+
   paths:
     exclude:
     - README.md
-    - azure-pipelines.yml
     - azure-pipelines-trigger-jenkins.yml
+    - azure-pipelines.yml
 
 stages:
-  - template: hybrid_pipeline/include-hybrid-pipeline-for-java-sonarqube.yml@templates
+  - template: hybrid_pipeline/include-jenkins-pipeline-trigger.yml@templates
     parameters:
       agent_pool_name: $(agentPoolName)
-      maven_pom_file: $(mavenPomFile)
-      maven_goal: $(mavenGoal)              
+      jenkins_job_name: $(jenkinsJobName)
