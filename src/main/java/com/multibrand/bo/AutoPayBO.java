@@ -332,6 +332,8 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 			cardType = MASTERCARD;
 		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
 			cardType = DISCOVER;
+		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZAMX))
+			cardType = AMERICANEXPRESS;
 		
 		String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
 		String ccLastDigits = maskCCNumber.substring(maskCCNumber.length()-4, maskCCNumber.length());

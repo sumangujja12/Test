@@ -845,6 +845,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			cardType = MASTERCARD;
 		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
 			cardType = DISCOVER;
+		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZAMX))
+			cardType = AMERICANEXPRESS;
 		
 		String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
 		
