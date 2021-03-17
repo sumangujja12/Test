@@ -1151,8 +1151,7 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 			
 		} catch (Exception e) {
 			long startTime = CommonUtil.getStartTime();
-			logger.error("Exception getConsumptionUsage" + e);
-			System.out.println("getConsumptionUsage"+e.getStackTrace().toString());
+			logger.error("Exception getConsumptionUsage:{}" , e.getMessage());
 			utilityloggerHelper.logTransaction("getCirroStructureCall", false, request,
 					e, "",
 					CommonUtil.getElapsedTime(startTime), "", sessionId,

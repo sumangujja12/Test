@@ -2,17 +2,16 @@ package com.multibrand.bo;
 
 import java.util.Map;
 
+import javax.naming.directory.Attributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-
 import com.multibrand.domain.SyncLDAPRequest;
 import com.multibrand.helper.LDAPHelper;
 import com.multibrand.service.LDAPService;
@@ -40,6 +39,7 @@ public class AuthenticationBO implements Constants{
 	@Autowired
 	private LDAPHelper ldapHelper;
 	
+	
 	@Autowired
 	protected EnvMessageReader envMessageReader;
 	
@@ -56,7 +56,7 @@ public class AuthenticationBO implements Constants{
 	 * @param hh
 	 * @return
 	 */
-	public LoginResponse loginSuccessCall(String userId, HttpHeaders httpHeaders, HttpServletRequest req) {
+	public LoginResponse loginSuccessCall(HttpHeaders httpHeaders, HttpServletRequest req) {
 
 		logger.info("AuthenticationBO.loginSuccessCall::::::::Start");
 		String uid = null;
@@ -64,7 +64,6 @@ public class AuthenticationBO implements Constants{
 		String accountNumber=null;
 		String ldapInvalidLoginCount = null;
 		int failureCount = 0;
-		//Cookie c = null;
 		LoginResponse loginResponse = new LoginResponse();
 
 		MultivaluedMap<String, String> requestHeadersMap = httpHeaders.getRequestHeaders();
@@ -72,7 +71,7 @@ public class AuthenticationBO implements Constants{
 		logger.info("loginSuccessCall(...) >>>>>>>>>>>>>>> Headers <<<<<<<<<<<<<<");
 		if(null != requestHeadersMap && requestHeadersMap.size() > 0) {
 			for(String headerName : requestHeadersMap.keySet()) {
-				logger.info("loginSuccessCall(...) >> Header Name [" + headerName + "] Header Value[" + requestHeadersMap.getFirst(headerName) + "]");
+				logger.info("loginSuccessCall(...) >> Header Name [ {} ] Header Value[{}]", headerName , requestHeadersMap.getFirst(headerName));
 			}
 		} else {
 			logger.info("loginSuccessCall(...) >> No headers received.");
@@ -81,7 +80,7 @@ public class AuthenticationBO implements Constants{
 		Map<String, Cookie> cookies = httpHeaders.getCookies();
 		if(null != cookies && cookies.size() > 0) {
 			for(String cookieName : cookies.keySet()) {
-				logger.info("loginSuccessCall(...) >> Cookie Name ["+cookieName+"] Cookie Value["+cookies.get(cookieName).getValue()+"]");
+				logger.info("loginSuccessCall(...) >> Cookie Name [{}] Cookie Value[{}]", cookieName, cookies.get(cookieName).getValue());
 			}
 		}
 				
@@ -95,11 +94,11 @@ public class AuthenticationBO implements Constants{
 			synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, ZERO, req);
 		}
 		logger.info("loginSuccessCall(...) "
-				+ "uid["+uid+"] "
-				+ "uuid["+uuid+"]"
-				+ "accountNumber["+accountNumber+"]"
-				+ "Unique ID["+uuid+"]"
-				+ "SSO_FAILURECOUNT["+ldapInvalidLoginCount+"] failureCount :[" + failureCount + "]");
+				+ "uid[{}] "
+				+ "uuid[{}"
+				+ "accountNumber[{}]"
+				+ "Unique ID[{}]"
+				+ "SSO_FAILURECOUNT[{}] failureCount :[{}]", uid, uuid, accountNumber, uuid, ldapInvalidLoginCount, failureCount);
 		
 		loginResponse.setUserID(uid);
 		loginResponse.setUserUniqueID(uuid);
@@ -118,7 +117,7 @@ public class AuthenticationBO implements Constants{
 	 * @param httpHeaders
 	 * @return
 	 */
-	public LoginFailureResponse loginFailureCall(String userId, HttpHeaders httpHeaders, HttpServletRequest req) {
+	public LoginFailureResponse loginFailureCall(HttpHeaders httpHeaders, HttpServletRequest req) {
 		
 		logger.info("AuthenticationBO.loginFailureCall::::::::Start");
 		LoginFailureResponse loginFailureResponse = new LoginFailureResponse();
@@ -142,7 +141,7 @@ public class AuthenticationBO implements Constants{
 				 }
 			}
 		} catch (Exception ex) {
-			logger.error("Error in getting configured invalid login count, thus defaulted its value to ["+oamMaxInvalidLoginCount+"]. Error:" + ex.getLocalizedMessage());
+			logger.error("Error in getting configured invalid login count, thus defaulted its value to [{}] Error:{}" , oamMaxInvalidLoginCount, ex.getLocalizedMessage());
 		}
 		
 		try {
@@ -153,7 +152,7 @@ public class AuthenticationBO implements Constants{
 			logger.info("loginFailureCall(...) >>>>>>>>>>>>>>> Headers <<<<<<<<<<<<<<");
 			if(null != requestHeadersMap && requestHeadersMap.size() > 0) {
 				for(String headerName : requestHeadersMap.keySet()) {
-					logger.info("loginFailureCall(...) >> Header Name [" + headerName + "] Header Value[" + requestHeadersMap.getFirst(headerName) + "]");
+					logger.info("loginFailureCall(...) >> Header Name [{}] Header Value[{}]", headerName, requestHeadersMap.getFirst(headerName));
 				}
 			} else {
 				logger.info("No headers received.");
@@ -162,7 +161,7 @@ public class AuthenticationBO implements Constants{
 			Map<String, Cookie> cookies = httpHeaders.getCookies();
 			if(null != cookies && cookies.size() > 0) {
 				for(String cookieName : cookies.keySet()) {
-					logger.info("loginFailureCall(...) >> Cookie Name ["+cookieName+"] Cookie Value["+cookies.get(cookieName).getValue()+"]");
+					logger.info("loginFailureCall(...) >> Cookie Name [{}] Cookie Value[{}]", cookieName, cookies.get(cookieName).getValue());
 				}
 			}
 			
@@ -175,52 +174,73 @@ public class AuthenticationBO implements Constants{
 			ldapInvalidLoginCount = readValueFromHeaderOrCookie(httpHeaders, SM_SSO_FAILURECOUNT);
 			failureCount = getValueAsInteger(ldapInvalidLoginCount);
 			logger.info("loginFailureCall(...) "
-					+ "uid["+uid+"] "
-					+ "uuid["+uuid+"]"
-					+ "noUserInLDAP["+ldapNoUserInLDAP+"] "
-					+ "SSO_LOCKEDFLAG["+ldapCustomLockOutFlag+"] "
-					+ "customLockOutValue["+customLockOutValue+"] "
-					+ "SSO_FAILURECOUNT["+ldapInvalidLoginCount+"] failureCount :[" + failureCount + "]");
+					+ "uid[{}] "
+					+ "uuid[{}]"
+					+ "noUserInLDAP[{}] "
+					+ "SSO_LOCKEDFLAG[{}] "
+					+ "customLockOutValue[{}] "
+					+ "SSO_FAILURECOUNT[{}] failureCount :[{}]", uid, uuid, ldapNoUserInLDAP, ldapCustomLockOutFlag, customLockOutValue, ldapInvalidLoginCount, failureCount);
 			
+			logger.debug("::::::::::::::::Calling the LDAP:::::::::::::::::::");			
 			//Setting various error codes based on the SiteMinder Header (or Cookie) values to send back to the caller 
 			loginFailureResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			if(null != ldapNoUserInLDAP && StringUtils.isNotBlank(ldapNoUserInLDAP) && ldapNoUserInLDAP.equalsIgnoreCase(FLAG_TRUE)) {
+			if(StringUtils.isEmpty(uid) ) {
 				loginFailureResponse.setResultDescription(USER_NOT_FOUND_ERROR_CODE);
 				loginFailureResponse.setErrorCode(MSG_USER_NOT_FOUND);
-				logger.info("User ID["+uid+"] >> User Not Found in LDAP");
+				logger.info("User ID[{}] >> User Not Found in LDAP", uid);
 			} else {
-				if(customLockOutValue > 0 ) {
+				
+				Attributes attrs = ldapHelper.getLdapUserinfo(uid);
+				
+				String customLockedOut = ldapHelper.getUserAttrValue(attrs, "customLockOut");
+				logger.info("::::::::::::::::checking lockedout status:::::::::::::::::::{}"
+						, customLockedOut);
+				
+				failureCount = getValueAsInteger(ldapHelper.getUserAttrValue(attrs, "invalidlogincount"));
+				
+				if(org.apache.commons.lang3.StringUtils.isNotEmpty(customLockedOut) && Integer.parseInt(customLockedOut) > 0 ) {
 					failureCount++;
-					logger.info("User ID["+uid+"] >> User Account is in Locked state. Error code sent back is:[MSG_LOCKED]");
+					logger.info("User ID[{}] >> User Account is in Locked state. Error code sent back is:[MSG_LOCKED]",uid);
 					loginFailureResponse.setResultDescription(USER_LOCKEDOUT_STATUS_ERROR_CODE);
 					loginFailureResponse.setErrorCode(MSG_LOCKED_ERROR_CODE);
 					loginFailureResponse.setInvalidLoginCount(failureCount+"");
 					synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (failureCount+""), req);					
 				} else {
+					
 					// Update failureCount to 1 if its actual value recived from LDAP is greater or equal to 4.  
 					// This is required to for the scenario where user tried 6th time but SiteMinder sends 
 					// SSO_LOCKEDFLAG=0 with actual failure count
 					// Note: SiteMinder unlocks user after 24 hours i.e. the header SSO_LOCKEDFLAG=0 (LDAP Attribute = CustomLockOutFlag') 
 					//---------------------------
-					failureCount = (failureCount >= (oamMaxInvalidLoginCount - 1) ? 1 : ++failureCount);
-					
-					if(failureCount < (oamMaxInvalidLoginCount-1)) {
-						logger.info("User ID["+uid+"] >> Invalid Credentials. Failure Count is [" + failureCount + "] Error code sent back is:[MSG_BAD_LOGIN]");
+					//failureCount = (failureCount >= (oamMaxInvalidLoginCount - 1) ? 1 : ++failureCount);
+					failureCount++;
+					logger.info("failureCount in else :{}",failureCount);
+					if ( failureCount > oamMaxInvalidLoginCount) {
+						
+						logger.info("Inside failureCount greater than oamMaxInvalidLoginCount" );
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
 						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
-						loginFailureResponse.setInvalidLoginCount(failureCount+"");
-						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (failureCount+""), req);
+						loginFailureResponse.setResultCode(String.valueOf("1"));
+						loginFailureResponse.setInvalidLoginCount("1");
+						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(1)), req);
+					} else if(failureCount < (oamMaxInvalidLoginCount-1)) {
+						logger.info("User ID[{}] >> Invalid Credentials. Failure Count is [{}] Error code sent back is:[MSG_BAD_LOGIN]",uid, failureCount);
+						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
+						loginFailureResponse.setErrorCode(MSG_BAD_LOGIN_ERROR_CODE);
+						loginFailureResponse.setInvalidLoginCount(String.valueOf(failureCount));
+						loginFailureResponse.setResultCode(String.valueOf(failureCount));
+						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(failureCount)), req);
 					} else if(failureCount == (oamMaxInvalidLoginCount-1)) {
-						logger.info("User ID["+uid+"] >> Invalid Credentials. Account is about to Lock. Failure Count is [" + failureCount + "] Error code sent back is:[MSG_LOCK_PENDING]");
+						logger.info("User ID[{}] >> Invalid Credentials. Account is about to Lock. Failure Count is [{}] Error code sent back is:[MSG_LOCK_PENDING]", uid, failureCount);
 						loginFailureResponse.setResultDescription(CREDENTIALS_MISMATCH_ERROR_CODE);
 						loginFailureResponse.setErrorCode(MSG_LOCK_PENDING_ERROR_CODE);
-						loginFailureResponse.setInvalidLoginCount(failureCount+"");
-						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (failureCount+""), req);
+						loginFailureResponse.setInvalidLoginCount(String.valueOf(failureCount));
+						synchronizeLDAP(GME_RES_COMPANY_CODE, uid, LDAP_ORG_GME, (String.valueOf(failureCount)), req);
 					}
 				}
 			}
 		} catch (Exception ex) {
-			logger.error("Exception occured in loginFailureCall(...). Error is :" + ex.getLocalizedMessage(),  ex);
+			logger.error("Exception occured in loginFailureCall(...). Error is :{}"  ,ex.getMessage());
 			loginFailureResponse.setResultDescription(USER_LOCKEDOUT_UNKNOWN_ERROR_CODE);
 			loginFailureResponse.setErrorCode(MSG_EXCEPTION_ERROR_CODE);
 		}
@@ -252,7 +272,7 @@ public class AuthenticationBO implements Constants{
 					&& StringUtils.isNotBlank(httpHeaders.getCookies().get(lookupItem).getValue())) {
 				
 				resultValue = httpHeaders.getCookies().get(lookupItem).getValue();
-				logger.info("Cookie value for - " + lookupItem + " is : " + resultValue);
+				logger.info("Cookie value for - {} is :{}" , lookupItem , resultValue);
 			}
 		}
 		
@@ -273,7 +293,7 @@ public class AuthenticationBO implements Constants{
 				defaultValue = Integer.parseInt(valueToBeReturnAsInteger);
 			}
 		} catch (Exception ex) {
-			logger.error("Error in parsing the String value to Integer for[" + valueToBeReturnAsInteger + "]");
+			logger.error("Error in parsing the String value to Integer for[{}]", valueToBeReturnAsInteger);
 		}
 		
 		return defaultValue;
@@ -299,8 +319,7 @@ public class AuthenticationBO implements Constants{
 			ldapService.synchronizeLDAP(syncLDAPRequest, ldapOrg, req.getSession(true).getId());
 			
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			logger.error("Error occured while updating 'invalidlogincount' attribute in LDAP. Exception is :" + ex.getLocalizedMessage());
+			logger.error("Error occured while updating 'invalidlogincount' attribute in LDAP. Exception is :{}" , ex.getMessage());
 		}
 		
 	}

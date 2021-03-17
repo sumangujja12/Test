@@ -94,11 +94,6 @@ public class GuidGenerator {
 		    sb.append( raw.substring(20) );
 		}
 
-		if ( sb != null ) {
-			return sb.toString().toUpperCase();
-		}
-		else {
-			return null;
-		}
+		return sb != null ?  sb.toString().toUpperCase() : null ;
 	}
 }

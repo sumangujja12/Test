@@ -30,10 +30,10 @@ public class JNDILDAPConnectionManager extends BaseAbstractService{
 		String securityPrincipal = this.envMessageReader.getMessage(LDAP_ADMIN_UID);
 		String securityCredentials = this.envMessageReader.getMessage(LDAP_SECURITY_CREDENTIALS);
 		
-		logger.debug("LDAP: providerUrl:" +providerUrl);
-		logger.debug("LDAP: securityAuthentication:" +securityAuthentication);
-		logger.debug("LDAP: securityPrincipal:" +securityPrincipal);
-		//logger.debug("LDAP: securityCredentials:" +securityCredentials);
+		logger.debug("LDAP: providerUrl:{}" ,providerUrl);
+		logger.debug("LDAP: securityAuthentication:{}" ,securityAuthentication);
+		logger.debug("LDAP: securityPrincipal:{}" ,securityPrincipal);
+
 		
 		
 		env.put(Context.INITIAL_CONTEXT_FACTORY, Constants.INITIAL_CONTEXT_FACTORY);
@@ -59,9 +59,9 @@ public class JNDILDAPConnectionManager extends BaseAbstractService{
 		String securityPrincipal = this.envMessageReader.getMessage(LDAP_ADMIN_UID_CSLR);
 		String securityCredentials = this.envMessageReader.getMessage(LDAP_SECURITY_CREDENTIALS_CSLR);
 		
-		logger.debug("LDAP: providerUrl:" +providerUrl);
-		logger.debug("LDAP: securityAuthentication:" +securityAuthentication);
-		logger.debug("LDAP: securityPrincipal:" +securityPrincipal);
+		logger.debug("LDAP: providerUrl:{}" ,providerUrl);
+		logger.debug("LDAP: securityAuthentication:{}" ,securityAuthentication);
+		logger.debug("LDAP: securityPrincipal:{}" ,securityPrincipal);
 		
 		
 		

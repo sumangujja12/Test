@@ -54,7 +54,7 @@ public enum EmailTemplateEnum {
 	
 	  
 	 
-	public String templateName;
+	private String templateName;
 
 	EmailTemplateEnum(String templateName) {
 		this.templateName = templateName;

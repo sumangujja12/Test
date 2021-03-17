@@ -14,7 +14,9 @@ import org.springframework.stereotype.Repository;
 import com.multibrand.dao.AbstractSpringDAO;
 import com.multibrand.dao.TCSDAO;
 import com.multibrand.dao.mapper.TCSPersonalizedFlagsRowMapper;
+import com.multibrand.dao.mapper.TCSPersonalizedFlagsSMBRowMapper;
 import com.multibrand.dto.response.TCSPersonalizedFlagsDTO;
+import com.multibrand.dto.response.TCSPersonalizedFlagsSMBDTO;
 import com.multibrand.util.Constants;
 
 @Repository("tcsDAO")
@@ -30,22 +32,19 @@ public class TCSDAOImpl extends AbstractSpringDAO  implements TCSDAO, Constants 
 		init(TCSDAOImpl.class);
 	}
 	
-public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca, String co) {
+public TCSPersonalizedFlagsSMBDTO getPersonalizedFlagsSmb(String bp, String ca, String co) {
 		
-		String methodName = "Load TCSDAOImpl: getPersonalizedFlags(..)";
+		String methodName = "Load TCSDAOImpl: getPersonalizedFlagsSmb(SMB)";
 		logger.debug("START:" + methodName);
-	
-		List<TCSPersonalizedFlagsDTO> tcsPersonalizedFlagsDTO = null;
+		
 		try {
-
-			String sqlQuery = getSqlMessage().getMessage(DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ,  null, null );		
-			
-			tcsPersonalizedFlagsDTO = getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca,co}, new TCSPersonalizedFlagsRowMapper());
-			
-			if ( tcsPersonalizedFlagsDTO.isEmpty() ){
-			  return null;
-			}else {
-			  return tcsPersonalizedFlagsDTO.get(0);
+			List<TCSPersonalizedFlagsSMBDTO> tcsPersonalizedFlagsSMBDTO = null;
+			String sqlQuery = getSqlMessage().getMessage(DB_TCS_SMB_PERSONALIZED_FLAGS_FROM_CUST_BASE ,  null, null );		
+			tcsPersonalizedFlagsSMBDTO = getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca,co}, new TCSPersonalizedFlagsSMBRowMapper());
+			if (tcsPersonalizedFlagsSMBDTO.isEmpty()) {
+				return null;
+			} else {
+				return tcsPersonalizedFlagsSMBDTO.get(0);
 			}
 
 		}  catch(DataAccessException de)
@@ -55,6 +54,31 @@ public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca, String
 		}			
 		logger.debug("END:" + methodName);
 		return null;
-	}	
+	}
+
+public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca, String co) {
+	
+	String methodName = "Load TCSDAOImpl: getPersonalizedFlags(residential customer)";
+	logger.debug("START:" + methodName);
+	List<TCSPersonalizedFlagsDTO> tcsPersonalizedFlagsDTO = null;
+	try {
+		String sqlQuery = getSqlMessage().getMessage(DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ,  null, null );		
+		
+		tcsPersonalizedFlagsDTO = getJdbcTemplate().query(sqlQuery,new Object[] {bp,ca,co}, new TCSPersonalizedFlagsRowMapper());
+		if (tcsPersonalizedFlagsDTO.isEmpty()) {
+			return null;
+		} else {
+			return tcsPersonalizedFlagsDTO.get(0);
+		}
+
+	}  catch(DataAccessException de)
+	{
+		logger.error("DAO Exception in:" + methodName , de);
+		
+	}			
+	logger.debug("END:" + methodName);
+	return null;
+}	
+
 	
 }

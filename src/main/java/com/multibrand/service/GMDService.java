@@ -7,7 +7,6 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
@@ -365,7 +364,6 @@ public class GMDService extends BaseAbstractService {
 	
 	private GMDStatementBreakDownResponse handleGMDStatementResponse(ZEIsuGetGmdStmtResponse zEIsuGetGmdStmtResponse) {
 			
-			//Holder<ZesGmdStmt>  holderZesGmdStmt,  Holder<BigDecimal> holderAvgPrice ,Holder<ZettGmdRetchr> holderZettGmdRetchr, Holder<String>holderLastBillDate) {
 
 		GMDStatementBreakDownResponse response = new GMDStatementBreakDownResponse();
 
@@ -548,7 +546,7 @@ public class GMDService extends BaseAbstractService {
 		
 			return method.invoke(obj, null);
 		} catch(IllegalAccessException | InvocationTargetException | NoSuchMethodException ex) {
-			logger.error("Exception getMethodRun {} ",ex);
+			logger.error("Exception getMethodRun {} ",ex.getMessage());
 		}
 		return 0.0;
 
@@ -590,12 +588,12 @@ public class GMDService extends BaseAbstractService {
 				moveOutResponse.setResultCode(zEISUCREATEMOVEOUTException.getName().value());
 				moveOutResponse.setResultDescription(zEISUCREATEMOVEOUTException.getText());
 			} catch (Exception e) {
-				logger.error("Exception Occured in  createMoveOut {} ", e);
+				logger.error("Exception Occured in  createMoveOut1 {} ", e.getMessage());
 				moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			} 
 		} catch (Exception ex) {
-			logger.error("Exception Occured in  createMoveOut {} ", ex);
+			logger.error("Exception Occured in  createMoveOut {} ", ex.getMessage());
 			moveOutResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			moveOutResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
@@ -619,7 +617,7 @@ public class GMDService extends BaseAbstractService {
 			priceSpikeAlertResponse.setResultCode(RESULT_CODE_SUCCESS);
 			priceSpikeAlertResponse.setResultDescription(MSG_SUCCESS);
 		} catch (Exception ex) {
-			logger.error("Exception Occured in  createMoveOut {} ", ex);
+			logger.error("Exception Occured in  createMoveOut {} ", ex.getMessage());
 			priceSpikeAlertResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			priceSpikeAlertResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
@@ -716,7 +714,7 @@ public class GMDService extends BaseAbstractService {
 				gmdMdStmtResponse.setResultDescription(MSG_SUCCESS);
 			}
 		} catch (Exception e) {
-			logger.error("Exception Occured in  getGmdMdStmt {} ", e);
+			logger.error("Exception Occured in  getGmdMdStmt {} ", e.getMessage());
 			gmdMdStmtResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			gmdMdStmtResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 
@@ -791,7 +789,7 @@ public class GMDService extends BaseAbstractService {
 
 		List<ZesGmdMnlyStmt> montlyStmts = response.getStmtMonthlyData().getItem();
 
-		if (montlyStmts != null && montlyStmts.size() > 0) {
+		if (montlyStmts != null && !montlyStmts.isEmpty()) {
 			for (ZesGmdMnlyStmt zesGmdMnlyStmt : montlyStmts) {
 				GmdMdMonthlyStmtItemResponse item = new GmdMdMonthlyStmtItemResponse();
 				item.setAnciFee(zesGmdMnlyStmt.getAnciFee());
@@ -844,7 +842,7 @@ public class GMDService extends BaseAbstractService {
 				lmpPriceSpikeResponse.setResultDescription(MSG_SUCCESS);
 			}
 		} catch (Exception e) {
-			logger.error("Exception Occured in  getGmdLmpPriceSpike {} ", e);
+			logger.error("Exception Occured in  getGmdLmpPriceSpike {} ", e.getMessage());
 			lmpPriceSpikeResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			lmpPriceSpikeResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}
@@ -860,7 +858,7 @@ public class GMDService extends BaseAbstractService {
 
 		List<LmpPriceItem> items = new ArrayList<>();
 		List<LmpPriceItem> spikeItems = new ArrayList<>();
-		List<GmdZoneCa> zoneCaList = new ArrayList<GmdZoneCa>();
+		List<GmdZoneCa> zoneCaList = new ArrayList();
 
 		LmpAllZonesPriceResponse extAllZonesPrice = new LmpAllZonesPriceResponse();
 		LmpSpikedPriceResponse extSpikedPrice = new LmpSpikedPriceResponse();
@@ -940,7 +938,7 @@ public class GMDService extends BaseAbstractService {
 				gmdHourHeadsSpikeResponse.setResultDescription(MSG_SUCCESS);
 			}
 		} catch (Exception e) {
-			logger.error("Exception Occured in  getGmdLmpPriceSpike {} ", e);
+			logger.error("Exception Occured in  getGmdLmpPriceSpike {} ", e.getMessage());
 			gmdHourHeadsSpikeResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			gmdHourHeadsSpikeResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 		}

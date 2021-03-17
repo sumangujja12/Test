@@ -75,9 +75,7 @@ public class AsyncHelper implements Constants  {
 			method.invoke(serviceObj, requestObject);
 			
 		} catch (Exception e) {
-			logger.error("executeService() Failed : ", e);			
-			
-			e.printStackTrace();
+			logger.error("executeService() Failed :{} ", e.getMessage());			
 		}
 		
 	}

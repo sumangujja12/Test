@@ -2,20 +2,15 @@ package com.multibrand.dao.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.annotation.Resource;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.apache.logging.log4j.Logger;
 import org.springframework.context.support.AbstractMessageSource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.BaseCirroJdbcDAO;
 import com.multibrand.dao.BaseCpdbJdbcDAO;
 import com.multibrand.dao.BaseJdbcDAO;
@@ -86,7 +81,6 @@ public class UserInfoDAOImpl implements UserInfoDAOIF, Constants {
 		try{		
 		
 			if((StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_RELIANT))&&((StringUtils.equals(request.getBrandname(),Constants.BRAND_NAME_RELIANT))||(StringUtils.equals(request.getBrandname(),Constants.BRAND_ID_RELIANT)))){
-				//System.out.println("RELIANT");
 				sql = sqlMessage.getMessage(DBConstants.QUERY_GET_USER_ID, null, null);
 				basecpdbjdbcdao = new BaseCpdbJdbcDAO(cpdbjdbcTemplate);	
 				jdbcTemplate=basecpdbjdbcdao.getJdbcTemplate();
@@ -99,7 +93,6 @@ public class UserInfoDAOImpl implements UserInfoDAOIF, Constants {
 				}	
 				},CommonUtil.paddedCa(request.getContractaccountnumber()));
 			}else if((StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_PENNYWISE))&&((StringUtils.equals(request.getBrandname(),Constants.BRAND_NAME_PENNYWISE))||(StringUtils.equals(request.getBrandname(),Constants.BRAND_ID_PENNYWISE)))){
-				//System.out.println("PENNYWISE");
 				sql = sqlMessage.getMessage(DBConstants.QUERY_GET_USER_ID, null, null);
 				pennywisejdbcdao = new BasePennywiseJdbcDAO(pennywiseJdbcTemplate);	
 				jdbcTemplate=pennywisejdbcdao.getJdbcTemplate();
@@ -112,7 +105,6 @@ public class UserInfoDAOImpl implements UserInfoDAOIF, Constants {
 				}	
 				},CommonUtil.paddedCa(request.getContractaccountnumber()));
 			}else if((StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_CIRRO))&&((StringUtils.equals(request.getBrandname(),Constants.BRAND_NAME_CIRRO))||(StringUtils.equals(request.getBrandname(),Constants.BRAND_ID_CIRRO)))){
-				//System.out.println("CIRRO");
 				sql = sqlMessage.getMessage(DBConstants.QUERY_CIRRO_GET_USER_ID, null, null);
 				cirrojdbcdao = new BaseCirroJdbcDAO(cirroJdbcTemplate);	
 				jdbcTemplate=cirrojdbcdao.getJdbcTemplate();
@@ -126,16 +118,14 @@ public class UserInfoDAOImpl implements UserInfoDAOIF, Constants {
 				},request.getContractaccountnumber(),CommonUtil.paddedCa(request.getContractaccountnumber()));
 				
 			}else if(StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_GME)){
-				//System.out.println("GME");
 			}
 			
-			System.out.println("SQL:"+sql);
 			
 			if(logger.isDebugEnabled())
-				logger.debug("Get user id sql "+sql);
+				logger.debug("Get user id sql:{} ",sql);
 			
 			if(logger.isDebugEnabled())
-				logger.debug("UserID from DB for "+request.getContractaccountnumber()+" is "+userName);
+				logger.debug("UserID from DB for {} is {} ", request.getContractaccountnumber(), userName);
 			if(StringUtils.isNotBlank(userName)){
 				response.setUserid(userName);
 				response.setResultcode(Constants.ZERO);
@@ -148,8 +138,7 @@ public class UserInfoDAOImpl implements UserInfoDAOIF, Constants {
 			}
 			
 		}catch(DataAccessException ex){
-			logger.error("Exception Occurred.... "+ex.getMessage());
-			ex.printStackTrace();
+			logger.error("Exception Occurred.... {}", ex.getMessage());
 			response.setResultcode(Constants.TWO);
 			response.setResultdescription(Constants.RESULT_DESCRIPTION_EXCEPTION);
 			response.setErrorcode(Constants.MSG_EXCP_ERROR_CODE);

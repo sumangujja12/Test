@@ -61,12 +61,11 @@ public class WSConfig {
 	private int httpConnectTimeout;
 	
 	
-	
-	  @Bean Jaxb2Marshaller jaxb2Marshaller() { 
+	@Bean Jaxb2Marshaller jaxb2Marshaller() { 
 		  Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
 		  jaxb2Marshaller.setContextPaths("com.nrg.cxfstubs.kbamatrix","com.nrg.cxfstubs.gmdmoveout","com.nrg.cxfstubs.gmdpricespike"); 
 		  return jaxb2Marshaller; 
-	  }
+	}
 	 
 
 	@Bean(name = "webServiceTemplateForGMDStatement")
@@ -164,7 +163,7 @@ public class WSConfig {
         
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
-	}	
+	}
 
 	@Bean
 	public HttpComponentsMessageSender httpComponentsMessageSender() {

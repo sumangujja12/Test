@@ -155,7 +155,7 @@ public class PersonDaoImpl extends AbstractSpringDAO implements PersonDao,
 	 */
 	public String updatePerson(UpdatePersonRequest request) {
 		logger.debug("Entering >> updatePerson");
-		logger.debug("request = " + request);
+		logger.debug("request = {}" , request);
 		String errorCode = null;
 		if (request != null) {
 			try {
@@ -186,14 +186,14 @@ public class PersonDaoImpl extends AbstractSpringDAO implements PersonDao,
 					request.setDrlFour(StringUtils.EMPTY);
 					request.setSsnFour(StringUtils.EMPTY);
 
-					logger.debug("Input procedure request = " + request);
+					logger.debug("Input procedure request = {}" , request);
 					
 					// Execute the procedure:
 					procedureTemplate.execute(request);
 
 					String dbErrorCode = request.getErrorCode();
-					logger.debug("After procedure execution, dbErrorCode = "
-							+ dbErrorCode);
+					logger.debug("After procedure execution, dbErrorCode ={} "
+							, dbErrorCode);
 
 					// Error condition:
 					if (StringUtils.isNotEmpty(dbErrorCode)) {
@@ -216,14 +216,12 @@ public class PersonDaoImpl extends AbstractSpringDAO implements PersonDao,
 		}
 
 		if (StringUtils.isNotEmpty(errorCode)) {
-			logger.error("Failed person update in DB with personId = "
-					+ request.getPersonId());
+			logger.error("Failed person update in DB with personId ={}", request);
 		} else if (StringUtils.isEmpty(errorCode)) {
-			logger.error("Successfully updated persion in DB with personId = "
-					+ request.getPersonId());
+			logger.error("Successfully updated persion in DB with personId = {}", request);
 		}
 
-		logger.debug("errorCode = " + errorCode);
+		logger.debug("errorCode = {}" , errorCode);
 		logger.debug("Exiting << updatePerson");
 		return errorCode;
 	}

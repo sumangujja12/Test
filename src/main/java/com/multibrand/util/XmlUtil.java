@@ -1,5 +1,8 @@
 package com.multibrand.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  *
  */
@@ -49,7 +52,7 @@ public class XmlUtil {
 	/**
 	 * The LOGGER
 	 */
-	//private static final Logger LOGGER = LogManager.getLogger(XmlUtil.class.getName());
+	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
 	/**
      * <pre>
@@ -87,9 +90,11 @@ public class XmlUtil {
             throw new RuntimeException("Error while writing the document into String:" + e);
         } finally {
             try {
-                is.close();
+            	if (is != null) {
+            		is.close();
+            	}
             } catch (Exception e) {
-            	System.out.println("convertXMLFileToString() InputStream Close Exception" + e.getMessage());
+            	 logger.error("convertXMLFileToString() InputStream Close Exception:{}" , e.getMessage());
             }
         }
 
