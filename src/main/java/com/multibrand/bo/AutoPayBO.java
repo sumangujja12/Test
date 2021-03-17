@@ -325,15 +325,7 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 		request.setStrExpirationDate(expirationDate);
 		request.setStrCAName(accountName);
 		
-		String cardType = "";
-		if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZVIS))
-			cardType = VISA;
-		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZMCD))
-			cardType = MASTERCARD;
-		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
-			cardType = DISCOVER;
-		else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZAMX))
-			cardType = AMERICANEXPRESS;
+		String cardType = getCeditCardType(authType);
 		
 		String maskCCNumber = CommonUtil.maskCCNo(ccNumber);
 		String ccLastDigits = maskCCNumber.substring(maskCCNumber.length()-4, maskCCNumber.length());
@@ -344,17 +336,18 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 			
 			if(response.getStrStatus() != null)autoPayCCResponse.setStrStatus(response.getStrStatus());
 			
-			if(response.getErrorCode()!=null && !response.getErrorCode().equalsIgnoreCase("")){
+			if(response.getErrorCode()!=null && !response.getErrorCode().equalsIgnoreCase("")) {
 				autoPayCCResponse.setResultCode(RESULT_CODE_CCS_ERROR);
 				if(response.getErrorMessage()!=null)autoPayCCResponse.setResultDescription(response.getErrorMessage());
 				autoPayCCResponse.setErrorCode(response.getErrorCode());
 				if(response.getErrorMessage()!=null)autoPayCCResponse.setErrorMessage(response.getErrorMessage());
+				
 			}else if(!CIRRO_COMPANY_CODE.equalsIgnoreCase(companyCode) && !CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)
-					&& !CommonUtil.checkIfGMEPrepay(companyCode, brandName, emailTypeId)){
+					&& !CommonUtil.checkIfGMEPrepay(companyCode, brandName, emailTypeId)) {
 				
                 logger.info("Sending mail for enrollment successful");
 				
-				HashMap<String, String> templateProps = new HashMap<String,String>();
+				HashMap<String, String> templateProps = new HashMap();
 					
 				templateProps.put(CARD_TYPE, cardType);
 				templateProps.put(CARD_NUMBER, maskCCNumber);
@@ -363,125 +356,137 @@ public AutoPayCCResponse submitCCAutoPay(String authType, String accountName,  S
 				if(StringUtils.isBlank(locale)|| locale.equalsIgnoreCase(LANGUAGE_CODE_EN)){
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
 					logger.info("Sending mail for successful auto pay enrollment EN");
-                    if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
-                    	emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_EN, templateProps, companyCode);
-                    }
+                    emailHelper.sendMailWithBCC(email, this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_EN, templateProps, companyCode);
 				} else{
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 					logger.info("Sending mail for successful auto pay enrollment ES");
-                    if(StringUtils.isNotEmpty(brandName) && !brandName.equalsIgnoreCase(BRAND_ID_GMD)) {
-                    	emailHelper.sendMailWithBCC(email,this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_ES, templateProps, companyCode);
-                    }
+                    emailHelper.sendMailWithBCC(email,this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_ES, templateProps, companyCode);
 				}
 				
 			}
 			
-			if (CIRRO_COMPANY_CODE.equalsIgnoreCase(companyCode) && CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)){
-				Map<String, Object> responseMap = new HashMap<String, Object>();
-				ProfileResponse profileResponse = null;
-				responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
-				if(responseMap!= null && responseMap.size()!= 0)
-				{
-					profileResponse= (ProfileResponse)responseMap.get("profileResponse");
-				}
-				else{
-					logger.info("Couldn't find the profile for given account number, so couldn't send mail");
-				}
-				ContractAccountDO caDO  = null;
-				
-				if (profileResponse != null) {
-					caDO = profileResponse.getContractAccountDO();
-					if(caDO != null){
-						
-						logger.info("Found profile for given account number, Found contract account info");
-						
-						String caName = caDO.getCAName();
-						
-						if(caName != null && !caName.equalsIgnoreCase("")){
-							logger.info("Found CA Name : " + caName + ", Sending Mail for auto pay update");
-							
-							HashMap<String, String> templateProperties = new HashMap<String,String>();
-
-							templateProperties.put(CUSTOMER_NAME, CommonUtil.capitalizeAllWords(caName));
-
-
-							try {
-
-							Boolean status = EmailHelper.sendMail( email ,"", CIRRO_AUTO_PAY_UPDATE_EXTERNAL_ID_EN, templateProperties, companyCode);
-
-							logger.info("Auto Pay Update Email sent status : " + status);
-
-							} catch (Exception e) {
-						    logger.info("Exception in sending Auto Pay Update Email " );
-							// TODO Auto-generated catch block
-	                        logger.info(e);
-							logger.error(e);
-
-							}
-							
-							
-						} else{
-							logger.info("Couldn't find CA Name : " + caName + ", so couldn't send mail auto pay update");	
-						}
-						
-					}else{
-						logger.info("Found the profile for given account number but couldn't find the contract account info, so couldn't send mail");
-					}                 
-				 
-							
-				}else{
-					logger.info("Couldn't find the profile for given account number, so couldn't send mail");
-				}
-				
-				
-			 }
+			CirroAutoPayEmailConfirmation(accountNumber, companyCode, email, sessionId, brandName);
+			writeAutoPayContactLog(accountNumber, bpid, companyCode, source, autoPayCCResponse, cardType, ccLastDigits);
 			
-			
-			
-		} catch (RemoteException e) {
-
-			autoPayCCResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			autoPayCCResponse.setResultDescription("Exception Occured");
-			throw new OAMException(200, e.getMessage(), autoPayCCResponse);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+
 			autoPayCCResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			autoPayCCResponse.setResultDescription("Exception Occured");
 			throw new OAMException(200, e.getMessage(), autoPayCCResponse);
 			
-		}
-		
-		if(autoPayCCResponse.getResultCode()!=null && source!=null &&
-				(autoPayCCResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||autoPayCCResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
-				GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE)){
-			logger.info("Inside submitCCAutoPay:updateContactLog(...) block - in AutoPayBO");
-			CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
-			cssUpdateLogRequest.setBusinessPartnerNumber(bpid);
-			cssUpdateLogRequest.setContractAccountNumber(accountNumber);
-			cssUpdateLogRequest.setContactClass(CONTACT_LOG_CC_CONTACT_CLASS);
-			cssUpdateLogRequest.setContactActivity(CONTACT_LOG_ENROLL_CONTACT_ACTIVITY);
-			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
-			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
-			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a "+cardType+" card with last four digits "+ccLastDigits+" on "+CommonUtil.getCurrentDateandTime()+".");
-			cssUpdateLogRequest.setFormatCol("");//Should be Blank
-			cssUpdateLogRequest.setCompanyCode(companyCode);
-			
-			logger.info("Start: call TOSService.updateContactLog(...)");
-			try {
-				tosService.updateContactLog(cssUpdateLogRequest);
-			} catch(Exception e) {
-				logger.error("Error in updateContactLog:"+e);
-			}
-			logger.info("End: call TOSService.updateContactLog(...)");
-			logger.info("End submitCCAutoPay:updateContactLog(...) block - in AutoPayBO");
-		}
+		}		
 		logger.info("AutoPayBO.submitCCAutoPay :: END");
 		return autoPayCCResponse;
 		
 		
 	}
+
+
+private void CirroAutoPayEmailConfirmation(String accountNumber, String companyCode, String email, String sessionId,
+		String brandName) throws Exception {
+	if (CIRRO_COMPANY_CODE.equalsIgnoreCase(companyCode) && CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)){
+		Map<String, Object> responseMap = new HashMap();
+		ProfileResponse profileResponse = null;
+		responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
+		if(responseMap!= null && responseMap.size()!= 0)
+		{
+			profileResponse= (ProfileResponse)responseMap.get("profileResponse");
+		}
+		else{
+			logger.info("Couldn't find the profile for given account number, so couldn't send mail");
+		}
+		ContractAccountDO caDO  = null;
+		
+		if (profileResponse != null) {
+			caDO = profileResponse.getContractAccountDO();
+			if(caDO != null){
+				
+				logger.info("Found profile for given account number, Found contract account info");
+				
+				String caName = caDO.getCAName();
+				
+				if(caName != null && !caName.equalsIgnoreCase("")){
+					logger.info("Found CA Name : {} , Sending Mail for auto pay update",  caName );
+					
+					HashMap<String, String> templateProperties = new HashMap<String,String>();
+
+					templateProperties.put(CUSTOMER_NAME, CommonUtil.capitalizeAllWords(caName));
+
+
+					try {
+
+					Boolean status = EmailHelper.sendMail( email ,"", CIRRO_AUTO_PAY_UPDATE_EXTERNAL_ID_EN, templateProperties, companyCode);
+
+					logger.info("Auto Pay Update Email sent status : {}" , status);
+
+					} catch (Exception e) {
+				    logger.info("Exception in sending Auto Pay Update Email " );
+					logger.error(e);
+
+					}
+					
+					
+				} else{
+					logger.info("Couldn't find CA Name : {} , so couldn't send mail auto pay update" , caName );	
+				}
+				
+			}else{
+				logger.info("Found the profile for given account number but couldn't find the contract account info, so couldn't send mail");
+			}                 
+		 
+					
+		}else{
+			logger.info("Couldn't find the profile for given account number, so couldn't send mail");
+		}
+		
+		
+	 }
+}
+
+
+private void writeAutoPayContactLog(String accountNumber, String bpid, String companyCode, String source,
+		AutoPayCCResponse autoPayCCResponse, String cardType, String ccLastDigits) {
+	if(autoPayCCResponse.getResultCode()!=null && source!=null &&
+			(autoPayCCResponse.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)||autoPayCCResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE))&& 
+			GME_RES_COMPANY_CODE.equalsIgnoreCase(companyCode)&&source.equalsIgnoreCase(MOBILE)){
+		logger.info("Inside submitCCAutoPay:updateContactLog(...) block - in AutoPayBO");
+		CreateContactLogRequest cssUpdateLogRequest = new CreateContactLogRequest();
+		cssUpdateLogRequest.setBusinessPartnerNumber(bpid);
+		cssUpdateLogRequest.setContractAccountNumber(accountNumber);
+		cssUpdateLogRequest.setContactClass(CONTACT_LOG_CC_CONTACT_CLASS);
+		cssUpdateLogRequest.setContactActivity(CONTACT_LOG_ENROLL_CONTACT_ACTIVITY);
+		cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
+		cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
+		cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
+		cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(accountNumber)+" enrolled in autoPay using a "+cardType+" card with last four digits "+ccLastDigits+" on "+CommonUtil.getCurrentDateandTime()+".");
+		cssUpdateLogRequest.setFormatCol("");//Should be Blank
+		cssUpdateLogRequest.setCompanyCode(companyCode);
+		
+		logger.info("Start: call TOSService.updateContactLog(...)");
+		try {
+			tosService.updateContactLog(cssUpdateLogRequest);
+		} catch(Exception e) {
+			logger.error("Error in updateContactLog:{}",e.getMessage());
+		}
+		logger.info("End: call TOSService.updateContactLog(...)");
+		logger.info("End submitCCAutoPay:updateContactLog(...) block - in AutoPayBO");
+	}
+}
+
+
+private String getCeditCardType(String authType) {
+	String cardType = "";
+	if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZVIS))
+		cardType = VISA;
+	else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZMCD))
+		cardType = MASTERCARD;
+	else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZDSC))
+		cardType = DISCOVER;
+	else if(!StringUtils.isEmpty(authType) && authType.equalsIgnoreCase(ZAMX))
+		cardType = AMERICANEXPRESS;
+	return cardType;
+}
 
 /**
  * @author kdeshmu1
