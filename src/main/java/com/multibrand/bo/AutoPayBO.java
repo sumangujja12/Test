@@ -471,8 +471,7 @@ public DeEnrollResponse deEnroll(AutoPayRequest request, String sessionId){
 	}
 	
 	
-		writeDeEnrollContactLog(request, response, payMethodIndicator, authType, maskCCNumber, maskBankAcctNumber,
-				cardType);	
+		writeDeEnrollContactLog(request, response, payMethodIndicator, authType, maskCCNumber, maskBankAcctNumber);	
 
 	logger.info("AutoPayBO.deEnroll :: END");
 	return response;
@@ -480,7 +479,7 @@ public DeEnrollResponse deEnroll(AutoPayRequest request, String sessionId){
 
 
 private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse response, String payMethodIndicator,
-		String authType, String maskCCNumber, String maskBankAcctNumber, String cardType) {
+		String authType, String maskCCNumber, String maskBankAcctNumber) {
 	if (response.getResultCode()!= null && request.getBpNumber()!= null && request.getSource()!= null
 			&& (response.getResultCode().equalsIgnoreCase(RESULT_CODE_SUCCESS)
 					|| response.getResultCode().equalsIgnoreCase(SUCCESS_CODE))
@@ -494,14 +493,14 @@ private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse re
 	cssUpdateLogRequest.setContractAccountNumber(request.getAccountNumber());
 		if(payMethodIndicator.equalsIgnoreCase(AUTOPAY_G_FLAG)){
 
-			cardType = getCeditCardType(authType);
+			String ccType = getCeditCardType(authType);
 			
 			cssUpdateLogRequest.setContactClass(CONTACT_LOG_CC_CONTACT_CLASS);
 			cssUpdateLogRequest.setContactActivity(CONTACT_LOG_DEENROLL_CONTACT_ACTIVITY);
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(request.getAccountNumber())+" de-enrolled in autoPay using a "+cardType+" card with last four digits "+maskCCNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(request.getAccountNumber())+" de-enrolled in autoPay using a "+ccType+" card with last four digits "+maskCCNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
 		}else{
 			
 			cssUpdateLogRequest.setContactClass(CONTACT_LOG_BANK_CONTACT_CLASS);
