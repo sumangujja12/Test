@@ -15,8 +15,6 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.multibrand.domain.AcctValidationRequest;
@@ -133,7 +131,6 @@ import com.nrg.cxfstubs.sundriverclub.ZetWebncProducts;
 
 @Service
 public class ProfileService extends BaseAbstractService {
-	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
@@ -171,8 +168,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @throws Exception 
 	 */
 	public com.multibrand.vo.response.OfferDO getCurrentOfferDocs(String caNumber,
-			String bpNumber, String esid, String contractId, String languageCode, String companyCode, com.multibrand.vo.response.OfferDO offerDO, String sessionId)
-					throws Exception {
+			String bpNumber, String esid, String contractId, String languageCode, String companyCode, com.multibrand.vo.response.OfferDO offerDO, String sessionId) {
 
 		logger.info("[Profile Service ]::::::getCurrentOfferDocs");
 		long startTime = CommonUtil.getStartTime();
@@ -181,8 +177,6 @@ public class ProfileService extends BaseAbstractService {
 		URL url = ZEISUGETOFFERDATAFORSWAP_Service.class
 				.getResource("Z_E_ISU_GET_OFFERDATA_FOR_SWAP-RPM.wsdl");
 
-		if (url == null)
-			logger.info("Z_E_ISU_GET_OFFERDATA_FOR_SWAP not initialised");
 
 		ZEISUGETOFFERDATAFORSWAP_Service port = new ZEISUGETOFFERDATAFORSWAP_Service(
 				url);
@@ -212,16 +206,16 @@ public class ProfileService extends BaseAbstractService {
 		zesSwapOfferInputList.add(zesSwapofferInput);
 
 		String imCaller = WEB_SUBSCRIBER_ID;		
-		javax.xml.ws.Holder<ZeiCampEnviDetails> hZeiCampEnvrDetails = new javax.xml.ws.Holder();
-		javax.xml.ws.Holder<ZeiSwapOutput> hZeiSwapOutput = new javax.xml.ws.Holder();
-		javax.xml.ws.Holder<ZeiOfrcdFlag> hZeiOffrCDFlag = new javax.xml.ws.Holder();
+		javax.xml.ws.Holder<ZeiCampEnviDetails> hZeiCampEnvrDetails = new javax.xml.ws.Holder<>();
+		javax.xml.ws.Holder<ZeiSwapOutput> hZeiSwapOutput = new javax.xml.ws.Holder<>();
+		javax.xml.ws.Holder<ZeiOfrcdFlag> hZeiOffrCDFlag = new javax.xml.ws.Holder<>();
 
 
 		try{
 		stub.zeIsuGetOfferdataForSwap(imCaller, zeiSwapOfferInputObj, "", null, hZeiCampEnvrDetails, hZeiSwapOutput, hZeiOffrCDFlag);
 		}catch(Exception ex){
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(request));
+
+			logger.debug(XmlUtil.pojoToXML(request));
 			utilityloggerHelper.logTransaction("getCurrentOfferDocs", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 			throw ex;
 			
@@ -274,10 +268,7 @@ public class ProfileService extends BaseAbstractService {
 		}
 		
 		utilityloggerHelper.logTransaction("getCurrentOfferDocs", false, request,offerDO, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-		if(logger.isDebugEnabled()){
-			logger.debug(XmlUtil.pojoToXML(request));
-			logger.debug(XmlUtil.pojoToXML(offerDO));
-		}
+
 		logger.info("[ProfileService ]::::: getCurrentOfferDocs ");
 		return offerDO;
 	}

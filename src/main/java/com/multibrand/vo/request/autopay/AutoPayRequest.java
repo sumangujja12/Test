@@ -2,9 +2,9 @@ package com.multibrand.vo.request.autopay;
 
 import java.io.Serializable;
 import com.multibrand.dto.request.FormEntityRequest;
-import com.multibrand.util.Constants;
 
-public class AutoPayRequest implements FormEntityRequest, Constants,Serializable {
+
+public class AutoPayRequest implements FormEntityRequest,Serializable {
 
 	/**
 	 * 
