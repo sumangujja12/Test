@@ -1,8 +1,15 @@
 package com.multibrand.vo.request.autopay;
 
+import java.io.Serializable;
+import com.multibrand.dto.request.FormEntityRequest;
+import com.multibrand.util.Constants;
 
-public class AutoPayRequest {
+public class AutoPayRequest implements FormEntityRequest, Constants,Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String authType = "";
 	private String accountNumber = "";
 	private String bankAccountNumber = "";
