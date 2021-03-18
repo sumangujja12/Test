@@ -118,11 +118,11 @@ public class AutoPayResource {
 	@Path("validateCCDetails")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response validateCCDetails(@FormParam("authType") String authType, @FormParam("accountNumber") String accountNumber, @FormParam("bpid") String bpid, @FormParam("ccNumber") String ccNumber, @FormParam("cvvNumber") String cvvNumber, @FormParam("expirationDate") String expirationDate, @FormParam("billingZip") String billingZip, @FormParam("companyCode") String companyCode, @FormParam("brandName,") String brandName){
+	public Response validateCCDetails(AutoPayRequest autoPayRequest){
 		logger.debug("Start AutoPayResource.validateCCDetails :: START");
 		Response response = null;
 		
-		ValidateCCResponse validateCCResp = autoPayBO.validateCCDetails(authType, accountNumber, bpid, ccNumber, cvvNumber, expirationDate, billingZip, companyCode, httpRequest.getSession(true).getId(),brandName);
+		ValidateCCResponse validateCCResp = autoPayBO.validateCCDetails(autoPayRequest, httpRequest.getSession(true).getId());
 		
 		response = Response.status(200).entity(validateCCResp).build();
 		logger.debug("End AutoPayResource.validateCCDetails :: END");
