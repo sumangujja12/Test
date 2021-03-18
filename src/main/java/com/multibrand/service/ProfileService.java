@@ -141,6 +141,9 @@ public class ProfileService extends BaseAbstractService {
 	private ProfileHelper profileHelper;
 	
 	private String[] excludeOfferList = {"S", "F"}; 
+	private static final String SECONDAY_NAME_UPDATE_LABEL = "secondaryNameUpdate";
+	
+	
 	
 	/**
 	 * This will return ProfileDomainProxy and set EndPoint URL
@@ -1400,7 +1403,7 @@ public class ProfileService extends BaseAbstractService {
        	return response;
 	}
 	
-	public SecondaryNameResponse secondaryNameUpdate(SecondaryNameUpdateReqVO request, String companyCode, String sessionId)throws Exception{
+	public SecondaryNameResponse secondaryNameUpdate(SecondaryNameUpdateReqVO request, String companyCode, String sessionId)throws RemoteException {
 		
 		SecondaryNameResponse response = new SecondaryNameResponse();
 		logger.info("ProfileService - secondaryNameUpdate ccs call starts...");
@@ -1473,7 +1476,7 @@ public class ProfileService extends BaseAbstractService {
      				   response.setResultCode(RESULT_CODE_SUCCESS);
      				   response.setResultDescription(bapiret2.getMessage());
      				   response.setSecondaryNames(new SecondaryName[0]);
-     				  utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+     				  utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
      				  return response;
      				}
      				else
@@ -1481,7 +1484,7 @@ public class ProfileService extends BaseAbstractService {
      				  response.setResultCode(RESULT_CODE_CCS_ERROR);
      				  response.setResultDescription(bapiret2.getMessage());
      				response.setSecondaryNames(new SecondaryName[0]);
-     				utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+     				utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
      				return response;
      				}  
      			}
