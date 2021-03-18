@@ -21,7 +21,9 @@ public class AutoPayRequest {
 	private String ccNumber = "";
 	private String expirationDate = "";
 	private String billingZip = "";
+	private String cvvNumber = "";
 	
+
 
 	
 	/**
@@ -240,6 +242,17 @@ public class AutoPayRequest {
 	public void setBillingZip(String billingZip) {
 		this.billingZip = billingZip;
 	}
-		
+	/**
+	 * @return the cvvNumber
+	 */
+	public String getCvvNumber() {
+		return cvvNumber;
+	}
+	/**
+	 * @param cvvNumber the cvvNumber to set
+	 */
+	public void setCvvNumber(String cvvNumber) {
+		this.cvvNumber = cvvNumber;
+	}		
 }
 

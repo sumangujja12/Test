@@ -1,9 +1,7 @@
 package com.multibrand.bo;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,25 +36,25 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	
 	@Autowired
 	private PaymentService paymentService;
-	
-	@Autowired
-	private EmailHelper emailHelper;
-		
+			
 	@Autowired
 	private TOSService tosService;
 	
 	@Autowired
 	private BillingBO billingBO;
 	
+	private static final String ACCOUNT_NUMBER_LABEL ="User with account number ";
+	private static final Map<String, String> deEnrollMap = new HashMap<>();
+
+	static 
+	{
+		deEnrollMap.put("01", "Invalid Contract Account");
+		deEnrollMap.put("02", "Autopay de-enroll failed");
+		deEnrollMap.put("03", "Invalid Payment Method");
+	}
 	
-	private static Map<String, String> deEnrollMap = Collections.unmodifiableMap(new HashMap<String, String>() {
-		private static final long serialVersionUID = 1L;
-		{
-			put("01", "Invalid Contract Account");
-			put("02", "Autopay de-enroll failed");
-			put("03", "Invalid Payment Method");
-		}
-	});	
+	
+	
 	
     
 	public ValidateBankResponse validateBankDetails(String ca, String bankAccountNumber, String bankRoutingNumber, String companyCode, String sessionId, String brandName){
@@ -120,7 +118,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 				
                 logger.info("Sending mail for auto pay enrollment successful");		
                 
-				HashMap<String, String> templateProps = new HashMap();
+				HashMap<String, String> templateProps = new HashMap<>();
 					
 				templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
 				templateProps.put(BANK_ROUTING_NUMBER, autoPayRequest.getBankRoutingNumber());
@@ -128,11 +126,11 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 				if(StringUtils.isBlank(autoPayRequest.getLanguageCode())|| autoPayRequest.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)){
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
 					logger.info("Sending mail for successful auto pay enrollment EN");
-					emailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_EN, templateProps, autoPayRequest.getCompanyCode());
+					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_EN, templateProps, autoPayRequest.getCompanyCode());
 				} else{
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
 					logger.info("Sending mail for successful auto pay enrollment ES");
-					emailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_ES, templateProps, autoPayRequest.getCompanyCode());
+					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_ES, templateProps, autoPayRequest.getCompanyCode());
 				}
 				
 			}
@@ -158,7 +156,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	private void sendCirroBankAutoPayConfirmationEmail(AutoPayRequest autoPayRequest) {
 		if (CIRRO_COMPANY_CODE.equalsIgnoreCase(autoPayRequest.getCompanyCode()) && CIRRO_BRAND_NAME.equalsIgnoreCase(autoPayRequest.getBrandName())){
 			
-			HashMap<String, String> templateProperties = new HashMap();
+			HashMap<String, String> templateProperties = new HashMap<>();
 
 			templateProperties.put(CUSTOMER_NAME, CommonUtil.capitalizeAllWords(autoPayRequest.getCaName()));
 
@@ -193,7 +191,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(autoPayRequest.getAccountNumber())+" enrolled in autoPay using a bank account with last 3 digits "+bankLastDigits+" on "+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setTextLines(ACCOUNT_NUMBER_LABEL + CommonUtil.stripLeadingZeros(autoPayRequest.getAccountNumber())+" enrolled in autoPay using a bank account with last 3 digits "+bankLastDigits+" on "+CommonUtil.getCurrentDateandTime()+".");
 			cssUpdateLogRequest.setFormatCol("");//Should be Blank
 			cssUpdateLogRequest.setCompanyCode(autoPayRequest.getCompanyCode());
 						
@@ -209,27 +207,27 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	}
 	
 	
-	public ValidateCCResponse validateCCDetails(String authType, String accountNumber, String bpid, String ccNumber, String cvvNumber, String expirationDate, String billingZip, String companyCode, String sessionId, String brandName){
-		
+	public ValidateCCResponse validateCCDetails(AutoPayRequest autoPayRequest, String sessionId){
+				
 		logger.info("AutoPayBO.validateCCDetails :: START");
 		
 		ValidateCCResponse validateCCResponse = new ValidateCCResponse(); 
 		
 		ValidateCCRequest request = new ValidateCCRequest();
-		request.setStrAuthorizationType(authType);
-		request.setStrBillingZip(billingZip);
-		request.setStrBPNumber(bpid);
-		if(accountNumber == null || accountNumber.equalsIgnoreCase("")){
+		request.setStrAuthorizationType(autoPayRequest.getAuthType());
+		request.setStrBillingZip(autoPayRequest.getBillingZip());
+		request.setStrBPNumber(autoPayRequest.getBpid());
+		if(autoPayRequest.getAccountNumber() == null || autoPayRequest.getAccountNumber().equalsIgnoreCase("")){
 			request.setStrCANumber("");
 		}else{
-			request.setStrCANumber(accountNumber);
+			request.setStrCANumber(autoPayRequest.getAccountNumber());
 		}
-		request.setStrCCNumber(ccNumber);
-		request.setStrExpirationDate(expirationDate);
-		request.setStrCVVNumber(cvvNumber);
-		request.setStrCompanyCode(companyCode);
+		request.setStrCCNumber(autoPayRequest.getCcNumber());
+		request.setStrExpirationDate(autoPayRequest.getExpirationDate());
+		request.setStrCVVNumber(autoPayRequest.getCvvNumber());
+		request.setStrCompanyCode(autoPayRequest.getCompanyCode());
 		try {
-			com.multibrand.domain.ValidateCCResponse response = paymentService.validateCCDetails(request, companyCode, sessionId,brandName);
+			com.multibrand.domain.ValidateCCResponse response = paymentService.validateCCDetails(request, autoPayRequest.getCompanyCode(), sessionId,autoPayRequest.getBrandName());
 			
 			if(response.getStrXCODE()!= null)validateCCResponse.setStrXCODE(response.getStrXCODE());
 			
@@ -294,7 +292,7 @@ public AutoPayCCResponse submitCCAutoPay(AutoPayRequest autoPayRequest, String s
 				
                 logger.info("Sending mail for enrollment successful");
 				
-				HashMap<String, String> templateProps = new HashMap();
+				HashMap<String, String> templateProps = new HashMap<>();
 					
 				templateProps.put(CARD_TYPE, cardType);
 				templateProps.put(CARD_NUMBER, maskCCNumber);
@@ -303,11 +301,11 @@ public AutoPayCCResponse submitCCAutoPay(AutoPayRequest autoPayRequest, String s
 				if(StringUtils.isBlank(autoPayRequest.getLanguageCode())|| autoPayRequest.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)){
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD);
 					logger.info("Sending mail for successful auto pay enrollment EN");
-                    emailHelper.sendMailWithBCC(autoPayRequest.getEmail(), this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_EN, templateProps, autoPayRequest.getCompanyCode());
+					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(), this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_EN, templateProps, autoPayRequest.getCompanyCode());
 				} else{
 					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_CARD_ES);
 					logger.info("Sending mail for successful auto pay enrollment ES");
-                    emailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_ES, templateProps, autoPayRequest.getCompanyCode());
+					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL),  "", AUTO_PAY_ENROLL_CONF_CC_ES, templateProps, autoPayRequest.getCompanyCode());
 				}
 				
 			}
@@ -333,7 +331,7 @@ public AutoPayCCResponse submitCCAutoPay(AutoPayRequest autoPayRequest, String s
 	private void cirroAutoPayEmailConfirmation( String companyCode, String email, String brandName, String caName) throws Exception {
 		if (CIRRO_COMPANY_CODE.equalsIgnoreCase(companyCode) && CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)) {
 
-			HashMap<String, String> templateProperties = new HashMap();
+			HashMap<String, String> templateProperties = new HashMap<>();
 
 			templateProperties.put(CUSTOMER_NAME, CommonUtil.capitalizeAllWords(caName));
 
@@ -369,7 +367,7 @@ public AutoPayCCResponse submitCCAutoPay(AutoPayRequest autoPayRequest, String s
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number " + CommonUtil.stripLeadingZeros(accountNumber)
+			cssUpdateLogRequest.setTextLines(ACCOUNT_NUMBER_LABEL + CommonUtil.stripLeadingZeros(accountNumber)
 					+ " enrolled in autoPay using a " + cardType + " card with last four digits " + ccLastDigits
 					+ " on " + CommonUtil.getCurrentDateandTime() + ".");
 			cssUpdateLogRequest.setFormatCol("");// Should be Blank
@@ -415,7 +413,6 @@ public DeEnrollResponse deEnroll(AutoPayRequest request, String sessionId){
 	String authType ="";
 	String maskCCNumber="";
 	String maskBankAcctNumber="";
-	String cardType = "";
 	try {
 		
 		if (request.getSource() != null && GME_RES_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode()) && request.getSource().equalsIgnoreCase(MOBILE))
@@ -500,7 +497,7 @@ private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse re
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(request.getAccountNumber())+" de-enrolled in autoPay using a "+ccType+" card with last four digits "+maskCCNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setTextLines(ACCOUNT_NUMBER_LABEL + CommonUtil.stripLeadingZeros(request.getAccountNumber())+" de-enrolled in autoPay using a "+ccType+" card with last four digits "+maskCCNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
 		}else{
 			
 			cssUpdateLogRequest.setContactClass(CONTACT_LOG_BANK_CONTACT_CLASS);
@@ -508,7 +505,7 @@ private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse re
 			cssUpdateLogRequest.setCommitFlag(CONTACT_LOG_COMMIT_FLAG);
 			cssUpdateLogRequest.setContactType(CONTACT_LOG_CONTACT_TYPE);
 			cssUpdateLogRequest.setDivision(CONTACT_LOG_DIVISION);
-			cssUpdateLogRequest.setTextLines("User with account number "+CommonUtil.stripLeadingZeros(request.getAccountNumber())+" de-enrolled in autoPay using a bank account with last 3 digits "+maskBankAcctNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
+			cssUpdateLogRequest.setTextLines(ACCOUNT_NUMBER_LABEL + CommonUtil.stripLeadingZeros(request.getAccountNumber())+" de-enrolled in autoPay using a bank account with last 3 digits "+maskBankAcctNumber+" on "+CommonUtil.getCurrentDateandTime()+".");
 		}
 		cssUpdateLogRequest.setFormatCol("");//Should be Blank
 		cssUpdateLogRequest.setCompanyCode(request.getCompanyCode());
@@ -529,7 +526,7 @@ private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse re
 		if (CIRRO_COMPANY_CODE.equalsIgnoreCase(request.getCompanyCode())
 				&& CIRRO_BRAND_NAME.equalsIgnoreCase(request.getBrandName())) {
 
-			HashMap<String, String> templateProperties = new HashMap();
+			HashMap<String, String> templateProperties = new HashMap<>();
 
 			templateProperties.put(CUSTOMER_NAME, CommonUtil.capitalizeAllWords(request.getCaName()));
 
@@ -556,16 +553,16 @@ private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse re
 				&& !CIRRO_BRAND_NAME.equalsIgnoreCase(request.getBrandName())) {
 			// sending mail for successful deenroll
 			logger.info("Sending mail for successful de-enroll for auto pay");
-			HashMap<String, String> templateProps = new HashMap();
+			HashMap<String, String> templateProps = new HashMap<>();
 
 			if (StringUtils.isBlank(request.getLanguageCode())
 					|| request.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)) {
 				logger.info("Sending mail for successful auto pay de-enrollment EN");
-				emailHelper.sendMailWithBCC(request.getEmail(), this.envMessageReader.getMessage(QC_BCC_MAIL), "",
+				EmailHelper.sendMailWithBCC(request.getEmail(), this.envMessageReader.getMessage(QC_BCC_MAIL), "",
 						AUTOPAY_DEENROLL_EN, templateProps, request.getCompanyCode());
 			} else {
 				logger.info("Sending mail for successful auto pay de-enrollment ES");
-				emailHelper.sendMailWithBCC(request.getEmail(), this.envMessageReader.getMessage(QC_BCC_MAIL), "",
+				EmailHelper.sendMailWithBCC(request.getEmail(), this.envMessageReader.getMessage(QC_BCC_MAIL), "",
 						AUTOPAY_DEENROLL_ES, templateProps, request.getCompanyCode());
 			}
 		}
