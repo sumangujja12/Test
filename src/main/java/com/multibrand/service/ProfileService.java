@@ -580,7 +580,7 @@ public class ProfileService extends BaseAbstractService {
 	}
 	 * @throws Exception **/
 
-	public CrmProfileResponse getCRMProfile(CrmProfileRequest crmProfileRequest, String companyCode, String sessionId) throws Exception {
+	public CrmProfileResponse getCRMProfile(CrmProfileRequest crmProfileRequest, String companyCode, String sessionId) throws RemoteException {
 
 		ProfileDomain proxy = getProfileDomainProxy();
 		long startTime = CommonUtil.getStartTime();
@@ -609,7 +609,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @throws Exception 
 	 */
 	public UpdateAddressResponse updateBillingAddress(
-			UpdateAddressRequest request, String companyCode, String sessionId) throws Exception {
+			UpdateAddressRequest request, String companyCode, String sessionId) throws RemoteException {
 
 		ProfileDomain proxy = getProfileDomainProxy();
 		long startTime = CommonUtil.getStartTime();
@@ -1417,9 +1417,6 @@ public class ProfileService extends BaseAbstractService {
         
 		URL url = ZCRMWSBPRELATIONREADUPD_Service.class.getResource("Z_CRM_WS_BP_RELATION_READ_UPD.wsdl");
 		
-		if(url==null)
-		  logger.info("Could Not initialize the WSDL");
-		
 		ZCRMWSBPRELATIONREADUPD_Service port = new ZCRMWSBPRELATIONREADUPD_Service(url);
 		
 		ZCRMWSBPRELATIONREADUPD stub= port.getZCRMWSBPRELATIONREADUPD();
@@ -1463,46 +1460,53 @@ public class ProfileService extends BaseAbstractService {
        com.nrg.cxfstubs.bprelationreadupd.Bapiret2T tbapiret2 = hBapiRet2.value;
        List<com.nrg.cxfstubs.bprelationreadupd.Bapiret2> listBapiret2 = tbapiret2.getItem();
        
-      	if(listBapiret2!=null && !listBapiret2.isEmpty())
-      	{
-      		for(com.nrg.cxfstubs.bprelationreadupd.Bapiret2 bapiret2:listBapiret2)
-      		{
-      			logger.info("Setting error codes using BApitRet2");
-      			logger.info("Printintg Bapiret2 values...{} {} {}",bapiret2.getType(),bapiret2.getNumber(),bapiret2.getMessage());
-      			if(bapiret2.getType().equalsIgnoreCase(TYPE_E) && (bapiret2.getNumber()!= null || bapiret2.getMessage() != null)){
-      				
-      				if(action.equals("4"))
-      				{
-      				   response.setResultCode(RESULT_CODE_SUCCESS);
-      				   response.setResultDescription(bapiret2.getMessage());
-      				   response.setSecondaryNames(new SecondaryName[0]);
-      				  utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-      				if(logger.isDebugEnabled()){
-	      				logger.debug(XmlUtil.pojoToXML(request));
-	      				logger.debug(XmlUtil.pojoToXML(response));
-      				}
-      				  return response;
-      				}
-      				else
-      				{
-      				  response.setResultCode(RESULT_CODE_CCS_ERROR);
-      				  response.setResultDescription(bapiret2.getMessage());
-      				response.setSecondaryNames(new SecondaryName[0]);
-      				utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-      				if(logger.isDebugEnabled()){
-	      				logger.debug(XmlUtil.pojoToXML(request));
-	      				logger.debug(XmlUtil.pojoToXML(response));
-      				}
-      				return response;
-      				}  
-      			}
-      			
-      		}
-      	}
+       if(listBapiret2!=null && !listBapiret2.isEmpty())
+     	{
+     		for(com.nrg.cxfstubs.bprelationreadupd.Bapiret2 bapiret2:listBapiret2)
+     		{
+     			logger.info("Setting error codes using BApitRet2");
+     			logger.info("Printintg Bapiret2 values...{} {} {}",bapiret2.getType(),bapiret2.getNumber(),bapiret2.getMessage());
+     			if(bapiret2.getType().equalsIgnoreCase(TYPE_E) && (bapiret2.getNumber()!= null || bapiret2.getMessage() != null)){
+     				
+     				if(action.equals("4"))
+     				{
+     				   response.setResultCode(RESULT_CODE_SUCCESS);
+     				   response.setResultDescription(bapiret2.getMessage());
+     				   response.setSecondaryNames(new SecondaryName[0]);
+     				  utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+     				  return response;
+     				}
+     				else
+     				{
+     				  response.setResultCode(RESULT_CODE_CCS_ERROR);
+     				  response.setResultDescription(bapiret2.getMessage());
+     				response.setSecondaryNames(new SecondaryName[0]);
+     				utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+     				return response;
+     				}  
+     			}
+     			
+     		}
+     	}
         
         ZetPartnerNames zetPartDetails = hzetPartNames.value;
         logger.info("Extracting ZetPartDetails");
-        List<ZesPartnerNames> zesPartnerNameList = zetPartDetails.getItem();
+        SecondaryName[] names = handleSecondaryNamesUpdResponse(zetPartDetails);
+        
+        response.setSecondaryNames(names);
+		}catch(Exception e){
+			logger.error(e);
+			logger.info(XmlUtil.pojoToXML(request));
+			utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+			throw e;// throwing is required so that proper API response is generated in BO layer for exception scenario
+		}
+        logger.info("ProfileService - secondaryNameUpdate ccs call ends...");
+        utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+        return response;
+	}
+
+	private SecondaryName[] handleSecondaryNamesUpdResponse(ZetPartnerNames zetPartDetails) {
+		List<ZesPartnerNames> zesPartnerNameList = zetPartDetails.getItem();
         logger.info("Partner Number Lists size:{} ",zesPartnerNameList.size());
         int count = 0;
         SecondaryName[] names = new SecondaryName[zesPartnerNameList.size()];
@@ -1520,21 +1524,7 @@ public class ProfileService extends BaseAbstractService {
         	names[count].setRelationship(partnerNames.getReltyp());
         	count++;
         }
-        
-        response.setSecondaryNames(names);
-		}catch(Exception e){
-			logger.error(e);
-			logger.info(XmlUtil.pojoToXML(request));
-			utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			throw e;// throwing is required so that proper API response is generated in BO layer for exception scenario
-		}
-        logger.info("ProfileService - secondaryNameUpdate ccs call ends...");
-        utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-        if(logger.isDebugEnabled()){
-	        logger.debug(XmlUtil.pojoToXML(request));
-			logger.debug(XmlUtil.pojoToXML(response));
-        }
-        return response;
+		return names;
 	}
 	
 	
