@@ -53,8 +53,8 @@ public class AutoPayResource {
 	 */
 	@POST
 	@Path("validateBankDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response validateBankDetails(@FormParam("accountNumber") String accountNumber, @FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("bankRoutingNumber") String bankRountingNumber, @FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName){
 		logger.debug("Start AutoPayResource.validateBankDetails :: START");
 		Response response = null;
@@ -87,8 +87,8 @@ public class AutoPayResource {
 	 */
 	@POST
 	@Path("submitBankAutoPay")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response submitBankAutoPay(AutoPayRequest autoPayRequest){
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
 		Response response = null;
@@ -116,8 +116,8 @@ public class AutoPayResource {
 	
 	@POST
 	@Path("validateCCDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response validateCCDetails(AutoPayRequest autoPayRequest){
 		logger.debug("Start AutoPayResource.validateCCDetails :: START");
 		Response response = null;
@@ -147,8 +147,8 @@ public class AutoPayResource {
 	
 	@POST
 	@Path("submitCCAutoPay")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response submitCCAutoPay(AutoPayRequest autoPayRequest) {
 		logger.debug("Start AutoPayResource.submitCCAutoPay :: START");
 		Response response = null;
@@ -170,8 +170,8 @@ public class AutoPayResource {
 	 */
 	@POST
 	@Path("deEnroll")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response deEnroll(AutoPayRequest autoPayRequest){
 		
 		logger.debug("Start AutoPayResource.deEnroll :: START");
