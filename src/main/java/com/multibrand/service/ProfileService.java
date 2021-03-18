@@ -43,6 +43,8 @@ import com.multibrand.domain.WseEnrollmentResponse;
 import com.multibrand.domain.WseEsenseEligibilityResponse;
 import com.multibrand.domain.WseServiceRequest;
 import com.multibrand.domain.WseServiceResponse;
+import com.multibrand.exception.NRGException;
+import com.multibrand.exception.ServiceException;
 import com.multibrand.helper.ProfileHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -168,8 +170,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @throws Exception 
 	 */
 	public com.multibrand.vo.response.OfferDO getCurrentOfferDocs(String caNumber,
-			String bpNumber, String esid, String contractId, String languageCode, String companyCode, com.multibrand.vo.response.OfferDO offerDO, String sessionId)
-					throws Exception {
+			String bpNumber, String esid, String contractId, String languageCode, String companyCode, com.multibrand.vo.response.OfferDO offerDO, String sessionId) {
 
 		logger.info("[Profile Service ]::::::getCurrentOfferDocs");
 		long startTime = CommonUtil.getStartTime();
