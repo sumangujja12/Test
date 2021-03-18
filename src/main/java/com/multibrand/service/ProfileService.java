@@ -1403,7 +1403,7 @@ public class ProfileService extends BaseAbstractService {
        	return response;
 	}
 	
-	public SecondaryNameResponse secondaryNameUpdate(SecondaryNameUpdateReqVO request, String companyCode, String sessionId)throws RemoteException {
+	public SecondaryNameResponse secondaryNameUpdate(SecondaryNameUpdateReqVO request, String companyCode, String sessionId) {
 		
 		SecondaryNameResponse response = new SecondaryNameResponse();
 		logger.info("ProfileService - secondaryNameUpdate ccs call starts...");
@@ -1463,7 +1463,7 @@ public class ProfileService extends BaseAbstractService {
        com.nrg.cxfstubs.bprelationreadupd.Bapiret2T tbapiret2 = hBapiRet2.value;
        List<com.nrg.cxfstubs.bprelationreadupd.Bapiret2> listBapiret2 = tbapiret2.getItem();
        
-       if(listBapiret2!=null && !listBapiret2.isEmpty())
+    	if(!CommonUtil.isNullOrEmptyCollection(listBapiret2))
      	{
      		for(com.nrg.cxfstubs.bprelationreadupd.Bapiret2 bapiret2:listBapiret2)
      		{
@@ -1500,7 +1500,7 @@ public class ProfileService extends BaseAbstractService {
 		}catch(Exception e){
 			logger.error(e);
 			logger.info(XmlUtil.pojoToXML(request));
-			utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+			utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 			throw e;// throwing is required so that proper API response is generated in BO layer for exception scenario
 		}
         logger.info("ProfileService - secondaryNameUpdate ccs call ends...");

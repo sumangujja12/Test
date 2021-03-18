@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -88,6 +89,7 @@ import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.UserIdResponse;
 import com.multibrand.vo.response.WebHookResponse;
+import com.nrg.cxfstubs.bprelationreadupd.Bapiret2;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
@@ -2382,6 +2384,7 @@ public class CommonUtil implements Constants {
 		return eflUrl;
 	}
 	
-
-	
+	public static boolean isNullOrEmptyCollection(final Collection<?> c) {
+		return c == null || c.isEmpty();
+	}	
 }
