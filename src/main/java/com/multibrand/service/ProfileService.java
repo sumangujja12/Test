@@ -43,8 +43,6 @@ import com.multibrand.domain.WseEnrollmentResponse;
 import com.multibrand.domain.WseEsenseEligibilityResponse;
 import com.multibrand.domain.WseServiceRequest;
 import com.multibrand.domain.WseServiceResponse;
-import com.multibrand.exception.NRGException;
-import com.multibrand.exception.ServiceException;
 import com.multibrand.helper.ProfileHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
