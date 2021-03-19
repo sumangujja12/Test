@@ -29,6 +29,7 @@ import com.multibrand.domain.ContractAccountDO;
 import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
+import com.multibrand.domain.CurrentEFLResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.LanguageUpdateRequest;
 import com.multibrand.domain.LanguageUpdateResponse;
@@ -37,6 +38,7 @@ import com.multibrand.domain.PayExtEligibleResponse;
 import com.multibrand.domain.PaymentExtensionSubmitRequest;
 import com.multibrand.domain.PaymentExtensionSubmitResponse;
 import com.multibrand.domain.ProfileResponse;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.UpdateAddressRequest;
 import com.multibrand.domain.UpdateContactRequest;
 import com.multibrand.domain.UpdateContactRequestAttNamValPairMapEntry;
@@ -48,6 +50,7 @@ import com.multibrand.domain.WseEsenseEligibilityRequest;
 import com.multibrand.domain.WseEsenseEligibilityResponse;
 import com.multibrand.domain.WseServiceRequest;
 import com.multibrand.domain.WseServiceResponse;
+import com.multibrand.dto.request.CurrentEFLRequest;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.BPAccountContractPayHelper;
 import com.multibrand.helper.EmailHelper;
@@ -2184,6 +2187,11 @@ public UpdateLanguageResponse updateLanguage(String bpid, String ca, String lang
 		}
 		logger.info("End - [ProfileBO - validatePassword]");
 		return passwordValidityResponse;
+	}
+
+
+	public CurrentEFLResponse getCurrentPlanEfl(CurrentEFLRequest currentEFLRequest) {
+		return profileService.getCurrentPlanEfl(currentEFLRequest);
 	}	
 }
 	
