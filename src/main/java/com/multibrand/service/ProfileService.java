@@ -16,8 +16,6 @@ import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
-
 import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAccountDetailsRequest;
@@ -365,7 +363,7 @@ public class ProfileService extends BaseAbstractService {
 		
 		//Populate Contract Account Details	
 		
-		if(!CollectionUtils.isEmpty(zcaOutputList)){
+		if(!CommonUtil.isCollectionNullOrEmpty(zcaOutputList)){
 			
 			zcaOutput = zcaOutputList.get(0);
 			contractAccountDO.setStrCANumber(zcaOutput.getExVkont());
