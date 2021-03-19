@@ -1962,7 +1962,7 @@ public class ProfileService extends BaseAbstractService {
 			currentEFLSoapRequest.setOfferCode(currentEFLRequest.getOfferCode());
 			currentEFLResponse = proxy.getCurrentPlanEFL(currentEFLSoapRequest);
 			
-			logger.debug("getCurrentPlanEfl  Response message '{}'", currentEFLResponse.getErrMessage());
+			logger.debug("getCurrentPlanEfl  Response message '{}'", currentEFLResponse.getReturnMessage());
 		} catch (Exception e) {
 			logger.error("Error in method: getProspectEFL '{}' ",e.getMessage());
 		} 
