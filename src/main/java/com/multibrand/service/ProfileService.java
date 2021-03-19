@@ -912,19 +912,16 @@ public class ProfileService extends BaseAbstractService {
 				try {
 					
 					
-					if( ! org.apache.commons.lang3.StringUtils.isEmpty(applicationArea) &&  applicationArea.equalsIgnoreCase(APPLICATION_SWAP_AREA) &&  zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
-							&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
-								continue;
+					if (isExcludeOfferList(applicationArea, zesEligoffer)) {
+						continue;
 					}
 					
 					OfferDO offerDO = new OfferDO();
 					
 					List<Map<String,Object>> offerCategoryLookupDetailsList = offerService.getOfferCategories(zesEligoffer.getOfferCode());
-					String strOfferCategory="";
-					for(Map<String, Object> offerMap: offerCategoryLookupDetailsList){
-						strOfferCategory = (String) offerMap.get(OE_OFFER_CATEGORY);
-						if(StringUtils.isBlank(strOfferCategory)) strOfferCategory = EMPTY;						
-					}
+					
+					String strOfferCategory = getStrOfferCategory(offerCategoryLookupDetailsList);
+					
 					offerDO.setStrOfferCategory(strOfferCategory);
 					offerDO.setStrOfferCode(zesEligoffer
 							.getOfferCode());
@@ -942,19 +939,9 @@ public class ProfileService extends BaseAbstractService {
 					List<CampEnvironmentDO> campEnvrDOList = new ArrayList<>();
 					Iterator<ZesCampEnviDetails> zesEnvCampDetailsItr = zesCampEnvDetailsList.iterator();
 					
-					while(zesEnvCampDetailsItr.hasNext())
-					{
-						ZesCampEnviDetails zesCampEnvDt = zesEnvCampDetailsItr.next();
-						
-						if(zesCampEnvDt.getCcsProductCd().equals(zesEligoffer.getTariftyp()))
-								{
-							logger.info("Camp ENvr Match Found {}", zesCampEnvDt.getCcsProductCd());
-							CampEnvironmentDO campDO = new CampEnvironmentDO();
-							campDO.setCalcOperand(zesCampEnvDt.getCalcOperand());
-							campDO.setValue(zesCampEnvDt.getValue().toString());
-							campEnvrDOList.add(campDO);
-								}
-					}
+					//Refactoring the code due complexity of the method
+					handleCampEnvironmentailDetails(zesEligoffer, campEnvrDOList, zesEnvCampDetailsItr);
+					
 					int campDtCounter=0;
 					CampEnvironmentDO[] campDOArray = new CampEnvironmentDO[campEnvrDOList.size()];
 					logger.info("CampDO ARRAY Size {}", campDOArray.length);
@@ -971,17 +958,8 @@ public class ProfileService extends BaseAbstractService {
 					List<SegmentedFlagDO> segmentFlagDOList = new ArrayList<>();
 					Iterator<ZesOfrcdFlag> ofrCDItr = zesOfferCDFlagList.iterator();
 					
-					while(ofrCDItr.hasNext()){
-						
-						ZesOfrcdFlag zesOFRCd = ofrCDItr.next();
-						if(zesOFRCd.getOfferCode().equals(zesEligoffer.getOfferCode()))
-						{
-							logger.info("Segmented Flag Array match found{} ", zesOFRCd.getOfferCode());
-							SegmentedFlagDO segmFlagDo = new SegmentedFlagDO();
-							segmFlagDo.setSegmentFlag(zesOFRCd.getSegmentFlag());
-							segmentFlagDOList.add(segmFlagDo);
-						}
-					}
+					//Refactoring the code due complexity of the method
+					handleSegmentFlangData(zesEligoffer, segmentFlagDOList, ofrCDItr);
 					
 					int segMCounter=0;
 					SegmentedFlagDO[] segmentFlagDOArray = new SegmentedFlagDO[segmentFlagDOList.size()];
@@ -1040,6 +1018,60 @@ public class ProfileService extends BaseAbstractService {
 		return eligibleOffersList.toArray(new OfferDO[eligibleOffersList.size()]);
 	}
 
+	private void handleSegmentFlangData(com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer,
+			List<SegmentedFlagDO> segmentFlagDOList, Iterator<ZesOfrcdFlag> ofrCDItr) {
+		while(ofrCDItr.hasNext()){
+			
+			ZesOfrcdFlag zesOFRCd = ofrCDItr.next();
+			if(zesOFRCd.getOfferCode().equals(zesEligoffer.getOfferCode()))
+			{
+				logger.info("Segmented Flag Array match found{} ", zesOFRCd.getOfferCode());
+				SegmentedFlagDO segmFlagDo = new SegmentedFlagDO();
+				segmFlagDo.setSegmentFlag(zesOFRCd.getSegmentFlag());
+				segmentFlagDOList.add(segmFlagDo);
+			}
+		}
+	}
+
+	private void handleCampEnvironmentailDetails(com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer,
+			List<CampEnvironmentDO> campEnvrDOList, Iterator<ZesCampEnviDetails> zesEnvCampDetailsItr) {
+		while(zesEnvCampDetailsItr.hasNext())
+		{
+			ZesCampEnviDetails zesCampEnvDt = zesEnvCampDetailsItr.next();
+			
+			if(zesCampEnvDt.getCcsProductCd().equals(zesEligoffer.getTariftyp()))
+			{
+				logger.info("Camp ENvr Match Found {}", zesCampEnvDt.getCcsProductCd());
+				CampEnvironmentDO campDO = new CampEnvironmentDO();
+				campDO.setCalcOperand(zesCampEnvDt.getCalcOperand());
+				campDO.setValue(zesCampEnvDt.getValue().toString());
+				campEnvrDOList.add(campDO);
+			}
+		}
+	}
+
+	private String getStrOfferCategory(List<Map<String, Object>> offerCategoryLookupDetailsList) {
+		String strOfferCategory = "";
+		for (Map<String, Object> offerMap : offerCategoryLookupDetailsList) {
+			strOfferCategory = (String) offerMap.get(OE_OFFER_CATEGORY);
+			if (StringUtils.isBlank(strOfferCategory))
+				strOfferCategory = EMPTY;
+		}
+		return strOfferCategory;
+	}
+
+	private boolean isExcludeOfferList(String applicationArea, ZesEligoffer zesEligoffer ) {
+
+		boolean isOfferExclude= false;
+		
+		if( ! org.apache.commons.lang3.StringUtils.isEmpty(applicationArea) &&  applicationArea.equalsIgnoreCase(APPLICATION_SWAP_AREA) &&  zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
+				&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
+				isOfferExclude = true;
+		}
+		
+		return isOfferExclude;
+		
+	}
 
 	/**
 	 * Populate Pricing and DocType lists for eligible offers
