@@ -917,26 +917,23 @@ public class ProfileService extends BaseAbstractService {
 
 		List <OfferDO> eligibleOffersList = new ArrayList<>();
 		
-		if (zesEligibleOfferList != null && !zesEligibleOfferList.isEmpty()) {
+		if (!CommonUtil.isNullOrEmptyCollection(zesEligibleOfferList)) {
 
 			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
 				try {
 					
 					
-					if( ! org.apache.commons.lang3.StringUtils.isEmpty(applicationArea) &&  applicationArea.equalsIgnoreCase(APPLICATION_SWAP_AREA) &&  zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
-							&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
-								continue;
-							}
+					if (isExcludeOfferList(applicationArea, zesEligoffer)) {
+						continue;
+					}
 					
 					OfferDO offerDO = new OfferDO();
 					
 					List<Map<String,Object>> offerCategoryLookupDetailsList = offerService.getOfferCategories(zesEligoffer.getOfferCode());
-					String strOfferCategory="";
-					for(Map<String, Object> offerMap: offerCategoryLookupDetailsList){
-						strOfferCategory = (String) offerMap.get(OE_OFFER_CATEGORY);
-						if(StringUtils.isBlank(strOfferCategory)) strOfferCategory = EMPTY;						
-					}
+					
+					String strOfferCategory = getStrOfferCategory(offerCategoryLookupDetailsList);
+					
 					offerDO.setStrOfferCategory(strOfferCategory);
 					offerDO.setStrOfferCode(zesEligoffer
 							.getOfferCode());
@@ -954,19 +951,9 @@ public class ProfileService extends BaseAbstractService {
 					List<CampEnvironmentDO> campEnvrDOList = new ArrayList<>();
 					Iterator<ZesCampEnviDetails> zesEnvCampDetailsItr = zesCampEnvDetailsList.iterator();
 					
-					while(zesEnvCampDetailsItr.hasNext())
-					{
-						ZesCampEnviDetails zesCampEnvDt = zesEnvCampDetailsItr.next();
-						
-						if(zesCampEnvDt.getCcsProductCd().equals(zesEligoffer.getTariftyp()))
-								{
-							logger.info("Camp ENvr Match Found {}", zesCampEnvDt.getCcsProductCd());
-							CampEnvironmentDO campDO = new CampEnvironmentDO();
-							campDO.setCalcOperand(zesCampEnvDt.getCalcOperand());
-							campDO.setValue(zesCampEnvDt.getValue().toString());
-							campEnvrDOList.add(campDO);
-								}
-					}
+					//Refactoring the code due complexity of the method
+					handleCampEnvironmentailDetails(zesEligoffer, campEnvrDOList, zesEnvCampDetailsItr);
+					
 					int campDtCounter=0;
 					CampEnvironmentDO[] campDOArray = new CampEnvironmentDO[campEnvrDOList.size()];
 					logger.info("CampDO ARRAY Size {}", campDOArray.length);
@@ -983,17 +970,8 @@ public class ProfileService extends BaseAbstractService {
 					List<SegmentedFlagDO> segmentFlagDOList = new ArrayList<>();
 					Iterator<ZesOfrcdFlag> ofrCDItr = zesOfferCDFlagList.iterator();
 					
-					while(ofrCDItr.hasNext()){
-						
-						ZesOfrcdFlag zesOFRCd = ofrCDItr.next();
-						if(zesOFRCd.getOfferCode().equals(zesEligoffer.getOfferCode()))
-						{
-							logger.info("Segmented Flag Array match found{} ", zesOFRCd.getOfferCode());
-							SegmentedFlagDO segmFlagDo = new SegmentedFlagDO();
-							segmFlagDo.setSegmentFlag(zesOFRCd.getSegmentFlag());
-							segmentFlagDOList.add(segmFlagDo);
-						}
-					}
+					//Refactoring the code due complexity of the method
+					handleSegmentFlangData(zesEligoffer, segmentFlagDOList, ofrCDItr);
 					
 					int segMCounter=0;
 					SegmentedFlagDO[] segmentFlagDOArray = new SegmentedFlagDO[segmentFlagDOList.size()];
@@ -1052,6 +1030,60 @@ public class ProfileService extends BaseAbstractService {
 		return eligibleOffersList.toArray(new OfferDO[eligibleOffersList.size()]);
 	}
 
+	private void handleSegmentFlangData(com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer,
+			List<SegmentedFlagDO> segmentFlagDOList, Iterator<ZesOfrcdFlag> ofrCDItr) {
+		while(ofrCDItr.hasNext()){
+			
+			ZesOfrcdFlag zesOFRCd = ofrCDItr.next();
+			if(zesOFRCd.getOfferCode().equals(zesEligoffer.getOfferCode()))
+			{
+				logger.info("Segmented Flag Array match found{} ", zesOFRCd.getOfferCode());
+				SegmentedFlagDO segmFlagDo = new SegmentedFlagDO();
+				segmFlagDo.setSegmentFlag(zesOFRCd.getSegmentFlag());
+				segmentFlagDOList.add(segmFlagDo);
+			}
+		}
+	}
+
+	private void handleCampEnvironmentailDetails(com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer,
+			List<CampEnvironmentDO> campEnvrDOList, Iterator<ZesCampEnviDetails> zesEnvCampDetailsItr) {
+		while(zesEnvCampDetailsItr.hasNext())
+		{
+			ZesCampEnviDetails zesCampEnvDt = zesEnvCampDetailsItr.next();
+			
+			if(zesCampEnvDt.getCcsProductCd().equals(zesEligoffer.getTariftyp()))
+			{
+				logger.info("Camp ENvr Match Found {}", zesCampEnvDt.getCcsProductCd());
+				CampEnvironmentDO campDO = new CampEnvironmentDO();
+				campDO.setCalcOperand(zesCampEnvDt.getCalcOperand());
+				campDO.setValue(zesCampEnvDt.getValue().toString());
+				campEnvrDOList.add(campDO);
+			}
+		}
+	}
+
+	private String getStrOfferCategory(List<Map<String, Object>> offerCategoryLookupDetailsList) {
+		String strOfferCategory = "";
+		for (Map<String, Object> offerMap : offerCategoryLookupDetailsList) {
+			strOfferCategory = (String) offerMap.get(OE_OFFER_CATEGORY);
+			if (StringUtils.isBlank(strOfferCategory))
+				strOfferCategory = EMPTY;
+		}
+		return strOfferCategory;
+	}
+
+	private boolean isExcludeOfferList(String applicationArea, ZesEligoffer zesEligoffer ) {
+
+		boolean isOfferExclude= false;
+		
+		if( ! org.apache.commons.lang3.StringUtils.isEmpty(applicationArea) &&  applicationArea.equalsIgnoreCase(APPLICATION_SWAP_AREA) &&  zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
+				&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
+				isOfferExclude = true;
+		}
+		
+		return isOfferExclude;
+		
+	}
 
 	/**
 	 * Populate Pricing and DocType lists for eligible offers
@@ -1516,7 +1548,7 @@ public class ProfileService extends BaseAbstractService {
 			throw e;// throwing is required so that proper API response is generated in BO layer for exception scenario
 		}
         logger.info("ProfileService - secondaryNameUpdate ccs call ends...");
-        utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+        utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
         return response;
 	}
 
@@ -1548,7 +1580,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @param request
 	 * @throws RemoteException
 	 */
-	public void activateCRM(UserRegistrationRequest request,String businessPartner, String companyCode, String sessionId)throws RemoteException
+	public void activateCRM(UserRegistrationRequest request,String businessPartner, String companyCode, String sessionId)
 	  {
 		  URL url = ZEWEBOAMIDENTYFORBP_Service.class.getResource("CMQ-Z_E_WEB_OAM_IDENTY_FOR_BP.wsdl");
 
@@ -1595,8 +1627,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public WseServiceResponse wsDeEnrollService(WseServiceRequest request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public WseServiceResponse wsDeEnrollService(WseServiceRequest request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.debug("Start ProfileService.wsEnrollDeEnrollService :: START");
 		ProfileDomain proxy = getProfileDomainProxy();
@@ -1625,8 +1656,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public WseEnrollmentResponse wsEnrollService(WseEnrollmentRequest request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public WseEnrollmentResponse wsEnrollService(WseEnrollmentRequest request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.debug("Start ProfileService.wsEnrollDeEnrollService :: START");
 		ProfileDomain proxy = getProfileDomainProxy();
@@ -1653,8 +1683,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public WseEsenseEligibilityResponse wseEsenseEligibilityStatus(AllAccountDetailsRequest  request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public WseEsenseEligibilityResponse wseEsenseEligibilityStatus(AllAccountDetailsRequest  request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.info("Start ProfileService.wseEsenseEligibilityStatus :: START");
 		ProfileDomain proxy = getProfileDomainProxy();
@@ -1674,7 +1703,6 @@ public class ProfileService extends BaseAbstractService {
 				&& (wseResponse.getWseEsenseEligibilityResponse() != null && wseResponse
 						.getWseEsenseEligibilityResponse()
 						.getWseEsenseEligibilityItem() != null)) {
-			System.out.println(wseResponse.getWseEsenseEligibilityResponse());
 			return wseResponse.getWseEsenseEligibilityResponse();
 		}
 		
@@ -1691,11 +1719,9 @@ public class ProfileService extends BaseAbstractService {
 	 * @throws RemoteException
 	 * @throws Exception
 	 */
-	public CirroStructureCallResponse getCirroStructureCall(CirroStructureCallRequest  request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public CirroStructureCallResponse getCirroStructureCall(CirroStructureCallRequest  request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.info("Start ProfileService.getCirroStructureCall :: START");
-		System.out.println("inside the profile domain");
 		long startTime = CommonUtil.getStartTime();
 		ProfileDomain proxy = getProfileDomainProxy();
 
@@ -1757,7 +1783,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws Exception
 	 */
-	public LanguageUpdateResponse updateLanguage(LanguageUpdateRequest request, String companyCode, String sessionId)throws Exception
+	public LanguageUpdateResponse updateLanguage(LanguageUpdateRequest request, String companyCode, String sessionId)throws RemoteException
 	{
 		
 		ProfileDomain proxy = getProfileDomainProxy();

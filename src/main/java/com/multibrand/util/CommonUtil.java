@@ -37,7 +37,6 @@ import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +48,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.soap.SOAPException;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.codec.binary.Base64;
@@ -70,8 +68,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.NodeList;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -89,7 +85,6 @@ import com.multibrand.vo.request.UserIdRequest;
 import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.UserIdResponse;
 import com.multibrand.vo.response.WebHookResponse;
-import com.nrg.cxfstubs.bprelationreadupd.Bapiret2;
 import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
