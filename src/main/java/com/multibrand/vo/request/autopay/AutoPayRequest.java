@@ -1,6 +1,9 @@
 package com.multibrand.vo.request.autopay;
 
 import java.io.Serializable;
+
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import com.multibrand.dto.request.FormEntityRequest;
 
 
@@ -260,6 +263,14 @@ public class AutoPayRequest implements FormEntityRequest,Serializable {
 	 */
 	public void setCvvNumber(String cvvNumber) {
 		this.cvvNumber = cvvNumber;
-	}		
+	}	
+	
+	/**
+	 * @return String representation of this request.
+	 */
+	@Override
+	public String toString() {
+		return ReflectionToStringBuilder.toString(this);
+	}	
 }
 
