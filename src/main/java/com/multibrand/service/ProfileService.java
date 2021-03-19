@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
@@ -142,6 +141,9 @@ public class ProfileService extends BaseAbstractService {
 	private ProfileHelper profileHelper;
 	
 	private String[] excludeOfferList = {"S", "F"}; 
+	private static final String SECONDAY_NAME_UPDATE_LABEL = "secondaryNameUpdate";
+	
+	
 	
 	/**
 	 * This will return ProfileDomainProxy and set EndPoint URL
@@ -173,6 +175,15 @@ public class ProfileService extends BaseAbstractService {
 		logger.info("[Profile Service ]::::::getCurrentOfferDocs");
 		long startTime = CommonUtil.getStartTime();
 		String request = "caNumber="+caNumber+",bpNumber="+bpNumber+",esid="+esid+",contractId="+contractId+",languageCode="+languageCode;
+		
+		
+		logger.info("setting default values current offer data");
+		offerDO.setStrEFLDocID("");
+		offerDO.setStrEFLSmartCode("");
+		offerDO.setStrTOSDocID("");
+		offerDO.setStrTOSSmartCode("");
+		offerDO.setStrYRAACDocID("");
+		offerDO.setStrYRAACSmartCode("");
 	 
 		URL url = ZEISUGETOFFERDATAFORSWAP_Service.class
 				.getResource("Z_E_ISU_GET_OFFERDATA_FOR_SWAP-RPM.wsdl");
@@ -256,16 +267,6 @@ public class ProfileService extends BaseAbstractService {
 				}
 			}
 		}
-		else
-		{
-			logger.info("[Profile Service ]::::::getCurrentOfferDocs:::no current offer data");
-			offerDO.setStrEFLDocID("");
-			offerDO.setStrEFLSmartCode("");
-			offerDO.setStrTOSDocID("");
-			offerDO.setStrTOSSmartCode("");
-			offerDO.setStrYRAACDocID("");
-			offerDO.setStrYRAACSmartCode("");
-		}
 		
 		utilityloggerHelper.logTransaction("getCurrentOfferDocs", false, request,offerDO, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 
@@ -283,11 +284,10 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws Exception 
 	 */
-	public Map<String, Object> getProfile(String accountNumber, String companyCode, String sessionId)
-			throws Exception {
+	public Map<String, Object> getProfile(String accountNumber, String companyCode, String sessionId) {
 		
 		logger.info("ProfileService.getProfile::::::::::::::::::::START");
-		HashMap<String, Object> responseMap = new HashMap<String, Object>();
+		HashMap<String, Object> responseMap = new HashMap<>();
 		
 		ProfileResponse profileResponse = new ProfileResponse();
 		long startTime = CommonUtil.getStartTime();
@@ -301,7 +301,6 @@ public class ProfileService extends BaseAbstractService {
 		AddressDO serviceAddressDO = null;
 		ZcontractAdrc zcontractAdrc = null;
 		ZcontractOutput[] zcontractOutput = null;
-		com.nrg.cxfstubs.profile.Bapiret2[] bapiret2 = null;
 		
 		//Start : Added for Redbull CXF upgrade by IJ
 		URL url = ZEIsuGetCaProfileData_Service.class.getResource("Z_E_ISU_GET_CA_PROFILE_DATA.wsdl");
@@ -320,47 +319,30 @@ public class ProfileService extends BaseAbstractService {
 	        binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, this.envMessageReader.getMessage(PROFILE_CADATA_ENDPOINT_URL_JNDINAME));
           logger.info("ProfileService.getProfile::::::::::::::::::::before call");
           
-/*            JaxWsProxyFactoryBean proxyFactory = new JaxWsProxyFactoryBean();
-	        proxyFactory.setServiceClass(ZEISUGETCAPROFILEDATA.class);
-	        proxyFactory.setAddress("http://saprd101.reinternal.com:8000/sap/bc/srt/rfc/sap/z_e_isu_get_ca_profile_data/130/z_e_isu_get_ca_profile_data/z_e_isu_get_ca_profile_data");
-	        
-	        ZEISUGETCAPROFILEDATA port =(ZEISUGETCAPROFILEDATA) proxyFactory.create();
-	        Client client = ClientProxy.getClient(port);
-	       
-	        HTTPConduit http = (HTTPConduit) client.getConduit();
-	       
-	        AuthorizationPolicy authPolicy = http.getAuthorization();
-	       
-	        authPolicy.setUserName(this.envMessageReader.getMessage(CCS_USER_NAME));
-	        authPolicy.setPassword( this.envMessageReader.getMessage(CCS_PSD));*/
           
         String imCaOnly = null;
 		String imVkont = accountNumber; //CA Number
 				
 		ZcaOutputTt exCaDetail = new ZcaOutputTt();
 		ZcontractOutputTt exContractDetail = new ZcontractOutputTt();
-		Holder<com.nrg.cxfstubs.profile.TableOfBapiret2> exMessage1 = new Holder<com.nrg.cxfstubs.profile.TableOfBapiret2>();		
+		Holder<com.nrg.cxfstubs.profile.TableOfBapiret2> exMessage1 = new Holder<>();		
 		
-		com.nrg.cxfstubs.profile.TableOfBapiret2 exMessage = new com.nrg.cxfstubs.profile.TableOfBapiret2();
-		Holder<String> exReturnCode = new Holder<String>();
+		Holder<String> exReturnCode = new Holder<>();
 		exReturnCode.value = new String();		
 		
 		// Added for the Jar Changes
-		Holder<String> exSuperPartner = new Holder<String>();
+		Holder<String> exSuperPartner = new Holder<>();
 		exSuperPartner.value = new String();	
 		
-		Holder<ZcaOutputTt> holderZcaOutputTt = new Holder<ZcaOutputTt>();
-		Holder<ZcontractOutputTt> holderZcontractOutputTt = new Holder<ZcontractOutputTt>();
+		Holder<ZcaOutputTt> holderZcaOutputTt = new Holder<>();
+		Holder<ZcontractOutputTt> holderZcontractOutputTt = new Holder<>();
 		holderZcaOutputTt.value = exCaDetail;
 		holderZcontractOutputTt.value = exContractDetail;
 		
 		ZesZesuerStat zesZesuerStat = new ZesZesuerStat();
-		Holder<ZesZesuerStat> holderZesZesuerStat = new Holder<ZesZesuerStat>();
+		Holder<ZesZesuerStat> holderZesZesuerStat = new Holder<>();
 		holderZesZesuerStat.value = zesZesuerStat;
 		
-		//super.startTime = Calendar.getInstance().getTimeInMillis();	
-		//map.put(START_TIME, super.startTime.toString());
-		//map.put(END_POINT_URL, CommonUtil.getEndpointURL(PROFILE_CADATA_ENDPOINT_URL_JNDINAME));
 		
 		try{
 			stub.zeIsuGetCaProfileData(exMessage1, imCaOnly, imVkont, holderZcaOutputTt, holderZcontractOutputTt, exReturnCode, exSuperPartner, holderZesZesuerStat);
@@ -373,8 +355,6 @@ public class ProfileService extends BaseAbstractService {
 			
 		}
 		logger.info("ProfileService.getProfile::::::::::::::::::::after call");
-		//super.endTime = Calendar.getInstance().getTimeInMillis();
-		//map.put(END_TIME, super.endTime.toString());
 		
 		zesZesuerStat=holderZesZesuerStat.value;
 		
@@ -385,8 +365,6 @@ public class ProfileService extends BaseAbstractService {
 		exContractDetail=holderZcontractOutputTt.value;
 		List<ZcontractOutput> zcontractOutputList=exContractDetail.getItem();
 		
-		exMessage=exMessage1.value;
-		List<com.nrg.cxfstubs.profile.Bapiret2> bapiret2List=exMessage.getItem();	
 		
 		String superBPID = exSuperPartner.value;
 		logger.info("super bpid ::::: {}" , superBPID);
@@ -395,7 +373,7 @@ public class ProfileService extends BaseAbstractService {
 		
 		//Populate Contract Account Details	
 		
-		if(null!=zcaOutputList && zcaOutputList.size() > 0){
+		if(null!=zcaOutputList && !zcaOutputList.isEmpty()){
 			
 			zcaOutput = zcaOutputList.get(0);
 			contractAccountDO.setStrCANumber(zcaOutput.getExVkont());
@@ -481,11 +459,8 @@ public class ProfileService extends BaseAbstractService {
 			
 			contractAccountDO.setBillingAddressDO(billingAddressDO);
 			
-			//constructing contract details
-						
-			//bapiret2 = (com.reliant.cxfstubs.profile.getcaprofiledata.Bapiret2[]) bapiret2List.toArray();
 			
-			if(null != zcontractOutputList  && zcontractOutputList.size()>0){
+			if(null != zcontractOutputList  && !zcontractOutputList.isEmpty()){
 				zcontractOutput = new ZcontractOutput[zcontractOutputList.size()];
 				
 				for(int forCnt=0;forCnt<zcontractOutput.length;forCnt++){
@@ -499,7 +474,7 @@ public class ProfileService extends BaseAbstractService {
 					contractAccountDO.setStrMultiContractFlag(FLAG_O);
 				}
 				
-				List<ContractDO> contracArrList = new LinkedList<ContractDO>();
+				List<ContractDO> contracArrList = new LinkedList<>();
 				int counter = 0;
 				for(ZcontractOutput contractOutput: zcontractOutput){
 					if (CommonUtil.checkInactiveAccount(companyCode, contractOutput.getExAuszdat())) {
@@ -562,8 +537,7 @@ public class ProfileService extends BaseAbstractService {
 					offerDO.setStrOfferTeaser(contractOutput.getExOfferTeaser());					
 					contractDO.setServiceAddressDO(serviceAddressDO);
 					contractDO.setCurrentPlan(offerDO);	
-					contracArrList.add(contractDO);
-					//contractDOList[counter]= contractDO;		
+					contracArrList.add(contractDO);	
 					
 				}
 				contractDOList = new ContractDO[contracArrList.size()];
@@ -591,16 +565,13 @@ public class ProfileService extends BaseAbstractService {
 		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)){
 			
 			profileResponse.setErrorCode(Constants.MSG_CCSERR_+exReturnCode.value+Constants._GET_PROFILE);
-		} else if((null == zcaOutputList  || zcaOutputList.size() == 0) && exReturnCode.value == null){
+		} else if((null == zcaOutputList  || zcaOutputList.isEmpty()) && exReturnCode.value == null){
 			
 			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
 		} 
 							
 		utilityloggerHelper.logTransaction("getProfile", false, request,profileResponse, profileResponse.getErrorMessage(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-		if(logger.isDebugEnabled()){
-			logger.debug(XmlUtil.pojoToXML(request));
-			logger.debug(XmlUtil.pojoToXML(profileResponse));
-		}
+
 		logger.info("ProfileService.getProfile::::::::::::::::::::end");
 		responseMap.put("profileResponse", profileResponse);
 		responseMap.put("profileSuerStats", zesZesuerStat);
@@ -622,20 +593,13 @@ public class ProfileService extends BaseAbstractService {
 	}
 	 * @throws Exception **/
 
-	public CrmProfileResponse getCRMProfile(CrmProfileRequest crmProfileRequest, String companyCode, String sessionId)
-			throws Exception {
+	public CrmProfileResponse getCRMProfile(CrmProfileRequest crmProfileRequest, String companyCode, String sessionId) throws RemoteException {
 
 		ProfileDomain proxy = getProfileDomainProxy();
 		long startTime = CommonUtil.getStartTime();
 		CrmProfileResponse response = null;
 		try{
 		response= proxy.getCRMProfile(crmProfileRequest);
-		}catch(RemoteException ex){
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(crmProfileRequest));
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("getCRMProfile", false, crmProfileRequest,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			throw ex;
 		}catch(Exception ex){
 			if(logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(crmProfileRequest));
@@ -658,19 +622,13 @@ public class ProfileService extends BaseAbstractService {
 	 * @throws Exception 
 	 */
 	public UpdateAddressResponse updateBillingAddress(
-			UpdateAddressRequest request, String companyCode, String sessionId) throws Exception {
+			UpdateAddressRequest request, String companyCode, String sessionId) throws RemoteException {
 
 		ProfileDomain proxy = getProfileDomainProxy();
 		long startTime = CommonUtil.getStartTime();
 		UpdateAddressResponse response=null;
 		try{
 			response = proxy.updateBillingAddress(request);
-		}catch(RemoteException ex){
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("updateBillingAddress", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(request));
-			throw ex;
 		}catch(Exception ex){
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("updateBillingAddress", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -699,12 +657,6 @@ public class ProfileService extends BaseAbstractService {
 		UpdateContactResponse  response= null;
 		try{
 			response= proxy.updateContactInfo(request);
-		}catch(RemoteException ex){
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("updateContactInfoWS", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(request));
-			throw ex;
 		}catch(Exception ex){
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("updateContactInfoWS", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -753,7 +705,7 @@ public class ProfileService extends BaseAbstractService {
 		String imSubscriberId = WEB_SUBSCRIBER_ID;
 		String actionFlag = CRM_UPDATE_ACTION;
 
-		javax.xml.ws.Holder<TableOfZesEmailsNew2> hTZEmailNew2 = new javax.xml.ws.Holder<TableOfZesEmailsNew2>();
+		javax.xml.ws.Holder<TableOfZesEmailsNew2> hTZEmailNew2 = new javax.xml.ws.Holder<>();
 		TableOfZesEmailsNew2 tZEmailNew2 = new TableOfZesEmailsNew2();
 		List<ZesEmailsNew2> tZEmailNew2List = tZEmailNew2.getItem();
 
@@ -769,9 +721,9 @@ public class ProfileService extends BaseAbstractService {
 
 		hTZEmailNew2.value=tZEmailNew2;
 		
-		javax.xml.ws.Holder<TableOfZesPhoneNew2> hTZPhoneNew2 = new javax.xml.ws.Holder<TableOfZesPhoneNew2>();
-		javax.xml.ws.Holder<TableOfZesUnsubReason> hTZUnsubReason = new  javax.xml.ws.Holder<TableOfZesUnsubReason>();
-		javax.xml.ws.Holder<TableOfZesCommPref2> hTZCommPref2 = new  javax.xml.ws.Holder<TableOfZesCommPref2>();
+		javax.xml.ws.Holder<TableOfZesPhoneNew2> hTZPhoneNew2 = new javax.xml.ws.Holder<>();
+		javax.xml.ws.Holder<TableOfZesUnsubReason> hTZUnsubReason = new  javax.xml.ws.Holder<>();
+		javax.xml.ws.Holder<TableOfZesCommPref2> hTZCommPref2 = new  javax.xml.ws.Holder<>();
 		
 		TableOfZesCommPref2 tZCommPref2 = new TableOfZesCommPref2();
 		List<ZesCommPref2> tZCommPref2List = tZCommPref2.getItem();
@@ -791,7 +743,7 @@ public class ProfileService extends BaseAbstractService {
 		}
 		hTZCommPref2.value = tZCommPref2;
 		
-		javax.xml.ws.Holder<TableOfBapiret2> hTBapiret2 = new  javax.xml.ws.Holder<TableOfBapiret2>();
+		javax.xml.ws.Holder<TableOfBapiret2> hTBapiret2 = new  javax.xml.ws.Holder<>();
 		
 		long startTime = CommonUtil.getStartTime();
 		stub.zeCrmBpContactDetailNew(imRequestType, imSubscriberId, hTZCommPref2, hTZEmailNew2, hTZPhoneNew2, hTBapiret2, hTZUnsubReason);
@@ -800,7 +752,6 @@ public class ProfileService extends BaseAbstractService {
 		 * error code response
 		 */
 		
-		//Bapiret2[] bapiret2s = TReturn.value;
 		TableOfBapiret2 tBapiret2 = new TableOfBapiret2();
 		tBapiret2 = hTBapiret2.value;
         List<Bapiret2> tBapiret2List= tBapiret2.getItem();
@@ -871,15 +822,14 @@ public class ProfileService extends BaseAbstractService {
 		zesSwapofferInput.setVkont(CommonUtil.paddedCa(caNumber));
 		zesSwapOfferInputList.add(zesSwapofferInput);
 		
-        XMLGregorianCalendar calender=null;
-        String im_caller = WEB_SUBSCRIBER_ID;		
-        javax.xml.ws.Holder<ZeiCampEnviDetails> hZeiCampEnvrDetails = new javax.xml.ws.Holder<ZeiCampEnviDetails>();
-        javax.xml.ws.Holder<ZeiSwapOutput> hZeiSwapOutput = new javax.xml.ws.Holder<ZeiSwapOutput>();
-        javax.xml.ws.Holder<ZeiOfrcdFlag> hZeiOffrCDFlag = new javax.xml.ws.Holder<ZeiOfrcdFlag>();
+        String imCaller = WEB_SUBSCRIBER_ID;		
+        javax.xml.ws.Holder<ZeiCampEnviDetails> hZeiCampEnvrDetails = new javax.xml.ws.Holder<>();
+        javax.xml.ws.Holder<ZeiSwapOutput> hZeiSwapOutput = new javax.xml.ws.Holder<>();
+        javax.xml.ws.Holder<ZeiOfrcdFlag> hZeiOffrCDFlag = new javax.xml.ws.Holder<>();
         
         long startTime = CommonUtil.getStartTime();
         try{
-        stub.zeIsuGetOfferdataForSwap(im_caller, zeiSwapOfferInputObj, "", null, hZeiCampEnvrDetails, hZeiSwapOutput, hZeiOffrCDFlag);
+        stub.zeIsuGetOfferdataForSwap(imCaller, zeiSwapOfferInputObj, "", null, hZeiCampEnvrDetails, hZeiSwapOutput, hZeiOffrCDFlag);
         }catch(Exception ex){
         	logger.error(ex);
         	utilityloggerHelper.logTransaction("getContractInfo", false, zeiSwapOfferInputObj,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -896,7 +846,7 @@ public class ProfileService extends BaseAbstractService {
             
             List<com.nrg.cxfstubs.contractinfo.Bapiret2> bapiRet2T = isuBapiRet2T.getItem();
             response = handleContractInfoResponse(zeiSwapOutput,zeiCampEnvrDetails,zeiOfferCdFlag, applicationArea);
-            if((zesSwapOutput.getEligOffers()==null) ||(zesSwapOutput.getEligOffers().getItem().size()==0))
+            if((zesSwapOutput.getEligOffers()==null) ||(zesSwapOutput.getEligOffers().getItem().isEmpty()))
             {
             	for(com.nrg.cxfstubs.contractinfo.Bapiret2 bapiret2 : bapiRet2T)
                 {
@@ -931,7 +881,7 @@ public class ProfileService extends BaseAbstractService {
         List<ZesCampEnviDetails> zesCampEnvDetailsList = zeiCampEnvrDetails.getItem();
         
 		// Populating pending swap data
-        logger.info("ZeiSwapOutPut List Size "+zeiSwapOutput.getItem().size());
+        logger.info("ZeiSwapOutPut List Size:{} ",zeiSwapOutput.getItem().size());
 		PendingSwapDO pendingSwapDO = new PendingSwapDO();
 
 		pendingSwapDO.setStrBPNumber(zesSwapOutput.getKeydata().getPartner());
@@ -965,9 +915,9 @@ public class ProfileService extends BaseAbstractService {
 		
 		logger.info("zesEligibleOfferList:::::: list size {}", zesEligibleOfferList.size());
 
-		List <OfferDO> eligibleOffersList = new ArrayList<OfferDO>();
+		List <OfferDO> eligibleOffersList = new ArrayList<>();
 		
-		if (zesEligibleOfferList != null && zesEligibleOfferList.size() > 0) {
+		if (zesEligibleOfferList != null && !zesEligibleOfferList.isEmpty()) {
 
 			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
@@ -1001,7 +951,7 @@ public class ProfileService extends BaseAbstractService {
 							.getTariftyp());
 					//Start : CampEnv Detail & Segment Flag data
 					logger.info("FillingCamp Envr Details{}", zesCampEnvDetailsList.size());
-					List<CampEnvironmentDO> campEnvrDOList = new ArrayList<CampEnvironmentDO>();
+					List<CampEnvironmentDO> campEnvrDOList = new ArrayList<>();
 					Iterator<ZesCampEnviDetails> zesEnvCampDetailsItr = zesCampEnvDetailsList.iterator();
 					
 					while(zesEnvCampDetailsItr.hasNext())
@@ -1030,7 +980,7 @@ public class ProfileService extends BaseAbstractService {
 					
 					//Filling Segment Flang Data
 					logger.info("Filling Segment Flag Data{}", zesOfferCDFlagList.size());
-					List<SegmentedFlagDO> segmentFlagDOList = new ArrayList<SegmentedFlagDO>();
+					List<SegmentedFlagDO> segmentFlagDOList = new ArrayList<>();
 					Iterator<ZesOfrcdFlag> ofrCDItr = zesOfferCDFlagList.iterator();
 					
 					while(ofrCDItr.hasNext()){
@@ -1171,12 +1121,6 @@ public class ProfileService extends BaseAbstractService {
 		EsidProfileResponse response = null;
 		try{
 			response= proxy.getESIDProfile(companyCode, esid);
-		}catch(RemoteException ex){
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("getESIDProfile", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(request));
-			throw ex;
 		}catch(Exception ex){
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("getESIDProfile", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -1199,9 +1143,7 @@ public class ProfileService extends BaseAbstractService {
 		String request="accountNumber="+accountNumber+",action="+action+",objectId="+objectId+",extUi="+extUi+",entrollType="+enrollType+",requestDate="+requestDate+",manuPartNo="+manuPartNo+",companyCode="+companyCode; 
 		ProductUpdateResponse productResponse = new ProductUpdateResponse();
 		URL url = ZECRMVASWEBPRODUPDATE_Service.class.getResource("Z_E_CRM_VAS_WEB_PROD_UPDATE.wsdl");
-		if (url == null) {
-           logger.info("Can not initialize the default wsdl - crm_bp_contact_detail_new.wsdl");
-       }
+		
 		ZECRMVASWEBPRODUPDATE_Service port = new ZECRMVASWEBPRODUPDATE_Service(url);
 		ZECRMVASWEBPRODUPDATE stub = port.getZECRMVASWEBPRODUPDATE();
        BindingProvider binding = (BindingProvider)stub;
@@ -1218,8 +1160,8 @@ public class ProfileService extends BaseAbstractService {
        zesEnrollProd.setQuantity(bd);
        enrollProdList.add(zesEnrollProd);
               
-       javax.xml.ws.Holder<com.nrg.cxfstubs.sundriverclub.ZetWebncProducts> hZetWebncProducts = new javax.xml.ws.Holder<com.nrg.cxfstubs.sundriverclub.ZetWebncProducts>();
-       javax.xml.ws.Holder<Bapiret2T> hTBapiret2 = new javax.xml.ws.Holder<Bapiret2T>();
+       javax.xml.ws.Holder<com.nrg.cxfstubs.sundriverclub.ZetWebncProducts> hZetWebncProducts = new javax.xml.ws.Holder<>();
+       javax.xml.ws.Holder<Bapiret2T> hTBapiret2 = new javax.xml.ws.Holder<>();
        long startTime = CommonUtil.getStartTime();
 		boolean isEnrolled = false;
        try{
@@ -1228,7 +1170,7 @@ public class ProfileService extends BaseAbstractService {
 						zetEnrollProd, hZetWebncProducts, hTBapiret2);
 				ZetWebncProducts webncProducts = hZetWebncProducts.value;
 				List<ZesWebncProducts> webncProductsList = webncProducts.getItem();
-				if (webncProductsList != null && webncProductsList.size() > 0) {
+				if (webncProductsList != null && !webncProductsList.isEmpty()) {
 					for (ZesWebncProducts products : webncProductsList) {
 						ZetPrdDetails zttypeprods = products.getProducts();
 						List<ZesPrdDetails> zvvasprodsList = zttypeprods.getItem();
@@ -1257,7 +1199,7 @@ public class ProfileService extends BaseAbstractService {
        	Bapiret2T bapiret2T = hTBapiret2.value;
 
        	List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
-       	if(listBapiret2!=null && listBapiret2.size()>0)
+       	if(listBapiret2!=null && !listBapiret2.isEmpty())
        	{
        		for(com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2:listBapiret2)
        		{
@@ -1284,7 +1226,7 @@ public class ProfileService extends BaseAbstractService {
        {
        	ZetWebncProducts webncProducts = hZetWebncProducts.value;
        	List<ZesWebncProducts> webncProductsList = webncProducts.getItem();
-       	if(webncProductsList!=null && webncProductsList.size()>0)
+       	if(webncProductsList!=null && !webncProductsList.isEmpty())
        	{
 	        	int counter=0;        
 	        	ProductDO[] productDO = new ProductDO[webncProductsList.size()];
@@ -1319,7 +1261,7 @@ public class ProfileService extends BaseAbstractService {
        	{
        		Bapiret2T bapiret2T = hTBapiret2.value;
        		List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
-       		if(listBapiret2!=null && listBapiret2.size()>0)
+       		if(listBapiret2!=null && !listBapiret2.isEmpty())
        		{
        			for(com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2:listBapiret2)
        			{
@@ -1342,7 +1284,7 @@ public class ProfileService extends BaseAbstractService {
 	       	Bapiret2T bapiret2T = hTBapiret2.value;
 	
 	       	List<com.nrg.cxfstubs.sundriverclub.Bapiret2> listBapiret2 = bapiret2T.getItem();
-	       	if(listBapiret2!=null && listBapiret2.size()>0)
+	       	if(listBapiret2!=null && !listBapiret2.isEmpty())
 	       	{
 	       		for(com.nrg.cxfstubs.sundriverclub.Bapiret2 bapiret2:listBapiret2)
 	       		{
@@ -1384,13 +1326,12 @@ public class ProfileService extends BaseAbstractService {
 		String request = "accountNumber="+accountNumber;
 		String imCa = CommonUtil.paddedCa(accountNumber);
 		
-		logger.info("imCa "+imCa);
+		logger.info("imCa:{} ",imCa);
 		
 		
 		URL url = ZEISUENVIRONMENTALIMPACTS.class
 		.getResource("Z_E_ISU_ENVIRONMENTAL_IMPACTS.wsdl");
 		
-		logger.info("Plan History URL "+url.toString());
 		
 		ZEWSENVIRONMENTALIMPACTS port = new ZEWSENVIRONMENTALIMPACTS(url);
 		
@@ -1402,8 +1343,8 @@ public class ProfileService extends BaseAbstractService {
 		binding.getRequestContext().put(BindingProvider.PASSWORD_PROPERTY,this.envMessageReader.getMessage(CCS_PSD));
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,this.envMessageReader.getMessage(ENVIRONMENT_IMPACT_ENDPOINT_URL_JNDINAME));
 
-		javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.ZetEnviDetails> hTZETEnviDetails = new javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.ZetEnviDetails>();
-		javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.Bapiret2T> hTBapiret2 = new  javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.Bapiret2T>();
+		javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.ZetEnviDetails> hTZETEnviDetails = new javax.xml.ws.Holder<>();
+		javax.xml.ws.Holder<com.nrg.cxfstubs.environmentalimpact.Bapiret2T> hTBapiret2 = new  javax.xml.ws.Holder<>();
 	    
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -1420,9 +1361,9 @@ public class ProfileService extends BaseAbstractService {
 		ZetEnviDetails htZetEnviDetails = hTZETEnviDetails.value;
 		List<ZesEnviDetails> listZesEnviDetails = htZetEnviDetails.getItem();
 				
-		logger.info("Plan History List "+listZesEnviDetails.size());
+		logger.info("Plan History List:{} ",listZesEnviDetails.size());
 		
-       	if(listZesEnviDetails!= null && listZesEnviDetails.size()>0)
+       	if(!listZesEnviDetails.isEmpty())
        	{	
 		EnvironmentImpacts[] environmentImpacts = new EnvironmentImpacts[listZesEnviDetails.size()];
 		int count=0;
@@ -1451,7 +1392,7 @@ public class ProfileService extends BaseAbstractService {
        	{
        		com.nrg.cxfstubs.environmentalimpact.Bapiret2T bapiret2T = hTBapiret2.value;
        		List<com.nrg.cxfstubs.environmentalimpact.Bapiret2> listBapiret2 = bapiret2T.getItem();
-       		if(listBapiret2!=null && listBapiret2.size()>0)
+       		if(listBapiret2!=null && !listBapiret2.isEmpty())
        		{
        			for(com.nrg.cxfstubs.environmentalimpact.Bapiret2 bapiret2:listBapiret2)
        			{
@@ -1474,7 +1415,7 @@ public class ProfileService extends BaseAbstractService {
        	return response;
 	}
 	
-	public SecondaryNameResponse secondaryNameUpdate(SecondaryNameUpdateReqVO request, String companyCode, String sessionId)throws Exception{
+	public SecondaryNameResponse secondaryNameUpdate(SecondaryNameUpdateReqVO request, String companyCode, String sessionId) {
 		
 		SecondaryNameResponse response = new SecondaryNameResponse();
 		logger.info("ProfileService - secondaryNameUpdate ccs call starts...");
@@ -1484,15 +1425,12 @@ public class ProfileService extends BaseAbstractService {
         String bp=request.getBpid();
         String ca = CommonUtil.paddedCa(request.getAccountNumber());
         
-        logger.info("Action in secondaryNameUpdate.."+action);
-        logger.info("BP Number in secondaryNameUpdate.."+bp);
-        logger.info("CA Number in secondaryNameUpdate.."+ca);
+        logger.info("Action in secondaryNameUpdate..{}",action);
+        logger.info("BP Number in secondaryNameUpdate.{}",bp);
+        logger.info("CA Number in secondaryNameUpdate..{}",ca);
         
         
 		URL url = ZCRMWSBPRELATIONREADUPD_Service.class.getResource("Z_CRM_WS_BP_RELATION_READ_UPD.wsdl");
-		
-		if(url==null)
-		  logger.info("Could Not initialize the WSDL");
 		
 		ZCRMWSBPRELATIONREADUPD_Service port = new ZCRMWSBPRELATIONREADUPD_Service(url);
 		
@@ -1507,11 +1445,11 @@ public class ProfileService extends BaseAbstractService {
 		binding.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY,this.envMessageReader.getMessage(CCS_SECONDARY_NAME_UPDATE_JNDINAME));
 
 
-        javax.xml.ws.Holder<ZetPartnerNames> hzetPartNames = new Holder<ZetPartnerNames>();
+        javax.xml.ws.Holder<ZetPartnerNames> hzetPartNames = new Holder<>();
         ZetPartnerNames zetPartNames = new ZetPartnerNames();
         hzetPartNames.value = zetPartNames;        
         
-        javax.xml.ws.Holder<com.nrg.cxfstubs.bprelationreadupd.Bapiret2T> hBapiRet2=new Holder<com.nrg.cxfstubs.bprelationreadupd.Bapiret2T>();
+        javax.xml.ws.Holder<com.nrg.cxfstubs.bprelationreadupd.Bapiret2T> hBapiRet2=new Holder<>();
         com.nrg.cxfstubs.bprelationreadupd.Bapiret2T bapiRet2T = new com.nrg.cxfstubs.bprelationreadupd.Bapiret2T();
         hBapiRet2.value=bapiRet2T;
         
@@ -1537,47 +1475,54 @@ public class ProfileService extends BaseAbstractService {
        com.nrg.cxfstubs.bprelationreadupd.Bapiret2T tbapiret2 = hBapiRet2.value;
        List<com.nrg.cxfstubs.bprelationreadupd.Bapiret2> listBapiret2 = tbapiret2.getItem();
        
-      	if(listBapiret2!=null && listBapiret2.size()>0)
-      	{
-      		for(com.nrg.cxfstubs.bprelationreadupd.Bapiret2 bapiret2:listBapiret2)
-      		{
-      			logger.info("Setting error codes using BApitRet2");
-      			logger.info("Printintg Bapiret2 values..."+bapiret2.getType()+" "+bapiret2.getNumber()+" "+bapiret2.getMessage());
-      			if(bapiret2.getType().equalsIgnoreCase(TYPE_E) && (bapiret2.getNumber()!= null || bapiret2.getMessage() != null)){
-      				
-      				if(action.equals("4"))
-      				{
-      				   response.setResultCode(RESULT_CODE_SUCCESS);
-      				   response.setResultDescription(bapiret2.getMessage());
-      				   response.setSecondaryNames(new SecondaryName[0]);
-      				  utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-      				if(logger.isDebugEnabled()){
-	      				logger.debug(XmlUtil.pojoToXML(request));
-	      				logger.debug(XmlUtil.pojoToXML(response));
-      				}
-      				  return response;
-      				}
-      				else
-      				{
-      				  response.setResultCode(RESULT_CODE_CCS_ERROR);
-      				  response.setResultDescription(bapiret2.getMessage());
-      				response.setSecondaryNames(new SecondaryName[0]);
-      				utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-      				if(logger.isDebugEnabled()){
-	      				logger.debug(XmlUtil.pojoToXML(request));
-	      				logger.debug(XmlUtil.pojoToXML(response));
-      				}
-      				return response;
-      				}  
-      			}
-      			
-      		}
-      	}
+    	if(!CommonUtil.isNullOrEmptyCollection(listBapiret2))
+     	{
+     		for(com.nrg.cxfstubs.bprelationreadupd.Bapiret2 bapiret2:listBapiret2)
+     		{
+     			logger.info("Setting error codes using BApitRet2");
+     			logger.info("Printintg Bapiret2 values...{} {} {}",bapiret2.getType(),bapiret2.getNumber(),bapiret2.getMessage());
+     			if(bapiret2.getType().equalsIgnoreCase(TYPE_E) && (bapiret2.getNumber()!= null || bapiret2.getMessage() != null)){
+     				
+     				if(action.equals("4"))
+     				{
+     				   response.setResultCode(RESULT_CODE_SUCCESS);
+     				   response.setResultDescription(bapiret2.getMessage());
+     				   response.setSecondaryNames(new SecondaryName[0]);
+     				  utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+     				  return response;
+     				}
+     				else
+     				{
+     				  response.setResultCode(RESULT_CODE_CCS_ERROR);
+     				  response.setResultDescription(bapiret2.getMessage());
+     				response.setSecondaryNames(new SecondaryName[0]);
+     				utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+     				return response;
+     				}  
+     			}
+     			
+     		}
+     	}
         
         ZetPartnerNames zetPartDetails = hzetPartNames.value;
         logger.info("Extracting ZetPartDetails");
-        List<ZesPartnerNames> zesPartnerNameList = zetPartDetails.getItem();
-        logger.info("Partner Number Lists size "+zesPartnerNameList.size());
+        SecondaryName[] names = handleSecondaryNamesUpdResponse(zetPartDetails);
+        
+        response.setSecondaryNames(names);
+		}catch(Exception e){
+			logger.error(e);
+			logger.info(XmlUtil.pojoToXML(request));
+			utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+			throw e;// throwing is required so that proper API response is generated in BO layer for exception scenario
+		}
+        logger.info("ProfileService - secondaryNameUpdate ccs call ends...");
+        utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+        return response;
+	}
+
+	private SecondaryName[] handleSecondaryNamesUpdResponse(ZetPartnerNames zetPartDetails) {
+		List<ZesPartnerNames> zesPartnerNameList = zetPartDetails.getItem();
+        logger.info("Partner Number Lists size:{} ",zesPartnerNameList.size());
         int count = 0;
         SecondaryName[] names = new SecondaryName[zesPartnerNameList.size()];
         
@@ -1594,21 +1539,7 @@ public class ProfileService extends BaseAbstractService {
         	names[count].setRelationship(partnerNames.getReltyp());
         	count++;
         }
-        
-        response.setSecondaryNames(names);
-		}catch(Exception e){
-			logger.error(e);
-			logger.info(XmlUtil.pojoToXML(request));
-			utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,e, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			throw e;// throwing is required so that proper API response is generated in BO layer for exception scenario
-		}
-        logger.info("ProfileService - secondaryNameUpdate ccs call ends...");
-        utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-        if(logger.isDebugEnabled()){
-	        logger.debug(XmlUtil.pojoToXML(request));
-			logger.debug(XmlUtil.pojoToXML(response));
-        }
-        return response;
+		return names;
 	}
 	
 	
@@ -1646,25 +1577,14 @@ public class ProfileService extends BaseAbstractService {
 	      zetList.add(zes);
 	      
 	      
-	      Holder<com.nrg.cxfstubs.oamidentity.Bapiret2T> hbapiret2T = new Holder<com.nrg.cxfstubs.oamidentity.Bapiret2T>();
-	      Holder<ZetBut0Id> hzetbutid01 = new Holder<ZetBut0Id>();
-	      Holder<ZetBut0Id> hzetbutid02 = new Holder<ZetBut0Id>();
+	      Holder<com.nrg.cxfstubs.oamidentity.Bapiret2T> hbapiret2T = new Holder<>();
+	      Holder<ZetBut0Id> hzetbutid01 = new Holder<>();
+	      Holder<ZetBut0Id> hzetbutid02 = new Holder<>();
 	      long startTime = CommonUtil.getStartTime();
 	      port.zeWebOamIdentyForBp(imAction, zet, hzetbutid01, hzetbutid02, hbapiret2T);
 	      utilityloggerHelper.logTransaction("activateCRM", false, zes,"", "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
 	      if(logger.isDebugEnabled())
 	    	  logger.debug(XmlUtil.pojoToXML(request));
-			//logger.info(XmlUtil.pojoToXML(response));
-
-	      /*ZetBut0Id zetId = hzetbutid01.value;
-	      List<ZesBut0Id> listZes = zetId.getItem();
-	      logger.info("List size "+listZes.size());
-	      for(ZesBut0Id z: listZes)
-	      {
-	    	  logger.info("Main Holder");
-	    	  logger.info(z.getBusinesspartner());
-	    	  logger.info(z.getIdType());
-	      } */
 	  }
 	
 	/**
@@ -1810,7 +1730,7 @@ public class ProfileService extends BaseAbstractService {
 			throws RemoteException
 	{
 		logger.info("Start ProfileService.AcctValidationResponse :: START");
-		System.out.println("inside the profile domain");
+
 		long startTime = CommonUtil.getStartTime();
 		ProfileDomain proxy = getProfileDomainProxy();
 
@@ -1845,12 +1765,6 @@ public class ProfileService extends BaseAbstractService {
 		LanguageUpdateResponse response = null;
 		try{
 			response= proxy.updateLanguage(request);
-		}catch(RemoteException ex){
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(request));
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("updateLanguage", false, request,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			throw ex;
 		}catch(Exception ex){
 			if(logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(request));
@@ -1881,13 +1795,6 @@ public class ProfileService extends BaseAbstractService {
 		AllAlertsResponse response = null;
 		try {
 			response = proxy.getContractInfoInParallel(allAlertsRequest);
-		} catch (RemoteException ex) {
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, ex, "",
-					CommonUtil.getElapsedTime(startTime), "", sessionId, allAlertsRequest.getCompanyCode());
-			if (logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(allAlertsRequest));
-			throw ex;
 		} catch (Exception ex) {
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("getContractInfoInParallel", false, allAlertsRequest, ex, "",
@@ -1921,13 +1828,6 @@ public class ProfileService extends BaseAbstractService {
 		AllAccountDetailsResponse response = null;
 		try {
 			response = proxy.getAllAccountDetailsInParallel(allAccountRequest);
-		} catch (RemoteException ex) {
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, ex, "",
-					CommonUtil.getElapsedTime(startTime), "", sessionId, allAccountRequest.getCompanyCode());
-			if (logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(allAccountRequest));
-			throw ex;
 		} catch (Exception ex) {
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("getAllAccountDetailsParallel", false, allAccountRequest, ex, "",
