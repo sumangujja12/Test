@@ -905,7 +905,7 @@ public class ProfileService extends BaseAbstractService {
 
 		List <OfferDO> eligibleOffersList = new ArrayList<>();
 		
-		if (zesEligibleOfferList != null && !zesEligibleOfferList.isEmpty()) {
+		if (!CommonUtil.isNullOrEmptyCollection(zesEligibleOfferList)) {
 
 			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
@@ -915,7 +915,7 @@ public class ProfileService extends BaseAbstractService {
 					if( ! org.apache.commons.lang3.StringUtils.isEmpty(applicationArea) &&  applicationArea.equalsIgnoreCase(APPLICATION_SWAP_AREA) &&  zesEligoffer.getAttribute01()!=null && (StringUtils.isNotBlank(zesEligoffer.getAttribute01()))
 							&& Arrays.asList(excludeOfferList).contains(zesEligoffer.getAttribute01())) {
 								continue;
-							}
+					}
 					
 					OfferDO offerDO = new OfferDO();
 					
@@ -1504,7 +1504,7 @@ public class ProfileService extends BaseAbstractService {
 			throw e;// throwing is required so that proper API response is generated in BO layer for exception scenario
 		}
         logger.info("ProfileService - secondaryNameUpdate ccs call ends...");
-        utilityloggerHelper.logTransaction("secondaryNameUpdate", false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+        utilityloggerHelper.logTransaction(SECONDAY_NAME_UPDATE_LABEL, false, request,response, response.getResultDescription(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
         return response;
 	}
 
@@ -1536,7 +1536,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @param request
 	 * @throws RemoteException
 	 */
-	public void activateCRM(UserRegistrationRequest request,String businessPartner, String companyCode, String sessionId)throws RemoteException
+	public void activateCRM(UserRegistrationRequest request,String businessPartner, String companyCode, String sessionId)
 	  {
 		  URL url = ZEWEBOAMIDENTYFORBP_Service.class.getResource("CMQ-Z_E_WEB_OAM_IDENTY_FOR_BP.wsdl");
 
@@ -1583,8 +1583,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public WseServiceResponse wsDeEnrollService(WseServiceRequest request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public WseServiceResponse wsDeEnrollService(WseServiceRequest request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.debug("Start ProfileService.wsEnrollDeEnrollService :: START");
 		ProfileDomain proxy = getProfileDomainProxy();
@@ -1613,8 +1612,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public WseEnrollmentResponse wsEnrollService(WseEnrollmentRequest request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public WseEnrollmentResponse wsEnrollService(WseEnrollmentRequest request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.debug("Start ProfileService.wsEnrollDeEnrollService :: START");
 		ProfileDomain proxy = getProfileDomainProxy();
@@ -1641,8 +1639,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public WseEsenseEligibilityResponse wseEsenseEligibilityStatus(AllAccountDetailsRequest  request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public WseEsenseEligibilityResponse wseEsenseEligibilityStatus(AllAccountDetailsRequest  request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.info("Start ProfileService.wseEsenseEligibilityStatus :: START");
 		ProfileDomain proxy = getProfileDomainProxy();
@@ -1662,7 +1659,6 @@ public class ProfileService extends BaseAbstractService {
 				&& (wseResponse.getWseEsenseEligibilityResponse() != null && wseResponse
 						.getWseEsenseEligibilityResponse()
 						.getWseEsenseEligibilityItem() != null)) {
-			System.out.println(wseResponse.getWseEsenseEligibilityResponse());
 			return wseResponse.getWseEsenseEligibilityResponse();
 		}
 		
@@ -1679,11 +1675,9 @@ public class ProfileService extends BaseAbstractService {
 	 * @throws RemoteException
 	 * @throws Exception
 	 */
-	public CirroStructureCallResponse getCirroStructureCall(CirroStructureCallRequest  request, String companyCode, String sessionId)
-			throws RemoteException, Exception
+	public CirroStructureCallResponse getCirroStructureCall(CirroStructureCallRequest  request, String companyCode, String sessionId) throws RemoteException
 	{
 		logger.info("Start ProfileService.getCirroStructureCall :: START");
-		System.out.println("inside the profile domain");
 		long startTime = CommonUtil.getStartTime();
 		ProfileDomain proxy = getProfileDomainProxy();
 
@@ -1745,7 +1739,7 @@ public class ProfileService extends BaseAbstractService {
 	 * @return
 	 * @throws Exception
 	 */
-	public LanguageUpdateResponse updateLanguage(LanguageUpdateRequest request, String companyCode, String sessionId)throws Exception
+	public LanguageUpdateResponse updateLanguage(LanguageUpdateRequest request, String companyCode, String sessionId)throws RemoteException
 	{
 		
 		ProfileDomain proxy = getProfileDomainProxy();
