@@ -1379,14 +1379,7 @@ public class CommonUtil implements Constants {
 			{
 				logger.debug("inside check size boundary param values and total values are::{}",sizeParamMap.size());
 				paramVal = (String) sizeParamMap.get(key);
-				if(!(isValidSize(paramVal, min, max))){
-					sizeParamMissing.add(key);
-					if(StringUtils.isBlank(errorDesc)){
-						errorDesc=key;
-					}else{
-						errorDesc+=", "+key;
-					}
-				}
+				errorDesc = checkParameterValidSize(min, max, sizeParamMissing, errorDesc, paramVal, key);
 				logger.debug("inside checkSizeParam:: {}",sizeParamMissing.size());
 			}
 			if( !isCollectionNullOrEmpty(sizeParamMissing))
@@ -1412,6 +1405,19 @@ public class CommonUtil implements Constants {
 		}
 		logger.info("inside checkSizeParam:: response is :: {}", sizeParamChkResponse);
 		return sizeParamChkResponse;
+	}
+
+	private static String checkParameterValidSize(Integer min, Integer max, ArrayList<Object> sizeParamMissing,
+			String errorDesc, String paramVal, String key) {
+		if(!(isValidSize(paramVal, min, max))){
+			sizeParamMissing.add(key);
+			if(StringUtils.isBlank(errorDesc)){
+				errorDesc=key;
+			}else{
+				errorDesc+=", "+key;
+			}
+		}
+		return errorDesc;
 	}
 	
 	/**
