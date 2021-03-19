@@ -16,6 +16,8 @@ import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
 import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAccountDetailsRequest;
@@ -363,7 +365,7 @@ public class ProfileService extends BaseAbstractService {
 		
 		//Populate Contract Account Details	
 		
-		if(null!=zcaOutputList && !zcaOutputList.isEmpty()){
+		if(!CollectionUtils.isEmpty(zcaOutputList)){
 			
 			zcaOutput = zcaOutputList.get(0);
 			contractAccountDO.setStrCANumber(zcaOutput.getExVkont());
@@ -545,12 +547,7 @@ public class ProfileService extends BaseAbstractService {
 			contractAccountDO.setListOfContracts(contractDOList);
 			
 			profileResponse.setContractAccountDO(contractAccountDO);
-			
-			
 		}
-		
-		
-		
 		
 		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)){
 			
@@ -905,7 +902,7 @@ public class ProfileService extends BaseAbstractService {
 
 		List <OfferDO> eligibleOffersList = new ArrayList<>();
 		
-		if (!CommonUtil.isNullOrEmptyCollection(zesEligibleOfferList)) {
+		if (!CommonUtil.isCollectionNullOrEmpty(zesEligibleOfferList)) {
 
 			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
@@ -1495,7 +1492,7 @@ public class ProfileService extends BaseAbstractService {
        com.nrg.cxfstubs.bprelationreadupd.Bapiret2T tbapiret2 = hBapiRet2.value;
        List<com.nrg.cxfstubs.bprelationreadupd.Bapiret2> listBapiret2 = tbapiret2.getItem();
        
-    	if(!CommonUtil.isNullOrEmptyCollection(listBapiret2))
+    	if(!CommonUtil.isCollectionNullOrEmpty(listBapiret2))
      	{
      		for(com.nrg.cxfstubs.bprelationreadupd.Bapiret2 bapiret2:listBapiret2)
      		{

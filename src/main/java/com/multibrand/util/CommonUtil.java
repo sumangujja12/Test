@@ -2379,7 +2379,24 @@ public class CommonUtil implements Constants {
 		return eflUrl;
 	}
 	
-	public static boolean isNullOrEmptyCollection(final Collection<?> c) {
-		return c == null || c.isEmpty();
+	
+	/**
+	 * Return {@code true} if the supplied Collection is {@code null}
+	 * or empty. Otherwise, return {@code false}.
+	 * @param collection the Collection to check
+	 * @return whether the given Collection is empty
+	 */
+	public static boolean isCollectionNullOrEmpty(final Collection<?> collection) {
+		return (collection == null || collection.isEmpty());
+	}
+
+	/**
+	 * Return {@code true} if the supplied Map is {@code null}
+	 * or empty. Otherwise, return {@code false}.
+	 * @param map the Map to check
+	 * @return whether the given Map is empty
+	 */
+	public static boolean isMapNullOrEmpty(final Map<?,?> map) {
+		return (map == null || map.isEmpty());
 	}	
 }
