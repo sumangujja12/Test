@@ -1644,5 +1644,7 @@ public interface Constants {
 	public static final String BUSINESS = "BUSINESS";
 	public static final String FB = "FB";
 	public static final String DEPOSIT = "DEPOSIT";
-
+	public static final String TWOZEROAFTERPOINT = ".00";
+	public static final String ZEROPLUSTWOZEROAFTERPOINT = "0.00";
+	public static final String CUSTOMER_PAY = "CUSTOMER_PAY";
 }
