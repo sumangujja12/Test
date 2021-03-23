@@ -37,6 +37,7 @@ public class SalesEnrollmentRequest extends SalesOERequest{
 	@Length(max = 1, groups = SizeConstraint.class)
 	private String ebillFlag;
 	
+	private String securityMethod;
 
 	
 	public String getEbillFlag() {
@@ -80,6 +81,12 @@ public class SalesEnrollmentRequest extends SalesOERequest{
 	}
 	public void setMarketSegment(String marketSegment) {
 		this.marketSegment = marketSegment;
+	}
+	public String getSecurityMethod() {
+		return securityMethod;
+	}
+	public void setSecurityMethod(String securityMethod) {
+		this.securityMethod = securityMethod;
 	}
 	
 	

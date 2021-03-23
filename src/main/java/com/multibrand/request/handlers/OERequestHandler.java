@@ -114,6 +114,11 @@ public class OERequestHandler implements Constants {
 		request.setCompanyCode(oeSignupDTO.getCompanyCode());
 		request.setTrackingId(oeSignupDTO.getTrackingNumber());
 		request.setServiceRequestTypeCode(oeSignupDTO.getServiceReqTypeCd());
+		if(null != oeSignupDTO.getCreditCheck()){
+		request.setSecurityMethod(oeSignupDTO.getCreditCheck().getSecurityMethod());
+		request.setActivationFeeCode(oeSignupDTO.getCreditCheck().getActivationFeeCd());
+		}
+		
 		if (BPSD.equalsIgnoreCase(oeSignupDTO.getErrorCode()) || NESID.equalsIgnoreCase(oeSignupDTO.getErrorCode())) {
 			request.setRequestStatusCode(FLAG_N);
 		} else {
@@ -741,10 +746,11 @@ public class OERequestHandler implements Constants {
 		 * 
 		 * @Jsingh1@lntinfotech
 		 */
+		String activationFeeCD=null;
 		if (null != oeSignUpDTO.getCreditCheck() && null != oeSignUpDTO.getCreditCheck().getSecurityMethod()
 				&& oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(SURETY_BOND)) {
 			reasonSEcurityDeposit = Z1; // z1 for account activation fee
-
+			
 			BigDecimal activation_fee = new BigDecimal(oeSignUpDTO.getCreditCheck().getActivationFee());
 			submitEnrollRequest.setCustFee(activation_fee);
 
@@ -753,14 +759,21 @@ public class OERequestHandler implements Constants {
 
 			submitEnrollRequest.setAcctSecStatus(oeSignUpDTO.getCreditCheck().getAccSecStatus());
 			depositCode = N_VALUE;
-			if ((oeSignUpDTO.getCreditCheck().getIsPayUpfront()).equalsIgnoreCase(FLAG_X)) {
+			if (StringUtils.equalsIgnoreCase(oeSignUpDTO.getCreditCheck().getIsPayUpfront(),FLAG_X)) {
+				activationFeeCD = DEPOSIT_CODE_FULL;
 				if (EMPTY.equals(enrollmentHoldType))
 					enrollmentHoldType = ACCSECHOLD;
 				else
 					enrollmentHoldType = enrollmentHoldType + SYMBOL_COMMA + ACCSECHOLD;
+			}else if(StringUtils.equalsIgnoreCase(oeSignUpDTO.getCreditCheck().getIsPayUpfront(),EMPTY)){
+				activationFeeCD = FB;
+			} 
+		}else if (null != oeSignUpDTO.getCreditCheck() && null != oeSignUpDTO.getCreditCheck().getSecurityMethod()
+				&& oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(DEPOSIT))
+		{
+			activationFeeCD =FLAG_NO;
 			}
-		}
-
+        oeSignUpDTO.getCreditCheck().setActivationFeeCd(activationFeeCD);
 		if (MOVEIN.equals(enrollmentType) && ON.equals(oeSignUpDTO.getSwitchHoldStatus())) {
 			if (EMPTY.equals(enrollmentHoldType))
 				enrollmentHoldType = SWITCHHOLD;
@@ -1172,6 +1185,7 @@ public class OERequestHandler implements Constants {
 		oeSignupDTO.setOfferDate(enrollmentRequest.getOfferDate());
 		oeSignupDTO.setOfferTime(enrollmentRequest.getOfferTime());
 		oeSignupDTO.setSwitchHoldStatus(enrollmentRequest.getSwitchHoldFlag());
+		
 		if(serviceLoationResponse != null){
 		oeSignupDTO.setReqStatusCd(serviceLoationResponse.getRequestStatusCode());}
 		// Offer data
@@ -1268,7 +1282,7 @@ public class OERequestHandler implements Constants {
 				this.populatePerson(oeSignupDTO, personResponse);
 
 				// credit check information
-				this.populateCreditInfo(oeSignupDTO, personResponse);
+				this.populateCreditInfo(oeSignupDTO, personResponse, servLocResponse, enrollmentRequest);
 			}
 
 			// credit deposit amount
@@ -1323,7 +1337,7 @@ public class OERequestHandler implements Constants {
 	 * @param oeSignupDTO
 	 * @param personResponse
 	 */
-	private void populateCreditInfo(OESignupDTO oeSignupDTO, PersonResponse personResponse) {
+	private void populateCreditInfo(OESignupDTO oeSignupDTO, PersonResponse personResponse,ServiceLocationResponse serviceResponse, EnrollmentRequest enrollmentRequest) {
 		// Credit data
 		CreditCheckDTO creditCheck = new CreditCheckDTO();
 
@@ -1334,7 +1348,12 @@ public class OERequestHandler implements Constants {
 		if (StringUtils.isNotBlank(personResponse.getAdvActionData())) {
 			creditCheck.setFactorsKey(CommonUtil.convertAsList(DELIMETER_COMMA, personResponse.getAdvActionData()));
 		}
-
+	   creditCheck.setSecurityMethod(enrollmentRequest.getSecurityMethod());
+	   creditCheck.setActivationFee(serviceResponse.getActivationFee());
+	   creditCheck.setBondPrice(serviceResponse.getBondPrice());
+	   creditCheck.setAccSecStatus(serviceResponse.getAccSecStatus());
+	   creditCheck.setIsPayUpfront(serviceResponse.getIsPayUpFront());
+	   
 		// set credit check
 		oeSignupDTO.setCreditCheck(creditCheck);
 	}
@@ -1393,6 +1412,7 @@ public class OERequestHandler implements Constants {
 		request.setEbillFlag(enrollmentRequest.getEbillFlag());
 		request.setLanguageCode(enrollmentRequest.getLanguageCode());
 		request.setTrackingId(enrollmentRequest.getTrackingId());
+		request.setSecurityMethod(enrollmentRequest.getSecurityMethod());
 
 		if (StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())) {
 			String[] errorCdArray = serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
