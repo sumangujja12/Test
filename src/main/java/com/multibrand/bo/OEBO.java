@@ -2312,7 +2312,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		/*Setting DepositDueText Empty if we have Credit Freeze or Fraud*/	
 
 			populateDepositReasonTextInResponse(response, newCreditScoreResponse, creditCheckRequest, localeObj);
-			
+			populateCreditCheckApiSuretyBondDetails(response, newCreditScoreResponse, localeObj);
 				
 		} catch (RemoteException e) {
 			logger.error(e);
@@ -6540,6 +6540,21 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				requestData.setDepositCode(DEPOSIT_NONE);
 				requestData.setDepositAmount(ZERO);
 			}
+			String payUpFront = newCreditScoreResponse.getStrPayUpFrontFlag();
+			if (null != payUpFront && !(payUpFront.equals(""))) {
+				if ((payUpFront.equalsIgnoreCase("Yes") || payUpFront.equalsIgnoreCase("Y")
+						|| payUpFront.equalsIgnoreCase("X"))) {
+					payUpFront = "X";
+				} else {
+					payUpFront = "O";
+				}
+			}
+			newCreditScoreResponse.getStrPayUpFrontFlag();
+			requestData.setBondPrice(response.getBondPrice());
+			requestData.setActivationFee(response.getActivationFee());
+			requestData.setAccSecStatus(response.getAccSecStatus());
+			requestData.setIsPayUpFront(payUpFront);
+			
 			requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(creditCheckRequest.getCallExecuted(),serviceLoationResponse.getCallExecutedFromDB()));
 			
 			/* Updating service location affiliate table */
@@ -7030,5 +7045,57 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			e.printStackTrace();
 		}
 		return affiliateOfferResponse;
+	}
+
+	private void populateCreditCheckApiSuretyBondDetails(NewCreditScoreResponse response,
+			com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse, Locale localeObj) {
+		
+		if (StringUtils.isNotBlank(String.valueOf(newCreditScoreResponse.getStrDepositAmt())) && (StringUtils.isNotBlank(newCreditScoreResponse.getStrAcctSecStatus())
+		&& newCreditScoreResponse.getStrAcctSecStatus().equalsIgnoreCase(CUSTOMER_PAY) && StringUtils.isNotBlank(String.valueOf(newCreditScoreResponse.getCustomerFee())))) {
+		String bondprice = EMPTY;
+		String activationFee = EMPTY;
+		if (null != newCreditScoreResponse.getBondPrice()) {
+			bondprice = newCreditScoreResponse.getBondPrice().toString();
+		} else {
+			bondprice = EMPTY;
+		}
+
+		if (null != newCreditScoreResponse.getCustomerFee()) {
+			activationFee = newCreditScoreResponse.getCustomerFee().toString();
+
+			activationFee = normalizedString(activationFee); // convert to .00 format
+
+		} else {
+			activationFee = EMPTY;
+		}
+			 response.setAccSecStatus(newCreditScoreResponse.getStrAcctSecStatus());
+			 response.setActivationFee(activationFee);
+			 response.setBondPrice(bondprice);
+			
+		}
+		 
+
+	}
+	
+	public String normalizedString(String tempStr)
+	{
+		logger.info("normalizedString : Entering the method");
+
+		if(tempStr.indexOf(DOT)!=-1)
+		{						
+			if(tempStr.substring(tempStr.indexOf(DOT)).length()<3)
+				tempStr += ZERO;
+		}
+		else {
+			tempStr += TWOZEROAFTERPOINT;
+		}
+
+		if(tempStr.equals(TWOZEROAFTERPOINT) || tempStr.equals(ZEROPLUSTWOZEROAFTERPOINT)) {
+			tempStr=EMPTY;	
+		}
+
+		logger.info("normalizedString : Leaving the method");
+
+		return tempStr;
 	}
 }
