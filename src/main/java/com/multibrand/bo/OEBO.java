@@ -2310,9 +2310,11 @@ public class OEBO extends OeBoHelper implements Constants{
 
 			
 		/*Setting DepositDueText Empty if we have Credit Freeze or Fraud*/	
-
 			populateDepositReasonTextInResponse(response, newCreditScoreResponse, creditCheckRequest, localeObj);
+			 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
 			populateCreditCheckApiSuretyBondDetails(response, newCreditScoreResponse, localeObj);
+			 // End Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
+			
 				
 		} catch (RemoteException e) {
 			logger.error(e);
@@ -6540,8 +6542,11 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				requestData.setDepositCode(DEPOSIT_NONE);
 				requestData.setDepositAmount(ZERO);
 			}
+			
+		     // Start Relient.com | 95753 | Sprint -33| vsingh | 24/03/2021
+		     
 			String payUpFront = newCreditScoreResponse.getStrPayUpFrontFlag();
-			if (null != payUpFront && !(payUpFront.equals(""))) {
+			if (StringUtils.isNotEmpty(payUpFront)) {
 				if ((payUpFront.equalsIgnoreCase("Yes") || payUpFront.equalsIgnoreCase("Y")
 						|| payUpFront.equalsIgnoreCase("X"))) {
 					payUpFront = "X";
@@ -6554,7 +6559,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			requestData.setActivationFee(response.getActivationFee());
 			requestData.setAccSecStatus(response.getAccSecStatus());
 			requestData.setIsPayUpFront(payUpFront);
-			
+			// End Relient.com | 95753 | Sprint -33| vsingh | 24/03/2021
 			requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(creditCheckRequest.getCallExecuted(),serviceLoationResponse.getCallExecutedFromDB()));
 			
 			/* Updating service location affiliate table */
@@ -7047,6 +7052,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		return affiliateOfferResponse;
 	}
 
+	 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
 	private void populateCreditCheckApiSuretyBondDetails(NewCreditScoreResponse response,
 			com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse, Locale localeObj) {
 		
@@ -7076,6 +7082,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		 
 
 	}
+	 // End Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
 	
 	public String normalizedString(String tempStr)
 	{
