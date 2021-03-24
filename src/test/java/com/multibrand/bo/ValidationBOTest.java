@@ -22,6 +22,7 @@ import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.multibrand.util.Constants;
@@ -54,6 +55,11 @@ public class ValidationBOTest {
 	@BeforeClass
 	public void init() {
 		MockitoAnnotations.initMocks(this);
+		when(logger.isDebugEnabled()).thenReturn(true);
+	}
+	
+	@BeforeMethod
+	public void initMethod() {
 		when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
