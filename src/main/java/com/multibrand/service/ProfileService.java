@@ -456,10 +456,10 @@ public class ProfileService extends BaseAbstractService {
 			profileResponse.setContractAccountDO(contractAccountDO);
 		}
 		
-		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)){
+		if(null != exReturnCode.value && (! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value) || ! Constants.THREE.equals(exReturnCode.value))) {
 			
 			profileResponse.setErrorCode(Constants.MSG_CCSERR_+exReturnCode.value+Constants._GET_PROFILE);
-		} else if((null == zcaOutputList  || zcaOutputList.isEmpty()) && exReturnCode.value == null){
+		} else if(CommonUtil.isCollectionNullOrEmpty(zcaOutputList)  && exReturnCode.value == null){
 			
 			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
 		} 

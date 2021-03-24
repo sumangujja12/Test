@@ -2360,8 +2360,6 @@ public class CommonUtil implements Constants {
 	
 	
 	/**
-	 * Return {@code true} if the supplied Collection is {@code null}
-	 * or empty. Otherwise, return {@code false}.
 	 * @param collection the Collection to check
 	 * @return whether the given Collection is empty
 	 */
@@ -2370,8 +2368,6 @@ public class CommonUtil implements Constants {
 	}
 
 	/**
-	 * Return {@code true} if the supplied Map is {@code null}
-	 * or empty. Otherwise, return {@code false}.
 	 * @param map the Map to check
 	 * @return whether the given Map is empty
 	 */
