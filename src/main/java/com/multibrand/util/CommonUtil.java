@@ -544,13 +544,13 @@ public class CommonUtil implements Constants {
 	 * @return
 	 */
 	public static String getRoundingDecimal(String value, int maxDigit) {
-		if (value == "" || value == null) {
+		if (!org.apache.commons.lang3.StringUtils.isNotEmpty(value)) {
 			return "";
 		}
-		System.out.println("String" + value);
+		logger.debug("String:{}" , value);
 		BigDecimal big = new BigDecimal(value, new MathContext(maxDigit,
 				RoundingMode.HALF_UP));
-		System.out.println(" big.toString()" + big.doubleValue());
+		logger.debug(" big.toString(){}" , big.doubleValue());
 		return getDecimalFormat(big.doubleValue(), "##.#");
 	}
 
@@ -561,13 +561,13 @@ public class CommonUtil implements Constants {
 	 * @return
 	 */
 	public static String getRoundingDecimalCost(String value) {
-		if (value == "" || value == null) {
+		if (!org.apache.commons.lang3.StringUtils.isNotEmpty(value)) {
 			return "";
 		}
-		System.out.println("String" + value);
+		logger.debug("String:{}" , value);
 		BigDecimal big = new BigDecimal(value, new MathContext(20,
 				RoundingMode.HALF_UP));
-		System.out.println(" big.toString()" + big.doubleValue());
+		logger.debug(" big.toString():{}" , big.doubleValue());
 		return getDecimalFormat(big.doubleValue(), "##.##");
 	}
 
@@ -1008,7 +1008,7 @@ public class CommonUtil implements Constants {
 				ObjectMapper mapper = new ObjectMapper();
 				Map<String, Object> pojoMap = mapper.convertValue(pojo,
 						Map.class);
-				logger.debug("pojoMap = " + pojoMap);
+				logger.debug("pojoMap = {}" , pojoMap);
 				if (pojoMap != null) {
 					map = new MultivaluedMapImpl();
 					extractPojoMap(StringUtils.EMPTY, pojoMap, map);
@@ -1017,7 +1017,7 @@ public class CommonUtil implements Constants {
 				logger.error("Pojo conversion to MultivaluedMap failed.", e);
 			}
 		}
-		logger.debug("MultivaluedMap.map = " + map);
+		logger.debug("MultivaluedMap.map = {}" , map);
 		return map;
 	}
 
@@ -1034,44 +1034,18 @@ public class CommonUtil implements Constants {
 						+ attributeSeparater + key)
 						: key;
 				if (value instanceof String) {
-					resultMap.add(mapKey, value != null ? value.toString()
-							: null);
+					resultMap.add(mapKey, value.toString());
 				} else if (value instanceof Map) {
 					Map<String, Object> subMap = (Map<String, Object>) value;
 					extractPojoMap(mapKey, subMap, resultMap);
 				} else if (value instanceof List) {
-					// TODO: need to fix the logic to populate list attributes.
 					@SuppressWarnings("unused")
 					List<Object> subList = (List<Object>) value;
-					//extractPojoList(mapKey, subList, resultMap);
 				}
 			}
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private static void extractPojoList(String mapKeyPrifix,
-			List<Object> pojoList, MultivaluedMap resultMap)
-			throws ParseException {
-		if (pojoList != null && pojoList.size() > 0 && resultMap != null) {
-			int count = 0;
-			for (Object value : pojoList) {
-				String mapKey = mapKeyPrifix + "[" + count + "]";
-				if (value instanceof String) {
-					resultMap.add(mapKey, value != null ? value.toString()
-							: null);
-				} else if (value instanceof Map) {
-					Map<String, Object> subMap = (Map<String, Object>) value;
-					extractPojoMap(mapKey, subMap, resultMap);
-				} else if (value instanceof List) {
-					List<Object> subList = (List<Object>) value;
-					extractPojoList(mapKey, subList, resultMap);
-				}
-				count++;
-			}
-			count = 0;
-		}
-	}
 
 	/**
 	 * Get <code>Map</code> containing URL parameters & their values.
@@ -1396,28 +1370,21 @@ public class CommonUtil implements Constants {
 	public static HashMap<String, Object> checkSizeParam(Map<String, Object> sizeParamMap, Integer min, Integer max)
 	{
 		logger.info("inside Map<String, Object> checkSizeParam:: entering method");
-		HashMap<String, Object> sizeParamChkResponse= new HashMap<String, Object>(); 
-		ArrayList<Object> sizeParamMissing = new ArrayList<Object>();
+		HashMap<String, Object> sizeParamChkResponse= new HashMap<>(); 
+		ArrayList<Object> sizeParamMissing = new ArrayList<>();
 		String errorDesc="";
-		if(sizeParamMap!=null && ((sizeParamMap.size())>0)){
+		if(!isMapNullOrEmpty(sizeParamMap)){
 			String paramVal = null;
 			for(String key:sizeParamMap.keySet() )
 			{
-				logger.debug("inside check size boundary param values and total values are::"+sizeParamMap.size());
+				logger.debug("inside check size boundary param values and total values are::{}",sizeParamMap.size());
 				paramVal = (String) sizeParamMap.get(key);
-				if(!(isValidSize(paramVal, min, max))){
-					sizeParamMissing.add(key);
-					if(StringUtils.isBlank(errorDesc)){
-						errorDesc=key;
-					}else{
-						errorDesc+=", "+key;
-					}
-				}
-				logger.debug("inside checkSizeParam:: "+sizeParamMissing.size());
+				errorDesc = checkParameterValidSize(min, max, sizeParamMissing, errorDesc, paramVal, key);
+				logger.debug("inside checkSizeParam:: {}",sizeParamMissing.size());
 			}
-			if(sizeParamMissing!=null &&(sizeParamMissing.size()>0))
+			if( !isCollectionNullOrEmpty(sizeParamMissing))
 			{
-				if (min == max){
+				if (min.equals(max)){
 					errorDesc="Length of following parameters must be " + min + " characters :: "+errorDesc;
 				} else {
 					errorDesc="Length of following parameters must be between " + min + " and " + max + " characters :: "+errorDesc;
@@ -1436,8 +1403,21 @@ public class CommonUtil implements Constants {
 			sizeParamChkResponse.put("resultCode", SUCCESS_CODE);
 			sizeParamChkResponse.put("errorDesc", errorDesc);
 		}
-		logger.info("inside checkSizeParam:: response is :: "+ sizeParamChkResponse);
+		logger.info("inside checkSizeParam:: response is :: {}", sizeParamChkResponse);
 		return sizeParamChkResponse;
+	}
+
+	private static String checkParameterValidSize(Integer min, Integer max, ArrayList<Object> sizeParamMissing,
+			String errorDesc, String paramVal, String key) {
+		if(!(isValidSize(paramVal, min, max))){
+			sizeParamMissing.add(key);
+			if(StringUtils.isBlank(errorDesc)){
+				errorDesc=key;
+			}else{
+				errorDesc+=", "+key;
+			}
+		}
+		return errorDesc;
 	}
 	
 	/**
@@ -1700,10 +1680,9 @@ public class CommonUtil implements Constants {
 	}
 	
 	public static String stringToDecimalFormat(String value) {
-		if (value == "" || value == null) {
-			value ="0";
+		if (!org.apache.commons.lang3.StringUtils.isNotEmpty(value)) {
+			return "";
 		}
-		System.out.println("String" + value);
 		BigDecimal big = new BigDecimal(value, new MathContext(20,
 				RoundingMode.HALF_UP));
 		return String.format("%.2f", big);
@@ -1725,7 +1704,7 @@ public class CommonUtil implements Constants {
 		boolean isValidRequest = true;
 		String contractAccountNumber = request.getContractaccountnumber();
 		StringBuffer strBuffer = new StringBuffer("Request Entity has following errors: ");
-		List<String> errorMsgList = new ArrayList<String>();
+		List<String> errorMsgList = new ArrayList<>();
 		
 		if(StringUtils.isBlank(request.getCompanycode())){
 		    errorMsgList.add("companycode may not be empty,");
@@ -1747,7 +1726,7 @@ public class CommonUtil implements Constants {
 			errorMsgList.add("companycode may not be less than 4 digits,");
 		}
 		
-		if(errorMsgList.size()>0)
+		if(!errorMsgList.isEmpty())
 			isValidRequest=false;
 	    
 		if(!isValidRequest){
@@ -2382,7 +2361,20 @@ public class CommonUtil implements Constants {
 		return eflUrl;
 	}
 	
-	public static boolean isNullOrEmptyCollection(final Collection<?> c) {
-		return c == null || c.isEmpty();
+	
+	/**
+	 * @param collection the Collection to check
+	 * @return whether the given Collection is empty
+	 */
+	public static boolean isCollectionNullOrEmpty(final Collection<?> collection) {
+		return (collection == null || collection.isEmpty());
+	}
+
+	/**
+	 * @param map the Map to check
+	 * @return whether the given Map is empty
+	 */
+	public static boolean isMapNullOrEmpty(final Map<?,?> map) {
+		return (map == null || map.isEmpty());
 	}	
 }

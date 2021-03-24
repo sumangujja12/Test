@@ -146,7 +146,7 @@ public class ProfileService extends BaseAbstractService {
 	
 	private String[] excludeOfferList = {"S", "F"}; 
 	private static final String SECONDAY_NAME_UPDATE_LABEL = "secondaryNameUpdate";
-	
+	private static final String ACCOUNT_MUMBER_LABEL = "accountNumber=";
 	
 	
 	/**
@@ -295,24 +295,15 @@ public class ProfileService extends BaseAbstractService {
 		
 		ProfileResponse profileResponse = new ProfileResponse();
 		long startTime = CommonUtil.getStartTime();
-		String request = "accountNumber="+accountNumber;
+		String request = ACCOUNT_MUMBER_LABEL + accountNumber;
 		com.multibrand.domain.ContractAccountDO contractAccountDO = new com.multibrand.domain.ContractAccountDO();
 		ZcaOutput zcaOutput = null;		
-		ContractDO contractDO = null;
-		com.multibrand.domain.OfferDO offerDO = null;
 		ContractDO[] contractDOList = null;
 		AddressDO billingAddressDO = null;
-		AddressDO serviceAddressDO = null;
-		ZcontractAdrc zcontractAdrc = null;
-		ZcontractOutput[] zcontractOutput = null;
 		
 		//Start : Added for Redbull CXF upgrade by IJ
 		URL url = ZEIsuGetCaProfileData_Service.class.getResource("Z_E_ISU_GET_CA_PROFILE_DATA.wsdl");
-        if (url == null) {
-            java.util.logging.Logger.getLogger(ZEIsuGetCaProfileData_Service.class.getName())
-                .log(java.util.logging.Level.INFO, 
-                     "Can not initialize the default wsdl from {0}", "Z_E_ISU_GET_CA_PROFILE_DATA.wsdl");
-        }
+       
         ZEIsuGetCaProfileData_Service profileService = new ZEIsuGetCaProfileData_Service(url);
 		
 		ZEISUGETCAPROFILEDATA stub = profileService.getZEIsuGetCaProfileData();
@@ -377,7 +368,7 @@ public class ProfileService extends BaseAbstractService {
 		
 		//Populate Contract Account Details	
 		
-		if(null!=zcaOutputList && !zcaOutputList.isEmpty()){
+		if(!CommonUtil.isCollectionNullOrEmpty(zcaOutputList)){
 			
 			zcaOutput = zcaOutputList.get(0);
 			contractAccountDO.setStrCANumber(zcaOutput.getExVkont());
@@ -464,91 +455,9 @@ public class ProfileService extends BaseAbstractService {
 			contractAccountDO.setBillingAddressDO(billingAddressDO);
 			
 			
-			if(null != zcontractOutputList  && !zcontractOutputList.isEmpty()){
-				zcontractOutput = new ZcontractOutput[zcontractOutputList.size()];
-				
-				for(int forCnt=0;forCnt<zcontractOutput.length;forCnt++){
-					zcontractOutput[forCnt] = zcontractOutputList.get(forCnt);
-				}
-				
-				if(zcontractOutput.length > 1){
-					contractAccountDO.setStrMultiContractFlag(FLAG_X);
-				}
-				else{
-					contractAccountDO.setStrMultiContractFlag(FLAG_O);
-				}
-				
-				List<ContractDO> contracArrList = new LinkedList<>();
-				int counter = 0;
-				for(ZcontractOutput contractOutput: zcontractOutput){
-					if (CommonUtil.checkInactiveAccount(companyCode, contractOutput.getExAuszdat())) {
-						continue;
-					}
-					contractDO = new ContractDO();
-					offerDO = new com.multibrand.domain.OfferDO();
-					serviceAddressDO = new AddressDO();
-										
-					contractDO.setStrContractID(contractOutput.getExVertrag());
-					contractDO.setStrESIID(contractOutput.getExEsiid());
-					contractDO.setStrOfferCode(contractOutput.getExOfferCode());
-					contractDO.setStrContractStartDate(contractOutput.getExVbeginn());
-					contractDO.setStrContractEndDate(contractOutput.getExVende());
-					contractDO.setStrMoveInDate(contractOutput.getExEinzdat());
-					contractDO.setStrMoveOutDate(contractOutput.getExAuszdat());
-					
-					
-					contractDO.setStrGuardLightFlag(CommonUtil.getFlagValue(contractOutput.getExGuard()));
-					
-					contractDO.setStrContractLength(contractOutput.getExContractLength());
-					contractDO.setStrOfferTeaser(contractOutput.getExOfferTeaser());
-					contractDO.setStrAvgPrice(contractOutput.getExAvgPrice().toString());
-					contractDO.setStrCancelFee(contractOutput.getExCancFee().toString());			
-					contractDO.setStrMeterNumber(contractOutput.getExGeraet());
-					contractDO.setStrMeterType(contractOutput.getExMeterType());
-					contractDO.setStrContractLegacyAccount(contractOutput.getExCsp());
-					//US US12202 Changes - DK - 09/19/2019
-					String  strTouFlag = contractOutput.getExTou();
-					if(strTouFlag!= null && StringUtils.isNotBlank(strTouFlag) && strTouFlag.equalsIgnoreCase("X"))
-					{
-						responseMap.put(contractOutput.getExVertrag(), contractOutput.getExVertrag()+"-"+strTouFlag);
-					}
-					else
-					{
-						responseMap.put(contractOutput.getExVertrag(), contractOutput.getExVertrag()+"-"+null);
-					}
-					//Populating Service Address
-					zcontractAdrc = contractOutput.getExServiceAdrc();	
-					
-					if(null != zcontractAdrc){
-						
-						serviceAddressDO.setStrCity(zcontractAdrc.getExCity1());
-						serviceAddressDO.setStrZip(zcontractAdrc.getExPostCode1());
-						serviceAddressDO.setStrState(zcontractAdrc.getExRegion());
-						serviceAddressDO.setStrStreetName(zcontractAdrc.getExStreet());
-						serviceAddressDO.setStrStreetNum(zcontractAdrc.getExHouseNum1());
-						serviceAddressDO.setStrAddressLine(zcontractAdrc.getExAddressLine());
-						serviceAddressDO.setStrApartNum(zcontractAdrc.getExHausNum2());
-						
-					}
-					else{
-						
-						serviceAddressDO.setErrorCode(Constants.MSG_ERR_GET_PROFILE_SERVICE_ADDRESS);
-						serviceAddressDO.setErrorMessage(Constants.MSG_ERR_GET_PROFILE_SERVICE_ADDRESS);
-						
-					}					
-					offerDO.setStrOfferCode(contractOutput.getExOfferCode());
-					offerDO.setStrContractTerm(contractOutput.getExContractLength());
-					offerDO.setStrOfferTeaser(contractOutput.getExOfferTeaser());					
-					contractDO.setServiceAddressDO(serviceAddressDO);
-					contractDO.setCurrentPlan(offerDO);	
-					contracArrList.add(contractDO);	
-					
-				}
-				contractDOList = new ContractDO[contracArrList.size()];
-				for(ContractDO contractDOTemp :contracArrList) {
-					contractDOList[counter] = contractDOTemp;
-					counter++;
-				}
+			if(!CommonUtil.isCollectionNullOrEmpty(zcontractOutputList)) {
+				//Populating contract response
+				contractDOList = handleContractResponse(companyCode, responseMap, contractAccountDO, zcontractOutputList);
 				
 			}
 			else{
@@ -559,17 +468,12 @@ public class ProfileService extends BaseAbstractService {
 			contractAccountDO.setListOfContracts(contractDOList);
 			
 			profileResponse.setContractAccountDO(contractAccountDO);
-			
-			
 		}
-				
 		
-		
-		
-		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)){
+		if(null != exReturnCode.value && (! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value) || ! Constants.THREE.equals(exReturnCode.value))) {
 			
 			profileResponse.setErrorCode(Constants.MSG_CCSERR_+exReturnCode.value+Constants._GET_PROFILE);
-		} else if((null == zcaOutputList  || zcaOutputList.isEmpty()) && exReturnCode.value == null){
+		} else if(CommonUtil.isCollectionNullOrEmpty(zcaOutputList)  && exReturnCode.value == null){
 			
 			profileResponse.setErrorCode(Constants.MSG_SYSTEM_UNAVAILABLE);
 		} 
@@ -580,6 +484,99 @@ public class ProfileService extends BaseAbstractService {
 		responseMap.put("profileResponse", profileResponse);
 		responseMap.put("profileSuerStats", zesZesuerStat);
 		return responseMap;
+	}
+
+	private ContractDO[] handleContractResponse(String companyCode, HashMap<String, Object> responseMap,
+			com.multibrand.domain.ContractAccountDO contractAccountDO, List<ZcontractOutput> zcontractOutputList) {
+		
+		ContractDO[] contractDOList;
+		ZcontractOutput[] zcontractOutput;
+		zcontractOutput = new ZcontractOutput[zcontractOutputList.size()];
+		
+		for(int forCnt=0;forCnt<zcontractOutput.length;forCnt++){
+			zcontractOutput[forCnt] = zcontractOutputList.get(forCnt);
+		}
+		
+		if(zcontractOutput.length > 1){
+			contractAccountDO.setStrMultiContractFlag(FLAG_X);
+		}
+		else{
+			contractAccountDO.setStrMultiContractFlag(FLAG_O);
+		}
+		
+		List<ContractDO> contracArrList = new LinkedList<>();
+		int counter = 0;
+		for(ZcontractOutput contractOutput: zcontractOutput){
+			if (CommonUtil.checkInactiveAccount(companyCode, contractOutput.getExAuszdat())) {
+				continue;
+			}
+			ContractDO contractDO = new ContractDO();
+			com.multibrand.domain.OfferDO offerDO = new com.multibrand.domain.OfferDO();
+			AddressDO serviceAddressDO = new AddressDO();
+								
+			contractDO.setStrContractID(contractOutput.getExVertrag());
+			contractDO.setStrESIID(contractOutput.getExEsiid());
+			contractDO.setStrOfferCode(contractOutput.getExOfferCode());
+			contractDO.setStrContractStartDate(contractOutput.getExVbeginn());
+			contractDO.setStrContractEndDate(contractOutput.getExVende());
+			contractDO.setStrMoveInDate(contractOutput.getExEinzdat());
+			contractDO.setStrMoveOutDate(contractOutput.getExAuszdat());
+			
+			
+			contractDO.setStrGuardLightFlag(CommonUtil.getFlagValue(contractOutput.getExGuard()));
+			
+			contractDO.setStrContractLength(contractOutput.getExContractLength());
+			contractDO.setStrOfferTeaser(contractOutput.getExOfferTeaser());
+			contractDO.setStrAvgPrice(contractOutput.getExAvgPrice().toString());
+			contractDO.setStrCancelFee(contractOutput.getExCancFee().toString());			
+			contractDO.setStrMeterNumber(contractOutput.getExGeraet());
+			contractDO.setStrMeterType(contractOutput.getExMeterType());
+			contractDO.setStrContractLegacyAccount(contractOutput.getExCsp());
+			//US US12202 Changes - DK - 09/19/2019
+			String  strTouFlag = contractOutput.getExTou();
+			if(strTouFlag!= null && StringUtils.isNotBlank(strTouFlag) && strTouFlag.equalsIgnoreCase("X"))
+			{
+				responseMap.put(contractOutput.getExVertrag(), contractOutput.getExVertrag()+"-"+strTouFlag);
+			}
+			else
+			{
+				responseMap.put(contractOutput.getExVertrag(), contractOutput.getExVertrag()+"-"+null);
+			}
+			//Populating Service Address
+			ZcontractAdrc zcontractAdrc = contractOutput.getExServiceAdrc();	
+			
+			if(null != zcontractAdrc){
+				
+				serviceAddressDO.setStrCity(zcontractAdrc.getExCity1());
+				serviceAddressDO.setStrZip(zcontractAdrc.getExPostCode1());
+				serviceAddressDO.setStrState(zcontractAdrc.getExRegion());
+				serviceAddressDO.setStrStreetName(zcontractAdrc.getExStreet());
+				serviceAddressDO.setStrStreetNum(zcontractAdrc.getExHouseNum1());
+				serviceAddressDO.setStrAddressLine(zcontractAdrc.getExAddressLine());
+				serviceAddressDO.setStrApartNum(zcontractAdrc.getExHausNum2());
+				
+			}
+			else{
+				
+				serviceAddressDO.setErrorCode(Constants.MSG_ERR_GET_PROFILE_SERVICE_ADDRESS);
+				serviceAddressDO.setErrorMessage(Constants.MSG_ERR_GET_PROFILE_SERVICE_ADDRESS);
+				
+			}					
+			offerDO.setStrOfferCode(contractOutput.getExOfferCode());
+			offerDO.setStrContractTerm(contractOutput.getExContractLength());
+			offerDO.setStrOfferTeaser(contractOutput.getExOfferTeaser());					
+			contractDO.setServiceAddressDO(serviceAddressDO);
+			contractDO.setCurrentPlan(offerDO);	
+			contracArrList.add(contractDO);	
+			
+		}
+		contractDOList = new ContractDO[contracArrList.size()];
+		for(ContractDO contractDOTemp :contracArrList) {
+			contractDOList[counter] = contractDOTemp;
+			counter++;
+
+		}
+		return contractDOList;
 	}
 	/**
 	 * This will not call the logging framework
@@ -921,7 +918,7 @@ public class ProfileService extends BaseAbstractService {
 
 		List <OfferDO> eligibleOffersList = new ArrayList<>();
 		
-		if (!CommonUtil.isNullOrEmptyCollection(zesEligibleOfferList)) {
+		if (!CommonUtil.isCollectionNullOrEmpty(zesEligibleOfferList)) {
 
 			
 			for (com.nrg.cxfstubs.contractinfo.ZesEligoffer zesEligoffer : zesEligibleOfferList) {
@@ -1176,7 +1173,7 @@ public class ProfileService extends BaseAbstractService {
 			 String objectId, String extUi, String enrollType ,
 			 String requestDate , String manuPartNo, String companyCode, String sessionId) throws Exception{
 		
-		String request="accountNumber="+accountNumber+",action="+action+",objectId="+objectId+",extUi="+extUi+",entrollType="+enrollType+",requestDate="+requestDate+",manuPartNo="+manuPartNo+",companyCode="+companyCode; 
+		String request=ACCOUNT_MUMBER_LABEL+accountNumber+",action="+action+",objectId="+objectId+",extUi="+extUi+",entrollType="+enrollType+",requestDate="+requestDate+",manuPartNo="+manuPartNo+",companyCode="+companyCode; 
 		ProductUpdateResponse productResponse = new ProductUpdateResponse();
 		URL url = ZECRMVASWEBPRODUPDATE_Service.class.getResource("Z_E_CRM_VAS_WEB_PROD_UPDATE.wsdl");
 		
@@ -1359,7 +1356,7 @@ public class ProfileService extends BaseAbstractService {
 	{
 		EnvironmentImpactsResponse response = new EnvironmentImpactsResponse();
 
-		String request = "accountNumber="+accountNumber;
+		String request = ACCOUNT_MUMBER_LABEL+accountNumber;
 		String imCa = CommonUtil.paddedCa(accountNumber);
 		
 		logger.info("imCa:{} ",imCa);
@@ -1511,7 +1508,7 @@ public class ProfileService extends BaseAbstractService {
        com.nrg.cxfstubs.bprelationreadupd.Bapiret2T tbapiret2 = hBapiRet2.value;
        List<com.nrg.cxfstubs.bprelationreadupd.Bapiret2> listBapiret2 = tbapiret2.getItem();
        
-    	if(!CommonUtil.isNullOrEmptyCollection(listBapiret2))
+    	if(!CommonUtil.isCollectionNullOrEmpty(listBapiret2))
      	{
      		for(com.nrg.cxfstubs.bprelationreadupd.Bapiret2 bapiret2:listBapiret2)
      		{
