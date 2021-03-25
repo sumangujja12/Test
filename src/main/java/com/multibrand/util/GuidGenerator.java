@@ -2,7 +2,9 @@ package com.multibrand.util;
 
 
 import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
 /**
@@ -35,7 +37,7 @@ public class GuidGenerator {
 	/*
 	 * Method to generate the random GUID
 	 */
-	public static final String getGuid(boolean dashes) throws Exception {
+	public static final String getGuid(boolean dashes) throws NoSuchAlgorithmException, UnknownHostException {
 		String raw = null;
 
 		MessageDigest md5 = null;
