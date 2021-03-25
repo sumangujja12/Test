@@ -470,7 +470,7 @@ public class ProfileService extends BaseAbstractService {
 			profileResponse.setContractAccountDO(contractAccountDO);
 		}
 		
-		if(null != exReturnCode.value && (! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value) || ! Constants.THREE.equals(exReturnCode.value))) {
+		if(null != exReturnCode.value && ! Constants.SUCCESS_RESPONSE.equals(exReturnCode.value)) {
 			
 			profileResponse.setErrorCode(Constants.MSG_CCSERR_+exReturnCode.value+Constants._GET_PROFILE);
 		} else if(CommonUtil.isCollectionNullOrEmpty(zcaOutputList)  && exReturnCode.value == null){
@@ -507,9 +507,7 @@ public class ProfileService extends BaseAbstractService {
 		List<ContractDO> contracArrList = new LinkedList<>();
 		int counter = 0;
 		for(ZcontractOutput contractOutput: zcontractOutput){
-			if (CommonUtil.checkInactiveAccount(companyCode, contractOutput.getExAuszdat())) {
-				continue;
-			}
+			
 			ContractDO contractDO = new ContractDO();
 			com.multibrand.domain.OfferDO offerDO = new com.multibrand.domain.OfferDO();
 			AddressDO serviceAddressDO = new AddressDO();
