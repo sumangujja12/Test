@@ -13,7 +13,6 @@ import java.util.Random;
 
 public class GuidGenerator {
 	private static Random myRand;
-	//private static SecureRandom mySecureRand;
 
 	/*
 	 * Static block to take care of one time secureRandom seed.
@@ -24,9 +23,6 @@ public class GuidGenerator {
 	 */
 
 	static {
-		//mySecureRand = new SecureRandom();
-		//long secureInitializer = mySecureRand.nextLong();
-		//myRand = new Random(secureInitializer);
 		myRand = new Random();
 	}
 
@@ -39,8 +35,7 @@ public class GuidGenerator {
 	/*
 	 * Method to generate the random GUID
 	 */
-	public final static String getGuid(boolean dashes) throws Exception {
-		StringBuffer sb = null;
+	public static final String getGuid(boolean dashes) throws Exception {
 		String raw = null;
 
 		MessageDigest md5 = null;
@@ -58,7 +53,7 @@ public class GuidGenerator {
 		rand = 0;
 
 		rand = myRand.nextLong();
-		sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append( id.toString() );
 		sb.append(":");
 		sb.append( Long.toString(time) );
@@ -94,6 +89,6 @@ public class GuidGenerator {
 		    sb.append( raw.substring(20) );
 		}
 
-		return sb != null ?  sb.toString().toUpperCase() : null ;
+		return sb.toString().toUpperCase();
 	}
 }
