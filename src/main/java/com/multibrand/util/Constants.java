@@ -160,7 +160,10 @@ public interface Constants {
 	
 	public static final String XI_HISTORY_ENDPOINT_URL = "xi.history.endpointURL";
 	public static final String XI_PAYMENT_HISTORY_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getPaymentHistory&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
+	public static final String XI_INVOICE_LIST_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getInvoiceList&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
+	public static final String XI_PRODUCT_HISTORY_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getProductHistory&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	public static final String XI_INTERVAL_DATA_ENDPOINT_URL_QUERY_PARAM   = "&interface=os_getIntervalData&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
+	
 	
 	public static final String EBILL_DOCUMENTUM_WS_USER_NAME= "EBILL_DOCUMENTUM_WS_USER_NAME";
 	public static final String EBILL_DOCUMENTUM_WS_PSD ="EBILL_DOCUMENTUM_WS_PWD";
