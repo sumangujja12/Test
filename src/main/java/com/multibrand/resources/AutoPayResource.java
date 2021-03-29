@@ -117,7 +117,7 @@ public class AutoPayResource {
 	@POST
 	@Path("validateCCDetails")
 	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	@Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML}) 
 	public Response validateCCDetails(AutoPayRequest autoPayRequest){
 		logger.debug("Start AutoPayResource.validateCCDetails :: START");
 		Response response = null;
