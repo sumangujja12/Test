@@ -7,54 +7,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class SecurityContractCancelRequest implements Serializable {
 	private static final long serialVersionUID = 5313732309176983924L;
 	
-	 private String sTraxLeadId;
-	 private String contractId;
-	 private String endDate;
+	 private String straxLeadID;
+	 private String caNumber;
+	 private String cancellationDate;
 	
      
 
-	public SecurityContractCancelRequest(String sTraxLeadId, String contractId, String endDate) {
+	public SecurityContractCancelRequest(String straxLeadID, String caNumber, String cancellationDate) {
 		super();
-		this.sTraxLeadId = sTraxLeadId;
-		this.contractId = contractId;
-		this.endDate = endDate;
+		this.straxLeadID = straxLeadID;
+		this.caNumber = caNumber;
+		this.cancellationDate = cancellationDate;
 	}
 
 	public SecurityContractCancelRequest() {
 	
 	}
 
-	public String getsTraxLeadId() {
-		return sTraxLeadId;
+	public String getStraxLeadID() {
+		return straxLeadID;
 	}
 
-
-	public void setsTraxLeadId(String sTraxLeadId) {
-		this.sTraxLeadId = sTraxLeadId;
+	public void setStraxLeadID(String straxLeadID) {
+		this.straxLeadID = straxLeadID;
 	}
 
-
-	public String getContractId() {
-		return contractId;
+	public String getCaNumber() {
+		return caNumber;
 	}
 
-	public void setContractId(String contractId) {
-		this.contractId = contractId;
+	public void setCaNumber(String caNumber) {
+		this.caNumber = caNumber;
 	}
 
-	public String getEndDate() {
-		return endDate;
+	public String getCancellationDate() {
+		return cancellationDate;
 	}
 
-	public void setEndDate(String endDate) {
-		this.endDate = endDate;
+	public void setCancellationDate(String cancellationDate) {
+		this.cancellationDate = cancellationDate;
 	}
 
-	@Override
-	public String toString() {
-		return "SecurityContractCancelRequest [sTraxLeadId=" + sTraxLeadId + ", contractId=" + contractId + ", endDate="
-				+ endDate + "]";
-	}
+	
 
 	
 	

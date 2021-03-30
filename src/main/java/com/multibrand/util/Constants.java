@@ -1643,4 +1643,6 @@ public interface Constants {
 	public static final String DOCID_URL_SUB_STR = "/files/";
 	public static final String BUSINESS = "BUSINESS";
 
+	//Strax Integration
+	public static final String SECURITY_SERVICE_ENDPOINT_URL = "ws.endpointURL.securityAccountsDomain";
 }

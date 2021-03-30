@@ -1,8 +1,7 @@
 package com.multibrand.vo.request;
 
 import java.io.Serializable;
-
-import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 
 public class SecurityInvoiceRequest implements Serializable {
@@ -11,6 +10,8 @@ public class SecurityInvoiceRequest implements Serializable {
 	
 	 private String caNumber;
 	 private String totalAmount;
+	 private String straxLeadID;
+	 private List<InvoiceItemCategory> invoiceItems;
 	 
 	 public SecurityInvoiceRequest()
 	 {
@@ -39,9 +40,20 @@ public class SecurityInvoiceRequest implements Serializable {
 		this.totalAmount = totalAmount;
 	}
 
-	@Override
-	public String toString() {
-		return "SecurityInvoiceRequest [caNumber=" + caNumber + ", totalAmount=" + totalAmount + "]";
+	public String getStraxLeadID() {
+		return straxLeadID;
+	}
+
+	public void setStraxLeadID(String straxLeadID) {
+		this.straxLeadID = straxLeadID;
+	}
+
+	public List<InvoiceItemCategory> getInvoiceItems() {
+		return invoiceItems;
+	}
+
+	public void setInvoiceItems(List<InvoiceItemCategory> invoiceItems) {
+		this.invoiceItems = invoiceItems;
 	}
 	 
 	 
