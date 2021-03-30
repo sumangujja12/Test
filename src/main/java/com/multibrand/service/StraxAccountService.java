@@ -23,9 +23,6 @@ import com.multibrand.util.XmlUtil;
 @Service
 public class StraxAccountService  extends BaseAbstractService {
 	
-	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
-	
-	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
 	
@@ -46,13 +43,6 @@ public class StraxAccountService  extends BaseAbstractService {
 			
 		}
 
-		catch(RemoteException ex){
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("cancelStraxContract", false, straxCancelAccountRequest,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(straxCancelAccountRequest));
-			throw ex;
-		}
 		catch(Exception ex){
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("cancelStraxContract", false, straxCancelAccountRequest,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
@@ -82,13 +72,6 @@ public class StraxAccountService  extends BaseAbstractService {
 		
 		}
 
-		catch(RemoteException ex){
-			logger.error(ex);
-			utilityloggerHelper.logTransaction("invoiceStraxContract", false, straxInvoiceAccountRequest,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
-			if(logger.isDebugEnabled())
-				logger.debug(XmlUtil.pojoToXML(straxInvoiceAccountRequest));
-			throw ex;
-		}
 		catch(Exception ex){
 			logger.error(ex);
 			utilityloggerHelper.logTransaction("invoiceStraxContract", false, straxInvoiceAccountRequest,ex, "", CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
