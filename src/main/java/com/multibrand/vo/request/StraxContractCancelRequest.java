@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-public class SecurityContractCancelRequest implements Serializable {
+public class StraxContractCancelRequest implements Serializable {
 	private static final long serialVersionUID = 5313732309176983924L;
 	
 	 private String straxLeadID;
@@ -13,14 +13,14 @@ public class SecurityContractCancelRequest implements Serializable {
 	
      
 
-	public SecurityContractCancelRequest(String straxLeadID, String caNumber, String cancellationDate) {
+	public StraxContractCancelRequest(String straxLeadID, String caNumber, String cancellationDate) {
 		super();
 		this.straxLeadID = straxLeadID;
 		this.caNumber = caNumber;
 		this.cancellationDate = cancellationDate;
 	}
 
-	public SecurityContractCancelRequest() {
+	public StraxContractCancelRequest() {
 	
 	}
 

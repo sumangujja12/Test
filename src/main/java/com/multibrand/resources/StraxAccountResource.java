@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.multibrand.bo.StraxBO;
 import com.multibrand.domain.StraxCancelAccountResponse;
 import com.multibrand.domain.StraxInvoiceAccountResponse;
-import com.multibrand.vo.request.SecurityContractCancelRequest;
-import com.multibrand.vo.request.SecurityInvoiceRequest;
+import com.multibrand.vo.request.StraxContractCancelRequest;
+import com.multibrand.vo.request.StraxInvoiceRequest;
+import com.multibrand.vo.response.StraxContractCancelResponse;
+import com.multibrand.vo.response.StraxInvoiceResponse;
 
 /**
  * This Resource is to handle the SecurityTrax requests.
  * 
- * @author PravinPatil
  */
 @Component
 @Path("/protected")
@@ -38,11 +39,11 @@ public class StraxAccountResource {
 	@Path("cancelContract")
 	@Consumes({ MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response cancelStraxAccount(@RequestBody SecurityContractCancelRequest request) {
+	public Response cancelStraxAccount(@RequestBody StraxContractCancelRequest request) {
 		Response response = null;
-		StraxCancelAccountResponse straxCancelAccountResponse = straxBO.cancelStraxContract(request, httpRequest.getSession(true).getId());
+		StraxContractCancelResponse straxContractCancelResponse = straxBO.cancelStraxContract(request, httpRequest.getSession(true).getId());
 		
-		response = Response.status(200).entity(straxCancelAccountResponse).build();
+		response = Response.status(200).entity(straxContractCancelResponse).build();
 		return response;
 
 	}
@@ -52,11 +53,11 @@ public class StraxAccountResource {
 	@Path("invoice")
 	@Consumes({ MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON})
-	public Response invoiceStraxAccount(@RequestBody SecurityInvoiceRequest request){
+	public Response invoiceStraxAccount(@RequestBody StraxInvoiceRequest request){
 		Response response = null;
-		StraxInvoiceAccountResponse straxInvoiceAccountResponse = straxBO.invoiceStraxContract(request,  httpRequest.getSession(true).getId());
+		StraxInvoiceResponse straxInvoiceResponse = straxBO.invoiceStraxContract(request,  httpRequest.getSession(true).getId());
 				
-		response = Response.status(200).entity(straxInvoiceAccountResponse).build();
+		response = Response.status(200).entity(straxInvoiceResponse).build();
 				
 		return response;
 		

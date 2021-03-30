@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 
-public class SecurityInvoiceRequest implements Serializable {
+public class StraxInvoiceRequest implements Serializable {
 	
 	private static final long serialVersionUID = 5313732309176983924L;
 	
@@ -13,12 +13,12 @@ public class SecurityInvoiceRequest implements Serializable {
 	 private String straxLeadID;
 	 private List<InvoiceItemCategory> invoiceItems;
 	 
-	 public SecurityInvoiceRequest()
+	 public StraxInvoiceRequest()
 	 {
 		 
 	 }
 
-	public SecurityInvoiceRequest(String caNumber, String totalAmount) {
+	public StraxInvoiceRequest(String caNumber, String totalAmount) {
 		super();
 		this.caNumber = caNumber;
 		this.totalAmount = totalAmount;
