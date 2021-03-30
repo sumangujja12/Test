@@ -1,19 +1,13 @@
 package com.multibrand.service;
 
-import java.rmi.RemoteException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.multibrand.bo.StraxBO;
 import com.multibrand.domain.SecurityAccountsDomain;
 import com.multibrand.domain.StraxCancelAccountRequest;
 import com.multibrand.domain.StraxCancelAccountResponse;
 import com.multibrand.domain.StraxInvoiceAccountRequest;
 import com.multibrand.domain.StraxInvoiceAccountResponse;
-
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;

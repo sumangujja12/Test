@@ -3,8 +3,6 @@ package com.multibrand.bo;
 import java.rmi.RemoteException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +25,6 @@ public class StraxBO extends BaseAbstractService implements Constants{
 
 	@Autowired
 	private StraxAccountService straxAccountService;
-	
-	Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
 	public StraxContractCancelResponse cancelStraxContract(StraxContractCancelRequest request, String sessionId) {
 		
