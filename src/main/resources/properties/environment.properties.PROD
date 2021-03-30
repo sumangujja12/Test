@@ -274,3 +274,6 @@ ws.rest.iot.ercot.check.by.address.url=http://txaixsexblp05/iotproxy/ercot/getBy
 0391.web.url=https://www.discountpowertx.com
 0391.CE.web.url=https://signup.cirroenergy.com
 0400.web.url=https://www.everythingenergytx.com
+
+#Strax Integration
+ws.endpointURL.securityAccountsDomain=http://ws.nrgenergy.com/NRGWS02/SecurityAccountsDomain

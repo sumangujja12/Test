@@ -255,3 +255,6 @@ adobe.messageId.message = Your contract will expire on [date].Log on to find cle
 0391.web.url=https://stg-www.discountpowertx.com
 0391.CE.web.url=https://stg-signup.cirroenergy.com
 0400.web.url=https://stg-www.everythingenergytx.com
+
+#Strax Integration
+ws.endpointURL.securityAccountsDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SecurityAccountsDomain

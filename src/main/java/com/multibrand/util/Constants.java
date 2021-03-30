@@ -1673,6 +1673,8 @@ public interface Constants {
 
 	public static final String BUSINESS = "BUSINESS";
 
+	//Strax Integration
+	public static final String SECURITY_SERVICE_ENDPOINT_URL = "ws.endpointURL.securityAccountsDomain";
 
 }
 	
