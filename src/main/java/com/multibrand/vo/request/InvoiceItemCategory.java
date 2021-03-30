@@ -1,7 +1,13 @@
 package com.multibrand.vo.request;
 
-public class InvoiceItemCategory {
+import java.io.Serializable;
+
+public class InvoiceItemCategory implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4805928745262678566L;
 	private String itemCategory;
 	private String amount;
 	

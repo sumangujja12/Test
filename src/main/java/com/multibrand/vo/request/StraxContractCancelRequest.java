@@ -2,8 +2,6 @@ package com.multibrand.vo.request;
 
 import java.io.Serializable;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 public class StraxContractCancelRequest implements Serializable {
 	private static final long serialVersionUID = 5313732309176983924L;
 	
