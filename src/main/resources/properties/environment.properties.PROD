@@ -274,3 +274,6 @@ adobe.messageId.message = Your contract will expire on [date].Log on to find cle
 
 # Lucene Search Engine Index Files Directory Location
 lucene.indexed.dir=/apps02/data/stream/address/lucene/
+
+#Strax Integration
+ws.endpointURL.securityAccountsDomain=http://ws.nrgenergy.com/NRGWS02/SecurityAccountsDomain
