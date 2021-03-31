@@ -1647,4 +1647,5 @@ public interface Constants {
 	public static final String TWOZEROAFTERPOINT = ".00";
 	public static final String ZEROPLUSTWOZEROAFTERPOINT = "0.00";
 	public static final String CUSTOMER_PAY = "CUSTOMER_PAY";
+	public static final String DEPOSIT_OPTION_CONTENT_SNIPPET="oe_creditcheck_deposit_pay_alt_tlp_tctxt";
 }
