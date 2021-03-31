@@ -152,6 +152,8 @@ ce.tempalte.id_desktop=884
 ce.tempalte.id_mobile=TODO
 gm.tempalte.id_desktop=6974
 gm.tempalte.id_mobile=TODO
+gme.tempalte.id_desktop=884
+rel.tempalte.id_desktop=941
 
 #Publication Id's
 re.pub.id_en=84

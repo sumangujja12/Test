@@ -6303,6 +6303,17 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			response.setDepositAmount(String.valueOf((Math
 				.round(newCreditScoreResponse.getStrDepositAmt()
 						.floatValue()))));
+			
+			if(StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_TYPE_AA)
+					&& ( StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ||
+							StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT))) {
+				Map<String, String> snippetMap = new HashMap<>();
+				snippetMap.put(DEPOSIT_OPTION_CONTENT_SNIPPET, DEPOSIT_OPTION_CONTENT_SNIPPET);
+				String languageCode = (StringUtils.equalsIgnoreCase(creditCheckRequest.getLanguageCode(), S)) ? S: E;
+				snippetMap = contentHelper.getSnippetContent(snippetMap, creditCheckRequest.getCompanyCode(), creditCheckRequest.getBrandId(), languageCode, false);
+				
+				response.setDepositOptionsText(snippetMap.get(DEPOSIT_OPTION_CONTENT_SNIPPET));
+			}
 		}
 		if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
 				.round(newCreditScoreResponse.getStrDepositAmt()
@@ -6445,6 +6456,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 							newCreditScoreResponse.getStrCreditScoreLow(),
 							newCreditScoreResponse.getStrCreditScoreHigh() };												
 					if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
+						
 						if(StringUtils.equals(EQ_INFO, infoKey) || StringUtils.equals(TU_INFO, infoKey)){
 							response.setDepositReasonText(StringEscapeUtils
 									.escapeHtml((this.msgSource.getMessage(
