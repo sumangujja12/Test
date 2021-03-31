@@ -1,6 +1,7 @@
 package com.multibrand.resources;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -41,6 +42,9 @@ public class AutoPayResource {
 	
 	@Autowired
 	private AutoPayBO autoPayBO;
+	
+	@BeanParam
+	AutoPayRequest autoPayRequest;
 	
 	/**
 	 * This service is to validate Bank Account Details  from Redbull Service Payment Domain
