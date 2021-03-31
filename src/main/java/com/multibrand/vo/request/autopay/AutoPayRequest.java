@@ -1,14 +1,10 @@
 package com.multibrand.vo.request.autopay;
 
 import java.io.Serializable;
-
-import javax.ws.rs.FormParam;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-
 import com.multibrand.dto.request.FormEntityRequest;
 
 @XmlRootElement
@@ -20,61 +16,42 @@ public class AutoPayRequest implements FormEntityRequest,Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@FormParam("authType")
 	private String authType = "";
 	
-	@FormParam("accountNumber")
 	private String accountNumber = "";
 	
-	@FormParam("bankAccountNumber")
 	private String bankAccountNumber = "";
 	
-	@FormParam("bankRoutingNumber")
 	private String bankRoutingNumber = "";
 	
-	@FormParam("companyCode")
 	private String companyCode = "";
 	
-	@FormParam("accountName")
 	private String accountName = "";
 	
-	@FormParam("accountChkDigit")
 	private String accountChkDigit = "";
 	
-	@FormParam("languageCode")
 	private String languageCode = "";
 	
-	@FormParam("email")
 	private String email = "";
 	
-	@FormParam("emailTypeId")
 	private String emailTypeId = "";
 	
-	@FormParam("brandName")
 	private String brandName = "";
 	
-	@FormParam("bpNumber")
 	private String bpNumber = "";
 	
-	@FormParam("source")
 	private String source = "";
 	
-	@FormParam("caName")
 	private String caName = "";
 	
-	@FormParam("bpid")
 	private String bpid = "";
 	
-	@FormParam("ccNumber")
 	private String ccNumber = "";
 	
-	@FormParam("expirationDate")
 	private String expirationDate = "";
 	
-	@FormParam("billingZip")
 	private String billingZip = "";
 	
-	@FormParam("cvvNumber")
 	private String cvvNumber = "";
 	
 
