@@ -627,9 +627,8 @@ public class OERequestHandler implements Constants {
 
         createLoggerFactorsKey(logger,oeSignUpDTO);
 		try {
-			FactorDetailDO[] arrayFactors = {};
 			List<String> factorsKeyList = oeSignUpDTO.getCreditCheck().getFactorsKey();
-			submitEnrollRequest = setAraayFactorsInRequest(submitEnrollRequest,factorsKeyList,oeSignUpDTO,arrayFactors);			
+			submitEnrollRequest = setAraayFactorsInRequest(submitEnrollRequest,factorsKeyList,oeSignUpDTO);			
 		} catch (Exception ex) {
 			logger.error(oeSignUpDTO.printOETrackingID()
 					+ "Error in createSubmitEnrollRequest - getting Key Factors: Skipping and Continuing", ex);
@@ -1781,11 +1780,11 @@ public class OERequestHandler implements Constants {
 		return submitEnrollRequest;
 	}
 	
-	private SubmitEnrollRequest setAraayFactorsInRequest(SubmitEnrollRequest submitEnrollRequest,List<String> factorsKeyList,OESignupDTO oeSignUpDTO,FactorDetailDO[] arrayFactors){
+	private SubmitEnrollRequest setAraayFactorsInRequest(SubmitEnrollRequest submitEnrollRequest,List<String> factorsKeyList,OESignupDTO oeSignUpDTO){
 		if (null != factorsKeyList && !factorsKeyList.isEmpty()) {
 			int factCnt = 0;
 			String[] factStrArray = null;
-			
+			FactorDetailDO[] arrayFactors = {};
 			logger.debug(oeSignUpDTO.printOETrackingID()
 					+ "createSubmitEnrollRequest: KEY FACTORS: factorsKeyList.size():: " + factorsKeyList.size());
 			arrayFactors = new FactorDetailDO[factorsKeyList.size()];
