@@ -6546,14 +6546,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		     // Start Relient.com | 95753 | Sprint -33| vsingh | 24/03/2021
 		     
 			String payUpFront = newCreditScoreResponse.getStrPayUpFrontFlag();
-			if (StringUtils.isNotEmpty(payUpFront)) {
-				if ((payUpFront.equalsIgnoreCase("Yes") || payUpFront.equalsIgnoreCase("Y")
-						|| payUpFront.equalsIgnoreCase("X"))) {
-					payUpFront = "X";
-				} else {
-					payUpFront = "O";
-				}
-			}
+			payUpFront = payUpFront(payUpFront);
 			newCreditScoreResponse.getStrPayUpFrontFlag();
 			requestData.setBondPrice(response.getBondPrice());
 			requestData.setActivationFee(response.getActivationFee());
@@ -6581,49 +6574,15 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			if (StringUtils.isNotBlank(creditScoreRequest.getStrSSN()))
 				requestDataPerson.setSsn(creditScoreRequest.getStrSSN());
 			if(newCreditScoreResponse != null) {
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditBucket()))
-					requestDataPerson.setCredLevelNum(newCreditScoreResponse
-							.getStrCreditBucket());
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditSource()))
-					requestDataPerson.setCredSourceNum(newCreditScoreResponse
-							.getStrCreditSource());
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditScore()))
-					requestDataPerson.setCredScoreNum(newCreditScoreResponse
-							.getStrCreditScore());
-				if(creditFactor != null) {
-					requestDataPerson.setAdvActionData(StringUtils.removeEnd(
-						creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
-				}
-	
-				if(StringUtils.isNotBlank(response.getDepositAmount())) {
-					if (StringUtils.isNotBlank(newCreditScoreResponse
-							.getStrDepositHold()) 
-							&& newCreditScoreResponse.getStrDepositHold()
-									.equalsIgnoreCase(YES))
-						requestDataPerson.setCredStatusCode(HOLD);
-					else
-						requestDataPerson.setCredStatusCode(NOTICE);
-				} else {
-					requestDataPerson.setCredStatusCode(RELEASE);	
-				}
 				
-				requestDataPerson.setDepWaiveFlag(newCreditScoreResponse.getStrDepWaiveFlag());
-				if (newCreditScoreResponse.getDepAmtWaived() != null){
-				requestDataPerson.setDepAmtWaived(newCreditScoreResponse.getDepAmtWaived().toString());
-				}
-				if (newCreditScoreResponse.getDepAmtWaivedProc() != null){
-				requestDataPerson.setDepAmtWaivedProc(newCreditScoreResponse.getDepAmtWaivedProc().toString());
-				}
+				requestDataPerson=personRequest(requestDataPerson,creditFactor,newCreditScoreResponse,response);
+				
 			}
 			errorCode = this.updatePerson(requestDataPerson);
 			if (StringUtils.isNotBlank(errorCode))
 				logger.debug("Finished processing updateServiceLocation, errorCode = "
 						+ errorCode);
-		}
-    }
+		}}
     
     private void constructPromoCodeEmptyResponse(EnrollmentResponse response){
     	response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -7104,5 +7063,50 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		logger.info("normalizedString : Leaving the method");
 
 		return tempStr;
+	}
+	public UpdatePersonRequest personRequest(UpdatePersonRequest requestDataPerson,
+			StringBuilder creditFactor,
+			com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse,NewCreditScoreResponse response) {
+		
+		if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditBucket()))
+			requestDataPerson.setCredLevelNum(newCreditScoreResponse.getStrCreditBucket());
+		if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditSource()))
+			requestDataPerson.setCredSourceNum(newCreditScoreResponse.getStrCreditSource());
+		if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditScore()))
+			requestDataPerson.setCredScoreNum(newCreditScoreResponse.getStrCreditScore());
+		if (creditFactor != null) {
+			requestDataPerson
+					.setAdvActionData(StringUtils.removeEnd(creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
+		}
+
+		if (StringUtils.isNotBlank(response.getDepositAmount())) {
+			if (StringUtils.isNotBlank(newCreditScoreResponse.getStrDepositHold())
+					&& newCreditScoreResponse.getStrDepositHold().equalsIgnoreCase(YES))
+				requestDataPerson.setCredStatusCode(HOLD);
+			else
+				requestDataPerson.setCredStatusCode(NOTICE);
+		} else {
+			requestDataPerson.setCredStatusCode(RELEASE);
+		}
+
+		requestDataPerson.setDepWaiveFlag(newCreditScoreResponse.getStrDepWaiveFlag());
+		if (newCreditScoreResponse.getDepAmtWaived() != null) {
+			requestDataPerson.setDepAmtWaived(newCreditScoreResponse.getDepAmtWaived().toString());
+		}
+		if (newCreditScoreResponse.getDepAmtWaivedProc() != null) {
+			requestDataPerson.setDepAmtWaivedProc(newCreditScoreResponse.getDepAmtWaivedProc().toString());
+		}
+		return requestDataPerson;
+	}
+	public String payUpFront(String payUpFront) {
+		if (StringUtils.isNotEmpty(payUpFront)) {
+			if ((payUpFront.equalsIgnoreCase("Yes") || payUpFront.equalsIgnoreCase("Y")
+					|| payUpFront.equalsIgnoreCase("X"))) {
+				payUpFront = "X";
+			} else {
+				payUpFront = "O";
+			}
+		}
+		return payUpFront;
 	}
 }
