@@ -291,7 +291,8 @@ public class OERequestHandler implements Constants {
 
 	public SubmitEnrollRequest createSubmitEnrollRequest(OESignupDTO oeSignUpDTO) {
 
-        createLoggerInsideMethod(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "enrollmentService SubmitEnrollment creating request:: inside createSubmitEnrollRequest");
         
 		String bpFullName = null;
 		String enrollmentType = EMPTY;
@@ -320,7 +321,8 @@ public class OERequestHandler implements Constants {
 		String personDobFormatted = CommonUtil.formatDateForNrgws(oeSignUpDTO.getPerson().getDateOfBirth());
 		submitEnrollRequest.setStrBPDOB(personDobFormatted);
 
-		createLoggerForFullName(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "enrollmentService SubmitEnrollment creating request:: checking for FullName");
 
 		bpFullName = this.getBpFullName(oeSignUpDTO);
 		
@@ -341,14 +343,12 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest.setStrCAName(
 				bpFullName.length() > 34 ? bpFullName.substring(0, 34).toUpperCase() : bpFullName.toUpperCase());
 		
-        createLoggerSubmitEnrollReqBpFullName(logger,oeSignUpDTO,bpFullName);
+		logger.debug(oeSignUpDTO.printOETrackingID() + "submitEnrollment request :: Name is " + bpFullName);
 		submitEnrollRequest.setStrCampaignCode(oeSignUpDTO.getSelectedOffer().getCampaignCode());
-		// START test logs
-		this.setTestLogs(oeSignUpDTO);
-		// END test logs
 
 		submitEnrollRequest = setBillingAddressInRequest(oeSignUpDTO,submitEnrollRequest);
-		createLoggerBillingAddress(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "creating SubmitEnrollmentRequest in enrollmentService:: passed the null check for Billing Address");
 		notifyAddress = getNotifyAddress(oeSignUpDTO);
 
 		submitEnrollRequest.setStrNotifyAddress(notifyAddress);
@@ -359,7 +359,9 @@ public class OERequestHandler implements Constants {
 		
 		startSvrcDate = CommonUtil.formatDateForNrgws(oeSignUpDTO.getServiceStartDate());
 		
-        createLoggerBillingAddrZipcodeComplete(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "enrollmentService: createSubmitEnrollmentRequest :: billing address zipcode is:"
+				+ oeSignUpDTO.getBillingAddress().getZipcodeComplete());
 		if ("".equals(startSvrcDate)) {
 			specialReadDate = "";
 			moveInDate = "";
@@ -370,7 +372,11 @@ public class OERequestHandler implements Constants {
 			moveInDate = startSvrcDate;
 		}
 
-		createLoggerSpecialReadDateAndMoveinDate(logger,oeSignUpDTO,specialReadDate,moveInDate);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,specialReadDate is ::" + specialReadDate);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,moveInDate is ::" + moveInDate);
+		
 		// Start: Selected Date Switch Contact Log update for OE - Dipika
 		// Pethaperumal
 		if (StringUtils.isNotBlank(oeSignUpDTO.getServiceReqTypeCd())
@@ -387,10 +393,12 @@ public class OERequestHandler implements Constants {
 			contactText = "Move in " + startSvrcDate + ".Web.";
 		}
 
-        createLoggerContactText(logger,oeSignUpDTO,contactText);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,contactText is ::" + contactText);
 		submitEnrollRequest.setStrEnrollmentType(enrollmentType);
 
-		createLoggerenrollmentType(logger,oeSignUpDTO,enrollmentType);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::" + enrollmentType);
 		submitEnrollRequest = setStrLanguagePrefInRequest(oeSignUpDTO,submitEnrollRequest);
 		
 		submitEnrollRequest.setStrSpecialReadDate(specialReadDate);
@@ -400,7 +408,9 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest.setStrBPHomeTelNum(oeSignUpDTO.getPerson().getPhoneNumber());
 		submitEnrollRequest.setStrSSN(oeSignUpDTO.getPerson().getTokenizedSSN());
 
-        createLoggerCreditCheckDTO(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,CreditCheckDTO is ::"
+				+ oeSignUpDTO.getCreditCheck());
 		submitEnrollRequest.setStrCreditBucket(oeSignUpDTO.getCreditCheck().getCreditBucket());
 		submitEnrollRequest.setStrCreditBureauSource(oeSignUpDTO.getCreditCheck().getCreditScoreNum());
 		submitEnrollRequest.setStrDLNum(oeSignUpDTO.getPerson().getTokenizedDL());
@@ -438,7 +448,9 @@ public class OERequestHandler implements Constants {
 		// Hardcoded as per Vishal Email dated on 04/09/2015
 		submitEnrollRequest.setStrBPFileTestStatus(FLAG_C);
 
-		createLoggerBillingAddressInSubmitEnrollmentRequest(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getBillingAddress() is ::"
+				+ oeSignUpDTO.getBillingAddress());
 		submitEnrollRequest.setStrBPRegion(oeSignUpDTO.getBillingAddress().getState());
 		submitEnrollRequest.setStrBPAptNum(oeSignUpDTO.getBillingAddress().getUnitNum());
 		submitEnrollRequest=setStrBPCityPostalCodeInRequest(oeSignUpDTO,submitEnrollRequest);
@@ -449,13 +461,18 @@ public class OERequestHandler implements Constants {
 
 		agreementNumber = oeSignUpDTO.getAgreementNumber();
 		
-		createLoggerAgreementNumber(logger,oeSignUpDTO,agreementNumber);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,agreementNumber() is ::" + agreementNumber);
 		submitEnrollRequest.setStrAgreementNumber(agreementNumber);
 
 		submitEnrollRequest.setStrSvrcFileTestStatus(FLAG_C);
 
-		createLoggerPersonDetails(logger,oeSignUpDTO);
-        createLoggerServiceAddress(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getPerson()() is ::"
+				+ oeSignUpDTO.getPerson());
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getServiceAddress()() is ::"
+				+ oeSignUpDTO.getServiceAddress());
 		
 		submitEnrollRequest.setStrSvrcStreet(oeSignUpDTO.getServiceAddress().getStreetName());
 		submitEnrollRequest.setStrSvrcAptNum(oeSignUpDTO.getServiceAddress().getUnitNum());
@@ -469,7 +486,18 @@ public class OERequestHandler implements Constants {
 		submitEnrollRequest = setStrBPPosPOSidSSNDateInRequest(oeSignUpDTO,submitEnrollRequest);
 		
 		logger.info("PosidSSNDate:" + oeSignUpDTO.getPerson().getPosidSSNDate());
-		createLoggerOfferCodeDetails(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrOfferCode() is ::"
+				+ oeSignUpDTO.getSelectedOffer().getOfferCode());
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrProductPriceCode() is ::"
+				+ oeSignUpDTO.getSelectedOffer().getProductPriceCode() + ". However passing as blank");
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrIncentiveCode() is ::"
+				+ oeSignUpDTO.getSelectedOffer().getIncentiveCode());
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrMarketSegment() is ::"
+				+ oeSignUpDTO.getSelectedOffer().getMarketSegment());
 		
 		submitEnrollRequest.setStrOfferSequenceNumber(
 				StringUtils.leftPad((oeSignUpDTO.getSelectedOffer().getOfferCode()), 8, "0"));
@@ -477,7 +505,8 @@ public class OERequestHandler implements Constants {
 
 		String depositAmt = oeSignUpDTO.getCreditCheck().getDepositAmount();
 		
-		createLoggerDepositAmt(logger,oeSignUpDTO,depositAmt);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,DepositAmt is ::" + depositAmt);
 		// txtPayAmt replaced with DepositAmt
 		if ((null == oeSignUpDTO.getSelectedOffer().getOfferCategory()
 				|| !OFFER_CATEGORY_PREPAY.equals(oeSignUpDTO.getSelectedOffer().getOfferCategory()))
@@ -486,7 +515,9 @@ public class OERequestHandler implements Constants {
 			requestedAmount = depositAmt;
 			contactText += "$" + depositAmt + " Deposit." + "Agr#" + agreementNumber;
 
-			this.createLoggerDepositHold(logger,oeSignUpDTO);
+			logger.debug(oeSignUpDTO.printOETrackingID()
+					+ "EnrollmentService creating submitEnrollmentRequest,getDepositHold is ::"
+					+ oeSignUpDTO.getCreditCheck().getDepositHold());
 			
 			depositCode = getDepositCode(depositAmt);
 			
@@ -500,7 +531,8 @@ public class OERequestHandler implements Constants {
 
 		contactText = contactText + CommonUtil.printAffiliateId(oeSignUpDTO);
 
-		createLoggerContactText(logger, oeSignUpDTO, contactText);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,contactText is ::" + contactText);
         
 		submitEnrollRequest.setStrContactText(contactText);
 
@@ -583,7 +615,9 @@ public class OERequestHandler implements Constants {
 
         enrollmentHoldType = getEnrollmentHoldTypeWithErrorCdList(oeSignUpDTO,enrollmentHoldType);
 		
-		createLoggerEnrollServiceEnrollHoldType(logger,oeSignUpDTO,enrollmentHoldType);
+        logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "EnrollmentService creating submitEnrollmentRequest,enrollmentHoldType is ::"
+				+ enrollmentHoldType);
 		submitEnrollRequest.setStrEnrollmentHoldType(enrollmentHoldType);
 		
 		BigDecimal reqAmt = getReqAmt(requestedAmount);
@@ -625,7 +659,9 @@ public class OERequestHandler implements Constants {
 
 		}
 
-        createLoggerFactorsKey(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID()
+				+ "Inside EnrollmentService :: createSubmitEnrollRequest : getFactorsKey :: "
+				+ oeSignUpDTO.getCreditCheck().getFactorsKey());
 		try {
 			List<String> factorsKeyList = oeSignUpDTO.getCreditCheck().getFactorsKey();
 			submitEnrollRequest = setAraayFactorsInRequest(submitEnrollRequest,factorsKeyList,oeSignUpDTO);			
@@ -634,7 +670,8 @@ public class OERequestHandler implements Constants {
 					+ "Error in createSubmitEnrollRequest - getting Key Factors: Skipping and Continuing", ex);
 		}
 
-		createLoggerTdspCode(logger,oeSignUpDTO);
+		logger.debug(oeSignUpDTO.printOETrackingID() + "submitEnrollmentRequest: value of WebTSDP is ::"
+				+ oeSignUpDTO.getTdspCode());
 		submitEnrollRequest.setStrWebTsdp(oeSignUpDTO.getTdspCode());
 		// START : OE :Sprint62 :US21019 :Kdeshmu1
 		submitEnrollRequest.setStrAgentId(oeSignUpDTO.getAgentID());
@@ -1327,15 +1364,6 @@ public class OERequestHandler implements Constants {
 		return bpMatch;
 	}
 	
-	private void setTestLogs(OESignupDTO oeSignUpDTO){
-		if (oeSignUpDTO.getBillingAddress() != null) {
-			logger.info(oeSignUpDTO.printOETrackingID() + "billingAddressDTO is not null");
-			if ((oeSignUpDTO.getBillingAddress().getStreetAddress()) == null) {
-				logger.info(oeSignUpDTO.printOETrackingID() + "StreetAddress is null");
-			}
-		}
-	}
-	
 	private SubmitEnrollRequest setBillingAddressInRequest(OESignupDTO oeSignUpDTO,SubmitEnrollRequest submitEnrollRequest){
 		if ((oeSignUpDTO.getBillingAddress().getStreetAddress()) != null)
 
@@ -1438,13 +1466,6 @@ public class OERequestHandler implements Constants {
 		return submitEnrollRequest;
 	}
 	
-	private void createLoggerForFullName(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "enrollmentService SubmitEnrollment creating request:: checking for FullName");
-		}
-	}
-	
 	private String getBpFullName(OESignupDTO oeSignUpDTO){
 		String bpFullName = null;
 		if ((oeSignUpDTO.getPerson().getMiddleName() != null)) {
@@ -1457,36 +1478,6 @@ public class OERequestHandler implements Constants {
 		return bpFullName;
 	}
 	
-	private void createLoggerSubmitEnrollReqBpFullName(LoggerUtil logger,OESignupDTO oeSignUpDTO,String bpFullName){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID() + "submitEnrollment request :: Name is " + bpFullName);
-		}
-	}
-	
-	private void createLoggerBillingAddress(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "creating SubmitEnrollmentRequest in enrollmentService:: passed the null check for Billing Address");
-		}
-	}
-	
-	private void createLoggerBillingAddrZipcodeComplete(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-	if (logger.isDebugEnabled()) {
-		logger.debug(oeSignUpDTO.printOETrackingID()
-				+ "enrollmentService: createSubmitEnrollmentRequest :: billing address zipcode is:"
-				+ oeSignUpDTO.getBillingAddress().getZipcodeComplete());
-	}
-	}
-	
-	private void createLoggerSpecialReadDateAndMoveinDate(LoggerUtil logger,OESignupDTO oeSignUpDTO,String specialReadDate,String moveInDate){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,specialReadDate is ::" + specialReadDate);
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,moveInDate is ::" + moveInDate);
-		}
-	}
-	
 	private String getContactText(String startSvrcDate){
 		String contactText=null;
 		if (StringUtils.isNotBlank(startSvrcDate)) {
@@ -1495,66 +1486,6 @@ public class OERequestHandler implements Constants {
 			contactText = "Standard Switch. Web.";
 		}
 		return contactText;
-	}
-	
-	private void createLoggerInsideMethod(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "enrollmentService SubmitEnrollment creating request:: inside createSubmitEnrollRequest");
-		}
-	}
-	
-	private void createLoggerContactText(LoggerUtil logger,OESignupDTO oeSignUpDTO,String contactText){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,contactText is ::" + contactText);
-		}
-	}
-	
-	private void createLoggerenrollmentType(LoggerUtil logger,OESignupDTO oeSignUpDTO,String enrollmentType){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,enrollmentType is ::" + enrollmentType);
-		}
-	}
-	
-	private void createLoggerCreditCheckDTO(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,CreditCheckDTO is ::"
-					+ oeSignUpDTO.getCreditCheck());
-		}
-	}
-	
-	private void createLoggerBillingAddressInSubmitEnrollmentRequest(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getBillingAddress() is ::"
-					+ oeSignUpDTO.getBillingAddress());
-		}
-	}
-	
-	private void createLoggerAgreementNumber(LoggerUtil logger,OESignupDTO oeSignUpDTO,String agreementNumber){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,agreementNumber() is ::" + agreementNumber);
-		}
-	}
-	
-	private void createLoggerPersonDetails(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getPerson()() is ::"
-					+ oeSignUpDTO.getPerson());
-		}
-	}
-	private void createLoggerServiceAddress(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getServiceAddress()() is ::"
-					+ oeSignUpDTO.getServiceAddress());
-		}
 	}
 	
 	private SubmitEnrollRequest setStrSvrcZipInRequest(OESignupDTO oeSignUpDTO,SubmitEnrollRequest submitEnrollRequest){
@@ -1585,23 +1516,6 @@ public class OERequestHandler implements Constants {
 		return submitEnrollRequest;
 		}
 	
-	private void createLoggerOfferCodeDetails(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrOfferCode() is ::"
-					+ oeSignUpDTO.getSelectedOffer().getOfferCode());
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrProductPriceCode() is ::"
-					+ oeSignUpDTO.getSelectedOffer().getProductPriceCode() + ". However passing as blank");
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrIncentiveCode() is ::"
-					+ oeSignUpDTO.getSelectedOffer().getIncentiveCode());
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,oeSignUpDTO.getSelectedOffer().getStrMarketSegment() is ::"
-					+ oeSignUpDTO.getSelectedOffer().getMarketSegment());
-		}
-	}
-	
 	private SubmitEnrollRequest getIncentiveAndMarketSegmwnt(OESignupDTO oeSignUpDTO,SubmitEnrollRequest submitEnrollRequest){
 		if (oeSignUpDTO.getSelectedOffer() != null) {
 			// Passing blank value for StrProductPriceCode since the one
@@ -1618,13 +1532,6 @@ public class OERequestHandler implements Constants {
 		return submitEnrollRequest;
 	}
 	
-	private void createLoggerDepositAmt(LoggerUtil logger,OESignupDTO oeSignUpDTO, String depositAmt){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,DepositAmt is ::" + depositAmt);
-		}
-	}
-	
 	private String getDepositCode(String depositAmt){
 		String depositCode=null;
 		if (StringUtils.equals(depositAmt, "0")) {
@@ -1634,14 +1541,6 @@ public class OERequestHandler implements Constants {
 		}
 		return depositCode;
 		}
-	
-	private void createLoggerDepositHold(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,getDepositHold is ::"
-					+ oeSignUpDTO.getCreditCheck().getDepositHold());
-		}
-	}
 	
 	private String getEnrollmentHoldType(OESignupDTO oeSignUpDTO,String enrollmentHoldType){
 		if (null != oeSignUpDTO.getSelectedOffer().getOfferCategory()
@@ -1701,13 +1600,6 @@ public class OERequestHandler implements Constants {
 	}
 	return enrollmentHoldType;
 }
-	private void createLoggerEnrollServiceEnrollHoldType(LoggerUtil logger,OESignupDTO oeSignUpDTO,String enrollmentHoldType){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "EnrollmentService creating submitEnrollmentRequest,enrollmentHoldType is ::"
-					+ enrollmentHoldType);
-		}
-	}
 	
 	private BigDecimal getReqAmt(String requestedAmount){
 		BigDecimal reqAmt = null;
@@ -1811,20 +1703,4 @@ public class OERequestHandler implements Constants {
 		}
 		return submitEnrollRequest;
 	}
-	
-	private void createLoggerTdspCode(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID() + "submitEnrollmentRequest: value of WebTSDP is ::"
-					+ oeSignUpDTO.getTdspCode());
-		}
-	}
-	
-	private void createLoggerFactorsKey(LoggerUtil logger,OESignupDTO oeSignUpDTO){
-		if (logger.isDebugEnabled()) {
-			logger.debug(oeSignUpDTO.printOETrackingID()
-					+ "Inside EnrollmentService :: createSubmitEnrollRequest : getFactorsKey :: "
-					+ oeSignUpDTO.getCreditCheck().getFactorsKey());
-		}
-	 }
-	
 }
