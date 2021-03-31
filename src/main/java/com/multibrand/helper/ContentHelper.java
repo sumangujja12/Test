@@ -827,9 +827,9 @@ public class ContentHelper implements Constants {
 			}
 			
 			contentDataRequest.getMessageKeys().setMessageKeyList(messageKeyList);	
-			logger.info("Content Request :"+contentDataRequest);
+			
 			ContentDataResponse contentDataResponse = ContentDataService.getContentData(contentDataRequest);
-			logger.info("Content Response :"+contentDataResponse);
+			
 			
 			if(removeHTMLCode) {
 				for(String snippetName: snippetMap.keySet()){
@@ -840,9 +840,7 @@ public class ContentHelper implements Constants {
 			} else{
 				for(String snippetName: snippetMap.keySet()){
 					String snippetValue = contentDataResponse.getMsgKeyRespMap().get(snippetName);
-					logger.info("snippetValue 1 :"+snippetValue);
 					snippetValue = CommonUtil.removeHTMLComment(snippetValue) ;
-					logger.info("snippetValue 2 :"+snippetValue);
 					snippetMap.put(snippetName, snippetValue);
 				}
 			}
