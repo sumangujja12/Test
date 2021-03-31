@@ -1120,6 +1120,14 @@
 			    <groupId>org.apache.lucene</groupId>
 			    <artifactId>lucene-analyzers</artifactId>
 			    <version>3.5.0</version>
-			</dependency>		
+			</dependency>	
+			
+		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api -->
+		<dependency>
+		    <groupId>javax.ws.rs</groupId>
+		    <artifactId>javax.ws.rs-api</artifactId>
+		    <version>2.1.1</version>
+		</dependency>
+				
 	</dependencies>
 </project>
