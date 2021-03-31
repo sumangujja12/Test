@@ -14,6 +14,9 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	private String depositDueText;
 	private String depositReasonText = StringUtils.EMPTY;
 	private String[] creditFactorsText;
+	
+	private String depositOptionsText;
+	
 	public String getCreditAgency() {
 		return creditAgency;
 	}
@@ -43,6 +46,12 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	}
 	public void setCreditFactorsText(String[] creditFactorsText) {
 		this.creditFactorsText = creditFactorsText;
+	}
+	public String getDepositOptionsText() {
+		return depositOptionsText;
+	}
+	public void setDepositOptionsText(String depositOptionsText) {
+		this.depositOptionsText = depositOptionsText;
 	}
 
 }
