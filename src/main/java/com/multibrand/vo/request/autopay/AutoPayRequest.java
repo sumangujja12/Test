@@ -3,11 +3,16 @@ package com.multibrand.vo.request.autopay;
 import java.io.Serializable;
 
 import javax.ws.rs.FormParam;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
+
 import com.multibrand.dto.request.FormEntityRequest;
 
 @XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class AutoPayRequest implements FormEntityRequest,Serializable {
 
 	/**
