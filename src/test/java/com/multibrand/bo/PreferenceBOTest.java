@@ -65,7 +65,7 @@ public class PreferenceBOTest {
 		mockResponse.setEXPUSHSTATTAB(tableStatus);
 		when(webServiceTemplateForGmdReadPushPreferences.marshalSendAndReceive(anyObject())).thenReturn(mockResponse);
 
-		PushNotificationPrefReadResponse response = preferenceBo.pushNotificationPreferences(request);
+		PushNotificationPrefReadResponse response = preferenceBo.readPushNotiPreference(request);
 		assertNotNull(response);
 	}
 
@@ -79,7 +79,7 @@ public class PreferenceBOTest {
 		ZECRMGMDREADPUSHPREFResponse mockResponse = null;
 		when(webServiceTemplateForGmdReadPushPreferences.marshalSendAndReceive(anyObject())).thenReturn(mockResponse);
 
-		PushNotificationPrefReadResponse response = preferenceBo.pushNotificationPreferences(request);
+		PushNotificationPrefReadResponse response = preferenceBo.readPushNotiPreference(request);
 		System.out.println(response);
 		Assert.assertEquals(response.getResultDescription(), "Exception Occurred");
 
