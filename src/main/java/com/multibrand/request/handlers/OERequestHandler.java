@@ -1784,10 +1784,9 @@ public class OERequestHandler implements Constants {
 		if (null != factorsKeyList && !factorsKeyList.isEmpty()) {
 			int factCnt = 0;
 			String[] factStrArray = null;
-			FactorDetailDO[] arrayFactors = {};
 			logger.debug(oeSignUpDTO.printOETrackingID()
 					+ "createSubmitEnrollRequest: KEY FACTORS: factorsKeyList.size():: " + factorsKeyList.size());
-			arrayFactors = new FactorDetailDO[factorsKeyList.size()];
+			FactorDetailDO[] arrayFactors = new FactorDetailDO[factorsKeyList.size()];
 			logger.debug(oeSignUpDTO.printOETrackingID() + "createSubmitEnrollRequest: KEY FACTORS: arrayFactors:: "
 					+ arrayFactors);
 			for (String factStr : factorsKeyList) {
