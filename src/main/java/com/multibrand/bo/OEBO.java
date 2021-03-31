@@ -2312,7 +2312,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		/*Setting DepositDueText Empty if we have Credit Freeze or Fraud*/	
 			populateDepositReasonTextInResponse(response, newCreditScoreResponse, creditCheckRequest, localeObj);
 			 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
-			populateCreditCheckApiSuretyBondDetails(response, newCreditScoreResponse, localeObj);
+			populateCreditCheckApiSuretyBondDetails(response, newCreditScoreResponse);
 			 // End Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
 			
 				
@@ -7013,12 +7013,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 
 	 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
 	private void populateCreditCheckApiSuretyBondDetails(NewCreditScoreResponse response,
-			com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse, Locale localeObj) {
+			com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse) {
 		
 		if (StringUtils.isNotBlank(String.valueOf(newCreditScoreResponse.getStrDepositAmt())) && (StringUtils.isNotBlank(newCreditScoreResponse.getStrAcctSecStatus())
 		&& newCreditScoreResponse.getStrAcctSecStatus().equalsIgnoreCase(CUSTOMER_PAY) && StringUtils.isNotBlank(String.valueOf(newCreditScoreResponse.getCustomerFee())))) {
-		String bondprice = EMPTY;
-		String activationFee = EMPTY;
+		String bondprice = null;
+		String activationFee = null;
 		if (null != newCreditScoreResponse.getBondPrice()) {
 			bondprice = newCreditScoreResponse.getBondPrice().toString();
 		} else {
