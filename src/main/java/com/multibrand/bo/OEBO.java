@@ -6544,14 +6544,20 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			}
 			
 		     // Start Relient.com | 95753 | Sprint -33| vsingh | 24/03/2021
-		     
+			if(newCreditScoreResponse != null) {
 			String payUpFront = newCreditScoreResponse.getStrPayUpFrontFlag();
+
+			
+
 			payUpFront = payUpFront(payUpFront);
-			newCreditScoreResponse.getStrPayUpFrontFlag();
+			requestData.setIsPayUpFront(payUpFront);
+			}
+
+			
 			requestData.setBondPrice(response.getBondPrice());
 			requestData.setActivationFee(response.getActivationFee());
 			requestData.setAccSecStatus(response.getAccSecStatus());
-			requestData.setIsPayUpFront(payUpFront);
+			
 			// End Relient.com | 95753 | Sprint -33| vsingh | 24/03/2021
 			requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(creditCheckRequest.getCallExecuted(),serviceLoationResponse.getCallExecutedFromDB()));
 			
