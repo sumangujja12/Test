@@ -6290,12 +6290,12 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			if(StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_TYPE_AA)
 					&& ( StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ||
 							StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT))) {
-				Map<String, String> snippetMap = new HashMap<String, String>();
-				snippetMap.put("oe_creditcheck_deposit_pay_alt_tlp_tctxt", "oe_creditcheck_deposit_pay_alt_tlp_tctxt");
+				Map<String, String> snippetMap = new HashMap<>();
+				snippetMap.put(DEPOSIT_OPTION_CONTENT_SNIPPET, DEPOSIT_OPTION_CONTENT_SNIPPET);
 				String languageCode = (StringUtils.equalsIgnoreCase(creditCheckRequest.getLanguageCode(), S)) ? S: E;
 				snippetMap = contentHelper.getSnippetContent(snippetMap, creditCheckRequest.getCompanyCode(), creditCheckRequest.getBrandId(), languageCode, false);
 				
-				response.setDepositOptionsText(snippetMap.get("oe_creditcheck_deposit_pay_alt_tlp_tctxt"));;
+				response.setDepositOptionsText(snippetMap.get(DEPOSIT_OPTION_CONTENT_SNIPPET));
 			}
 		}
 		if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
