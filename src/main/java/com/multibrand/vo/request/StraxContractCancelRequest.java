@@ -4,23 +4,10 @@ import java.io.Serializable;
 
 public class StraxContractCancelRequest implements Serializable {
 	private static final long serialVersionUID = 5313732309176983924L;
-	
-	 private String straxLeadID;
-	 private String caNumber;
-	 private String cancellationDate;
-	
-     
 
-	public StraxContractCancelRequest(String straxLeadID, String caNumber, String cancellationDate) {
-		super();
-		this.straxLeadID = straxLeadID;
-		this.caNumber = caNumber;
-		this.cancellationDate = cancellationDate;
-	}
-
-	public StraxContractCancelRequest() {
-	
-	}
+	private String straxLeadID;
+	private String caNumber;
+	private String cancellationDate;
 
 	public String getStraxLeadID() {
 		return straxLeadID;
@@ -45,11 +32,5 @@ public class StraxContractCancelRequest implements Serializable {
 	public void setCancellationDate(String cancellationDate) {
 		this.cancellationDate = cancellationDate;
 	}
-
-	
-
-	
-	
-	
 
 }

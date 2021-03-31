@@ -1,6 +1,8 @@
 package com.multibrand.bo;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.StraxAccountService;
 import com.multibrand.util.Constants;
 import com.multibrand.util.JavaBeanUtil;
+import com.multibrand.vo.request.InvoiceItemCategory;
 import com.multibrand.vo.request.StraxContractCancelRequest;
 import com.multibrand.vo.request.StraxInvoiceRequest;
 import com.multibrand.vo.response.StraxContractCancelResponse;
@@ -78,6 +81,20 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			straxInvoiceAccountRequest.setCaNumber(request.getCaNumber());
 			straxInvoiceAccountRequest.setTotalInvoiceAmount(request.getTotalAmount());
 						
+			List<com.multibrand.domain.InvoiceItemCategory>invoiceItemCat = new ArrayList<>();
+			for (InvoiceItemCategory invoiceItemCategory : request.getInvoiceItems()) {
+				com.multibrand.domain.InvoiceItemCategory eachInvoiceItem = new com.multibrand.domain.InvoiceItemCategory();
+				eachInvoiceItem.setAmount(invoiceItemCategory.getAmount());
+				eachInvoiceItem.setItemCategory(invoiceItemCategory.getItemCategory());
+				invoiceItemCat.add(eachInvoiceItem);
+			}
+			
+			int len = request.getInvoiceItems().size();
+			com.multibrand.domain.InvoiceItemCategory[] invoiceItmCategory = new com.multibrand.domain.InvoiceItemCategory[invoiceItemCat.size()];
+			for (int i = 0; i < len; i++) {
+				invoiceItmCategory[i] = invoiceItemCat.get(i);
+			}
+			straxInvoiceAccountRequest.setInvoiceItems(invoiceItmCategory);
 			straxInvoiceAccountResponse = straxAccountService.invoiceStraxContract(straxInvoiceAccountRequest, "0121", sessionId);
 			if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorCode())){
 				
@@ -86,7 +103,7 @@ public class StraxBO extends BaseAbstractService implements Constants{
 				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				response.setResultDescription(straxInvoiceAccountResponse.getErrorMessage());
 			}
-			else
+			else if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getXCode()))
 			{
 				logger.info("invoiceStraxContract() call successful:::::"); 
 				JavaBeanUtil.copy(straxInvoiceAccountResponse, response);

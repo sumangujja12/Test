@@ -3,26 +3,14 @@ package com.multibrand.vo.request;
 import java.io.Serializable;
 import java.util.List;
 
-
 public class StraxInvoiceRequest implements Serializable {
-	
-	private static final long serialVersionUID = 5313732309176983924L;
-	
-	 private String caNumber;
-	 private String totalAmount;
-	 private String straxLeadID;
-	 private List<InvoiceItemCategory> invoiceItems;
-	 
-	 public StraxInvoiceRequest()
-	 {
-		 
-	 }
 
-	public StraxInvoiceRequest(String caNumber, String totalAmount) {
-		super();
-		this.caNumber = caNumber;
-		this.totalAmount = totalAmount;
-	}
+	private static final long serialVersionUID = 5313732309176983924L;
+
+	private String caNumber;
+	private String totalAmount;
+	private String straxLeadID;
+	private List<InvoiceItemCategory> invoiceItems;
 
 	public String getCaNumber() {
 		return caNumber;
@@ -55,8 +43,5 @@ public class StraxInvoiceRequest implements Serializable {
 	public void setInvoiceItems(List<InvoiceItemCategory> invoiceItems) {
 		this.invoiceItems = invoiceItems;
 	}
-	 
-	 
-	 
 
 }
