@@ -25,6 +25,8 @@ public class NewCreditScoreResponse extends GenericResponse implements java.io.S
 	private String bondPrice;
 	private String accSecStatus;
 	
+	private String depositOptionsText;
+	
 	/**
 	 * @return the depositAmount
 	 */
@@ -111,5 +113,13 @@ public class NewCreditScoreResponse extends GenericResponse implements java.io.S
 	public void setAccSecStatus(String accSecStatus) {
 		this.accSecStatus = accSecStatus;
 	}
+	public String getDepositOptionsText() {
+		return depositOptionsText;
+	}
+	public void setDepositOptionsText(String depositOptionsText) {
+		this.depositOptionsText = depositOptionsText;
+	}
+	
+	
 	
 }
