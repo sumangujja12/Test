@@ -17,7 +17,10 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	
 	private String depositOptionsText;
 
+
 	private String activationFee;
+	private String bondPrice;
+
 
 	
 	
@@ -58,12 +61,21 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 		this.depositOptionsText = depositOptionsText;
 	}
 
+
 	public String getActivationFee() {
 		return activationFee;
 	}
 	public void setActivationFee(String activationFee) {
 		this.activationFee = activationFee;
 	}
+	public String getBondPrice() {
+		return bondPrice;
+	}
+	public void setBondPrice(String bondPrice) {
+		this.bondPrice = bondPrice;
+	}
+	
+
 	
 
 
