@@ -16,12 +16,14 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	private String[] creditFactorsText;
 	
 	private String depositOptionsText;
-	
-	// End Relient.com | 95753 | Sprint -33| vsingh | 01/04/2021
+
+
 	private String activationFee;
 	private String bondPrice;
 	private String accSecStatus;
-	// End Relient.com | 95753 | Sprint -33| vsingh | 01/04/2021
+
+
+	
 	
 	public String getCreditAgency() {
 		return creditAgency;
@@ -59,6 +61,8 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	public void setDepositOptionsText(String depositOptionsText) {
 		this.depositOptionsText = depositOptionsText;
 	}
+
+
 	public String getActivationFee() {
 		return activationFee;
 	}
@@ -77,5 +81,9 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	public void setAccSecStatus(String accSecStatus) {
 		this.accSecStatus = accSecStatus;
 	}
+	
+
+	
+
 
 }
