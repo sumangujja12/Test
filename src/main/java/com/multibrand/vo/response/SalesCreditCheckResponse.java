@@ -16,9 +16,10 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	private String[] creditFactorsText;
 	
 	private String depositOptionsText;
+
 	private String activationFee;
-	private String bondPrice;
-	private String accSecStatus;
+
+	
 	
 	public String getCreditAgency() {
 		return creditAgency;
@@ -56,23 +57,14 @@ public class SalesCreditCheckResponse extends SalesBaseResponse {
 	public void setDepositOptionsText(String depositOptionsText) {
 		this.depositOptionsText = depositOptionsText;
 	}
+
 	public String getActivationFee() {
 		return activationFee;
 	}
 	public void setActivationFee(String activationFee) {
 		this.activationFee = activationFee;
 	}
-	public String getBondPrice() {
-		return bondPrice;
-	}
-	public void setBondPrice(String bondPrice) {
-		this.bondPrice = bondPrice;
-	}
-	public String getAccSecStatus() {
-		return accSecStatus;
-	}
-	public void setAccSecStatus(String accSecStatus) {
-		this.accSecStatus = accSecStatus;
-	}
+	
+
 
 }
