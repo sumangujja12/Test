@@ -3,8 +3,9 @@ package com.multibrand.dto.request;
 import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.NotEmpty;
+import com.multibrand.request.validation.SecurityMethodCheck;
 import com.multibrand.request.validation.SizeConstraint;
-
+@SecurityMethodCheck
 public class SalesEnrollmentRequest extends SalesOERequest{
 	/**
 	 * 
