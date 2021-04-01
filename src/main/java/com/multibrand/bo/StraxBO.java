@@ -39,14 +39,14 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			straxCancelAccountRequest.setCaNumber(request.getCaNumber());
 			straxCancelAccountRequest.setCancellationDate(request.getCancellationDate());
 			straxCancelAccountResponse = straxAccountService.cancelStraxContract(straxCancelAccountRequest, "0121", sessionId);
-			if(StringUtils.isNotBlank(straxCancelAccountResponse.getErrorCode())){
+			if(StringUtils.isNotBlank(straxCancelAccountResponse.getErrorCode()) || StringUtils.isNotBlank(straxCancelAccountResponse.getErrorMessage())){
 				
 				logger.info("cancelStraxContract failed with error code:::::{}",straxCancelAccountResponse.getErrorCode());
 				logger.info("cancelStraxContract failed with error::::::{}",straxCancelAccountResponse.getErrorMessage());
 				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 				response.setResultDescription(straxCancelAccountResponse.getErrorMessage());
 			}
-			else
+			else if(StringUtils.isNotBlank(straxCancelAccountResponse.getXCode()))
 			{
 				logger.info("cancelStraxContract() call successful:::::"); 
 				JavaBeanUtil.copy(straxCancelAccountResponse, response);
@@ -96,7 +96,7 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			}
 			straxInvoiceAccountRequest.setInvoiceItems(invoiceItmCategory);
 			straxInvoiceAccountResponse = straxAccountService.invoiceStraxContract(straxInvoiceAccountRequest, "0121", sessionId);
-			if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorCode())){
+			if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorCode()) || StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorMessage())){
 				
 				logger.info("invoiceStraxContract failed with ErrorCode:::::{}",straxInvoiceAccountResponse.getErrorCode());
 				logger.info("invoiceStraxContract failed with ErrorMessage::::::{}",straxInvoiceAccountResponse.getErrorMessage());
@@ -105,7 +105,7 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			}
 			else if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getXCode()))
 			{
-				logger.info("invoiceStraxContract() call successful:::::"); 
+				logger.info("invoiceStraxContract() call successful:::::{}",straxInvoiceAccountResponse.getXCode()); 
 				JavaBeanUtil.copy(straxInvoiceAccountResponse, response);
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
