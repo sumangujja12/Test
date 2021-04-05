@@ -13,18 +13,19 @@ ConstraintValidator<SecurityMethodCheck, SalesEnrollmentRequest>, Constants {
 
 	@Override
 	public void initialize(SecurityMethodCheck arg0) {
-		
+		 // Do nothing.
 	}
 
 	@Override
 	public boolean isValid(SalesEnrollmentRequest salesEnrollmentRequest, ConstraintValidatorContext arg1) {
-		if(DEPOSIT.equals(salesEnrollmentRequest.getSecurityMethod()) || SURETY_BOND.equals(salesEnrollmentRequest.getSecurityMethod()) || StringUtils.equalsIgnoreCase(StringUtils.EMPTY, salesEnrollmentRequest.getSecurityMethod())) {
-			return true;
+		boolean status=false;
+		if(StringUtils.isEmpty(salesEnrollmentRequest.getSecurityMethod()) || DEPOSIT.equals(salesEnrollmentRequest.getSecurityMethod()) ||SURETY_BOND.equals(salesEnrollmentRequest.getSecurityMethod())) { 
+			status=true;
 		}
-		return false;
+		return status;
+		
 	}
 
 
 	
-
 }
