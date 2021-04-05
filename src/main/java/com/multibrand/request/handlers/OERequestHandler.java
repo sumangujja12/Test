@@ -612,10 +612,10 @@ public class OERequestHandler implements Constants {
 				&& oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(DEPOSIT))
 		{
 			activationFeeCD =FLAG_NO;
-			}else if(StringUtils.isNotBlank(oeSignUpDTO.getCreditCheck().getDepositAmount()) && StringUtils.isBlank(oeSignUpDTO.getCreditCheck().getSecurityMethod()) )
-					{
+			}else if(StringUtils.isBlank(oeSignUpDTO.getCreditCheck().getSecurityMethod()))
+			{
 				oeSignUpDTO.getCreditCheck().setSecurityMethod(DEPOSIT);
-					}
+			}
 			
         oeSignUpDTO.getCreditCheck().setActivationFeeCd(activationFeeCD);
         enrollmentHoldType = getEnrollmentHoldTypeForSwitchHoldStatus(enrollmentType,enrollmentHoldType,oeSignUpDTO);
