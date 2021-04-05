@@ -1722,7 +1722,7 @@ public class OERequestHandler implements Constants {
 			holdlist.remove(DEPOSITHOLD);
 		}
 		oeSignUpDTO.setErrorCdList(StringUtils.join(holdlist,SYMBOL_PIPE));
-		}else{
+		}else if (StringUtils.equalsIgnoreCase(SURETY_BOND, enrollmentRequest.getSecurityMethod())){
 			oeSignUpDTO.setErrorCdList(ACCSECHOLD);
 		}
 		return oeSignUpDTO;
