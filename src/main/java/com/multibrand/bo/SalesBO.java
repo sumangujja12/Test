@@ -118,6 +118,15 @@ public class SalesBO extends OeBoHelper implements Constants {
 					response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(bpMatchResponse).build();
 					return response;
 				} 
+			} else
+				if(StringUtils.isBlank(request.getTokenizedSSN()) && StringUtils.isBlank(request.getTokenizedTDL()) 
+						&& StringUtils.isBlank(request.getNoid())) {
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("please provide ssn or dl or noId");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
 				
 			}
 		} catch (Exception e) {
