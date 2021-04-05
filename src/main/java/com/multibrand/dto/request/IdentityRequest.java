@@ -12,7 +12,7 @@ import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidAge;
 import com.multibrand.request.validation.ValidDateTime;
 
-@MandotoryFieldCheck(fields = {"tokenizedSSN", "tokenizedTDL"}, message = "please provide ssn or dl")
+@MandotoryFieldCheck(fields = {"tokenizedSSN", "tokenizedTDL", "noid"}, message = "please provide ssn or dl or noid")
 public class IdentityRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1068351198219357955L;

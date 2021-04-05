@@ -252,8 +252,7 @@ public class ValidationBO extends BaseBO {
 				if(retryCount>3)
 				{
 					errorCodeFromAPI = processPerformPosidBPMatchAfterMaxRetryAllowed(performPosIdBpRequest, 
-						oESignupDTO, serviceLoationResponse, response,errorCodeFromAPI,messageCode, 
-						serviceLocationResponseerrorList,bpMatchDTO, retryCount  );
+						 response, retryCount  );
 					
 					if(StringUtils.isNotEmpty(serviceLoationResponse.getErrorCode())){
 						errorCodeFromAPI = serviceLoationResponse.getErrorCode();
@@ -290,16 +289,7 @@ public class ValidationBO extends BaseBO {
 			/*
 			 * Step 5: Make validatePosId call
 			 */
-			recentCallMade=RECENT_CALL_MADE_POSID;
-			boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
-			if(isNewPosidCallEnabled){
-				ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
-				validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
-			} else{
-				validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
-		}
-
-			//Pass the parameters from NRG response to wrapper Response POJO
+			validatePosIdKBAResponse = callValidateMethod(performPosIdBpRequest, validatePosIdKBAResponse);
 			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
 			oESignupDTO.setPosidSNRO(validatePosIdKBAResponse.getPosidUniqueKey());
 			/*
@@ -310,6 +300,8 @@ public class ValidationBO extends BaseBO {
 			{
 				logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 						+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID SUCCESSFULLY CONDUCTED");
+				//Pass the parameters from NRG response to wrapper Response POJO
+				
 				posidStatus=POSID_FLAG_YES;
 				serviceLocationResponseerrorList.remove(POSIDHOLD);
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
@@ -325,16 +317,16 @@ public class ValidationBO extends BaseBO {
 	
 			}
 
-			else if(null!=(validatePosIdKBAResponse)&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
+			else if((null!=(validatePosIdKBAResponse)&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
 					&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE)) && 
 					(StringUtils.isBlank( validatePosIdKBAResponse.getStrErroMessage()) 
-							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
+							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())))|| performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE") ) 
 			{
 				
 				errorCodeFromAPI = processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
-						serviceLoationResponse, response, errorCodeFromAPI, messageCode, 
+						serviceLoationResponse, response, 
 						serviceLocationResponseerrorList, bpMatchDTO, 
-						validatePosIdKBAResponse, posidHoldAllowedForAffilate, posidHoldAllowed, retryCount);
+						 posidHoldAllowedForAffilate, posidHoldAllowed, retryCount);
 				posidStatus = oESignupDTO.getPosidStatus();
 				
 			}
@@ -1056,13 +1048,7 @@ public class ValidationBO extends BaseBO {
 	
 	private String processPerformPosidBPMatchAfterMaxRetryAllowed
 					(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
-						OESignupDTO oESignupDTO, 
-						ServiceLocationResponse serviceLoationResponse,
 						PerformPosIdandBpMatchResponse response,
-						String errorCd,
-						String messageCode,
-						LinkedHashSet<String> serviceLocationResponseerrorList,
-						BPMatchDTO bpMatchDTO,
 						int retryCount)
 			{
 		logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
@@ -1072,9 +1058,9 @@ public class ValidationBO extends BaseBO {
 		
 
 		response.setStatusCode(STATUS_CODE_STOP);
-		messageCode=POSID_FAIL_MAX;
+		String messageCode=POSID_FAIL_MAX;
 		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-		errorCd=POSIDHOLD;			
+		String errorCd=POSIDHOLD;			
 		response.setMessageCode(messageCode);
 		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setRetryCount(Integer.toString(retryCount));
@@ -1146,17 +1132,16 @@ public class ValidationBO extends BaseBO {
 			OESignupDTO oESignupDTO, 
 			ServiceLocationResponse serviceLoationResponse,
 			PerformPosIdandBpMatchResponse response,
-			String errorCd,
-			String messageCode,
 			LinkedHashSet<String> serviceLocationResponseerrorList, 
 			BPMatchDTO bpMatchDTO,
-			ValidatePosIdKBAResponse validatePosIdKBAResponse,
 			boolean posidHoldAllowedForAffilate,
 			boolean posidHoldAllowed, 
 			int retryCount)
 	{
 		String posidStatus = null;
-		if(retryCount<=2){
+		String messageCode;
+		String errorCd;
+		if(retryCount<=2 && !performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
 			response.setStatusCode(STATUS_CODE_ASK);
 			messageCode=POSID_FAIL;
 			response.setMessageCode(messageCode);
@@ -1333,4 +1318,17 @@ public class ValidationBO extends BaseBO {
 		}
 		return validatePosIdKBAResponse;
 	}
+	public ValidatePosIdKBAResponse callValidateMethod(PerformPosIdAndBpMatchRequest performPosIdBpRequest,ValidatePosIdKBAResponse validatePosIdKBAResponse) throws Exception {
+	if(! performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
+		
+		boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
+		if(isNewPosidCallEnabled){
+			ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
+			validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
+		} else{
+			validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
+	}
+
 }
+	return validatePosIdKBAResponse;
+	}}
