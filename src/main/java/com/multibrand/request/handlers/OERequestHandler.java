@@ -1714,7 +1714,7 @@ public class OERequestHandler implements Constants {
 	}
 	
 	private void setErrorCdListForSecurityMethod(OESignupDTO oeSignUpDTO,ServiceLocationResponse serviceLoationResponse,EnrollmentRequest enrollmentRequest){
-		Set<String> holdlist = new LinkedHashSet<String>(); 
+		Set<String> holdlist = null; 
 		if(null != serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
 		holdlist = new LinkedHashSet<>(Arrays.asList(errorCdArray));
