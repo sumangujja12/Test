@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -609,7 +612,11 @@ public class OERequestHandler implements Constants {
 				&& oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(DEPOSIT))
 		{
 			activationFeeCD =FLAG_NO;
-			}
+			}else if(StringUtils.isNotBlank(oeSignUpDTO.getCreditCheck().getDepositAmount()) && StringUtils.isBlank(oeSignUpDTO.getCreditCheck().getSecurityMethod()) )
+					{
+				oeSignUpDTO.getCreditCheck().setSecurityMethod(DEPOSIT);
+					}
+			
         oeSignUpDTO.getCreditCheck().setActivationFeeCd(activationFeeCD);
         enrollmentHoldType = getEnrollmentHoldTypeForSwitchHoldStatus(enrollmentType,enrollmentHoldType,oeSignUpDTO);
 
@@ -912,6 +919,7 @@ public class OERequestHandler implements Constants {
 		
 		if(serviceLoationResponse != null){
 		oeSignupDTO.setReqStatusCd(serviceLoationResponse.getRequestStatusCode());}
+		oeSignupDTO = setErrorCdListForSecurityMethod(oeSignupDTO, serviceLoationResponse, enrollmentRequest);
 		// Offer data
 		OfferDTO selectedOffer = new OfferDTO();
 		selectedOffer.setCampaignCode(enrollmentRequest.getCampaignCode());
@@ -1703,4 +1711,21 @@ public class OERequestHandler implements Constants {
 		}
 		return submitEnrollRequest;
 	}
+	
+	private OESignupDTO setErrorCdListForSecurityMethod(OESignupDTO oeSignUpDTO,ServiceLocationResponse serviceLoationResponse,EnrollmentRequest enrollmentRequest){
+		Set<String> holdlist = new LinkedHashSet<String>(); 
+		if(null != serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
+		holdlist = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+		if (StringUtils.equalsIgnoreCase(SURETY_BOND, enrollmentRequest.getSecurityMethod())){
+			holdlist.add(ACCSECHOLD);
+			holdlist.remove(DEPOSITHOLD);
+		}
+		oeSignUpDTO.setErrorCdList(StringUtils.join(holdlist,SYMBOL_PIPE));
+		}else{
+			oeSignUpDTO.setErrorCdList(ACCSECHOLD);
+		}
+		return oeSignUpDTO;
+	}
+	
 }
