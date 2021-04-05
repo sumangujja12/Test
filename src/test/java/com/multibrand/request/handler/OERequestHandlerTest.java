@@ -162,4 +162,22 @@ public class OERequestHandlerTest {
 		oeSignUpDTO=oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest, oeSignUpDTO, serviceLoationResponse);
 		Assert.assertEquals(true,null != oeSignUpDTO.getCreditCheck());
 	}
+	
+	@Test
+	public void testCreateOeSignupDtoByMinimalSecurityMethod(){
+		EnrollmentRequest enrollmentRequest=new EnrollmentRequest();
+		enrollmentRequest.setSecurityMethod(Constants.SURETY_BOND);
+		OESignupDTO oeSignUpDTO = new OESignupDTO();
+		ServiceLocationResponse serviceLoationResponse=new ServiceLocationResponse();
+		serviceLoationResponse.setActivationFee("45");
+		serviceLoationResponse.setBondPrice("81");
+		serviceLoationResponse.setAccSecStatus("Y");
+		serviceLoationResponse.setIsPayUpFront("X");
+		serviceLoationResponse.setErrorCdlist("DEPOSITHOLD|ACCSHOLD");
+		PersonResponse personResponse=new PersonResponse();
+		serviceLoationResponse.setPersonResponse(personResponse);
+		when(oebo.getEnrollmentData(enrollmentRequest.getTrackingId())).thenReturn(serviceLoationResponse);
+		oeSignUpDTO=oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest, oeSignUpDTO, serviceLoationResponse);
+		Assert.assertEquals(true,null != oeSignUpDTO.getCreditCheck());
+	}
 }

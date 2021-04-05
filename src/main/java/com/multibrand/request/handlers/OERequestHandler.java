@@ -612,7 +612,8 @@ public class OERequestHandler implements Constants {
 				&& oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(DEPOSIT))
 		{
 			activationFeeCD =FLAG_NO;
-			}else if(StringUtils.isBlank(oeSignUpDTO.getCreditCheck().getSecurityMethod()))
+			}else if(StringUtils.isBlank(oeSignUpDTO.getCreditCheck().getSecurityMethod()) && 
+					StringUtils.isNotBlank(oeSignUpDTO.getCreditCheck().getDepositAmount()) && Integer.parseInt(oeSignUpDTO.getCreditCheck().getDepositAmount()) > 0)
 			{
 				oeSignUpDTO.getCreditCheck().setSecurityMethod(DEPOSIT);
 			}
@@ -919,7 +920,7 @@ public class OERequestHandler implements Constants {
 		
 		if(serviceLoationResponse != null){
 		oeSignupDTO.setReqStatusCd(serviceLoationResponse.getRequestStatusCode());}
-		oeSignupDTO = setErrorCdListForSecurityMethod(oeSignupDTO, serviceLoationResponse, enrollmentRequest);
+		this.setErrorCdListForSecurityMethod(oeSignupDTO, serviceLoationResponse, enrollmentRequest);
 		// Offer data
 		OfferDTO selectedOffer = new OfferDTO();
 		selectedOffer.setCampaignCode(enrollmentRequest.getCampaignCode());
@@ -1712,7 +1713,7 @@ public class OERequestHandler implements Constants {
 		return submitEnrollRequest;
 	}
 	
-	private OESignupDTO setErrorCdListForSecurityMethod(OESignupDTO oeSignUpDTO,ServiceLocationResponse serviceLoationResponse,EnrollmentRequest enrollmentRequest){
+	private void setErrorCdListForSecurityMethod(OESignupDTO oeSignUpDTO,ServiceLocationResponse serviceLoationResponse,EnrollmentRequest enrollmentRequest){
 		Set<String> holdlist = new LinkedHashSet<String>(); 
 		if(null != serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 		String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split(ERROR_CD_LIST_SPLIT_PATTERN);
@@ -1725,7 +1726,7 @@ public class OERequestHandler implements Constants {
 		}else if (StringUtils.equalsIgnoreCase(SURETY_BOND, enrollmentRequest.getSecurityMethod())){
 			oeSignUpDTO.setErrorCdList(ACCSECHOLD);
 		}
-		return oeSignUpDTO;
+		
 	}
 	
 }
