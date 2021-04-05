@@ -289,21 +289,9 @@ public class ValidationBO extends BaseBO {
 			/*
 			 * Step 5: Make validatePosId call
 			 */
-			if(! performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
-				
-			recentCallMade=RECENT_CALL_MADE_POSID;
-			boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
-			if(isNewPosidCallEnabled){
-				ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
-				validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
-			} else{
-				validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
-		}
-
-			//Pass the parameters from NRG response to wrapper Response POJO
+			validatePosIdKBAResponse = callValidateMethod(performPosIdBpRequest, validatePosIdKBAResponse);
 			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
 			oESignupDTO.setPosidSNRO(validatePosIdKBAResponse.getPosidUniqueKey());
-			}
 			/*
 			 * PosId Scenario: 
 			 */
@@ -312,6 +300,8 @@ public class ValidationBO extends BaseBO {
 			{
 				logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 						+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID SUCCESSFULLY CONDUCTED");
+				//Pass the parameters from NRG response to wrapper Response POJO
+				
 				posidStatus=POSID_FLAG_YES;
 				serviceLocationResponseerrorList.remove(POSIDHOLD);
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
@@ -1328,4 +1318,17 @@ public class ValidationBO extends BaseBO {
 		}
 		return validatePosIdKBAResponse;
 	}
+	public ValidatePosIdKBAResponse callValidateMethod(PerformPosIdAndBpMatchRequest performPosIdBpRequest,ValidatePosIdKBAResponse validatePosIdKBAResponse) throws Exception {
+	if(! performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
+		
+		boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
+		if(isNewPosidCallEnabled){
+			ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
+			validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
+		} else{
+			validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
+	}
+
 }
+	return validatePosIdKBAResponse;
+	}}
