@@ -252,8 +252,7 @@ public class ValidationBO extends BaseBO {
 				if(retryCount>3)
 				{
 					errorCodeFromAPI = processPerformPosidBPMatchAfterMaxRetryAllowed(performPosIdBpRequest, 
-						oESignupDTO, serviceLoationResponse, response,errorCodeFromAPI,messageCode, 
-						serviceLocationResponseerrorList,bpMatchDTO, retryCount  );
+						 response, retryCount  );
 					
 					if(StringUtils.isNotEmpty(serviceLoationResponse.getErrorCode())){
 						errorCodeFromAPI = serviceLoationResponse.getErrorCode();
@@ -290,16 +289,7 @@ public class ValidationBO extends BaseBO {
 			/*
 			 * Step 5: Make validatePosId call
 			 */
-			recentCallMade=RECENT_CALL_MADE_POSID;
-			boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
-			if(isNewPosidCallEnabled){
-				ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
-				validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
-			} else{
-				validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
-		}
-
-			//Pass the parameters from NRG response to wrapper Response POJO
+			validatePosIdKBAResponse = callValidateMethod(performPosIdBpRequest, validatePosIdKBAResponse);
 			response.setErrorDescription(validatePosIdKBAResponse.getStrErroMessage());
 			oESignupDTO.setPosidSNRO(validatePosIdKBAResponse.getPosidUniqueKey());
 			/*
@@ -310,6 +300,8 @@ public class ValidationBO extends BaseBO {
 			{
 				logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 						+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: POSID SUCCESSFULLY CONDUCTED");
+				//Pass the parameters from NRG response to wrapper Response POJO
+				
 				posidStatus=POSID_FLAG_YES;
 				serviceLocationResponseerrorList.remove(POSIDHOLD);
 				recentCallMade=RECENT_CALL_MADE_BP_MATCH;
@@ -325,16 +317,16 @@ public class ValidationBO extends BaseBO {
 	
 			}
 
-			else if(null!=(validatePosIdKBAResponse)&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
+			else if((null!=(validatePosIdKBAResponse)&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
 					&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE)) && 
 					(StringUtils.isBlank( validatePosIdKBAResponse.getStrErroMessage()) 
-							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())) ) 
+							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())))|| performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE") ) 
 			{
 				
 				errorCodeFromAPI = processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
-						serviceLoationResponse, response, errorCodeFromAPI, messageCode, 
+						serviceLoationResponse, response, 
 						serviceLocationResponseerrorList, bpMatchDTO, 
-						validatePosIdKBAResponse, posidHoldAllowedForAffilate, posidHoldAllowed, retryCount);
+						 posidHoldAllowedForAffilate, posidHoldAllowed, retryCount);
 				posidStatus = oESignupDTO.getPosidStatus();
 				
 			}
@@ -385,61 +377,9 @@ public class ValidationBO extends BaseBO {
 		}
 		finally{
 			oESignupDTO.setErrorCdList(StringUtils.join(serviceLocationResponseerrorList,SYMBOL_PIPE));
-			if (retryCount==0)
-			{
-				createPersonAndServiceLocationRecordForPerformPosidBPMatchProcess(performPosIdBpRequest, oESignupDTO, 
-						serviceLoationResponse, response, errorCodeFromAPI, messageCode, serviceLocationResponseerrorList,
-						bpMatchDTO, validatePosIdKBAResponse, posidPii, posIdDate, posidStatus, recentCallMade);
-				personId = oESignupDTO.getPerson().getPersonID();
-				
-			}else{
-				//ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
-				response.setGuid(serviceLoationResponse.getGuid());
-			}
-
-			response.setTrackingId(performPosIdBpRequest.getTrackingId());
-
-			logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: "
-					+ "affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: existing tracking number and  making updateperson call");
-
-			//Checking if person Id is present then only make updatePerson call
-			if(StringUtils.isNotBlank(personId))
-			{
-				logger.info("inside com.multibrand.bo:: validatePosId ::Person Id available so making updatePerson call");
-				UpdatePersonRequest updatePerson = new UpdatePersonRequest();
-				createUpdatePersonRequest(updatePerson, posidPii, performPosIdBpRequest, personId, posidStatus, posIdDate, retryCount, oESignupDTO);
-
-				logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
-						+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +"::"
-								+ " retry count after increment which is sent to db is :: "+retryCountStr);
-
-				String updatePersonErrorCode=oeBO.updatePerson(updatePerson);
-				logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+""
-						+ " :: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+":: errorCode is :: "+updatePersonErrorCode);
-			}
-			else{
-				logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
-						+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+"Person Id was not present so skipped Update Person Call");
-			}
-			logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
-					+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making updtaeservicelocation call now");
-			//Making Update Servicelocation call now
-			UpdateServiceLocationRequest updateServiceLocation= new UpdateServiceLocationRequest();
-			if(null!=serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getCallExecutedFromDB()))
-				updateServiceLocation.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(performPosIdBpRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
-			
-			if((StringUtils.isBlank(errorCodeFromAPI)) && StringUtils.equalsIgnoreCase(POSIDHOLD, errorCodeFromDB)){
-				errorCodeFromAPI = "";
-			}else if((StringUtils.isBlank(errorCodeFromAPI))){
-				errorCodeFromAPI = errorCodeFromDB;
-			}
-			createUpdateServiceLocationRequest(updateServiceLocation, performPosIdBpRequest, personId,
-					messageCode, errorCodeFromAPI,bpMatchDTO,recentCallMade,oESignupDTO);
-			String updateSrvLocationErrorCode=oeBO.updateServiceLocation(updateServiceLocation);
-			logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
-					+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
-							+ "errorCode from updateservicelocation call is :: "+updateSrvLocationErrorCode);
-			logger.debug(" END *******ValidationBO:: validatePosID API**********");
+			updateSLTable(performPosIdBpRequest, oESignupDTO, 
+				serviceLoationResponse, response, errorCodeFromAPI, messageCode, serviceLocationResponseerrorList,
+				bpMatchDTO, validatePosIdKBAResponse, posidPii, posIdDate, posidStatus, recentCallMade,retryCount,errorCodeFromAPI,errorCodeFromDB);
 		}	
 
 		return response;
@@ -1056,13 +996,7 @@ public class ValidationBO extends BaseBO {
 	
 	private String processPerformPosidBPMatchAfterMaxRetryAllowed
 					(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
-						OESignupDTO oESignupDTO, 
-						ServiceLocationResponse serviceLoationResponse,
 						PerformPosIdandBpMatchResponse response,
-						String errorCd,
-						String messageCode,
-						LinkedHashSet<String> serviceLocationResponseerrorList,
-						BPMatchDTO bpMatchDTO,
 						int retryCount)
 			{
 		logger.debug("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
@@ -1072,9 +1006,9 @@ public class ValidationBO extends BaseBO {
 		
 
 		response.setStatusCode(STATUS_CODE_STOP);
-		messageCode=POSID_FAIL_MAX;
+		String messageCode=POSID_FAIL_MAX;
 		response.setMessageText(getMessage(POSID_FAIL_MAX_MSG_TXT));
-		errorCd=POSIDHOLD;			
+		String errorCd=POSIDHOLD;			
 		response.setMessageCode(messageCode);
 		response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		response.setRetryCount(Integer.toString(retryCount));
@@ -1146,17 +1080,16 @@ public class ValidationBO extends BaseBO {
 			OESignupDTO oESignupDTO, 
 			ServiceLocationResponse serviceLoationResponse,
 			PerformPosIdandBpMatchResponse response,
-			String errorCd,
-			String messageCode,
 			LinkedHashSet<String> serviceLocationResponseerrorList, 
 			BPMatchDTO bpMatchDTO,
-			ValidatePosIdKBAResponse validatePosIdKBAResponse,
 			boolean posidHoldAllowedForAffilate,
 			boolean posidHoldAllowed, 
 			int retryCount)
 	{
 		String posidStatus = null;
-		if(retryCount<=2){
+		String messageCode;
+		String errorCd;
+		if(retryCount<=2 && !performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
 			response.setStatusCode(STATUS_CODE_ASK);
 			messageCode=POSID_FAIL;
 			response.setMessageCode(messageCode);
@@ -1333,4 +1266,89 @@ public class ValidationBO extends BaseBO {
 		}
 		return validatePosIdKBAResponse;
 	}
+	public ValidatePosIdKBAResponse callValidateMethod(PerformPosIdAndBpMatchRequest performPosIdBpRequest,ValidatePosIdKBAResponse validatePosIdKBAResponse) throws Exception {
+	if(! performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
+		
+		boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
+		if(isNewPosidCallEnabled){
+			ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
+			validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
+		} else{
+			validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);
+	}
+
+}
+	return validatePosIdKBAResponse;
+	}
+	
+	public void updateSLTable(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
+			OESignupDTO oESignupDTO, 
+			ServiceLocationResponse serviceLoationResponse,
+			PerformPosIdandBpMatchResponse response,
+			String errorCd,
+			String messageCode,
+			LinkedHashSet<String> serviceLocationResponseerrorList, 
+			BPMatchDTO bpMatchDTO,
+			ValidatePosIdKBAResponse validatePosIdKBAResponse,
+			String posidPii,
+			String posIdDate,
+			String posidStatus,
+			String recentCallMade,
+			int retryCount,
+			String errorCodeFromAPI,
+			String errorCodeFromDB) throws OEException{
+		String personId = null;	
+	if (retryCount==0)
+	{
+		createPersonAndServiceLocationRecordForPerformPosidBPMatchProcess(performPosIdBpRequest, oESignupDTO, 
+				serviceLoationResponse, response, errorCodeFromAPI, messageCode, serviceLocationResponseerrorList,
+				bpMatchDTO, validatePosIdKBAResponse, posidPii, posIdDate, posidStatus, recentCallMade);
+		 personId = oESignupDTO.getPerson().getPersonID();
+		
+	}else{
+		//ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
+		response.setGuid(serviceLoationResponse.getGuid());
+	}
+
+	response.setTrackingId(performPosIdBpRequest.getTrackingId());
+
+	logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: "
+			+ "affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: existing tracking number and  making updateperson call");
+
+	//Checking if person Id is present then only make updatePerson call
+	if(StringUtils.isNotBlank(personId))
+	{
+		logger.info("inside com.multibrand.bo:: validatePosId ::Person Id available so making updatePerson call");
+		UpdatePersonRequest updatePerson = new UpdatePersonRequest();
+		createUpdatePersonRequest(updatePerson, posidPii, performPosIdBpRequest, personId, posidStatus, posIdDate, retryCount, oESignupDTO);
+
+		String updatePersonErrorCode=oeBO.updatePerson(updatePerson);
+		logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+""
+				+ " :: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+":: errorCode is :: "+updatePersonErrorCode);
+	}
+	else{
+		logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
+				+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+"Person Id was not present so skipped Update Person Call");
+	}
+	logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
+			+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making updtaeservicelocation call now");
+	//Making Update Servicelocation call now
+	UpdateServiceLocationRequest updateServiceLocation= new UpdateServiceLocationRequest();
+	if(null!=serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getCallExecutedFromDB()))
+		updateServiceLocation.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(performPosIdBpRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
+	
+	if((StringUtils.isBlank(errorCodeFromAPI)) && StringUtils.equalsIgnoreCase(POSIDHOLD, errorCodeFromDB)){
+		errorCodeFromAPI = "";
+	}else if((StringUtils.isBlank(errorCodeFromAPI))){
+		errorCodeFromAPI = errorCodeFromDB;
+	}
+	createUpdateServiceLocationRequest(updateServiceLocation, performPosIdBpRequest, personId,
+			messageCode, errorCodeFromAPI,bpMatchDTO,recentCallMade,oESignupDTO);
+	String updateSrvLocationErrorCode=oeBO.updateServiceLocation(updateServiceLocation);
+	logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
+			+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
+					+ "errorCode from updateservicelocation call is :: "+updateSrvLocationErrorCode);
+	logger.debug(" END *******ValidationBO:: validatePosID API**********");
+}
+
 }
