@@ -203,23 +203,14 @@ public class ValidationBO extends BaseBO {
 		/*
 		 * Processing preferredLanguage
 		 */
-		if(StringUtils.isNotBlank(performPosIdBpRequest.getPreferredLanguage()) && 
-				performPosIdBpRequest.getPreferredLanguage().equalsIgnoreCase(S))
-			performPosIdBpRequest.setPreferredLanguage(ES);
-		else 
-			performPosIdBpRequest.setPreferredLanguage(EN);
+		performPosIdBpRequest=preferredLanguage(performPosIdBpRequest);
 
 		logger.info("inside validatePosId::affiliate Id : "+performPosIdBpRequest.getAffiliateId() +""
 				+ ":: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: preferred language is"
 						+ " "+performPosIdBpRequest.getPreferredLanguage());
 
-		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
-		    
-			if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
-				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
-				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-			}
-		}
+		serviceLocationResponseerrorList = serviceLocationResponseerrorList(performPosIdBpRequest,
+				serviceLoationResponse, serviceLocationResponseerrorList);
 		
 		/*
 		 * Step 2: Check if we have a Tracking Number in the call 
@@ -385,6 +376,35 @@ public class ValidationBO extends BaseBO {
 		return response;
 	}
 	//END ONLINE AFFILIATES - JSINGH1
+
+
+
+
+	public LinkedHashSet<String> serviceLocationResponseerrorList(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
+			ServiceLocationResponse serviceLoationResponse, LinkedHashSet<String> serviceLocationResponseerrorList) {
+		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
+		    
+			if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
+				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
+				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
+			}
+		}
+		return serviceLocationResponseerrorList;
+	}
+
+
+
+
+	public PerformPosIdAndBpMatchRequest preferredLanguage(PerformPosIdAndBpMatchRequest performPosIdBpRequest) {
+		if(StringUtils.isNotBlank(performPosIdBpRequest.getPreferredLanguage()) && 
+				performPosIdBpRequest.getPreferredLanguage().equalsIgnoreCase(S)) {
+			performPosIdBpRequest.setPreferredLanguage(ES);
+		}
+		else {
+			performPosIdBpRequest.setPreferredLanguage(EN);
+		}
+		return performPosIdBpRequest;
+	}
 
 	/**
 	 * 
