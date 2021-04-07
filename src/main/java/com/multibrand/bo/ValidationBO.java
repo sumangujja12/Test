@@ -311,7 +311,7 @@ public class ValidationBO extends BaseBO {
 			else if((null!=(validatePosIdKBAResponse)&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExDlVerifydate(), POSID_BLANK_DATE))
 					&&(StringUtils.equalsIgnoreCase(validatePosIdKBAResponse.getExSsnVerifydate(), POSID_BLANK_DATE)) && 
 					(StringUtils.isBlank( validatePosIdKBAResponse.getStrErroMessage()) 
-							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())))|| performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE") ) 
+							|| StringUtils.isBlank(validatePosIdKBAResponse.getStrErroCode())))|| StringUtils.equalsIgnoreCase(performPosIdBpRequest.getNoid(), FLAG_TRUE) ) 
 			{
 				
 				errorCodeFromAPI = processPosidFailedResponse(performPosIdBpRequest, oESignupDTO, 
@@ -1107,7 +1107,7 @@ public class ValidationBO extends BaseBO {
 		String posidStatus = null;
 		String messageCode;
 		String errorCd;
-		if(retryCount<=2 && !performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
+		if(retryCount<=2 && !StringUtils.equalsIgnoreCase(performPosIdBpRequest.getNoid(), FLAG_TRUE)){
 			response.setStatusCode(STATUS_CODE_ASK);
 			messageCode=POSID_FAIL;
 			response.setMessageCode(messageCode);
@@ -1119,7 +1119,7 @@ public class ValidationBO extends BaseBO {
 			serviceLocationResponseerrorList.add(errorCd);
 		}
 		else{
-			if(posidHoldAllowedForAffilate || posidHoldAllowed){
+			if(posidHoldAllowedForAffilate || posidHoldAllowed || StringUtils.equalsIgnoreCase(performPosIdBpRequest.getNoid(), FLAG_TRUE)){
 				errorCd=POSIDHOLD;
 				serviceLocationResponseerrorList.add(errorCd);
 				messageCode = POSIDHOLD;
@@ -1285,7 +1285,7 @@ public class ValidationBO extends BaseBO {
 		return validatePosIdKBAResponse;
 	}
 	public ValidatePosIdKBAResponse callValidateMethod(PerformPosIdAndBpMatchRequest performPosIdBpRequest,ValidatePosIdKBAResponse validatePosIdKBAResponse) throws Exception {
-	if(! performPosIdBpRequest.getNoid().equalsIgnoreCase("TRUE")){
+	if(! StringUtils.equalsIgnoreCase(performPosIdBpRequest.getNoid(), FLAG_TRUE)){
 		
 		boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
 		if(isNewPosidCallEnabled){
