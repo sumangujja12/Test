@@ -378,6 +378,16 @@ public class SalesBO extends OeBoHelper implements Constants {
 			if (null != serviceLoationResponse) {
 				if(!oeBO.isEnrollmentAlreadySubmitted(serviceLoationResponse))
 				{
+					if(StringUtils.equalsIgnoreCase(enrollmentRequest.getSecurityMethod(), SURETY_BOND) 
+							&& StringUtils.isEmpty(serviceLoationResponse.getActivationFee())){
+						
+						salesEnrollmentresponse.setStatusCode(Constants.STATUS_CODE_STOP);
+						salesEnrollmentresponse.setErrorCode(HTTP_BAD_REQUEST);
+						salesEnrollmentresponse.setHttpStatus(Response.Status.BAD_REQUEST);
+						salesEnrollmentresponse.setErrorDescription("Security Method Surety Bond is not available for this enrollment");					
+						return salesEnrollmentresponse;
+					}
+					
 					EnrollmentRequest request = oeRequestHandler.createSubmitEnrollmentRequest(enrollmentRequest, serviceLoationResponse);
 					EnrollmentResponse enrollmentResponse = oeBO.submitEnrollment(request, serviceLoationResponse);
 					BeanUtils.copyProperties(enrollmentResponse, salesEnrollmentresponse);
