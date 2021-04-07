@@ -382,12 +382,10 @@ public class ValidationBO extends BaseBO {
 
 	public LinkedHashSet<String> serviceLocationResponseerrorList(PerformPosIdAndBpMatchRequest performPosIdBpRequest,
 			ServiceLocationResponse serviceLoationResponse, LinkedHashSet<String> serviceLocationResponseerrorList) {
-		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId())){
+		if(StringUtils.isNotEmpty(performPosIdBpRequest.getTrackingId()) && serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 		    
-			if(serviceLoationResponse != null && StringUtils.isNotBlank(serviceLoationResponse.getErrorCdlist())){
 				String[] errorCdArray =serviceLoationResponse.getErrorCdlist().split("\\|");
 				serviceLocationResponseerrorList = new LinkedHashSet<>(Arrays.asList(errorCdArray));
-			}
 		}
 		return serviceLocationResponseerrorList;
 	}
@@ -1326,14 +1324,12 @@ public class ValidationBO extends BaseBO {
 		 personId = oESignupDTO.getPerson().getPersonID();
 		
 	}else{
-		//ServiceLocationResponse serviceLoationResponse=oeBO.getEnrollmentData(performPosIdBpRequest.getTrackingId());
 		response.setGuid(serviceLoationResponse.getGuid());
 	}
 
 	response.setTrackingId(performPosIdBpRequest.getTrackingId());
 
-	logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" :: "
-			+ "affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: existing tracking number and  making updateperson call");
+	logger.debug(performPosIdBpRequest.getTrackingId(), "inside validatePosId:: Tracking Number : : {}", performPosIdBpRequest.getAffiliateId(),": : affiliate Id : {}",":::: existing tracking number and  making updateperson call");
 
 	//Checking if person Id is present then only make updatePerson call
 	if(StringUtils.isNotBlank(personId))
@@ -1343,15 +1339,12 @@ public class ValidationBO extends BaseBO {
 		createUpdatePersonRequest(updatePerson, posidPii, performPosIdBpRequest, personId, posidStatus, posIdDate, retryCount, oESignupDTO);
 
 		String updatePersonErrorCode=oeBO.updatePerson(updatePerson);
-		logger.info("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+""
-				+ " :: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+":: errorCode is :: "+updatePersonErrorCode);
+		logger.info(performPosIdBpRequest.getTrackingId(), "inside validatePosId:: Tracking Number:: {}", performPosIdBpRequest.getAffiliateId(),":: affiliate Id: {}",updatePersonErrorCode,"errorCode is {}");
 	}
 	else{
-		logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
-				+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId()+"Person Id was not present so skipped Update Person Call");
+		logger.debug(performPosIdBpRequest.getTrackingId(), "inside validatePosId:: Tracking Number : : {}", performPosIdBpRequest.getAffiliateId(),": : affiliate Id : {}",":: Person Id was not present so skipped Update Person Call");
 	}
-	logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
-			+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: making updtaeservicelocation call now");
+	logger.debug(performPosIdBpRequest.getTrackingId(), "inside validatePosId:: Tracking Number :: {}", performPosIdBpRequest.getAffiliateId(),":: affiliate Id : {}",":: making updtaeservicelocation call now{}");
 	//Making Update Servicelocation call now
 	UpdateServiceLocationRequest updateServiceLocation= new UpdateServiceLocationRequest();
 	if(null!=serviceLoationResponse && StringUtils.isNotBlank(serviceLoationResponse.getCallExecutedFromDB()))
@@ -1365,9 +1358,7 @@ public class ValidationBO extends BaseBO {
 	createUpdateServiceLocationRequest(updateServiceLocation, performPosIdBpRequest, personId,
 			messageCode, errorCodeFromAPI,bpMatchDTO,recentCallMade,oESignupDTO);
 	String updateSrvLocationErrorCode=oeBO.updateServiceLocation(updateServiceLocation);
-	logger.debug("inside validatePosId:: Tracking Number ::"+performPosIdBpRequest.getTrackingId()+" "
-			+ ":: affiliate Id : "+performPosIdBpRequest.getAffiliateId() +":: "
-					+ "errorCode from updateservicelocation call is :: "+updateSrvLocationErrorCode);
+	logger.debug(performPosIdBpRequest.getTrackingId(), "inside validatePosId:: Tracking Number :: {}", performPosIdBpRequest.getAffiliateId(),":: affiliate Id : {}",updateSrvLocationErrorCode,"errorCode from updateservicelocation call is ::{}");
 	logger.debug(" END *******ValidationBO:: validatePosID API**********");
 }
 
