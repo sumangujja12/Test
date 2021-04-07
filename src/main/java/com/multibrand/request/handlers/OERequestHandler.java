@@ -608,15 +608,14 @@ public class OERequestHandler implements Constants {
 			}else if(StringUtils.equalsIgnoreCase(oeSignUpDTO.getCreditCheck().getIsPayUpfront(),EMPTY)){
 				activationFeeCD = FB;
 			} 
-		}else if (null != oeSignUpDTO.getCreditCheck() && null != oeSignUpDTO.getCreditCheck().getSecurityMethod()
-				&& oeSignUpDTO.getCreditCheck().getSecurityMethod().equalsIgnoreCase(DEPOSIT))
-		{
-			activationFeeCD =FLAG_NO;
-			}else if(StringUtils.isBlank(oeSignUpDTO.getCreditCheck().getSecurityMethod()) && 
+		}
+		else if((StringUtils.isBlank(oeSignUpDTO.getCreditCheck().getSecurityMethod()) 
+				|| StringUtils.equalsIgnoreCase(oeSignUpDTO.getCreditCheck().getSecurityMethod(), DEPOSIT))&& 
 					StringUtils.isNotBlank(oeSignUpDTO.getCreditCheck().getDepositAmount()) && Integer.parseInt(oeSignUpDTO.getCreditCheck().getDepositAmount()) > 0)
-			{
-				oeSignUpDTO.getCreditCheck().setSecurityMethod(DEPOSIT);
-			}
+		{
+			oeSignUpDTO.getCreditCheck().setSecurityMethod(DEPOSIT);
+			activationFeeCD =FLAG_NO;
+		}
 			
         oeSignUpDTO.getCreditCheck().setActivationFeeCd(activationFeeCD);
         enrollmentHoldType = getEnrollmentHoldTypeForSwitchHoldStatus(enrollmentType,enrollmentHoldType,oeSignUpDTO);
