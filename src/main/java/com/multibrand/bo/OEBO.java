@@ -3626,10 +3626,10 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	public Map<String,Object> getPosIdTokenResponse(String tdl,
 			String ssn,String affiliateId,String trackingId){
-		logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: inside if loop");
+		logger.debug("inside performPosidAndBpMatch :: affiliate Id : "+affiliateId +":: inside if loop");
 		//Make Token call 
 		TokenRequestVO tokenRequest= new TokenRequestVO();
-		Map<String,Object> getPosIdTokenResponse=new HashMap<String,Object>();
+		Map<String,Object> getPosIdTokenResponse=new HashMap<>();
 		
 		TokenizedResponse tokenResponse=new TokenizedResponse();
 		String tokenTdl=null;
@@ -3643,12 +3643,12 @@ public class OEBO extends OeBoHelper implements Constants{
 				tokenResponse.setErrorCode("MISSING_PII");
 				tokenResponse.setErrorDescription("Both DL and SSN are empty");
 				tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-				getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+				getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 
 				return getPosIdTokenResponse;
 			}
 			if(StringUtils.isNotBlank(ssn))
-			{   logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: setting ssn action ");
+			{   logger.debug("inside performPosidAndBpMatch :: affiliateId : "+affiliateId +":: setting ssn action ");
 			
 			
 			//If SSN or DL is not of expected size the append zeroes
@@ -3667,8 +3667,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					tokenResponse.setErrorCode("INVALID_PII");
 					tokenResponse.setErrorDescription(tokenResponse.getResultDescription());
 					tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-					logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+":: affiliateId ::"+affiliateId+" SSN in invalid format");
-					getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+					logger.debug("Inside peformPosidAndBpMatch:: tracking is:: "+trackingId+":: affiliateId ::"+affiliateId+" SSN in invalid format");
+					getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 					return getPosIdTokenResponse;
 				}
 				logger.debug("inside peformPosidAndBpMatch:: isValidSSN value is :: "+isValidSSN);
@@ -3679,14 +3679,14 @@ public class OEBO extends OeBoHelper implements Constants{
 			tokenSSN=tokenResponse.getReturnToken();
 			}
 			if( StringUtils.isNotBlank(tdl)){
-			logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: setting DL action ");
+			logger.debug("inside performPosidAndBpMatch :: affiliate Id : "+affiliateId +":: setting DL action ");
 			//IF SSN or DL is not of expected size the append zeroes
 			if(tdl.length()<10)
 			  tdl=CommonUtil.addLeadingZeroes(tdl, 10);
 			
 				boolean isValidTDL=true;
 				isValidTDL=CommonUtil.isValidFormat(tdl, validationFormatEnum.TDL);
-				logger.debug("inside performPosidAndBpMatch:: isValidTDL value is :: "+isValidTDL);
+				logger.debug("inside performPosidAndBpMatch :: isValidTDL value is :: "+isValidTDL);
 				if(!isValidTDL)
 				{
 					logger.debug("inside performPosidAndBpMatch:: isValidTDL is "+isValidTDL);
@@ -3697,7 +3697,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					tokenResponse.setErrorDescription(tokenResponse.getResultDescription());
 					tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 					logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+":: affiliateId ::"+affiliateId+" TDL in invalid format");
-					getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+					getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 					return getPosIdTokenResponse;
 				}
 			tokenRequest.setActionCode(Constants.ACTION_CODE_DL_ACTION);
@@ -3705,9 +3705,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			tokenResponse=getTokenResponse(tokenRequest);
 			tokenTdl=tokenResponse.getReturnToken();
 			}
-		getPosIdTokenResponse.put("tokenTdl", tokenTdl);
-		getPosIdTokenResponse.put("tokenSSN", tokenSSN);
-		getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+		getPosIdTokenResponse.put(TOKENTDL, tokenTdl);
+		getPosIdTokenResponse.put(TOKENSSN, tokenSSN);
+		getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 	}
 	catch(Exception e)
 	{logger.error("Exception making token call :: ", e);
@@ -3716,9 +3716,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		logger.debug("inside performPosidAndBpMatch:: Tokenization call returned with failure result code ");
 		tokenResponse.setErrorDescription("Tokenization call returned failure code");
 		tokenResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-		getPosIdTokenResponse.put("tokenResponse", tokenResponse);
-		getPosIdTokenResponse.put("tokenTdl", tokenTdl);
-		getPosIdTokenResponse.put("tokenSSN", tokenSSN);
+		getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
+		getPosIdTokenResponse.put(TOKENTDL, tokenTdl);
+		getPosIdTokenResponse.put(TOKENSSN, tokenSSN);
 	
 	}
 	
@@ -5629,7 +5629,6 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 	public Response performPosidAndBpMatch(
 			@Valid PerformPosIdAndBpMatchRequest request) throws OEException {		
 		Response response = null;
-		OEBO oeBo = null;
 		TokenizedResponse tokenResponse = null;
 		Map<String, Object> getPosIdTokenResponse = null;
 		OESignupDTO oESignupDTO = new OESignupDTO();
