@@ -5693,25 +5693,25 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					.localeCode(request.getLanguageCode()));
 			logger.info("inside validatePosId::after local change languageCode langauge is :: "
 					+ request.getLanguageCode());
-						
-			if(StringUtils.isNotEmpty(request.getTokenizedSSN()) || StringUtils.isNotEmpty(request.getTokenizedTDL()) ) {				
-				String tokenValue = StringUtils.isNotEmpty(request.getTokenizedSSN()) ? request.getTokenizedSSN() : request.getTokenizedTDL();
-				logger.info("inside tokenValue  :: "+tokenValue);
-				tokenResponse.setReturnToken(tokenValue);
-				tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
-				getPosIdTokenResponse.put("tokenSSN", request.getTokenizedSSN());				
-				getPosIdTokenResponse.put("tokenTdl", request.getTokenizedTDL());												
-				getPosIdTokenResponse.put("tokenResponse",tokenResponse);
-							
-				
-			}else {			
-				getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
-						request.getTdl(), request.getSsn(),
-						request.getAffiliateId(),
-						request.getTrackingId());
-				
+			if(!request.getNoid().equalsIgnoreCase("TRUE")){				
+				if(StringUtils.isNotEmpty(request.getTokenizedSSN()) || StringUtils.isNotEmpty(request.getTokenizedTDL()) ) {				
+					String tokenValue = StringUtils.isNotEmpty(request.getTokenizedSSN()) ? request.getTokenizedSSN() : request.getTokenizedTDL();
+					logger.info("inside tokenValue  :: "+tokenValue);
+					tokenResponse.setReturnToken(tokenValue);
+					tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
+					getPosIdTokenResponse.put("tokenSSN", request.getTokenizedSSN());				
+					getPosIdTokenResponse.put("tokenTdl", request.getTokenizedTDL());												
+					getPosIdTokenResponse.put("tokenResponse",tokenResponse);
+								
+					
+				}else {			
+					getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
+							request.getTdl(), request.getSsn(),
+							request.getAffiliateId(),
+							request.getTrackingId());
+					
+				}
 			}
-			
 			if (getPosIdTokenResponse != null) {
 				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
 						.get("tokenResponse");
@@ -5719,13 +5719,20 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						.get("tokenTdl"));
 				request.setTokenizedSSN((String) getPosIdTokenResponse
 						.get("tokenSSN"));
-	
-				if (tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
+				if(tokenResponse == null){
+					tokenResponse = new TokenizedResponse();
+				}
+				
+				if (request.getNoid().equalsIgnoreCase("TRUE")|| tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
 				&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
+					
+					if(null != tokenResponse){
 					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
 							+ request.getAffiliateId()
 							+ ":: got token back."+tokenResponse.getReturnToken());
-					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
+					}
+					if (request.getNoid().equalsIgnoreCase("TRUE") 
+							||!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
 						if(StringUtils.isNotEmpty(request.getProspectId())) {
 							ProspectDataInternalResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
@@ -5779,8 +5786,8 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 								.build();
 						return response;
 					}
-				} else if (tokenResponse.getResultCode().equals(
-				Constants.RESULT_CODE_EXCEPTION_FAILURE)) { // if validation fail for this scenario
+				} else if (StringUtils.equalsIgnoreCase(tokenResponse.getResultCode(), Constants.RESULT_CODE_EXCEPTION_FAILURE) )
+				{ // if validation fail for this scenario
 	
 					response = Response.status(tokenResponse.getHttpStatus()).entity(tokenResponse).build();
 				
