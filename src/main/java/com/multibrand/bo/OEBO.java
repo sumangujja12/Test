@@ -5636,8 +5636,22 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 		ServiceLocationResponse serviceLoationResponse = null;
 			try{
 				if(StringUtils.isNotEmpty(request.getTrackingId())){
-					serviceLoationResponse = this.getEnrollmentDataBasedonTrackingGuid(request);
-					this.getResponseForBadRequest(serviceLoationResponse, response);
+					if(StringUtils.isNotEmpty(request.getGuid())){
+						 serviceLoationResponse=getEnrollmentData(request.getTrackingId(),request.getGuid() );
+					}else{
+						 serviceLoationResponse=getEnrollmentData(request.getTrackingId() );
+					}					
+					if(serviceLoationResponse == null){					
+						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateInvalidTrackingAndGuidResponse()).build();
+						return response;
+					}
+					if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
+					{
+						response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateAlreadySubmittedEnrollmentResponse()).build();
+						return response;	
+					}
+					
+					
 				}
 								
 				response = checkBillingAddressAgentIdAge(request, oESignupDTO);
@@ -5651,18 +5665,134 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 			}				
 			//End Validating DOB- Jsingh1
 			
+			oeBo = new OEBO();
 			tokenResponse = new TokenizedResponse();
-			getPosIdTokenResponse = new HashMap<>();
+			getPosIdTokenResponse = new HashMap<String, Object>();
 			
 			// Changing language code to suitable locale
 			request.setLanguageCode(CommonUtil
 					.localeCode(request.getLanguageCode()));
 			logger.info("inside validatePosId::after local change languageCode langauge is :: "
 					+ request.getLanguageCode());
-			this.setPosIdTokenResponse(request, tokenResponse, getPosIdTokenResponse);
-			
-			this.getResponseFromTokenResponse(getPosIdTokenResponse,tokenResponse,request, oESignupDTO, serviceLoationResponse);
-			
+			if(!request.getNoid().equalsIgnoreCase("TRUE")){				
+				if(StringUtils.isNotEmpty(request.getTokenizedSSN()) || StringUtils.isNotEmpty(request.getTokenizedTDL()) ) {				
+					String tokenValue = StringUtils.isNotEmpty(request.getTokenizedSSN()) ? request.getTokenizedSSN() : request.getTokenizedTDL();
+					logger.info("inside tokenValue  :: "+tokenValue);
+					tokenResponse.setReturnToken(tokenValue);
+					tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
+					getPosIdTokenResponse.put("tokenSSN", request.getTokenizedSSN());				
+					getPosIdTokenResponse.put("tokenTdl", request.getTokenizedTDL());												
+					getPosIdTokenResponse.put("tokenResponse",tokenResponse);
+								
+					
+				}else {			
+					getPosIdTokenResponse = oeBo.getPosIdTokenResponse(
+							request.getTdl(), request.getSsn(),
+							request.getAffiliateId(),
+							request.getTrackingId());
+					
+				}
+			}
+			if (getPosIdTokenResponse != null) {
+				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
+						.get("tokenResponse");
+				request.setTokenizedTDL((String) getPosIdTokenResponse
+						.get("tokenTdl"));
+				request.setTokenizedSSN((String) getPosIdTokenResponse
+						.get("tokenSSN"));
+				if(tokenResponse == null){
+					tokenResponse = new TokenizedResponse();
+				}
+				
+				if (request.getNoid().equalsIgnoreCase("TRUE")|| tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
+				&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
+					
+					if(null != tokenResponse){
+					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+							+ request.getAffiliateId()
+							+ ":: got token back."+tokenResponse.getReturnToken());
+					}
+					if (request.getNoid().equalsIgnoreCase("TRUE") 
+							||!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
+						
+						if(StringUtils.isNotEmpty(request.getProspectId())) {
+							ProspectDataInternalResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
+						
+							if(StringUtils.equals(prospectResponse.getStatusCode(), STATUS_CODE_STOP) ) {
+								response = Response.status(Response.Status.OK).entity(prospectResponse)
+										.build();
+								return response;
+							}
+						}
+						
+						PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
+								.validatePosId(request,oESignupDTO, serviceLoationResponse);
+						if(StringUtils.isEmpty(validPosIdResponse.getTrackingId())){
+							validPosIdResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+							validPosIdResponse.setErrorCode(HTTP_INTERNAL_SERVER_ERROR);
+							validPosIdResponse.setErrorDescription("Database save operation failed!");					
+							response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(validPosIdResponse).build();
+						} else {
+							response = Response.status(Response.Status.OK).entity(validPosIdResponse)
+								.build();
+						}
+						response.getMetadata().add(CONST_TRACKING_ID, validPosIdResponse.getTrackingId());
+						response.getMetadata().add(CONST_GUID, validPosIdResponse.getGuid());
+						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+								+ request.getAffiliateId()
+								+ "::rendering response pojo :: " + response);
+												
+						if(StringUtils.equals(request.getAffiliateId(),"372529") 
+								&& StringUtils.isNotBlank(validPosIdResponse.getBpMatchFlag())							
+								&& !StringUtils.equals(validPosIdResponse.getStatusCode(), "00")){	
+							logger.info("inside sendPowerGeniusConfirmationEmail");
+							try{
+								oeBo.sendPowerGeniusConfirmationEmail(request.getEmail());
+							}catch(Exception e){
+								logger.error("inside performPosidAndBpMatch :: email sent failed for Power genius Online affiliates.", e);							
+							}
+						}
+						// End : Validate for Power Genius Online Affiliates by KB
+					}
+	
+					else { // returning exception and error as token server is down
+						logger.info("inside performPosidAndBpMatch:: Token Server Down ");
+						tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+						tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+						tokenResponse.setMessageText(msgSource
+								.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+						tokenResponse
+								.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+						response = Response.status(200).entity(tokenResponse)
+								.build();
+						return response;
+					}
+				} else if (StringUtils.equalsIgnoreCase(tokenResponse.getResultCode(), Constants.RESULT_CODE_EXCEPTION_FAILURE) )
+				{ // if validation fail for this scenario
+	
+					response = Response.status(tokenResponse.getHttpStatus()).entity(tokenResponse).build();
+				
+					return response;
+				} else {
+					tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+					tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+					tokenResponse.setMessageText(msgSource
+							.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+					tokenResponse
+							.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+					response = Response.status(500).entity(tokenResponse).build();
+					return response;
+				}
+			} else {
+				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
+				tokenResponse.setMessageText(msgSource
+						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
+				tokenResponse
+						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
+				response = Response.status(500).entity(tokenResponse).build();
+				return response;
+			}		
 	   return response;
 	}
 	
@@ -6908,160 +7038,4 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		}
 		return affiliateOfferResponse;
 	}
-	
-	private ServiceLocationResponse getEnrollmentDataBasedonTrackingGuid(PerformPosIdAndBpMatchRequest request){
-		ServiceLocationResponse serviceLocationResponse = null;
-		if(StringUtils.isNotEmpty(request.getGuid())){
-			serviceLocationResponse=getEnrollmentData(request.getTrackingId(),request.getGuid() );
-		}else{
-			serviceLocationResponse=getEnrollmentData(request.getTrackingId() );
-		}	
-		return serviceLocationResponse;
-	}
-	
-	private Response getResponseForBadRequest(ServiceLocationResponse serviceLoationResponse, Response response){
-		if(serviceLoationResponse == null){					
-			response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateInvalidTrackingAndGuidResponse()).build();
-		}
-		if(isEnrollmentAlreadySubmitted(serviceLoationResponse))
-		{
-			response=Response.status(Response.Status.BAD_REQUEST).entity(new SalesBaseResponse().populateAlreadySubmittedEnrollmentResponse()).build();
-		}
-		return response;
-	}
-	
-	private Map<String, Object> setPosIdTokenResponse(PerformPosIdAndBpMatchRequest request, TokenizedResponse tokenResponse,Map<String, Object> getPosIdTokenResponse){
-		if(!request.getNoid().equalsIgnoreCase("TRUE")){				
-			if(StringUtils.isNotEmpty(request.getTokenizedSSN()) || StringUtils.isNotEmpty(request.getTokenizedTDL()) ) {				
-				String tokenValue = StringUtils.isNotEmpty(request.getTokenizedSSN()) ? request.getTokenizedSSN() : request.getTokenizedTDL();
-				logger.info("inside tokenValue  :: "+tokenValue);
-				tokenResponse.setReturnToken(tokenValue);
-				tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
-				getPosIdTokenResponse.put("tokenSSN", request.getTokenizedSSN());				
-				getPosIdTokenResponse.put("tokenTdl", request.getTokenizedTDL());												
-				getPosIdTokenResponse.put("tokenResponse",tokenResponse);
-							
-				
-			}else {			
-				this.getPosIdTokenResponse(
-						request.getTdl(), request.getSsn(),
-						request.getAffiliateId(),
-						request.getTrackingId());
-				
-			}
-		}
-		return getPosIdTokenResponse;
-	}
-	
-	private Response getResponseFromTokenResponse(Map<String, Object> getPosIdTokenResponse, TokenizedResponse tokenResponse, PerformPosIdAndBpMatchRequest request,
-			OESignupDTO oESignupDTO, ServiceLocationResponse serviceLoationResponse) throws OEException{
-		Response response = null;
-		if (getPosIdTokenResponse != null) {
-			tokenResponse = (TokenizedResponse) getPosIdTokenResponse
-					.get("tokenResponse");
-			request.setTokenizedTDL((String) getPosIdTokenResponse
-					.get("tokenTdl"));
-			request.setTokenizedSSN((String) getPosIdTokenResponse
-					.get("tokenSSN"));
-			if(tokenResponse == null){
-				tokenResponse = new TokenizedResponse();
-			}
-			this.getResponseBasedOnResultCode(request,tokenResponse,oESignupDTO,serviceLoationResponse);
-
-		} else {
-			tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-			tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
-			tokenResponse.setMessageText(msgSource
-					.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
-			tokenResponse
-					.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			response = Response.status(500).entity(tokenResponse).build();
-			return response;
-		}
-		return response;
-	}
-	
-	private Response getResponseBasedOnResultCode(PerformPosIdAndBpMatchRequest request,TokenizedResponse tokenResponse,OESignupDTO oESignupDTO,ServiceLocationResponse serviceLoationResponse) throws OEException{
-		Response response = null;
-		if (request.getNoid().equalsIgnoreCase("TRUE")|| tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
-		&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
-			
-			logger.info("inside performPosidAndBpMatch:: affiliate Id : "
-					+ request.getAffiliateId()
-					+ ":: got token back."+tokenResponse.getReturnToken());
-			
-			if (request.getNoid().equalsIgnoreCase("TRUE") 
-					||!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
-				
-				if(StringUtils.isNotEmpty(request.getProspectId())) {
-					ProspectDataInternalResponse prospectResponse =  validateProspectDetails(request,oESignupDTO);
-				
-					if(StringUtils.equals(prospectResponse.getStatusCode(), STATUS_CODE_STOP) ) {
-						response = Response.status(Response.Status.OK).entity(prospectResponse)
-								.build();
-						return response;
-					}
-				}
-				
-				PerformPosIdandBpMatchResponse validPosIdResponse = validationBO
-						.validatePosId(request,oESignupDTO, serviceLoationResponse);
-				if(StringUtils.isEmpty(validPosIdResponse.getTrackingId())){
-					validPosIdResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-					validPosIdResponse.setErrorCode(HTTP_INTERNAL_SERVER_ERROR);
-					validPosIdResponse.setErrorDescription("Database save operation failed!");					
-					response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(validPosIdResponse).build();
-				} else {
-					response = Response.status(Response.Status.OK).entity(validPosIdResponse)
-						.build();
-				}
-				response.getMetadata().add(CONST_TRACKING_ID, validPosIdResponse.getTrackingId());
-				response.getMetadata().add(CONST_GUID, validPosIdResponse.getGuid());
-				logger.info("inside performPosidAndBpMatch:: affiliate Id : "
-						+ request.getAffiliateId()
-						+ "::rendering response pojo :: " + response);
-										
-				if(StringUtils.equals(request.getAffiliateId(),"372529") 
-						&& StringUtils.isNotBlank(validPosIdResponse.getBpMatchFlag())							
-						&& !StringUtils.equals(validPosIdResponse.getStatusCode(), "00")){	
-					logger.info("inside sendPowerGeniusConfirmationEmail");
-					try{
-						this.sendPowerGeniusConfirmationEmail(request.getEmail());
-					}catch(Exception e){
-						logger.error("inside performPosidAndBpMatch :: email sent failed for Power genius Online affiliates.", e);							
-					}
-				}
-				// End : Validate for Power Genius Online Affiliates by KB
-			}
-
-			else { // returning exception and error as token server is down
-				logger.info("inside performPosidAndBpMatch:: Token Server Down ");
-				tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-				tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
-				tokenResponse.setMessageText(msgSource
-						.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
-				tokenResponse
-						.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-				response = Response.status(200).entity(tokenResponse)
-						.build();
-				return response;
-			}
-		} else if (StringUtils.equalsIgnoreCase(tokenResponse.getResultCode(), Constants.RESULT_CODE_EXCEPTION_FAILURE) )
-		{ // if validation fail for this scenario
-
-			response = Response.status(tokenResponse.getHttpStatus()).entity(tokenResponse).build();
-		
-			return response;
-		} else {
-			tokenResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-			tokenResponse.setMessageCode(Constants.TOKEN_SERVER_DOWN);
-			tokenResponse.setMessageText(msgSource
-					.getMessage(TOKEN_SERVER_DOWN_MSG_TXT));
-			tokenResponse
-					.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-			response = Response.status(500).entity(tokenResponse).build();
-			return response;
-		}
-		return response;
-	}
-	
 }
