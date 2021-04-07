@@ -5723,7 +5723,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					tokenResponse = new TokenizedResponse();
 				}
 				
-				if (request.getNoid().equalsIgnoreCase("TRUE")|| tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
+				if (StringUtils.equalsIgnoreCase(request.getNoid(), FLAG_TRUE)|| tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
 				&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
 					
 					if(null != tokenResponse){
@@ -5731,7 +5731,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 							+ request.getAffiliateId()
 							+ ":: got token back."+tokenResponse.getReturnToken());
 					}
-					if (request.getNoid().equalsIgnoreCase("TRUE") 
+					if (StringUtils.equalsIgnoreCase(request.getNoid(), FLAG_TRUE)
 							||!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
 						
 						if(StringUtils.isNotEmpty(request.getProspectId())) {
