@@ -5693,7 +5693,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 					.localeCode(request.getLanguageCode()));
 			logger.info("inside validatePosId::after local change languageCode langauge is :: "
 					+ request.getLanguageCode());
-			if(!request.getNoid().equalsIgnoreCase("TRUE")){				
+			if(!StringUtils.equalsIgnoreCase(request.getNoid(), FLAG_TRUE)){				
 				if(StringUtils.isNotEmpty(request.getTokenizedSSN()) || StringUtils.isNotEmpty(request.getTokenizedTDL()) ) {				
 					String tokenValue = StringUtils.isNotEmpty(request.getTokenizedSSN()) ? request.getTokenizedSSN() : request.getTokenizedTDL();
 					logger.info("inside tokenValue  :: "+tokenValue);
