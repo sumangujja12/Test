@@ -18,7 +18,7 @@ import javax.validation.Payload;
 @Retention(RUNTIME)
 public @interface NoidCheck {
 
-    String message() default "noid option allowed values are TRUE or blank.";
+    String message() default "noid option allowed values are true or blank.";
 	
 	Class<?>[] groups() default {}; 
 	
