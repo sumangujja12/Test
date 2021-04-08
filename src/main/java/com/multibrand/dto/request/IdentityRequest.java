@@ -5,8 +5,9 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
-import com.multibrand.request.validation.MandotoryFieldCheck;
 import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.MandotoryFieldCheck;
+import com.multibrand.request.validation.NoidCheck;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidAge;
@@ -131,6 +132,7 @@ public class IdentityRequest extends SalesBaseRequest {
 	String locationName;
 	
 	String guid;
+	@NoidCheck
 	String noid;
 
 
