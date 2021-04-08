@@ -5,14 +5,16 @@ import javax.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 
-import com.multibrand.request.validation.MandotoryFieldCheck;
 import com.multibrand.request.validation.FormatConstraint;
+import com.multibrand.request.validation.MandotoryFieldCheck;
+import com.multibrand.request.validation.NoidCheck;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidAge;
 import com.multibrand.request.validation.ValidDateTime;
 
 @MandotoryFieldCheck(fields = {"tokenizedSSN", "tokenizedTDL", "noid"}, message = "please provide ssn or dl or noid")
+@NoidCheck
 public class IdentityRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1068351198219357955L;
@@ -131,6 +133,7 @@ public class IdentityRequest extends SalesBaseRequest {
 	String locationName;
 	
 	String guid;
+	
 	String noid;
 
 
