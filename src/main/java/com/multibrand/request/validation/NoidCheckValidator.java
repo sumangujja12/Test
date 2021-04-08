@@ -19,12 +19,12 @@ ConstraintValidator<NoidCheck, IdentityRequest>, Constants {
 
 	@Override
 	public boolean isValid(IdentityRequest identityRequest, ConstraintValidatorContext arg1) {
-     
+     boolean status = false;
 		if(StringUtils.equalsIgnoreCase(FLAG_TRUE, identityRequest.getNoid()) || StringUtils.isEmpty(identityRequest.getNoid())){
-			return true;
+			status= true;
 	}
 		
-		return false;
+		return status;
 	}
 
 }
