@@ -1941,7 +1941,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		if((StringUtils.equalsIgnoreCase(enrollmentRequest.getCompanyCode(), COMPANY_CODE_CIRRO)||
 				StringUtils.equalsIgnoreCase(enrollmentRequest.getCompanyCode(), COMPANY_CODE_DISCOUNTPOWER) ||
 				!StringUtils.equalsIgnoreCase(enrollmentRequest.getChannelType(), CHANNEL_AA))
-				&& !StringUtils.isEmpty(enrollmentRequest.getSecurityMethod())) {
+				&& StringUtils.isNotEmpty(enrollmentRequest.getSecurityMethod())) {
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setErrorCode(HTTP_BAD_REQUEST);
 			response.setErrorDescription("Security Method not allowed");
@@ -2325,7 +2325,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 				
 				if((StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT) ||
-						StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), GME_COMPANY_CODE) ) &&
+						StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ) &&
 						StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_AA)
 						){
 				
