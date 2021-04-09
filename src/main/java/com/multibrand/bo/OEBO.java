@@ -1941,7 +1941,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		if((StringUtils.equalsIgnoreCase(enrollmentRequest.getCompanyCode(), COMPANY_CODE_CIRRO)||
 				StringUtils.equalsIgnoreCase(enrollmentRequest.getCompanyCode(), COMPANY_CODE_DISCOUNTPOWER) ||
 				!StringUtils.equalsIgnoreCase(enrollmentRequest.getChannelType(), CHANNEL_AA))
-				&& StringUtils.isNotEmpty(enrollmentRequest.getSecurityMethod())) {
+				&& !StringUtils.isEmpty(enrollmentRequest.getSecurityMethod())) {
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setErrorCode(HTTP_BAD_REQUEST);
 			response.setErrorDescription("Security Method not allowed");
@@ -2322,10 +2322,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		/*Setting DepositDueText Empty if we have Credit Freeze or Fraud*/	
 			populateDepositReasonTextInResponse(response, newCreditScoreResponse, creditCheckRequest, localeObj);
 			 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
-			if((StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_CIRRO)||
-					StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_DISCOUNTPOWER) ||
-					!StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_AA))
-					) {
+			
+				
+				if((StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT) ||
+						StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), GME_COMPANY_CODE) ) &&
+						StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_AA)
+						){
+				
 			populateCreditCheckApiSuretyBondDetails(response, newCreditScoreResponse);
 			}
 			 // End Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
