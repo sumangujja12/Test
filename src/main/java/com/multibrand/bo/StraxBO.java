@@ -96,14 +96,15 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			}
 			straxInvoiceAccountRequest.setInvoiceItems(invoiceItmCategory);
 			straxInvoiceAccountResponse = straxAccountService.invoiceStraxContract(straxInvoiceAccountRequest, "0121", sessionId);
-			if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorCode()) || StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorMessage())){
+			if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorCode()) || StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorMessage()) || !StringUtils.equals(straxInvoiceAccountResponse.getXCode(),"00")){
 				
 				logger.info("invoiceStraxContract failed with ErrorCode:::::{}",straxInvoiceAccountResponse.getErrorCode());
 				logger.info("invoiceStraxContract failed with ErrorMessage::::::{}",straxInvoiceAccountResponse.getErrorMessage());
-				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				response.setResultDescription(straxInvoiceAccountResponse.getErrorMessage());
+				response.setErrorCode(straxInvoiceAccountResponse.getErrorCode());
+				response.setErrorDescription(straxInvoiceAccountResponse.getErrorMessage());
+				
 			}
-			else if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getXCode()))
+			else if(StringUtils.equals(straxInvoiceAccountResponse.getXCode(),"00"))
 			{
 				logger.info("invoiceStraxContract() call successful:::::{}",straxInvoiceAccountResponse.getXCode()); 
 				JavaBeanUtil.copy(straxInvoiceAccountResponse, response);
