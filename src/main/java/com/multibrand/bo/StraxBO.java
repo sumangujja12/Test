@@ -2,7 +2,9 @@ package com.multibrand.bo;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,10 +100,16 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			straxInvoiceAccountResponse = straxAccountService.invoiceStraxContract(straxInvoiceAccountRequest, "0121", sessionId);
 			if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorCode()) || StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorMessage()) || !StringUtils.equals(straxInvoiceAccountResponse.getXCode(),"00")){
 				
-				logger.info("invoiceStraxContract failed with ErrorCode:::::{}",straxInvoiceAccountResponse.getErrorCode());
-				logger.info("invoiceStraxContract failed with ErrorMessage::::::{}",straxInvoiceAccountResponse.getErrorMessage());
-				response.setErrorCode(straxInvoiceAccountResponse.getErrorCode());
-				response.setErrorDescription(straxInvoiceAccountResponse.getErrorMessage());
+				Map<String, String> xCodeValues = new HashMap<>();
+				xCodeValues.put("01", INVOICE_CREATION_XCODE_01);
+				xCodeValues.put("02", INVOICE_CREATION_XCODE_02);
+				xCodeValues.put("03", INVOICE_CREATION_XCODE_03);
+				xCodeValues.put("04", INVOICE_CREATION_XCODE_04);
+				response.setErrorCode(straxInvoiceAccountResponse.getXCode());
+				response.setErrorDescription(xCodeValues.get(straxInvoiceAccountResponse.getXCode()));
+				response.setResultCode("");
+				logger.info("invoiceStraxContract failed with ErrorCode:::::{}",response.getErrorCode());
+				logger.info("invoiceStraxContract failed with ErrorMessage::::::{}",response.getErrorDescription());
 				
 			}
 			else if(StringUtils.equals(straxInvoiceAccountResponse.getXCode(),"00"))
