@@ -1672,6 +1672,8 @@ public interface Constants {
 	public static final String VEHICLE_ID = "VEHICLE_ID";
 
 	public static final String BUSINESS = "BUSINESS";
+	
+	public static final String FLAG_OTHER = "Other";
 
 
 	//Strax Integration

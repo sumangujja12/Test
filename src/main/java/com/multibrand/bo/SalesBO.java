@@ -98,6 +98,16 @@ public class SalesBO extends OeBoHelper implements Constants {
 				bpMatchResponse.setErrorDescription("guid cannot be empty");					
 				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
 				return response;
+			} else if(StringUtils.equalsIgnoreCase(request.getNoid(), FLAG_TRUE) 
+					&& (StringUtils.isNotEmpty(request.getTokenizedSSN())
+							|| StringUtils.isNotEmpty(request.getTokenizedTDL()))){
+				
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("please provide noid or ssn/dl");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
 			}
 			
 			BeanUtils.copyProperties(request, performPosidAndBPMatchRequest);
@@ -128,7 +138,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
 				return response;
 				
-			}
+			} 
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch", e);
 			throw e;

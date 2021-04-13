@@ -320,6 +320,11 @@ public class ValidationBO extends BaseBO {
 						 posidHoldAllowedForAffilate, posidHoldAllowed, retryCount);
 				posidStatus = oESignupDTO.getPosidStatus();
 				
+				if(StringUtils.equalsIgnoreCase(performPosIdBpRequest.getNoid(), FLAG_TRUE)) {
+					posidPii=FLAG_OTHER;
+					posIdDate=null;
+				}
+				
 			}
 			else
 			{ 
