@@ -23,7 +23,7 @@ public class StraxAccountService  extends BaseAbstractService {
 	protected SecurityAccountsDomain getSecurityAccountsDomainProxy() {
 
 		return (SecurityAccountsDomain) getServiceProxy(com.multibrand.domain.SecurityAccountsDomainPortBindingStub.class,
-				SECURITY_SERVICE_ENDPOINT_URL);
+				"ws.endpointURL.securityAccountsDomain");
 	}
 
 	public StraxCancelAccountResponse cancelStraxContract(StraxCancelAccountRequest straxCancelAccountRequest, String companyCode, String sessionId) throws Exception {
