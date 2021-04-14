@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dao.BillDAO;
+import com.multibrand.dao.SmartCarDAO;
 import com.multibrand.domain.ActEbillRequest;
 import com.multibrand.domain.ActEbillResponse;
 import com.multibrand.domain.AddressDO;
@@ -197,6 +198,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	@Autowired 
 	private BillDAO billDao;
 	
+	@Autowired 
+	private SmartCarDAO smartCarDAO;	
+	
 	@Autowired
 	private HistoryBO historyBO;
 	
@@ -307,12 +311,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @param accountNumber
 	 * @return
 	 */
-	public GetAccountDetailsResponse getAccountDetails(String accountNumber, String companyCode, String brandName, String sessionId) {
+	public GetAccountDetailsResponse getAccountDetails(String accountNumber, String companyCode, String brandName, String sessionId, String userUniqueId) {
 
 		ProfileResponse response = null;
 		ZesZesuerStat zesZesuerStat = null;
 		GetAccountDetailsResponse accountDetailsResp = new GetAccountDetailsResponse();
-		Map<String, Object> responseMap = new HashMap<String, Object>();
+		Map<String, Object> responseMap = new HashMap();
 		String averageBillingEligibilty = AVG_BILL_FLAG_NO;
 		String averageBillingEnrolment = AVG_BILL_FLAG_NO;
 		try {			
@@ -340,7 +344,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				for(ContractDO contract:contractDO)
 				{
 					
-					logger.info("contract MVO date :::::: " + contract.getStrMoveOutDate());
+					logger.info("contract MVO date :::::: {}" , contract.getStrMoveOutDate());
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 					////US US12202 Changes - DK - 09/19/2019
 					if(StringUtils.isNotBlank(contract.getStrContractID()))
@@ -353,7 +357,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							if(contract.getStrContractID().equalsIgnoreCase(co))
 							{
 								contract.setStrTouFlag(strTouFlag);
-								logger.info("strTouFlag :::::: " +strTouFlag);
+								logger.info("strTouFlag :::::: {}" ,strTouFlag);
 							}
 						}
 					}
@@ -363,7 +367,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						if(null != contract.getCurrentPlan() && StringUtils.isNotBlank(contract.getCurrentPlan().getStrOfferCode())) {
 							contract.getCurrentPlan().setStrOfferCategory(EMPTY); // set default offer category as empty instead of 'null'
 							List<Map<String, Object>> offerCategoryLookupDetailsList = offerService.getOfferCategories(contract.getCurrentPlan().getStrOfferCode());
-							if(null != offerCategoryLookupDetailsList && offerCategoryLookupDetailsList.size() > 0) {
+							if(null != offerCategoryLookupDetailsList && !offerCategoryLookupDetailsList.isEmpty()) {
 								Map<String, Object> offerCategoryMap =  offerCategoryLookupDetailsList.get(0);
 								if(null != offerCategoryMap && offerCategoryMap.containsKey(OE_OFFER_CATEGORY) ) {
 									if(null != offerCategoryMap.get(OE_OFFER_CATEGORY)) {
@@ -374,17 +378,17 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						}
 						//END::GME Residential OE Phase-II
 					}catch(Exception ex){
-						logger.error("Error in getting current plan offer category! Skip and continue." +ex.getMessage());
+						logger.error("Error in getting current plan offer category! Skip and continue.{}" , ex.getMessage());
 					}
 					
 					if(contract.getStrMoveOutDate()!=null && !contract.getStrMoveOutDate().equals(""))
 					{
 						Date mvoDate = sdf.parse(contract.getStrMoveOutDate());
-						logger.info("Parsed Date object : " + mvoDate );
+						logger.info("Parsed Date object : {}" , mvoDate );
 						Date currentDate = sdf.parse(sdf.format(Calendar.getInstance().getTime()));
 						if(mvoDate.after(currentDate)|| mvoDate.equals(currentDate))
 						{
-							logger.info("Active Contract!! MVO Date :: "+ mvoDate);
+							logger.info("Active Contract!! MVO Date ::{}",  mvoDate);
 							com.multibrand.vo.response.OfferDO offer = new com.multibrand.vo.response.OfferDO();
 							offer = profileService.getCurrentOfferDocs(accountNumber, accountDetailsResp.getContractAccountDO().getStrBPNumber(), contract.getStrESIID(), contract.getStrContractID(), accountDetailsResp.getContractAccountDO().getStrLanguageCode(), companyCode, offer, sessionId);
 							contract.setEflDocID(offer.getStrEFLDocID());
@@ -394,13 +398,22 @@ public class BillingBO extends BaseAbstractService implements Constants{
 							contract.setYraacDocID(offer.getStrYRAACDocID());
 							contract.setYraacSmartCode(offer.getStrYRAACSmartCode());
 							contract.setStrEflUrl(CommonUtil.getDynamicEflUrl(offer.getStrEFLDocID(), offer.getStrEFLSmartCode()));
+							if (!StringUtils.isEmpty(offer.getStrProductType()) && offer.getStrProductType().substring(offer.getStrProductType().length() -3).equalsIgnoreCase(Constants.EV_PRODUCT_TYPE_LAST_THREE)) {
+								accountDetailsResp.setEVPlan(true);
+								List<Map<String, Object>> resultList = smartCarDAO.getUserSmartCarTokens(userUniqueId);
+								for (Map<String, Object> rowMap : resultList) {
+									accountDetailsResp.setSmartCarToken((String)rowMap.get(ACCESS_TOKEN));
+									accountDetailsResp.setSmartCarVehicleIdList(Arrays.asList((String)rowMap.get(VEHICLE_ID)));
+								}
+								
+							}
 						}else{
-							logger.info("Inactive contract!! MVO Date :: " +mvoDate);
+							logger.info("Inactive contract!! MVO Date ::{}" ,mvoDate);
 						}
 					}
 					else
 					{
-						logger.info("Inactive contract!! MVO Date :: " +contract.getStrMoveOutDate()+" or Company code is "+companyCode);
+						logger.info("Inactive contract!! MVO Date ::{} or Company code is {} ", contract.getStrMoveOutDate(), companyCode);
 					}
 				
 						// Setting Average Billing Eligibility & Average Billing
@@ -437,7 +450,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				crmProfileRequest.setStrCANumber(accountNumber);
 				if(response != null && CIRRO_BRAND_NAME.equalsIgnoreCase(brandName)&& StringUtils.isNotEmpty(response.getSuperBPID())){
 					logger.info("Brand name :::: CE :::::::");
-					logger.info("Super BPID :::: "+ response.getSuperBPID());
+					logger.info("Super BPID ::::{} ", response.getSuperBPID());
 					crmProfileRequest.setStrBPNumber(response.getSuperBPID());
 				} else{
 				    crmProfileRequest.setStrBPNumber(accountDetailsResp.getContractAccountDO().getStrBPNumber());
@@ -468,12 +481,12 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				accountDetailsResp.setResultDescription(response.getErrorCode());
 			}				
 		} catch (RemoteException e) {
-			logger.error("Exception occured in getAccountDetails : " +e.getStackTrace());
+			logger.error("Exception occured in getAccountDetails :{}" , e.getMessage());
 			accountDetailsResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			accountDetailsResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), accountDetailsResp);
 		} catch (Exception e) {
-			logger.error("Exception occured in getAccountDetails : " +e.getStackTrace());
+			logger.error("Exception occured in getAccountDetails :{}" ,e.getMessage());
 			accountDetailsResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			accountDetailsResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(), accountDetailsResp);
@@ -2628,7 +2641,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					
 			
 			
-			accountDetailsResponse = getAccountDetails(contractAccountNumber, companyCode, brandName, sessionId);
+			accountDetailsResponse = getAccountDetails(contractAccountNumber, companyCode, brandName, sessionId,"");
 			
 			if(accountDetailsResponse!=null && (accountDetailsResponse.getResultCode().equalsIgnoreCase("0"))){
 			String NCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
@@ -2964,7 +2977,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		ContractDO[] contractDO = new ContractDO[5];
 		OfferDO[] offerDO = new OfferDO[10];
 		try {	
-		getAccountDetailsResponse = getAccountDetails(accountNumber,companyCode,brandName,sessionId);
+		getAccountDetailsResponse = getAccountDetails(accountNumber,companyCode,brandName,sessionId,"");
 		String youngTreesValue = null;
 		String bpNumber = getAccountDetailsResponse.getContractAccountDO().getStrBPNumber();
 		String esid = null;
@@ -3208,7 +3221,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		String checkDigitVal = "";
 
 		GetAccountDetailsResponse accountDetails = getAccountDetails(request.getAccountNumber(),
-				request.getCompanyCode(), request.getBrandName(), sessionId);
+				request.getCompanyCode(), request.getBrandName(), sessionId,"");
 
 		// set billing address details
 		billingAddressDetails = getBillingAddressInfo(request, accountDetails);

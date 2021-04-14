@@ -66,6 +66,7 @@ public interface Constants {
     public static final String EFL = "EFL";
 	public static final String TOS = "TOS";
 	public static final String YRAAC = "YRAAC";
+	public static final String EV_PRODUCT_TYPE_LAST_THREE = "004";
 	
 	// TPV Service Implementation : Start : KB
 	public static final String TPV_CCS_URL = "ccs.tpv.api.trans.upd.wsdl.url";
@@ -1641,6 +1642,7 @@ public interface Constants {
 	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
-	public static final String BUSINESS = "BUSINESS";
-
+	public static final String BUSINESS = "BUSINESS";	
+	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
+	public static final String VEHICLE_ID = "VEHICLE_ID";
 }
