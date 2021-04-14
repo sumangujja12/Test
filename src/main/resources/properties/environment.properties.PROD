@@ -22,8 +22,8 @@ salesforce.username=communitysolarapi@nrg.renew
 salesforce.user.password=%%SALESFORCE.PASSWORD%%
 
 #LDAP BIND USER
-LDAP_ADMIN_UID=uid=ocsadmin,ou=cagroup,o=admin
-LDAP_ADMIN_UID_CSLR=uid=ocsadmin,ou=cagroup,o=admin
+LDAP_ADMIN_UID=uid=ocsadmin1,ou=cagroup,o=admin
+LDAP_ADMIN_UID_CSLR=uid=ocsadmin1,ou=cagroup,o=admin
 
 #LDAP URLS
 LDAP_PROVIDER_URL=ldap://dir.nrgenergy.com:14391
