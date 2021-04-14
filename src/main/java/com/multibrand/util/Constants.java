@@ -165,6 +165,7 @@ public interface Constants {
 	public static final String XI_PRODUCT_HISTORY_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getProductHistory&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	public static final String XI_INTERVAL_DATA_ENDPOINT_URL_QUERY_PARAM   = "&interface=os_getIntervalData&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	
+	
 	public static final String EBILL_DOCUMENTUM_WS_USER_NAME= "EBILL_DOCUMENTUM_WS_USER_NAME";
 	public static final String EBILL_DOCUMENTUM_WS_PSD ="EBILL_DOCUMENTUM_WS_PWD";
 	public static final String EBILL_DOCUMENTUM_END_POINT_URL ="EBILL_DOCUMENTUM_END_POINT_URL";
@@ -387,9 +388,12 @@ public interface Constants {
 	 public static final String VISA = "Visa";
 	 public static final String MASTERCARD = "MasterCard";
 	 public static final String DISCOVER = "Discover";
+	 public static final String AMERICANEXPRESS = "AmericanExpress";
 	 public static final String ZVIS = "ZVIS";
 	 public static final String ZMCD = "ZMCD";
 	 public static final String ZDSC = "ZDSC";
+	 public static final String ZAMX = "ZAMX";
+	 
 	 
 	 public static final String CARD_TYPE="cardType";
 	 public static final String CARD_NUMBER="cardNumber";

@@ -9,15 +9,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.bo.AutoPayBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.util.CommonUtil;
+import com.multibrand.vo.request.autopay.AutoPayRequest;
 import com.multibrand.vo.response.AutoPayBankResponse;
 import com.multibrand.vo.response.AutoPayCCResponse;
 import com.multibrand.vo.response.DeEnrollResponse;
@@ -52,23 +51,21 @@ public class AutoPayResource {
 	 */
 	@POST
 	@Path("validateBankDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
 	public Response validateBankDetails(@FormParam("accountNumber") String accountNumber, @FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("bankRoutingNumber") String bankRountingNumber, @FormParam("companyCode") String companyCode,@FormParam("brandName") String brandName){
 		logger.debug("Start AutoPayResource.validateBankDetails :: START");
 		Response response = null;
 		ValidateBankResponse validateBankResp = autoPayBO.validateBankDetails(accountNumber, bankAccountNumber, bankRountingNumber, companyCode, httpRequest.getSession(true).getId(),brandName);
 		response = Response.status(200).entity(validateBankResp).build();
 		logger.info(" START ******* Input for the validateBankDetails API**********");
-		logger.info(" accountNumber - "+accountNumber);
-		logger.info("  companyCode  - "+companyCode);
-		logger.info("  brandName  - "+brandName);
-		logger.info("  bankAccountNumber  - "+CommonUtil.maskBankAccountNo(bankAccountNumber));
-		logger.info("  bankRountingNumber  - "+bankRountingNumber);
+		logger.info(" accountNumber - {}",accountNumber);
+		logger.info("  companyCode  - {}",companyCode);
+		logger.info("  brandName  - {}",brandName);
+		logger.info("  bankRountingNumber  - {}",bankRountingNumber);
 		logger.info(" OUTPUT of the validateBankDetails API*************");
 		String json = CommonUtil.wirteObjectToJson(response);
-		logger.info(" Response  - "+json);
-		System.out.println(" Response  json- "+json);
+		logger.info(" Response  - {}",json);
 		logger.info("END of the validateBankDetails API*************");
 		logger.debug("End AutoPayResource.validateBankDetails :: END");
 		return response;
@@ -88,12 +85,43 @@ public class AutoPayResource {
 	 */
 	@POST
 	@Path("submitBankAutoPay")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response submitBankAutoPay(@FormParam("accountNumber") String accountNumber, @FormParam("bankAccountNumber") String bankAccountNumber, @FormParam("bankRoutingNumber") String bankRountingNumber, @FormParam("companyCode") String companyCode, @FormParam("accountName") String accountName, @FormParam("accountChkDigit") String accountChkDigit, @FormParam("languageCode")String locale, @FormParam("email") String email,@FormParam("emailTypeId")String emailTypeId ,@FormParam("brandName") String brandName, @FormParam("bpNumber") String bpNumber, @FormParam("source") String source){
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	public Response submitBankAutoPay(
+			@FormParam("accountNumber") String accountNumber, 
+			@FormParam("bankAccountNumber") String bankAccountNumber, 
+			@FormParam("bankRoutingNumber") String bankRountingNumber, 
+			@FormParam("companyCode") String companyCode, 
+			@FormParam("accountName") String accountName, 
+			@FormParam("accountChkDigit") String accountChkDigit, 
+			@FormParam("languageCode")String locale, 
+			@FormParam("email") String email,
+			@FormParam("emailTypeId")String emailTypeId ,
+			@FormParam("brandName") String brandName, 
+			@FormParam("bpNumber") String bpNumber, 
+			@FormParam("source") String source) {
+		
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
+		
 		Response response = null;
-		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(accountNumber, bankAccountNumber, bankRountingNumber, companyCode, accountName, accountChkDigit, locale, email, httpRequest.getSession(true).getId(),emailTypeId,brandName,bpNumber,source);
+		
+		AutoPayRequest autoPayRequest = new AutoPayRequest();
+		
+
+		autoPayRequest.setAccountNumber(accountNumber);
+		autoPayRequest.setBankAccountNumber(bankAccountNumber);
+		autoPayRequest.setBankRoutingNumber(bankRountingNumber);
+		autoPayRequest.setCompanyCode(companyCode);
+		autoPayRequest.setAccountName(accountName);
+		autoPayRequest.setAccountChkDigit(accountChkDigit);
+		autoPayRequest.setLanguageCode(locale);
+		autoPayRequest.setEmail(email);
+		autoPayRequest.setEmailTypeId(emailTypeId);
+		autoPayRequest.setBrandName(brandName);
+		autoPayRequest.setBpid(bpNumber);
+		autoPayRequest.setSource(source);
+			
+		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId());
 		
 		
 				response = Response.status(200).entity(autoPayBankRep).build();
@@ -117,13 +145,35 @@ public class AutoPayResource {
 	
 	@POST
 	@Path("validateCCDetails")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response validateCCDetails(@FormParam("authType") String authType, @FormParam("accountNumber") String accountNumber, @FormParam("bpid") String bpid, @FormParam("ccNumber") String ccNumber, @FormParam("cvvNumber") String cvvNumber, @FormParam("expirationDate") String expirationDate, @FormParam("billingZip") String billingZip, @FormParam("companyCode") String companyCode, @FormParam("brandName,") String brandName){
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	public Response validateCCDetails(
+			@FormParam("authType") String authType, 
+			@FormParam("accountNumber") String accountNumber, 
+			@FormParam("bpid") String bpid, 
+			@FormParam("ccNumber") String ccNumber, 
+			@FormParam("cvvNumber") String cvvNumber,
+			@FormParam("expirationDate") String expirationDate, 
+			@FormParam("billingZip") String billingZip,
+			@FormParam("companyCode") String companyCode, 
+			@FormParam("brandName,") String brandName){
 		logger.debug("Start AutoPayResource.validateCCDetails :: START");
 		Response response = null;
 		
-		ValidateCCResponse validateCCResp = autoPayBO.validateCCDetails(authType, accountNumber, bpid, ccNumber, cvvNumber, expirationDate, billingZip, companyCode, httpRequest.getSession(true).getId(),brandName);
+		AutoPayRequest autoPayRequest = new AutoPayRequest();
+		
+		autoPayRequest.setAuthType(authType);
+		autoPayRequest.setAccountNumber(accountNumber);
+		autoPayRequest.setBpid(bpid);
+		autoPayRequest.setCcNumber(ccNumber);
+		autoPayRequest.setCvvNumber(cvvNumber);
+		autoPayRequest.setExpirationDate(expirationDate);
+		autoPayRequest.setBillingZip(billingZip);
+		autoPayRequest.setCompanyCode(companyCode);
+		autoPayRequest.setBrandName(brandName);
+
+		
+		ValidateCCResponse validateCCResp = autoPayBO.validateCCDetails(autoPayRequest, httpRequest.getSession(true).getId());
 		
 		response = Response.status(200).entity(validateCCResp).build();
 		logger.debug("End AutoPayResource.validateCCDetails :: END");
@@ -148,13 +198,42 @@ public class AutoPayResource {
 	
 	@POST
 	@Path("submitCCAutoPay")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response submitCCAutoPay(@FormParam("authType") String authType, @FormParam("accountName")String accountName, @FormParam("accountNumber") String accountNumber, @FormParam("bpid") String bpid, @FormParam("ccNumber") String ccNumber, @FormParam("expirationDate") String expirationDate, @FormParam("billingZip") String billingZip, @FormParam("companyCode") String companyCode, @FormParam("email") String email, @FormParam("languageCode")String languageCode,@FormParam("emailTypeId")String emailTypeId, @FormParam("brandName")String brandName, @FormParam("source")String source){
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	public Response submitCCAutoPay(
+			@FormParam("authType") String authType, 
+			@FormParam("accountName")String accountName, 
+			@FormParam("accountNumber") String accountNumber, 
+			@FormParam("bpid") String bpid, 
+			@FormParam("ccNumber") String ccNumber, 
+			@FormParam("expirationDate") String expirationDate, 
+			@FormParam("billingZip") String billingZip, 
+			@FormParam("companyCode") String companyCode, 
+			@FormParam("email") String email, 
+			@FormParam("languageCode")String languageCode,
+			@FormParam("emailTypeId")String emailTypeId, 
+			@FormParam("brandName")String brandName, 
+			@FormParam("source")String source) {
 		logger.debug("Start AutoPayResource.submitCCAutoPay :: START");
 		Response response = null;
 		
-		AutoPayCCResponse autoPayCCResp = autoPayBO.submitCCAutoPay(authType,accountName, accountNumber, bpid, ccNumber, expirationDate, billingZip, companyCode, email, httpRequest.getSession(true).getId(), languageCode,emailTypeId,brandName,source);
+		AutoPayRequest autoPayRequest = new AutoPayRequest();
+		
+		autoPayRequest.setAuthType(authType);
+		autoPayRequest.setAccountName(accountName);
+		autoPayRequest.setAccountNumber(accountNumber);
+		autoPayRequest.setBpid(bpid);
+		autoPayRequest.setCcNumber(ccNumber);
+		autoPayRequest.setExpirationDate(expirationDate);
+		autoPayRequest.setBillingZip(billingZip);
+		autoPayRequest.setCompanyCode(companyCode);
+		autoPayRequest.setEmail(email);
+		autoPayRequest.setLanguageCode(languageCode);
+		autoPayRequest.setEmailTypeId(emailTypeId);
+		autoPayRequest.setBrandName(brandName);
+		autoPayRequest.setSource(source);
+		
+		AutoPayCCResponse autoPayCCResp = autoPayBO.submitCCAutoPay(autoPayRequest, httpRequest.getSession(true).getId());
 		
 		
 		response = Response.status(200).entity(autoPayCCResp).build();
@@ -171,14 +250,32 @@ public class AutoPayResource {
 	 */
 	@POST
 	@Path("deEnroll")
-	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-	public Response deEnroll(@FormParam("accountNumber") String accountNumber,@FormParam("companyCode") String companyCode, @FormParam("email") String email, @FormParam("languageCode")String languageCode,@FormParam("brandName") String brandName,@FormParam("bpNumber") String bpNumber,@FormParam("source") String source){
+	@Consumes({ MediaType.APPLICATION_FORM_URLENCODED,MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON}) 
+	public Response deEnroll(
+			@FormParam("accountNumber") String accountNumber,
+			@FormParam("companyCode") String companyCode, 
+			@FormParam("email") String email, 
+			@FormParam("languageCode")String languageCode,
+			@FormParam("brandName") String brandName,
+			@FormParam("bpNumber") String bpNumber,
+			@FormParam("source") String source) {
 		
 		logger.debug("Start AutoPayResource.deEnroll :: START");
 		Response response = null;
 		
-		DeEnrollResponse deEnrollResponse = autoPayBO.deEnroll(accountNumber, companyCode, httpRequest.getSession(true).getId(), email, languageCode,brandName,bpNumber,source);
+		AutoPayRequest autoPayRequest = new AutoPayRequest();
+		
+		autoPayRequest.setAccountNumber(accountNumber);
+		autoPayRequest.setCompanyCode(companyCode);
+		autoPayRequest.setEmail(email);
+		autoPayRequest.setLanguageCode(languageCode);
+		autoPayRequest.setBrandName(brandName);
+		autoPayRequest.setBpNumber(bpNumber);
+		autoPayRequest.setSource(source);
+		
+		
+		DeEnrollResponse deEnrollResponse = autoPayBO.deEnroll(autoPayRequest, httpRequest.getSession(true).getId());
 		
 		
 		response = Response.status(200).entity(deEnrollResponse).build();

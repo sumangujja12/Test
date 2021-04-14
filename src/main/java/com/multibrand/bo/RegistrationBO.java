@@ -80,8 +80,8 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 		accountNumber = CommonUtil.paddedCa(accountNumber);
 
 		try {
-			Map<String, Object> responseMap = new HashMap<String, Object>();			 
-			responseMap= profileService.getProfile(accountNumber, companyCode, sessionId);
+			
+			Map<String, Object> responseMap = profileService.getProfile(accountNumber, companyCode, sessionId);
 			if(responseMap!= null && responseMap.size()!= 0)
 			{
 				response= (ProfileResponse)responseMap.get("profileResponse");
@@ -91,12 +91,11 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 				String lastNameFromProfile = response.getContractAccountDO().getStrExLastName();
 				String firstNameFromProfile=response.getContractAccountDO().getStrExFirstName();
 				//START US515 : GME_MyAccount_CompanyCode Validation :adadan
-				logger.info("RegistrationBO.validateAccount :::: lastNameFromProfile--->"+lastNameFromProfile+"<--");
-				logger.info("RegistrationBO.validateAccount :::: firstNameFromProfile--->"+firstNameFromProfile+"<--");
-				logger.info("RegistrationBO.validateAccount :::: lastName--->"+lastName+"<--");
-				logger.info("RegistrationBO.validateAccount :::: companyCode--->"+companyCode+"<--");
-				logger.info("RegistrationBO.validateAccount :::: COMPANY_CODE_GME --->"+COMPANY_CODE_GME+"<--");
-				logger.info("RegistrationBO.validateAccount :::: response.getContractAccountDO().getStrCompany()--->"+response.getContractAccountDO().getStrCompany()+"<--");
+				logger.info("RegistrationBO.validateAccount :::: lastNameFromProfile--->{}",lastNameFromProfile);
+				logger.info("RegistrationBO.validateAccount :::: firstNameFromProfile--->>{}",firstNameFromProfile);
+				logger.info("RegistrationBO.validateAccount :::: lastName--->{}",lastName);
+				logger.info("RegistrationBO.validateAccount :::: companyCode--->{}",companyCode);
+				logger.info("RegistrationBO.validateAccount :::: COMPANY_CODE_GME --->{}",COMPANY_CODE_GME);
 
 			if(companyCode!=null && companyCode.equals(COMPANY_CODE_GME) && !companyCode.equals(response.getContractAccountDO().getStrCompany())){
 				
@@ -121,17 +120,9 @@ public class RegistrationBO extends BaseAbstractService implements Constants
 			else
 			{
 				validateAccountResponse.setResultCode(RESULT_CODE_THREE);
-				validateAccountResponse.setResultDescription(response.getErrorCode());
+				validateAccountResponse.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			logger.error(e);
-			validateAccountResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			validateAccountResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			throw new OAMException(200, e.getMessage(), validateAccountResponse);
-		}
-		catch (Exception e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) {
 			logger.error(e);
 			validateAccountResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			validateAccountResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
