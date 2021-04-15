@@ -282,6 +282,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	protected static final String[] allCreditAPICalls = {API_CHECK_CREDIT, API_LEGACY_SUBMIT_UCC_DATA, API_RECHECK_CREDIT,API_LEGACY_PERFORM_CREDIT_CHECK};
 	protected static final String[] allDatesAPICalls =  {API_AVAILABLE_DATES,API_LEGACY_GET_ESID_AND_CALENDAR_DATES};
 	
+	protected static final List<String>  FREEZE_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE = Arrays.asList("A", "B" ,"F");
+	protected static final List<String> FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE = Arrays.asList ("01","05","06","07","03","02","V","X","W","N","Q","R","T");
+	
 	@Autowired
 	@Qualifier("environmentMessageSource")
 	private ReloadableResourceBundleMessageSource environmentMessageSource;
@@ -361,7 +364,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						tdspCodeCCS = tdspCodeCCS.trim();
 						oeSignupVO.setTdspCodeCCS(tdspCodeCCS);
 						offerResponse.setStrTDSPCode(tdspCodeCCS);
-						oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."+ tdspCodeCCS,null, null));
+						oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage(APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX+ tdspCodeCCS,null, null));
 						oeSignupVO.setTdspName(this.appConstMessageSource.getMessage(tdspCodeCCS, null,null));
 						oeSignupVO.setGeoZone(null);
 						logger.debug("OEBO.getOffers() Got TDSP Info from ESID."+oeSignupVO.getTdspCodeCCS()+ "~"+ oeSignupVO.getTdspCode()+ "~"+ oeSignupVO.getTdspName());
@@ -374,10 +377,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					logger.debug("OEBO.getOffers() getting offers based on TDSP code : "	+ tdspCode);
 					tdspCode = tdspCode.trim();
 					offerResponse.setStrTDSPCode(tdspCode);
-					streetAddress = "";
 					oeSignupVO.setTdspCodeCCS(tdspCode);
 					oeSignupVO.setTdspCode(appConstMessageSource.getMessage(
-							"ccs.tdsp.web.equivalent." + tdspCode, null, null));
+							APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX + tdspCode, null, null));
 					oeSignupVO.setTdspName(appConstMessageSource.getMessage(
 							tdspCode, null, null));
 					//Added by Vipul starts
@@ -435,7 +437,7 @@ public class OEBO extends OeBoHelper implements Constants{
 									tdspCodeCCS = tdspCodeCCS.trim();
 									oeSignupVO.setTdspCodeCCS(tdspCodeCCS);
 									offerResponse.setStrTDSPCode(tdspCodeCCS);
-									oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."+ tdspCodeCCS,null, null));
+									oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage(APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX+ tdspCodeCCS,null, null));
 									oeSignupVO.setTdspName(this.appConstMessageSource.getMessage(tdspCodeCCS, null,null));
 									oeSignupVO.setGeoZone(null);
 									logger.debug("OEBO.getOffers() Got TDSP Info from ESID."
@@ -581,11 +583,10 @@ public class OEBO extends OeBoHelper implements Constants{
 							//Ends - POD POW Changes -Arumugam
 							offerResponse.setStrOfferFetchSource(OFFER_FETCH_SOURCE_POW);
 							logger.debug("OEBO.getOffers() Started getting regular POW offers.");
-							resultMap = new HashMap<String, Object>();
 							resultMap = getPOWOffers(oeSignupVO);
 							logger.debug("OEBO.getOffers() Completed getting regular POW offers.");
 						}else{
-							logger.debug("Company code "+companyCode+" ,brandId "+brandId+" is NOT setup for POW Offers. Continue getting reactive offers!!!");
+							logger.debug("CompanyCode "+companyCode+" ,brandId "+brandId+" is NOT setup for POW Offers. Continue getting reactive offers!!!");
 						}
 					}
 
@@ -599,7 +600,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					if (resultMap != null) {
 						OfferDO[] offerDOArray = null;
 						List<OfferDO> offersList = (List<OfferDO>) (resultMap).get(OFFERS_LIST);
-						if ((offersList != null) && (offersList.size() > 0)) {
+						if ((offersList != null) && !offersList.isEmpty()) {
 							offerDOArray = offersList.toArray(new OfferDO[offersList.size()]);
 							offerResponse.setOfferDOList(offerDOArray);
 						} else {
@@ -872,7 +873,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	private Map<String, Object> getPOWOffers(OESignupVO oeSignupVO)
 			throws ServiceException {
 		logger.debug("OEBO.getPOWOffers() start");
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<>();
 		if (StringUtils.isBlank(oeSignupVO.getTransactionType())) {
 			oeSignupVO.setTransactionType(MVI);
 		}
@@ -948,8 +949,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	private Map<String, Object> constructOffers(
 			PromoOfferResponse promoOfferResponse, OESignupVO oeSignupVO) {
 		logger.debug("OEBO.constructOffers() start");
-		Map<String, Object> resultMap = new HashMap<String, Object>();
-		List<OfferDO> offerDOList = new ArrayList<OfferDO>();
+		Map<String, Object> resultMap = new HashMap<>();
+		List<OfferDO> offerDOList = new ArrayList<>();
 		DecimalFormat decimalformat = new DecimalFormat("#0");
 		PromoOfferOutData[] promoOfferOutDataArr=null;
 		if (promoOfferResponse == null) {
@@ -966,7 +967,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 			promoOfferOutDataArr = promoOfferResponse.getOfferOuts();
 			if(null==promoOfferOutDataArr){
-				resultMap.put("OESIGNUPVO", oeSignupVO);
+				resultMap.put(OESIGNUPVO, oeSignupVO);
 				resultMap.put(OFFERS_LIST, offerDOList);
 				resultMap.put(DISPLAYED_OFFER_CODE_LIST, null);
 				resultMap.put(CCS_ERROR, promoOfferResponse.getStrErrCode());
@@ -1040,7 +1041,7 @@ public class OEBO extends OeBoHelper implements Constants{
 							.getStrPenaltyValue().toString());
 					if (promoOfferOutData.getStrPlanName().indexOf("®") != -1) {
 						offerDO.setStrPlanName(promoOfferOutData
-								.getStrPlanName().replaceAll("®", "�"));
+								.getStrPlanName().replace("®", "�"));
 					} else {
 						offerDO.setStrPlanName(promoOfferOutData
 								.getStrPlanName());
@@ -1098,7 +1099,7 @@ public class OEBO extends OeBoHelper implements Constants{
 				}
 			}
 
-			resultMap.put("OESIGNUPVO", oeSignupVO);
+			resultMap.put(OESIGNUPVO, oeSignupVO);
 			resultMap.put(OFFERS_LIST, offerDOList);
 			resultMap.put(DISPLAYED_OFFER_CODE_LIST, offerCodes);
 			resultMap.put(CCS_ERROR, promoOfferResponse.getStrErrCode());
@@ -1217,52 +1218,15 @@ public class OEBO extends OeBoHelper implements Constants{
 		logger.debug("OEBO.populatePriceInfo() start");
 		PromoOfferOutDataAvgPriceMapEntry[] priceArr = matchingCCSOffer
 				.getAvgPriceMap();
-		List<OfferPriceWraperDO> offerPriceWraperDOList = new ArrayList<OfferPriceWraperDO>();
+		List<OfferPriceWraperDO> offerPriceWraperDOList = new ArrayList<>();
 		for (int j = 0; j < priceArr.length; j++) {
 			OfferPriceWraperDO offerPriceWraperDO = new OfferPriceWraperDO();
 			OfferPriceDO offerPriceDO = new OfferPriceDO();
 			PromoOfferOutDataAvgPriceMapEntry promoOfferOutDataAvgPriceMapEntry = priceArr[j];
-			DecimalFormat decimalformat = new DecimalFormat("#0.0");
-			DecimalFormat energyChargeDecimalformat = new DecimalFormat("#0.0000");
-			DecimalFormat tdspDF = new DecimalFormat("#0.00");			
+			DecimalFormat decimalformat = new DecimalFormat("#0.0");			
 			if (promoOfferOutDataAvgPriceMapEntry.getValue().getAvgPrice() != null) {
+				this.setPriceInOfferPriceDO(promoOfferOutDataAvgPriceMapEntry,offerPriceDO);
 
-				if (StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
-						.getValue().getPriceType(), TDSP_CHRG1)
-						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
-								.getValue().getPriceType(), TDSP_CHRG2)
-						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
-								.getValue().getPriceType(), S_CUSTCHRG)
-						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
-								.getValue().getPriceType(), S_CUSTCHR2)) {
-
-					offerPriceDO.setPrice(tdspDF.format(Double
-							.valueOf(promoOfferOutDataAvgPriceMapEntry
-									.getValue().getAvgPrice().toString())));
-				}
-				// Start | Sprint16 -US13873 | Pratyush -- 11/12/2018
-				else if (StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE)
-						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), E_ENRGPB_P)
-						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_GME_UNB)
-						|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE2)) 	
-				{
-					if(StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), E_ENRGPB_P)) {
-						offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
-							.valueOf(promoOfferOutDataAvgPriceMapEntry
-									.getValue().getAvgPrice().toString())*100));
-					} else {
-						offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
-								.valueOf(promoOfferOutDataAvgPriceMapEntry
-										.getValue().getAvgPrice().toString())));
-					}
-		
-				}
-				else {
-
-					offerPriceDO.setPrice(decimalformat.format(Double
-							.valueOf(promoOfferOutDataAvgPriceMapEntry
-									.getValue().getAvgPrice().toString())));
-				}
 			} else {
 				offerPriceDO
 					.setPrice(decimalformat.format(Double.valueOf("0")));
@@ -1312,17 +1276,14 @@ public class OEBO extends OeBoHelper implements Constants{
 	 * @return String
 	 */
 	private String getOfferCodes(PromoOfferOutData[] promoOfferOutData) {
-		ArrayList<String> offerCodeList = new ArrayList<String>();
+		ArrayList<String> offerCodeList = new ArrayList<>();
 		String offerCode = null;
 		if (promoOfferOutData != null && promoOfferOutData.length > 0) {
 			for (int i = 0; i < promoOfferOutData.length; i++) {
-				if (promoOfferOutData[i] == null)
-					continue;
-				if (logger.isDebugEnabled()) {
-					logger.debug("OEBO.getOfferCodes() promoOfferOutData[ " + i
-							+ " ].getStrOfferCode: "
-							+ promoOfferOutData[i].getStrOfferCode());
-				}
+				if (promoOfferOutData[i] == null){
+					continue;}
+					logger.debug("OEBO.getOfferCodes() promoOfferOutData[ " + i+ " ].getStrOfferCode: "+ promoOfferOutData[i].getStrOfferCode());
+				
 				try {
 					if (offerCodeList.contains(promoOfferOutData[i]
 							.getStrOfferCode())) {
@@ -1333,10 +1294,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					e.printStackTrace();
 				}
 			}
-			if (logger.isDebugEnabled()) {
 				logger.debug("OEBO.getOfferCodes(): offercodeList"
 						+ offerCodeList);
-			}
+			
 			String[] offerCodeArray = offerCodeList.toArray(new String[1]);
 			offerCode = CommonUtil.arrayToString(offerCodeArray,
 					DELIMETER_COMMA);
@@ -1344,13 +1304,10 @@ public class OEBO extends OeBoHelper implements Constants{
 		return offerCode;
 	}
 
-	/*
-	 * private ProductOfferDO parseProductXML(Document productXMLDocument) {
-	 * return ProductOfferParser.parseData(productXMLDocument); }
-	 */
+	
 
 	public Map<String, Object> getReactiveOffers(OESignupVO oeSignupVO) {
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<>();
 		CharityDetailsVO[] charityDetailsVOArr=null;
 		PromoOfferOutData[] promoOfferOutDataArr=null;
 		String strCCSError=null;
@@ -1358,7 +1315,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			PromoOfferRequest promoOfferRequest = createPromoOfferRequest(oeSignupVO);
 			PromoOfferResponse promoOfferResponse = this.offerService.getOfferWithPricingFromCCS(promoOfferRequest);
 			strCCSError=promoOfferResponse.getStrErrCode();
-			//resultMap.put(CCS_ERROR, promoOfferResponse.getStrErrCode());
 			promoOfferOutDataArr = promoOfferResponse.getOfferOuts();
 			try{
 				charityDetailsVOArr=getCharityDetails(promoOfferResponse.getCharityOuts());
@@ -1387,15 +1343,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					}
 				}
 			}
-			if(null!=promoOfferResponse && null!=promoOfferResponse.getOfferOuts()){
-				logger.debug("SUCCESS!!! Offer Data is present. Now constructing offers!!!");
-				resultMap = constructOffers(promoOfferResponse, oeSignupVO);
-			}else{
-				logger.debug("ERROR!!! Offer Data is blank from second reactive offers call!!!");
-				resultMap.put("OESIGNUPVO", oeSignupVO);
-				resultMap.put(OFFERS_LIST, null);
-				resultMap.put(DISPLAYED_OFFER_CODE_LIST, null);
-			}
+			this.constructOffersCallFromReactiveMethod(promoOfferResponse,resultMap,oeSignupVO);
+			
 		} catch (Exception e) {
 			logger.error("Exception in OEBO.getReactiveOffers():"
 					, e);
@@ -1486,7 +1435,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		OESignupVO oeSignupVO = new OESignupVO();
 		oeSignupVO.setCompanyCode(companyCode);
 		String tdspCodeCCS=null;
-		List<TDSPDO> tdspDOList = new ArrayList<TDSPDO>();
+		List<TDSPDO> tdspDOList = new ArrayList<>();
 		if (StringUtils.isBlank(servZipCode)) {
 			logger.debug("OEBO.getTDSPDetails() Zip code is mandatory.");
 			tdspResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -1524,91 +1473,16 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug("OEBO.getTDSPDetails()  street address entered! getting ESID info");
 				oeSignupVO = getESIDInformation(oeSignupVO, companyCode,
 						sessionId);
-				if(null!=oeSignupVO.getServiceAddressDO()){
-					tdspResponse.setServiceAddress(populateServiceAddressDO(oeSignupVO.getServiceAddressDO()));
-				}
-				if (StringUtils.isNotBlank(oeSignupVO.getEsidNumber())) {
-					String strESIDNumber = oeSignupVO.getEsidNumber();
-					tdspResponse.setEsid(strESIDNumber);
-					logger.debug("OEBO.getTDSPDetails() Getting TDSP Code for ESID Number="
-							+ oeSignupVO.getEsidNumber());
-					TdspByESIDResponse tdspByESIDResponse = this.tosService
-							.ccsGetTDSPFromESID(strESIDNumber,
-									oeSignupVO.getCompanyCode(), sessionId);
-					if ((tdspByESIDResponse != null)
-							&& (StringUtils.isNotBlank(tdspByESIDResponse
-									.getServiceId()))) {
-						TDSPDO tdspDO = new TDSPDO();
-						tdspCodeCCS = tdspByESIDResponse.getServiceId()
-								.trim();
-						tdspDO.setTdspCodeCCS(tdspCodeCCS);
-						tdspDO.setTdspCodeWeb(this.appConstMessageSource
-								.getMessage("ccs.tdsp.web.equivalent."
-										+ tdspCodeCCS, null, null));
-						tdspDO.setTdspName(this.appConstMessageSource
-								.getMessage(tdspCodeCCS, null, null));
+				this.setServiceAddressInTdspResp(oeSignupVO,tdspResponse);
+			    tdspCodeCCS=this.getResponseBasedOnEsidNumber(oeSignupVO,tdspResponse,sessionId,tdspDOList);
 
-						tdspDOList.add(tdspDO);
-						tdspResponse.setTdspData(tdspDOList);
-						logger.debug("OEBO.getTDSPDetails() Got TDSP Info from ESID."
-								+ tdspDO.getTdspCodeCCS()
-								+ "~"
-								+ tdspDO.getTdspCodeWeb()
-								+ "~"
-								+ tdspDO.getTdspName());
-					} else {
-						logger.debug("OEBO.getTDSPDetails() Failed in getting TDSP Code for ESID Number="
-								+ oeSignupVO.getEsidNumber());
-					}
-				} else {
-					logger.debug("OEBO.getTDSPDetails() getESIDInformation FAILED. Nevermind! Continuing with process... ");
-				}
 			} catch (Exception e) {
 				logger.error("OEBO.getTDSPDetails() getESIDInformation FAILED. Nevermind! Continuing with process... "
 						, e);
 			}
 		}
-
-		if (StringUtils.isBlank(tdspCodeCCS)) {
-	        logger.debug("OEBO.getTDSPDetails() Failed in getting TDSP Code for ESID! Now getting from the DB call");
-	        TdspDetailsResponse tdspDetailsResponse = this.addressService.getTDSP(oeSignupVO.getServiceAddressDO(), oeSignupVO.getCompanyCode());
-	        if ((tdspDetailsResponse != null) && (StringUtils.isBlank(tdspDetailsResponse.getStrErrCode()))) {
-	          if (tdspDetailsResponse.isMultiTdsp()) {
-	            logger.debug("OEBO.getTDSPDetails() Got Multi TDSP codes from DB:" + tdspDetailsResponse.getStrTdspCodes());
-	            TdspDetailsResponseStrTdspCodesEntry[] strTdspCodesMap = tdspDetailsResponse.getStrTdspCodes();
-	            for (TdspDetailsResponseStrTdspCodesEntry tdspDetailsResponseStrTdspCodesEntry : strTdspCodesMap) {
-	              try {           	  	
-		                String ccsTDSPCode = this.appConstMessageSource.getMessage(tdspDetailsResponseStrTdspCodesEntry.getKey(), null, null);
-		                logger.debug("OEBO.getTDSPDetails() - Resolved ccsTDSPCode:"+ ccsTDSPCode);
-		                TDSPDO tdspDO = new TDSPDO();
-		                tdspDO.setTdspCodeCCS(ccsTDSPCode);
-		                tdspDO.setTdspCodeWeb(tdspDetailsResponseStrTdspCodesEntry.getKey());
-		                tdspDO.setTdspName(this.appConstMessageSource
-								.getMessage(ccsTDSPCode, null, null));
-		                tdspDOList.add(tdspDO);
-	              	}catch (Exception localException) {
-	              		logger.error("inside getTDSPDetails :: exception occured ", localException);
-	            	  logger.debug("OEBO.getTDSPDetails() - Non Supported TDSPCode:"+ tdspDetailsResponseStrTdspCodesEntry.getKey());
-	            	 // do nothing try your luck with another TDSP code 
-	              }
-	            }
-	            tdspResponse.setTdspData(tdspDOList);
-	          } else {
-		            logger.debug("OEBO.getTDSPDetails() Single TDSP code:" + tdspDetailsResponse.getStrTdsp());
-		            TDSPDO tdspDO = new TDSPDO();
-		            tdspDO.setTdspCodeCCS(this.appConstMessageSource.getMessage(tdspDetailsResponse.getStrTdsp(), null, null));
-		            tdspDO.setTdspCodeWeb(tdspDetailsResponse.getStrTdsp());
-		            tdspDO.setTdspName(this.appConstMessageSource
-							.getMessage(tdspDO.getTdspCodeCCS(), null, null));
-					tdspDOList.add(tdspDO);
-					tdspResponse.setTdspData(tdspDOList);
-	          }
-	        } else {
-		          logger.debug("OEBO.getTDSPDetails() addressService.getTDSP() call results an Error: " + tdspDetailsResponse.getStrErrMessage());
-		          tdspResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-		          tdspResponse.setResultDescription("Error while getting TDSP code from Database");
-	        }
-	    }
+          this.getTdspDataResponseWithTdspCodeCCSBlank(tdspCodeCCS,oeSignupVO,tdspResponse, tdspDOList);
+		
 		return tdspResponse;
 	}
 	
@@ -1629,21 +1503,21 @@ public class OEBO extends OeBoHelper implements Constants{
 				 for(int i=0;i<promoCharityOutData.length;i++){
 					 logger.debug(" Outside IF promoCharityOutData["+i+"]: "+promoCharityOutData[i]);
 					 if(promoCharityOutData[i]==null ) {
-						 logger.debug("promoCharityOutData["+i+"]: "+promoCharityOutData[i]);
+						 logger.debug(PROMOCHARITYOUTDATA+i+"]: "+promoCharityOutData[i]);
 						 continue;
 					 }						 
-					 logger.debug("promoCharityOutData["+i+"].getZcharityId:: "+promoCharityOutData[i].getZcharityId());
-					 logger.debug("promoCharityOutData["+i+"].getZzChar1:: "+promoCharityOutData[i].getZzChar1());
+					 logger.debug(PROMOCHARITYOUTDATA+i+"].getZcharityId:: "+promoCharityOutData[i].getZcharityId());
+					 logger.debug(PROMOCHARITYOUTDATA+i+"].getZzChar1:: "+promoCharityOutData[i].getZzChar1());
 					//ENTCR 13315 APPCR_104998 Promo Code - Start by Thabitha Sethurman
-					 logger.debug("promoCharityOutData["+i+"].getZdefault():: "+promoCharityOutData[i].getZdefault());
-					 logger.debug("promoCharityOutData["+i+"].getZpromoCd():: "+promoCharityOutData[i].getZpromoCd());
+					 logger.debug(PROMOCHARITYOUTDATA+i+"].getZdefault():: "+promoCharityOutData[i].getZdefault());
+					 logger.debug(PROMOCHARITYOUTDATA+i+"].getZpromoCd():: "+promoCharityOutData[i].getZpromoCd());
 					 if(promoCharityOutData[i].getZdefault()!=null && promoCharityOutData[i].getZpromoCd()!=null) {
 					 	if((promoCharityOutData[i].getZdefault().equals("X")) && !(promoCharityOutData[i].getZpromoCd().startsWith("X"))) {						
 						 charityDetailsVO[voCount] = new CharityDetailsVO();						 
 						
 						 logger.debug("Before setting charity id and name");
 						 charityDetailsVO[voCount].setStrCharityId(promoCharityOutData[i].getZcharityId());
-						 logger.debug("charityDetailsVO["+voCount+"] Chairty Id ::"+charityDetailsVO[voCount].getStrCharityId());
+						 logger.debug(CHARITYDETAILSVO+voCount+"] Chairty Id ::"+charityDetailsVO[voCount].getStrCharityId());
 						 charityDetailsVO[voCount].setStrCharityName(promoCharityOutData[i].getZzChar1());
 						 if(promoCharityOutData[i].getZzChar1()!=null){							 
 							 if(promoCharityOutData[i].getZzChar1().isEmpty()){								 
@@ -1653,10 +1527,10 @@ public class OEBO extends OeBoHelper implements Constants{
 							 charityDetailsVO[voCount].setStrCharityName(promoCharityOutData[i].getZcharityId()); 
 						}
 						 
-						 logger.debug("charityDetailsVO["+voCount+"] Chairty Name ::"+charityDetailsVO[voCount].getStrCharityName());	
+						 logger.debug(CHARITYDETAILSVO+voCount+"] Chairty Name ::"+charityDetailsVO[voCount].getStrCharityName());	
 						 
 						 charityDetailsVO[voCount].setStrPromoCode(promoCharityOutData[i].getZpromoCd());
-						 logger.debug("charityDetailsVO["+voCount+"] Chairty PromoCode ::"+charityDetailsVO[voCount].getStrPromoCode());
+						 logger.debug(CHARITYDETAILSVO+voCount+"] Chairty PromoCode ::"+charityDetailsVO[voCount].getStrPromoCode());
 						 voCount++;
 					 	} 
 					 }
@@ -1722,22 +1596,14 @@ public class OEBO extends OeBoHelper implements Constants{
 								.getPendingRequestDetails(pendingServiceRequestDTO
 										.getTrackNo());
 						try {
-							for (Map pendingRequestMap : pendingRequestDetailsList) {
-								repCode = (String) pendingRequestMap
-										.get(REP_CD);
-								logger.debug("checkPendingRequest - repCode :: "
-										+ repCode);
-								logger.debug("checkPendingRequest - SERVICE_START_DATE :: "
-										+ pendingRequestMap
-												.get(SERVICE_START_DATE));
-								if (null != pendingRequestMap
-										.get(SERVICE_START_DATE))
-									dtPrevReqStartDate = new java.sql.Date(
-											((java.sql.Timestamp) pendingRequestMap
-													.get(SERVICE_START_DATE))
-													.getTime());
-								break;
-							}
+							Map<String, Object> pendingRequestMap = pendingRequestDetailsList.get(0);
+							repCode = (String) pendingRequestMap.get(REP_CD);
+							logger.debug("checkPendingRequest - repCode :: " + repCode);
+							logger.debug("checkPendingRequest - SERVICE_START_DATE :: "
+									+ pendingRequestMap.get(SERVICE_START_DATE));
+							if (null != pendingRequestMap.get(SERVICE_START_DATE))
+								dtPrevReqStartDate = new java.sql.Date(
+										((java.sql.Timestamp) pendingRequestMap.get(SERVICE_START_DATE)).getTime());
 							if (StringUtils.isNotBlank(repCode)) {
 								try {
 									List<Map<String, Object>> previousProviderNameList = serviceLocationDAO
@@ -1863,9 +1729,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	public CheckPermitResponse checkPermitRequirement(
 			CheckPermitRequest permitCheckRequestDTO, String sessionId)
 			throws OEException {
-		String METHOD_NAME = "OEBO: checkPermitRequirement(..)";
+		String methodName = "OEBO: checkPermitRequirement(..)";
 
-		logger.debug("Start:" + METHOD_NAME);
+		logger.debug(START + methodName);
 
 		CheckPermitResponse response = new CheckPermitResponse();
 		try {
@@ -1880,14 +1746,14 @@ public class OEBO extends OeBoHelper implements Constants{
 			this.handlePermitCheckResponse(response, permitCheckResponse);
 		} catch (RemoteException e) {
 			logger.error(e);
-			handleServiceException(response, METHOD_NAME, e);
+			handleServiceException(response, methodName, e);
 
 		} catch (Exception e) {
-			logger.error("ERROR:" + METHOD_NAME, e);
-			handleServiceException(response, METHOD_NAME, e);
+			logger.error("ERROR:" + methodName, e);
+			handleServiceException(response, methodName, e);
 		}
 
-		logger.debug("END:" + METHOD_NAME);
+		logger.debug("END:" + methodName);
 
 		return response;
 	}
@@ -1924,8 +1790,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	public EnrollmentResponse submitEnrollment(EnrollmentRequest enrollmentRequest, ServiceLocationResponse serviceLoationResponse)
 			throws OEException {
-		String METHOD_NAME = "OEBO: submitEnrollment(..)";
-		logger.debug("Start:" + METHOD_NAME);
+		String methodName = "OEBO: submitEnrollment(..)";
+		logger.debug(START + methodName);
 		
 		EnrollmentResponse response =  new EnrollmentResponse();
 		response.setTrackingId(enrollmentRequest.getTrackingId());
@@ -1973,7 +1839,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			// Create SignupDTO from the enrollment API request.
 			oeSignUpDTO = oeRequestHandler.createOeSignupDtoByMinimal(enrollmentRequest, oeSignUpDTO,serviceLoationResponse);
 			
-			logger.info(oeSignUpDTO.printOETrackingID() + METHOD_NAME);
+			logger.info(oeSignUpDTO.printOETrackingID() + methodName);
 			
 	
 			
@@ -2047,13 +1913,13 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (RemoteException e) {
 			logger.error(e);
 			this.handleSubmitEnrollmentError(oeSignUpDTO, e);
-			handleServiceException(response, METHOD_NAME, e);
+			handleServiceException(response, methodName, e);
 			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
 
 		} catch (Exception e) {
 			logger.error(e);
 			this.handleSubmitEnrollmentError(oeSignUpDTO, e);
-			handleServiceException(response, METHOD_NAME, e);
+			handleServiceException(response, methodName, e);
 			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
 		} 
 		/**
@@ -2073,15 +1939,15 @@ public class OEBO extends OeBoHelper implements Constants{
 			}
 		}
 		
-		logger.debug("END:" + METHOD_NAME);
+		logger.debug("END:" + methodName);
 				
 		return response;
 	}
 
 	public ENROLLMENT_FRAUD_ENUM checkFraudulentActivity(OESignupDTO oeSignUpDTO,boolean posidHoldAllowedForAffilate, boolean isPosidHoldAllowed,String apiCallExecuted,
 														ServiceLocationResponse serviceLocationResponse) {
-		String METHOD_NAME = "OEBO: isAnyFraudActivityDetected(..)";
-		logger.debug("Start:" + METHOD_NAME);
+		String methodName = "OEBO: isAnyFraudActivityDetected(..)";
+		logger.debug(START + methodName);
 		ENROLLMENT_FRAUD_ENUM enrollmentFraudEnum=null;
 		LinkedHashSet<String> errorCodeSet = CommonUtil.getSetFromPipeSeparatedString(oeSignUpDTO.getErrorCdList());
 		
@@ -2116,7 +1982,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		}else if(errorCodeSet.contains(CREDFREEZE)){
 			enrollmentFraudEnum = ENROLLMENT_FRAUD_ENUM.valueOf("CREDIT_FREEZE");
 		} 
-		logger.debug("End:" + METHOD_NAME);
+		logger.debug("End:" + methodName);
 		return enrollmentFraudEnum;
 	}
 	
@@ -2188,11 +2054,10 @@ public class OEBO extends OeBoHelper implements Constants{
 		
 
 		String locale = creditCheckRequest.getLanguageCode();
-		/*string companyCode = creditCheckRequest.getCompanyCode();*/
 		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
-		String METHOD_NAME = "OEBO: performCreditCheck(..)";
+		String methodName = "OEBO: performCreditCheck(..)";
 
-		logger.debug("Start:" + METHOD_NAME);
+		logger.debug(START + methodName);
 
 		Locale localeObj = null;
 		StringBuilder creditFactor = new StringBuilder(EMPTY);
@@ -2325,7 +2190,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			logger.error("inside performCreditCheck:: exception occured ::", e);
 			response.setDepositReasonText(EMPTY);
 		} catch (Exception e) {
-			logger.error("ERROR:" + METHOD_NAME, e);
+			logger.error("ERROR:" + methodName, e);
 			errorCodeFromAPI = CCSD;
 			serviceLocationResponseErrorList.remove(CREDFREEZE);
 			serviceLocationResponseErrorList.add(CCSD);
@@ -2348,7 +2213,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 		}
 
-		logger.debug("END:" + METHOD_NAME);
+		logger.debug("END:" + methodName);
 
 		return response;
 	}
@@ -2645,8 +2510,8 @@ public class OEBO extends OeBoHelper implements Constants{
 			String tdspCodeCCS, String transactionType, String trackingId, String bpMatchFlag,
 			String locale, String esid,String sessionId,String holdType,
 			ServiceLocationResponse serviceLoationResponse,String callExecutedStrForDB ) throws OAMException {
-		String METHOD_NAME = "OEBO: getESIDAndCalendarDates(..)";
-		logger.debug("Start:" + METHOD_NAME);
+		String methodName = "OEBO: getESIDAndCalendarDates(..)";
+		logger.debug(START + methodName);
 		
 		
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
@@ -2878,7 +2743,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	  			response.setSwitchHoldFlag(EMPTY);
 	  	}
 	    
-		logger.debug("END:" + METHOD_NAME);
+		logger.debug("END:" + methodName);
 
 		return response;
 	}
@@ -4140,9 +4005,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			String transactionType, String tdspCodeCCS, String bpMatchFlag,
 			ESIDDO esidDo, EsidInfoTdspCalendarResponse response,
 			Locale locale,String holdType, String prospectPartnerId) throws Exception {
-		String METHOD_NAME = "OEBO: getTdspDates(..)";
+		String methodName = "OEBO: getTdspDates(..)";
 
-		logger.debug("Start:" + METHOD_NAME);
+		logger.debug(START + methodName);
 		String internaltdspCodeCCS="";
 		
 		if (esidDo != null && StringUtils.isNotEmpty(esidDo.getEsidTDSP())) {
@@ -4167,7 +4032,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		request.setEndDate(df.format(DateUtils.addDays(today.getTime(), 59)));
 		request.setStrCompanyCode(companyCode);
 		//START : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-		if(StringUtils.isNotEmpty(esidDo.getEsidNumber())){
+		if(null != esidDo && StringUtils.isNotEmpty(esidDo.getEsidNumber())){
 			request.setEsiid(esidDo.getEsidNumber());
 		}else{
 			request.setEsiid(EMPTY);
@@ -4184,7 +4049,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	   	if (StringUtils.isNotBlank(dateString))
 	   	{
 	   		String[] strValues = StringUtils.split(dateString, '|');
-	   		ArrayList<String> holidayDates = new ArrayList<String>(Arrays.asList(strValues));
+	   		ArrayList<String> holidayDates = new ArrayList<>(Arrays.asList(strValues));
 	   		allInclusiveDateList.removeAll(holidayDates);
 	   	}
 
@@ -4220,7 +4085,7 @@ public class OEBO extends OeBoHelper implements Constants{
     		response.setTdspFee(EMPTY);
     	}
     	
-    	logger.debug("End:" + METHOD_NAME);
+    	logger.debug("End:" + methodName);
 	}
 	
 	public AffiliateOfferResponse getAffiliateOffers(AffiliateOfferRequest request, String sessionId) {
@@ -7031,4 +6896,156 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 		}
 		return affiliateOfferResponse;
 	}
+	
+	private void setPriceInOfferPriceDO(PromoOfferOutDataAvgPriceMapEntry promoOfferOutDataAvgPriceMapEntry,OfferPriceDO offerPriceDO) {
+		DecimalFormat decimalformat = new DecimalFormat("#0.0");
+		DecimalFormat energyChargeDecimalformat = new DecimalFormat("#0.0000");
+		DecimalFormat tdspDF = new DecimalFormat("#0.00");
+		if (StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
+				.getValue().getPriceType(), TDSP_CHRG1)
+				|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
+						.getValue().getPriceType(), TDSP_CHRG2)
+				|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
+						.getValue().getPriceType(), S_CUSTCHRG)
+				|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry
+						.getValue().getPriceType(), S_CUSTCHR2)) {
+
+			offerPriceDO.setPrice(tdspDF.format(Double
+					.valueOf(promoOfferOutDataAvgPriceMapEntry
+							.getValue().getAvgPrice().toString())));
+		}
+		// Start | Sprint16 -US13873 | Pratyush -- 11/12/2018
+		else if (StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE)
+				|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), E_ENRGPB_P)
+				|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_GME_UNB)
+				|| StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), S_UNBUNDLE2)) 	
+		{
+			if(StringUtils.equals(promoOfferOutDataAvgPriceMapEntry.getValue().getPriceType(), E_ENRGPB_P)) {
+				offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
+					.valueOf(promoOfferOutDataAvgPriceMapEntry
+							.getValue().getAvgPrice().toString())*100));
+			} else {
+				offerPriceDO.setPrice(energyChargeDecimalformat.format(Double
+						.valueOf(promoOfferOutDataAvgPriceMapEntry
+								.getValue().getAvgPrice().toString())));
+			}
+
+		}
+		else {
+
+			offerPriceDO.setPrice(decimalformat.format(Double
+					.valueOf(promoOfferOutDataAvgPriceMapEntry
+							.getValue().getAvgPrice().toString())));
+		}
+		
+	}
+	
+	private Map<String, Object> constructOffersCallFromReactiveMethod(PromoOfferResponse promoOfferResponse,Map<String, Object> resultMap,OESignupVO oeSignupVO){
+		if(null!=promoOfferResponse && null!=promoOfferResponse.getOfferOuts()){
+			logger.debug("SUCCESS!!! Offer Data is present. Now constructing offers!!!");
+			resultMap = constructOffers(promoOfferResponse, oeSignupVO);
+		}else{
+			logger.debug("ERROR!!! Offer Data is blank from second reactive offers call!!!");
+			resultMap.put("OESIGNUPVO", oeSignupVO);
+			resultMap.put(OFFERS_LIST, null);
+			resultMap.put(DISPLAYED_OFFER_CODE_LIST, null);
+		}
+		return resultMap;
+	}
+	
+	private void setServiceAddressInTdspResp(OESignupVO oeSignupVO,TdspResponse tdspResponse){
+		if(null!=oeSignupVO.getServiceAddressDO()){
+			tdspResponse.setServiceAddress(populateServiceAddressDO(oeSignupVO.getServiceAddressDO()));
+		}
+	}
+	
+	private String getResponseBasedOnEsidNumber(OESignupVO oeSignupVO,TdspResponse tdspResponse,String sessionId,List<TDSPDO> tdspDOList) throws Exception{
+		String tdspCodeCCS=null;
+		if (StringUtils.isNotBlank(oeSignupVO.getEsidNumber())) {
+			String strESIDNumber = oeSignupVO.getEsidNumber();
+			tdspResponse.setEsid(strESIDNumber);
+			logger.debug("OEBO.getTDSPDetails() Getting TDSP Code for ESID Number="
+					+ oeSignupVO.getEsidNumber());
+			TdspByESIDResponse tdspByESIDResponse = this.tosService
+					.ccsGetTDSPFromESID(strESIDNumber,
+							oeSignupVO.getCompanyCode(), sessionId);
+			if ((tdspByESIDResponse != null)
+					&& (StringUtils.isNotBlank(tdspByESIDResponse
+							.getServiceId()))) {
+				TDSPDO tdspDO = new TDSPDO();
+				tdspCodeCCS = tdspByESIDResponse.getServiceId()
+						.trim();
+				tdspDO.setTdspCodeCCS(tdspCodeCCS);
+				tdspDO.setTdspCodeWeb(this.appConstMessageSource
+						.getMessage("ccs.tdsp.web.equivalent."
+								+ tdspCodeCCS, null, null));
+				tdspDO.setTdspName(this.appConstMessageSource
+						.getMessage(tdspCodeCCS, null, null));
+
+				tdspDOList.add(tdspDO);
+				tdspResponse.setTdspData(tdspDOList);
+				logger.debug("OEBO.getTDSPDetails() Got TDSP Info from ESID."
+						+ tdspDO.getTdspCodeCCS()
+						+ "~"
+						+ tdspDO.getTdspCodeWeb()
+						+ "~"
+						+ tdspDO.getTdspName());
+			} else {
+				logger.debug("OEBO.getTDSPDetails() Failed in getting TDSP Code for ESID Number="
+						+ oeSignupVO.getEsidNumber());
+			}
+		} else {
+			logger.debug("OEBO.getTDSPDetails() getESIDInformation FAILED. Nevermind! Continuing with process... ");
+		}
+		return tdspCodeCCS;
+	}
+	
+	private void getTdspDataResponseWithTdspCodeCCSBlank(String tdspCodeCCS,OESignupVO oeSignupVO,TdspResponse tdspResponse,List<TDSPDO> tdspDOList){
+		if (StringUtils.isBlank(tdspCodeCCS)) {
+	        logger.debug("OEBO.getTDSPDetails() Failed in getting TDSP Code for ESID! Now getting from the DB call");
+	        TdspDetailsResponse tdspDetailsResponse = this.addressService.getTDSP(oeSignupVO.getServiceAddressDO(), oeSignupVO.getCompanyCode());
+	        if ((tdspDetailsResponse != null) && (StringUtils.isBlank(tdspDetailsResponse.getStrErrCode()))) {
+	          this.getTdspDataBasedonMultiTdsp(tdspDetailsResponse,tdspResponse,tdspDOList);
+	        	
+	        } else if(null != tdspDetailsResponse){
+		          logger.debug("OEBO.getTDSPDetails() addressService.getTDSP() call results an Error: " + tdspDetailsResponse.getStrErrMessage());
+		          tdspResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+		          tdspResponse.setResultDescription("Error while getting TDSP code from Database");
+	        }
+	    }
+	}
+	
+	private void getTdspDataBasedonMultiTdsp(TdspDetailsResponse tdspDetailsResponse,TdspResponse tdspResponse,List<TDSPDO> tdspDOList){
+		if (tdspDetailsResponse.isMultiTdsp()) {
+            logger.debug("OEBO.getTDSPDetails() Got Multi TDSP codes from DB:" + tdspDetailsResponse.getStrTdspCodes());
+            TdspDetailsResponseStrTdspCodesEntry[] strTdspCodesMap = tdspDetailsResponse.getStrTdspCodes();
+            for (TdspDetailsResponseStrTdspCodesEntry tdspDetailsResponseStrTdspCodesEntry : strTdspCodesMap) {
+              try {           	  	
+	                String ccsTDSPCode = this.appConstMessageSource.getMessage(tdspDetailsResponseStrTdspCodesEntry.getKey(), null, null);
+	                logger.debug("OEBO.getTDSPDetails() - Resolved ccsTDSPCode:"+ ccsTDSPCode);
+	                TDSPDO tdspDO = new TDSPDO();
+	                tdspDO.setTdspCodeCCS(ccsTDSPCode);
+	                tdspDO.setTdspCodeWeb(tdspDetailsResponseStrTdspCodesEntry.getKey());
+	                tdspDO.setTdspName(this.appConstMessageSource
+							.getMessage(ccsTDSPCode, null, null));
+	                tdspDOList.add(tdspDO);
+              	}catch (Exception localException) {
+              		logger.error("inside getTDSPDetails :: exception occured ", localException);
+            	  logger.debug("OEBO.getTDSPDetails() - Non Supported TDSPCode:"+ tdspDetailsResponseStrTdspCodesEntry.getKey());
+            	 // do nothing try your luck with another TDSP code 
+              }
+            }
+            tdspResponse.setTdspData(tdspDOList);
+          } else {
+	            logger.debug("OEBO.getTDSPDetails() Single TDSP code:" + tdspDetailsResponse.getStrTdsp());
+	            TDSPDO tdspDO = new TDSPDO();
+	            tdspDO.setTdspCodeCCS(this.appConstMessageSource.getMessage(tdspDetailsResponse.getStrTdsp(), null, null));
+	            tdspDO.setTdspCodeWeb(tdspDetailsResponse.getStrTdsp());
+	            tdspDO.setTdspName(this.appConstMessageSource
+						.getMessage(tdspDO.getTdspCodeCCS(), null, null));
+				tdspDOList.add(tdspDO);
+				tdspResponse.setTdspData(tdspDOList);
+          }
+	}
+	
 }
