@@ -336,7 +336,6 @@ public class ProfileResource {
 			@FormParam("companyCode") String companyCode){
 		
 		Response response = null;
-		companyCode="0391";
 		logger.info("Start-[ProfileResource-smartMeterCheck]");
 		logger.info("::::::::::::::::::::::::::::::11");
 		SmartMeterCheckResponse smeterCheckRep = profileBO.getSmartMeterCheck(

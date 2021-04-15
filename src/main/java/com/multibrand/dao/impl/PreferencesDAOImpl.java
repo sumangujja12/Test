@@ -86,7 +86,7 @@ PreferencesDAO, Constants  {
 			if (update == 0 || update == 1) {
 				updateSuccess = true;
 				if (logger.isDebugEnabled()) {
-					logger.debug("PreferencesDAO.savePrivacyPreference.update:rows affected"+update);
+					logger.debug("PreferencesDAO.savePrivacyPreference.update:rows affected:{}",update);
 				}
 			} else
 		     
@@ -94,11 +94,10 @@ PreferencesDAO, Constants  {
 				updateSuccess = false;
 			}
 			if (logger.isDebugEnabled()) {
-				logger.debug("PreferencesDAO.savePrivacyPreference.update:rows affected"+update);
+				logger.debug("PreferencesDAO.savePrivacyPreference.update:rows affected:{}",update);
 				logger.debug("Inserted Records Successfully");
 			}
 		} catch (DataAccessException ex) {
-			ex.printStackTrace();
 			logger.info(ex);
 			logger.error(ex);
 			throw ex;

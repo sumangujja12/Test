@@ -396,7 +396,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				    
 				        
 				    if((CommonUtil.trimZipCode(billingAddressResp.getStrZip()).equalsIgnoreCase(zip.trim()))&&StringUtils.isNotEmpty(billingAddressResp.getStrZip())){
-				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId);
+				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId,"");
 				    
 				  	    // Verification code comes here
 				    	boolean EMAIL_VERIFIED=true;
@@ -1216,18 +1216,12 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				response.setResultCode(RESULT_CODE_SUCCESS);
 			    response.setResultDescription(MSG_SUCCESS);
 			}
-		}catch(RemoteException re)
+		}catch(Exception re)
 		{
 			logger.info("Remote Exception occurred...in secondaryNameUpdate-ProfileBO");
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, re.getMessage(), response);
-		}
-		catch (Exception e) {
-			logger.info("Exception "+e);
-			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			throw new OAMException(200, e.getMessage(), response);
 		}
 		logger.info("ProfileBO - secondaryNameUpdate method end...");
 		

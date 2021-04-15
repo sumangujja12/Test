@@ -66,6 +66,7 @@ public interface Constants {
     public static final String EFL = "EFL";
 	public static final String TOS = "TOS";
 	public static final String YRAAC = "YRAAC";
+	public static final String EV_PRODUCT_TYPE_LAST_THREE = "004";
 	
 	// TPV Service Implementation : Start : KB
 	public static final String TPV_CCS_URL = "ccs.tpv.api.trans.upd.wsdl.url";
@@ -163,6 +164,7 @@ public interface Constants {
 	public static final String XI_INVOICE_LIST_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getInvoiceList&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	public static final String XI_PRODUCT_HISTORY_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getProductHistory&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	public static final String XI_INTERVAL_DATA_ENDPOINT_URL_QUERY_PARAM   = "&interface=os_getIntervalData&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
+	
 	
 	public static final String EBILL_DOCUMENTUM_WS_USER_NAME= "EBILL_DOCUMENTUM_WS_USER_NAME";
 	public static final String EBILL_DOCUMENTUM_WS_PSD ="EBILL_DOCUMENTUM_WS_PWD";
@@ -386,9 +388,12 @@ public interface Constants {
 	 public static final String VISA = "Visa";
 	 public static final String MASTERCARD = "MasterCard";
 	 public static final String DISCOVER = "Discover";
+	 public static final String AMERICANEXPRESS = "AmericanExpress";
 	 public static final String ZVIS = "ZVIS";
 	 public static final String ZMCD = "ZMCD";
 	 public static final String ZDSC = "ZDSC";
+	 public static final String ZAMX = "ZAMX";
+	 
 	 
 	 public static final String CARD_TYPE="cardType";
 	 public static final String CARD_NUMBER="cardNumber";
@@ -1641,6 +1646,7 @@ public interface Constants {
 	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
-	public static final String BUSINESS = "BUSINESS";
-
+	public static final String BUSINESS = "BUSINESS";	
+	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
+	public static final String VEHICLE_ID = "VEHICLE_ID";
 }
