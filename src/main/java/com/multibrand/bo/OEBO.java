@@ -1855,11 +1855,11 @@ public class OEBO extends OeBoHelper implements Constants{
 				try{
 					this.initNormalization(oeSignUpDTO);
 				}catch(NoSuchMessageException nsme){
-					logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", nsme);
+					logger.error(OEBO_EXCEPTION_LOG, nsme);
 					response.setErrorCode(AREA_NOT_SERVICED);
 					return response;
 				}catch(Exception e){
-					logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
+					logger.error(OEBO_EXCEPTION_LOG, e);
 					response.setErrorCode(AREA_NOT_SERVICED);
 					return response;
 				}
@@ -2572,13 +2572,13 @@ public class OEBO extends OeBoHelper implements Constants{
 							tdspCodeCCS = (this.appConstMessageSource.getMessage(esidDo.getEsidTDSP(), null, null));
 						}
 					}catch(NoSuchMessageException nsme){
-						logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", nsme);
+						logger.error(OEBO_EXCEPTION_LOG, nsme);
 						response.setMessageCode(AREA_NOT_SERVICED);
 						response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
 						response.setStatusCode(Constants.STATUS_CODE_STOP);
 						return response;
 					}catch(Exception e){
-						logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
+						logger.error(OEBO_EXCEPTION_LOG, e);
 						response.setMessageCode(AREA_NOT_SERVICED);
 						response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
 						response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -2608,13 +2608,13 @@ public class OEBO extends OeBoHelper implements Constants{
 							esidDo.setEsidTDSP(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."
 										+ tdspCodeCCSForEsid, null, null));
 						}catch(NoSuchMessageException nsme){
-							logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", nsme);
+							logger.error(OEBO_EXCEPTION_LOG, nsme);
 							response.setMessageCode(AREA_NOT_SERVICED);
 							response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
 							response.setStatusCode(Constants.STATUS_CODE_STOP);
 							return response;
 						}catch(Exception e){
-							logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
+							logger.error(OEBO_EXCEPTION_LOG, e);
 							response.setMessageCode(AREA_NOT_SERVICED);
 							response.setMessageText(msgSource.getMessage(AREA_NOT_SERVICED_TEXT,null,CommonUtil.localeCode(locale)));
 							response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -2718,7 +2718,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			logger.info("Tracking Number :"+trackingId +" ESID CalendarDates call Hold Type :"+holdType);
 			this.getTdspDates(companyCode, trackingId, transactionType,	tdspCodeCCS, bpMatchFlag, esidDo, response, localeObj,holdType, serviceLoationResponse.getProspectPartnerId());
 	    }catch (Exception e) {
-			logger.error("OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo", e);
+			logger.error(OEBO_EXCEPTION_LOG, e);
 			response.setResultCode(RESULT_CODE_SUCCESS);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			response.setStatusCode(STATUS_CODE_CONTINUE);

@@ -1645,5 +1645,6 @@ public interface Constants {
 	public static final String PROMOCHARITYOUTDATA="promoCharityOutData[";
 	public static final String CHARITYDETAILSVO="charityDetailsVO[";
 	public static final String START="Start:";
+	public static final String OEBO_EXCEPTION_LOG="OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo";
 
 }

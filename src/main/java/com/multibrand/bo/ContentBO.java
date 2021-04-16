@@ -144,8 +144,8 @@ public class ContentBO extends BaseBO implements Constants {
 			int numberOfMonths = 0;
 			for (MonthlyUsageResponse usage : monthlyUsageList) {
 				Double monthlyUsageKwh = Double.parseDouble(usage.getTotalUsageMonth());
-				logger.info(CONTRACT_ID+ "="+contractInfo.getContractId()+" monthlyUsageKwh"+String.valueOf(monthlyUsageKwh));
-				logger.info(CONTRACT_ID+"="+contractInfo.getContractId()+" yearlyUsageKwh"+String.valueOf(usage.getTotalUsageYear()));
+				logger.info("ContractId="+contractInfo.getContractId()+"monthlyUsageKwh"+String.valueOf(monthlyUsageKwh));
+				logger.info("ContractId="+contractInfo.getContractId()+"yearlyUsageKwh"+String.valueOf(usage.getTotalUsageYear()));
 				if (monthlyUsageKwh > 0.00) {
 					totMontlyUsageKwh += monthlyUsageKwh;
 					numberOfMonths++;
@@ -156,7 +156,7 @@ public class ContentBO extends BaseBO implements Constants {
 			} else {
 				avgUsage = totMontlyUsageKwh / numberOfMonths;
 			}
-			logger.info(CONTRACT_ID+"="+contractInfo.getContractId()+"totalMonthlyUsageKwh-"+String.valueOf(totMontlyUsageKwh));
+			logger.info("ContractId="+contractInfo.getContractId()+"totalMonthlyUsageKwh-"+String.valueOf(totMontlyUsageKwh));
 		}
 		
 		return avgUsage;
