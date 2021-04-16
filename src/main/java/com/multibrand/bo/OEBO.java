@@ -1919,8 +1919,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		} catch (Exception e) {
 			logger.error(e);
 			this.handleSubmitEnrollmentError(oeSignUpDTO, e);
-			handleServiceException(response, methodName, e);
+			handleServiceException(response, methodName,  e);
 			response.setHttpStatus(Response.Status.INTERNAL_SERVER_ERROR);
+			logger.debug("In catch exception block");
 		} 
 		/**
 		 * The Below given finally always runs in all scenarios and in case
@@ -2605,7 +2606,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					if ((tdspByESIDResponse != null) && (StringUtils.isNotBlank(tdspByESIDResponse.getServiceId()))) {
 						String tdspCodeCCSForEsid = tdspByESIDResponse.getServiceId();
 						try{
-							esidDo.setEsidTDSP(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."
+							esidDo.setEsidTDSP(this.appConstMessageSource.getMessage(APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX
 										+ tdspCodeCCSForEsid, null, null));
 						}catch(NoSuchMessageException nsme){
 							logger.error(OEBO_EXCEPTION_LOG, nsme);
@@ -2798,14 +2799,14 @@ public class OEBO extends OeBoHelper implements Constants{
 					TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(request.getEsid(),request.getCompanyCode(),sessionId);										
 					if ((tdspByESIDResponse != null) && (StringUtils.isNotBlank(tdspByESIDResponse.getServiceId()))) {
 						String tdspCodeCCSForEsid = tdspByESIDResponse.getServiceId();
-						esidDo.setEsidTDSP(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."
+						esidDo.setEsidTDSP(this.appConstMessageSource.getMessage(APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX
 										+ tdspCodeCCSForEsid, null, null));						
 						logger.info("TDSP Code:"+esidDo.getEsidTDSP());
 						
 						TDSPDO tdspDO = new TDSPDO();
 						tdspDO.setTdspCodeCCS(tdspCodeCCSForEsid);
 						tdspDO.setTdspCodeWeb(this.appConstMessageSource
-								.getMessage("ccs.tdsp.web.equivalent."
+								.getMessage(APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX
 										+ tdspCodeCCSForEsid, null, null));
 						tdspDO.setTdspName(this.appConstMessageSource
 								.getMessage(tdspCodeCCSForEsid, null, null));
@@ -6977,7 +6978,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						.trim();
 				tdspDO.setTdspCodeCCS(tdspCodeCCS);
 				tdspDO.setTdspCodeWeb(this.appConstMessageSource
-						.getMessage("ccs.tdsp.web.equivalent."
+						.getMessage(APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX
 								+ tdspCodeCCS, null, null));
 				tdspDO.setTdspName(this.appConstMessageSource
 						.getMessage(tdspCodeCCS, null, null));
