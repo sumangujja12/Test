@@ -2198,10 +2198,10 @@ public class OEBO extends OeBoHelper implements Constants{
 			constructRemoteExceptionResponse(response, localeObj);
 			throw new OAMException(200, e.getMessage(), response);
 		} finally {
-			logger.debug("Processing updateServiceLocation ...");
+			logger.debug(PROCESSING_UPDATESERVICELOCATION);
 			Assert.notNull(
 					creditScoreRequest.getTrackingNum(),
-					"trackingId must not be null.");
+					TRACKING_NOT_NULL);
 			if((StringUtils.isBlank(errorCodeFromAPI)) && ArrayUtils.contains(validErrorCd, errorCodeFromDB)){
 				errorCodeFromAPI = "";
 			}else if((StringUtils.isBlank(errorCodeFromAPI))){
@@ -3046,7 +3046,7 @@ public class OEBO extends OeBoHelper implements Constants{
 
 	public String addPerson(AddPersonRequest request) {
 		logger.debug("Entering >> addPerson");
-		logger.debug("request = " + request);
+		logger.debug(LOGGER_REQUEST + request);
 		Assert.notNull(request, "request");
 		String personId = personDao.addPerson(request);
 		logger.debug("Exiting << addPerson");
@@ -3055,7 +3055,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	public String updatePerson(UpdatePersonRequest request) {
 		logger.debug("Entering >> updatePerson");
-		logger.debug("request = " + request);
+		logger.debug(LOGGER_REQUEST + request);
 		String errorCode = personDao.updatePerson(request);
 		logger.debug("Exiting << updatePerson");
 		return errorCode;
@@ -3071,7 +3071,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	public String addServiceLocation(AddServiceLocationRequest request) {
 		logger.debug("Entering >> addServiceLocation");
-		logger.debug("request = " + request);
+		logger.debug(LOGGER_REQUEST + request);
 		Assert.notNull(request, "request");
 		String trackingNo = serviceLocationDAO.addServiceLocation(request);
 		logger.debug("Exiting << addServiceLocation");
@@ -3080,7 +3080,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	public String updateServiceLocation(UpdateServiceLocationRequest request) {
 		logger.debug("Entering >> updateServiceLocation");
-		logger.debug("request = " + request);
+		logger.debug(LOGGER_REQUEST + request);
 		String errorCode = serviceLocationDAO.updateServiceLocation(request);
 		logger.debug("Exiting << updateServiceLocation");
 		return errorCode;
@@ -3492,7 +3492,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	public Map<String,Object> getPosIdTokenResponse(String tdl,
 			String ssn,String affiliateId,String trackingId){
-		logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: inside if loop");
+		logger.debug(LOGGER_PERFORMPOSIDBPMATCH +affiliateId +":: inside if loop");
 		//Make Token call 
 		TokenRequestVO tokenRequest= new TokenRequestVO();
 		Map<String,Object> getPosIdTokenResponse=new HashMap<String,Object>();
@@ -3509,12 +3509,12 @@ public class OEBO extends OeBoHelper implements Constants{
 				tokenResponse.setErrorCode("MISSING_PII");
 				tokenResponse.setErrorDescription("Both DL and SSN are empty");
 				tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-				getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+				getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 
 				return getPosIdTokenResponse;
 			}
 			if(StringUtils.isNotBlank(ssn))
-			{   logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: setting ssn action ");
+			{   logger.debug(LOGGER_PERFORMPOSIDBPMATCH+affiliateId +":: setting ssn action ");
 			
 			
 			//If SSN or DL is not of expected size the append zeroes
@@ -3534,7 +3534,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					tokenResponse.setErrorDescription(tokenResponse.getResultDescription());
 					tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 					logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+":: affiliateId ::"+affiliateId+" SSN in invalid format");
-					getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+					getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 					return getPosIdTokenResponse;
 				}
 				logger.debug("inside peformPosidAndBpMatch:: isValidSSN value is :: "+isValidSSN);
@@ -3545,7 +3545,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			tokenSSN=tokenResponse.getReturnToken();
 			}
 			if( StringUtils.isNotBlank(tdl)){
-			logger.debug("inside performPosidAndBpMatch:: affiliate Id : "+affiliateId +":: setting DL action ");
+			logger.debug(LOGGER_PERFORMPOSIDBPMATCH+affiliateId +":: setting DL action ");
 			//IF SSN or DL is not of expected size the append zeroes
 			if(tdl.length()<10)
 			  tdl=CommonUtil.addLeadingZeroes(tdl, 10);
@@ -3563,7 +3563,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					tokenResponse.setErrorDescription(tokenResponse.getResultDescription());
 					tokenResponse.setHttpStatus(Response.Status.BAD_REQUEST);
 					logger.debug("Inside peformPosidAndBpMatch :: tracking is:: "+trackingId+":: affiliateId ::"+affiliateId+" TDL in invalid format");
-					getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+					getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 					return getPosIdTokenResponse;
 				}
 			tokenRequest.setActionCode(Constants.ACTION_CODE_DL_ACTION);
@@ -3571,9 +3571,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			tokenResponse=getTokenResponse(tokenRequest);
 			tokenTdl=tokenResponse.getReturnToken();
 			}
-		getPosIdTokenResponse.put("tokenTdl", tokenTdl);
-		getPosIdTokenResponse.put("tokenSSN", tokenSSN);
-		getPosIdTokenResponse.put("tokenResponse", tokenResponse);
+		getPosIdTokenResponse.put(TOKENTDL, tokenTdl);
+		getPosIdTokenResponse.put(TOKENSSN, tokenSSN);
+		getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
 	}
 	catch(Exception e)
 	{logger.error("Exception making token call :: ", e);
@@ -3582,9 +3582,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		logger.debug("inside performPosidAndBpMatch:: Tokenization call returned with failure result code ");
 		tokenResponse.setErrorDescription("Tokenization call returned failure code");
 		tokenResponse.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE);
-		getPosIdTokenResponse.put("tokenResponse", tokenResponse);
-		getPosIdTokenResponse.put("tokenTdl", tokenTdl);
-		getPosIdTokenResponse.put("tokenSSN", tokenSSN);
+		getPosIdTokenResponse.put(TOKENRESPONSE, tokenResponse);
+		getPosIdTokenResponse.put(TOKENTDL, tokenTdl);
+		getPosIdTokenResponse.put(TOKENSSN, tokenSSN);
 	
 	}
 	
@@ -3689,9 +3689,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void updateServiceLocation(String companyCode, String affiliateId, String trackingId, 
 			String depositAmount, BankDepositPaymentResponse response) {
-		logger.debug("Processing updateServiceLocation ...");
+		logger.debug(PROCESSING_UPDATESERVICELOCATION);
 		Assert.notNull(Integer.parseInt(trackingId),
-				"trackingId must not be null.");
+				TRACKING_NOT_NULL);
 		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 
 		requestData.setTrackingId(trackingId);
@@ -3716,7 +3716,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			/* Updating service location affiliate table */
 			String errorCode = this.updateServiceLocation(requestData);
 			if (StringUtils.isNotBlank(errorCode))
-				logger.debug("Finished processing updateServiceLocation, errorCode = "
+				logger.debug(FINISH_PROCESS_UPDATESERVLOCATION
 						+ errorCode);		
 	}
 	
@@ -3823,9 +3823,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	 */
 	private void updateServiceLocation(String companyCode, String affiliateId, String trackingId, 
 			String depositAmount, CCDepositPaymentResponse response) {
-		logger.debug("Processing updateServiceLocation ...");
+		logger.debug(PROCESSING_UPDATESERVICELOCATION);
 		Assert.notNull(Integer.parseInt(trackingId),
-				"trackingId must not be null.");
+				TRACKING_NOT_NULL);
 		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 
 		requestData.setTrackingId(trackingId);
@@ -3851,7 +3851,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		/* Updating service location affiliate table */
 		String errorCode = this.updateServiceLocation(requestData);
 		if (StringUtils.isNotBlank(errorCode))
-			logger.debug("Finished processing updateServiceLocation, errorCode = "
+			logger.debug(FINISH_PROCESS_UPDATESERVLOCATION
 					+ errorCode);		
 	}
 	
@@ -3911,9 +3911,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			AddressDO serviceAddressDO, ESIDDO esidDo,
 			EsidInfoTdspCalendarResponse response,String requestEsidNumber,String errorCdlist, 
 			String callExecutedStrForDB,String errorCodeFromAPI) {
-		logger.debug("Processing updateServiceLocation ...");
+		logger.debug(PROCESSING_UPDATESERVICELOCATION);
 		Assert.notNull(Integer.parseInt(trackingId),
-				"trackingId must not be null.");
+				TRACKING_NOT_NULL);
 		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
 
 		requestData.setTrackingId(trackingId);
@@ -3984,7 +3984,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			/* Updating service location affiliate table */
 			String errorCode = this.updateServiceLocation(requestData);
 			if (StringUtils.isNotBlank(errorCode))
-				logger.debug("Finished processing updateServiceLocation, errorCode = "
+				logger.debug(FINISH_PROCESS_UPDATESERVLOCATION
 						+ errorCode);
 		}
 	}
@@ -4645,7 +4645,7 @@ public TLPOfferResponse getOfferForTLP(TLPOfferRequest request, String sessionId
 		{  //If Promo code is passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("promoCode may not be Empty");
+			response.setResultDescription(PROMOCODE_NOT_EMPTY);
 			return response;	
 		}
 		
@@ -4654,7 +4654,7 @@ public TLPOfferResponse getOfferForTLP(TLPOfferRequest request, String sessionId
 		{  //If Tdsp Code & Esid are passed empty
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-			response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");			
+			response.setResultDescription(COMPANYCODE+request.getCompanyCode()+" is currently not supported ");			
 			return response;			
 		}
 		
@@ -4821,7 +4821,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 					requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
 					String errorCode = this.updateServiceLocation(requestData);
 					if (StringUtils.isNotBlank(errorCode)){
-						logger.debug("Finished processing updateServiceLocation, errorCode = "
+						logger.debug(FINISH_PROCESS_UPDATESERVLOCATION
 								+ errorCode);
 																				
 						uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -4853,7 +4853,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		
 					errorCode = this.updatePerson(requestDataPerson);
 					if (StringUtils.isNotBlank(errorCode)) {
-						logger.debug("Finished processing updateServiceLocation, errorCode = "
+						logger.debug(FINISH_PROCESS_UPDATESERVLOCATION
 								+ errorCode);
 						
 						uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -5404,7 +5404,7 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 		{  
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setErrorCode(HTTP_BAD_REQUEST);
-			response.setErrorDescription("Company code "+getOEKBAQuestionsRequest.getCompanyCode()+" is currently not supported");
+			response.setErrorDescription(COMPANYCODE+getOEKBAQuestionsRequest.getCompanyCode()+" is currently not supported");
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;			
 		}	
@@ -5546,9 +5546,9 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 				logger.info("inside tokenValue  :: "+tokenValue);
 				tokenResponse.setReturnToken(tokenValue);
 				tokenResponse.setResultCode(RESULT_CODE_SUCCESS);
-				getPosIdTokenResponse.put("tokenSSN", request.getTokenizedSSN());				
-				getPosIdTokenResponse.put("tokenTdl", request.getTokenizedTDL());												
-				getPosIdTokenResponse.put("tokenResponse",tokenResponse);
+				getPosIdTokenResponse.put(TOKENSSN, request.getTokenizedSSN());				
+				getPosIdTokenResponse.put(TOKENTDL, request.getTokenizedTDL());												
+				getPosIdTokenResponse.put(TOKENRESPONSE,tokenResponse);
 							
 				
 			}else {			
@@ -5561,15 +5561,15 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 			
 			if (getPosIdTokenResponse != null) {
 				tokenResponse = (TokenizedResponse) getPosIdTokenResponse
-						.get("tokenResponse");
+						.get(TOKENRESPONSE);
 				request.setTokenizedTDL((String) getPosIdTokenResponse
-						.get("tokenTdl"));
+						.get(TOKENTDL));
 				request.setTokenizedSSN((String) getPosIdTokenResponse
-						.get("tokenSSN"));
+						.get(TOKENSSN));
 	
 				if (tokenResponse.getResultCode().equals(Constants.RESULT_CODE_SUCCESS)
 				&& StringUtils.isNotBlank(tokenResponse.getReturnToken())) {
-					logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+					logger.info(LOGGER_PERFORMPOSIDBPMATCH
 							+ request.getAffiliateId()
 							+ ":: got token back."+tokenResponse.getReturnToken());
 					if (!CommonUtil.checkTokenDown(tokenResponse.getReturnToken())) {
@@ -5597,7 +5597,7 @@ private GetKBAQuestionsResponse createKBAQuestionResposne(KbaQuestionResponse kb
 						}
 						response.getMetadata().add(CONST_TRACKING_ID, validPosIdResponse.getTrackingId());
 						response.getMetadata().add(CONST_GUID, validPosIdResponse.getGuid());
-						logger.info("inside performPosidAndBpMatch:: affiliate Id : "
+						logger.info(LOGGER_PERFORMPOSIDBPMATCH
 								+ request.getAffiliateId()
 								+ "::rendering response pojo :: " + response);
 												
@@ -5784,7 +5784,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
  			response = new AffiliateOfferResponse();
  			response.setStatusCode(Constants.STATUS_CODE_STOP);
  			response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
- 			response.setResultDescription("promoCode may not be Empty");
+ 			response.setResultDescription(PROMOCODE_NOT_EMPTY);
  			response.setErrorCode(HTTP_BAD_REQUEST);
  			response.setErrorDescription(response.getResultDescription());
  			response.setHttpStatus(Response.Status.BAD_REQUEST);
@@ -5811,7 +5811,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
  			if(StringUtils.isBlank(request.getCompanyCode())){
  				response.setResultDescription("Company code is required");		
  			}else{
- 				response.setResultDescription("Company code "+request.getCompanyCode()+" is currently not supported");	
+ 				response.setResultDescription(COMPANYCODE+request.getCompanyCode()+" is currently not supported");	
  			}
  			response.setErrorCode(HTTP_BAD_REQUEST);
  			response.setErrorDescription(response.getResultDescription());
@@ -6474,7 +6474,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
     private void constructPromoCodeEmptyResponse(EnrollmentResponse response){
     	response.setStatusCode(Constants.STATUS_CODE_STOP);
 		response.setResultCode(Constants.RESULT_CODE_EXCEPTION_FAILURE );
-		response.setResultDescription("promoCode may not be Empty");
+		response.setResultDescription(PROMOCODE_NOT_EMPTY);
 		response.setHttpStatus(Response.Status.BAD_REQUEST);
     }
     
