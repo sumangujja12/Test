@@ -1646,5 +1646,15 @@ public interface Constants {
 	public static final String CHARITYDETAILSVO="charityDetailsVO[";
 	public static final String START="Start:";
 	public static final String OEBO_EXCEPTION_LOG="OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo";
+	public static final String PROCESSING_UPDATESERVICELOCATION="Processing updateServiceLocation ...";
+	public static final String TRACKING_NOT_NULL="trackingId must not be null.";
+	public static final String LOGGER_REQUEST="request = ";
+	public static final String LOGGER_PERFORMPOSIDBPMATCH="inside performPosidAndBpMatch:: affiliate Id : ";
+	public static final String TOKENRESPONSE="tokenResponse";
+	public static final String TOKENTDL="tokenTdl";
+	public static final String TOKENSSN="tokenSSN";
+	public static final String FINISH_PROCESS_UPDATESERVLOCATION="Finished processing updateServiceLocation, errorCode = ";
+	public static final String PROMOCODE_NOT_EMPTY="promoCode may not be Empty";
+	public static final String COMPANYCODE="Company code ";
 
 }
