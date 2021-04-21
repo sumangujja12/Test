@@ -1644,9 +1644,10 @@ public interface Constants {
 	public static final String BUSINESS = "BUSINESS";
 
 	//Strax Integration
-	public static final String SECURITY_SERVICE_ENDPOINT_URL = "ws.endpointURL.securityaccountsdomain";
-	public static final String INVOICE_CREATION_XCODE_01 = "DMR Creation Failure";
-	public static final String INVOICE_CREATION_XCODE_02 = "Input CA or Leads are Mandatory";
-	public static final String INVOICE_CREATION_XCODE_03 = "Strax Lead ID not found";
-	public static final String INVOICE_CREATION_XCODE_04 = "CA not found";
+	public static final String SECURITY_SERVICE_ENDPOINT_URL = "ws.endpointURL.securityAccountsDomain";
+	public static final String INVOICE_CREATION_XCODE_01 = "CA does not exist";
+	public static final String INVOICE_CREATION_XCODE_02 = "CA has no active STRAX contract";
+	public static final String INVOICE_CREATION_XCODE_03 = "Item Category Doesn't exist";
+	public static final String INVOICE_CREATION_XCODE_04 = "Invoice Creation Failure";
+	
 }
