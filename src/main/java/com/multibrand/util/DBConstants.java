@@ -417,6 +417,7 @@ public interface DBConstants {
 	public static final String DB_RELIANT_APP_USER_FLG="RELIANT_APP_USER_FLG";
 	public static final String DB_SECURITY_ACTIVE="SECURITY_ACTIVE";
 	public static final String DB_POLR_CUST="POLR_CUST";
+	public static final String DB_PEBRC_IDENTIFIED_FLAG="PEBRC_IDENTIFIED_FLAG";
 	public static final String DB_TCS_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase";
 	
 

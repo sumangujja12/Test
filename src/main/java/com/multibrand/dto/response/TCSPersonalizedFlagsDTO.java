@@ -20,7 +20,14 @@ public class TCSPersonalizedFlagsDTO implements Serializable{
 	private String reliantAppUserFlag;
 	private String securityActive;
 	private String polrCustomer;
+	private String pebrcIdentifiedFlag;
 	
+	public String getPebrcIdentifiedFlag() {
+		return pebrcIdentifiedFlag;
+	}
+	public void setPebrcIdentifiedFlag(String pebrcIdentifiedFlag) {
+		this.pebrcIdentifiedFlag = pebrcIdentifiedFlag;
+	}
 	public String getPolrCustomer() {
 		return polrCustomer;
 	}
