@@ -1649,6 +1649,7 @@ public interface Constants {
 	public static final String DOCID_URL_SUB_STR = "/files/";
 
 	
+
 	public static final String PLAN_TYPE_INDEXED = "Indexed";
 	public static final String TOU = "TOU";
 	public static final String IND = "IND";
@@ -1666,10 +1667,13 @@ public interface Constants {
 	
 	public static final String SUCCESSFULLY_UPDATED = "Updated Successfully";
 
+	public static final String BUSINESS = "BUSINESS";	
+
 	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
 	public static final String VEHICLE_ID = "VEHICLE_ID";
 
-	public static final String BUSINESS = "BUSINESS";
+
+	
 	
 
 	public static final String FLAG_OTHER = "Other";
@@ -1704,6 +1708,7 @@ public interface Constants {
 	public static final String FINISH_PROCESS_UPDATESERVLOCATION="Finished processing updateServiceLocation, errorCode = ";
 	public static final String PROMOCODE_NOT_EMPTY="promoCode may not be Empty";
 	public static final String COMPANYCODE="Company code ";
+
 	
 
 }
