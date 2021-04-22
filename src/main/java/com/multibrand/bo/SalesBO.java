@@ -212,8 +212,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 
 		SalesTokenResponse tokenizedResponse = new SalesTokenResponse();
 		String returnToken = null;
-		String tdl=null;
-		String ssn=null;
+		
 		if (StringUtils.isBlank(request.getActionCode())
 				|| (!request.getActionCode().equalsIgnoreCase(Token.getCreditCardAction())
 						&& !request.getActionCode().equalsIgnoreCase(Token.getBankAccountAction())
@@ -235,11 +234,13 @@ public class SalesBO extends OeBoHelper implements Constants {
 			returnToken = Token.getBankAccountToken(request.getNumToBeTokenized());
 			tokenizedResponse.setReturnToken(returnToken);
 		} else if (request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceAction())) {
+			String tdl=request.getNumToBeTokenized();
 			if(request.getNumToBeTokenized().length()<10)
 			  tdl=CommonUtil.addLeadingZeroes(request.getNumToBeTokenized(), 10);
 			returnToken = Token.getDRLToken(tdl);
 			tokenizedResponse.setReturnToken(returnToken);
 		} else if (request.getActionCode().equalsIgnoreCase(Token.getSsnAction())) {
+			String ssn=request.getNumToBeTokenized();
 			if(request.getNumToBeTokenized().length()<9)
 				ssn=CommonUtil.addLeadingZeroes(request.getNumToBeTokenized(), 9);
 			returnToken = Token.getSSNToken(ssn);
