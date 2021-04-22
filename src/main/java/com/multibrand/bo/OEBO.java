@@ -1346,7 +1346,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					}
 				}
 			}
-			this.constructOffersCallFromReactiveMethod(promoOfferResponse,resultMap,oeSignupVO);
+			resultMap = this.constructOffersCallFromReactiveMethod(promoOfferResponse,resultMap,oeSignupVO);
 			
 		} catch (Exception e) {
 			logger.error("Exception in OEBO.getReactiveOffers():"
