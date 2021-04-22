@@ -281,4 +281,5 @@ ws.rest.iot.ercot.check.by.address.url=http://txaixsexbls05/iotproxy/ercot/getBy
 0400.web.url=https://stg-www.everythingenergytx.com
 
 #Strax Integration
-ws.endpointURL.securityAccountsDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SecurityAccountsDomain
+#ws.endpointURL.securityAccountsDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SecurityAccountsDomain
+ws.endpointURL.securityAccountsDomain=http://txaixebxindxs01:13180/NRGWS01/SecurityAccountsDomain
