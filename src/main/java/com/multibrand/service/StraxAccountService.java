@@ -62,7 +62,9 @@ public class StraxAccountService  extends BaseAbstractService {
 		
 		try {
 			SecurityAccountsDomain proxy = getSecurityAccountsDomainProxy();
+			logger.info("sending request to proxy {}",straxInvoiceAccountRequest);
 			straxInvoiceAccountResponse = proxy.invoiceSecurityAccount(straxInvoiceAccountRequest);
+			logger.info("response from proxy {}",straxInvoiceAccountResponse);
 		
 		}
 

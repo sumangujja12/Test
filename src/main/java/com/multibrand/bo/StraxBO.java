@@ -98,13 +98,14 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			}
 			straxInvoiceAccountRequest.setInvoiceItems(invoiceItmCategory);
 			straxInvoiceAccountResponse = straxAccountService.invoiceStraxContract(straxInvoiceAccountRequest, "0121", sessionId);
-			if(StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorCode()) || StringUtils.isNotBlank(straxInvoiceAccountResponse.getErrorMessage()) || !StringUtils.equals(straxInvoiceAccountResponse.getXCode(),"00")){
+			if(!StringUtils.equals(straxInvoiceAccountResponse.getXCode(),"00")){
 				
 				Map<String, String> xCodeValues = new HashMap<>();
 				xCodeValues.put("01", INVOICE_CREATION_XCODE_01);
 				xCodeValues.put("02", INVOICE_CREATION_XCODE_02);
 				xCodeValues.put("03", INVOICE_CREATION_XCODE_03);
 				xCodeValues.put("04", INVOICE_CREATION_XCODE_04);
+				
 				response.setErrorCode(straxInvoiceAccountResponse.getXCode());
 				response.setErrorDescription(xCodeValues.get(straxInvoiceAccountResponse.getXCode()));
 				response.setResultCode("");
