@@ -278,4 +278,5 @@ adobe.messageId.message = Your contract will expire on [date].Log on to find cle
 lucene.indexed.dir=/apps02/data/stream/address/lucene/
 
 #Strax Integration
-ws.endpointURL.securityAccountsDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SecurityAccountsDomain
+#ws.endpointURL.securityAccountsDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SecurityAccountsDomain
+ws.endpointURL.securityAccountsDomain=http://txaixebxindxs01:13180/NRGWS01/SecurityAccountsDomain
