@@ -1330,6 +1330,7 @@ public class ValidationBO extends BaseBO {
 		
 	}else{
 		response.setGuid(serviceLoationResponse.getGuid());
+		personId = serviceLoationResponse.getPersonId();
 	}
 
 	response.setTrackingId(performPosIdBpRequest.getTrackingId());
