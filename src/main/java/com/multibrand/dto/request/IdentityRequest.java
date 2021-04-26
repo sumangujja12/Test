@@ -25,7 +25,7 @@ public class IdentityRequest extends SalesBaseRequest {
 	@Length(max = 40, groups = SizeConstraint.class)
 	String firstName;
 	
-	@Length(max = 1,groups = SizeConstraint.class)
+	@Length(max = 40 ,groups = SizeConstraint.class)
 	String middleName;
 
 	@NotEmpty
