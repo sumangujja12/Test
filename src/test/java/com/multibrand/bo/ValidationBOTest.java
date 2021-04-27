@@ -55,12 +55,12 @@ public class ValidationBOTest {
 	@BeforeClass
 	public void init() {
 		MockitoAnnotations.initMocks(this);
-		when(logger.isDebugEnabled()).thenReturn(true);
+		//when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
 	@BeforeMethod
 	public void initMethod() {
-		when(logger.isDebugEnabled()).thenReturn(true);
+		//when(logger.isDebugEnabled()).thenReturn(true);
 	}
 	
 /*	@Test
