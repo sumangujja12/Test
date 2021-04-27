@@ -99,7 +99,7 @@ public class AutoPayResource {
 			@FormParam("emailTypeId")String emailTypeId ,
 			@FormParam("brandName") String brandName, 
 			@FormParam("bpNumber") String bpNumber, 
-			@FormParam("source") String source) {
+			@FormParam("source") String source,@Context HttpServletRequest request) {
 		
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
 		
