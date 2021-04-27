@@ -136,7 +136,7 @@ public class GMDResource extends BaseResource {
 			esidCalendarRequest.setLanguageCode(Constants.LOCALE_LANGUAGE_CODE_E);
 		esidInfoTdspResponse = gmdBO.getESIDAndCalendarDates(esidCalendarRequest.getCompanyCode(),
 				esidCalendarRequest.getBrandName(), esidCalendarRequest.getTdspCode(),
-				esidCalendarRequest.getTransactionType(), esidCalendarRequest.getLanguageCode(),
+				esidCalendarRequest.getTransactionType(),
 				esidCalendarRequest.getEsiId());
 
 		response = Response.status(Response.Status.OK).entity(esidInfoTdspResponse).build();
