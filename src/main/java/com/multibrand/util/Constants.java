@@ -1649,4 +1649,14 @@ public interface Constants {
 	public static final String BUSINESS = "BUSINESS";	
 	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
 	public static final String VEHICLE_ID = "VEHICLE_ID";
+	
+    public static final String ERROR_01="01";
+    public static final String ERROR_02="02";
+    public static final String ERROR_03="03";
+    
+	public static final String GIACT_ERROR_01="GIACT_ERROR_01";
+	public static final String GIACT_ERROR_02="GIACT_ERROR_02";
+	public static final String GIACT_ERROR_03="GIACT_ERROR_03";
+	public static final String BANK_AUTOPAY_INVALID_BANK_ACCOUNT = "MSG_CCSERR_2_INVALID_BNK";
+	
 }

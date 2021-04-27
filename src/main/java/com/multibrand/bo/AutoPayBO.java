@@ -2,14 +2,11 @@ package com.multibrand.bo;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.domain.AutoPayBankRequest;
 import com.multibrand.domain.BankDetailsValidationRequest;
 import com.multibrand.domain.BankDetailsValidationResponse;
@@ -17,7 +14,6 @@ import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.ValidateCCRequest;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.EmailHelper;
-import com.multibrand.request.autopay.BankAutoPayRequest;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.PaymentService;
 import com.multibrand.service.TOSService;
@@ -120,40 +116,30 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 			
 			BankDetailsValidationResponse validateBankResp = paymentService.validateBankDetailsGIACT(bankDetailsValidationRequest);
 			
+			 logger.info("Sending mail for auto pay enrollment successful:{}", validateBankResp);		
 			
-			
+			 if(validateBankResp!=null && validateBankResp.getExReturnCode()!=null 
+						&&  STATUS_CODE_CONTINUE.equalsIgnoreCase(validateBankResp.getExReturnCode())) {
 			com.multibrand.domain.AutoPayBankResponse response = paymentService.submitBankAutoPay(request, autoPayRequest.getCompanyCode(), sessionId,autoPayRequest.getBrandName());
 			
 			if(response.getStrStatus()!= null)autoPayBankResponse.setStrStatus(response.getStrStatus());
 			
-			if(response.getErrorCode()!=null && !response.getErrorCode().equalsIgnoreCase("")){
-				autoPayBankResponse.setResultCode(RESULT_CODE_CCS_ERROR);
-				if(response.getErrorMessage()!=null)autoPayBankResponse.setResultDescription(response.getErrorMessage());
-				autoPayBankResponse.setErrorCode(response.getErrorCode());
-				if(response.getErrorMessage()!=null)autoPayBankResponse.setErrorMessage(response.getErrorMessage());
-			} else if(!CIRRO_COMPANY_CODE.equalsIgnoreCase(autoPayRequest.getCompanyCode()) && !CIRRO_BRAND_NAME.equalsIgnoreCase(autoPayRequest.getBrandName())
-					&& !CommonUtil.checkIfGMEPrepay(autoPayRequest.getCompanyCode(), autoPayRequest.getBrandName(), autoPayRequest.getEmailTypeId())) {
-				
-                logger.info("Sending mail for auto pay enrollment successful");		
-                
-				HashMap<String, String> templateProps = new HashMap<>();
-					
-				templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
-				templateProps.put(BANK_ROUTING_NUMBER, autoPayRequest.getBankRoutingNumber());
-				
-				if(StringUtils.isBlank(autoPayRequest.getLanguageCode())|| autoPayRequest.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)){
-					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
-					logger.info("Sending mail for successful auto pay enrollment EN");
-					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_EN, templateProps, autoPayRequest.getCompanyCode());
-				} else{
-					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
-					logger.info("Sending mail for successful auto pay enrollment ES");
-					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_ES, templateProps, autoPayRequest.getCompanyCode());
-				}
-				
-			}
+			handleBankAutoPayResponse(autoPayRequest, autoPayBankResponse, maskBankAcctNumber, response);
 			
 			sendCirroBankAutoPayConfirmationEmail(autoPayRequest);
+		 } else if(validateBankResp!=null && validateBankResp.getExReturnCode().equalsIgnoreCase(ERROR_01)){
+				autoPayBankResponse.setResultCode(GIACT_ERROR_01);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}else if(validateBankResp!=null &&validateBankResp.getErrorCode().equalsIgnoreCase(ERROR_02)){
+				autoPayBankResponse.setResultCode(GIACT_ERROR_02);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}else if(validateBankResp!=null && validateBankResp.getErrorCode().equalsIgnoreCase(ERROR_03)){
+				autoPayBankResponse.setResultCode(GIACT_ERROR_03);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}else{
+				autoPayBankResponse.setResultCode(BANK_AUTOPAY_INVALID_BANK_ACCOUNT);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}
 			
 		} catch (Exception e) {
 
@@ -168,6 +154,44 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		logger.info("AutoPayBO.submitBankAutoPay :: END");
 		return autoPayBankResponse;
 		
+	}
+
+
+	/**
+	 * @param autoPayRequest
+	 * @param autoPayBankResponse
+	 * @param maskBankAcctNumber
+	 * @param response
+	 * @throws Exception
+	 */
+	public void handleBankAutoPayResponse(AutoPayRequest autoPayRequest, AutoPayBankResponse autoPayBankResponse,
+			String maskBankAcctNumber, com.multibrand.domain.AutoPayBankResponse response) throws Exception {
+		if(response.getErrorCode()!=null && !response.getErrorCode().equalsIgnoreCase("")){
+			autoPayBankResponse.setResultCode(RESULT_CODE_CCS_ERROR);
+			if(response.getErrorMessage()!=null)autoPayBankResponse.setResultDescription(response.getErrorMessage());
+			autoPayBankResponse.setErrorCode(response.getErrorCode());
+			if(response.getErrorMessage()!=null)autoPayBankResponse.setErrorMessage(response.getErrorMessage());
+		} else if(!CIRRO_COMPANY_CODE.equalsIgnoreCase(autoPayRequest.getCompanyCode()) && !CIRRO_BRAND_NAME.equalsIgnoreCase(autoPayRequest.getBrandName())
+				&& !CommonUtil.checkIfGMEPrepay(autoPayRequest.getCompanyCode(), autoPayRequest.getBrandName(), autoPayRequest.getEmailTypeId())) {
+			
+		    logger.info("Sending mail for auto pay enrollment successful");		
+		    
+			HashMap<String, String> templateProps = new HashMap<>();
+				
+			templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
+			templateProps.put(BANK_ROUTING_NUMBER, autoPayRequest.getBankRoutingNumber());
+			
+			if(StringUtils.isBlank(autoPayRequest.getLanguageCode())|| autoPayRequest.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)){
+				templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
+				logger.info("Sending mail for successful auto pay enrollment EN");
+				EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_EN, templateProps, autoPayRequest.getCompanyCode());
+			} else{
+				templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
+				logger.info("Sending mail for successful auto pay enrollment ES");
+				EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_ES, templateProps, autoPayRequest.getCompanyCode());
+			}
+			
+		}
 	}
 
 
