@@ -2,6 +2,11 @@ package com.multibrand.bo;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -90,7 +95,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	}
 	
 	
-	public AutoPayBankResponse submitBankAutoPay(AutoPayRequest autoPayRequest, String sessionId) {
+	public AutoPayBankResponse submitBankAutoPay(AutoPayRequest autoPayRequest, String sessionId, HttpHeaders httpHeaders) {
 		
 		logger.info("AutoPayBO.submitBankAutoPay :: START");
 		AutoPayBankResponse autoPayBankResponse = new AutoPayBankResponse();
@@ -104,6 +109,10 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		String bankLastDigits = maskBankAcctNumber.substring(maskBankAcctNumber.length()-3, maskBankAcctNumber.length());
 		
 		try {
+			
+			printHeaders(httpHeaders);
+			
+			
 			com.multibrand.domain.AutoPayBankResponse response = paymentService.submitBankAutoPay(request, autoPayRequest.getCompanyCode(), sessionId,autoPayRequest.getBrandName());
 			
 			if(response.getStrStatus()!= null)autoPayBankResponse.setStrStatus(response.getStrStatus());
@@ -150,6 +159,21 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		logger.info("AutoPayBO.submitBankAutoPay :: END");
 		return autoPayBankResponse;
 		
+	}
+
+
+	/**
+	 * @param httpHeaders
+	 */
+	public void printHeaders(HttpHeaders httpHeaders) {
+		MultivaluedMap<String, String> requestHeadersMap = httpHeaders.getRequestHeaders();
+		
+		logger.info("submitBankAutoPay(...) >>>>>>>>>>>>>>> Headers <<<<<<<<<<<<<<");
+		if(null != requestHeadersMap && requestHeadersMap.size() > 0) {
+			for(String headerName : requestHeadersMap.keySet()) {
+				logger.info("submitBankAutoPay(...) >> Header Name [{}] Header Value[{}]", headerName, requestHeadersMap.getFirst(headerName));
+			}
+		}
 	}
 
 
