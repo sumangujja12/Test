@@ -102,6 +102,8 @@ public class ValidationBOTest {
 		PerformPosIdandBpMatchResponse result = validBO.validatePosId(performPosIdBpRequest, null,null);
 		Assert.assertEquals(result.getStatusCode(), Constants.STATUS_CODE_STOP);
 	} */
+	
+	/*	
 	@Test
 	public void testValidatePosIdForInvalidTrackingID() throws Exception{
 		
@@ -123,5 +125,5 @@ public class ValidationBOTest {
 		performPosIdBpRequest.setBrandId("RE");
 		return performPosIdBpRequest;
 	}
-
+*/
 }

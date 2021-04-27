@@ -3,18 +3,21 @@ package com.multibrand.bo;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import com.multibrand.domain.AutoPayBankRequest;
+import com.multibrand.domain.BankDetailsValidationRequest;
+import com.multibrand.domain.BankDetailsValidationResponse;
 import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.ValidateCCRequest;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.EmailHelper;
+import com.multibrand.request.autopay.BankAutoPayRequest;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.PaymentService;
 import com.multibrand.service.TOSService;
@@ -29,6 +32,7 @@ import com.multibrand.vo.response.ValidateBankResponse;
 import com.multibrand.vo.response.ValidateCCResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
 import com.multibrand.vo.response.billingResponse.AutoPayInfoResponse;
+
 
 /**
  * 
@@ -111,6 +115,11 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		try {
 			
 			printHeaders(httpHeaders);
+			
+			BankDetailsValidationRequest bankDetailsValidationRequest = createValidateBankDetailsGIACTRequest(autoPayRequest);
+			
+			BankDetailsValidationResponse validateBankResp = paymentService.validateBankDetailsGIACT(bankDetailsValidationRequest);
+			
 			
 			
 			com.multibrand.domain.AutoPayBankResponse response = paymentService.submitBankAutoPay(request, autoPayRequest.getCompanyCode(), sessionId,autoPayRequest.getBrandName());
@@ -591,4 +600,23 @@ private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse re
 			}
 		}
 	}
+	
+	/**
+	 * Method createValidateBankDetailsGIACTRequest used to create a complete request Object for BankValidation Call Using GIACT API 
+	 * @param contractAccountNum String
+	 * @param trackingNumber String
+	 * @param bankDTO BankAccountDTO
+	 * @return BankDetailsValidationRequest
+	 */
+	private BankDetailsValidationRequest createValidateBankDetailsGIACTRequest(AutoPayRequest autoPayRequest)
+	{
+		BankDetailsValidationRequest bankDetailsValidationRequest = new BankDetailsValidationRequest();
+		bankDetailsValidationRequest.setBankAccountNumber(autoPayRequest.getBankAccountNumber());
+		bankDetailsValidationRequest.setCompanyCode(GME_RES_COMPANY_CODE);
+		bankDetailsValidationRequest.setContractAccountNumber(autoPayRequest.getAccountNumber());
+		bankDetailsValidationRequest.setRoutingNumber(autoPayRequest.getBankRoutingNumber());
+		bankDetailsValidationRequest.setTrackingNumber("");
+		return bankDetailsValidationRequest;
+		
+	}	
 }
