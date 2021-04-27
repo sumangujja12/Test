@@ -7,6 +7,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.Logger;
@@ -99,7 +100,7 @@ public class AutoPayResource {
 			@FormParam("emailTypeId")String emailTypeId ,
 			@FormParam("brandName") String brandName, 
 			@FormParam("bpNumber") String bpNumber, 
-			@FormParam("source") String source,@Context HttpServletRequest request) {
+			@FormParam("source") String source,@Context HttpHeaders hh) {
 		
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
 		
@@ -121,7 +122,7 @@ public class AutoPayResource {
 		autoPayRequest.setBpid(bpNumber);
 		autoPayRequest.setSource(source);
 			
-		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId());
+		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId(), hh);
 		
 		
 				response = Response.status(200).entity(autoPayBankRep).build();
