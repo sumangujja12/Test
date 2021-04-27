@@ -7,11 +7,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.multibrand.domain.AutoPayBankRequest;
 import com.multibrand.domain.AutoPayBankResponse;
 import com.multibrand.domain.AutoPayCCRequest;
 import com.multibrand.domain.AutoPayCCResponse;
+import com.multibrand.domain.BankDetailsValidationRequest;
+import com.multibrand.domain.BankDetailsValidationResponse;
 import com.multibrand.domain.BankPaymentInstitutionResponse;
 import com.multibrand.domain.CancelOtccPaymentResp;
 import com.multibrand.domain.CancelPaymentRequest;
@@ -561,6 +562,24 @@ public class PaymentService extends BaseAbstractService {
 		}
 		logger.info("PaymentService.dppSubmit :: END");
 		return response;
-	}	
+	}
+	
+	public BankDetailsValidationResponse validateBankDetailsGIACT(BankDetailsValidationRequest request) throws RemoteException{
+		logger.info("PaymentService.validateBankDetailsGIACT :: START");
+			
+		long startTime = CommonUtil.getStartTime();
+		BankDetailsValidationResponse response = null;
+		try{
+			PaymentDomain proxy = getPaymentDomainProxy();
+			response = proxy.validateBankDetailsGIACT(request);
+			request.setBankAccountNumber(CommonUtil.maskBankAccountNo(request.getBankAccountNumber()));
+			logger.info("Time taken by validateBankDetailsGIACT  Call is : {}", CommonUtil.getElapsedTime(startTime));
+		}catch(Exception ex){
+			logger.error("NRGWS Error in validateBankDetailsGIACT Message {}", ex.getMessage());
+			throw ex;
+		}
+		logger.info("PaymentService.validateBankDetailsGIACT :: END");
+		return response;
+	}
 		
 }
