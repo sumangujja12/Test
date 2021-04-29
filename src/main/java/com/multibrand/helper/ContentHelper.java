@@ -369,17 +369,22 @@ public class ContentHelper implements Constants {
 	private void getContractCurrentPlan(AllAlertsResponse allRequestResponse,
 			GetContractInfoResponse contractInfoResponse,ContractOfferPlanContentResponse response) {
 		ContractOffer contractOffer = null;
+		AddressDO address = null;
 		com.multibrand.domain.OfferDO offerDO = getCurrentPlanOfferDO(allRequestResponse);
 		if (offerDO != null) {
 
 			contractOffer = new ContractOffer();
 			loadContractOfferCurrenPlanResponse(contractOffer,offerDO);
 			ContractDO returnContractDO =  getContractDO(allRequestResponse);
+			if(returnContractDO != null){
 			contractOffer.setNewContractBegins(returnContractDO.getStrContractStartDate());
 			contractOffer.setNewContractEnds(returnContractDO.getStrContractEndDate());
 			contractOffer.setAvgPrice(returnContractDO.getStrAvgPrice());
+			}
 			ContractDO contractDo = getContractDO(allRequestResponse);
-			AddressDO address = contractDo.getServiceAddressDO();
+			if(contractDo != null){
+				address = contractDo.getServiceAddressDO();
+			}
 			ServiceAddressDO serviceAddressDO = new ServiceAddressDO();
 			response.setServiceAddress(serviceAddressDO);
 			BeanUtils.copyProperties(address, serviceAddressDO);
