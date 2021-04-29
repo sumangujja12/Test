@@ -6,8 +6,11 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import javax.ws.rs.core.Response;
 import javax.xml.rpc.ServiceException;
+
 /*
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,45 +21,47 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.Assert;
+
+import com.multibrand.bo.helper.OeBoHelper;
+import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.dao.KbaDAO;
+import com.multibrand.dao.PersonDao;
+import com.multibrand.dao.ServiceLocationDao;
+import com.multibrand.domain.KbaAnswerDTO;
 //import org.testng.annotations.BeforeClass;
 //import org.testng.annotations.BeforeMethod;
 //import org.testng.annotations.Test;
 import com.multibrand.domain.KbaQuestionDTO;
-import com.multibrand.bo.helper.OeBoHelper;
-import com.multibrand.dao.AddressDAOIF;
-import com.multibrand.dao.KbaDAO;
-import com.multibrand.dao.ServiceLocationDao;
-import com.multibrand.dao.impl.AddressDAOImpl;
-import com.multibrand.domain.KbaAnswerDTO;
-import com.multibrand.domain.KbaErrorDTO;
 import com.multibrand.domain.KbaQuestionRequest;
 import com.multibrand.domain.KbaQuestionResponse;
-import com.multibrand.domain.KbaResponseAssessmentDTO;
-import com.multibrand.domain.KbaResponseOutputDTO;
-import com.multibrand.domain.KbaResponseReasonDTO;
 import com.multibrand.domain.KbaSubmitAnswerRequest;
 import com.multibrand.domain.KbaSubmitAnswerResponse;
+import com.multibrand.domain.NewCreditScoreRequest;
+import com.multibrand.domain.NewCreditScoreResponse;
 import com.multibrand.domain.OfferPricingRequest;
 import com.multibrand.domain.PromoOfferAvgPriceData;
 import com.multibrand.domain.PromoOfferOutData;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.domain.PromoOfferTDSPCharge;
-import com.multibrand.dto.AddressDTO;
-import com.multibrand.dto.ESIDDTO;
-import com.multibrand.dto.KBASubmitResultsDTO;
 import com.multibrand.dto.OESignupDTO;
-import com.multibrand.dto.OfferDTO;
-import com.multibrand.dto.request.EnrollmentRequest;
+import com.multibrand.dto.request.CreditCheckRequest;
 import com.multibrand.dto.request.EsidRequest;
 import com.multibrand.dto.request.GetKBAQuestionsRequest;
 import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
+import com.multibrand.dto.response.AffiliateOfferResponse;
+import com.multibrand.dto.response.EsidResponse;
+import com.multibrand.dto.response.PersonResponse;
+import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.exception.OEException;
+import com.multibrand.proxy.OEProxy;
+import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.service.OEService;
 import com.multibrand.service.OfferService;
 import com.multibrand.util.CommonUtil;
@@ -64,23 +69,17 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.EnrollmentFraud.ENROLLMENT_FRAUD_ENUM;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.util.TogglzUtil;
-import com.multibrand.vo.request.KBAQuestionAnswerVO;
+import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
-import com.multibrand.vo.response.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.web.i18n.WebI18nMessageSource;
-import com.multibrand.vo.request.ESIDData;
-import com.multibrand.vo.request.EnrollmentReportDataRequest;
-import com.multibrand.dto.response.AffiliateOfferResponse;
-import com.multibrand.dto.response.EnrollmentResponse;
-import com.multibrand.dto.response.EsidResponse;
-import com.multibrand.dto.response.PersonResponse;
-import com.multibrand.dto.response.ServiceLocationResponse;
-import com.multibrand.exception.OEException;
-import com.multibrand.request.handlers.OERequestHandler;
+
+import mc_style.functions.soap.sap.document.sap_com.ZesSecrtyNotifHold;
 
 @Test(singleThreaded = true)
 public class OEBOTest implements Constants{
+
+	
 
 	@InjectMocks
 	private OEBO oebo;
@@ -97,8 +96,8 @@ public class OEBOTest implements Constants{
 	@Mock
 	private LoggerUtil logger;
 
-	@Mock
-	protected WebI18nMessageSource msgSource;
+	/*@Mock
+	protected WebI18nMessageSource msgSource;*/
 	
 	@Mock
 	private AddressDAOIF addressDAO;
@@ -127,12 +126,24 @@ public class OEBOTest implements Constants{
 	@Mock 
 	OfferService offerService;
 	
+	@Mock
+	private OEProxy oeProxy;
+	
+	@Mock
+	Response response; 
+	
+	@Mock
+	PersonDao personDao;;
+	
 	@Spy
 	ReloadableResourceBundleMessageSource appConstMessageSource = new ReloadableResourceBundleMessageSource();
-	
-	@Spy 
-	private ReloadableResourceBundleMessageSource environmentMessageSource = new ReloadableResourceBundleMessageSource() ;
-	
+
+	@Spy
+	private ReloadableResourceBundleMessageSource environmentMessageSource = new ReloadableResourceBundleMessageSource();
+
+	@Spy
+	WebI18nMessageSource msgSource = new WebI18nMessageSource();
+
 	String apiCallExecuted = API_CHECK_CREDIT+"|"+API_LEGACY_SUBMIT_UCC_DATA+"|"+API_RECHECK_CREDIT+"|"+API_LEGACY_PERFORM_CREDIT_CHECK+"|"+API_AVAILABLE_DATES+"|"+API_LEGACY_GET_ESID_AND_CALENDAR_DATES;
 	
 	@BeforeClass
@@ -143,14 +154,19 @@ public class OEBOTest implements Constants{
 		appConstMessageSource.setDefaultEncoding("UTF-8");
 		appConstMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
 		appConstMessageSource.setUseCodeAsDefaultMessage(true);
-		appConstMessageSource.setBasenames("/WEB-INF/classes/properties/appConstants");
+		
+		msgSource.setUseCodeAsDefaultMessage(true);
+		msgSource.setDefaultEncoding("UTF-8");
+		msgSource.setFallbackToSystemLocale(Boolean.TRUE);
+		msgSource.setUseCodeAsDefaultMessage(true);
+		//appConstMessageSource.setBasenames("/src/main/resources/properties/appConstants");
 		
 		
 		environmentMessageSource.setUseCodeAsDefaultMessage(true);
 		environmentMessageSource.setDefaultEncoding("UTF-8");
 		environmentMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
 		environmentMessageSource.setUseCodeAsDefaultMessage(true);
-		environmentMessageSource.setBasenames("/WEB-INF/classes/properties/environment");
+		//environmentMessageSource.setBasenames("/src/main/resources/properties/environment");
     
 	}
 
@@ -162,13 +178,18 @@ public class OEBOTest implements Constants{
 		appConstMessageSource.setDefaultEncoding("UTF-8");
 		appConstMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
 		appConstMessageSource.setUseCodeAsDefaultMessage(true);
-		appConstMessageSource.setBasenames("/WEB-INF/classes/properties/appConstants");
+		
+		msgSource.setUseCodeAsDefaultMessage(true);
+		msgSource.setDefaultEncoding("UTF-8");
+		msgSource.setFallbackToSystemLocale(Boolean.TRUE);
+		msgSource.setUseCodeAsDefaultMessage(true);
+		//appConstMessageSource.setBasenames("/src/main/resources/properties/appConstants");
 		
 		environmentMessageSource.setUseCodeAsDefaultMessage(true);
 		environmentMessageSource.setDefaultEncoding("UTF-8");
 		environmentMessageSource.setFallbackToSystemLocale(Boolean.TRUE);
 		environmentMessageSource.setUseCodeAsDefaultMessage(true);
-		environmentMessageSource.setBasenames("/WEB-INF/classes/properties/environment");
+		//environmentMessageSource.setBasenames("/src/main/resources/properties/environment");
     
 	}
 
@@ -862,6 +883,7 @@ public class OEBOTest implements Constants{
 		promoOfferOutDataArr[0] = promoOffer;
 		promoOfferResponse.setOfferOuts(promoOfferOutDataArr);
 		when(appConstMessageSource.getMessage("0121" + ".web.url" , null,null)).thenReturn("https://www.reliant.com");
+	  //when(appConstMessageSource.getMessage("0121" + ".web.url" , null,null)).thenReturn("https://www.reliant.com");
 		when(this.offerService.getOfferPricingFromCCS(Matchers.any(OfferPricingRequest.class))).thenReturn(promoOfferResponse);
 		
 		AffiliateOfferResponse affilaiteResponse = oebo.getOfferDetails(salesOfferDetailsRequest);
@@ -888,5 +910,218 @@ public class OEBOTest implements Constants{
 		when(environmentMessageSource.getMessage("0391.web.url" , null,null)).thenReturn("https://stg-www.discountpowertx.com");
 		String webURL = oebo.getWebURL("0391", "DE");
 		Assert.assertEquals(webURL, "https://stg-www.discountpowertx.com");
+	}
+	
+	@Test
+	public void testnormalizedString(){
+		String tempStr="CUSTOMER_PAY";
+		oebo.normalizedString(tempStr);
+		Assert.assertEquals(tempStr, tempStr);
+	}
+	@Test
+	public void testnormalizedStringWithdot(){
+		String tempStr="CUSTOMER.PAY";
+		oebo.normalizedString(tempStr);
+		Assert.assertEquals(tempStr, tempStr);
+	}
+	
+	@Test
+	public void testnormalizedStringWithZero(){
+		String tempStr=".00";
+		oebo.normalizedString(tempStr);
+		Assert.assertEquals(tempStr, tempStr);
+	}
+	@Test
+	public void testnormalizedStringWithtemp(){
+		String tempStr="c.a";
+		oebo.normalizedString(tempStr);
+		Assert.assertEquals(tempStr, tempStr);
+	}
+	@Test
+	public void testperformCreditCheckForMVIDateEmpty(){
+		NewCreditScoreRequest creditScoreRequest = new NewCreditScoreRequest();
+		CreditCheckRequest creditCheckRequest = new CreditCheckRequest();
+		ServiceLocationResponse serviceLoationResponse = new ServiceLocationResponse();
+		
+		creditCheckRequest.setTransactionType("MVI");
+		creditCheckRequest.setLanguageCode("S");
+		
+		oebo.performCreditCheck(creditScoreRequest,creditCheckRequest,serviceLoationResponse);
+		Assert.assertEquals(creditScoreRequest, creditScoreRequest);
+	}
+	
+	@Test
+	public void testperformCreditCheckForNewCreditScore() throws Exception{
+		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = new NewCreditScoreResponse();
+		NewCreditScoreRequest creditScoreRequest = new NewCreditScoreRequest();
+		CreditCheckRequest creditCheckRequest = new CreditCheckRequest();
+		ServiceLocationResponse serviceLoationResponse = new ServiceLocationResponse();
+		PersonResponse personResponse = new PersonResponse();
+		ZesSecrtyNotifHold[] obj = new ZesSecrtyNotifHold[5];
+
+	     //create actual employee object
+	     obj[0] = new ZesSecrtyNotifHold();
+	     obj[1] = new ZesSecrtyNotifHold();
+	     obj[2] = new ZesSecrtyNotifHold();
+	     obj[3] = new ZesSecrtyNotifHold();
+	     obj[4] = new ZesSecrtyNotifHold();
+	     obj[0].setAlertCode("01");
+	     obj[1].setAlertType("B");
+	     obj[2].setContactText("F");
+	     obj[3].setCrAgency("nrg");
+	     obj[4].setWebText("nrg");
+	     
+		personResponse.setCredSourceNum("123");
+		personResponse.setPersonId("123");
+		serviceLoationResponse.setRequestStatusCode("I");
+		serviceLoationResponse.setProspectId("123");
+		serviceLoationResponse.setPersonId("123");
+		serviceLoationResponse.setProspectPreapprovalFlag("W");
+		serviceLoationResponse.setErrorCdlist("01\\|02");
+		serviceLoationResponse.setPersonResponse(personResponse);
+		creditCheckRequest.setTrackingId("123");
+		creditCheckRequest.setLanguageCode("Y");
+		creditCheckRequest.setBrandId("CE");
+		creditCheckRequest.setCompanyCode("0391");
+		creditScoreRequest.setTrackingNum("123");;
+		newCreditScoreResponse.setStrCreditSource("EQ");
+		newCreditScoreResponse.setStrCreditSource("TU");
+		newCreditScoreResponse.setStrCreditScore("0000");
+		newCreditScoreResponse.setZesSecrtyNotifHold(obj);
+		newCreditScoreResponse.setStrErrCode("01");
+		newCreditScoreResponse.setStrPayUpFrontFlag(FLAG_X);
+		
+		when(serviceLocationDAO.getServiceLocation(Matchers.anyString())).thenReturn(serviceLoationResponse);
+		when(oeProxy.getNewCreditScore(creditScoreRequest)).thenReturn(newCreditScoreResponse);
+		oebo.performCreditCheck(creditScoreRequest,creditCheckRequest,serviceLoationResponse);
+		Assert.assertEquals(creditScoreRequest, creditScoreRequest);
+	}
+	@Test
+	public void testperformCreditCheckForNewCreditScoreWithoutCreditScoreResponse() throws Exception{
+		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = new NewCreditScoreResponse();
+		NewCreditScoreRequest creditScoreRequest = new NewCreditScoreRequest();
+		CreditCheckRequest creditCheckRequest = new CreditCheckRequest();
+		ServiceLocationResponse serviceLoationResponse = new ServiceLocationResponse();
+		Locale localeObj=null;
+		UpdatePersonRequest request=new UpdatePersonRequest();
+		request.setAccountName("test");
+		PersonResponse personResponse = new PersonResponse();
+		ZesSecrtyNotifHold[] obj = new ZesSecrtyNotifHold[5];
+
+	     //create actual employee object
+	     obj[0] = new ZesSecrtyNotifHold();
+	     obj[1] = new ZesSecrtyNotifHold();
+	     obj[2] = new ZesSecrtyNotifHold();
+	     obj[3] = new ZesSecrtyNotifHold();
+	     obj[4] = new ZesSecrtyNotifHold();
+	     obj[0].setAlertCode("01");
+	     obj[1].setAlertType("B");
+	     obj[2].setContactText("F");
+	     obj[3].setCrAgency("nrg");
+	     obj[4].setWebText("nrg");
+	     
+		personResponse.setCredSourceNum("123");
+		personResponse.setPersonId("123");
+		serviceLoationResponse.setRequestStatusCode("I");
+		serviceLoationResponse.setProspectId("123");
+		serviceLoationResponse.setPersonId("123");
+		serviceLoationResponse.setProspectPreapprovalFlag("W");
+		serviceLoationResponse.setErrorCdlist("01\\|02");
+		serviceLoationResponse.setPersonResponse(personResponse);
+		creditCheckRequest.setTrackingId("1236");
+		creditCheckRequest.setLanguageCode("Y");
+		creditCheckRequest.setBrandId("CE");
+		creditCheckRequest.setCompanyCode("0391");
+		creditCheckRequest.setMviDate("03242021");
+		creditScoreRequest.setTrackingNum("123");
+		creditCheckRequest.setServStreetAptNum("12345");
+		creditScoreRequest.setStrOfferCode("12345");
+		creditCheckRequest.setBillStreetAptNum("2121");
+		creditCheckRequest.setBillCity("Huston");
+		creditScoreRequest.setStrSSN("21213");
+		newCreditScoreResponse.setStrCreditBucket("12121");
+		newCreditScoreResponse.setStrDepositHold("YES");
+		newCreditScoreResponse.setStrCreditSource("EQ");
+		newCreditScoreResponse.setStrCreditScore("0000");
+		newCreditScoreResponse.setZesSecrtyNotifHold(obj);
+		newCreditScoreResponse.setStrCreditScoreHigh("9251");
+		newCreditScoreResponse.setStrCreditScoreLow("3214");
+		newCreditScoreResponse.setStrDepositAmt(new BigDecimal("100.00"));
+		newCreditScoreResponse.setStrPayUpFrontFlag(FLAG_X);
+		newCreditScoreResponse.setStrDepositReason("test");
+		newCreditScoreResponse.setStrAcctSecStatus("CUSTOMER_PAY");
+		newCreditScoreResponse.setCustomerFee(new BigDecimal("100.00"));
+		
+		when(serviceLocationDAO.getServiceLocation(Matchers.anyString())).thenReturn(serviceLoationResponse);
+		when(oeProxy.getNewCreditScore(creditScoreRequest)).thenReturn(newCreditScoreResponse);
+		when(msgSource.getMessage(MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj)).thenReturn("Test");
+		when(personDao.updatePerson(request)).thenReturn("01");
+		
+		oebo.performCreditCheck(creditScoreRequest,creditCheckRequest,serviceLoationResponse);
+		Assert.assertEquals(creditScoreRequest, creditScoreRequest);
+	}
+	@Test
+	public void testperformCreditCheckForBondPriceNullCheck() throws Exception{
+		com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse = new NewCreditScoreResponse();
+		NewCreditScoreRequest creditScoreRequest = new NewCreditScoreRequest();
+		CreditCheckRequest creditCheckRequest = new CreditCheckRequest();
+		ServiceLocationResponse serviceLoationResponse = new ServiceLocationResponse();
+		Locale localeObj=null;
+		UpdatePersonRequest request=new UpdatePersonRequest();
+		request.setAccountName("test");
+		PersonResponse personResponse = new PersonResponse();
+		ZesSecrtyNotifHold[] obj = new ZesSecrtyNotifHold[5];
+
+	     //create actual employee object
+	     obj[0] = new ZesSecrtyNotifHold();
+	     obj[1] = new ZesSecrtyNotifHold();
+	     obj[2] = new ZesSecrtyNotifHold();
+	     obj[3] = new ZesSecrtyNotifHold();
+	     obj[4] = new ZesSecrtyNotifHold();
+	     obj[0].setAlertCode("01");
+	     obj[1].setAlertType("B");
+	     obj[2].setContactText("F");
+	     obj[3].setCrAgency("nrg");
+	     obj[4].setWebText("nrg");
+	     
+		personResponse.setCredSourceNum("123");
+		personResponse.setPersonId("123");
+		serviceLoationResponse.setRequestStatusCode("I");
+		serviceLoationResponse.setProspectId("123");
+		serviceLoationResponse.setPersonId("123");
+		serviceLoationResponse.setProspectPreapprovalFlag("W");
+		serviceLoationResponse.setErrorCdlist("01\\|02");
+		serviceLoationResponse.setPersonResponse(personResponse);
+		creditCheckRequest.setTrackingId("1236");
+		creditCheckRequest.setLanguageCode("Y");
+		creditCheckRequest.setBrandId("CE");
+		creditCheckRequest.setCompanyCode("0391");
+		creditCheckRequest.setMviDate("03242021");
+		creditScoreRequest.setTrackingNum("123");
+		creditCheckRequest.setServStreetAptNum("12345");
+		creditScoreRequest.setStrOfferCode("12345");
+		creditCheckRequest.setBillStreetAptNum("2121");
+		creditCheckRequest.setBillCity("Huston");
+		creditScoreRequest.setStrSSN("21213");
+		newCreditScoreResponse.setStrCreditBucket("12121");
+		newCreditScoreResponse.setStrDepositHold("YES");
+		newCreditScoreResponse.setStrCreditSource("EQ");
+		newCreditScoreResponse.setStrCreditScore("0000");
+		newCreditScoreResponse.setZesSecrtyNotifHold(obj);
+		newCreditScoreResponse.setStrCreditScoreHigh("9251");
+		newCreditScoreResponse.setStrCreditScoreLow("3214");
+		newCreditScoreResponse.setStrDepositAmt(new BigDecimal("100.00"));
+		newCreditScoreResponse.setStrPayUpFrontFlag("A");
+		newCreditScoreResponse.setStrDepositReason("test");
+		newCreditScoreResponse.setStrAcctSecStatus("CUSTOMER_PAY");
+		newCreditScoreResponse.setBondPrice(new BigDecimal("100.00"));
+		
+		when(serviceLocationDAO.getServiceLocation(Matchers.anyString())).thenReturn(serviceLoationResponse);
+		when(oeProxy.getNewCreditScore(creditScoreRequest)).thenReturn(newCreditScoreResponse);
+		when(msgSource.getMessage(MESSAGE_CODE_TECHNICAL_ERROR, null, localeObj)).thenReturn("Test");
+		when(personDao.updatePerson(request)).thenReturn("01");
+		
+		oebo.performCreditCheck(creditScoreRequest,creditCheckRequest,serviceLoationResponse);
+		Assert.assertEquals(creditScoreRequest, creditScoreRequest);
 	}
 }

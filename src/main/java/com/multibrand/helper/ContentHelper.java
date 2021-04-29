@@ -800,15 +800,24 @@ public class ContentHelper implements Constants {
 		
 		return cmsErroredOfferCodes;
 	}
-
 	public Map<String, String> getSnippetContent(Map<String, String> snippetMap, String companyCode, String brandId, String languageCode ){
+		return getSnippetContent(snippetMap, companyCode, brandId, languageCode, true);
+	}
+
+	public Map<String, String> getSnippetContent(Map<String, String> snippetMap, String companyCode, String brandId, String languageCode, boolean removeHTMLCode ){
 		
 			brandId = CommonUtil.getBrandIdFromCompanycodeForTogglz(companyCode, brandId);
 			ContentDataRequest contentDataRequest  = new ContentDataRequest();			
 			contentDataRequest.setBrandId(brandId);
 			contentDataRequest.setEndPointUri(getEndPointURL(brandId));
 			contentDataRequest.setPublicationId(getPublicationId(brandId, languageCode));
-			contentDataRequest.setTemplateId(getTemplateId(brandId, true));
+			if(StringUtils.equalsIgnoreCase(companyCode, COMPANY_CODE_GME)) {
+				contentDataRequest.setTemplateId(getTemplateId("gme", true));
+			} else if(StringUtils.equalsIgnoreCase(companyCode, COMPANY_CODE_RELIANT)) {
+				contentDataRequest.setTemplateId(getTemplateId("rel", true));
+			} else {
+				contentDataRequest.setTemplateId(getTemplateId(brandId, true));
+			}
 			contentDataRequest.setTaxonomyId(getTaxonomyId(brandId));
 			contentDataRequest.setProdOfferSchemaId(getProductOfferSchemaId(brandId));
 			contentDataRequest.setProdBonusSchemaId(getProductBonusSchemaId(brandId));
@@ -818,19 +827,29 @@ public class ContentHelper implements Constants {
 				com.nrg.content.model.MessageKey msgKey = new com.nrg.content.model.MessageKey();
 				msgKey.setKeyName(snippetName);
 				msgKey.setKeyType(com.nrg.content.utils.MessageKeyTypeEnum.CONTENT_DATA);
-				msgKey.setSearchType(com.nrg.content.utils.SearchTypeEnum.KEYWORD_FILTER);
+				msgKey.setSearchType(com.nrg.content.utils.SearchTypeEnum.TITLE_FILTER);
 				messageKeyList.add(msgKey);
 			}
 			
-			contentDataRequest.getMessageKeys().setMessageKeyList(messageKeyList);			
-			ContentDataResponse contentDataResponse = ContentDataService.getContentData(contentDataRequest);
-		
+			contentDataRequest.getMessageKeys().setMessageKeyList(messageKeyList);	
 			
-			for(String snippetName: snippetMap.keySet()){
-				String snippetValue = contentDataResponse.getMsgKeyRespMap().get(snippetName);
-				snippetValue = CommonUtil.extractHtmlCSSUsingRegexPattern(snippetValue);
-				snippetMap.put(snippetName, snippetValue);
+			ContentDataResponse contentDataResponse = ContentDataService.getContentData(contentDataRequest);
+			
+			
+			if(removeHTMLCode) {
+				for(String snippetName: snippetMap.keySet()){
+					String snippetValue = contentDataResponse.getMsgKeyRespMap().get(snippetName);
+					snippetValue = CommonUtil.extractHtmlCSSUsingRegexPattern(snippetValue);
+					snippetMap.put(snippetName, snippetValue);
+				}
+			} else{
+				for(String snippetName: snippetMap.keySet()){
+					String snippetValue = contentDataResponse.getMsgKeyRespMap().get(snippetName);
+					snippetValue = CommonUtil.removeHTMLComment(snippetValue) ;
+					snippetMap.put(snippetName, snippetValue);
+				}
 			}
+			
 			return snippetMap;
 	}
 	/**
