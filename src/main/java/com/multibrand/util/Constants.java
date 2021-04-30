@@ -1680,7 +1680,10 @@ public interface Constants {
 	public static final String INVOICE_CREATION_XCODE_02 = "CA has no active STRAX contract";
 	public static final String INVOICE_CREATION_XCODE_03 = "Item Category Doesn't exist";
 	public static final String INVOICE_CREATION_XCODE_04 = "Invoice Creation Failure";
-
+	public static final String CANCEL_CONTRACT_XCODE_01="Failure to cancel the contract in SAP";
+	public static final String CANCEL_CONTRACT_XCODE_02="Strax Lead ID not found";
+	//Strax Integration
+	
 	public static final String FB = "FB";
 	public static final String DEPOSIT = "DEPOSIT";
 	public static final String TWOZEROAFTERPOINT = ".00";
@@ -1712,5 +1715,5 @@ public interface Constants {
 	public static final String GIACT_ERROR_02="GIACT_ERROR_02";
 	public static final String GIACT_ERROR_03="GIACT_ERROR_03";
 	public static final String BANK_AUTOPAY_INVALID_BANK_ACCOUNT = "MSG_CCSERR_2_INVALID_BNK";
-}
+	}
 	
