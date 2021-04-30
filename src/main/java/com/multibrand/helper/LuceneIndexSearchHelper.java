@@ -40,9 +40,9 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants {
 
 	LuceneIndexSearchHelper() {
 		stopWordsList = new ArrayList<>();
-		stopWordsList.addAll(Arrays.asList(StreetSuffixes));
-		stopWordsList.addAll(Arrays.asList(SupportedStates));
-		stopWordsList.addAll(Arrays.asList(ApartmentPrefixes));
+		stopWordsList.addAll(Arrays.asList(STREETSUFFIXES));
+		stopWordsList.addAll(Arrays.asList(SUPPORTEDSTATES));
+		stopWordsList.addAll(Arrays.asList(APARTMENTPREFIXES));
 	}
 
 	public List<String> getStopWordsList() {

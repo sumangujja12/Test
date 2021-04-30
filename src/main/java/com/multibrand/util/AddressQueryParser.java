@@ -120,7 +120,7 @@ public class AddressQueryParser
     					break;
     				}
 
-    				if (altToken != token.toLowerCase()) {
+    				if (altToken != null && altToken != token.toLowerCase()) {
     					searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, altToken), 0.6f, 0), Occur.SHOULD));
     				}
     				searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, token), 0.6f, 1), Occur.SHOULD));
