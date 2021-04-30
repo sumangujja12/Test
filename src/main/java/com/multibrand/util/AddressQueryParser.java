@@ -64,9 +64,9 @@ public class AddressQueryParser
     }
 
     public Query Parse(String queryString, Analyzer analyzer) throws IOException {
-    	logger.info("Lucene Address Search queryString method called ---"+queryString);
+    	logger.info("Lucene Address Search queryString method called ---:{}",queryString);
     	// manually building it because the Query Parser treats "AND" and such oddly for
-    	List < String > tokens = new ArrayList < String > ();
+    	List < String > tokens = new ArrayList <> ();
     	TokenStream tokenStream = analyzer.tokenStream(field, new StringReader(queryString));
     	while (tokenStream.incrementToken()) {
     		tokens.add(tokenStream.getAttribute(CharTermAttribute.class).toString());
