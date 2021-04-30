@@ -30,7 +30,7 @@ public class StraxBO extends BaseAbstractService implements Constants{
 
 	@Autowired
 	private StraxAccountService straxAccountService;
-	
+
 	public StraxContractCancelResponse cancelStraxContract(StraxContractCancelRequest request, String sessionId) {
 		
 		StraxContractCancelResponse response = new StraxContractCancelResponse();
@@ -41,16 +41,21 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			straxCancelAccountRequest.setCaNumber(request.getCaNumber());
 			straxCancelAccountRequest.setCancellationDate(request.getCancellationDate());
 			straxCancelAccountResponse = straxAccountService.cancelStraxContract(straxCancelAccountRequest, "0121", sessionId);
-			if(StringUtils.isNotBlank(straxCancelAccountResponse.getErrorCode()) || StringUtils.isNotBlank(straxCancelAccountResponse.getErrorMessage())){
-				
+			if(!StringUtils.equals(straxCancelAccountResponse.getXCode(),"00"))
+			{
+				Map<String, String> xCodeValues = new HashMap<>();
+				xCodeValues.put("01", CANCEL_CONTRACT_XCODE_01);
+				xCodeValues.put("02", CANCEL_CONTRACT_XCODE_02);
+
+				response.setErrorCode(straxCancelAccountResponse.getXCode());
+				response.setErrorDescription(xCodeValues.get(straxCancelAccountResponse.getXCode()));
+				response.setResultCode("");
 				logger.info("cancelStraxContract failed with error code:::::{}",straxCancelAccountResponse.getErrorCode());
 				logger.info("cancelStraxContract failed with error::::::{}",straxCancelAccountResponse.getErrorMessage());
-				response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-				response.setResultDescription(straxCancelAccountResponse.getErrorMessage());
 			}
-			else if(StringUtils.isNotBlank(straxCancelAccountResponse.getXCode()))
+			else if(StringUtils.equals(straxCancelAccountResponse.getXCode(),"00"))
 			{
-				logger.info("cancelStraxContract() call successful:::::"); 
+				logger.info("cancelStraxContract() call successful:::::{}",straxCancelAccountResponse.getXCode());
 				JavaBeanUtil.copy(straxCancelAccountResponse, response);
 				response.setResultCode(RESULT_CODE_SUCCESS);
 				response.setResultDescription(MSG_SUCCESS);
