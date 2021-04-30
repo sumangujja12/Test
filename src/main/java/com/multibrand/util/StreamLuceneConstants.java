@@ -7,6 +7,9 @@ package com.multibrand.util;
 
 public class StreamLuceneConstants {
 	
+	private StreamLuceneConstants() {
+		
+	}
 	 public static final String[] streetSuffixes = new String[] {
     		
 	   		 "ALY", "ANX", "ARC", "AVE", "BYU", "BCH", "BND", "BLF", "BLFS", "BTM", 
