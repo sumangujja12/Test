@@ -28,7 +28,7 @@ import com.multibrand.util.StreamLuceneConstants;
  */
 
 @Component
-public class LuceneIndexSearchHelper implements StreamLuceneConstants {
+public class LuceneIndexSearchHelper extends StreamLuceneConstants {
 
 	private List<String> stopWordsList = null;
 
@@ -40,9 +40,9 @@ public class LuceneIndexSearchHelper implements StreamLuceneConstants {
 
 	LuceneIndexSearchHelper() {
 		stopWordsList = new ArrayList<>();
-		stopWordsList.addAll(Arrays.asList(StreetSuffixes));
-		stopWordsList.addAll(Arrays.asList(SupportedStates));
-		stopWordsList.addAll(Arrays.asList(ApartmentPrefixes));
+		stopWordsList.addAll(Arrays.asList(streetSuffixes));
+		stopWordsList.addAll(Arrays.asList(supportedStates));
+		stopWordsList.addAll(Arrays.asList(apartmenPreFixes));
 	}
 
 	public List<String> getStopWordsList() {
