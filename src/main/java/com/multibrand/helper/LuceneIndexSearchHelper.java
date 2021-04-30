@@ -28,7 +28,7 @@ import com.multibrand.util.StreamLuceneConstants;
  */
 
 @Component
-public class LuceneIndexSearchHelper implements StreamLuceneConstants {
+public class LuceneIndexSearchHelper extends StreamLuceneConstants {
 
 	private List<String> stopWordsList = null;
 

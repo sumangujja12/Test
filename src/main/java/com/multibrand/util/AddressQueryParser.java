@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -120,7 +121,7 @@ public class AddressQueryParser
     					break;
     				}
 
-    				if (altToken != null && altToken != token.toLowerCase()) {
+    				if (!StringUtils.equalsAnyIgnoreCase(altToken, token.toLowerCase())) {
     					searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, altToken), 0.6f, 0), Occur.SHOULD));
     				}
     				searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, token), 0.6f, 1), Occur.SHOULD));
