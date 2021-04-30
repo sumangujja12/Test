@@ -3,6 +3,7 @@ package com.multibrand.resources;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -113,7 +114,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performPosidAndBpMatch(IdentityRequest request) {
+	public Response performPosidAndBpMatch(@Valid IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{

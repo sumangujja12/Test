@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.dto.request.FormEntityRequest;
+import com.multibrand.dto.request.SalesBaseRequest;
 import com.multibrand.request.validation.BasicConstraint;
 import com.multibrand.request.validation.DuplicateRecordGroupConstraint;
 import com.multibrand.request.validation.ErrorMessageDescriptor;
@@ -209,6 +210,7 @@ public class FormEntityRequestMessageBodyReader implements
 					BasicConstraint.class);
 
 			if (errorsResponse != null) {
+				errorsResponse = constructErrorResponse(errorsResponse, form);
 				return errorsResponse;
 			}
 
@@ -218,6 +220,7 @@ public class FormEntityRequestMessageBodyReader implements
 					SizeConstraint.class, Constants.BOOLEAN_TRUE);
 
 			if (errorsResponse != null) {
+				errorsResponse = constructErrorResponse(errorsResponse, form);
 				return errorsResponse;
 			}
 
@@ -225,14 +228,21 @@ public class FormEntityRequestMessageBodyReader implements
 			// level. (@ValidDateTime @Pattern etc...)
 			errorsResponse = this.validateByConstraintGroup(form,
 					FormatConstraint.class, Constants.BOOLEAN_TRUE);
-
+			
+			
 			if (errorsResponse != null) {
+				errorsResponse = constructErrorResponse(errorsResponse, form);
 				return errorsResponse;
 			}
 
 			errorsResponse = this.validateByConstraintGroup(form,
 					DuplicateRecordGroupConstraint.class,
 					Constants.BOOLEAN_TRUE);
+			
+			if (errorsResponse != null) {
+				errorsResponse = constructErrorResponse(errorsResponse, form);
+				return errorsResponse;
+			}
 
 		}
 
@@ -285,9 +295,10 @@ public class FormEntityRequestMessageBodyReader implements
 				}
 				msg.append(' ').append(errMsg).append('*');
 			}
-
+			
 			errorsResponse = createErrorsResponse(msg.toString(),
 					msgCode.toString(), msgCodeTxt.toString());
+			
 		}
 
 		return errorsResponse;
@@ -480,6 +491,13 @@ public class FormEntityRequestMessageBodyReader implements
 		parameterData.append("]");
 
 		return parameterData.toString();
+	}
+	
+	public Response constructErrorResponse(Response errorsResponse, FormEntityRequest form){
+		if(form instanceof SalesBaseRequest ) {
+			errorsResponse = Response.status(Response.Status.BAD_REQUEST).entity(errorsResponse.getEntity()).build();
+		}
+		return errorsResponse;
 	}
 
 }
