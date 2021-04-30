@@ -496,7 +496,6 @@ public class FormEntityRequestMessageBodyReader implements
 	public Response constructErrorResponse(Response errorsResponse, FormEntityRequest form){
 		if(form instanceof SalesBaseRequest ) {
 			errorsResponse = Response.status(Response.Status.BAD_REQUEST).entity(errorsResponse.getEntity()).build();
-			System.out.println("Status :"+errorsResponse.getStatus());
 		}
 		return errorsResponse;
 	}
