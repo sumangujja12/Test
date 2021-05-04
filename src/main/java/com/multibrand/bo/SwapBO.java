@@ -445,7 +445,7 @@ public class SwapBO extends BaseAbstractService implements Constants {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Exception ",e ); 
 		}
 		logger.info(" requestSubmittedDate is campaignCode {}" , campaignCode);
 		logger.info(" requestSubmittedDate is {}" , swapROEffectiveDate);

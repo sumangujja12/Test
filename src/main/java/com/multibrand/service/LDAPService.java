@@ -103,8 +103,9 @@ public class LDAPService extends BaseAbstractService {
 			if(logger.isDebugEnabled())
 				logger.debug(XmlUtil.pojoToXML(syncLDAPRequest));
 		}
-
+		if (syncLDAPResponse != null){
         utilityloggerHelper.logTransaction(LOG_TXN_GME_RES_SYNC_LDAP, false, syncLDAPRequest, syncLDAPResponse, syncLDAPResponse.getStrErrorText(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
+		}
         if(logger.isDebugEnabled()){
 	        logger.debug(XmlUtil.pojoToXML(syncLDAPRequest));
 			logger.debug(XmlUtil.pojoToXML(syncLDAPResponse));

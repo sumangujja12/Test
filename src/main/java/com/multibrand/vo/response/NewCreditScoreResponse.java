@@ -21,6 +21,12 @@ public class NewCreditScoreResponse extends GenericResponse implements java.io.S
 
 	private Response.Status httpStatus;
 	
+	private String activationFee;
+	private String bondPrice;
+	private String accSecStatus;
+	
+	private String depositOptionsText;
+	
 	/**
 	 * @return the depositAmount
 	 */
@@ -87,6 +93,31 @@ public class NewCreditScoreResponse extends GenericResponse implements java.io.S
 	}
 	public void setHttpStatus(Response.Status httpStatus) {
 		this.httpStatus = httpStatus;
+	}
+	
+	public String getActivationFee() {
+		return activationFee;
+	}
+	public void setActivationFee(String activationFee) {
+		this.activationFee = activationFee;
+	}
+	public String getBondPrice() {
+		return bondPrice;
+	}
+	public void setBondPrice(String bondPrice) {
+		this.bondPrice = bondPrice;
+	}
+	public String getAccSecStatus() {
+		return accSecStatus;
+	}
+	public void setAccSecStatus(String accSecStatus) {
+		this.accSecStatus = accSecStatus;
+	}
+	public String getDepositOptionsText() {
+		return depositOptionsText;
+	}
+	public void setDepositOptionsText(String depositOptionsText) {
+		this.depositOptionsText = depositOptionsText;
 	}
 	
 	

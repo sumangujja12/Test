@@ -745,8 +745,10 @@ public class OEBO extends OeBoHelper implements Constants{
 						oeSignupVO.setEsidDO(esidDO);
 						logger.debug("OEBO.getESIDInformation() GETTING ESID PROFILE SUCCESSFUL");
 					} else {
+						if(esidResponse != null){
 						logger.debug("OEBO.getESIDInformation() GETTING ESID FAILED:"
 								+ esidResponse.getStrErrCode());
+						}
 					}
 				} catch (ServiceException localServiceException) {
 					logger.error("ServiceException in OEBO.getESIDInformation():"
@@ -1330,7 +1332,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					}
 					offerCodeList.add(promoOfferOutData[i].getStrOfferCode());
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("Exception - ", e);
 				}
 			}
 			if (logger.isDebugEnabled()) {
@@ -1604,7 +1606,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					tdspResponse.setTdspData(tdspDOList);
 	          }
 	        } else {
+	        	if(null != tdspDetailsResponse){
 		          logger.debug("OEBO.getTDSPDetails() addressService.getTDSP() call results an Error: " + tdspDetailsResponse.getStrErrMessage());
+	        	}
 		          tdspResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 		          tdspResponse.setResultDescription("Error while getting TDSP code from Database");
 	        }
@@ -1679,7 +1683,6 @@ public class OEBO extends OeBoHelper implements Constants{
 			
 		 }catch (Exception e) {
 			 logger.error("Exception in get Charity Details ::", e);
-			e.printStackTrace();
 		}
 		 
 		return removedCharityDetailsVO.toArray(new CharityDetailsVO[voCount]);	//ENTCR 13315 APPCR_104998 Promo Code by Thabitha Sethurman
@@ -1753,8 +1756,8 @@ public class OEBO extends OeBoHelper implements Constants{
 									throw new ServiceException();
 								}
 							}
-							if (null != dtPrevReqStartDate
-									&& !dtPrevReqStartDate.equals(""))
+							if (null != dtPrevReqStartDate)
+									//&& !dtPrevReqStartDate.equals(""))
 								dtStartDate = sdf.format(dtPrevReqStartDate);
 							pendingServiceRequestDTO
 									.setPreviousProviderName(previousProviderName);
@@ -1935,6 +1938,16 @@ public class OEBO extends OeBoHelper implements Constants{
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setErrorCode(HTTP_BAD_REQUEST);
 			response.setErrorDescription("mviDate is required for move-in");
+			response.setHttpStatus(Response.Status.BAD_REQUEST);
+			return response;
+		}
+		if((StringUtils.equalsIgnoreCase(enrollmentRequest.getCompanyCode(), COMPANY_CODE_CIRRO)||
+				StringUtils.equalsIgnoreCase(enrollmentRequest.getCompanyCode(), COMPANY_CODE_DISCOUNTPOWER) ||
+				!StringUtils.equalsIgnoreCase(enrollmentRequest.getChannelType(), CHANNEL_AA))
+				&& StringUtils.isNotEmpty(enrollmentRequest.getSecurityMethod())) {
+			response.setStatusCode(Constants.STATUS_CODE_STOP);
+			response.setErrorCode(HTTP_BAD_REQUEST);
+			response.setErrorDescription("Security Method not allowed");
 			response.setHttpStatus(Response.Status.BAD_REQUEST);
 			return response;
 		}
@@ -2310,8 +2323,18 @@ public class OEBO extends OeBoHelper implements Constants{
 
 			
 		/*Setting DepositDueText Empty if we have Credit Freeze or Fraud*/	
-
 			populateDepositReasonTextInResponse(response, newCreditScoreResponse, creditCheckRequest, localeObj);
+			 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
+			
+				
+				if((StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT) ||
+						StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ) &&
+						StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_AA)
+						){
+				
+			populateCreditCheckApiSuretyBondDetails(response, newCreditScoreResponse);
+			}
+			 // End Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
 			
 				
 		} catch (RemoteException e) {
@@ -2614,7 +2637,9 @@ public class OEBO extends OeBoHelper implements Constants{
 					logger.debug("OEBO.getESIDInfo() ESID PROFILE SUCESSFUL");
 				}
 			} else {
+				if(null != esidResponse){
 				logger.debug("OEBO.getESIDInfo() GETTING ESID FAILED:"+ esidResponse.getStrErrCode());
+				}
 			}
 		} catch (ServiceException localServiceException) {
 			logger.error("ServiceException in OEBO.getESIDInfo():"
@@ -4167,7 +4192,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		request.setEndDate(df.format(DateUtils.addDays(today.getTime(), 59)));
 		request.setStrCompanyCode(companyCode);
 		//START : ALT Channel : Sprint6 :US7569 :Kdeshmu1
-		if(StringUtils.isNotEmpty(esidDo.getEsidNumber())){
+		if(null != esidDo && StringUtils.isNotEmpty(esidDo.getEsidNumber())){
 			request.setEsiid(esidDo.getEsidNumber());
 		}else{
 			request.setEsiid(EMPTY);
@@ -4486,8 +4511,8 @@ public class OEBO extends OeBoHelper implements Constants{
 				String usageCharge = getKeyPrice(offerDO, S_CUSTCHR2);
 				if(StringUtils.isEmpty(usageCharge))
 					affiliateOfferDO.setUsageCharge(null);
-				else
-					affiliateOfferDO.setUsageCharge(null);
+				//else
+					//affiliateOfferDO.setUsageCharge(null);
 				//End : PBI 76839 | Single Offer API | 11-16-2020 
 				
 				if (!StringUtils.isEmpty(baseCharge)) {
@@ -5359,7 +5384,9 @@ public boolean addKBADetails(KbaQuestionResponse request) throws Exception {
 		     			requestData.setErrorCdList("$blank$");
 		     		}
 		             requestData.setSystemNotes(StringUtils.join(systemNotesList,SYMBOL_PIPE));
+		             if(null != serviceLoationResponse){
 		             requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(kbaAnswerRequest.getCallExecuted(), serviceLoationResponse.getCallExecutedFromDB()));
+		             }
 		            this.updateServiceLocation(requestData);
 		        }
 			}catch(Exception e){
@@ -5582,7 +5609,9 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 				UpdateServiceLocationRequest updateServiceLocationRequest = new UpdateServiceLocationRequest();
 				updateServiceLocationRequest.setTrackingId(getOEKBAQuestionsRequest.getTrackingId());
 				updateServiceLocationRequest.setKbaTransactionKey(kbaQuestionResponse.getTransactionKey());
+				if(null != serviceLocationResponse){
 				updateServiceLocationRequest.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(getOEKBAQuestionsRequest.getCallExecuted(), serviceLocationResponse.getCallExecutedFromDB()));
+				}
 				this.updateServiceLocation(updateServiceLocationRequest);
 			}
 		}catch(Exception e){
@@ -6284,6 +6313,17 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			response.setDepositAmount(String.valueOf((Math
 				.round(newCreditScoreResponse.getStrDepositAmt()
 						.floatValue()))));
+			
+			if(StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_TYPE_AA)
+					&& ( StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ||
+							StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT))) {
+				Map<String, String> snippetMap = new HashMap<>();
+				snippetMap.put(DEPOSIT_OPTION_CONTENT_SNIPPET, DEPOSIT_OPTION_CONTENT_SNIPPET);
+				String languageCode = (StringUtils.equalsIgnoreCase(creditCheckRequest.getLanguageCode(), S)) ? S: E;
+				snippetMap = contentHelper.getSnippetContent(snippetMap, creditCheckRequest.getCompanyCode(), creditCheckRequest.getBrandId(), languageCode, false);
+				
+				response.setDepositOptionsText(snippetMap.get(DEPOSIT_OPTION_CONTENT_SNIPPET));
+			}
 		}
 		if(newCreditScoreResponse.getStrDepositAmt() != null && (Math
 				.round(newCreditScoreResponse.getStrDepositAmt()
@@ -6426,6 +6466,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 							newCreditScoreResponse.getStrCreditScoreLow(),
 							newCreditScoreResponse.getStrCreditScoreHigh() };												
 					if(!StringUtils.equals(ZERO, response.getDepositAmount())) {
+						
 						if(StringUtils.equals(EQ_INFO, infoKey) || StringUtils.equals(TU_INFO, infoKey)){
 							response.setDepositReasonText(StringEscapeUtils
 									.escapeHtml((this.msgSource.getMessage(
@@ -6540,6 +6581,23 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				requestData.setDepositCode(DEPOSIT_NONE);
 				requestData.setDepositAmount(ZERO);
 			}
+			
+		     // Start Relient.com | 95753 | Sprint -33| vsingh | 24/03/2021
+			if(newCreditScoreResponse != null) {
+			String payUpFront = newCreditScoreResponse.getStrPayUpFrontFlag();
+
+			
+
+			payUpFront = payUpFront(payUpFront);
+			requestData.setIsPayUpFront(payUpFront);
+			}
+
+			
+			requestData.setBondPrice(response.getBondPrice());
+			requestData.setActivationFee(response.getActivationFee());
+			requestData.setAccSecStatus(response.getAccSecStatus());
+			
+			// End Relient.com | 95753 | Sprint -33| vsingh | 24/03/2021
 			requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(creditCheckRequest.getCallExecuted(),serviceLoationResponse.getCallExecutedFromDB()));
 			
 			/* Updating service location affiliate table */
@@ -6561,49 +6619,15 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			if (StringUtils.isNotBlank(creditScoreRequest.getStrSSN()))
 				requestDataPerson.setSsn(creditScoreRequest.getStrSSN());
 			if(newCreditScoreResponse != null) {
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditBucket()))
-					requestDataPerson.setCredLevelNum(newCreditScoreResponse
-							.getStrCreditBucket());
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditSource()))
-					requestDataPerson.setCredSourceNum(newCreditScoreResponse
-							.getStrCreditSource());
-				if (StringUtils.isNotBlank(newCreditScoreResponse
-						.getStrCreditScore()))
-					requestDataPerson.setCredScoreNum(newCreditScoreResponse
-							.getStrCreditScore());
-				if(creditFactor != null) {
-					requestDataPerson.setAdvActionData(StringUtils.removeEnd(
-						creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
-				}
-	
-				if(StringUtils.isNotBlank(response.getDepositAmount())) {
-					if (StringUtils.isNotBlank(newCreditScoreResponse
-							.getStrDepositHold()) 
-							&& newCreditScoreResponse.getStrDepositHold()
-									.equalsIgnoreCase(YES))
-						requestDataPerson.setCredStatusCode(HOLD);
-					else
-						requestDataPerson.setCredStatusCode(NOTICE);
-				} else {
-					requestDataPerson.setCredStatusCode(RELEASE);	
-				}
 				
-				requestDataPerson.setDepWaiveFlag(newCreditScoreResponse.getStrDepWaiveFlag());
-				if (newCreditScoreResponse.getDepAmtWaived() != null){
-				requestDataPerson.setDepAmtWaived(newCreditScoreResponse.getDepAmtWaived().toString());
-				}
-				if (newCreditScoreResponse.getDepAmtWaivedProc() != null){
-				requestDataPerson.setDepAmtWaivedProc(newCreditScoreResponse.getDepAmtWaivedProc().toString());
-				}
+				requestDataPerson=personRequest(requestDataPerson,creditFactor,newCreditScoreResponse,response);
+				
 			}
 			errorCode = this.updatePerson(requestDataPerson);
 			if (StringUtils.isNotBlank(errorCode))
 				logger.debug("Finished processing updateServiceLocation, errorCode = "
 						+ errorCode);
-		}
-    }
+		}}
     
     private void constructPromoCodeEmptyResponse(EnrollmentResponse response){
     	response.setStatusCode(Constants.STATUS_CODE_STOP);
@@ -7027,8 +7051,107 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				affiliateOfferResponse.setStatusCode(Constants.STATUS_CODE_STOP);				
 			}
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			logger.error("Exception", e);
 		}
 		return affiliateOfferResponse;
+	}
+
+	 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
+	private void populateCreditCheckApiSuretyBondDetails(NewCreditScoreResponse response,
+			com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse) {
+		
+		if (StringUtils.isNotBlank(String.valueOf(newCreditScoreResponse.getStrDepositAmt())) && (StringUtils.isNotBlank(newCreditScoreResponse.getStrAcctSecStatus())
+		&& newCreditScoreResponse.getStrAcctSecStatus().equalsIgnoreCase(CUSTOMER_PAY) && StringUtils.isNotBlank(String.valueOf(newCreditScoreResponse.getCustomerFee())))) {
+		String bondprice = null;
+		String activationFee = null;
+		if (null != newCreditScoreResponse.getBondPrice()) {
+			bondprice = newCreditScoreResponse.getBondPrice().toString();
+		} else {
+			bondprice = EMPTY;
+		}
+
+		if (null != newCreditScoreResponse.getCustomerFee()) {
+			activationFee = newCreditScoreResponse.getCustomerFee().toString();
+
+			activationFee = normalizedString(activationFee); // convert to .00 format
+
+		} else {
+			activationFee = EMPTY;
+		}
+			 response.setAccSecStatus(newCreditScoreResponse.getStrAcctSecStatus());
+			 response.setActivationFee(activationFee);
+			 response.setBondPrice(bondprice);
+			
+		}
+		 
+
+	}
+	 // End Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
+	
+	public String normalizedString(String tempStr)
+	{
+		logger.info("normalizedString : Entering the method");
+
+		if(tempStr.indexOf(DOT)!=-1)
+		{						
+			if(tempStr.substring(tempStr.indexOf(DOT)).length()<3)
+				tempStr += ZERO;
+		}
+		else {
+			tempStr += TWOZEROAFTERPOINT;
+		}
+
+		if(tempStr.equals(TWOZEROAFTERPOINT) || tempStr.equals(ZEROPLUSTWOZEROAFTERPOINT)) {
+			tempStr=EMPTY;	
+		}
+
+		logger.info("normalizedString : Leaving the method");
+
+		return tempStr;
+	}
+	public UpdatePersonRequest personRequest(UpdatePersonRequest requestDataPerson,
+			StringBuilder creditFactor,
+			com.multibrand.domain.NewCreditScoreResponse newCreditScoreResponse,NewCreditScoreResponse response) {
+		
+		if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditBucket()))
+			requestDataPerson.setCredLevelNum(newCreditScoreResponse.getStrCreditBucket());
+		if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditSource()))
+			requestDataPerson.setCredSourceNum(newCreditScoreResponse.getStrCreditSource());
+		if (StringUtils.isNotBlank(newCreditScoreResponse.getStrCreditScore()))
+			requestDataPerson.setCredScoreNum(newCreditScoreResponse.getStrCreditScore());
+		if (creditFactor != null) {
+			requestDataPerson
+					.setAdvActionData(StringUtils.removeEnd(creditFactor.toString(), String.valueOf(DELIMETER_COMMA)));
+		}
+
+		if (StringUtils.isNotBlank(response.getDepositAmount())) {
+			if (StringUtils.isNotBlank(newCreditScoreResponse.getStrDepositHold())
+					&& newCreditScoreResponse.getStrDepositHold().equalsIgnoreCase(YES))
+				requestDataPerson.setCredStatusCode(HOLD);
+			else
+				requestDataPerson.setCredStatusCode(NOTICE);
+		} else {
+			requestDataPerson.setCredStatusCode(RELEASE);
+		}
+
+		requestDataPerson.setDepWaiveFlag(newCreditScoreResponse.getStrDepWaiveFlag());
+		if (newCreditScoreResponse.getDepAmtWaived() != null) {
+			requestDataPerson.setDepAmtWaived(newCreditScoreResponse.getDepAmtWaived().toString());
+		}
+		if (newCreditScoreResponse.getDepAmtWaivedProc() != null) {
+			requestDataPerson.setDepAmtWaivedProc(newCreditScoreResponse.getDepAmtWaivedProc().toString());
+		}
+		return requestDataPerson;
+	}
+	public String payUpFront(String payUpFront) {
+		if (StringUtils.isNotEmpty(payUpFront)) {
+			if ((payUpFront.equalsIgnoreCase("Yes") || payUpFront.equalsIgnoreCase("Y")
+					|| payUpFront.equalsIgnoreCase("X"))) {
+				payUpFront = "X";
+			} else {
+				payUpFront = "O";
+			}
+		}
+		return payUpFront;
 	}
 }
