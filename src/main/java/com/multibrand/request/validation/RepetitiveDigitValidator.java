@@ -27,7 +27,6 @@ public class RepetitiveDigitValidator implements
     	}
     	pattern = Pattern.compile(regex);
 		matcher = pattern.matcher(number);
-		//System.out.println(number+"  : "+matcher.matches());
 		return !(matcher.matches());
     }    	
 

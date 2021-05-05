@@ -80,7 +80,6 @@ public class PreferenceBOTest {
 		when(webServiceTemplateForGmdReadPushPreferences.marshalSendAndReceive(anyObject())).thenReturn(mockResponse);
 
 		PushNotificationPrefReadResponse response = preferenceBo.pushNotificationPreferences(request);
-		System.out.println(response);
 		Assert.assertEquals(response.getResultDescription(), "Exception Occurred");
 
 	}

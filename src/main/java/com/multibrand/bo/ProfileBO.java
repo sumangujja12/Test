@@ -819,7 +819,6 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			changeUsrNameRequest.setStrOldUserName(oldUserName);
 			
 			response = ldapService.changeUsername(changeUsrNameRequest, companyCode, sessionId);
-			System.out.println(response.getStrErrorCode());
 			if (response.getStrErrorCode()==null || response.getStrErrorCode().equals("")){
 				changeUsernameResponse.setResultCode(RESULT_CODE_SUCCESS);
 				changeUsernameResponse.setResultDescription(MSG_SUCCESS);
@@ -1498,10 +1497,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		cirroStructureCallRequest.setStrBpId(bpId);
 		cirroStructureCallRequest.setNoOfDaysBack(noOfDayBack);
 		cirroStructureCallRequest.setBrandName(brandName);
-		System.out.println("bpId"+bpId);
-		System.out.println("companyCode"+companyCode);
-		System.out.println("noOfDayBack"+noOfDayBack);
-		System.out.println("brandName"+brandName);
+
 		try {
 			cirroServiceResponse = profileService.getCirroStructureCall(
 					cirroStructureCallRequest, companyCode, sessionId);
@@ -1587,8 +1583,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		} catch (Exception e) {
 			long startTime = CommonUtil.getStartTime();
 			logger.error("Exception getCirroStructureCall" + e);
-			System.out.println("getCirroStructureCall"+e.getCause());
-			System.out.println(e.getMessage());
+
 			utilityloggerHelper.logTransaction("getCirroStructureCall", false, cirroStructureCallRequest,
 					e, "",
 					CommonUtil.getElapsedTime(startTime), "", sessionId,
@@ -1637,7 +1632,6 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 					&& (acctValidateResponse.getErrorCode() == null || acctValidateResponse
 							.getErrorCode().equals(""))) {
 				logger.info("ProfileBO -getCirroStructureCall  After Service method .IF LOOP..");
-				System.out.println(" Gettin the value  "+acctValidateResponse.getErrorCode());
 				
 				response.setBpId(acctValidateResponse.getBpId());
 				response.setBrandName(acctValidateResponse.getBrandName());
@@ -1702,7 +1696,6 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 		} catch (Exception e) {
 			long startTime = CommonUtil.getStartTime();
 			logger.error("Exception validateAccount" + e);
-			System.out.println("validateAccount"+e.getCause());
 			utilityloggerHelper.logTransaction("validateAccount", false, request,
 					e, "",
 					CommonUtil.getElapsedTime(startTime), "", sessionId,
