@@ -1,6 +1,7 @@
 package com.multibrand.dto.request;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -20,7 +21,7 @@ public class IdentityRequest extends SalesBaseRequest {
 	private static final long serialVersionUID = 1068351198219357955L;
 	
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String lastName;
 	
 	@NotEmpty
