@@ -71,6 +71,7 @@ public class NEIPaypalPaymentServiceTest {
 	public void initMethod() {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(stub);
+		
 		//envMessageReader = new EnvMessageReader();
 	    //ReflectionTestUtils.setField(neiSimplySmartService, "envMessageReader", envMessageReader);
 	
