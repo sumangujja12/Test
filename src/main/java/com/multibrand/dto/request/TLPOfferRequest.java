@@ -5,8 +5,9 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.BasicConstraint;
@@ -24,17 +25,17 @@ public class TLPOfferRequest implements FormEntityRequest, Constants, Serializab
 	private static final long serialVersionUID = 1L;
 
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4, groups = SizeConstraint.class)
 	private String companyCode;
 	
 	@NotBlank(groups = BasicConstraint.class)
 	private String vendorID;
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String promoCode;
 	
-	@Length(max = 5, groups = SizeConstraint.class)
+	@Size(max = 5, groups = SizeConstraint.class)
 	private String tdspCodeCCS;
 	
 	

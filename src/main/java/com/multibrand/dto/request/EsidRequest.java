@@ -2,9 +2,10 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
@@ -23,7 +24,7 @@ public class EsidRequest extends SalesBaseRequest implements Serializable {
 	private String servZipCode;
 	@NotEmpty
 	private String servCity;
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 	public String getServStreet() {
 		return servStreet;

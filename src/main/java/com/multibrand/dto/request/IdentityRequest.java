@@ -4,7 +4,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.MandotoryFieldCheck;
@@ -25,10 +24,10 @@ public class IdentityRequest extends SalesBaseRequest {
 	String lastName;
 	
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String firstName;
 	
-	@Length(max = 40 ,groups = SizeConstraint.class)
+	@Size(max = 40 ,groups = SizeConstraint.class)
 	String middleName;
 
 	@NotEmpty
@@ -36,78 +35,78 @@ public class IdentityRequest extends SalesBaseRequest {
 	@ValidAge
 	String dob;
 	
-	@Length(max = 40,groups = SizeConstraint.class)
+	@Size(max = 40,groups = SizeConstraint.class)
 	String maidenName; 
 	
 	String trackingId;
 	
 	@NotEmpty
-	@Length(max = 100, groups = SizeConstraint.class)
+	@Size(max = 100, groups = SizeConstraint.class)
 	@Email(groups = FormatConstraint.class)
 	String email;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	@Pattern(regexp = "\\d{10}", groups = FormatConstraint.class, message="is invalid")
 	String phoneNum;
 	
-	@Length(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1, groups = SizeConstraint.class)
 	String mktPref;
 	
 	String transactionType;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
 	@NotEmpty
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 	
 	@NotEmpty
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	String servCity;
 	
 	@NotEmpty
-	@Length(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2, groups = SizeConstraint.class)
 	String servState;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	String servZipCode;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	String billStreetNum;
 	
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	String billStreetName;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	String billStreetAptNum;
 	
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	String billCity;
 	
-	@Length(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2, groups = SizeConstraint.class)
 	String billState;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	String billZipCode;
 	
-	@Length(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25, groups = SizeConstraint.class)
 	String billPOBox;
 	
 	String preferredLanguage;
 	
 	
-	@Length(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20, groups = SizeConstraint.class)
 	String tokenizedTDL;
 	
 	
-	@Length(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20, groups = SizeConstraint.class)
 	String tokenizedSSN;
 	
 	String agentID;
@@ -121,16 +120,16 @@ public class IdentityRequest extends SalesBaseRequest {
 	String etfFlag;
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	String partnerId;
 	
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String partnerName;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	String locationId;
 	
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String locationName;
 	
 	String guid;

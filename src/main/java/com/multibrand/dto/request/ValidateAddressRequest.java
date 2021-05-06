@@ -5,6 +5,8 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
@@ -25,28 +27,28 @@ public class ValidateAddressRequest extends BaseAffiliateRequest implements
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String streetNum = null;
 	
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String streetName = null;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String aptNum = null;
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	private String city = null;
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(min = 2, max = 2, groups = SizeConstraint.class, message ="{err.msg.state.format}")
+	@Size(min = 2, max = 2, groups = SizeConstraint.class, message ="{err.msg.state.format}")
 	private String state = null;
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String zipCode = null;
 	
-	@Length(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25, groups = SizeConstraint.class)
 	private String poBox = null;
 	//private String country = null;
 

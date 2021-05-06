@@ -1,5 +1,7 @@
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.NotEmpty;
@@ -11,35 +13,35 @@ public class UCCDataRequest extends BaseAffiliateRequest {
 	
 		
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String trackingId;
 	
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String lastName;
 	
 
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String firstName;
 		
-	@Length(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20, groups = SizeConstraint.class)
 	String tokenizedSSN;
 	
 	@NotEmpty
-	@Length(max = 8, groups = SizeConstraint.class)
+	@Size(max = 8, groups = SizeConstraint.class)
 	String depositAmount;
 	
-	@Length(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4, groups = SizeConstraint.class)
 	String creditScore;
 	
-	@Length(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4, groups = SizeConstraint.class)
 	String creditSource;
 	
-	@Length(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1, groups = SizeConstraint.class)
 	String creditBucket;
 		
-	@Length(max = 2000, groups = SizeConstraint.class)
+	@Size(max = 2000, groups = SizeConstraint.class)
 	String creditFactors;
 
 	public String getTrackingId() {
