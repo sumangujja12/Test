@@ -213,15 +213,10 @@ public class PrepayBO implements Constants {
 		
 		try {
 			ppDresponse = billingService.prepayDocRead(request);
-			System.out.println("ppDresponse tostring*"+ppDresponse.toString());
-			System.out.println("ppDresponse tostring*"+ppDresponse.getContractAccountNumber());
-			System.out.println("ppDresponse tostring*"+ppDresponse.getContractData(0).getPARTNER_GUID());
-			System.out.println("ppDresponse tostring*"+ppDresponse.getContractData(0).getPPD_CONTRACT_ACC());
 			
 		}
 		catch(Exception e){
-			System.out.println("In exception");
-				logger.error("prepayDocRead() in PrepayBO "+e.getMessage()); 
+				logger.error("prepayDocRead() in PrepayBO:{} ",e.getMessage()); 
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
 				response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
 				throw new OAMException(200, e.getMessage(), response);
@@ -234,8 +229,8 @@ public class PrepayBO implements Constants {
 					response.setResultCode(RESULT_CODE_NO_DATA);
 					response.setResultDescription(RESULT_CODE_NO_MATCH_DESCRIPTION);
 					
-					logger.info("Error Code "+ppDresponse.getErrCode());
-					logger.info("Error Message "+ppDresponse.getErrMessage());
+					logger.info("Error Code:{}",ppDresponse.getErrCode());
+					logger.info("Error Message:{}",ppDresponse.getErrMessage());
 				}
 				else{
 					JavaBeanUtil.copy(ppDresponse, response);
@@ -244,7 +239,7 @@ public class PrepayBO implements Constants {
 				}
 			}
 		}catch(Exception ex) {
-			logger.error("prepayDocRead() in PrepayBO "+ex.getMessage()); 
+			logger.error("prepayDocRead() in PrepayBO:{}",ex.getMessage()); 
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, ex.getMessage(), response);

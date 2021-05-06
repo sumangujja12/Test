@@ -13,7 +13,6 @@ public class RegistrationUserRowMapper implements RowMapper<UserRegistrationRequ
 	@Override
 	public UserRegistrationRequest mapRow(ResultSet rs, int row) throws SQLException
 	{
-		System.out.println("Inside the rowapper");
 		UserRegistrationRequest registerVO = new UserRegistrationRequest();
 		registerVO.setUserName(rs.getString("user_login_id"));
 		

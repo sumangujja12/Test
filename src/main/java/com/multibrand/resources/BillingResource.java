@@ -501,7 +501,6 @@ public class BillingResource {
 		logger.info(" brandName  - "+brandName);
 		logger.info(" OUTPUT of the updateInvoiceDelivery API*************");
 		logger.info(" Response  - "+CommonUtil.wirteObjectToJson(response));
-		System.out.println(" Response  json- "+CommonUtil.wirteObjectToJson(response));
 		logger.info("END of the updateInvoiceDelivery API*************");
 		
 		return response;

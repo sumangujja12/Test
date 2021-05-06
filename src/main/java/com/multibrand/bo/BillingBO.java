@@ -974,8 +974,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		} catch (Exception e) {
 			logger.info(" Exeception Occured in the getAvgTempBill"
 					+ e.getCause());
-			//System.out.println(e.getMessage());
-			//System.out.println(e.getCause());
 			logger.error(" Error "+e.getMessage());
 			avgTempResponse = new AvgTempResponse();
 			avgTempResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -2376,12 +2374,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				retroEligResp.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
 		} catch (Exception e) {
-			//e.printstackTrace();
-			logger.info(" Exeception Occured in the checkRetroEligibility"
-					+ e.getCause());
-			//System.out.println(e.getMessage());
-			//System.out.println(e.getCause());
-			logger.error(" Error "+e.getMessage());
+			logger.info(" Exeception Occured in the checkRetroEligibility:{}"
+					, e.getMessage());
 			retroEligResp = new RetroEligibilityResponse();
 			retroEligResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			retroEligResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);

@@ -238,62 +238,6 @@ public class EmailHelper implements Constants {
 		return emailDtls;
 	}
 
-/*	public static void main(String str[]) throws Exception {
-
-		UtilityWebServicesServiceLocator service = new UtilityWebServicesServiceLocator();
-
-		UtilityWebServices port = service.getUtilityWebServicesPort(new URL("http://dev1-ws.nrgenergy.com/UtilityWebServices/utilityWebServices"));
-
-		String txnGUID = GuidGenerator.getGuid(true);
-		String serviceName = "EmailService";
-
-		HashMap<String, String> templateProperties = new HashMap<String, String>();
-		
-		
-
-		templateProperties.put("bpNumber", " ");
-		templateProperties.put("accountNumber", "0001");
-		templateProperties.put("checkDigit", "1");
-		templateProperties.put("esid", " ");
-		templateProperties.put("serviceAddress", "$1");
-		templateProperties.put("serviceCity", " ");
-
-		templateProperties.put("serviceState", " ");
-		templateProperties.put("serviceZipCode", " ");
-		templateProperties.put("billingAddress", " ");
-		templateProperties.put("billingCity", " ");
-		templateProperties.put("billingState", " ");
-		templateProperties.put("billingZipCode", " ");
-		
-		templateProperties.put("existingServiceAddress", "$0");
-		templateProperties.put("existingServiceCity", " ");
-		templateProperties.put("existingServiceState", " ");
-		templateProperties.put("existingServiceZipCode", " ");
-		templateProperties.put("accountName", "ashish");
-		templateProperties.put("powerOn", "on");
-		templateProperties.put("powerOff", "of");
-		templateProperties.put("submitDate", " ");
-		templateProperties.put("transactionNumber", "6987678968976987687");
-
-		
-		templateProperties.put("contactName", "  ");
-		templateProperties.put("contactPhoneNumber", " ");
-		templateProperties.put("contactEmailAddress", " ");
-		templateProperties.put("additionalProgs", "additional progs");
-		templateProperties.put("billDeliveryMethod", "");
-		
-		
-		//String additionalProgsString ="<tr><td style='vertical-align:top;'>Additional Programs:</td><td class='fRight alignRight'>xtxttxtx</td></tr>";
-		
-		
-		
-		boolean status = sendMailWithBCC("ahanda1@reliant.com", "rbansal30@reliant.com",  "", SUBMIT_TOS_CONF_EN, templateProperties, "0121");
-		// boolean status= sendMail("gmecbizcare_test@greenmountain.com",
-		// "Testing","EBILL.CONFR.CPC.EN_US", templateProperties, "0271");
-
-		System.out.println("Mail Sent :: " + status);
-
-	}*/
 	
 	// START OE-REDESIGN-JASVEEN
 	public boolean sendEnrollmentConfirmationMail(String firstName,

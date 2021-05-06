@@ -210,11 +210,6 @@ public class EmailRequest extends NRGServicesRequest implements BaseEmailRequest
 		return bccEmail;
 	}
 	
-	public static void main(String[] args){
-		Gson gson = new Gson();
-		EmailRequest re = new EmailRequest();
-		System.out.println(gson.toJson(re));
-	}
 	public void populateRequestForNNPBasedOnBrand(CCSNNPEmailRequest request) {
 		this.subject = NNP_SUBJECT;
 		this.toEmailList.add(request.getEmailid());
