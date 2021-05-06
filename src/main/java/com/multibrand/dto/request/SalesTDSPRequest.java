@@ -1,6 +1,6 @@
 package com.multibrand.dto.request;
 
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
@@ -13,17 +13,17 @@ public class SalesTDSPRequest extends SalesBaseRequest{
 
 	private String servStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
 	@NotEmpty
-	@Length(min = 5, max = 10, groups = SizeConstraint.class)
+	@Size(min = 5, max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 
-	@Length(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3, groups = SizeConstraint.class)
 	private String transactionType; // MVI or SWI
 
-	@Length(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32, groups = SizeConstraint.class)
 	private String esid;
 
 	public String getServStreetNum() {

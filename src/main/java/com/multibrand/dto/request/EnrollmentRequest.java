@@ -3,7 +3,8 @@
  */
 package com.multibrand.dto.request;
 
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
+
 import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.NotEmpty;
@@ -23,104 +24,104 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	private static final long serialVersionUID = 1L;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String trackingId;
 
 	@NotEmpty
-	@Length(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3, groups = SizeConstraint.class)
 	private String transactionType;
 
 	@NotEmpty
-	@Length(max = 5, groups = SizeConstraint.class)
+	@Size(max = 5, groups = SizeConstraint.class)
 	private String tdspCodeCCS;
 
-	@Length(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4, groups = SizeConstraint.class)
 	private String bpMatchFlag;
 
 	// @NotEmpty
-	// @Length(max = 1, groups = SizeConstraint.class)
+	// @Size(max = 1, groups = SizeConstraint.class)
 	private String preferredLanguage;
 
-	@Length(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32, groups = SizeConstraint.class)
 	private String esid;
 
-	@Length(max = 2, groups = SizeConstraint.class)
+	@Size(max = 2, groups = SizeConstraint.class)
 	private String switchHoldFlag;
 
-	@Length(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1, groups = SizeConstraint.class)
 	private String ebillFlag;
 
 	@NotEmpty
-	@Length(min= 8, max = 8, groups = SizeConstraint.class)
+	@Size(min= 8, max = 8, groups = SizeConstraint.class)
 	private String offerCode;
 
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String promoCode;
 
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String campaignCode;
 
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String productPriceCode;
 
 	@NotEmpty
-	@Length(max = 15, groups = SizeConstraint.class)
+	@Size(max = 15, groups = SizeConstraint.class)
 	private String incentiveCode;
 
-	@Length(max = 2, groups = SizeConstraint.class)
+	@Size(max = 2, groups = SizeConstraint.class)
 	private String marketSegment;
 
 	@CurrentOrFutureDate
 	private String mviDate;
 
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
 	@NotEmpty
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
 	@NotEmpty
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	private String servCity;
 
 	@NotEmpty
-	@Length(min = 2, max = 2, groups = SizeConstraint.class, message = "{err.msg.state.format}")
+	@Size(min = 2, max = 2, groups = SizeConstraint.class, message = "{err.msg.state.format}")
 	private String servState;
 
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billStreetNum;
 
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String billStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billStreetAptNum;
 
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	private String billCity;
 
-	@Length(min = 2, max = 2, groups = SizeConstraint.class, message = "{err.msg.state.format}")
+	@Size(min = 2, max = 2, groups = SizeConstraint.class, message = "{err.msg.state.format}")
 	private String billState;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billZipCode;
 
-	@Length(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25, groups = SizeConstraint.class)
 	private String billPOBox;
 
-	@Length(max = 14, groups = SizeConstraint.class)
+	@Size(max = 14, groups = SizeConstraint.class)
 	private String referralId;
 
 	@ValidDateTime(format = "MMddyyyy", groups = FormatConstraint.class, message = "{err.msg.date.mmddyyyy.format}")
@@ -129,7 +130,7 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	@ValidDateTime(format = "HH:mm:ss", groups = FormatConstraint.class, message = "{err.msg.date.hhmmss.format}")
 	private String offerTime;
 	
-	@Length(max = 200, groups = SizeConstraint.class)
+	@Size(max = 200, groups = SizeConstraint.class)
 	private String sapOfferTagline;
 
 	
