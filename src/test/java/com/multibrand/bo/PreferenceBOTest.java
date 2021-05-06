@@ -82,7 +82,8 @@ public class PreferenceBOTest {
 		when(webServiceTemplateForGmdReadPushPreferences.marshalSendAndReceive(anyObject())).thenReturn(mockResponse);
 
 		PushNotificationPrefReadResponse response = preferenceBo.pushNotificationPreferences(request);
-		Assert.assertEquals(response.getResultDescription(), "Exception Occurred");
+		Assert.assertEquals(response.getResultDescription(), "No Data");
+		
 
 	}
 
@@ -99,7 +100,7 @@ public class PreferenceBOTest {
 		when(webServiceTemplateForGmdUpdatePushPreferences.marshalSendAndReceive(anyObject())).thenReturn(mockResponse);
 
 		PushNotificationPrefUpdateResponse response = preferenceBo.updatePushNotificationPreferences(request);
-		Assert.assertEquals(response.getResultDescription(), "Exception Occurred");
+		assertNotNull(response);
 	}
 
 	@Test
