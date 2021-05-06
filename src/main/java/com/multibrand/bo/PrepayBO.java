@@ -216,7 +216,7 @@ public class PrepayBO implements Constants {
 			
 		}
 		catch(Exception e){
-				logger.error("prepayDocRead() in PrepayBO:{] ",e.getMessage()); 
+				logger.error("prepayDocRead() in PrepayBO:{} ",e.getMessage()); 
 				response.setResultCode(RESULT_CODE_CCS_ERROR);
 				response.setResultDescription(RESULT_DESCRIPTION_CCS_EXCEPTION);
 				throw new OAMException(200, e.getMessage(), response);
@@ -230,7 +230,7 @@ public class PrepayBO implements Constants {
 					response.setResultDescription(RESULT_CODE_NO_MATCH_DESCRIPTION);
 					
 					logger.info("Error Code:{}",ppDresponse.getErrCode());
-					logger.info("Error Message:{]",ppDresponse.getErrMessage());
+					logger.info("Error Message:{}",ppDresponse.getErrMessage());
 				}
 				else{
 					JavaBeanUtil.copy(ppDresponse, response);
