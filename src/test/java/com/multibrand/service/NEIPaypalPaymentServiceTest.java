@@ -62,6 +62,7 @@ public class NEIPaypalPaymentServiceTest {
 	@BeforeClass
 	public void init() {
 		MockitoAnnotations.initMocks(this);
+		Mockito.reset(stub);
 		ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
 		this.validator = vf.getValidator();
 	}
