@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -44,6 +45,7 @@ public class PreferenceBOTest {
 	@BeforeClass
 	public void init() {
 		MockitoAnnotations.initMocks(this);
+		Mockito.reset(webServiceTemplateForGmdReadPushPreferences);
 	}
 
 	@Test
