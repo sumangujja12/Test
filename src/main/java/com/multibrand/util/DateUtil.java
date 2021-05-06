@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -824,5 +825,10 @@ public class DateUtil implements Constants{
 		return  (startDate.getTime() - endDate.getTime()) / 1000;
 	}
 
+	public static boolean matches(String strPattern ,String date) {
+		Pattern pattern = Pattern.compile(
+				strPattern);
+        return pattern.matcher(date).matches();
+    }
 	
 }

@@ -1715,5 +1715,8 @@ public interface Constants {
 	public static final String GIACT_ERROR_02="GIACT_ERROR_02";
 	public static final String GIACT_ERROR_03="GIACT_ERROR_03";
 	public static final String BANK_AUTOPAY_INVALID_BANK_ACCOUNT = "MSG_CCSERR_2_INVALID_BNK";
-	}
+	
+	public static final String DATE_PATTERN_YYYY_MM_DD = "^\\d{4}-\\d{2}-\\d{2}$";
+	
+}
 	
