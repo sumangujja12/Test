@@ -63,6 +63,7 @@ public class NEIPaypalPaymentServiceTest {
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(stub);
+		
 		ValidatorFactory vf = Validation.buildDefaultValidatorFactory();
 		this.validator = vf.getValidator();
 	}
@@ -71,6 +72,9 @@ public class NEIPaypalPaymentServiceTest {
 	public void initMethod() {
 		MockitoAnnotations.initMocks(this);
 		Mockito.reset(stub);
+		Mockito.reset(envMessageReader);
+		Mockito.reset(environmentMessageSource);
+		Mockito.reset(zeISUNEIPAYPALPAYMENT_Service);
 		
 		//envMessageReader = new EnvMessageReader();
 	    //ReflectionTestUtils.setField(neiSimplySmartService, "envMessageReader", envMessageReader);
