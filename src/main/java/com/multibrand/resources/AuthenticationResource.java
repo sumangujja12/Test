@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.AuthenticationBO;
 import com.multibrand.helper.ErrorContentHelper;
+import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.response.AuthenticationResponse;
@@ -56,6 +57,9 @@ public class AuthenticationResource implements Constants  {
 	
 	@Context 
 	private HttpServletRequest httpRequest;
+	
+	@Autowired
+	private UtilityLoggerHelper utilityloggerHelper;
 	
 	Logger logger =LogManager.getLogger("NRGREST_LOGGER");
 	
@@ -94,9 +98,15 @@ public class AuthenticationResource implements Constants  {
 	public Response loginFailureCall(@FormParam("userId") String userId,@Context HttpHeaders hh, @Context HttpServletRequest request){
 		logger.debug("Inside loginFailureCall of AuthenticationResource");
 		Response response = null;
-		LoginFailureResponse loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
+		LoginFailureResponse loginFailureCallResponse = null;
+		long startTime = CommonUtil.getStartTime();
+		try {
+			
+			loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
 		
-		
+		} finally {
+			utilityloggerHelper.logTransaction("loginFailureCall", false, hh,loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), "", authenticationBO.readValueFromHeaderOrCookie(hh, "SSO_UNIQUEID"), "0270");
+		}
 		response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
 		return response;
