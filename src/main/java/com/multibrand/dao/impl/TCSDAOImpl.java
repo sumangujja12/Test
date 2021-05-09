@@ -57,7 +57,6 @@ public TCSPersonalizedFlagsSMBDTO getPersonalizedFlagsSmb(String bp, String ca, 
 	}
 
 public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca, String co) {
-	
 	String methodName = "Load TCSDAOImpl: getPersonalizedFlags(residential customer)";
 	logger.debug("START:" + methodName);
 	List<TCSPersonalizedFlagsDTO> tcsPersonalizedFlagsDTO = null;
@@ -70,7 +69,6 @@ public TCSPersonalizedFlagsDTO getPersonalizedFlags(String bp, String ca, String
 		} else {
 			return tcsPersonalizedFlagsDTO.get(0);
 		}
-
 	}  catch(DataAccessException de)
 	{
 		logger.error("DAO Exception in:" + methodName , de);

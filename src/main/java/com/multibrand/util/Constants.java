@@ -66,6 +66,7 @@ public interface Constants {
     public static final String EFL = "EFL";
 	public static final String TOS = "TOS";
 	public static final String YRAAC = "YRAAC";
+	public static final String EV_PRODUCT_TYPE_LAST_THREE = "004";
 	
 	// TPV Service Implementation : Start : KB
 	public static final String TPV_CCS_URL = "ccs.tpv.api.trans.upd.wsdl.url";
@@ -163,6 +164,7 @@ public interface Constants {
 	public static final String XI_INVOICE_LIST_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getInvoiceList&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	public static final String XI_PRODUCT_HISTORY_ENDPOINT_URL_QUERY_PARAM = "&interface=os_getProductHistory&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
 	public static final String XI_INTERVAL_DATA_ENDPOINT_URL_QUERY_PARAM   = "&interface=os_getIntervalData&service=Srv_GME&qos=BE&sap-user=SWAP_CPIC&sap-password=pawsC0mm&sap-client=110&sap-language=EN";
+	
 	
 	public static final String EBILL_DOCUMENTUM_WS_USER_NAME= "EBILL_DOCUMENTUM_WS_USER_NAME";
 	public static final String EBILL_DOCUMENTUM_WS_PSD ="EBILL_DOCUMENTUM_WS_PWD";
@@ -386,9 +388,12 @@ public interface Constants {
 	 public static final String VISA = "Visa";
 	 public static final String MASTERCARD = "MasterCard";
 	 public static final String DISCOVER = "Discover";
+	 public static final String AMERICANEXPRESS = "AmericanExpress";
 	 public static final String ZVIS = "ZVIS";
 	 public static final String ZMCD = "ZMCD";
 	 public static final String ZDSC = "ZDSC";
+	 public static final String ZAMX = "ZAMX";
+	 
 	 
 	 public static final String CARD_TYPE="cardType";
 	 public static final String CARD_NUMBER="cardNumber";
@@ -898,7 +903,7 @@ public interface Constants {
 	//nnp
 	public static final String NNP_SUBJECT = "";
 	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my contract related notices by email only (Paperless)";
-	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electrónico (sin papel)";
+	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electr�nico (sin papel)";
 	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_EN ="Receive my contract related notices by mail only";
 	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_ES ="Recibir mis avisos relacionados con el contrato solo por correo";
 	
@@ -929,7 +934,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -1092,7 +1097,7 @@ public interface Constants {
 	public static final String MESSAGE_TEXT_PERSON_NOT_UPDATED = "Person details are not updated";
 	public static final String MESSAGE_TEXT_PERSON_NOT_FOUND = "Person details are not found";
 	public static final String MESSAGE_CODE_INFO_MISMATCH = "INFO_MISMATCH";
-	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
+	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information�previously�used for�this enrollment.";
 	
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
 	
@@ -1408,7 +1413,7 @@ public interface Constants {
 	public static final String DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO= "0.0";
 	
 	public static final String SYMBOL_DOLLAR = "$";
-	public static final String SYMBOL_CENTS = "¢";
+	public static final String SYMBOL_CENTS = "�";
 
 	public static final String CREDFREEZE = "CREDFREEZE";
 	public static final String CCSD = "CCSD";
@@ -1641,13 +1646,20 @@ public interface Constants {
 	public static final String SMARTCODE_URL_SUB_STR = "/defl/";
 	public static final String EFL_URL_ERROR = "EFL_URL_ERROR";
 	public static final String DOCID_URL_SUB_STR = "/files/";
-	public static final String BUSINESS = "BUSINESS";
-
+	public static final String BUSINESS = "BUSINESS";	
+	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
+	public static final String VEHICLE_ID = "VEHICLE_ID";
+	public static final String FB = "FB";
+	public static final String DEPOSIT = "DEPOSIT";
+	public static final String TWOZEROAFTERPOINT = ".00";
+	public static final String ZEROPLUSTWOZEROAFTERPOINT = "0.00";
+	public static final String CUSTOMER_PAY = "CUSTOMER_PAY";
+	public static final String DEPOSIT_OPTION_CONTENT_SNIPPET="oe_creditcheck_deposit_pay_alt_tlp_tctxt";
+	
 	//Strax Integration
 	public static final String SECURITY_SERVICE_ENDPOINT_URL = "ws.endpointURL.securityAccountsDomain";
 	public static final String INVOICE_CREATION_XCODE_01 = "CA does not exist";
 	public static final String INVOICE_CREATION_XCODE_02 = "CA has no active STRAX contract";
 	public static final String INVOICE_CREATION_XCODE_03 = "Item Category Doesn't exist";
 	public static final String INVOICE_CREATION_XCODE_04 = "Invoice Creation Failure";
-	
 }

@@ -396,7 +396,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				    
 				        
 				    if((CommonUtil.trimZipCode(billingAddressResp.getStrZip()).equalsIgnoreCase(zip.trim()))&&StringUtils.isNotEmpty(billingAddressResp.getStrZip())){
-				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId);
+				    	GetAccountDetailsResponse getAccountDetailsResponse =billingBO.getAccountDetails(accountNumber, companyCode, brandName, sessionId,"");
 				    
 				  	    // Verification code comes here
 				    	boolean EMAIL_VERIFIED=true;
@@ -774,7 +774,7 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			response = profileService.updateBillingAddress(request, companyCode, sessionId);
 			logger.info(response.getErrorCode());
 			logger.info(response.getErrorMessage());
-			if (response.getErrorCode().equals(null)|| response.getErrorCode().equals("") )
+			if (response.getErrorCode() == null|| response.getErrorCode().equals("") )
 			{
 				updateBillingAddressResponse.setResultCode(RESULT_CODE_SUCCESS);
 				updateBillingAddressResponse.setResultDescription(MSG_SUCCESS);
@@ -1177,12 +1177,14 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			
 		} catch (RemoteException e) {
 			logger.info("Remote Exception "+e);
+			response= new EnvironmentImpactsResponse();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(),response);
 		}
 		catch (Exception e) {
 			logger.info("Exception "+e);
+			response= new EnvironmentImpactsResponse();
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, e.getMessage(),response);
@@ -1216,18 +1218,12 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 				response.setResultCode(RESULT_CODE_SUCCESS);
 			    response.setResultDescription(MSG_SUCCESS);
 			}
-		}catch(RemoteException re)
+		}catch(Exception re)
 		{
 			logger.info("Remote Exception occurred...in secondaryNameUpdate-ProfileBO");
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			throw new OAMException(200, re.getMessage(), response);
-		}
-		catch (Exception e) {
-			logger.info("Exception "+e);
-			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			throw new OAMException(200, e.getMessage(), response);
 		}
 		logger.info("ProfileBO - secondaryNameUpdate method end...");
 		
@@ -1350,16 +1346,18 @@ public ForgotPasswordResponse forgotPassword(String userIdOrAcNum,String company
 			} else {
 				wseEnrollResponse.setResultCode(RESULT_CODE_NO_MATCH);
 				wseEnrollResponse.setResultDescription(RESULT_DESCRIPTION_ENROLL_FAILED);
-				wseEnrollResponse.setErrorCode(CommonUtil
-						.getBlankString(response.getErrorCode()));
-				wseEnrollResponse.setErrorMessage(CommonUtil
-						.getBlankString(response.getErrorMessage()));
-				wseEnrollResponse.setWseRequestDate(CommonUtil.getBlankString(
-						response.getWseRequestDate()).replaceAll("-", ""));
-				wseEnrollResponse.setWseTerminationDate(CommonUtil
-						.getBlankString(response.getWseTerminationDate())
-						.replaceAll("-", ""));
-				wseEnrollResponse.setSucessCode(response.getExCode());
+				if (null != response){
+					wseEnrollResponse.setErrorCode(CommonUtil
+							.getBlankString(response.getErrorCode()));
+					wseEnrollResponse.setErrorMessage(CommonUtil
+							.getBlankString(response.getErrorMessage()));
+					wseEnrollResponse.setWseRequestDate(CommonUtil.getBlankString(
+							response.getWseRequestDate()).replaceAll("-", ""));
+					wseEnrollResponse.setWseTerminationDate(CommonUtil
+							.getBlankString(response.getWseTerminationDate())
+							.replaceAll("-", ""));
+					wseEnrollResponse.setSucessCode(response.getExCode());
+				}
 				
 			}
 		}  catch (Exception e) {

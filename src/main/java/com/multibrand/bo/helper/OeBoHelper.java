@@ -512,11 +512,10 @@ public class OeBoHelper extends BaseBO {
 						.getOfferCategory()
 						&& OFFER_CATEGORY_PREPAY.equalsIgnoreCase(oeSignUpDTO
 								.getSelectedOffer().getOfferCategory())) {
-					// oeSignUpDTO.setReqStatusCd(I_VALUE);
 					oeSignUpDTO.setReqStatusCd(N_VALUE);
-				} else {
-					oeSignUpDTO.setReqStatusCd(N_VALUE);
-				}
+				} //else {
+					//oeSignUpDTO.setReqStatusCd(N_VALUE);
+				//}
 
 			} else {
 				if (oeSignUpDTO.getEsid().getEsidCount() != null 
@@ -723,7 +722,7 @@ public class OeBoHelper extends BaseBO {
 		String savePersonErrorcode = null;
 		// String savePersonErrorcode=genericOEService.savePerson(oeSignUpDTO);
 
-		if (savePersonErrorcode == null) {
+		/*if (savePersonErrorcode == null) {
 			if (logger.isDebugEnabled())
 				logger.debug(oeSignUpDTO.printOETrackingID()
 						+ "updatePersonInfo call happened successfully");
@@ -733,7 +732,7 @@ public class OeBoHelper extends BaseBO {
 						+ "error in updatePersonInfo call and error Code is : "
 						+ savePersonErrorcode);
 		}
-
+*/
 	}
 
 	/**
@@ -757,14 +756,14 @@ public class OeBoHelper extends BaseBO {
 		 * is set to nextview DEFAULT VIEW if happy path fails
 		 */
 
-		if (saveServcieErrorcode == null) {
+		/*if (saveServcieErrorcode == null) {
 			logger.debug(oeSignUpDTO.printOETrackingID()
 					+ "UpdateServiceLocation call happened successfully");
 		} else {
 			logger.debug(oeSignUpDTO.printOETrackingID()
 					+ "error in updateSErviceLocation call and error Code is : "
 					+ saveServcieErrorcode);
-		}
+		}*/
 	}
 
 	/**
@@ -793,7 +792,7 @@ public class OeBoHelper extends BaseBO {
 						// TODO
 						// String
 						// errorInNcbAdd=ncbDao.ncbServiceReqAdd(oeSignUpDTO);
-						if (StringUtils.isBlank(errorInNcbAdd)) {
+						/*if (StringUtils.isBlank(errorInNcbAdd)) {
 							logger.info(oeSignUpDTO.printOETrackingID()
 									+ "NCB Details Added successfully");
 						} else {
@@ -804,7 +803,7 @@ public class OeBoHelper extends BaseBO {
 									&& !(isCriticalExceptionHappen)) {
 								errorVariable = ERROR_IN_PROC_ADD_NON_COMMODITY_BILLING;
 							}
-						}
+						}*/
 					}
 				}
 			}

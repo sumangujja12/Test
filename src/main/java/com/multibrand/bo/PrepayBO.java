@@ -244,7 +244,6 @@ public class PrepayBO implements Constants {
 				}
 			}
 		}catch(Exception ex) {
-			ex.printStackTrace();
 			logger.error("prepayDocRead() in PrepayBO "+ex.getMessage()); 
 			response.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			response.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);

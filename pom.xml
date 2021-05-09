@@ -1060,12 +1060,7 @@
 		  <artifactId>nrg-ccs-ws-client-nei-paypal</artifactId>
 		  <version>1.0</version>
 		</dependency>
-		<dependency>
-			<groupId>com.nrg.services.clients</groupId>
-			<artifactId>nrg-securityaccounts-domain</artifactId>
-			<version>2-SNAPSHOT</version>
-			<scope>${dependency.scope}</scope>
-		</dependency>
+
 		<!--END: WS Client -->	
 		<!-- https://mvnrepository.com/artifact/org.formcept/sqljdbc4 -->
 		<dependency>
@@ -1125,6 +1120,8 @@
 			    <groupId>org.apache.lucene</groupId>
 			    <artifactId>lucene-analyzers</artifactId>
 			    <version>3.5.0</version>
-			</dependency>		
+			</dependency>	
+			
+				
 	</dependencies>
 </project>

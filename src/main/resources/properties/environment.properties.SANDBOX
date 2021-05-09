@@ -22,8 +22,8 @@ salesforce.username=salesforce.api@nrgenergy.com.servicemax
 salesforce.user.password=%%SALESFORCE.PASSWORD%%
 
 #LDAP BIND USER
-LDAP_ADMIN_UID=uid=ocsadmin,ou=cagroup,o=admin
-LDAP_ADMIN_UID_CSLR=uid=ocsadmin,ou=cagroup,o=admin
+LDAP_ADMIN_UID=uid=ocsadmin1,ou=cagroup,o=admin
+LDAP_ADMIN_UID_CSLR=uid=ocsadmin1,ou=cagroup,o=admin
 
 #LDAP URLS
 LDAP_PROVIDER_URL=ldap://txaixdocud03:21391
@@ -150,6 +150,8 @@ ce.tempalte.id_desktop=884
 ce.tempalte.id_mobile=TODO
 gm.tempalte.id_desktop=6974
 gm.tempalte.id_mobile=TODO
+gme.tempalte.id_desktop=884
+rel.tempalte.id_desktop=941
 
 #Publication Id's
 re.pub.id_en=84

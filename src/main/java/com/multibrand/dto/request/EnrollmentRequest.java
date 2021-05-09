@@ -132,6 +132,7 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	@Length(max = 200, groups = SizeConstraint.class)
 	private String sapOfferTagline;
 
+	private String securityMethod;
 	
 	/*	
 	 * @return the trackingId
@@ -610,6 +611,14 @@ public class EnrollmentRequest extends BaseAffiliateRequest {
 	public String toString() {
 		// return ReflectionToStringBuilder.toString(this);
 		return super.toString() + CommonUtil.doRender(this);
+	}
+
+	public String getSecurityMethod() {
+		return securityMethod;
+	}
+
+	public void setSecurityMethod(String securityMethod) {
+		this.securityMethod = securityMethod;
 	}
 
 }

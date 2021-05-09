@@ -3,8 +3,9 @@ package com.multibrand.dto.request;
 import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.NotEmpty;
+import com.multibrand.request.validation.SecurityMethodCheck;
 import com.multibrand.request.validation.SizeConstraint;
-
+@SecurityMethodCheck
 public class SalesEnrollmentRequest extends SalesOERequest{
 	/**
 	 * 
@@ -37,6 +38,7 @@ public class SalesEnrollmentRequest extends SalesOERequest{
 	@Length(max = 1, groups = SizeConstraint.class)
 	private String ebillFlag;
 	
+	private String securityMethod;
 
 	
 	public String getEbillFlag() {
@@ -80,6 +82,12 @@ public class SalesEnrollmentRequest extends SalesOERequest{
 	}
 	public void setMarketSegment(String marketSegment) {
 		this.marketSegment = marketSegment;
+	}
+	public String getSecurityMethod() {
+		return securityMethod;
+	}
+	public void setSecurityMethod(String securityMethod) {
+		this.securityMethod = securityMethod;
 	}
 	
 	

@@ -457,16 +457,12 @@ public class LoggerUtil {
 	 * @param message
 	 */
 	public void logInfo(String className, String message){
-		//System.out.println("TEST:"+ message);
 		info(className, message, null);
 	}
 	
 	
 	
     public void logTransaction(String className, Map<String, String> userMap, Object requestObj, Object responseObj){
-		Long timeElapsed = null;
-		Long startTime = null;
-		Long endTime = null;
 		String strCallType = "";
 		if(className.endsWith("Dao")) {
 			strCallType = "DB ";
@@ -476,40 +472,19 @@ public class LoggerUtil {
 			strCallType = "CCS and DB ";
 		}
 		try{
-			//if(userMap.containsKey(START_TIME)){
-				//startTime =  Long.valueOf(userMap.get(START_TIME));
-			//}
 			
-			//if(userMap.containsKey(END_TIME)){
-				//endTime =  Long.valueOf(userMap.get(END_TIME));
-			//}		
-			
-			//if(startTime != null && endTime != null){
-				//timeElapsed = endTime - startTime;
-			//}
-			StringBuffer message = new StringBuffer(NEWLINE);
+			StringBuilder message = new StringBuilder(NEWLINE);
 			message.append(strCallType);
-			//message.append("Call Invoked for: "+((userMap.containsKey(TRANSACTION_TYPE))? userMap.get(TRANSACTION_TYPE):""));
-			//message.append(NEWLINE);
-			//message.append(END_POINT_URL+": "+((userMap.containsKey(END_POINT_URL))? userMap.get(END_POINT_URL):""));
-			//message.append(NEWLINE);
-			//message.append("Response Time(ms): "+((timeElapsed != null)? timeElapsed:""));		
-			//message.append(NEWLINE);
-			//message.append(REFERENCE_ID+": "+((userMap.containsKey(REFERENCE_ID))? userMap.get(REFERENCE_ID):""));
-			//message.append(NEWLINE);
 			message.append(REQUEST);
 			if(null != requestObj){
 				message.append(getData(requestObj));
 			}
 			message.append(NEWLINE);
 			message.append(RESPONSE);
-			if(null != responseObj){
-				//message.append(getData(responseObj));
-			}
-			//System.out.println("LoggerUtil = "+message+":"+className);
+			
 			logInfo(className, message.toString());	
 		}catch(Exception e){
-			e.printStackTrace();
+			this.error(e);
 		}
 
 	}
