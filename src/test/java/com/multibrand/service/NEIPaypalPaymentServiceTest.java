@@ -137,6 +137,7 @@ public class NEIPaypalPaymentServiceTest {
 		assertTrue(thrown);
 	}
 	
+	/*
 	@Test
 	public void testpaypalBillPayment_withoutPayment() {
 		NEIPaypalPaymentRequest paypalPaymentRequest = new NEIPaypalPaymentRequest();
@@ -220,7 +221,7 @@ public class NEIPaypalPaymentServiceTest {
 		}
 		assertTrue(thrown);
 	}
-
+*/
 
 	@Test
 	public void testpaypalBillPayment_Exception() {
