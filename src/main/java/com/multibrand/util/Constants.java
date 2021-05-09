@@ -1662,4 +1662,6 @@ public interface Constants {
 	public static final String INVOICE_CREATION_XCODE_02 = "CA has no active STRAX contract";
 	public static final String INVOICE_CREATION_XCODE_03 = "Item Category Doesn't exist";
 	public static final String INVOICE_CREATION_XCODE_04 = "Invoice Creation Failure";
+	public static final String CANCEL_CONTRACT_XCODE_01="Failure to cancel the contract in SAP";
+	public static final String CANCEL_CONTRACT_XCODE_02="Strax Lead ID not found";
 }
