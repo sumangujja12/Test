@@ -35,7 +35,9 @@ import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.SalesTDSPRequest;
+import com.multibrand.dto.request.ValidateCARequest;
 import com.multibrand.dto.request.ValidateEsidRequest;
+import com.multibrand.dto.request.ValidateUserIdRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.EsidValidationAddressResponse;
@@ -46,6 +48,8 @@ import com.multibrand.dto.response.SalesHoldLookupResponse;
 import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
+import com.multibrand.dto.response.ValidateCAResponse;
+import com.multibrand.dto.response.ValidateUserIdResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
@@ -468,7 +472,6 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = esidAddressResponse.getHttpStatus() != null ? esidAddressResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status)
 					.entity(esidAddressResponse).build();
-			response = Response.status(200).entity(esidAddressResponse).build();
  
 			logger.info("Exit validateEsid");
 		} catch (Exception e) {
@@ -478,6 +481,52 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
+	@POST
+	@Path(SALES_API_CA_VALIDATION)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateCA(ValidateCARequest validateCARequest) {
+		logger.info("In validateEsid");
+		Response response = null;
+			
+		try {
+			ValidateCAResponse validateCAResponse = salesBO.validateCA(validateCARequest);
+			Response.Status status = validateCAResponse.getHttpStatus() != null ? validateCAResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(validateCAResponse).build();
+ 
+			logger.info("Exit validateCA");
+		} catch (Exception e) {
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new ValidateCAResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateCARequest.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+		}
+       return response;
+	}
+	
+	/**
+	 * s
+	 * @param validateUserIdRequest
+	 * @return
+	 */
+	@POST
+	@Path(SALES_API_USERNAME_VALIDATION)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateUsername(ValidateUserIdRequest validateUserIdRequest) {
+		logger.info("In validateEsid");
+		Response response = null;
+			
+		try {
+			ValidateUserIdResponse validateUserIdResponse = salesBO.validateUserName(validateUserIdRequest);
+			Response.Status status = validateUserIdResponse.getHttpStatus() != null ? validateUserIdResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(validateUserIdResponse).build();
+ 
+			logger.info("Exit validateUsernames");
+		} catch (Exception e) {
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new ValidateUserIdResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateUserIdRequest.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+		}
+       return response;
+	}
 	
 	
 

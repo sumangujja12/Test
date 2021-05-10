@@ -1,5 +1,6 @@
 package com.multibrand.bo;
 
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 
@@ -34,6 +35,8 @@ import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.SalesTDSPRequest;
 import com.multibrand.dto.request.ValidateAddressRequest;
+import com.multibrand.dto.request.ValidateCARequest;
+import com.multibrand.dto.request.ValidateUserIdRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
@@ -47,6 +50,8 @@ import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.ValidateAddressResponse;
+import com.multibrand.dto.response.ValidateCAResponse;
+import com.multibrand.dto.response.ValidateUserIdResponse;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
@@ -482,6 +487,26 @@ public class SalesBO extends OeBoHelper implements Constants {
 		esidValidationAddressResponse.setStrZipFour(esidAddressResponse.getStrZipFour());
 		
 		return esidValidationAddressResponse;
+	}
+	
+	/**
+	 * 
+	 * @param validateCARequest
+	 * @return
+	 * @throws RemoteException
+	 */
+	public ValidateCAResponse validateCA(ValidateCARequest validateCARequest) throws RemoteException {
+		return oeBO.validateCA(validateCARequest);
+	}
+	
+	/**
+	 * @author Kdeshmu1
+	 * @param validateUserIdRequest
+	 * @return
+	 */
+	
+	public ValidateUserIdResponse validateUserName(ValidateUserIdRequest validateUserIdRequest) {
+		return oeBO.validateUserName(validateUserIdRequest);
 	}
 
 }
