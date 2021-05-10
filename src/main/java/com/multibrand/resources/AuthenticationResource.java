@@ -4,7 +4,6 @@ package com.multibrand.resources;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
@@ -14,13 +13,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import com.google.gson.Gson;
 import com.multibrand.bo.AuthenticationBO;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -100,12 +99,19 @@ public class AuthenticationResource implements Constants  {
 		Response response = null;
 		LoginFailureResponse loginFailureCallResponse = null;
 		long startTime = CommonUtil.getStartTime();
+		
+		Gson gson = new Gson();
+		MultivaluedMap<String, String> requestHeadersMap = null;
+		
 		try {
+			 
+			requestHeadersMap = hh.getRequestHeaders();
+			
 			
 			loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
 		
 		} finally {
-			utilityloggerHelper.logTransaction("loginFailureCall", false, hh,loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), "", authenticationBO.readValueFromHeaderOrCookie(hh, "SSO_UNIQUEID"), "0270");
+			utilityloggerHelper.logTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), "", authenticationBO.readValueFromHeaderOrCookie(hh, "SSO_UNIQUEID"), "0270");
 		}
 		response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
