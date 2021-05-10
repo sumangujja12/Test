@@ -19,7 +19,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.validation.ConstraintValidatorContext;
 import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -32,8 +31,6 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.NoSuchMessageException;
@@ -43,12 +40,18 @@ import org.springframework.util.Assert;
 
 import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.dao.BpInfoDAOIF;
+import com.multibrand.dao.ContractInfoDAO;
 import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.PersonDao;
+
 import com.multibrand.dao.ServiceLocationDao;
+import com.multibrand.dao.UserInfoDAOIF;
+import com.multibrand.domain.AccountInfoResponse;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
 import com.multibrand.domain.CampEnvironmentOutData;
+import com.multibrand.domain.ContractDetailsDTO;
 import com.multibrand.domain.EnrollmentHold;
 import com.multibrand.domain.EnrollmentHoldInfoRequest;
 import com.multibrand.domain.EnrollmentHoldInfoResponse;
@@ -62,7 +65,6 @@ import com.multibrand.domain.KbaErrorDTO;
 import com.multibrand.domain.KbaQuestionDTO;
 import com.multibrand.domain.KbaQuestionRequest;
 import com.multibrand.domain.KbaQuestionResponse;
-import com.multibrand.domain.KbaQuizAnswerDTO;
 import com.multibrand.domain.KbaResponseAssessmentDTO;
 import com.multibrand.domain.KbaResponseOutputDTO;
 import com.multibrand.domain.KbaResponseReasonDTO;
@@ -126,6 +128,8 @@ import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.UpdateETFFlagToCRMRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
+import com.multibrand.dto.request.ValidateCARequest;
+import com.multibrand.dto.request.ValidateUserIdRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.BankDepositPaymentResponse;
 import com.multibrand.dto.response.CCDepositPaymentResponse;
@@ -143,16 +147,18 @@ import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.dto.response.UpdateETFFlagToCRMResponse;
+import com.multibrand.dto.response.ValidateCAResponse;
+import com.multibrand.dto.response.ValidateUserIdResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.ContentHelper;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.request.handlers.OERequestHandler;
-import com.multibrand.request.validation.CompanyCodeConstraintValidator;
 import com.multibrand.service.AddressService;
 import com.multibrand.service.OEService;
 import com.multibrand.service.OfferService;
 import com.multibrand.service.PaymentService;
+import com.multibrand.service.ProfileService;
 import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.CommonUtil.validationFormatEnum;
@@ -234,6 +240,10 @@ public class OEBO extends OeBoHelper implements Constants{
 	@Autowired
 	@Qualifier("addressDAO")
 	private AddressDAOIF addressDAO;
+	
+	@Autowired
+	@Qualifier("bpInfoDAO")
+	private BpInfoDAOIF bpInfoDAO;
 
 	@Autowired
 	@Qualifier("serviceLocationDAO")
@@ -247,6 +257,9 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	@Autowired
 	private OEProxy oeProxy;
+	
+	@Autowired
+	private ProfileService profileService;
 	
 	@Autowired
 	@Qualifier("appConstMessageSource")
@@ -7153,5 +7166,50 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 			}
 		}
 		return payUpFront;
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 * @throws RemoteException 
+	 * @throws Exception
+	 */
+	public ValidateCAResponse validateCA(ValidateCARequest request) throws RemoteException {
+		String existingCustomerCA = StringUtils.EMPTY;
+		ValidateCAResponse validateCAResponse = new ValidateCAResponse();
+		String usrEnteredCA= CommonUtil.addLeadingZeroes(request.getContractAccountNumber(), 12)+STR_SYMBOL_EIPHEN+request.getCheckDigit();
+		AccountInfoResponse acctInfoResponse = profileService.getContractDetailsFromCO(request.getContractNumber(),request.getCompanyCode());
+
+		if(acctInfoResponse!=null && StringUtils.isBlank(acctInfoResponse.getErrorCode())){
+
+			ContractDetailsDTO contractDetails = acctInfoResponse.getContractDetailsDtoList(0);
+			existingCustomerCA =CommonUtil.addLeadingZeroes(contractDetails.getContractAccountNo(), 12)+STR_SYMBOL_EIPHEN+contractDetails.getCheckDigit();			
+		}
+
+		if(StringUtils.equals(usrEnteredCA, existingCustomerCA)) {					
+			validateCAResponse.setHttpStatus(Status.OK);
+		}else {
+			validateCAResponse.setHttpStatus(Status.NOT_FOUND);
+		}
+
+		
+		
+		return validateCAResponse;
+	}
+	
+	public ValidateUserIdResponse validateUserName(ValidateUserIdRequest request)  {
+		
+		ValidateUserIdResponse validateUserIdResponse = new ValidateUserIdResponse();
+		String existingCustomerBP=  CommonUtil.addLeadingZeroes(request.getBpNumber(), 10);
+		List<String> bpList = bpInfoDAO.getBPforUserId(request.getUserId());
+
+		if(bpList != null && bpList.contains(existingCustomerBP)) {					
+			validateUserIdResponse.setHttpStatus(Status.OK);
+		}else {
+			validateUserIdResponse.setHttpStatus(Status.NOT_FOUND);
+		}
+
+		return validateUserIdResponse;
 	}
 }

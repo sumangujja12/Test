@@ -28,9 +28,12 @@ import org.testng.annotations.Test;
 
 import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.dao.BpInfoDAOIF;
 import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
+import com.multibrand.domain.AccountInfoResponse;
+import com.multibrand.domain.ContractDetailsDTO;
 import com.multibrand.domain.KbaAnswerDTO;
 //import org.testng.annotations.BeforeClass;
 //import org.testng.annotations.BeforeMethod;
@@ -55,15 +58,20 @@ import com.multibrand.dto.request.KbaAnswerRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.UpdatePersonRequest;
 import com.multibrand.dto.request.UpdateServiceLocationRequest;
+import com.multibrand.dto.request.ValidateCARequest;
+import com.multibrand.dto.request.ValidateUserIdRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.dto.response.ValidateCAResponse;
+import com.multibrand.dto.response.ValidateUserIdResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.service.OEService;
 import com.multibrand.service.OfferService;
+import com.multibrand.service.ProfileService;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.util.EnrollmentFraud.ENROLLMENT_FRAUD_ENUM;
@@ -134,6 +142,12 @@ public class OEBOTest implements Constants{
 	
 	@Mock
 	PersonDao personDao;;
+	
+	@Mock
+    ProfileService profileService;
+	
+	@Mock
+	BpInfoDAOIF bpInfoDAO;
 	
 	@Spy
 	ReloadableResourceBundleMessageSource appConstMessageSource = new ReloadableResourceBundleMessageSource();
@@ -1123,5 +1137,69 @@ public class OEBOTest implements Constants{
 		
 		oebo.performCreditCheck(creditScoreRequest,creditCheckRequest,serviceLoationResponse);
 		Assert.assertEquals(creditScoreRequest, creditScoreRequest);
+	}
+	@Test
+	public void testvalidateCA() throws Exception{
+		ValidateCARequest request = new ValidateCARequest();
+		ValidateCAResponse validateCAResponse = new ValidateCAResponse();
+		AccountInfoResponse acctInfoResponse = new AccountInfoResponse();
+		request.setContractAccountNumber("123456");
+		ContractDetailsDTO  contractDetailsDTO = new ContractDetailsDTO();
+		ContractDetailsDTO[] contractDetailsDtoList = new ContractDetailsDTO[1] ;
+		contractDetailsDTO.setBusinessPartnerId("123");
+		contractDetailsDTO.setContractAccountName("nrg");
+		contractDetailsDTO.setContractAccountNo("123456");
+		contractDetailsDtoList[0]=contractDetailsDTO;
+		request.setCompanyCode("01212");
+		
+		acctInfoResponse.setErrorMessage("Failure");
+		acctInfoResponse.setContractDetailsDtoList(contractDetailsDtoList);
+		when(profileService.getContractDetailsFromCO(request.getContractNumber(),request.getCompanyCode())).thenReturn(acctInfoResponse);
+		oebo.validateCA(request);
+		Assert.assertEquals(validateCAResponse, validateCAResponse);
+	}
+	@Test
+	public void testvalidateCANegative() throws Exception{
+		ValidateCARequest request = new ValidateCARequest();
+		ValidateCAResponse validateCAResponse = new ValidateCAResponse();
+		AccountInfoResponse acctInfoResponse = new AccountInfoResponse();
+		request.setContractAccountNumber("123456");
+		ContractDetailsDTO  contractDetailsDTO = new ContractDetailsDTO();
+		ContractDetailsDTO[] contractDetailsDtoList = new ContractDetailsDTO[1] ;
+		contractDetailsDTO.setBusinessPartnerId("123");
+		contractDetailsDTO.setContractAccountName("nrg");
+		contractDetailsDTO.setContractAccountNo("12345611");
+		contractDetailsDtoList[0]=contractDetailsDTO;
+		request.setCompanyCode("01212");
+		
+		acctInfoResponse.setErrorMessage("Failure");
+		acctInfoResponse.setContractDetailsDtoList(contractDetailsDtoList);
+		when(profileService.getContractDetailsFromCO(request.getContractNumber(),request.getCompanyCode())).thenReturn(acctInfoResponse);
+		oebo.validateCA(request);
+		Assert.assertEquals(validateCAResponse, validateCAResponse);
+	}
+	@Test
+	public void testValidateUserName() {
+		ValidateUserIdRequest request = new ValidateUserIdRequest();
+		ValidateUserIdResponse validateUserIdResponse = new ValidateUserIdResponse();
+		request.setBpNumber("0000123456");
+		List<String> bpList = new ArrayList<>();
+		bpList.add("0000123456");
+		bpList.add("test2");
+		when(bpInfoDAO.getBPforUserId(request.getUserId())).thenReturn(bpList);
+		oebo.validateUserName(request);
+		Assert.assertEquals(validateUserIdResponse, validateUserIdResponse);
+	}
+	@Test
+	public void testValidateUserNameNegative() {
+		ValidateUserIdRequest request = new ValidateUserIdRequest();
+		ValidateUserIdResponse validateUserIdResponse = new ValidateUserIdResponse();
+		request.setBpNumber("0000123");
+		List<String> bpList = new ArrayList<String>();
+		bpList.add("00001234561");
+		bpList.add("test2");
+		when(bpInfoDAO.getBPforUserId(request.getUserId())).thenReturn(bpList);
+		oebo.validateUserName(request);
+		Assert.assertEquals(validateUserIdResponse, validateUserIdResponse);
 	}
 }
