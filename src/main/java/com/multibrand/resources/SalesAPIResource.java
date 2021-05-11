@@ -163,7 +163,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(SalesCreditCheckRequest request) throws OEException {
+	public Response performCreditCheck(@Valid SalesCreditCheckRequest request) throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -187,7 +187,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_RECHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditRecheck(SalesCreditReCheckRequest request) throws OEException {
+	public Response performCreditRecheck(@Valid SalesCreditReCheckRequest request) throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -374,7 +374,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CLEANUP_ADDRESS)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response cleanupAddress(SalesCleanupAddressRequest  request)
+	public Response cleanupAddress(@Valid SalesCleanupAddressRequest  request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
