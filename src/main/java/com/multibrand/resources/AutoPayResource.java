@@ -109,6 +109,8 @@ public class AutoPayResource {
 		Response response = null;
 		AutoPayBankResponse autoPayBankRep = null;
 		String userAgent = "";
+		String host = "";
+
 		AutoPayRequest autoPayRequest = new AutoPayRequest();
 		
 
@@ -127,11 +129,11 @@ public class AutoPayResource {
 		
 		MultivaluedMap<String, String> requestHeadersMap = hh.getRequestHeaders();
 		
-		if (requestHeadersMap!=null&&requestHeadersMap.containsKey("user-agent")){
-			userAgent = requestHeadersMap.getFirst("user-agent");
+		if (requestHeadersMap!=null&&requestHeadersMap.containsKey("Host")){
+			host = requestHeadersMap.getFirst("Host");
 		}
 		
-		if( StringUtils.isNotEmpty(userAgent))	 {
+		if( StringUtils.isNotEmpty(host) && userAgent.indexOf("service.nrg.com") > -1)	 {
 			autoPayBankRep = autoPayBO.submitMobileAppBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId(), hh);
 		} else {
 			autoPayBankRep = autoPayBO.submitBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId());
