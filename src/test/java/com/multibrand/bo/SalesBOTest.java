@@ -4,6 +4,8 @@ package com.multibrand.bo;
 
 import static org.mockito.Mockito.when;
 
+import java.rmi.RemoteException;
+
 import javax.ws.rs.core.Response;
 
 
@@ -23,9 +25,13 @@ import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
+import com.multibrand.dto.request.ValidateCARequest;
+import com.multibrand.dto.request.ValidateUserIdRequest;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.dto.response.ValidateCAResponse;
+import com.multibrand.dto.response.ValidateUserIdResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.request.handlers.OERequestHandler;
@@ -164,7 +170,22 @@ public class SalesBOTest implements Constants{
 		}
 		Assert.assertEquals(response.getHttpStatus(), Response.Status.BAD_REQUEST);
 	}
-
+	@Test
+	public void testValidateUserName(){
+		ValidateUserIdResponse validateUserIdResponse = new ValidateUserIdResponse();
+		ValidateUserIdRequest validateUserIdRequest= new ValidateUserIdRequest();
+		when(oebo.validateUserName(validateUserIdRequest)).thenReturn(validateUserIdResponse);
+		salesBO.validateUserName(validateUserIdRequest);
+		Assert.assertEquals(validateUserIdResponse,validateUserIdResponse);
+	}
+	@Test
+	public void testValidateCA() throws  RemoteException{
+		ValidateCARequest validateCARequest = new ValidateCARequest();
+		ValidateCAResponse validateCAResponse= new ValidateCAResponse();
+		when(oebo.validateCA(validateCARequest)).thenReturn(validateCAResponse);
+		salesBO.validateCA(validateCARequest);
+		Assert.assertEquals(validateCAResponse,validateCAResponse);
+	}
 	@Test
 	public void testPerformPosidAndBpMatchBothSSNandNoid() throws OEException{
 	   IdentityRequest request = new IdentityRequest();

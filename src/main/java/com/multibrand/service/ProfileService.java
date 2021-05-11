@@ -16,6 +16,9 @@ import javax.xml.ws.Holder;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.multibrand.domain.AccountInfoRequest;
+import com.multibrand.domain.AccountInfoResponse;
 import com.multibrand.domain.AcctValidationRequest;
 import com.multibrand.domain.AddressDO;
 import com.multibrand.domain.AllAccountDetailsRequest;
@@ -1891,6 +1894,33 @@ public class ProfileService extends BaseAbstractService {
 		} 
 		return currentEFLResponse;
 	}	
+	
+	/**
+	 * @author kdeshmu1
+	 * OE- Fetching account details 
+	 * @param contractNumber
+	 * @param companyCode
+	 * @return
+	 * @throws Exception
+	 */
+	public AccountInfoResponse getContractDetailsFromCO(String contractNumber, String companyCode) throws RemoteException {
+		
+		AccountInfoResponse accountInfoResponse = null ;
+		AccountInfoRequest accountInfoRequest = new AccountInfoRequest();
+		accountInfoRequest.setContractNumber(contractNumber);
+		accountInfoRequest.setCompanyCode(companyCode);
+
+		try {
+			ProfileDomain proxy = getProfileDomainProxy();
+			accountInfoResponse = proxy.getAccountInfoFromCO(accountInfoRequest);
+		} catch (Exception re) {
+			logger.error("getContractDetailsFromCO : RemoteException while fetching Account info from ProfileDomain based on contractNumber:", re);
+			throw new RemoteException("RemoteException while fetching Account info from ProfileDomain based on contractNumber", re);
+		} 
+
+		return accountInfoResponse ;
+	}
+
 	
 
 }

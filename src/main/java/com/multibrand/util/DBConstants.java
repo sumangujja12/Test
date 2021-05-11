@@ -422,6 +422,8 @@ public interface DBConstants {
 	
 
 	public static final String QUERY_GET_SMART_CAR_USER_PROFILE = "query.get.smart.car.profile.sqlQuery";
+	
+	public static final String SMS_SELECT_PROFILE_GET_BP_NUMBER="db.cpdb.sms.select.profile.get.bp.number";
 
 
 	public static final String DB_TCS_SMB_PERSONALIZED_FLAGS_FROM_CUST_BASE ="db.tcs.personalizedflags.from.custbase.smb";
