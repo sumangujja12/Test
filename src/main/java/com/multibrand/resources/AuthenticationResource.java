@@ -107,11 +107,11 @@ public class AuthenticationResource implements Constants  {
 			 
 			requestHeadersMap = hh.getRequestHeaders();
 			uuid = requestHeadersMap.getFirst("SSO_UID");
-			
+			logger.debug("Inside loginFailureCall uuid:{}",uuid);
 			loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
 		
 		} finally {
-			utilityloggerHelper.logTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), "", 
+			utilityloggerHelper.logTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), uuid, 
 					uuid, "0270");
 		}
 		response = Response.status(200).entity(loginFailureCallResponse).build();
