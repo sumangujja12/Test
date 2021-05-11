@@ -464,7 +464,6 @@ public class SalesAPIResource extends BaseResource {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response validateEsid(ValidateEsidRequest validateEsidRequest) {
-		logger.info("In validateEsid");
 		Response response = null;
 			
 		try {
@@ -473,7 +472,6 @@ public class SalesAPIResource extends BaseResource {
 			response = Response.status(status)
 					.entity(esidAddressResponse).build();
  
-			logger.info("Exit validateEsid");
 		} catch (Exception e) {
 			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new EsidValidationAddressResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateEsidRequest.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
@@ -486,7 +484,6 @@ public class SalesAPIResource extends BaseResource {
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response validateCA(ValidateCARequest validateCARequest) {
-		logger.info("In validateEsid");
 		Response response = null;
 			
 		try {
@@ -494,7 +491,6 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = validateCAResponse.getHttpStatus() != null ? validateCAResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status).entity(validateCAResponse).build();
  
-			logger.info("Exit validateCA");
 		} catch (Exception e) {
 			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new ValidateCAResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateCARequest.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());

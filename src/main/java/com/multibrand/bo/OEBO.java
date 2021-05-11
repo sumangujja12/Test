@@ -41,12 +41,10 @@ import org.springframework.util.Assert;
 import com.multibrand.bo.helper.OeBoHelper;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.BpInfoDAOIF;
-import com.multibrand.dao.ContractInfoDAO;
 import com.multibrand.dao.KbaDAO;
 import com.multibrand.dao.PersonDao;
 
 import com.multibrand.dao.ServiceLocationDao;
-import com.multibrand.dao.UserInfoDAOIF;
 import com.multibrand.domain.AccountInfoResponse;
 import com.multibrand.domain.BpMatchCCSRequest;
 import com.multibrand.domain.BpMatchCCSResponse;
