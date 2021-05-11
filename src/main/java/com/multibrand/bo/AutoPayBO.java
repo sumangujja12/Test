@@ -95,7 +95,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	}
 	
 	
-	public AutoPayBankResponse submitBankAutoPay(AutoPayRequest autoPayRequest, String sessionId, HttpHeaders httpHeaders) {
+	public AutoPayBankResponse submitMobileAppBankAutoPay(AutoPayRequest autoPayRequest, String sessionId, HttpHeaders httpHeaders) {
 		
 		logger.info("AutoPayBO.submitBankAutoPay :: START");
 		AutoPayBankResponse autoPayBankResponse = new AutoPayBankResponse();
@@ -155,7 +155,67 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		return autoPayBankResponse;
 		
 	}
+	public AutoPayBankResponse submitBankAutoPay(AutoPayRequest autoPayRequest, String sessionId) {
+		
+		logger.info("AutoPayBO.submitBankAutoPay :: START");
+		AutoPayBankResponse autoPayBankResponse = new AutoPayBankResponse();
+		
+		AutoPayBankRequest request = new AutoPayBankRequest();
+		request.setStrBankAccNumber(autoPayRequest.getBankAccountNumber());
+		request.setStrBankRoutingNumber(autoPayRequest.getBankRoutingNumber());
+		request.setStrCANumber(autoPayRequest.getAccountNumber());
+		request.setStrCompanyCode(autoPayRequest.getCompanyCode());
+		String maskBankAcctNumber = CommonUtil.maskBankAccountNo(autoPayRequest.getBankAccountNumber());
+		String bankLastDigits = maskBankAcctNumber.substring(maskBankAcctNumber.length()-3, maskBankAcctNumber.length());
+		
+		try {
+			com.multibrand.domain.AutoPayBankResponse response = paymentService.submitBankAutoPay(request, autoPayRequest.getCompanyCode(), sessionId,autoPayRequest.getBrandName());
+			
+			if(response.getStrStatus()!= null)autoPayBankResponse.setStrStatus(response.getStrStatus());
+			
+			if(response.getErrorCode()!=null && !response.getErrorCode().equalsIgnoreCase("")){
+				autoPayBankResponse.setResultCode(RESULT_CODE_CCS_ERROR);
+				if(response.getErrorMessage()!=null)autoPayBankResponse.setResultDescription(response.getErrorMessage());
+				autoPayBankResponse.setErrorCode(response.getErrorCode());
+				if(response.getErrorMessage()!=null)autoPayBankResponse.setErrorMessage(response.getErrorMessage());
+			} else if(!CIRRO_COMPANY_CODE.equalsIgnoreCase(autoPayRequest.getCompanyCode()) && !CIRRO_BRAND_NAME.equalsIgnoreCase(autoPayRequest.getBrandName())
+					&& !CommonUtil.checkIfGMEPrepay(autoPayRequest.getCompanyCode(), autoPayRequest.getBrandName(), autoPayRequest.getEmailTypeId())) {
+				
+                logger.info("Sending mail for auto pay enrollment successful");		
+                
+				HashMap<String, String> templateProps = new HashMap<>();
+					
+				templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
+				templateProps.put(BANK_ROUTING_NUMBER, autoPayRequest.getBankRoutingNumber());
+				
+				if(StringUtils.isBlank(autoPayRequest.getLanguageCode())|| autoPayRequest.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)){
+					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
+					logger.info("Sending mail for successful auto pay enrollment EN");
+					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_EN, templateProps, autoPayRequest.getCompanyCode());
+				} else{
+					templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
+					logger.info("Sending mail for successful auto pay enrollment ES");
+					EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_ES, templateProps, autoPayRequest.getCompanyCode());
+				}
+				
+			}
+			
+			sendCirroBankAutoPayConfirmationEmail(autoPayRequest);
+			
+		} catch (Exception e) {
 
+			autoPayBankResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), autoPayBankResponse);
+			
+		}
+		
+		writeAutoPayBankContactLog(autoPayRequest, autoPayBankResponse, bankLastDigits);	
+		
+		logger.info("AutoPayBO.submitBankAutoPay :: END");
+		return autoPayBankResponse;
+		
+	}
 
 	/**
 	 * @param autoPayRequest
