@@ -7,9 +7,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -99,12 +102,13 @@ public class AutoPayResource {
 			@FormParam("emailTypeId")String emailTypeId ,
 			@FormParam("brandName") String brandName, 
 			@FormParam("bpNumber") String bpNumber, 
-			@FormParam("source") String source) {
+			@FormParam("source") String source,@Context HttpHeaders hh) {
 		
 		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
 		
 		Response response = null;
-		
+		AutoPayBankResponse autoPayBankRep = null;
+		String userAgent = "";
 		AutoPayRequest autoPayRequest = new AutoPayRequest();
 		
 
@@ -120,11 +124,22 @@ public class AutoPayResource {
 		autoPayRequest.setBrandName(brandName);
 		autoPayRequest.setBpid(bpNumber);
 		autoPayRequest.setSource(source);
-			
-		AutoPayBankResponse autoPayBankRep = autoPayBO.submitBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId());
+		
+		MultivaluedMap<String, String> requestHeadersMap = hh.getRequestHeaders();
+		
+		if (requestHeadersMap!=null&&requestHeadersMap.containsKey("user-agent")){
+			userAgent = requestHeadersMap.getFirst("user-agent");
+		}
+		
+		if( StringUtils.isNotEmpty(userAgent))	 {
+			autoPayBankRep = autoPayBO.submitMobileAppBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId(), hh);
+		} else {
+			autoPayBankRep = autoPayBO.submitBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId());
+		}
 		
 		
-				response = Response.status(200).entity(autoPayBankRep).build();
+		
+		response = Response.status(200).entity(autoPayBankRep).build();
 		logger.debug("End AutoPayResource.submitBankAutoPay :: END");
 		
 		return response;

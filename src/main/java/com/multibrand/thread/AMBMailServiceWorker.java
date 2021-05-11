@@ -27,9 +27,9 @@ public class AMBMailServiceWorker implements Runnable {
 	@Override
 	public void run() {
 		try {
-			billingBO.sendConfirmationMailForAmbSignup(request,accountDetails,sessionId);
+			billingBO.sendConfirmationMailForAmbSignup(request,accountDetails);
 		} catch (Exception e) {
-			logger.error("Exception occured in AMBMailServiceWorker " +e.getStackTrace());
+			logger.error("Exception occured in AMBMailServiceWorker:{}" ,e.getMessage());
 		}
 		
 	}

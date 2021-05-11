@@ -2,10 +2,14 @@ package com.multibrand.bo;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.multibrand.domain.AutoPayBankRequest;
+import com.multibrand.domain.BankDetailsValidationRequest;
+import com.multibrand.domain.BankDetailsValidationResponse;
 import com.multibrand.domain.CreateContactLogRequest;
 import com.multibrand.domain.ValidateCCRequest;
 import com.multibrand.exception.OAMException;
@@ -24,6 +28,7 @@ import com.multibrand.vo.response.ValidateBankResponse;
 import com.multibrand.vo.response.ValidateCCResponse;
 import com.multibrand.vo.response.billingResponse.AutoPayDetails;
 import com.multibrand.vo.response.billingResponse.AutoPayInfoResponse;
+
 
 /**
  * 
@@ -90,6 +95,66 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	}
 	
 	
+	public AutoPayBankResponse submitMobileAppBankAutoPay(AutoPayRequest autoPayRequest, String sessionId, HttpHeaders httpHeaders) {
+		
+		logger.info("AutoPayBO.submitMobileAppBankAutoPay :: START");
+		AutoPayBankResponse autoPayBankResponse = new AutoPayBankResponse();
+		
+		AutoPayBankRequest request = new AutoPayBankRequest();
+		request.setStrBankAccNumber(autoPayRequest.getBankAccountNumber());
+		request.setStrBankRoutingNumber(autoPayRequest.getBankRoutingNumber());
+		request.setStrCANumber(autoPayRequest.getAccountNumber());
+		request.setStrCompanyCode(autoPayRequest.getCompanyCode());
+		String maskBankAcctNumber = CommonUtil.maskBankAccountNo(autoPayRequest.getBankAccountNumber());
+		String bankLastDigits = maskBankAcctNumber.substring(maskBankAcctNumber.length()-3, maskBankAcctNumber.length());
+		
+		try {
+			
+			printHeaders(httpHeaders);
+			
+			BankDetailsValidationRequest bankDetailsValidationRequest = createValidateBankDetailsGIACTRequest(autoPayRequest);
+			
+			BankDetailsValidationResponse validateBankResp = paymentService.validateBankDetailsGIACT(bankDetailsValidationRequest);
+			
+			 logger.info("Sending mail for auto pay enrollment successful:{}", validateBankResp);		
+			
+			 if(validateBankResp!=null && validateBankResp.getExReturnCode()!=null 
+						&&  STATUS_CODE_CONTINUE.equalsIgnoreCase(validateBankResp.getExReturnCode())) {
+			com.multibrand.domain.AutoPayBankResponse response = paymentService.submitBankAutoPay(request, autoPayRequest.getCompanyCode(), sessionId,autoPayRequest.getBrandName());
+			
+			if(response.getStrStatus()!= null)autoPayBankResponse.setStrStatus(response.getStrStatus());
+			
+			handleBankAutoPayResponse(autoPayRequest, autoPayBankResponse, maskBankAcctNumber, response);
+			
+			sendCirroBankAutoPayConfirmationEmail(autoPayRequest);
+		 } else if(validateBankResp!=null && validateBankResp.getExReturnCode().equalsIgnoreCase(ERROR_01)){
+				autoPayBankResponse.setResultCode(GIACT_ERROR_01);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}else if(validateBankResp!=null &&validateBankResp.getErrorCode().equalsIgnoreCase(ERROR_02)){
+				autoPayBankResponse.setResultCode(GIACT_ERROR_02);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}else if(validateBankResp!=null && validateBankResp.getErrorCode().equalsIgnoreCase(ERROR_03)){
+				autoPayBankResponse.setResultCode(GIACT_ERROR_03);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}else{
+				autoPayBankResponse.setResultCode(BANK_AUTOPAY_INVALID_BANK_ACCOUNT);
+				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			}
+			
+		} catch (Exception e) {
+
+			autoPayBankResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), autoPayBankResponse);
+			
+		}
+		
+		writeAutoPayBankContactLog(autoPayRequest, autoPayBankResponse, bankLastDigits);	
+		
+		logger.info("AutoPayBO.submitMobileAppBankAutoPay :: END");
+		return autoPayBankResponse;
+		
+	}
 	public AutoPayBankResponse submitBankAutoPay(AutoPayRequest autoPayRequest, String sessionId) {
 		
 		logger.info("AutoPayBO.submitBankAutoPay :: START");
@@ -150,6 +215,58 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		logger.info("AutoPayBO.submitBankAutoPay :: END");
 		return autoPayBankResponse;
 		
+	}
+
+	/**
+	 * @param autoPayRequest
+	 * @param autoPayBankResponse
+	 * @param maskBankAcctNumber
+	 * @param response
+	 * @throws Exception
+	 */
+	public void handleBankAutoPayResponse(AutoPayRequest autoPayRequest, AutoPayBankResponse autoPayBankResponse,
+			String maskBankAcctNumber, com.multibrand.domain.AutoPayBankResponse response) throws Exception {
+		if(response.getErrorCode()!=null && !response.getErrorCode().equalsIgnoreCase("")){
+			autoPayBankResponse.setResultCode(RESULT_CODE_CCS_ERROR);
+			if(response.getErrorMessage()!=null)autoPayBankResponse.setResultDescription(response.getErrorMessage());
+			autoPayBankResponse.setErrorCode(response.getErrorCode());
+			if(response.getErrorMessage()!=null)autoPayBankResponse.setErrorMessage(response.getErrorMessage());
+		} else if(!CIRRO_COMPANY_CODE.equalsIgnoreCase(autoPayRequest.getCompanyCode()) && !CIRRO_BRAND_NAME.equalsIgnoreCase(autoPayRequest.getBrandName())
+				&& !CommonUtil.checkIfGMEPrepay(autoPayRequest.getCompanyCode(), autoPayRequest.getBrandName(), autoPayRequest.getEmailTypeId())) {
+			
+		    logger.info("Sending mail for auto pay enrollment successful");		
+		    
+			HashMap<String, String> templateProps = new HashMap<>();
+				
+			templateProps.put(BANK_ACCOUNT_NUMBER, maskBankAcctNumber);
+			templateProps.put(BANK_ROUTING_NUMBER, autoPayRequest.getBankRoutingNumber());
+			
+			if(StringUtils.isBlank(autoPayRequest.getLanguageCode())|| autoPayRequest.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)){
+				templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK);
+				logger.info("Sending mail for successful auto pay enrollment EN");
+				EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_EN, templateProps, autoPayRequest.getCompanyCode());
+			} else{
+				templateProps.put(PAYMENT_METHOD, PAYMENT_METHOD_BANK_ES);
+				logger.info("Sending mail for successful auto pay enrollment ES");
+				EmailHelper.sendMailWithBCC(autoPayRequest.getEmail(),this.envMessageReader.getMessage(QC_BCC_MAIL), "", AUTO_PAY_ENROLL_CONF_BANK_ES, templateProps, autoPayRequest.getCompanyCode());
+			}
+			
+		}
+	}
+
+
+	/**
+	 * @param httpHeaders
+	 */
+	public void printHeaders(HttpHeaders httpHeaders) {
+		MultivaluedMap<String, String> requestHeadersMap = httpHeaders.getRequestHeaders();
+		
+		logger.info("submitBankAutoPay(...) >>>>>>>>>>>>>>> Headers <<<<<<<<<<<<<<");
+		if(null != requestHeadersMap && requestHeadersMap.size() > 0) {
+			for(String headerName : requestHeadersMap.keySet()) {
+				logger.info("submitBankAutoPay(...) >> Header Name [{}] Header Value[{}]", headerName, requestHeadersMap.getFirst(headerName));
+			}
+		}
 	}
 
 
@@ -567,4 +684,23 @@ private void writeDeEnrollContactLog(AutoPayRequest request, DeEnrollResponse re
 			}
 		}
 	}
+	
+	/**
+	 * Method createValidateBankDetailsGIACTRequest used to create a complete request Object for BankValidation Call Using GIACT API 
+	 * @param contractAccountNum String
+	 * @param trackingNumber String
+	 * @param bankDTO BankAccountDTO
+	 * @return BankDetailsValidationRequest
+	 */
+	private BankDetailsValidationRequest createValidateBankDetailsGIACTRequest(AutoPayRequest autoPayRequest)
+	{
+		BankDetailsValidationRequest bankDetailsValidationRequest = new BankDetailsValidationRequest();
+		bankDetailsValidationRequest.setBankAccountNumber(autoPayRequest.getBankAccountNumber());
+		bankDetailsValidationRequest.setCompanyCode(GME_RES_COMPANY_CODE);
+		bankDetailsValidationRequest.setContractAccountNumber(autoPayRequest.getAccountNumber());
+		bankDetailsValidationRequest.setRoutingNumber(autoPayRequest.getBankRoutingNumber());
+		bankDetailsValidationRequest.setTrackingNumber("");
+		return bankDetailsValidationRequest;
+		
+	}	
 }
