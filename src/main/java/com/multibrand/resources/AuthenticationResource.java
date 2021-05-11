@@ -107,7 +107,7 @@ public class AuthenticationResource implements Constants  {
 			 
 			requestHeadersMap = hh.getRequestHeaders();
 			uuid = requestHeadersMap.getFirst("SSO_UID");
-			logger.debug("Inside loginFailureCall uuid:{}",uuid);
+			logger.info("Inside loginFailureCall uuid:{}",uuid);
 			loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
 		
 		} finally {
