@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multibrand.domain.ValidateCustReferralIdResponse;
+import com.multibrand.domain.ValidatePaymentReceiptRequest;
 import com.multibrand.domain.ValidatePosIdKBARequest;
 import com.multibrand.domain.ValidatePosIdKBAResponse;
 import com.multibrand.domain.ValidatePosIdRequest;
@@ -18,6 +19,7 @@ import com.multibrand.domain.ValidationDomain;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
+import com.multibrand.domain.ValidatePaymentReceiptResponse;
 import com.reliant.domain.AddressValidateRequest;
 import com.reliant.domain.AddressValidateResponse;
 import com.reliant.domain.AddressValidationDomain;
@@ -192,5 +194,37 @@ public class ValidationService extends BaseAbstractService {
 			return response;
 		}
 		//END -- Security and Services Sprint 2
+		
+	public ValidatePaymentReceiptResponse validateThirdPartyReceipt(
+			ValidatePaymentReceiptRequest validatePaymentReceiptRequest) throws Exception {
+
+		ValidatePaymentReceiptResponse response = new ValidatePaymentReceiptResponse();
+		String responseStatus = null;
+		long startTime = CommonUtil.getStartTime();
+		logger.debug(" START *******ValidationService:: validateThirdPartyReceipt API**********");
+		try {
+			response = validationDomainPortProxy.validateThirdPartyPaymentReceipt(validatePaymentReceiptRequest);
+			logger.debug("validateThirdPartyReceipt:: request ::{}",
+					CommonUtil.doRender(validatePaymentReceiptRequest));
+			logger.debug("validateThirdPartyReceipt:: response  :: {}", CommonUtil.doRender(response));
+
+			if (StringUtils.isNotBlank(response.getErrorMessage())) {
+				responseStatus = response.getErrorMessage();
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception in ValidationService.validateThirdPartyReceipt :: ", e);
+		} finally {
+			try {
+				utilityloggerHelper.logTransaction("validateThirdPartyReceipt", false, validatePaymentReceiptRequest,
+						response, responseStatus, CommonUtil.getElapsedTime(startTime), "", "",
+						validatePaymentReceiptRequest.getCompanyCode());
+			} catch (Exception e) {
+				logger.error("Exception While logging::", e);
+			}
+		}
+		return response;
+
+	}
 	
 }
