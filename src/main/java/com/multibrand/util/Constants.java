@@ -1656,6 +1656,7 @@ public interface Constants {
 	public static final String CUSTOMER_PAY = "CUSTOMER_PAY";
 	public static final String DEPOSIT_OPTION_CONTENT_SNIPPET="oe_creditcheck_deposit_pay_alt_tlp_tctxt";
 	
+
 	public static final String DATE_PATTERN_YYYY_MM_DD = "^\\d{4}-\\d{2}-\\d{2}$";
 	
 	
@@ -1668,4 +1669,7 @@ public interface Constants {
 	public static final String GIACT_ERROR_03="GIACT_ERROR_03";
 	public static final String BANK_AUTOPAY_INVALID_BANK_ACCOUNT = "MSG_CCSERR_2_INVALID_BNK";
 	
+
+	public static final String ZIRTUE_RECEIPT_NUMBER = "ZIRTUE.REL.0102.1";
+
 }
