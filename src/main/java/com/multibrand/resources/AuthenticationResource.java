@@ -112,7 +112,7 @@ public class AuthenticationResource implements Constants  {
 		
 		} finally {
 			utilityloggerHelper.logTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), uid, 
-					uid, "0270");
+					uid, COMPANY_CODE_GME);
 		}
 		response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
