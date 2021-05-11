@@ -97,7 +97,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 	
 	public AutoPayBankResponse submitMobileAppBankAutoPay(AutoPayRequest autoPayRequest, String sessionId, HttpHeaders httpHeaders) {
 		
-		logger.info("AutoPayBO.submitBankAutoPay :: START");
+		logger.info("AutoPayBO.submitMobileAppBankAutoPay :: START");
 		AutoPayBankResponse autoPayBankResponse = new AutoPayBankResponse();
 		
 		AutoPayBankRequest request = new AutoPayBankRequest();
@@ -151,7 +151,7 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		
 		writeAutoPayBankContactLog(autoPayRequest, autoPayBankResponse, bankLastDigits);	
 		
-		logger.info("AutoPayBO.submitBankAutoPay :: END");
+		logger.info("AutoPayBO.submitMobileAppBankAutoPay :: END");
 		return autoPayBankResponse;
 		
 	}
