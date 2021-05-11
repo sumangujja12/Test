@@ -213,43 +213,6 @@ public class RegistrationDAOImpl implements RegistrationDAO, DBConstants
 		return true;
 	}
 
-	public static void main(String[] argz)
-	{
-		FileSystemXmlApplicationContext file = new FileSystemXmlApplicationContext(
-				"G:\\Redesign_WorkSpace\\GME_ResidentialWS\\WebContent\\WEB-INF\\spring\\NRGREST-dao-config.xml");
-
-		JdbcTemplate gmeResJdbcTemplate = (JdbcTemplate) file
-				.getBean("gmeResJdbcTemplate");
-
-		RegistrationDAOImpl register = new RegistrationDAOImpl(
-				gmeResJdbcTemplate);
-		UserRegistrationRequest regDto = new UserRegistrationRequest();
-		regDto.setAccountNumber("000000441435");
-		regDto.setCompanyCode("0127");
-		regDto.setEmail("smuruga1@reliant.com");
-		regDto.setUniqueId("6772896B-696D-EC75-79C2-0F224E3FA83C");
-		regDto.setUserName("smuruga1");
-		regDto.setPassword("nrg123");
-		regDto.setLastName("smarimuthu");
-		regDto.setFirstName("siva");
-		//register.createUserName(regDto);
-		
-		
-		System.out.println(register.isAccountEnrolled(regDto));
-		
-		regDto = new UserRegistrationRequest();
-		regDto.setAccountNumber("000000441435");
-		regDto.setCompanyCode("0127");
-		regDto.setEmail("smuruga1@reliant.com");
-		regDto.setUniqueId("6772896B-696D-EC75-79C2-0F224E3FA83C");
-		regDto.setUserName("smuruga1");
-		regDto.setPassword("nrg123");
-		regDto.setLastName("smarimuthu");
-		regDto.setFirstName("siva");
-		System.out.println(String.valueOf(register.getUserName(regDto)));
-		
-		System.out.println("hai"+StringUtils.defaultIfEmpty("ssss", "default"));
-	}
 
 	@Override
 	public UserIdResponse getUserName(UserIdRequest request){

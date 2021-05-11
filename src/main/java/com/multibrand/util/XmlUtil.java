@@ -116,9 +116,7 @@ public class XmlUtil {
         builder = createDocumentBuilder();
 
         try {
-        	System.out.println("START: Parsing the XML inputStream");
             doc = builder.parse(inputStream);
-            System.out.println("DONE: Parsing the XML inputStream");
         } catch (SAXException e) {
             throw new RuntimeException("Error while parsing the document:" + e);
         } catch (IOException e) {
@@ -143,9 +141,7 @@ public class XmlUtil {
         builder = createDocumentBuilder();
 
         try {
-        	 System.out.println("START: Parsing the XML input Reader");
             doc = builder.parse(new InputSource(reader));
-            System.out.println("DONE: Parsing the XML input Reader");
         } catch (SAXException e) {
             throw new RuntimeException("Error while parsing the document:" + e);
         } catch (IOException e) {
@@ -175,18 +171,14 @@ public class XmlUtil {
 
             if (url == null) {
             	
-            	System.out.println("file not found  in classpath:'" + configFilePath + "'. Failed laoding XML config.");
             	File file = new File(configFilePath);
-            	System.out.println("Trying to load from file system : absoulte path:" +file.getAbsolutePath());
-            		doc  =  createDocument(new FileInputStream(file));
+            	doc  =  createDocument(new FileInputStream(file));
             	
             }
             else {
             
 		            builder = createDocumentBuilder();
-		            System.out.println("START: Parsing the XML file. Path:" +url);
 		            doc = builder.parse(url.toString());
-		            System.out.println("DONE: Parsing the XML file. ");
             }
         } catch (SAXException e) {
             throw new RuntimeException("Error while parsing the document:" + e);
@@ -211,7 +203,6 @@ public class XmlUtil {
       
         try {
         	
-        	System.out.println("creating Dom Document Builder");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             
             factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
@@ -277,7 +268,7 @@ public class XmlUtil {
                 try {
                     f.close();
                 } catch (IOException ignored) {
-                	System.out.println("readFileAsString() BufferedInputStream Close Exception" + ignored.getMessage());
+                	logger.info("readFileAsString() BufferedInputStream Close Exception:{}" , ignored.getMessage());
                 }
             }
         }

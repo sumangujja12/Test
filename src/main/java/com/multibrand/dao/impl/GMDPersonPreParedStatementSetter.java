@@ -25,7 +25,6 @@ public class GMDPersonPreParedStatementSetter implements PreparedStatementSetter
 	@Override
 	public void setValues(PreparedStatement ps) throws SQLException {
 		ps.setInt(1,personDTO.getPersonId());
-		System.out.println(personDTO.getPersonId());
 		ps.setString(2, personDTO.getNameFirst());
 		ps.setString(3, personDTO.getNameLast());
 		if (StringUtils.isNotBlank(personDTO.getDateOfBirth())) {
