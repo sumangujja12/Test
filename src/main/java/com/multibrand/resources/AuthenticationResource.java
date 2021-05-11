@@ -102,17 +102,17 @@ public class AuthenticationResource implements Constants  {
 		
 		Gson gson = new Gson();
 		MultivaluedMap<String, String> requestHeadersMap = null;
-		String uuid = null;
+		String uid = null;
 		try {
 			 
 			requestHeadersMap = hh.getRequestHeaders();
-			uuid = requestHeadersMap.getFirst("SSO_UID");
-			logger.info("Inside loginFailureCall uuid:{}",uuid);
+			uid = authenticationBO.readValueFromHeaderOrCookie(hh, "SSO_UID");
+			logger.info("Inside loginFailureCall uuid:{}",uid);
 			loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
 		
 		} finally {
-			utilityloggerHelper.logTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), uuid, 
-					uuid, "0270");
+			utilityloggerHelper.logTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), uid, 
+					uid, "0270");
 		}
 		response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
