@@ -27,7 +27,7 @@ import com.multibrand.vo.response.StraxInvoiceResponse;
  * 
  */
 @Component
-@Path("/protected")
+@Path("straxResource")
 public class StraxAccountResource {
 		
 	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
@@ -39,7 +39,7 @@ public class StraxAccountResource {
 	private HttpServletRequest httpRequest;
 	
 	@POST
-	@Path("cancelContract")
+	@Path("/protected/cancelContract")
 	@Consumes({ MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response cancelStraxAccount(@RequestBody StraxContractCancelRequest request) {
@@ -54,7 +54,7 @@ public class StraxAccountResource {
 	
 	
 	@POST
-	@Path("invoice")
+	@Path("/protected/invoice")
 	@Consumes({ MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON})
 	public Response invoiceStraxAccount(@RequestBody StraxInvoiceRequest request){
