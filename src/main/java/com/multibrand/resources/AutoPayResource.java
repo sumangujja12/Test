@@ -104,11 +104,10 @@ public class AutoPayResource {
 			@FormParam("bpNumber") String bpNumber, 
 			@FormParam("source") String source,@Context HttpHeaders hh) {
 		
-		logger.debug("Start AutoPayResource.submitBankAutoPay :: START");
+		logger.info("Start AutoPayResource.submitBankAutoPay :: START");
 		
 		Response response = null;
 		AutoPayBankResponse autoPayBankRep = null;
-		String userAgent = "";
 		String host = "";
 
 		AutoPayRequest autoPayRequest = new AutoPayRequest();
@@ -133,7 +132,7 @@ public class AutoPayResource {
 			host = requestHeadersMap.getFirst("Host");
 		}
 		
-		if( StringUtils.isNotEmpty(host) && userAgent.indexOf("service.nrg.com") > -1)	 {
+		if( StringUtils.isNotEmpty(host) && host.indexOf("service.nrg.com") > -1)	 {
 			autoPayBankRep = autoPayBO.submitMobileAppBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId(), hh);
 		} else {
 			autoPayBankRep = autoPayBO.submitBankAutoPay(autoPayRequest, httpRequest.getSession(true).getId());
