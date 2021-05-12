@@ -114,8 +114,8 @@ public class AuthenticationResource implements Constants  {
 			loginFailureCallResponse = authenticationBO.loginFailureCall(hh, request);
 		
 		} finally {
-			utilityloggerHelper.logMobileTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), "", 
-					userAgent,uid, COMPANY_CODE_GME);
+			utilityloggerHelper.logMobileTransaction("loginFailureCall", false, gson.toJson(requestHeadersMap),loginFailureCallResponse, "", CommonUtil.getElapsedTime(startTime), userAgent, 
+					uid,uid, COMPANY_CODE_GME);
 		}
 		response = Response.status(200).entity(loginFailureCallResponse).build();
 		logger.debug("Exiting loginFailureCall of AuthenticationResource");
