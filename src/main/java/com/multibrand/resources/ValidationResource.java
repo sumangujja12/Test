@@ -21,7 +21,9 @@ import com.multibrand.domain.ValidateCustReferralIdResponse;
 import com.multibrand.dto.request.ValidateAddressRequest;
 import com.multibrand.dto.response.ValidateAddressResponse;
 import com.multibrand.exception.OEException;
+import com.multibrand.vo.request.ValidateThirdPartyReceipt;
 import com.multibrand.vo.response.AddressValidateResponse;
+import com.multibrand.vo.response.ValidateThirdPartyReceiptResponse;
 
 
 
@@ -144,6 +146,21 @@ public class ValidationResource extends ValidationAddressResource {
 		response = Response.status(200).entity(validateCustReferralIdResponse).build();
 		logger.info(" END ******* validateReferralId API**********");
 		return response;		
+	}
+	
+	@POST
+	@Path("/protected/zirtuePayment")
+	@Consumes({ MediaType.APPLICATION_JSON })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateThirdPartyReceipt(ValidateThirdPartyReceipt request) {
+		
+		logger.info(" START ******* validateThirdPartyReceipt API**********");
+		Response response = null;
+		ValidateThirdPartyReceiptResponse validateThirdPartyReceiptResponse = validationBO.validateThirdPartyReceipt(request);
+
+		response = Response.status(200).entity(validateThirdPartyReceiptResponse).build();
+		return response;
+
 	}
 
 }
