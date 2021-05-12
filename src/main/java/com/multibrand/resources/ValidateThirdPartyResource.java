@@ -19,7 +19,7 @@ import com.multibrand.vo.request.ValidateThirdPartyReceipt;
 import com.multibrand.vo.response.ValidateThirdPartyReceiptResponse;
 
 @Component
-@Path("protected")
+@Path("protected/validate")
 
 public class ValidateThirdPartyResource {
 
@@ -32,7 +32,7 @@ public class ValidateThirdPartyResource {
 	private HttpServletRequest httpRequest;
 
 	@POST
-	@Path("zirtuePayment")
+	@Path("/zirtuePayment")
 	@Consumes({ MediaType.APPLICATION_JSON })
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response validateThirdPartyReceipt(ValidateThirdPartyReceipt request) {
