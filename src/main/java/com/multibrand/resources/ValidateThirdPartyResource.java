@@ -19,7 +19,7 @@ import com.multibrand.vo.request.ValidateThirdPartyReceipt;
 import com.multibrand.vo.response.ValidateThirdPartyReceiptResponse;
 
 @Component
-@Path("/protected")
+@Path("protected")
 
 public class ValidateThirdPartyResource {
 
