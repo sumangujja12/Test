@@ -239,4 +239,27 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		}
 	}
 	
+	public void logMobileTransaction(String transactionType, boolean isMask, Object requestData,Object responseData, String responseSts, long responseTime, String confirmNum,String sessionId, String userId, String companyCode){
+		if(isLoggingEnable()){
+			logger.info("LOGGING SERVICE IS ENABLED:::");
+			try{
+				LoggingVO logvo = new LoggingVO();
+				logvo.setUserId(userId);
+				logvo.setSessionId(sessionId);
+				logvo.setCompanyCode(companyCode);
+				logvo.setRequestData(requestData);
+				logvo.setResponseData(responseData);
+				logvo.setResponseStatus(responseSts);
+				logvo.setMask(isMask);
+				logvo.setConfirmationNumber(confirmNum);
+				logvo.setTransactionType(transactionType);
+				logvo.setResponseTime(responseTime);			
+				logvo.setEndPointURL(this.envMessageReader.getMessage(Constants.UTILITY_SERVICE_ENDPOINT_URL));
+				asycHelper.asychLogging(logvo);
+			}catch(Exception e){
+				logger.info("Error logging using UtilityService!!! :{}",e.getMessage());
+			}
+		}
+		
+	}
 }
