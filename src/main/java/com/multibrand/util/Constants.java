@@ -903,7 +903,7 @@ public interface Constants {
 	//nnp
 	public static final String NNP_SUBJECT = "";
 	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my contract related notices by email only (Paperless)";
-	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electrónico (sin papel)";
+	public static final String NNP_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibir mis avisos relacionados con el contrato solo por correo electr�nico (sin papel)";
 	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_EN ="Receive my contract related notices by mail only";
 	public static final String NNP_DELIVERY_METHOD_VAL_MAIL_ES ="Recibir mis avisos relacionados con el contrato solo por correo";
 	
@@ -934,7 +934,7 @@ public interface Constants {
 	public static final String EBILL_DELIVERY_METHOD = "bill-delivery-method";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_EN = "Receive my bills by email only (Paperless Billing)";
-	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturaciÃ³n electrÃ³nica)";
+	public static final String EBILL_DELIVERY_METHOD_VAL_EMAIL_ES = "Recibe mis cuentas solamente por email (facturación electrónica)";
 	
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_EN = "Receive my bills by mail only";
 	public static final String EBILL_DELIVERY_METHOD_VAL_MAIL_ES = "Recibir facturas por correo";
@@ -1095,7 +1095,7 @@ public interface Constants {
 	public static final String MESSAGE_TEXT_PERSON_NOT_UPDATED = "Person details are not updated";
 	public static final String MESSAGE_TEXT_PERSON_NOT_FOUND = "Person details are not found";
 	public static final String MESSAGE_CODE_INFO_MISMATCH = "INFO_MISMATCH";
-	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information previously used for this enrollment.";
+	public static final String MESSAGE_TEXT_INFO_MISMATCH  = "First Name, Last Name and / or SSN did not match the information�previously�used for�this enrollment.";
 	
 	public static final String CCS_UPDATE_ETF_FLAG_TO_CRM_URL = "ws.rest.ccs.update.etfflag.crm.url";
 	
@@ -1411,7 +1411,7 @@ public interface Constants {
 	public static final String DEFAULT_PRICE_VALUE_ZERO_DOT_ZERO= "0.0";
 	
 	public static final String SYMBOL_DOLLAR = "$";
-	public static final String SYMBOL_CENTS = "¢";
+	public static final String SYMBOL_CENTS = "�";
 
 	public static final String CREDFREEZE = "CREDFREEZE";
 	public static final String CCSD = "CCSD";
@@ -1726,5 +1726,6 @@ public interface Constants {
 	
 	public static final String ZIRTUE_RECEIPT_NUMBER = "ZIRTUE.REL.0102.1";
 
+	
 }
 	

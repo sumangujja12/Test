@@ -87,7 +87,7 @@ public class StraxBO extends BaseAbstractService implements Constants{
 			straxInvoiceAccountRequest.setStraxLeadID(request.getStraxLeadID());
 			straxInvoiceAccountRequest.setCaNumber(request.getCaNumber());
 			straxInvoiceAccountRequest.setTotalInvoiceAmount(request.getTotalAmount());
-						
+			straxInvoiceAccountRequest.setInvoiceID(request.getInvoiceID());
 			List<com.multibrand.domain.InvoiceItemCategory>invoiceItemCat = new ArrayList<>();
 			for (InvoiceItemCategory invoiceItemCategory : request.getInvoiceItems()) {
 				com.multibrand.domain.InvoiceItemCategory eachInvoiceItem = new com.multibrand.domain.InvoiceItemCategory();

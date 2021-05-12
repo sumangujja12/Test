@@ -114,6 +114,7 @@ public class StraxBOTest implements Constants{
 		request.setCaNumber("3434324232");
 		request.setStraxLeadID("23423");
 		request.setTotalAmount("24");
+		request.setInvoiceID("23");
 		List<InvoiceItemCategory> invoiceItems = new ArrayList<>();
 		InvoiceItemCategory item1 = new InvoiceItemCategory();
 		item1.setAmount("10");

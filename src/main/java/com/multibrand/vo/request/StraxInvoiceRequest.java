@@ -6,10 +6,16 @@ import java.util.List;
 public class StraxInvoiceRequest implements Serializable {
 
 	private static final long serialVersionUID = 5313732309176983924L;
-
+	
+	
 	private String caNumber;
+	
 	private String totalAmount;
+	
 	private String straxLeadID;
+	
+	private String invoiceID;
+	
 	private List<InvoiceItemCategory> invoiceItems;
 
 	public String getCaNumber() {
@@ -42,6 +48,14 @@ public class StraxInvoiceRequest implements Serializable {
 
 	public void setInvoiceItems(List<InvoiceItemCategory> invoiceItems) {
 		this.invoiceItems = invoiceItems;
+	}
+
+	public String getInvoiceID() {
+		return invoiceID;
+	}
+
+	public void setInvoiceID(String invoiceID) {
+		this.invoiceID = invoiceID;
 	}
 
 }
