@@ -9,11 +9,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.multibrand.bo.StraxBO;
+import com.multibrand.util.CommonUtil;
 import com.multibrand.vo.request.StraxContractCancelRequest;
 import com.multibrand.vo.request.StraxInvoiceRequest;
 import com.multibrand.vo.response.StraxContractCancelResponse;
@@ -24,9 +27,11 @@ import com.multibrand.vo.response.StraxInvoiceResponse;
  * 
  */
 @Component
-@Path("/protected")
+@Path("straxResource")
 public class StraxAccountResource {
 		
+	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	
 	@Autowired
 	private StraxBO straxBO;
 	
@@ -34,10 +39,11 @@ public class StraxAccountResource {
 	private HttpServletRequest httpRequest;
 	
 	@POST
-	@Path("cancelContract")
+	@Path("/protected/cancelContract")
 	@Consumes({ MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON })
 	public Response cancelStraxAccount(@RequestBody StraxContractCancelRequest request) {
+		
 		Response response = null;
 		StraxContractCancelResponse straxContractCancelResponse = straxBO.cancelStraxContract(request, httpRequest.getSession(true).getId());
 		
@@ -48,10 +54,11 @@ public class StraxAccountResource {
 	
 	
 	@POST
-	@Path("invoice")
+	@Path("/protected/invoice")
 	@Consumes({ MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_JSON})
 	public Response invoiceStraxAccount(@RequestBody StraxInvoiceRequest request){
+		
 		Response response = null;
 		StraxInvoiceResponse straxInvoiceResponse = straxBO.invoiceStraxContract(request,  httpRequest.getSession(true).getId());
 				
