@@ -21,6 +21,8 @@ import org.testng.annotations.Test;
 import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.dto.OESignupDTO;
+
+import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
@@ -144,7 +146,37 @@ public class SalesBOTest implements Constants{
 		//environmentMessageSource.setBasenames("/src/main/resources/properties/environment");
     
 	}
+		
+	@Test
+	public void testPerformPosidAndBpMatchBothSSNandNoid() throws OEException{
+	   IdentityRequest request = new IdentityRequest();
+	   request.setTokenizedSSN("testSSN");
+	   request.setNoid("true");
+	   Response response = null;
+		try {
+			response = salesBO.performPosidAndBpMatch(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Assert.assertEquals(response.getStatus(), 400);
+	}
 	
+	@Test
+	public void testPerformPosidAndBpMatchBothDLandNoid() throws OEException{
+	   IdentityRequest request = new IdentityRequest();
+	   request.setTokenizedTDL("testTDL");
+	   request.setNoid("true");
+	   Response response = null;
+		try {
+			response = salesBO.performPosidAndBpMatch(request);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Assert.assertEquals(response.getStatus(), 400);
+	}
+
 	@Test
 	public void testsubmitEnrollmentSuertyNotAvailable() throws OEException{
 	    ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
@@ -163,5 +195,4 @@ public class SalesBOTest implements Constants{
 		}
 		Assert.assertEquals(response.getHttpStatus(), Response.Status.BAD_REQUEST);
 	}
-
 }
