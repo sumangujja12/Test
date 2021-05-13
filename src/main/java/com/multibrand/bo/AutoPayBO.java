@@ -130,10 +130,10 @@ public class AutoPayBO extends BaseAbstractService implements Constants{
 		 } else if(validateBankResp!=null && validateBankResp.getExReturnCode().equalsIgnoreCase(ERROR_01)){
 				autoPayBankResponse.setResultCode(GIACT_ERROR_01);
 				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			}else if(validateBankResp!=null &&validateBankResp.getErrorCode().equalsIgnoreCase(ERROR_02)){
+			}else if(validateBankResp!=null &&validateBankResp.getExReturnCode().equalsIgnoreCase(ERROR_02)){
 				autoPayBankResponse.setResultCode(GIACT_ERROR_02);
 				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
-			}else if(validateBankResp!=null && validateBankResp.getErrorCode().equalsIgnoreCase(ERROR_03)){
+			}else if(validateBankResp!=null && validateBankResp.getExReturnCode().equalsIgnoreCase(ERROR_03)){
 				autoPayBankResponse.setResultCode(GIACT_ERROR_03);
 				autoPayBankResponse.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
 			}else{
