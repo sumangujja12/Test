@@ -1,9 +1,9 @@
 package com.multibrand.dto.request;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.NotEmpty;
@@ -14,56 +14,56 @@ public class GetKBAQuestionsRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1L;
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String lastName;
 	
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	String firstName;
 	
-	@Length(max = 1,groups = SizeConstraint.class)
+	@Size(max = 1,groups = SizeConstraint.class)
 	String middleName;
 	
 	@NotEmpty
 	String dob;
 	
 	@NotEmpty
-	@Length(max = 100, groups = SizeConstraint.class)
+	@Size(max = 100, groups = SizeConstraint.class)
 	@Email(groups = FormatConstraint.class)
 	String email;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	@Pattern(regexp = "\\d{10}", groups = FormatConstraint.class, message="is invalid")
 	String phoneNum;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
 	@NotEmpty
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 	
 	@NotEmpty
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	String servCity;
 	
 	@NotEmpty
-	@Length(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2, groups = SizeConstraint.class)
 	String servState;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	String servZipCode;
 	
-	@Length(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25, groups = SizeConstraint.class)
 	String tokenizedTDL;
 	
-	@Length(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20, groups = SizeConstraint.class)
 	String tokenizedSSN;
 	
 	private String drivingLicenseState;

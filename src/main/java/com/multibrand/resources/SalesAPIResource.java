@@ -3,6 +3,7 @@ package com.multibrand.resources;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -114,7 +115,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performPosidAndBpMatch(IdentityRequest request) {
+	public Response performPosidAndBpMatch(@Valid IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -162,7 +163,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(SalesCreditCheckRequest request) throws OEException {
+	public Response performCreditCheck(@Valid SalesCreditCheckRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -186,7 +187,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_RECHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditRecheck(SalesCreditReCheckRequest request) throws OEException {
+	public Response performCreditRecheck(@Valid SalesCreditReCheckRequest request)  {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -373,8 +374,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CLEANUP_ADDRESS)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response cleanupAddress(SalesCleanupAddressRequest  request)
-			throws OEException {
+	public Response cleanupAddress(@Valid SalesCleanupAddressRequest  request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{

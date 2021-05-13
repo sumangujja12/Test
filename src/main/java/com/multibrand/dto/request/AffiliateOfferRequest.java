@@ -3,10 +3,10 @@
  */
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.BasicConstraint;
@@ -25,24 +25,24 @@ public class AffiliateOfferRequest extends BaseAffiliateRequest {
 
 	/** The transaction type. */
 	@QueryParam(value = "transactionType")
-	@Length(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3, groups = SizeConstraint.class)
 	private String transactionType; //MVI or SWI
 
 	
 	/** The promo code. */
 	@QueryParam(value = "promoCode")
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String promoCode;
 
 	/** The tdsp code ccs. */
 	@QueryParam(value = "tdspCodeCCS")
-	@Length(max = 5, groups = SizeConstraint.class)
+	@Size(max = 5, groups = SizeConstraint.class)
 	private String tdspCodeCCS;
 
 	/** The esid. */
 	@QueryParam(value = "esid")
-	@Length(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32, groups = SizeConstraint.class)
 	private String esid;
 
 	
