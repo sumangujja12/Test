@@ -5,14 +5,12 @@ package com.multibrand.dao.impl;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.ResultObject;
 import com.multibrand.dao.UsageDAO;
 import com.multibrand.dao.mapper.DailyUsageRowMapper;
@@ -54,9 +52,7 @@ import com.multibrand.vo.response.gmd.DailyHourlyPriceResponseVO;
 import com.multibrand.vo.response.gmd.GMDZoneByEsiIdResponseVO;
 import com.multibrand.vo.response.gmd.HourlyPrice;
 import com.multibrand.vo.response.gmd.Zone;
-
 import oracle.jdbc.OracleTypes;
-import com.multibrand.vo.response.HourlyUsageResponse;
 
 
 @Component("usageDao")
@@ -89,13 +85,13 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		long startTime = CommonUtil.getStartTime();
 		
 		DailyHourlyUsageResponseVO response = new DailyHourlyUsageResponseVO();
-		logger.info("ca in the request is "+request.getContractAcctId());
-		logger.info("esiid in the request is "+request.getEsiId());
-		logger.info("co in the request is "+request.getContractId());
+		logger.info("ca in the request is:{}",request.getContractAcctId());
+		logger.info("esiid in the request is:{} ",request.getEsiId());
+		logger.info("co in the request is:{}",request.getContractId());
 		
-		Map<String, Object> inParams = new LinkedHashMap<String, Object>();
-		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<String, Integer>();
-		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<String, ResultObject>();
+		Map<String, Object> inParams = new LinkedHashMap<>();
+		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<>();
+		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<>();
 		BaseStoredProcedure storedProc = null;
 		
 		inParamsTypeMap.put(ESIID_IN_V,OracleTypes.VARCHAR );
@@ -125,11 +121,9 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 		if (Constants.DAILY_INDICATOR.equalsIgnoreCase(request.getDyHrInd())) {
 			outParamsTypeMap.put(DYHR_OUT_REC, new ResultObject(
 					OracleTypes.CURSOR, new DailyUsageRowMapper()));
-			System.out.println("Inside the Daily");
 		} else {
 			outParamsTypeMap.put(DYHR_OUT_REC, new ResultObject(
 					OracleTypes.CURSOR, new HourlyUsageRowMapper()));
-			System.out.println("Inside the Hourly Daily");
 		}
 		outParamsTypeMap.put(RET_TYP_OUT_V, new ResultObject(OracleTypes.VARCHAR));
 		
@@ -148,14 +142,11 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 			
 		// Elapsed time in minutes (TIME LOG)
 		elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
-		String elapsedTimeDisp = elapsedTime > 0 ? elapsedTime + " seconds."
-				: "less than a second.";
-		logger.info(PROJECTEDBILL_PROC + "-" + elapsedTimeDisp);
+		logger.info(PROJECTEDBILL_PROC , "-{}" , elapsedTime);
 
 		// END (TIME LOG)
 		
 		
-		logger.info("hai"+storedProcResult.get("RET_TYP_OUT_V"));
 		if (storedProcResult != null
 				&& (storedProcResult.get("RET_TYP_OUT_V") == null || storedProcResult
 						.get("RET_TYP_OUT_V").equals(""))) {
@@ -166,33 +157,19 @@ public class UsageDaoImpl implements UsageDAO, DBConstants
 				List<DailyResponseVO> storeResponseList = (List<DailyResponseVO>) storedProcResult
 						.get(DYHR_OUT_REC);
 				
-				
-				if (storeResponseList != null) {
-					response.setDailyUsageList(storeResponseList);
-				}
+				response.setDailyUsageList(storeResponseList);
 			} else {
 				List<HourlyUsage> storeResponseList = (List<HourlyUsage>) storedProcResult
 						.get(DYHR_OUT_REC);
-				
-				
-				if (storeResponseList != null) {
-					response.setHourlyUsageList(storeResponseList);
-					logger.info("SIZE of the List"+storeResponseList.size());
-				}
+				response.setHourlyUsageList(storeResponseList);
 				
 			}
-			
-			
-			
 		}		
 	
 		utilityloggerHelper.logTransaction("getHourlyUsageFromDB", false,
 				request, response, "", CommonUtil.getElapsedTime(startTime),
 				"", sessionId, companyCode);
-		if(logger.isDebugEnabled()){
-			logger.debug(XmlUtil.pojoToXML(request));
-			logger.debug(XmlUtil.pojoToXML(response));
-		}
+
 		logger.info("Exiting getHourlyUsageFromDB in UsageDaoImpl");
 		return response;
 	}

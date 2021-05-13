@@ -5,9 +5,10 @@ package com.multibrand.util;
  * @author RKiran
  */
 
-public interface StreamLuceneConstants {
+public class StreamLuceneConstants {
 	
-	public static  String[] StreetSuffixes = new String[] {
+
+	 protected static final String[] streetSuffixes = new String[] {
     		
 	   		 "ALY", "ANX", "ARC", "AVE", "BYU", "BCH", "BND", "BLF", "BLFS", "BTM", 
 	            "BLVD", "BR", "BRG", "BRK", "BRKS", "BG", "BGS", "BYP", "CP", "CYN", 
@@ -34,11 +35,11 @@ public interface StreamLuceneConstants {
 	   };
 		
 	
-	public static    String[] SupportedStates = new String[] {
+	 protected static final String[] supportedStates = new String[] {
 			 "TX", "GA", "PA", "MA", "NJ", "NY", "DC"
 	 };
 	 
-	public static    String[] ApartmentPrefixes = new String[] {
+	 protected static final String[] apartmenPreFixes = new String[] {
 			 "APT", "UNIT", "STE"
 	 };
 	

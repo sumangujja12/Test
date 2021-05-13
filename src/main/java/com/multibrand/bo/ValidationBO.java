@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import com.multibrand.bo.helper.ValidateAddressHelper;
 import com.multibrand.domain.ValidateCustReferralIdResponse;
+import com.multibrand.domain.ValidatePaymentReceiptRequest;
 import com.multibrand.domain.ValidatePosIdKBARequest;
 import com.multibrand.domain.ValidatePosIdKBAResponse;
 import com.multibrand.domain.ValidatePosIdRequest;
@@ -45,8 +46,11 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 import com.multibrand.util.JavaBeanUtil;
 import com.multibrand.util.TogglzUtil;
+import com.multibrand.vo.request.ValidateThirdPartyReceipt;
 import com.multibrand.vo.response.AgentDetailsResponse;
 import com.multibrand.vo.response.PerformPosIdandBpMatchResponse;
+import com.multibrand.domain.ValidatePaymentReceiptResponse;
+import com.multibrand.vo.response.ValidateThirdPartyReceiptResponse;
 import com.reliant.domain.AddressValidateRequest;
 import com.reliant.domain.AddressValidateResponse;
 
@@ -1332,5 +1336,50 @@ public class ValidationBO extends BaseBO {
 			logger.debug("caught Exception in ValidationBO::validatePOSIdwithKBA(..)"+e);
 		}
 		return validatePosIdKBAResponse;
+	}
+	
+	public ValidateThirdPartyReceiptResponse validateThirdPartyReceipt(ValidateThirdPartyReceipt validateThirdPartyReceipt) {
+		
+		ValidateThirdPartyReceiptResponse response = new ValidateThirdPartyReceiptResponse();
+		ValidatePaymentReceiptResponse validatePaymentReceiptResponse = null;
+		try {
+			
+			ValidatePaymentReceiptRequest validatePaymentReceiptRequest = new ValidatePaymentReceiptRequest();
+			validatePaymentReceiptRequest.setContractAccountNumber(validateThirdPartyReceipt.getContractAccountNumber());
+			validatePaymentReceiptRequest.setPaymentAmount(validateThirdPartyReceipt.getPaymentAmount());
+			validatePaymentReceiptRequest.setCompanyCode(validateThirdPartyReceipt.getCompanyCode());
+			validatePaymentReceiptRequest.setCheckDigit("");
+			validatePaymentReceiptRequest.setReceiptNumber(ZIRTUE_RECEIPT_NUMBER);
+			
+			Date date = new Date();
+			String formattedPaymentDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+			
+			validatePaymentReceiptRequest.setPaymentDate(formattedPaymentDate);
+			
+			validatePaymentReceiptResponse = validationService.validateThirdPartyReceipt(validatePaymentReceiptRequest);
+			
+			if(StringUtils.isNotBlank(validatePaymentReceiptResponse.getErrorCode())) {
+				response.setErrorCode(validatePaymentReceiptResponse.getErrorCode());
+				response.setErrorMessage(validatePaymentReceiptResponse.getErrorMessage());
+			}
+			
+			else {
+				JavaBeanUtil.copy(validatePaymentReceiptResponse, response);
+			}
+		}
+		
+		catch (RemoteException e) {
+			logger.error("RemoteException::::: ValidationBO.validateThirdPartyReceipt()::::");
+			response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setErrorMessage(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), response);
+		} catch (Exception e) {
+			logger.error("Exception::::: ValidationBO.validateThirdPartyReceipt()::::");
+			response.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+			response.setErrorMessage(RESULT_DESCRIPTION_EXCEPTION);
+			throw new OAMException(200, e.getMessage(), response);
+		}
+		return response;
+		
 	}
 }

@@ -47,10 +47,8 @@ public class ProfileHelper {
 			if((StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_RELIANT))
 					||(StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_PENNYWISE))
 					||(StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_CIRRO))){
-				//System.out.println("RELIANT/PENNYWISE/CIRRO Profile");
 				response = userDAOImpl.getUserName(request);
 			}else if(StringUtils.equals(request.getCompanycode(),Constants.COMPANY_CODE_GME)){
-				//System.out.println("GME Profile");
 				response=registrationDAOImpl.getUserName(request);
 			}else{
 				response=new UserIdResponse();

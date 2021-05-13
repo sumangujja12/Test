@@ -1113,9 +1113,7 @@ public PaymentHistoryResponse fetchPaymentHistory(String accountNumber,String st
 		try {
 			ConsumptionHistory serviceResponse = historyService
 					.getUsageHistoryList(request, companyCode, sessionId);
-			
-			System.out.println("After call from the "+serviceResponse.getErrorCode());
-			
+						
 			if (serviceResponse != null
 					&& (serviceResponse.getErrorCode() == null || serviceResponse
 							.getErrorCode().equals(""))) {
