@@ -142,7 +142,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_AVAILABLE_DATES)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDAndCalendarDates(SalesEsidCalendarRequest request) {
+	public Response getESIDAndCalendarDates(@Valid SalesEsidCalendarRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -214,7 +214,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_SUBMIT_ENROLLMENT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(SalesEnrollmentRequest request)
+	public Response submitEnrollment(@Valid SalesEnrollmentRequest request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
@@ -236,7 +236,7 @@ public class SalesAPIResource extends BaseResource {
     @Path(API_GET_KBA_QUESTIONS)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestions(GetKBAQuestionsRequest request) {
+    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
@@ -255,7 +255,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_KBA_RESULT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitKBAAnswers(KbaAnswerRequest request) throws Exception {
+	public Response submitKBAAnswers(@Valid KbaAnswerRequest request) throws Exception {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
 		
@@ -318,7 +318,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDDetails(EsidRequest request){
+	public Response getESIDDetails(@Valid EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -337,7 +337,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID_RESIDENTIAL)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDResidentialDetails(EsidRequest request){
+	public Response getESIDResidentialDetails(@Valid EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -356,7 +356,7 @@ public class SalesAPIResource extends BaseResource {
     @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest request){
+    public Response getKBAQuestionsWithinOE(@Valid GetOEKBAQuestionsRequest request){
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
@@ -441,7 +441,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_TDSP)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getTDSP(SalesTDSPRequest request) {
+	public Response getTDSP(@Valid SalesTDSPRequest request) {
 		logger.info("SalesTDSPRequest : {}", request);
 		Response response = null;
 		try{
@@ -461,7 +461,8 @@ public class SalesAPIResource extends BaseResource {
 	@Path(SALES_API_ESID_VALIDATION)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validateEsid(ValidateEsidRequest validateEsidRequest) {
+	public Response validateEsid(@Valid ValidateEsidRequest validateEsidRequest) {
+		logger.info("In validateEsid");
 		Response response = null;
 			
 		try {
