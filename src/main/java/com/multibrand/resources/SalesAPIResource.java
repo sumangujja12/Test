@@ -61,6 +61,7 @@ import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
+import javax.validation.Valid;
 
 /**
  * This Resource is to handle all the Online Enrollment API calls.
@@ -479,11 +480,10 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
-	@POST
+	@GET
 	@Path(SALES_API_CA_VALIDATION)
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
-	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validateCA(ValidateCARequest validateCARequest) {
+	@Produces({ MediaType.APPLICATION_JSON})
+	public Response validateCA(@InjectParam ValidateCARequest validateCARequest) {
 		Response response = null;
 			
 		try {
@@ -503,12 +503,10 @@ public class SalesAPIResource extends BaseResource {
 	 * @param validateUserIdRequest
 	 * @return
 	 */
-	@POST
+	@GET
 	@Path(SALES_API_USERNAME_VALIDATION)
-	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validateUsername(ValidateUserIdRequest validateUserIdRequest) {
-		logger.info("In validateEsid");
+	public Response validateUsername(@InjectParam ValidateUserIdRequest validateUserIdRequest) {
 		Response response = null;
 			
 		try {
