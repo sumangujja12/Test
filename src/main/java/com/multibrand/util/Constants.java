@@ -1656,6 +1656,6 @@ public interface Constants {
 	public static final String CUSTOMER_PAY = "CUSTOMER_PAY";
 	public static final String DEPOSIT_OPTION_CONTENT_SNIPPET="oe_creditcheck_deposit_pay_alt_tlp_tctxt";
 	
-	public static final String SALES_API_CA_VALIDATION = "validateca";
-	public static final String SALES_API_USERNAME_VALIDATION = "validateusername";
+	public static final String SALES_API_CA_VALIDATION = "validate-ca";
+	public static final String SALES_API_USERNAME_VALIDATION = "validate-username";
 }
