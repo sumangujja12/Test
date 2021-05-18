@@ -1,6 +1,9 @@
 package com.multibrand.dto.request;
 
 
+import javax.validation.constraints.Size;
+import javax.ws.rs.QueryParam;
+
 import com.multibrand.request.validation.NotEmpty;
 
 public class ValidateCARequest extends SalesBaseRequest{
@@ -9,12 +12,17 @@ public class ValidateCARequest extends SalesBaseRequest{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	@QueryParam(value = "contractNumber")
 	@NotEmpty
+	@Size(min=10 , max = 10)
 	private String contractNumber;
 	
+	@QueryParam(value = "contractAccountNumber")
 	@NotEmpty
+	@Size(min=12 , max = 12)
 	private String contractAccountNumber;
 	
+	@QueryParam(value = "checkDigit")
 	@NotEmpty
 	private String checkDigit;
 
