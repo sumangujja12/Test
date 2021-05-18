@@ -19,7 +19,7 @@ import com.multibrand.util.DBConstants;
 public class BPInfoDAOImpl extends AbstractSpringDAO implements
 BpInfoDAOIF, Constants {
 
-	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
+	//private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
 	
 	@Autowired
 	@Qualifier("appConstMessageSource")
