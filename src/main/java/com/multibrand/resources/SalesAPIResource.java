@@ -1,8 +1,11 @@
 
 package com.multibrand.resources;
 
+import java.util.HashMap;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -35,6 +38,8 @@ import com.multibrand.dto.request.SalesHoldLookupRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.SalesTDSPRequest;
+import com.multibrand.dto.request.SalesUCCDataRequest;
+import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.ValidateEsidRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
@@ -46,12 +51,15 @@ import com.multibrand.dto.response.SalesHoldLookupResponse;
 import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
+import com.multibrand.dto.response.SalesUCCDataResponse;
+import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.SalesTokenRequest;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
@@ -478,7 +486,26 @@ public class SalesAPIResource extends BaseResource {
        return response;
 	}
 	
-	
-	
+	@POST
+	@Path(SALES_API_SUBMIT_UCC_DATA)
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response submitUCCData(SalesUCCDataRequest request) {
+		logger.info("In SubmitUCCData");
+		Response response = null;
+		try {
+			SalesUCCDataResponse uccDataResponse = salesBO.submitUCCData(request,
+					httpRequest.getSession(true).getId());
+			Response.Status status = uccDataResponse.getHttpStatus() != null ? uccDataResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status)
+					.entity(uccDataResponse).build();
+			logger.info("End SubmitUCCData method");
+		} catch (Exception e) {
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new SalesUCCDataResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+		}
+		
+		return response;
+	}
 
 }
