@@ -33,14 +33,12 @@ public class TPVService extends BaseAbstractService {
 		Z_E_NEWS_TPV_API_TRANS_UPD_ServiceLocator locator = new Z_E_NEWS_TPV_API_TRANS_UPD_ServiceLocator();
 		locator.setEngineConfiguration(config);
 	
-		System.out.println("Calling TPV Service " );
 		locator.setZ_E_NEWS_TPV_API_TRANS_UPD_BINDEndpointAddress(this.envMessageReader.getMessage(TPV_CCS_URL));
 
 		Z_E_NEWS_TPV_API_TRANS_UPD_PortType port = locator.getZ_E_NEWS_TPV_API_TRANS_UPD_BIND(); 
 	
 		org.apache.axis.client.Stub s = (Stub)port;				
 		int timeOutInMs = 120000;				 
-		System.out.println("Setting Client Timeout = " + timeOutInMs);
 		s.setTimeout(timeOutInMs); // Setting the client timeout in millsec explicitly.. this overrides the default 60sec axis timeout.
 		s.setUsername(this.envMessageReader.getMessage(CCS_USER_NAME));
 		s.setPassword(this.envMessageReader.getMessage(CCS_PSD));
@@ -49,8 +47,6 @@ public class TPVService extends BaseAbstractService {
 		ZesNeReturn output = port.ZEIsuNewsTpvApiTransUpd(ivAcctNum, 
 		ivApprovedBy, ivDateTime, ivReason, ivResult, ivTransactionid);
 
-		System.out.println("Output Message = " + output.getMessage());
-		System.out.println("Output Type = " + output.getType());
 		TransUpdResponseVO responseVO = new TransUpdResponseVO();
 		responseVO.setMessage( output.getMessage());
 		responseVO.setType(output.getType());

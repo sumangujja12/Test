@@ -3,8 +3,10 @@
  */
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.hibernate.validator.constraints.Length;
+
 import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
@@ -24,78 +26,78 @@ public class CreditCheckRequest extends BaseAffiliateRequest {
 	private String trackingId;
 
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	private String firstName;
 
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	private String lastName;
 
-	@Length(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20, groups = SizeConstraint.class)
 	private String tokenizedSSN;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String matchedBP;
 
 	@NotEmpty
-	@Length(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3, groups = SizeConstraint.class)
 	private String transactionType; //MVI or SWI
 
-	@Length(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32, groups = SizeConstraint.class)
 	private String esid;
 
 	@NotEmpty
-	@Length(max = 8, groups = SizeConstraint.class)
+	@Size(max = 8, groups = SizeConstraint.class)
 	private String offerCode;
 
 	@CurrentOrFutureDate
 	private String mviDate;
 
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetNum;
 
 	@NotEmpty
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String servStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
 	@NotEmpty
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	private String servCity;
 
 	@NotEmpty
-	@Length(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2, groups = SizeConstraint.class)
 	private String servState;
 
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billStreetNum;
 
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String billStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billStreetAptNum;
 
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	private String billCity;
 
-	@Length(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2, groups = SizeConstraint.class)
 	private String billState;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billZipCode;
 
-	@Length(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25, groups = SizeConstraint.class)
 	private String billPOBox;
 
-	@Length(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4, groups = SizeConstraint.class)
 	private String bpMatchFlag;
 	
 

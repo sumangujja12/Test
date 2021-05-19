@@ -3,6 +3,8 @@ package com.multibrand.vo.response.billingResponse;
 import javax.xml.bind.annotation.XmlElement;
 
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.Constants;
+import com.multibrand.util.DateUtil;
 
 
 
@@ -92,7 +94,12 @@ public class ContractAccountDO {
   	
   	@XmlElement(name="accountConversionDate")
   	public String getStrConversionDate() {
-  		return CommonUtil.changeDateFormat(strConversionDate);
+  		
+  		if ( DateUtil.matches(Constants.DATE_PATTERN_YYYY_MM_DD,strConversionDate)) {
+  			return CommonUtil.changeDateFormat(strConversionDate);
+  		} else {
+  			return strConversionDate;
+  		}
   	}
   	public void setStrConversionDate(String strConversionDate) {
   		this.strConversionDate = strConversionDate;
@@ -142,7 +149,11 @@ public class ContractAccountDO {
 	}
 
 	public java.lang.String getStrAPCCExpDate() {
-		return CommonUtil.changeDateFormat(strAPCCExpDate);
+		if ( DateUtil.matches(Constants.DATE_PATTERN_YYYY_MM_DD,strAPCCExpDate)) {
+			return CommonUtil.changeDateFormat(strAPCCExpDate);
+		} else {
+			return strAPCCExpDate;
+		}
 	}
 
 	public void setStrAPCCExpDate(java.lang.String strAPCCExpDate) {
@@ -302,7 +313,14 @@ public class ContractAccountDO {
 	}
 
 	public java.lang.String getStrDisconnectDate() {
-		return CommonUtil.changeDateFormat(strDisconnectDate);
+		
+		if ( DateUtil.matches(Constants.DATE_PATTERN_YYYY_MM_DD,strDisconnectDate)) {
+			return CommonUtil.changeDateFormat(strDisconnectDate);
+			
+		}
+		else {
+			return strDisconnectDate;
+		}
 	}
 
 	public void setStrDisconnectDate(java.lang.String strDisconnectDate) {

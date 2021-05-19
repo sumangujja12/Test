@@ -1,5 +1,6 @@
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 
 import org.hibernate.validator.constraints.Length;
@@ -16,17 +17,17 @@ public class SalesHoldLookupRequest  extends SalesBaseRequest{
 
 	@QueryParam(value = "caNumber")
 	@NotEmpty
-	@Length(max = 12, groups = SizeConstraint.class)
+	@Size(max = 12, groups = SizeConstraint.class)
 	private String caNumber;
 	
 	@QueryParam(value = "checkDigit")
 	@NotEmpty
-	@Length(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1, groups = SizeConstraint.class)
 	private String checkDigit;
 	
 	@QueryParam(value = "billZipCode")
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billZipCode;
 
 	public String getCaNumber() {

@@ -1,20 +1,14 @@
 package com.multibrand.dao.impl;
 
-import java.sql.SQLException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import oracle.jdbc.OracleTypes;
-
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.dao.BPAccountContractPayDAO;
 import com.multibrand.dao.ResultObject;
 import com.multibrand.dao.mapper.BPContractAccountRowMapper;
@@ -24,6 +18,9 @@ import com.multibrand.manager.StoredProcedureManager;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.XmlUtil;
 import com.multibrand.vo.response.BussinessPartnerDO;
+import oracle.jdbc.OracleTypes;
+
+
 @Component("SVTDAO")
 public class BPAccountContractPayDAOImpl implements BPAccountContractPayDAO
 {
@@ -47,12 +44,12 @@ public class BPAccountContractPayDAOImpl implements BPAccountContractPayDAO
 			String companyCode, String brandName, String sessionId)
 	{
 		logger.info("Starts getSVTDATA in BPAccountContractPayDAOImpl");
-		logger.info("bp no in the request is "+bpNumber);
+		logger.info("bp no in the request is:{}",bpNumber);
 		
 		List<BussinessPartnerDO> bussinessPartnerDOList = null;
-		Map<String, Object> inParams = new LinkedHashMap<String, Object>();
-		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<String, Integer>();
-		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<String, ResultObject>();
+		Map<String, Object> inParams = new LinkedHashMap<>();
+		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<>();
+		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<>();
 		BaseStoredProcedure storedProc = null;
 		
 		
@@ -78,17 +75,12 @@ public class BPAccountContractPayDAOImpl implements BPAccountContractPayDAO
 		elapsedTime = (System.currentTimeMillis() - entryTime) / (1000);
 		String elapsedTimeDisp = elapsedTime > 0 ? elapsedTime + " seconds."
 				: "less than a second.";
-		logger.info("GETSVTDATA" + "-" + elapsedTimeDisp);
+		logger.info("GETSVTDATA -{}" , elapsedTimeDisp);
 		
 		if (storedProcResult != null ) {
 			
 			bussinessPartnerDOList = (List<BussinessPartnerDO>) storedProcResult
 					.get("recordSet");
-			
-			if (bussinessPartnerDOList != null && bussinessPartnerDOList.size() > 0) {
-				System.out.println(bussinessPartnerDOList.size());
-				System.out.println(bussinessPartnerDOList.get(0).getBpContractAccount().get(0).getPaymentDO().size());
-			}
 		}
 		
 		utilityloggerHelper.logTransaction("getSVTDATA", false, bpNumber, bussinessPartnerDOList, "",
@@ -102,20 +94,4 @@ public class BPAccountContractPayDAOImpl implements BPAccountContractPayDAO
 		
 		return bussinessPartnerDOList;
 	}
-	
-	
-	 public static void main(String[] argz) throws SQLException
-		{
-			 ClassPathXmlApplicationContext file = new ClassPathXmlApplicationContext(
-					"NRGREST-dao-config.xml");
-
-			JdbcTemplate jdbcTemplate = (JdbcTemplate) file
-					.getBean("svtJdbcTemplate");
-			BPAccountContractPayDAOImpl accountContractPayDAOImpl = new BPAccountContractPayDAOImpl(jdbcTemplate);
-			
-			accountContractPayDAOImpl.getSVTData("0005482301,0002440845", "", "", "");
-			
-			
-		}
-
 }

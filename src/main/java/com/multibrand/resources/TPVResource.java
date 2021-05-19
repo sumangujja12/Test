@@ -74,7 +74,7 @@ public class TPVResource {
 			Enumeration params = request.getParameterNames(); 
 			while(params.hasMoreElements()){
 			 String paramName = (String)params.nextElement();
-			 System.out.println("Parameter Name - "+paramName+", Value - "+request.getParameter(paramName));
+			 logger.info("Parameter Name - :{} , Value -{}",paramName,request.getParameter(paramName));
 			}
 			responseVO = tpvService.tpvTransUpd(request.getParameter("IvAcctNum"),
 					request.getParameter("IvApprovedBy"),

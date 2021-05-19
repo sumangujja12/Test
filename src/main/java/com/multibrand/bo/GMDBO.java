@@ -146,12 +146,14 @@ public class GMDBO extends BaseAbstractService implements Constants {
 
 	}	
 
-	public EsidInfoTdspCalendarResponse getESIDAndCalendarDates(String companyCode, String brandId, String tdspCodeCCS,
-			String transactionType, String locale, String esid) {
+	public EsidInfoTdspCalendarResponse getESIDAndCalendarDates(String companyCode, String brandId, String tdspCodeCCSreq,
+			String transactionType, String esid) {
 
 		String methodName = "OEBO: getESIDAndCalendarDates(..)";
 		logger.debug("Start in getESIDAndCalendarDates:{}" , methodName);
 
+		String tdspCodeCCS = tdspCodeCCSreq;
+		
 		EsidInfoTdspCalendarResponse response = new EsidInfoTdspCalendarResponse();
 		ESIDDO esidDo = null;
 

@@ -1,5 +1,7 @@
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -18,17 +20,17 @@ public class CCDepositPaymentRequest extends BaseAffiliateRequest {
 	
 	/** The tracking id. */
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String trackingId;
 	
 	/** The ca number. */
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 12, groups = SizeConstraint.class)
+	@Size(max = 12, groups = SizeConstraint.class)
 	private String caNumber;
 	
 	/** The bpid. */
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String bpid;
 	
 	/** The tokenized cc number. */
@@ -36,7 +38,7 @@ public class CCDepositPaymentRequest extends BaseAffiliateRequest {
 	private String tokenizedCCNumber; 
 	
 	/** The cvv number. */	
-	@Length(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3, groups = SizeConstraint.class)
 	private String cvvNumber; 
 	
 	/** The expiration date. */
@@ -45,12 +47,12 @@ public class CCDepositPaymentRequest extends BaseAffiliateRequest {
 	
 	/** The billing zip. */
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String billingZip;  
 	
 	/** The payment amount. */
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 11, groups = SizeConstraint.class)
+	@Size(max = 11, groups = SizeConstraint.class)
 	private String depositAmount;
 	
 	

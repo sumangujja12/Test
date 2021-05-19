@@ -688,7 +688,6 @@ public com.multibrand.vo.response.TransferServiceResponse saveTransferServiceDet
 			  {
 				  String strAdditionalProg = "<![CDATA[<tr><td style=\"vertical-align:top;\">]]>Additional Programs:<![CDATA[</td><td class=\"fRight alignRight\">]]>"+additionalProgs+"<![CDATA[</td></tr>]]>";
 				  templateProps.put(ADDITION_PROGS, strAdditionalProg);
-				  System.out.println("Prashant : "+templateProps.get(ADDITION_PROGS));
 			  }else{
 				  templateProps.put(ADDITION_PROGS, "");
 			  }				

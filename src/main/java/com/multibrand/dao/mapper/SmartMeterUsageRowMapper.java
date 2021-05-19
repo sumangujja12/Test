@@ -33,8 +33,6 @@ public class SmartMeterUsageRowMapper implements ResultSetExtractor<Object>, Con
 			smartMeterUsageHistory.setServicePointId(CommonUtil.getBlankString(rs.getString("SERVICEPOINTID")));
 			smartMeterUsageHistory.setReadSetDate(CommonUtil.changeDateFormat(rs.getString("READ_SET_DATE"),
 						DT_SQL_FMT_DB, DT_FMT));
-			System.out.println("Date"+CommonUtil.changeDateFormat(rs.getString("READ_SET_DATE"),
-						DT_SQL_FMT_DB, DT_FMT));
 			smartMeterUsageHistory.setTdsp(CommonUtil.getBlankString(rs.getString("TDSP")));
 			smartMeterUsageHistory.setProduct(CommonUtil.getBlankString(rs.getString("PRODUCT")));
 			smartMeterUsageHistory.setM2mProduct(CommonUtil.getBlankString(rs.getString("M2M_PRODUCT")));

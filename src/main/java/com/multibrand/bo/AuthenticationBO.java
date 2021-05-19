@@ -257,7 +257,7 @@ public class AuthenticationBO implements Constants{
 	 * @param lookupItem
 	 * @return
 	 */
-	private String readValueFromHeaderOrCookie(HttpHeaders httpHeaders, String lookupItem) {
+	public String readValueFromHeaderOrCookie(HttpHeaders httpHeaders, String lookupItem) {
 		
 		String resultValue = null;
 		

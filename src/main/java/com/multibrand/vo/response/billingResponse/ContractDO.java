@@ -5,6 +5,7 @@ import java.util.Date;
 import org.apache.axis.utils.StringUtils;
 
 import com.multibrand.util.CommonUtil;
+import com.multibrand.util.Constants;
 import com.multibrand.util.DateUtil;
 
 
@@ -138,7 +139,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrContractEndDate() {
-		return CommonUtil.changeDateFormat(strContractEndDate);
+		if ( DateUtil.matches(Constants.DATE_PATTERN_YYYY_MM_DD,strContractEndDate)) {
+			return CommonUtil.changeDateFormat(strContractEndDate);
+		} else {
+			return strContractEndDate;
+		}
 	}
 
 	public void setStrContractEndDate(java.lang.String strContractEndDate) {
@@ -154,7 +159,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrContractStartDate() {
-		return CommonUtil.changeDateFormat(strContractStartDate);
+		if ( DateUtil.matches(Constants.DATE_PATTERN_YYYY_MM_DD,strContractStartDate)) {
+			return CommonUtil.changeDateFormat(strContractStartDate);
+		} else {
+			return strContractStartDate;
+		}
 	}
 
 	public OfferDO getCurrentPlan() {
@@ -186,7 +195,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrMoveInDate() {
-		return CommonUtil.changeDateFormat(strMoveInDate);
+		if ( DateUtil.matches(Constants.DATE_PATTERN_YYYY_MM_DD,strMoveInDate)) {
+			return CommonUtil.changeDateFormat(strMoveInDate);
+		} else {
+			return strMoveInDate;
+		}
 	}
 
 	public void setStrMoveInDate(java.lang.String strMoveInDate) {
@@ -194,7 +207,11 @@ public class ContractDO {
 	}
 
 	public java.lang.String getStrMoveOutDate() {
-		return CommonUtil.changeDateFormat(strMoveOutDate);
+		if ( DateUtil.matches(Constants.DATE_PATTERN_YYYY_MM_DD,strMoveOutDate)) {
+			return CommonUtil.changeDateFormat(strMoveOutDate);
+		} else {
+			return strMoveOutDate;
+		}
 	}
 
 

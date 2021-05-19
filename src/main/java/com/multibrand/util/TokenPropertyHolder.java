@@ -12,9 +12,6 @@ public class TokenPropertyHolder {
 
 	private static final Properties TokenServerProps = new Properties();
 	//private static long lastModifiedTime = -1;
-	public static void main(String[] args) throws IOException {
-		System.out.println("Inside TokenPropHolder.java: " + getInstance().getProperty("tokenServerUrl"));
-	}
 	public static Properties initTokenServerProps() throws IOException {
 		InputStream is = null;
 		try {

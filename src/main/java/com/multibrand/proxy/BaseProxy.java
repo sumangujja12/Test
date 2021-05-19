@@ -101,8 +101,6 @@ public class BaseProxy implements Constants {
 
 			endPoint = getEndPointUrl(endPointUrlKey);
 			// endPoint= "http://txaixebnbld01:9088/NRGWS/SwapDomain";
-			System.out.println("endPoint ================================== "
-					+ endPoint);
 			Constructor constructor = srvProxyClass.getConstructor(parmTypes);
 			proxyObject = constructor.newInstance(new Object[] {
 					new java.net.URL(endPoint), service });

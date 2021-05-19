@@ -3,8 +3,9 @@
  */
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
@@ -22,10 +23,10 @@ public class EsidCalendarRequest extends BaseAffiliateRequest {
 	@NotEmpty	
 	private String trackingId;
 	@NotEmpty
-	@Length(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3, groups = SizeConstraint.class)
 	private String transactionType; //MVI or SWI
 	@NotEmpty
-	@Length(max = 5, groups = SizeConstraint.class)
+	@Size(max = 5, groups = SizeConstraint.class)
 	private String tdspCodeCCS;
 
 	@NotEmpty
@@ -34,19 +35,19 @@ public class EsidCalendarRequest extends BaseAffiliateRequest {
 	@NotEmpty
 	private String servStreetName;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
 	@NotEmpty
-	@Length(min = 5, max = 10, groups = SizeConstraint.class)
+	@Size(min = 5, max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 
-	@Length(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4, groups = SizeConstraint.class)
 	private String bpMatchFlag;
 
 	private String requestType = ESID_CALENDAR_REQ_TYPE.FULL.toString();
 	
-	@Length(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32, groups = SizeConstraint.class)
 	private String esid;
 	
 	/**

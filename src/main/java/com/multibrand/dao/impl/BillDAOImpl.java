@@ -101,10 +101,8 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 		Map<String, Integer> inParamsTypeMap = new LinkedHashMap<String, Integer>();
 		Map<String, ResultObject> outParamsTypeMap = new LinkedHashMap<String, ResultObject>();
 		BaseStoredProcedure storedProc = null;
-		//System.out.println("hai1");
 		inParamsTypeMap.put(ESIID_IN_V, OracleTypes.VARCHAR);
 		inParamsTypeMap.put(CONTRACT_ACT_ID_IN_V, OracleTypes.VARCHAR);
-		//System.out.println("hai2");
 		inParams.put(ESIID_IN_V,projReq.getEsIid() );
 		inParams.put(CONTRACT_ACT_ID_IN_V, projReq.getContractAccountNumber());
 		
@@ -112,7 +110,6 @@ public class BillDAOImpl implements BillDAO, DBConstants, Constants
 				OracleTypes.CURSOR, new ProjectedBillRowMapper()));
 		outParamsTypeMap.put(RET_TYP_OUT_V, new ResultObject(OracleTypes.VARCHAR));
 
-		//System.out.println("hai3");
 		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
 		storedProc = storedProcedure
 				.createStoredProcedure(smartJdbcTemplate, PROJECTEDBILL_PROC,

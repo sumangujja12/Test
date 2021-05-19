@@ -1,8 +1,9 @@
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
-import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.SizeConstraint;
@@ -26,18 +27,18 @@ public class EsidDetailsRequest extends BaseAffiliateRequest {
 	
 	private String servStreetName;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String servStreetAptNum;
 
 	@NotBlank
-	@Length(min = 5, max = 10, groups = SizeConstraint.class)
+	@Size(min = 5, max = 10, groups = SizeConstraint.class)
 	private String servZipCode;
 
 	// @NotBlank(groups = BasicConstraint.class)
-	@Length(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3, groups = SizeConstraint.class)
 	private String transactionType; // MVI or SWI
 
-	@Length(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32, groups = SizeConstraint.class)
 	private String esid;
 	
 	/**

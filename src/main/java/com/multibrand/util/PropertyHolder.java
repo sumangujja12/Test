@@ -12,9 +12,6 @@ public class PropertyHolder {
 
 	private static final Properties ServerProps = new Properties();
 
-	public static void main(String[] args) throws IOException {
-		System.out.println("Inside propHolder.java: " + getInstance("/properties/appConstants.properties").getProperty("08901"));
-	}
 	public static Properties initServerProps(String fileName) throws IOException {
 		InputStream is = null;
 		try {

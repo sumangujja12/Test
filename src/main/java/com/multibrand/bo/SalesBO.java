@@ -103,6 +103,16 @@ public class SalesBO extends OeBoHelper implements Constants {
 				bpMatchResponse.setErrorDescription("guid cannot be empty");					
 				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
 				return response;
+			} else if(StringUtils.equalsIgnoreCase(request.getNoid(), FLAG_TRUE) 
+					&& (StringUtils.isNotEmpty(request.getTokenizedSSN())
+							|| StringUtils.isNotEmpty(request.getTokenizedTDL()))){
+				
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("please provide noid or ssn/dl");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
 			}
 			
 			BeanUtils.copyProperties(request, performPosidAndBPMatchRequest);
@@ -123,8 +133,17 @@ public class SalesBO extends OeBoHelper implements Constants {
 					response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(bpMatchResponse).build();
 					return response;
 				} 
+			} else
+				if(StringUtils.isBlank(request.getTokenizedSSN()) && StringUtils.isBlank(request.getTokenizedTDL()) 
+						&& StringUtils.isBlank(request.getNoid())) {
+				IdentityResponse bpMatchResponse = new IdentityResponse();
+				bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+				bpMatchResponse.setErrorCode(HTTP_BAD_REQUEST);
+				bpMatchResponse.setErrorDescription("please provide ssn or dl or noId");					
+				response=Response.status(Response.Status.BAD_REQUEST).entity(bpMatchResponse).build();
+				return response;
 				
-			}
+			} 
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.performPosidAndBpMatch", e);
 			throw e;
@@ -217,6 +236,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 
 		SalesTokenResponse tokenizedResponse = new SalesTokenResponse();
 		String returnToken = null;
+		
 		if (StringUtils.isBlank(request.getActionCode())
 				|| (!request.getActionCode().equalsIgnoreCase(Token.getCreditCardAction())
 						&& !request.getActionCode().equalsIgnoreCase(Token.getBankAccountAction())
@@ -238,10 +258,16 @@ public class SalesBO extends OeBoHelper implements Constants {
 			returnToken = Token.getBankAccountToken(request.getNumToBeTokenized());
 			tokenizedResponse.setReturnToken(returnToken);
 		} else if (request.getActionCode().equalsIgnoreCase(Token.getDriverLicenceAction())) {
-			returnToken = Token.getDRLToken(request.getNumToBeTokenized());
+			String tdl=request.getNumToBeTokenized();
+			if(request.getNumToBeTokenized().length()<10)
+			  tdl=CommonUtil.addLeadingZeroes(request.getNumToBeTokenized(), 10);
+			returnToken = Token.getDRLToken(tdl);
 			tokenizedResponse.setReturnToken(returnToken);
 		} else if (request.getActionCode().equalsIgnoreCase(Token.getSsnAction())) {
-			returnToken = Token.getSSNToken(request.getNumToBeTokenized());
+			String ssn=request.getNumToBeTokenized();
+			if(request.getNumToBeTokenized().length()<9)
+				ssn=CommonUtil.addLeadingZeroes(request.getNumToBeTokenized(), 9);
+			returnToken = Token.getSSNToken(ssn);
 			tokenizedResponse.setReturnToken(returnToken);
 		}
 

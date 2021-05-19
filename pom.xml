@@ -704,7 +704,14 @@
 		    	</exclusion>
 		    </exclusions>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-validator</artifactId>
+		    <version>4.3.2.Final</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
+		
 		<dependency>
 		    <groupId>javax.ws.rs</groupId>
 		    <artifactId>jsr311-api</artifactId>
@@ -812,12 +819,8 @@
 			<artifactId>aspectjrt</artifactId>
 			<version>1.7.2</version> <!-- prev 1.7.2 -->
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
-		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-validator</artifactId>
-		    <version>4.3.2.Final</version>
-		</dependency>
+		
+
 
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
