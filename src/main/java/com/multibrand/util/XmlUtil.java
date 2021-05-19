@@ -246,35 +246,7 @@ public class XmlUtil {
         }
     }
     
-    /**
-     * <pre>
-     * Gets a String value from an File
-     * </pre>
-     *
-     * @param filePath
-     *            A physical path of an any file to be converted as String.
-     * @return String from an give File.
-     * @throws IOException
-     */
-    public static String readFileAsString(String filePath) throws java.io.IOException {
-        byte[]              buffer = new byte[(int) new File(filePath).length()];
-        BufferedInputStream f      = null;
-
-        try {
-            f = new BufferedInputStream(new FileInputStream(filePath));
-            f.read(buffer);
-        } finally {
-            if (f != null) {
-                try {
-                    f.close();
-                } catch (IOException ignored) {
-                	logger.info("readFileAsString() BufferedInputStream Close Exception:{}" , ignored.getMessage());
-                }
-            }
-        }
-
-        return new String(buffer);
-    }
+    
     
     public static String pojoToXMLwithRootElement(Object pObject, String transactionType){
     	
