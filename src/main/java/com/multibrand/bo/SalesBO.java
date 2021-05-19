@@ -2,6 +2,7 @@ package com.multibrand.bo;
 
 import java.rmi.RemoteException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,8 @@ import com.multibrand.dto.request.SalesEsidCalendarRequest;
 import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.SalesTDSPRequest;
+import com.multibrand.dto.request.SalesUCCDataRequest;
+import com.multibrand.dto.request.UCCDataRequest;
 import com.multibrand.dto.request.ValidateAddressRequest;
 import com.multibrand.dto.request.ValidateCARequest;
 import com.multibrand.dto.request.ValidateUserIdRequest;
@@ -48,7 +51,9 @@ import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
+import com.multibrand.dto.response.SalesUCCDataResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
+import com.multibrand.dto.response.UCCDataResponse;
 import com.multibrand.dto.response.ValidateAddressResponse;
 import com.multibrand.dto.response.ValidateCAResponse;
 import com.multibrand.dto.response.ValidateUserIdResponse;
@@ -533,6 +538,82 @@ public class SalesBO extends OeBoHelper implements Constants {
 	
 	public ValidateUserIdResponse validateUserName(ValidateUserIdRequest validateUserIdRequest) {
 		return oeBO.validateUserName(validateUserIdRequest);
+	}
+
+	public SalesUCCDataResponse submitUCCData(SalesUCCDataRequest salesUCCDatarequest, String httpServletRequest) {
+		SalesUCCDataResponse salesUCCDataResponse = new SalesUCCDataResponse();
+		UCCDataRequest uccDataRequest = new UCCDataRequest();
+		try {
+			String errorDesc = null;
+			HashMap<String, Object> mandatoryParamList = new HashMap<>();
+			HashMap<String, Object> mandatoryParamCheckResponse = null;
+
+			salesUCCDatarequest.setCallExecuted(SALES_API_SUBMIT_UCC_DATA);
+			// Either Billing PO box or Billing Street num/name should be
+			// supplied
+			mandatoryParamList.put("firstName", salesUCCDatarequest.getFirstName());
+
+			mandatoryParamList.put("lastName", salesUCCDatarequest.getLastName());
+			mandatoryParamList.put("depositAmount", salesUCCDatarequest.getDepositAmount());
+
+			mandatoryParamCheckResponse = CommonUtil.checkMandatoryParam(mandatoryParamList);
+			String resultCode = (String) mandatoryParamCheckResponse.get("resultCode");
+
+			if (StringUtils.isNotBlank(resultCode) && !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+
+				errorDesc = (String) mandatoryParamCheckResponse.get("errorDesc");
+
+				if (StringUtils.isNotBlank(errorDesc)) {
+					salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+					salesUCCDataResponse.setErrorDescription(errorDesc);
+
+				} else {
+					salesUCCDataResponse.setStatusCode(STATUS_CODE_ASK);
+					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+					salesUCCDataResponse.setErrorDescription(errorDesc);
+				}
+				logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
+
+				return salesUCCDataResponse;
+			}
+
+			HashMap<String, Object> nagativeParamList = new HashMap<>();
+			HashMap<String, Object> negativeParamCheckResponse = null;
+			nagativeParamList.put("depositAmount", salesUCCDatarequest.getDepositAmount());
+
+			if (StringUtils.isNotEmpty(salesUCCDatarequest.getCreditScore())) {
+				nagativeParamList.put("creditScore", salesUCCDatarequest.getCreditScore());
+			}
+
+			negativeParamCheckResponse = CommonUtil.checkNegaviteValueInParam(nagativeParamList);
+			resultCode = (String) negativeParamCheckResponse.get("resultCode");
+
+			if (StringUtils.isNotBlank(resultCode) && !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
+
+				errorDesc = (String) negativeParamCheckResponse.get("errorDesc");
+
+				if (StringUtils.isNotBlank(errorDesc)) {
+					salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+					salesUCCDataResponse.setErrorDescription(errorDesc);
+				} else {
+					salesUCCDataResponse.setStatusCode(STATUS_CODE_ASK);
+					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+					salesUCCDataResponse.setErrorDescription(errorDesc);
+				}
+				logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
+
+				return salesUCCDataResponse;
+			}
+			BeanUtils.copyProperties(salesUCCDatarequest, uccDataRequest);
+			UCCDataResponse uccResp = oeBO.submitUCCData(uccDataRequest, httpServletRequest);
+			BeanUtils.copyProperties(uccResp, salesUCCDataResponse);
+		} catch (Exception e) {
+			logger.error("Exception in SalesBO.submitUCCData()", e);
+			throw e;
+		}
+		return salesUCCDataResponse;
 	}
 
 }

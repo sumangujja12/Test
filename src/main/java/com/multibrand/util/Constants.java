@@ -1671,6 +1671,7 @@ public interface Constants {
 
 	public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
 	public static final String VEHICLE_ID = "VEHICLE_ID";
+
 	public static final String FLAG_OTHER = "Other";
 
 
@@ -1707,6 +1708,13 @@ public interface Constants {
 	public static final String FINISH_PROCESS_UPDATESERVLOCATION="Finished processing updateServiceLocation, errorCode = ";
 	public static final String PROMOCODE_NOT_EMPTY="promoCode may not be Empty";
 	public static final String COMPANYCODE="Company code ";
+
+	
+	
+
+	public static final String DATE_PATTERN_YYYY_MM_DD = "^\\d{4}-\\d{2}-\\d{2}$";
+
+	
 	
     public static final String ERROR_01="01";
     public static final String ERROR_02="02";
@@ -1717,7 +1725,8 @@ public interface Constants {
 	public static final String GIACT_ERROR_03="GIACT_ERROR_03";
 	public static final String BANK_AUTOPAY_INVALID_BANK_ACCOUNT = "MSG_CCSERR_2_INVALID_BNK";
 	
-	public static final String DATE_PATTERN_YYYY_MM_DD = "^\\d{4}-\\d{2}-\\d{2}$";
+
+	
 
 	
 	public static final String SALES_API_CA_VALIDATION = "validate-ca";
@@ -1727,6 +1736,12 @@ public interface Constants {
 
 	
 	public static final String ZIRTUE_RECEIPT_NUMBER = "ZIRTUE.REL.0102.1";
+
+
+
+	
+	public static final String SALES_API_SUBMIT_UCC_DATA= "submitUCCData";
+
 
 	
 }

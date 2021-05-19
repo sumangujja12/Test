@@ -25,10 +25,15 @@ import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.IdentityRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
+
 import com.multibrand.dto.request.ValidateCARequest;
 import com.multibrand.dto.request.ValidateUserIdRequest;
+
+import com.multibrand.dto.request.SalesUCCDataRequest;
+
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
+import com.multibrand.dto.response.SalesUCCDataResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.ValidateCAResponse;
 import com.multibrand.dto.response.ValidateUserIdResponse;
@@ -170,6 +175,7 @@ public class SalesBOTest implements Constants{
 		}
 		Assert.assertEquals(response.getHttpStatus(), Response.Status.BAD_REQUEST);
 	}
+
 	@Test
 	public void testValidateUserName(){
 		ValidateUserIdResponse validateUserIdResponse = new ValidateUserIdResponse();
@@ -215,6 +221,39 @@ public class SalesBOTest implements Constants{
 		}
 		Assert.assertEquals(response.getStatus(), 400);
 	}
+
+
+
+	@Test
+	public void testSubmitUCCDataForMandatoryParam(){
+		SalesUCCDataRequest salesUCCDatarequest =new SalesUCCDataRequest();
+		salesUCCDatarequest.setDepositAmount("125");
+		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();
+		String httpServletRequest = "123456";
+		try{
+	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		Assert.assertEquals(salesUCCDataResponse.getStatusCode(), STATUS_CODE_STOP);
+	}
+	
+	@Test
+	public void testSubmitUCCDataForNegaviteValueInParam(){
+		SalesUCCDataRequest salesUCCDatarequest =new SalesUCCDataRequest();
+		salesUCCDatarequest.setDepositAmount("-1");
+		salesUCCDatarequest.setFirstName("test");
+		salesUCCDatarequest.setLastName("test");
+		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();
+		String httpServletRequest = "123456";
+		try{
+	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		Assert.assertEquals(salesUCCDataResponse.getStatusCode(), STATUS_CODE_STOP);
+	}
+	
 
 
 }
