@@ -6795,6 +6795,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 					esidData.setRecentDisconnectFlag(esidProfileResponse.getRecentDisconnectFlag());
 					esidData.setBlockStatus(esidProfileResponse.getBlockStatus());
 					esidData.setSwitchHoldStatus(esidProfileResponse.getSwitchHoldStatus());
+					esidData.setMeterNumber(esidProfileResponse.getMeterNumber());
 				}
 			}
 			

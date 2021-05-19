@@ -34,6 +34,7 @@ import com.multibrand.dao.PersonDao;
 import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.domain.AccountInfoResponse;
 import com.multibrand.domain.ContractDetailsDTO;
+import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.KbaAnswerDTO;
 //import org.testng.annotations.BeforeClass;
 //import org.testng.annotations.BeforeMethod;
@@ -69,6 +70,7 @@ import com.multibrand.dto.response.ValidateUserIdResponse;
 import com.multibrand.exception.OEException;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.request.handlers.OERequestHandler;
+import com.multibrand.service.AddressService;
 import com.multibrand.service.OEService;
 import com.multibrand.service.OfferService;
 import com.multibrand.service.ProfileService;
@@ -159,6 +161,10 @@ public class OEBOTest implements Constants{
 	WebI18nMessageSource msgSource = new WebI18nMessageSource();
 
 	String apiCallExecuted = API_CHECK_CREDIT+"|"+API_LEGACY_SUBMIT_UCC_DATA+"|"+API_RECHECK_CREDIT+"|"+API_LEGACY_PERFORM_CREDIT_CHECK+"|"+API_AVAILABLE_DATES+"|"+API_LEGACY_GET_ESID_AND_CALENDAR_DATES;
+	
+	
+	@Mock 
+	AddressService addressService;
 	
 	@BeforeClass
 	public void init() {
@@ -674,6 +680,47 @@ public class OEBOTest implements Constants{
 		Assert.assertEquals(esidResponse.getEsidList().size(), 0);
 	}
 	
+	@Test
+	public void testPositiveGetESIDResidentialDetails() throws SQLException, Exception{
+		EsidRequest request = createEsidRequest();
+		EsidResponse esidResponse = createEsidResidentialResponse();
+		when(addressDAO.getESIDDetails(Matchers.any(EsidRequest.class))).thenReturn(esidResponse);
+		EsidProfileResponse esidProfileResponse = new EsidProfileResponse();
+		when(addressService.getESIDProfile(Matchers.any(String.class), Matchers.any(String.class))).thenReturn(esidProfileResponse);
+		when(addressService.esidStatusValidation(Matchers.any(String.class), Matchers.any(String.class))).thenReturn(true);
+		esidResponse = oebo.getESIDResidentialDetails(request);
+		Assert.assertEquals(esidResponse.getEsidList().size(), 1);
+		
+	}
+	
+	@Test
+	public void testNegativeGetESIDResidentialDetails() throws SQLException, Exception{
+		EsidRequest request = createEsidRequest();
+		EsidResponse esidResponse = createEsidResidentialResponse();
+		esidResponse.getEsidList().get(0).setEsidStatus("ACTIVE");
+		when(addressDAO.getESIDDetails(Matchers.any(EsidRequest.class))).thenReturn(esidResponse);
+		EsidProfileResponse esidProfileResponse = new EsidProfileResponse();
+		when(addressService.getESIDProfile(Matchers.any(String.class), Matchers.any(String.class))).thenReturn(esidProfileResponse);
+		when(addressService.esidStatusValidation(Matchers.any(String.class), Matchers.any(String.class))).thenReturn(false);
+		esidResponse = oebo.getESIDResidentialDetails(request);
+		Assert.assertEquals(esidResponse.getEsidList().size(), 1);
+		
+	}
+	
+	@Test
+	public void testNegative2GetESIDResidentialDetails() throws SQLException, Exception{
+		EsidRequest request = createEsidRequest();
+		EsidResponse esidResponse = createEsidResidentialResponse();
+		esidResponse.getEsidList().get(0).setEsidStatus("De-Energized");
+		when(addressDAO.getESIDDetails(Matchers.any(EsidRequest.class))).thenReturn(esidResponse);
+		EsidProfileResponse esidProfileResponse = new EsidProfileResponse();
+		when(addressService.getESIDProfile(Matchers.any(String.class), Matchers.any(String.class))).thenReturn(esidProfileResponse);
+		when(addressService.esidStatusValidation(Matchers.any(String.class), Matchers.any(String.class))).thenReturn(false);
+		esidResponse = oebo.getESIDResidentialDetails(request);
+		Assert.assertEquals(esidResponse.getEsidList().size(), 1);
+		
+	}
+	
 	private EsidRequest createEsidRequest(){
 		EsidRequest request = new EsidRequest();
 		request.setAffiliateId("12345");
@@ -698,6 +745,24 @@ public class OEBOTest implements Constants{
 		esid.setEsidClass("1");
 		esid.setEsidDeposit("410");
 		esid.setEsidTDSP("44372");
+		esidList.add(esid);
+		EsidResponse esidResponse= new EsidResponse();
+		esidResponse.setEsidList(esidList);
+		return esidResponse;
+	}
+	
+	private EsidResponse createEsidResidentialResponse(){
+		List<ESIDData> esidList=null;
+		ESIDData esid = null;
+		esidList = new ArrayList<>();
+		esid = new ESIDData();
+		esid.setEsidNumber("10443720003000440");
+		esid.setPremiseType("Resdential");
+		esid.setEsidStatus(null);
+		esid.setEsidClass("1");
+		esid.setEsidDeposit("410");
+		esid.setEsidTDSP("44372");
+		esid.setMeterNumber("4437200");
 		esidList.add(esid);
 		EsidResponse esidResponse= new EsidResponse();
 		esidResponse.setEsidList(esidList);

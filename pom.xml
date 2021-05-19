@@ -1014,7 +1014,7 @@
 		<dependency>
 			<groupId>com.nrg.services.clients</groupId>
 			<artifactId>nrg-profile-domain</artifactId>
-			<version>26-SNAPSHOT</version>
+			<version>27-SNAPSHOT</version>
 			<scope>${dependency.scope}</scope>
 		</dependency>
 		<dependency>

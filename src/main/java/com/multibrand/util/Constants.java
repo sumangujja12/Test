@@ -1741,6 +1741,8 @@ public interface Constants {
 
 	
 	public static final String SALES_API_SUBMIT_UCC_DATA= "submitUCCData";
+	
+	public static final String SOURCE_AFFILIATE="AFFILIATE";
 
 
 	
