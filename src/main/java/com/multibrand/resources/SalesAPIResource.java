@@ -1,7 +1,6 @@
 
 package com.multibrand.resources;
 
-import java.util.HashMap;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +38,7 @@ import com.multibrand.dto.request.SalesOfferDetailsRequest;
 import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.SalesTDSPRequest;
 import com.multibrand.dto.request.SalesUCCDataRequest;
-import com.multibrand.dto.request.UCCDataRequest;
+
 import com.multibrand.dto.request.ValidateEsidRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
@@ -52,14 +51,14 @@ import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
 import com.multibrand.dto.response.SalesUCCDataResponse;
-import com.multibrand.dto.response.UCCDataResponse;
+
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.request.handlers.OERequestHandler;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
 import com.multibrand.vo.request.SalesTokenRequest;
-import com.multibrand.vo.response.GenericResponse;
+
 import com.multibrand.vo.response.GetKBAQuestionsResponse;
 import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
