@@ -1,6 +1,6 @@
 package com.multibrand.dto.request;
 
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
 
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
@@ -18,7 +18,7 @@ public class SalesCreditReCheckRequest extends SalesCreditCheckRequest {
 	
 
 	@NotEmpty
-	@Length(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20, groups = SizeConstraint.class)
 	private String tokenizedSSN;
 
 

@@ -622,11 +622,9 @@ public class HistoryService extends BaseAbstractService {
 	public ConsumptionHistory getUsageHistoryList(GetUsageHistoryRequest request,String companyCode, String sessionId) throws RemoteException {
 		
 		logger.info("Start HistoryService.getUsageHistoryList :: START");
-		System.out.println("inside the History domain");
 		long startTime = CommonUtil.getStartTime();
 		HistoryDomain proxy = getHistoryDomainProxy();
 		ConsumptionHistory consumptionHistory = proxy.getConsumptionUsageList(request);
-		System.out.println("out the Historydomain"+consumptionHistory);
 		utilityloggerHelper.logTransaction("getUsageHistoryList", false,
 				request, consumptionHistory, consumptionHistory.getErrorMessage(),
 				CommonUtil.getElapsedTime(startTime), "", sessionId,

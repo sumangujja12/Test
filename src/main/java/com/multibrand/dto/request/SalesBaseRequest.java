@@ -2,6 +2,7 @@ package com.multibrand.dto.request;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 
 import org.hibernate.validator.constraints.Length;
@@ -24,7 +25,7 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 
 	@QueryParam(value = "affiliateId")
 	@NotEmpty
-	@Length(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40, groups = SizeConstraint.class)
 	private String affiliateId;
 	
 	@QueryParam(value = "channelType")
@@ -33,16 +34,16 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 	
 	@QueryParam(value = "companyCode")
 	@NotEmpty
-	@Length(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4, groups = SizeConstraint.class)
 	@ValidateCompanyCode(message="is not valid")
 	private String companyCode;
 	
 	@QueryParam(value = "brandId")
-	@Length(max = 2, groups = SizeConstraint.class)
+	@Size(max = 2, groups = SizeConstraint.class)
 	private String brandId;
 	
 	@QueryParam(value = "languageCode")
-	@Length(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1, groups = SizeConstraint.class)
 	private String languageCode = null;
 	
 	private String callExecuted;

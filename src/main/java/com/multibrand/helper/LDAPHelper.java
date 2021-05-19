@@ -368,7 +368,6 @@ public class LDAPHelper extends BaseAbstractService{
 	public Attributes replaceExistingUserDetails(String bindKeyName, String bindKeyValue, String domain,
 			Map<String, String> attributes) throws NamingException, ServiceException, RemoteException {
 		
-		System.out.println("inside replaceExistingUserDetails");
 		DirContext dirCtx = null;
 		StringBuilder modifyAttribString = new StringBuilder();
 		
@@ -412,14 +411,11 @@ public class LDAPHelper extends BaseAbstractService{
 			return attrs;
 			
 		} catch (AttributeModificationException e) {
-			System.out.println(e);
-			logger.error("Problem default modifying attributes: ", e);
+			logger.error("Problem default replaceExistingUserDetails modifying attributes:{}", e.getMessage());
 		} catch (NamingException e) {
-			System.out.println(e);
-			logger.error("Problem default modifying attributes ", e);
+			logger.error("Problem default modifying attributes:{}", e.getMessage());
 		} catch (Exception e) {
-			System.out.println(e);
-			logger.error("Problem default modifying  attributes: ", e);
+			logger.error("Problem default modifying  attributes:{}", e.getMessage());
 		}
 		return null;
 	}

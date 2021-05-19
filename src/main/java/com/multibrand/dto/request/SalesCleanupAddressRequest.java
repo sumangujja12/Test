@@ -1,10 +1,9 @@
 package com.multibrand.dto.request;
 
-import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
-import com.multibrand.request.validation.BasicConstraint;
+import org.apache.commons.lang.StringUtils;
+
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.util.CommonUtil;
@@ -16,28 +15,28 @@ public class SalesCleanupAddressRequest extends SalesBaseRequest{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String streetNum;
 	
-	@Length(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60, groups = SizeConstraint.class)
 	private String streetName;
 	
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String aptNum;
 	
 	@NotEmpty
-	@Length(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30, groups = SizeConstraint.class)
 	private String city;
 	
 	@NotEmpty
-	@Length(min = 2, max = 2, groups = SizeConstraint.class, message ="{err.msg.state.format}")
+	@Size(min = 2, max = 2, groups = SizeConstraint.class, message ="{err.msg.state.format}")
 	private String state;
 	
 	@NotEmpty
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String zipCode;
 	
-	@Length(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25, groups = SizeConstraint.class)
 	private String poBox;
 
 	public String getStreetNum() {

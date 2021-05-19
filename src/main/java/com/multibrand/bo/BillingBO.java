@@ -974,8 +974,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		} catch (Exception e) {
 			logger.info(" Exeception Occured in the getAvgTempBill"
 					+ e.getCause());
-			//System.out.println(e.getMessage());
-			//System.out.println(e.getCause());
 			logger.error(" Error "+e.getMessage());
 			avgTempResponse = new AvgTempResponse();
 			avgTempResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -2110,6 +2108,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		ExecutorService executorService = null;
 		try {
 			AmbSignupRequest request = new AmbSignupRequest();
+			
+			
 			if (!StringUtils.isBlank(requestVO.getAmbAmount())) {
 				request.setAmbAmount(new BigDecimal(requestVO.getAmbAmount()));
 			}
@@ -2118,13 +2118,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			request.setCaNumber(requestVO.getAccountNumber());
 			request.setCoNumber(requestVO.getContractId());
 			// Added Retro flag and abm web tab data- Start
-			if (StringUtils.isNotBlank(requestVO.getRetroFlag())
-					&& (StringUtils.equals(FLAG_TRUE, requestVO.getRetroFlag())
-							|| StringUtils.equalsIgnoreCase(Constants.X_VALUE, requestVO.getRetroFlag()))) {
-				request.setRetroFlag(Constants.X_VALUE);
-			} else {
-				request.setRetroFlag("");
-			}
+			setRetroFlag(requestVO, request);
 
 			if (StringUtils.isNotBlank(requestVO.getAmtAdjust()))
 				zesAmbOutput.setAmtAdjust(new BigDecimal(requestVO.getAmtAdjust()));
@@ -2156,7 +2150,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 				AccountDetailsProp accountDetails = new AccountDetailsProp();
 				accountDetails = getAccountDetailsInfoForAmbSignUpMail(requestVO, strSessionId);
-				sendConfirmationMailForAmbSignup(requestVO, accountDetails, strSessionId);
+				sendConfirmationMailForAmbSignup(requestVO, accountDetails);
 				AMBMailServiceWorker aMBMailServiceWorker = new AMBMailServiceWorker(requestVO, accountDetails,
 						strSessionId);
 				executorService = Executors.newFixedThreadPool(5);
@@ -2183,6 +2177,20 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			}
 		}
 		return response;
+	}
+
+	/**
+	 * @param requestVO
+	 * @param request
+	 */
+	public void setRetroFlag(SaveAMBSingupRequestVO requestVO, AmbSignupRequest request) {
+		if (StringUtils.isNotBlank(requestVO.getRetroFlag())
+				&& (StringUtils.equals(FLAG_TRUE, requestVO.getRetroFlag())
+						|| StringUtils.equalsIgnoreCase(Constants.X_VALUE, requestVO.getRetroFlag()))) {
+			request.setRetroFlag(Constants.X_VALUE);
+		} else {
+			request.setRetroFlag("");
+		}
 	}
 
 	
@@ -2366,12 +2374,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				retroEligResp.setResultDescription(RESULT_CODE_DESCRIPTION_NO_DATA);
 			}
 		} catch (Exception e) {
-			//e.printstackTrace();
-			logger.info(" Exeception Occured in the checkRetroEligibility"
-					+ e.getCause());
-			//System.out.println(e.getMessage());
-			//System.out.println(e.getCause());
-			logger.error(" Error "+e.getMessage());
+			logger.info(" Exeception Occured in the checkRetroEligibility:{}"
+					, e.getMessage());
 			retroEligResp = new RetroEligibilityResponse();
 			retroEligResp.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
 			retroEligResp.setResultDescription(RESULT_DESCRIPTION_EXCEPTION);
@@ -3391,13 +3395,11 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	}
 	
 
-	public void sendConfirmationMailForAmbSignup(SaveAMBSingupRequestVO requestVO, AccountDetailsProp accountDetails,
-			String sesseionId) throws Exception {
+	public void sendConfirmationMailForAmbSignup(SaveAMBSingupRequestVO requestVO, AccountDetailsProp accountDetails) throws Exception {
 
-		HashMap<String, String> templateProps = new HashMap<String, String>();
+		HashMap<String, String> templateProps = new HashMap<>();
 		templateProps.put(ACCOUNT_NUMBER, requestVO.getAccountNumber());
 		templateProps.put(BP_NUMBER, requestVO.getBpNumber());
-		accountDetails = getAccountDetailsInfoForAmbSignUpMail(requestVO, sesseionId);
 		// setting service address
 		templateProps.put(SERVICE_ADDRESS, accountDetails.getServiceAddress());
 		templateProps.put(SERVICE_CITY, accountDetails.getServiceCity());
@@ -3416,47 +3418,14 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		String transactionDate = (new SimpleDateFormat(MM_dd_yyyy)).format(Calendar.getInstance().getTime());
 		templateProps.put(DATE_SUBMITTED, transactionDate);
 		String ambAmount = CommonUtil.stringToDecimalFormat(requestVO.getAmbAmount());
-		logger.info("Email send to To requestVO.getLanguageCode(" + requestVO.getLanguageCode());
-		logger.info("Email send to To Address" + requestVO.getToEmail());
+		logger.info("Email send to To requestVO.getLanguageCode({})" , requestVO.getLanguageCode());
+		logger.info("Email send to To Address:{}" , requestVO.getToEmail());
 		String bccMailAddress = this.envMessageReader.getMessage(QC_BCC_MAIL) + ","
 				+ this.envMessageReader.getMessage(SWAP_BCC_MAIL);
 	
-		// if(StringUtils.equals(requestVO.getCompanyCode(),Constants.COMPANY_CODE_GME)){
 		if (Constants.COMPANY_CODE_GME.equals(requestVO.getCompanyCode())) {
 			logger.info("Email send to GME as per company code");
-			if (StringUtils.isBlank(requestVO.getLanguageCode())
-					|| requestVO.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)) {
-				if (ambAmount.equals("0.00")) {
-					templateProps.put(AMB_AMOUNT, "");
-				} else {
-					String strAmbAmount = DOLLAR_SIGN+ambAmount;
-					templateProps.put(AMB_AMOUNT, strAmbAmount);
-				}
-				logger.info("Email send To Address" + requestVO.getToEmail());
-				if (StringUtils.isNotBlank(requestVO.getRetroFlag())
-						&& StringUtils.equals("true", requestVO.getRetroFlag())) {
-					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_RETRO_AMB_EN_US,
-							templateProps, requestVO.getCompanyCode());
-				} else {
-					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_AMB_EN_US,
-							templateProps, requestVO.getCompanyCode());
-				}
-			} else {
-				if (ambAmount.equals("0.00")) {
-					templateProps.put(AMB_AMOUNT, "");
-				} else {
-					String strAmbAmount = DOLLAR_SIGN+ambAmount;
-					templateProps.put(AMB_AMOUNT, strAmbAmount);
-				}
-				if (StringUtils.isNotBlank(requestVO.getRetroFlag())
-						&& StringUtils.equals("true", requestVO.getRetroFlag())) {
-					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_RETRO_AMB_ES_US,
-							templateProps, requestVO.getCompanyCode());
-				} else {
-					emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_AMB_ES_US,
-							templateProps, requestVO.getCompanyCode());
-				}
-			}
+			sendGMEAMBEmailConfirmation(requestVO, templateProps, ambAmount, bccMailAddress);
 		} else if (StringUtils.equals(requestVO.getCompanyCode(), Constants.COMPANY_CODE_CIRRO)) {
 
 			logger.info("Email send to Cirro as per company code");
@@ -3468,12 +3437,59 @@ public class BillingBO extends BaseAbstractService implements Constants{
 						+ ambAmount + "<![CDATA[</td></tr>]]>";
 				templateProps.put(AMB_AMOUNT, strAmbAmount);
 			}
-			logger.info("Email send To Address" + requestVO.getToEmail());
+			logger.info("Email send To Address:{}" , requestVO.getToEmail());
 			emailHelper.sendMail(requestVO.getToEmail(), "", CIRRO_AVG_BILLING_CONF_EXTERNAL_ID_EN, templateProps,
 					requestVO.getCompanyCode());
 
 		}
 
+	}
+
+	/**
+	 * @param requestVO
+	 * @param templateProps
+	 * @param ambAmount
+	 * @param bccMailAddress
+	 * @throws Exception
+	 */
+	public void sendGMEAMBEmailConfirmation(SaveAMBSingupRequestVO requestVO, HashMap templateProps,
+			String ambAmount, String bccMailAddress) throws Exception {
+		if (StringUtils.isBlank(requestVO.getLanguageCode())
+				|| requestVO.getLanguageCode().equalsIgnoreCase(LANGUAGE_CODE_EN)) {
+			setEmailTemplateAMBAmount(templateProps, ambAmount);
+			logger.info("Email send To Address:{}" , requestVO.getToEmail());
+			if (StringUtils.isNotBlank(requestVO.getRetroFlag())
+					&& StringUtils.equals("true", requestVO.getRetroFlag())) {
+				emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_RETRO_AMB_EN_US,
+						templateProps, requestVO.getCompanyCode());
+			} else {
+				emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_AMB_EN_US,
+						templateProps, requestVO.getCompanyCode());
+			}
+		} else {
+			setEmailTemplateAMBAmount(templateProps, ambAmount);
+			if (StringUtils.isNotBlank(requestVO.getRetroFlag())
+					&& StringUtils.equals("true", requestVO.getRetroFlag())) {
+				emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_RETRO_AMB_ES_US,
+						templateProps, requestVO.getCompanyCode());
+			} else {
+				emailHelper.sendMailWithBCC(requestVO.getToEmail(), bccMailAddress, "", GME_SUBMIT_AMB_ES_US,
+						templateProps, requestVO.getCompanyCode());
+			}
+		}
+	}
+
+	/**
+	 * @param templateProps
+	 * @param ambAmount
+	 */
+	public void setEmailTemplateAMBAmount(HashMap templateProps, String ambAmount) {
+		if (ambAmount.equals("0.00")) {
+			templateProps.put(AMB_AMOUNT, "");
+		} else {
+			String strAmbAmount = DOLLAR_SIGN+ambAmount;
+			templateProps.put(AMB_AMOUNT, strAmbAmount);
+		}
 	} 
 	
 	public void sendCancelPaymentEmail(String paymentId, String email, String paymentAmount,

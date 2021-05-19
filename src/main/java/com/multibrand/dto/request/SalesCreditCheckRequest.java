@@ -1,5 +1,7 @@
 package com.multibrand.dto.request;
 
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.Length;
 
 import com.multibrand.request.validation.CurrentOrFutureDate;
@@ -16,7 +18,7 @@ public class SalesCreditCheckRequest extends SalesOERequest {
 	
 	
 	@NotEmpty
-	@Length(min= 8, max = 8, groups = SizeConstraint.class)
+	@Size(min= 8, max = 8, groups = SizeConstraint.class)
 	String offerCode;
 	
 	@CurrentOrFutureDate

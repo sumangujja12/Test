@@ -185,7 +185,6 @@ public class CommonUtil implements Constants {
 
 	public static String changeDateFormat(String strDate, String srcFormat,
 			String destFormat) {
-		// System.out.println("strDate"+strDate);
 		if ((strDate != null) && (!strDate.trim().equalsIgnoreCase(""))) {
 			SimpleDateFormat format1 = new SimpleDateFormat(srcFormat);
 			SimpleDateFormat format2 = new SimpleDateFormat(destFormat);
@@ -573,9 +572,7 @@ public class CommonUtil implements Constants {
 
 	public static String getDecimalFormat(Double number, String pattern) {
 		DecimalFormat df = new DecimalFormat(pattern);
-		System.out.println("number" + number);
 		String frmString = df.format(number);
-		System.out.println(String.valueOf(frmString));
 		return df.format(number).toString();
 	}
 
@@ -1808,10 +1805,8 @@ public class CommonUtil implements Constants {
 		while(tk.hasMoreTokens()){
 			
 			String temp = tk.nextToken().toString();
-			//System.out.println(StringUtils.capitalize(temp.toLowerCase()));
 			sb.append(StringUtils.capitalize(temp.toLowerCase())+ " ");
 		}
-		//System.out.print(sb.toString().trim());
 		outputString = sb.toString().trim();
 		return outputString;
 	}
@@ -2280,10 +2275,9 @@ public class CommonUtil implements Constants {
 		StringBuffer buffer = new StringBuffer();
 		while (matcher.find()) {
 			if (variables.containsKey(matcher.group(1))) {
-				// System.out.println("Key"+matcher.group(1));
 
 				String replacement = variables.get(matcher.group(1));
-				// System.out.println("Key"+replacement);
+
 				// quote to work properly with $ and {,} signs
 				matcher.appendReplacement(buffer, replacement != null ? Matcher.quoteReplacement(replacement) : "null");
 			}
@@ -2310,11 +2304,10 @@ public class CommonUtil implements Constants {
 		Map<String, Object> ServiceDetailRequest = new LinkedHashMap<String, Object>();
 		ServiceDetailRequest.put("serviceUrl", serviceURL);
 		ServiceDetailRequest.put("httpMethod", Constants.HTTP_METHOD_GET);
-		// System.out.println(gson.toJson(serviceHttpHeader).toString());
 		ServiceDetailRequest.put("serviceHttpHeader", serviceHttpHeader);
 		ServiceDetailRequest.put("serviceReqParameters", serviceReqParameters);
 		ServiceDetailRequest.put("serviceReqJSONBody", serviceReqJSONBody);
-		// System.out.println(gson.toJson(ServiceDetailRequest).toString());
+
 		return gson.toJson(ServiceDetailRequest);
 	}
 

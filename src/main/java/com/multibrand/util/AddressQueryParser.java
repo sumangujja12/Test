@@ -5,6 +5,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
@@ -63,9 +64,9 @@ public class AddressQueryParser
     }
 
     public Query Parse(String queryString, Analyzer analyzer) throws IOException {
-    	logger.info("Lucene Address Search queryString method called ---"+queryString);
+    	logger.info("Lucene Address Search queryString method called ---:{}",queryString);
     	// manually building it because the Query Parser treats "AND" and such oddly for
-    	List < String > tokens = new ArrayList < String > ();
+    	List < String > tokens = new ArrayList <> ();
     	TokenStream tokenStream = analyzer.tokenStream(field, new StringReader(queryString));
     	while (tokenStream.incrementToken()) {
     		tokens.add(tokenStream.getAttribute(CharTermAttribute.class).toString());
@@ -120,7 +121,7 @@ public class AddressQueryParser
     					break;
     				}
 
-    				if (altToken != token.toLowerCase()) {
+    				if (!StringUtils.equalsAnyIgnoreCase(altToken, token.toLowerCase())) {
     					searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, altToken), 0.6f, 0), Occur.SHOULD));
     				}
     				searchQueryBuilder.add(new BooleanClause(new FuzzyQuery(new Term(field, token), 0.6f, 1), Occur.SHOULD));
