@@ -1,6 +1,7 @@
 package com.multibrand.dto.request;
 
-import org.hibernate.validator.constraints.Length;
+import javax.validation.constraints.Size;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import com.multibrand.request.validation.BasicConstraint;
@@ -12,26 +13,26 @@ public class BankDepositPaymentRequest extends BaseAffiliateRequest {
 	
 		
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String trackingId;
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 12, groups = SizeConstraint.class)
+	@Size(max = 12, groups = SizeConstraint.class)
 	private String caNumber;
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10, groups = SizeConstraint.class)
 	private String bpid;
 	
 	@NotBlank(groups = BasicConstraint.class)
 	private String tokenizedBankAccountNumber; 
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 9, groups = SizeConstraint.class)
+	@Size(max = 9, groups = SizeConstraint.class)
 	private String tokenizedBankRoutingNumber; 
 	
 	@NotBlank(groups = BasicConstraint.class)
-	@Length(max = 11, groups = SizeConstraint.class)
+	@Size(max = 11, groups = SizeConstraint.class)
 	private String depositAmount;
 	
 	
