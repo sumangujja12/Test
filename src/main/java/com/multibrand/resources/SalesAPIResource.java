@@ -3,7 +3,6 @@ package com.multibrand.resources;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -18,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.SalesBO;
@@ -63,6 +61,8 @@ import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
+import javax.validation.Valid;
+
 /**
  * This Resource is to handle all the Online Enrollment API calls.
  * 
@@ -482,7 +482,7 @@ public class SalesAPIResource extends BaseResource {
 
 	@GET
 	@Path(SALES_API_CA_VALIDATION)
-	@Consumes({ MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_JSON})
 	public Response validateCA(@InjectParam ValidateCARequest validateCARequest) {
 		Response response = null;
 			
@@ -505,8 +505,8 @@ public class SalesAPIResource extends BaseResource {
 	 */
 	@GET
 	@Path(SALES_API_USERNAME_VALIDATION)
-	@Consumes({ MediaType.APPLICATION_JSON })
-	public Response validateUsername(@InjectParam @Validated ValidateUserIdRequest validateUserIdRequest) {
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateUsername(@InjectParam ValidateUserIdRequest validateUserIdRequest) {
 		Response response = null;
 			
 		try {
