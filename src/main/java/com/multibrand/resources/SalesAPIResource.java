@@ -61,6 +61,7 @@ import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
+import javax.validation.Valid;
 
 /**
  * This Resource is to handle all the Online Enrollment API calls.
