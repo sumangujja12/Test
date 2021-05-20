@@ -543,6 +543,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 	public SalesUCCDataResponse submitUCCData(SalesUCCDataRequest salesUCCDatarequest, String httpServletRequest) {
 		SalesUCCDataResponse salesUCCDataResponse = new SalesUCCDataResponse();
 		UCCDataRequest uccDataRequest = new UCCDataRequest();
+		ServiceLocationResponse serviceLocationResponse = null;
 		try {
 			String errorDesc = null;
 			HashMap<String, Object> mandatoryParamList = new HashMap<>();
@@ -562,17 +563,8 @@ public class SalesBO extends OeBoHelper implements Constants {
 			if (StringUtils.isNotBlank(resultCode) && !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
 
 				errorDesc = (String) mandatoryParamCheckResponse.get("errorDesc");
-
-				if (StringUtils.isNotBlank(errorDesc)) {
-					salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
-					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-					salesUCCDataResponse.setErrorDescription(errorDesc);
-
-				} else {
-					salesUCCDataResponse.setStatusCode(STATUS_CODE_ASK);
-					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-					salesUCCDataResponse.setErrorDescription(errorDesc);
-				}
+				salesUCCDataResponse = getSalesUCCDataResponseBasedOnErrorDesc(errorDesc,salesUCCDataResponse);
+				
 				logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
 
 				return salesUCCDataResponse;
@@ -582,9 +574,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 			HashMap<String, Object> negativeParamCheckResponse = null;
 			nagativeParamList.put("depositAmount", salesUCCDatarequest.getDepositAmount());
 
-			if (StringUtils.isNotEmpty(salesUCCDatarequest.getCreditScore())) {
-				nagativeParamList.put("creditScore", salesUCCDatarequest.getCreditScore());
-			}
+			nagativeParamList.put("creditScore", salesUCCDatarequest.getCreditScore());
 
 			negativeParamCheckResponse = CommonUtil.checkNegaviteValueInParam(nagativeParamList);
 			resultCode = (String) negativeParamCheckResponse.get("resultCode");
@@ -592,26 +582,90 @@ public class SalesBO extends OeBoHelper implements Constants {
 			if (StringUtils.isNotBlank(resultCode) && !resultCode.equalsIgnoreCase(Constants.SUCCESS_CODE)) {
 
 				errorDesc = (String) negativeParamCheckResponse.get("errorDesc");
-
-				if (StringUtils.isNotBlank(errorDesc)) {
-					salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
-					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-					salesUCCDataResponse.setErrorDescription(errorDesc);
-				} else {
-					salesUCCDataResponse.setStatusCode(STATUS_CODE_ASK);
-					salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
-					salesUCCDataResponse.setErrorDescription(errorDesc);
-				}
+				salesUCCDataResponse = getSalesUCCDataResponseBasedOnErrorDescNegativeParam(errorDesc,salesUCCDataResponse);
+				
 				logger.info("Inside submitUCCData:: errorDesc is " + errorDesc);
 
 				return salesUCCDataResponse;
 			}
-			BeanUtils.copyProperties(salesUCCDatarequest, uccDataRequest);
-			UCCDataResponse uccResp = oeBO.submitUCCData(uccDataRequest, httpServletRequest);
-			BeanUtils.copyProperties(uccResp, salesUCCDataResponse);
+			
+		double doublValue = Double.parseDouble(salesUCCDatarequest.getDepositAmount());
+			if(doublValue <= 0){
+				salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+				salesUCCDataResponse.setMessageCode(RESULT_CODE_EXCEPTION_FAILURE);
+				salesUCCDataResponse.setErrorDescription("No Value passed for Parameters :: depositAmount");
+				salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+				salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+				return salesUCCDataResponse;
+			}
+			
+				serviceLocationResponse=oeBO.getEnrollmentData(salesUCCDatarequest.getTrackingId());
+				if (null!= serviceLocationResponse){
+					
+					if(!oeBO.isEnrollmentAlreadySubmitted(serviceLocationResponse)){
+						
+						if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), salesUCCDatarequest.getFirstName())) 
+								|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), salesUCCDatarequest.getLastName())) ) {
+							salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+							salesUCCDataResponse.setErrorDescription(MESSAGE_TEXT_INFO_MISMATCH);
+							salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+							salesUCCDataResponse.setMessageCode(MESSAGE_CODE_INFO_MISMATCH);
+							salesUCCDataResponse.setMessageText(MESSAGE_TEXT_INFO_MISMATCH);
+							salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+							return salesUCCDataResponse;
+						}
+						
+						BeanUtils.copyProperties(salesUCCDatarequest, uccDataRequest);
+						UCCDataResponse uccResp = oeBO.submitUCCData(uccDataRequest, httpServletRequest);
+						BeanUtils.copyProperties(uccResp, salesUCCDataResponse);
+					}
+					else{
+						salesUCCDataResponse.populateAlreadySubmittedEnrollmentResponse();
+						return salesUCCDataResponse;
+					} 
+				}else{
+					salesUCCDataResponse.populateInvalidTrackingAndGuidResponse();
+					return salesUCCDataResponse;
+				}
+			
+			
 		} catch (Exception e) {
 			logger.error("Exception in SalesBO.submitUCCData()", e);
 			throw e;
+		}
+		return salesUCCDataResponse;
+	}
+	
+	private SalesUCCDataResponse getSalesUCCDataResponseBasedOnErrorDesc(String errorDesc,SalesUCCDataResponse salesUCCDataResponse){
+		if (StringUtils.isNotBlank(errorDesc)) {
+			salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+			salesUCCDataResponse.setMessageCode(RESULT_CODE_EXCEPTION_FAILURE);
+			salesUCCDataResponse.setErrorDescription(errorDesc);
+			salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+			salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+		} else {
+			salesUCCDataResponse.setStatusCode(STATUS_CODE_ASK);
+			salesUCCDataResponse.setMessageCode(RESULT_CODE_EXCEPTION_FAILURE);
+			salesUCCDataResponse.setErrorDescription(errorDesc);
+			salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+			salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+		}
+		return salesUCCDataResponse;
+	}
+	
+	private SalesUCCDataResponse getSalesUCCDataResponseBasedOnErrorDescNegativeParam(String errorDesc,SalesUCCDataResponse salesUCCDataResponse){
+		if (StringUtils.isNotBlank(errorDesc)) {
+			salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+			salesUCCDataResponse.setMessageCode(RESULT_CODE_EXCEPTION_FAILURE);
+			salesUCCDataResponse.setErrorDescription(errorDesc);
+			salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+			salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+		} else {
+			salesUCCDataResponse.setStatusCode(STATUS_CODE_ASK);
+			salesUCCDataResponse.setErrorCode(RESULT_CODE_EXCEPTION_FAILURE);
+			salesUCCDataResponse.setErrorDescription(errorDesc);
+			salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+			salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
 		}
 		return salesUCCDataResponse;
 	}
