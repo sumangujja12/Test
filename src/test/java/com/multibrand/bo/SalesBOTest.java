@@ -203,25 +203,6 @@ public class SalesBOTest implements Constants{
 	}
 	
 	@Test
-	public void testSubmitUCCDataForDepositamount(){
-		SalesUCCDataRequest salesUCCDatarequest =new SalesUCCDataRequest();
-		salesUCCDatarequest.setDepositAmount("0");
-		salesUCCDatarequest.setFirstName("test");
-		salesUCCDatarequest.setLastName("test");
-		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();
-		String httpServletRequest = "123456";
-		ServiceLocationResponse serviceLocationResponse = null;
-		try{
-			when(oebo.getEnrollmentData(salesUCCDatarequest.getTrackingId())).thenReturn(serviceLocationResponse);
-			when(oebo.isEnrollmentAlreadySubmitted(serviceLocationResponse)).thenReturn(false);
-	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		Assert.assertEquals(salesUCCDataResponse.getStatusCode(), STATUS_CODE_STOP);
-	}
-	
-	@Test
 	public void testSubmitUCCDataForMismatchData(){
 		SalesUCCDataRequest salesUCCDatarequest =new SalesUCCDataRequest();
 		salesUCCDatarequest.setDepositAmount("125");
