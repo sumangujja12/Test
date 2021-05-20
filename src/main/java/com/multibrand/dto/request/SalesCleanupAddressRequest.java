@@ -5,7 +5,6 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
 
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.util.CommonUtil;
 
 public class SalesCleanupAddressRequest extends SalesBaseRequest{
@@ -15,28 +14,28 @@ public class SalesCleanupAddressRequest extends SalesBaseRequest{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String streetNum;
 	
-	@Size(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60)
 	private String streetName;
 	
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String aptNum;
 	
 	@NotEmpty
-	@Size(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30)
 	private String city;
 	
 	@NotEmpty
-	@Size(min = 2, max = 2, groups = SizeConstraint.class, message ="{err.msg.state.format}")
+	@Size(min = 2, max = 2, message ="{err.msg.state.format}")
 	private String state;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String zipCode;
 	
-	@Size(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25)
 	private String poBox;
 
 	public String getStreetNum() {

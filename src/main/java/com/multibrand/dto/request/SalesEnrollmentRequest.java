@@ -4,7 +4,6 @@ import javax.validation.constraints.Size;
 
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SecurityMethodCheck;
-import com.multibrand.request.validation.SizeConstraint;
 @SecurityMethodCheck
 public class SalesEnrollmentRequest extends SalesOERequest{
 	/**
@@ -12,30 +11,30 @@ public class SalesEnrollmentRequest extends SalesOERequest{
 	 */
 	private static final long serialVersionUID = 1L;
 	@NotEmpty
-	@Size(min= 8, max = 8, groups = SizeConstraint.class)
+	@Size(min= 8, max = 8)
 	private String offerCode;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String promoCode;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String campaignCode;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String productPriceCode;
 	
 	@NotEmpty
-	@Size(max = 15, groups = SizeConstraint.class)
+	@Size(max = 15)
 	private String incentiveCode;
 	
 	@NotEmpty
-	@Size(max = 2, groups = SizeConstraint.class)
+	@Size(max = 2)
 	private String marketSegment;
 	
-	@Size(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1)
 	private String ebillFlag;
 	
 	private String securityMethod;

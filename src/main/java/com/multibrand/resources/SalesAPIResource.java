@@ -4,7 +4,6 @@ package com.multibrand.resources;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -52,7 +51,6 @@ import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
-import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
 
@@ -74,7 +72,6 @@ import com.multibrand.vo.response.KbaAnswerResponse;
 import com.multibrand.vo.response.SalesTokenResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
 import com.sun.jersey.api.core.InjectParam;
-import javax.validation.Valid;
 
 /**
  * This Resource is to handle all the Online Enrollment API calls.
@@ -132,7 +129,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performPosidAndBpMatch(@Valid IdentityRequest request) {
+	public Response performPosidAndBpMatch( IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -156,7 +153,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_AVAILABLE_DATES)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDAndCalendarDates(@Valid SalesEsidCalendarRequest request) {
+	public Response getESIDAndCalendarDates( SalesEsidCalendarRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -180,7 +177,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(@Valid SalesCreditCheckRequest request) {
+	public Response performCreditCheck( SalesCreditCheckRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -204,7 +201,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_RECHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditRecheck(@Valid SalesCreditReCheckRequest request)  {
+	public Response performCreditRecheck( SalesCreditReCheckRequest request)  {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -228,7 +225,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_SUBMIT_ENROLLMENT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(@Valid SalesEnrollmentRequest request)
+	public Response submitEnrollment( SalesEnrollmentRequest request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
@@ -250,7 +247,7 @@ public class SalesAPIResource extends BaseResource {
     @Path(API_GET_KBA_QUESTIONS)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest request) {
+    public Response getKBAQuestions( GetKBAQuestionsRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
@@ -269,7 +266,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_KBA_RESULT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitKBAAnswers(@Valid KbaAnswerRequest request) throws Exception {
+	public Response submitKBAAnswers( KbaAnswerRequest request) throws Exception {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
 		
@@ -332,7 +329,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDDetails(@Valid EsidRequest request){
+	public Response getESIDDetails( EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -351,7 +348,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID_RESIDENTIAL)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDResidentialDetails(@Valid EsidRequest request){
+	public Response getESIDResidentialDetails( EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -370,7 +367,7 @@ public class SalesAPIResource extends BaseResource {
     @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestionsWithinOE(@Valid GetOEKBAQuestionsRequest request){
+    public Response getKBAQuestionsWithinOE( GetOEKBAQuestionsRequest request){
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
@@ -391,7 +388,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CLEANUP_ADDRESS)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response cleanupAddress(@Valid SalesCleanupAddressRequest  request) {
+	public Response cleanupAddress( SalesCleanupAddressRequest  request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -455,7 +452,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_TDSP)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getTDSP(@Valid SalesTDSPRequest request) {
+	public Response getTDSP( SalesTDSPRequest request) {
 		logger.info("SalesTDSPRequest : {}", request);
 		Response response = null;
 		try{
@@ -475,7 +472,9 @@ public class SalesAPIResource extends BaseResource {
 	@Path(SALES_API_ESID_VALIDATION)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validateEsid(@Valid ValidateEsidRequest validateEsidRequest) {
+
+
+	public Response validateEsid( ValidateEsidRequest validateEsidRequest) {
 		logger.info("In validateEsid");
 		Response response = null;
 			
@@ -496,7 +495,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(SALES_API_SUBMIT_UCC_DATA)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitUCCData(@Valid SalesUCCDataRequest request) {
+	public Response submitUCCData( SalesUCCDataRequest request) {
 		logger.info("In SubmitUCCData");
 		Response response = null;
 		try {

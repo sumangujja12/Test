@@ -6,31 +6,29 @@ package com.multibrand.dto.request;
 import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 
-import com.multibrand.request.validation.SizeConstraint;
-
 public class SalesOfferRequest extends SalesBaseRequest {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 	/** The transaction type. */
 	@QueryParam(value = "transactionType")
-	@Size(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3)
 	private String transactionType; //MVI or SWI
 
 	
 	/** The promo code. */
 	@QueryParam(value = "promoCode")
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String promoCode;
 
 	/** The tdsp code ccs. */
 	@QueryParam(value = "tdspCodeCCS")
-	@Size(max = 5, groups = SizeConstraint.class)
+	@Size(max = 5)
 	private String tdspCodeCCS;
 
 	/** The esid. */
 	@QueryParam(value = "esid")
-	@Size(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32)
 	private String esid;
 
 	public String getTransactionType() {
