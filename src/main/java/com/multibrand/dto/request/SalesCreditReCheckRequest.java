@@ -3,7 +3,6 @@ package com.multibrand.dto.request;
 import javax.validation.constraints.Size;
 
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 
 public class SalesCreditReCheckRequest extends SalesCreditCheckRequest {
 
@@ -18,7 +17,7 @@ public class SalesCreditReCheckRequest extends SalesCreditCheckRequest {
 	
 
 	@NotEmpty
-	@Size(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20)
 	private String tokenizedSSN;
 
 

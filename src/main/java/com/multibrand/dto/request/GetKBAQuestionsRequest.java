@@ -14,11 +14,11 @@ public class GetKBAQuestionsRequest extends SalesBaseRequest {
 
 	private static final long serialVersionUID = 1L;
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String lastName;
 	
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String firstName;
 	
 	@Size(max = 1,groups = SizeConstraint.class)
@@ -28,42 +28,42 @@ public class GetKBAQuestionsRequest extends SalesBaseRequest {
 	String dob;
 	
 	@NotEmpty
-	@Size(max = 100, groups = SizeConstraint.class)
+	@Size(max = 100)
 	@Email(groups = FormatConstraint.class)
 	String email;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	@Pattern(regexp = "\\d{10}", groups = FormatConstraint.class, message="is invalid")
 	String phoneNum;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String servStreetNum;
 
 	@NotEmpty
-	@Size(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60)
 	private String servStreetName;
 
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String servStreetAptNum;
 	
 	@NotEmpty
-	@Size(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30)
 	String servCity;
 	
 	@NotEmpty
-	@Size(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2)
 	String servState;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	String servZipCode;
 	
-	@Size(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25)
 	String tokenizedTDL;
 	
-	@Size(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20)
 	String tokenizedSSN;
 	
 	private String drivingLicenseState;

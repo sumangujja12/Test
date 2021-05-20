@@ -3,10 +3,7 @@ package com.multibrand.dto.request;
 import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 
-import org.hibernate.validator.constraints.Length;
-
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 
 public class SalesHoldLookupRequest  extends SalesBaseRequest{
 	
@@ -17,17 +14,17 @@ public class SalesHoldLookupRequest  extends SalesBaseRequest{
 
 	@QueryParam(value = "caNumber")
 	@NotEmpty
-	@Size(max = 12, groups = SizeConstraint.class)
+	@Size(max = 12)
 	private String caNumber;
 	
 	@QueryParam(value = "checkDigit")
 	@NotEmpty
-	@Size(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1)
 	private String checkDigit;
 	
 	@QueryParam(value = "billZipCode")
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String billZipCode;
 
 	public String getCaNumber() {

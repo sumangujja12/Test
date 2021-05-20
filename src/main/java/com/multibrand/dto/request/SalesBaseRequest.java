@@ -5,12 +5,10 @@ import java.io.Serializable;
 import javax.validation.constraints.Size;
 import javax.ws.rs.QueryParam;
 
-import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Component;
 
 import com.multibrand.request.validation.ChannelType;
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidateCompanyCode;
 import com.multibrand.util.CommonUtil;
 import com.multibrand.util.Constants;
@@ -25,7 +23,7 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 
 	@QueryParam(value = "affiliateId")
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	private String affiliateId;
 	
 	@QueryParam(value = "channelType")
@@ -34,16 +32,16 @@ public class SalesBaseRequest implements Constants, FormEntityRequest, Serializa
 	
 	@QueryParam(value = "companyCode")
 	@NotEmpty
-	@Size(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4)
 	@ValidateCompanyCode(message="is not valid")
 	private String companyCode;
 	
 	@QueryParam(value = "brandId")
-	@Size(max = 2, groups = SizeConstraint.class)
+	@Size(max = 2)
 	private String brandId;
 	
 	@QueryParam(value = "languageCode")
-	@Size(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1)
 	private String languageCode = null;
 	
 	private String callExecuted;
