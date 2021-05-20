@@ -538,16 +538,6 @@ public class SalesBO extends OeBoHelper implements Constants {
 				return salesUCCDataResponse;
 			}
 			
-		double doublValue = Double.parseDouble(salesUCCDatarequest.getDepositAmount());
-			if(doublValue <= 0){
-				salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
-				salesUCCDataResponse.setMessageCode(RESULT_CODE_EXCEPTION_FAILURE);
-				salesUCCDataResponse.setErrorDescription("No Value passed for Parameters :: depositAmount");
-				salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-				salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
-				return salesUCCDataResponse;
-			}
-			
 				serviceLocationResponse=oeBO.getEnrollmentData(salesUCCDatarequest.getTrackingId());
 				if (null!= serviceLocationResponse){
 					
