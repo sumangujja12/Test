@@ -108,6 +108,7 @@ public class IdentityRequest extends SalesBaseRequest {
 	@Size(max = 20)
 	String tokenizedSSN;
 	
+	@Size(max = 10)
 	String agentID;
 	
 	String ipAddress;
