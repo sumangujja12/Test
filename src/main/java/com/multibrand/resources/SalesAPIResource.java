@@ -4,7 +4,6 @@ package com.multibrand.resources;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -47,7 +46,6 @@ import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesCleanupAddressResponse;
 import com.multibrand.dto.response.SalesEnrollmentResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
-import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
 import com.multibrand.dto.response.SalesUCCDataResponse;
@@ -489,7 +487,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(SALES_API_SUBMIT_UCC_DATA)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitUCCData(@Valid SalesUCCDataRequest request) {
+	public Response submitUCCData(SalesUCCDataRequest request) {
 		logger.info("In SubmitUCCData");
 		Response response = null;
 		try {
