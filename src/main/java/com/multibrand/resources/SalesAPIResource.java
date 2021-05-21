@@ -495,7 +495,8 @@ public class SalesAPIResource extends BaseResource {
 	@Path(SALES_API_SUBMIT_UCC_DATA)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitUCCData( SalesUCCDataRequest request) {
+	public Response submitUCCData(SalesUCCDataRequest request) {
+
 		logger.info("In SubmitUCCData");
 		Response response = null;
 		try {

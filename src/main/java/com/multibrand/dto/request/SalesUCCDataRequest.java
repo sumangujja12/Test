@@ -4,7 +4,6 @@ import javax.validation.constraints.Size;
 
 
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 
 public class SalesUCCDataRequest extends SalesBaseRequest{
 
@@ -14,35 +13,35 @@ public class SalesUCCDataRequest extends SalesBaseRequest{
 	private static final long serialVersionUID = 1L;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String trackingId;
 	
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String lastName;
 	
 
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String firstName;
 		
-	@Size(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20)
 	String tokenizedSSN;
 	
 	@NotEmpty
-	@Size(max = 8, groups = SizeConstraint.class)
+	@Size(max = 8)
 	String depositAmount;
 	
-	@Size(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4)
 	String creditScore;
 	
-	@Size(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4)
 	String creditSource;
 	
-	@Size(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1)
 	String creditBucket;
 		
-	@Size(max = 2000, groups = SizeConstraint.class)
+	@Size(max = 2000)
 	String creditFactors;
 
 	public String getTrackingId() {
