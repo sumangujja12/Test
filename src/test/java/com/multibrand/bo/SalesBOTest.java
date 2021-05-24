@@ -7,13 +7,15 @@ import static org.mockito.Mockito.when;
 import java.rmi.RemoteException;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
-
+import org.apache.commons.lang.StringUtils;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
+import org.springframework.beans.BeanUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
@@ -24,6 +26,7 @@ import com.multibrand.dao.AddressDAOIF;
 import com.multibrand.dao.ServiceLocationDao;
 import com.multibrand.dto.OESignupDTO;
 import com.multibrand.dto.request.IdentityRequest;
+import com.multibrand.dto.request.PerformPosIdAndBpMatchRequest;
 import com.multibrand.dto.request.SalesEnrollmentRequest;
 
 import com.multibrand.dto.request.ValidateCARequest;
@@ -46,7 +49,9 @@ import com.multibrand.util.Constants;
 import com.multibrand.util.EnrollmentFraud.ENROLLMENT_FRAUD_ENUM;
 import com.multibrand.util.LoggerUtil;
 import com.multibrand.util.TogglzUtil;
+import com.multibrand.vo.response.GenericResponse;
 import com.multibrand.web.i18n.WebI18nMessageSource;
+import com.sun.jersey.core.spi.factory.ResponseBuilderImpl;
 
 @Test(singleThreaded = true)
 public class SalesBOTest implements Constants{
@@ -321,7 +326,33 @@ public class SalesBOTest implements Constants{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+
 		Assert.assertEquals(salesUCCDataResponse.getStatusCode(), STATUS_CODE_STOP);
+
+	}
+	
+	@Test
+	public void testPerformPosidAndBpMatchForNoTrackingIdAndStatusCodeInResp() throws OEException{
+	   IdentityRequest request = new IdentityRequest();
+	   request.setGuid("24234");
+	   request.setTrackingId("12345");
+	   request.setTokenizedSSN("123445");
+	   request.setNoid(FLAG_FALSE);
+	  Response response=null;
+	  ResponseBuilder builder= new ResponseBuilderImpl();
+	  GenericResponse notAllowedResponse= new GenericResponse();
+	  notAllowedResponse.setStatusCode("");
+	  builder.entity(notAllowedResponse);
+	  response=builder.build();
+		try {
+			when(oebo.performPosidAndBpMatch(Matchers.any(PerformPosIdAndBpMatchRequest.class))).thenReturn(response);
+			response = salesBO.performPosidAndBpMatch(request);
+			Assert.assertEquals(response.getStatus(), 500);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		
 	}
 	
 
