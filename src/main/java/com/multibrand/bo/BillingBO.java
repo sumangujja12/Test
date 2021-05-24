@@ -204,8 +204,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	@Autowired
 	private HistoryBO historyBO;
 	
-	//@Autowired
-	//private ReloadableResourceBundleMessageSource appConstMessageSource;
 
 	/**
 	 * This method is to get balance information from CCS system.
@@ -2631,7 +2629,6 @@ public class BillingBO extends BaseAbstractService implements Constants{
 		List<Object> paymentMethodsList = new ArrayList<>();
 		AutoPayInfoRequest autoPayRequest = new AutoPayInfoRequest();
 		AutoPayInfoResponse autoPayResponse = new AutoPayInfoResponse();
-		BankCCInfoResponse bankCCInfoResponse = new BankCCInfoResponse();
 		PayAccountInfoResponse payAccountInfoResp = new PayAccountInfoResponse();
 		
 		try {
@@ -2797,8 +2794,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @return
 	 */
 	public String getNCCAFlag(GetAccountDetailsResponse accountDetailsResponse) {
-		String NCCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
-		return NCCAFlag;
+		return ((accountDetailsResponse.getContractAccountDO().getStrNCCAStatus().trim()).equalsIgnoreCase("X") ? FLAG_FALSE : FLAG_TRUE);
 	}
 
 	/**
@@ -2806,8 +2802,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	 * @return
 	 */
 	public String getNCAFlag(GetAccountDetailsResponse accountDetailsResponse) {
-		String NCAFlag = ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X")?"false":"true");
-		return NCAFlag;
+		return ((accountDetailsResponse.getContractAccountDO().getStrNCAStatus().trim()).equalsIgnoreCase("X") ? FLAG_FALSE : FLAG_TRUE);
 	}
 	
 	private String getAutoPayCCOnlineAccountId(PayAccountInfoResponse payAccountInfoResp , String ccNumber) {
