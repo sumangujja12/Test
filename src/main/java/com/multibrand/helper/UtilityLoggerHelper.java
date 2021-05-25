@@ -59,13 +59,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 	    		|| StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
 	    	Gson gson = new Gson();
 	    	txnLogRequest.setRequestData(gson.toJson(logvo.getRequestData()));
-	    	if(logvo.getResponseData() instanceof Response) {
-	    		Object responsePojo = ((Response)logvo.getResponseData()).getEntity();
-	    		txnLogRequest.setResponseData(gson.toJson(responsePojo));
-	    		
-	    	} else {
-	    		txnLogRequest.setResponseData(gson.toJson(logvo.getResponseData()));
-	    	}
+	    	txnLogRequest = getTxnLogRequest(logvo,txnLogRequest,gson);
 	    	
 	    } else {
 	 	    txnLogRequest.setRequestData(XmlUtil.pojoToXMLwithRootElement(logvo.getRequestData(),logvo.getTransactionType()));
@@ -261,5 +255,16 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 			}
 		}
 		
+	}
+	
+	private TransactionLogRequest getTxnLogRequest(LoggingVO logvo,TransactionLogRequest txnLogRequest,Gson gson){
+		if(logvo.getResponseData() instanceof Response) {
+    		Object responsePojo = ((Response)logvo.getResponseData()).getEntity();
+    		txnLogRequest.setResponseData(gson.toJson(responsePojo));
+    		
+    	} else {
+    		txnLogRequest.setResponseData(gson.toJson(logvo.getResponseData()));
+    	}
+		return txnLogRequest;
 	}
 }
