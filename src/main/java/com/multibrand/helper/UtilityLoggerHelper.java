@@ -79,7 +79,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 		    client.setUserUniqueID(logvo.getUserUniqueId());
 	    txnLogRequest.setClient(client);}*/
 	    if(StringUtils.isNotBlank(logvo.getUserId()) 
-	    		&& (StringUtils.contains(logvo.getTransactionType(), OE_RESOURCE_API_BASE_PATH) || StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
+	    		&& (StringUtils.isNotBlank(logvo.getTransactionType()))){
 	    	Client client= new Client();
 	    	client.setUserLoginID(logvo.getUserId());
 	    	if(StringUtils.isNotBlank(logvo.getConfirmationNumber())) 	client.setConfirmationNumber(CommonUtil.generateConfirmationNumber());
