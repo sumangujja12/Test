@@ -8,11 +8,11 @@ public class SalesTDSPRequest extends SalesBaseRequest{
 
 	private static final long serialVersionUID = 1L;
 
-	@NotEmpty
+
 	@Size(max = 10)
 	private String servStreetNum;
 
-	@NotEmpty
+
 	@Size(max = 60)
 	private String servStreetName;
 
