@@ -27,12 +27,15 @@ import com.multibrand.domain.CirroStructureCallResponse;
 import com.multibrand.domain.ContractDO;
 import com.multibrand.domain.CrmProfileRequest;
 import com.multibrand.domain.CrmProfileResponse;
+import com.multibrand.domain.CurrentEFLResponse;
 import com.multibrand.domain.EsidProfileResponse;
 import com.multibrand.domain.LanguageUpdateRequest;
 import com.multibrand.domain.LanguageUpdateResponse;
 import com.multibrand.domain.ProfileDomain;
 import com.multibrand.domain.ProfileDomainPortBindingStub;
 import com.multibrand.domain.ProfileResponse;
+import com.multibrand.domain.ProspectEFLRequest;
+import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.UpdateAddressRequest;
 import com.multibrand.domain.UpdateAddressResponse;
 import com.multibrand.domain.UpdateContactRequest;
@@ -42,6 +45,7 @@ import com.multibrand.domain.WseEnrollmentResponse;
 import com.multibrand.domain.WseEsenseEligibilityResponse;
 import com.multibrand.domain.WseServiceRequest;
 import com.multibrand.domain.WseServiceResponse;
+import com.multibrand.dto.request.CurrentEFLRequest;
 import com.multibrand.helper.ProfileHelper;
 import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.util.CommonUtil;
@@ -1860,6 +1864,28 @@ public class ProfileService extends BaseAbstractService {
 			logger.debug(XmlUtil.pojoToXML(response));
 		}
 		return response;
+	}
+
+	public CurrentEFLResponse getCurrentPlanEfl(CurrentEFLRequest currentEFLRequest) {
+	
+		ProfileDomain proxy = getProfileDomainProxy();
+		CurrentEFLResponse currentEFLResponse = null;
+		try {
+			com.multibrand.domain.CurrentEFLRequest currentEFLSoapRequest = new com.multibrand.domain.CurrentEFLRequest();
+			currentEFLSoapRequest.setCompanyCode(currentEFLRequest.getCompanyCode());
+			currentEFLSoapRequest.setBP(currentEFLRequest.getbP());
+			currentEFLSoapRequest.setBrandId(currentEFLRequest.getBrandId());
+			currentEFLSoapRequest.setCA(currentEFLRequest.getcA());
+			currentEFLSoapRequest.setCO(currentEFLRequest.getcO());
+			currentEFLSoapRequest.setLanguageCode(currentEFLRequest.getLanguageCode());
+			currentEFLSoapRequest.setOfferCode(currentEFLRequest.getOfferCode());
+			currentEFLResponse = proxy.getCurrentPlanEFL(currentEFLSoapRequest);
+			
+			logger.debug("getCurrentPlanEfl  Response message '{}'", currentEFLResponse.getReturnMessage());
+		} catch (Exception e) {
+			logger.error("Error in method: getProspectEFL '{}' ",e.getMessage());
+		} 
+		return currentEFLResponse;
 	}	
 	
 
