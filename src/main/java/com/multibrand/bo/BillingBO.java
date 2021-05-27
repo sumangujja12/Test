@@ -2647,11 +2647,9 @@ public class BillingBO extends BaseAbstractService implements Constants{
 			
 			try{
 				payAccountInfoResp = getPayAccounts(contractAccountNumber, companyCode, brandName, sessionId);
-				}
-			catch(Exception e)
-				{
-					logger.error("Error in getPayAccounts");
-				}
+			} catch(Exception e) {
+				logger.error("Error in getPayAccounts");
+			}
 						
 			
 			
@@ -2669,59 +2667,8 @@ public class BillingBO extends BaseAbstractService implements Constants{
 				// Get Autopay card details
 				if (autoPayResponse != null && autoPayResponse.getResultCode().equalsIgnoreCase(SUCCESS_CODE)) {
 
-					for (AutoPayDetails adr : autoPayResponse.getAutoPayDetailsList()) {
-
-						if (adr!= null && adr.getContractAccount().equalsIgnoreCase(contractAccountNumber) && (adr.getPayment().equalsIgnoreCase("G") || adr.getPayment().equalsIgnoreCase("K"))) {
-
-							paymentMethodCC = new PaymentMethodCC();
-
-							paymentMethodCC.setIsAllowed(nccaFlag);
-							paymentMethodCC.setIsRegisteredWithAutopay(FLAG_TRUE);
-							paymentMethodCC.setNameOnAccount(accountDetailsResponse.getContractAccountDO() != null
-									? accountDetailsResponse.getContractAccountDO().getCAName()
-									: null);
-							paymentMethodCC.setCreditCardExpYear(adr.getExpDate().substring(0, 4));
-							paymentMethodCC.setCreditCardExpMonth(adr.getExpDate().substring(4, 6));
-							paymentMethodCC.setCreditCardType(adr.getCardType());
-							paymentMethodCC.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_CC);
-							paymentMethodCC.setPaymentMethodToken(adr.getCardNumber());
-							paymentMethodCC.setPaymentMethodNickName("Autopay_" + adr.getCardNumber()
-									.substring(adr.getCardNumber().length() - 4, adr.getCardNumber().length()));
-							paymentMethodCC.setActivationDate(null);
-							paymentMethodCC.setVerifyCard(null);
-							paymentMethodCC.setOnlinePayAccountId(getAutoPayCCOnlineAccountId(payAccountInfoResp, adr.getCardNumber()));
-							paymentMethodCC.setZipCode(accountDetailsResponse.getContractAccountDO() != null
-									? CommonUtil.trimZipCode(accountDetailsResponse.getContractAccountDO()
-											.getBillingAddressDO().getStrZip())
-									: null);
-							autoPayNumberList.add(adr.getCardNumber());
-							paymentMethodsList.add(paymentMethodCC);
-						} else if (adr!= null &&  adr.getContractAccount().equalsIgnoreCase(contractAccountNumber) ){
-							paymentMethodB = new PaymentMethodB();
-
-							paymentMethodB.setIsAllowed(ncaFlag);
-							paymentMethodB.setIsRegisteredWithAutopay(FLAG_TRUE);
-							paymentMethodB.setNameOnAccount(accountDetailsResponse.getContractAccountDO() != null
-									? accountDetailsResponse.getContractAccountDO().getCAName()
-									: null);
-							paymentMethodB.setRoutingNumber(adr.getBankRoutingNumber());
-							paymentMethodB.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_BANK);
-							paymentMethodB.setPaymentMethodToken(adr.getBankAccountNumber());
-							paymentMethodB.setPaymentMethodNickName("Autopay_"
-									+ adr.getBankAccountNumber().substring(adr.getBankAccountNumber().length() - 3,
-											adr.getBankAccountNumber().length()));
-							paymentMethodB.setActivationDate(null);
-							paymentMethodB.setVerifyCard(null);
-							paymentMethodB.setOnlinePayAccountId(getAutoPayBankOnlineAccountId(payAccountInfoResp, adr.getBankAccountNumber()));
-							paymentMethodB.setZipCode(accountDetailsResponse.getContractAccountDO() != null
-									? CommonUtil.trimZipCode(accountDetailsResponse.getContractAccountDO()
-											.getBillingAddressDO().getStrZip())
-									: null);
-							autoPayNumberList.add(adr.getBankAccountNumber());
-							paymentMethodsList.add(paymentMethodB);
-						}
-
-					}
+					handleAutopayResponse(contractAccountNumber, accountDetailsResponse, autoPayNumberList,
+							paymentMethodsList, autoPayResponse, payAccountInfoResp, ncaFlag, nccaFlag);
 
 					DateFormat df = new SimpleDateFormat(DT_FMT_REQUEST);
 					// Get Credit Card Details
@@ -2787,6 +2734,76 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	}
 	logger.info("END-[BillingBO-getPaymentMethods]");
 	return response;
+	}
+
+	/**
+	 * @param contractAccountNumber
+	 * @param accountDetailsResponse
+	 * @param autoPayNumberList
+	 * @param paymentMethodsList
+	 * @param autoPayResponse
+	 * @param payAccountInfoResp
+	 * @param ncaFlag
+	 * @param nccaFlag
+	 */
+	public void handleAutopayResponse(String contractAccountNumber, GetAccountDetailsResponse accountDetailsResponse,
+			List<String> autoPayNumberList, List<Object> paymentMethodsList, AutoPayInfoResponse autoPayResponse,
+			PayAccountInfoResponse payAccountInfoResp, String ncaFlag, String nccaFlag) {
+		PaymentMethodB paymentMethodB;
+		PaymentMethodCC paymentMethodCC;
+		for (AutoPayDetails adr : autoPayResponse.getAutoPayDetailsList()) {
+
+			if (adr!= null && adr.getContractAccount().equalsIgnoreCase(contractAccountNumber) && (adr.getPayment().equalsIgnoreCase("G") || adr.getPayment().equalsIgnoreCase("K"))) {
+
+				paymentMethodCC = new PaymentMethodCC();
+
+				paymentMethodCC.setIsAllowed(nccaFlag);
+				paymentMethodCC.setIsRegisteredWithAutopay(FLAG_TRUE);
+				paymentMethodCC.setNameOnAccount(accountDetailsResponse.getContractAccountDO() != null
+						? accountDetailsResponse.getContractAccountDO().getCAName()
+						: null);
+				paymentMethodCC.setCreditCardExpYear(adr.getExpDate().substring(0, 4));
+				paymentMethodCC.setCreditCardExpMonth(adr.getExpDate().substring(4, 6));
+				paymentMethodCC.setCreditCardType(adr.getCardType());
+				paymentMethodCC.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_CC);
+				paymentMethodCC.setPaymentMethodToken(adr.getCardNumber());
+				paymentMethodCC.setPaymentMethodNickName("Autopay_" + adr.getCardNumber()
+						.substring(adr.getCardNumber().length() - 4, adr.getCardNumber().length()));
+				paymentMethodCC.setActivationDate(null);
+				paymentMethodCC.setVerifyCard(null);
+				paymentMethodCC.setOnlinePayAccountId(getAutoPayCCOnlineAccountId(payAccountInfoResp, adr.getCardNumber()));
+				paymentMethodCC.setZipCode(accountDetailsResponse.getContractAccountDO() != null
+						? CommonUtil.trimZipCode(accountDetailsResponse.getContractAccountDO()
+								.getBillingAddressDO().getStrZip())
+						: null);
+				autoPayNumberList.add(adr.getCardNumber());
+				paymentMethodsList.add(paymentMethodCC);
+			} else if (adr!= null &&  adr.getContractAccount().equalsIgnoreCase(contractAccountNumber) ){
+				paymentMethodB = new PaymentMethodB();
+
+				paymentMethodB.setIsAllowed(ncaFlag);
+				paymentMethodB.setIsRegisteredWithAutopay(FLAG_TRUE);
+				paymentMethodB.setNameOnAccount(accountDetailsResponse.getContractAccountDO() != null
+						? accountDetailsResponse.getContractAccountDO().getCAName()
+						: null);
+				paymentMethodB.setRoutingNumber(adr.getBankRoutingNumber());
+				paymentMethodB.setPaymentMethodType(ONLINE_ACCOUNT_TYPE_BANK);
+				paymentMethodB.setPaymentMethodToken(adr.getBankAccountNumber());
+				paymentMethodB.setPaymentMethodNickName("Autopay_"
+						+ adr.getBankAccountNumber().substring(adr.getBankAccountNumber().length() - 3,
+								adr.getBankAccountNumber().length()));
+				paymentMethodB.setActivationDate(null);
+				paymentMethodB.setVerifyCard(null);
+				paymentMethodB.setOnlinePayAccountId(getAutoPayBankOnlineAccountId(payAccountInfoResp, adr.getBankAccountNumber()));
+				paymentMethodB.setZipCode(accountDetailsResponse.getContractAccountDO() != null
+						? CommonUtil.trimZipCode(accountDetailsResponse.getContractAccountDO()
+								.getBillingAddressDO().getStrZip())
+						: null);
+				autoPayNumberList.add(adr.getBankAccountNumber());
+				paymentMethodsList.add(paymentMethodB);
+			}
+
+		}
 	}
 
 	/**
