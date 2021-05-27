@@ -16,6 +16,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.ws.client.core.WebServiceTemplate;
@@ -42,6 +43,7 @@ public class NEIPaypalPaymentServiceTest {
 	public NEIPaypalPaymentRequest paypalPaymentRequest;
 
 	@Mock
+	@Autowired
 	EnvMessageReader envMessageReader;
 
 	@Mock

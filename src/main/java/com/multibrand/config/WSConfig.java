@@ -3,9 +3,11 @@ package com.multibrand.config;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.stereotype.Component;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.transport.http.HttpComponentsMessageSender;
@@ -22,6 +24,7 @@ import org.apache.http.client.CredentialsProvider;
 
 @Configuration
 @PropertySource({ "classpath:properties/environment.properties" })
+@ComponentScan("com.multibrand")
 public class WSConfig {
 		
 	@Value("${CCS_GMD_STMT}")
@@ -56,15 +59,14 @@ public class WSConfig {
 		
 	@Value("${CRM_KBA_MATRIX}")
 	private String kbaMatrixUpdate;	
+	//@Value("${http.max.connection.per.route}")
+	private int defaultMaxConnectionPerRoute = 55;
 	
-	@Value("${http.max.connection.per.route}")
-	private int defaultMaxConnectionPerRoute;
+	//@Value("${http.max.total.connection}")
+	private int defaultMaxTotalConnection = 50;
 	
-	@Value("${http.max.total.connection}")
-	private int defaultMaxTotalConnection;
-	
-	@Value("${http.stocket.connection.timeout}")
-	private int httpConnectTimeout;
+	//@Value("${http.stocket.connection.timeout}")
+	private int httpConnectTimeout = 15;
 	
 	
 	@Bean Jaxb2Marshaller jaxb2Marshaller() { 
@@ -185,7 +187,7 @@ public class WSConfig {
 		return webServiceTemplate;
 	}
 	
-	@Bean(name = "webServiceTemplateForKBAMatrixUpdate")
+/*	@Bean(name = "webServiceTemplateForKBAMatrixUpdate")
 	public WebServiceTemplate webServiceTemplateForKBAMatrixUpdate() {
 		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
 		webServiceTemplate.setMarshaller(jaxb2Marshaller());
@@ -197,7 +199,7 @@ public class WSConfig {
         
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
-	}
+	}*/
 
 	@Bean
 	public HttpComponentsMessageSender httpComponentsMessageSender() {

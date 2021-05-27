@@ -29,10 +29,10 @@
 
 	<properties>
 		<jdk.version>1.7</jdk.version>
-		<mockito.version>1.10.19</mockito.version>
+		<!-- <mockito.version>1.10.19</mockito.version> -->
 		<testng.version>6.14.3</testng.version>
 		<project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
-		<junit.version>4.11</junit.version>
+		<!-- <junit.version>4.11</junit.version> -->
 		<spring-version>3.2.3.RELEASE</spring-version>
 		<dependency.scope>compile</dependency.scope>
 		<snapshot-version>-SNAPSHOT</snapshot-version>
@@ -643,24 +643,40 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.8.1</version>			
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>${mockito.version}</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
 			<version>${testng.version}</version>
 			<scope>test</scope>
 		</dependency>
-	  <dependency>
+	 <!--  <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.11</version>
         <scope>test</scope>
-       </dependency>
+       </dependency> -->
+       <dependency>
+		    <groupId>junit</groupId>
+		    <artifactId>junit</artifactId>
+		    <version>4.12</version>
+		    <exclusions>
+		        <exclusion>
+		            <artifactId>hamcrest-core</artifactId>
+		            <groupId>org.hamcrest</groupId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>org.hamcrest</groupId>
+		    <artifactId>hamcrest-all</artifactId>
+		    <version>1.3</version>
+		</dependency>
 	 <dependency>
             <groupId>com.intuit.karate</groupId>
             <artifactId>karate-junit4</artifactId>
@@ -1124,6 +1140,13 @@
 			    <artifactId>lucene-analyzers</artifactId>
 			    <version>3.5.0</version>
 			</dependency>	
+			
+			<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>2.15.0</version>
+			<scope>test</scope>		
+		</dependency>
 			
 				
 	</dependencies>
