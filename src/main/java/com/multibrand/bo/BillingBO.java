@@ -2728,7 +2728,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 					if (payAccountInfoResp.getPayAccountList() != null && !payAccountInfoResp.getPayAccountList().isEmpty()) {						
 						for (PayAccount payAccount : payAccountInfoResp.getPayAccountList()) {
 
-							if (!autoPayNumberList.contains(payAccount.getPayAccountToken()) && payAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_CC)) {
+							if (!autoPayNumberList.contains(payAccount.getPayAccountToken()) && payAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_CC) &&(payAccount.getActiveFlag().equalsIgnoreCase(FLAG_YES))) {
 								paymentMethodCC = new PaymentMethodCC();
 
 								paymentMethodCC.setIsAllowed(nccaFlag);
@@ -2745,7 +2745,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 								paymentMethodCC.setOnlinePayAccountId(payAccount.getOnlinePayAccountId());
 								paymentMethodCC.setZipCode(payAccount.getZipCode());
 								paymentMethodsList.add(paymentMethodCC);
-							} else if (!autoPayNumberList.contains(payAccount.getPayAccountToken()) && payAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_BANK)) {
+							} else if (!autoPayNumberList.contains(payAccount.getPayAccountToken()) && payAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_BANK) && (payAccount.getActiveFlag().equalsIgnoreCase(FLAG_YES))) {
 								paymentMethodB = new PaymentMethodB();
 								paymentMethodB.setIsAllowed(ncaFlag);
 								paymentMethodB.setIsRegisteredWithAutopay(FLAG_FALSE);
