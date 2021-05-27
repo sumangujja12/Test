@@ -2725,7 +2725,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 
 					DateFormat df = new SimpleDateFormat(DT_FMT_REQUEST);
 					// Get Credit Card Details
-					if (payAccountInfoResp.getPayAccountList() != null && !payAccountInfoResp.getPayAccountList().isEmpty()) {						
+					if (!CommonUtil.isCollectionNullOrEmpty(payAccountInfoResp.getPayAccountList())) {						
 						for (PayAccount payAccount : payAccountInfoResp.getPayAccountList()) {
 
 							if (!autoPayNumberList.contains(payAccount.getPayAccountToken()) && payAccount.getOnlinePayAccountType().equalsIgnoreCase(ONLINE_ACCOUNT_TYPE_CC) &&(payAccount.getActiveFlag().equalsIgnoreCase(FLAG_YES))) {
