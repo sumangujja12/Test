@@ -2740,7 +2740,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 								paymentMethodCC.setPaymentMethodType(payAccount.getOnlinePayAccountType());
 								paymentMethodCC.setPaymentMethodToken(payAccount.getPayAccountToken());
 								paymentMethodCC.setPaymentMethodNickName(payAccount.getPayAccountNickName());
-								paymentMethodCC.setActivationDate((payAccount.getActivationDate()!=null?(df.format(payAccount.getActivationDate())):null));
+								paymentMethodCC.setActivationDate(setActivationDate(df, payAccount));
 								paymentMethodCC.setVerifyCard(payAccount.getVerifyCard());
 								paymentMethodCC.setOnlinePayAccountId(payAccount.getOnlinePayAccountId());
 								paymentMethodCC.setZipCode(payAccount.getZipCode());
@@ -2754,7 +2754,7 @@ public class BillingBO extends BaseAbstractService implements Constants{
 								paymentMethodB.setPaymentMethodType(payAccount.getOnlinePayAccountType());
 								paymentMethodB.setPaymentMethodToken(payAccount.getPayAccountToken());
 								paymentMethodB.setPaymentMethodNickName(payAccount.getPayAccountNickName());
-								paymentMethodB.setActivationDate((payAccount.getActivationDate()!=null?(df.format(payAccount.getActivationDate())):null));
+								paymentMethodB.setActivationDate(setActivationDate(df, payAccount));
 								paymentMethodB.setVerifyCard(payAccount.getVerifyCard());
 								paymentMethodB.setOnlinePayAccountId(payAccount.getOnlinePayAccountId());
 								paymentMethodB.setZipCode(payAccount.getZipCode());
@@ -2787,6 +2787,15 @@ public class BillingBO extends BaseAbstractService implements Constants{
 	}
 	logger.info("END-[BillingBO-getPaymentMethods]");
 	return response;
+	}
+
+	/**
+	 * @param df
+	 * @param payAccount
+	 * @return
+	 */
+	public String setActivationDate(DateFormat df, PayAccount payAccount) {
+		return payAccount.getActivationDate()!=null?(df.format(payAccount.getActivationDate())):null;
 	}
 
 	/**
