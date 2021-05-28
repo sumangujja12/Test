@@ -3,6 +3,7 @@ package com.multibrand.resources;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -14,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.multibrand.bo.ProfileBO;
+import com.multibrand.domain.CurrentEFLResponse;
 import com.multibrand.helper.ErrorContentHelper;
 import com.multibrand.helper.ProfileHelper;
 import com.multibrand.vo.request.UserIdRequest;
@@ -42,6 +44,8 @@ import com.multibrand.vo.response.profileResponse.GetBPInfoResponse;
 import com.multibrand.vo.response.profileResponse.ProductUpdateResponse;
 import com.multibrand.vo.response.profileResponse.ProfileCheckResponse;
 import com.multibrand.vo.response.profileResponse.UpdateLanguageResponse;
+import com.sun.jersey.api.core.InjectParam;
+import javax.ws.rs.core.Response.Status;
 
 
 
@@ -666,5 +670,16 @@ public class ProfileResource {
 		logger.info("End-[ProfileResource-validatePassword]");
 		return response;
 	}
+	
+	
+	@GET
+	@Path("getCurrentPlanEfl")
+	@Produces({ MediaType.APPLICATION_JSON }) 
+	public Response getCurrentPlanEfl(@InjectParam com.multibrand.dto.request.CurrentEFLRequest currentEFLRequest) {
+		logger.info("Inside Profile BO getCurrentPlanEfl Method. ");
+		CurrentEFLResponse prospectEFLResponse = profileBO.getCurrentPlanEfl(currentEFLRequest);
+			return (Response.status(Status.ACCEPTED).entity(prospectEFLResponse).build());
+	}
+	
 }	
 	
