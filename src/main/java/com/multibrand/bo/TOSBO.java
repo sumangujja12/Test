@@ -9,14 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import com.google.gson.Gson;
 import com.multibrand.domain.CheckPendingMVORequest;
 import com.multibrand.domain.CheckPendingMoveInRequest;
 import com.multibrand.domain.ContractDataRequest;
@@ -41,14 +36,10 @@ import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.exception.OAMException;
 import com.multibrand.helper.ContentHelper;
 import com.multibrand.helper.ContractHelper;
-import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.OfferHelper;
-import com.multibrand.helper.UtilityLoggerHelper;
 import com.multibrand.resources.requestHandlers.TOSRequestHandler;
-import com.multibrand.service.AddressService;
 import com.multibrand.service.BaseAbstractService;
 import com.multibrand.service.OEService;
-import com.multibrand.service.OfferService;
 import com.multibrand.service.ProfileService;
 import com.multibrand.service.TOSService;
 import com.multibrand.util.CommonUtil;
@@ -63,6 +54,7 @@ import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.OetdspResponse;
 import com.multibrand.vo.response.OfferDO;
+import com.multibrand.vo.response.OfferPriceWraperDO;
 import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.TOSEligibleNonEligibleProductsResponse;
 import com.multibrand.vo.response.TOSSubmitEligibleProductsResponse;
@@ -83,14 +75,10 @@ public class TOSBO extends BaseAbstractService implements Constants {
 	@Autowired
 	private OEService oeService;
 	
-	@Autowired
-	private AddressService addrService;
 	
 	@Autowired
 	private ProfileService profileService;
 	
-	@Autowired
-	private OfferService ofrService;
 	
 	@Autowired
 	TOSRequestHandler tosRequestHandler;
@@ -103,15 +91,7 @@ public class TOSBO extends BaseAbstractService implements Constants {
 	
 	@Autowired
 	ContentHelper contentHelper;
-	
-	@Autowired
-	private UtilityLoggerHelper utilityloggerHelper;
-	
-	@Autowired
-	private EmailHelper emailHelper;
-	
-	private static Logger logger = LogManager.getLogger("NRGREST_LOGGER");
-	
+		
 	 
 	/**
 	 * @author ahanda1
@@ -931,7 +911,7 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 		
 		ESIDForAddressResponse esIdForAddressResponse = new ESIDForAddressResponse();
 		try {
-			 List<ESIDData>  esidList = new  ArrayList();
+			 List<ESIDData>  esidList = new  ArrayList<>();
 		
 			 //Filtering Inaqctive ESID's
 			if ( esiidResponse.getEsidList() != null && !esiidResponse.getEsidList().isEmpty()) {
@@ -981,7 +961,7 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 	}
 	
 	
-	public OfferPlanContentResponse getOffers(String locale, String companyCode, String brandId,
+	public OfferPlanContentResponse tosMoveOutPlans(String locale, String companyCode, String brandId,
 			String servStreetNum, String servStreetName,
 			String servStreetAptNum, String servZipCode, String promoCode,
 			String tdspCode, String esid, String sessionId,String transactionType) {
@@ -1004,6 +984,16 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					ContractOffer contractOffer = new ContractOffer();
 					offerCode.add(contentHelper.loadContractOfferResponse(contractOffer, offerVO));
+					
+					List<OfferPriceWraperDO> offerPriceWraperDOList = offerVO.getAvgPriceMap();
+					
+					String avgPrice = getAvgPrice( offerPriceWraperDOList);
+					
+					String offerFamily = getOfferFamilyPrice(offerPriceWraperDOList);
+					
+					contractOffer.setPrice(avgPrice);
+					contractOffer.setOfferFamily(offerFamily);
+					
 					contractList.add(contractOffer);
 				}
 			}
@@ -1014,5 +1004,45 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 		}
 		return response;
 	}
+
+	/**
+	 * @param OfferPriceWraperDOList
+	 */
+	public String getAvgPrice(List<OfferPriceWraperDO> offerPriceWraperDOList) {
+
+		String avgPrice = "";
+
+		if (offerPriceWraperDOList != null) {
+			for (OfferPriceWraperDO offerPriceWraperDO : offerPriceWraperDOList) {
+				if (offerPriceWraperDO.getKey().equalsIgnoreCase("EFL_BR2000")) {
+
+					avgPrice = offerPriceWraperDO.getValue().getPrice();
+				}
+
+			}
+		}
+
+		return avgPrice;
+	}
+	
+	/**
+	 * @param OfferPriceWraperDOList
+	 */
+	public String getOfferFamilyPrice(List<OfferPriceWraperDO> offerPriceWraperDOList) {
+
+		String offerFamily = "";
+
+		if (offerPriceWraperDOList != null) {
+			for (OfferPriceWraperDO offerPriceWraperDO : offerPriceWraperDOList) {
+				if (offerPriceWraperDO.getKey().equalsIgnoreCase("E_FAMILY")) {
+
+					offerFamily = offerPriceWraperDO.getValue().getPrice();
+				}
+
+			}
+		}
+
+		return offerFamily;
+	}	
 
 }
