@@ -479,7 +479,7 @@ public class ContentHelper implements Constants {
 	 * @param contractOffer
 	 * @param offerDO
 	 */
-	private String loadContractOfferResponse(ContractOffer contractOffer, com.multibrand.vo.response.OfferDO offerDO) {
+	public String loadContractOfferResponse(ContractOffer contractOffer, com.multibrand.vo.response.OfferDO offerDO) {
 		String OfferEFamily = "";
 		contractOffer.setYrracDocId(offerDO.getStrYRAACDocID());
 		contractOffer.setEflDocId(offerDO.getStrEFLDocID());
