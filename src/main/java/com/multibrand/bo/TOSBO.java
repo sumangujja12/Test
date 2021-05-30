@@ -5,13 +5,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.gson.Gson;
 import com.multibrand.domain.CheckPendingMVORequest;
 import com.multibrand.domain.CheckPendingMoveInRequest;
 import com.multibrand.domain.ContractDataRequest;
@@ -34,6 +39,7 @@ import com.multibrand.domain.TransferServiceRequest;
 import com.multibrand.domain.TransferServiceResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.exception.OAMException;
+import com.multibrand.helper.ContentHelper;
 import com.multibrand.helper.ContractHelper;
 import com.multibrand.helper.EmailHelper;
 import com.multibrand.helper.OfferHelper;
@@ -53,11 +59,15 @@ import com.multibrand.vo.request.TOSEligibleNonEligibleProductsRequest;
 import com.multibrand.vo.request.TOSSubmitEligibleProductsRequest;
 import com.multibrand.vo.response.CheckPendingMVOResponse;
 import com.multibrand.vo.response.CheckPendingMoveInResponse;
+import com.multibrand.vo.response.ContractOffer;
 import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.OetdspResponse;
+import com.multibrand.vo.response.OfferDO;
+import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.TOSEligibleNonEligibleProductsResponse;
 import com.multibrand.vo.response.TOSSubmitEligibleProductsResponse;
 import com.multibrand.vo.response.TosAmbWebResponse;
+import com.multibrand.vo.response.tosResponse.OfferPlanContentResponse;
 
 @Component
 public class TOSBO extends BaseAbstractService implements Constants {
@@ -66,6 +76,9 @@ public class TOSBO extends BaseAbstractService implements Constants {
 	
 	@Autowired
 	private TOSService tosService;
+	
+	@Autowired
+	private OEBO oeBO;
 	
 	@Autowired
 	private OEService oeService;
@@ -87,6 +100,9 @@ public class TOSBO extends BaseAbstractService implements Constants {
 	
 	@Autowired
 	ContractHelper contractHelper;
+	
+	@Autowired
+	ContentHelper contentHelper;
 	
 	@Autowired
 	private UtilityLoggerHelper utilityloggerHelper;
@@ -964,5 +980,39 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 		
 	}
 	
+	
+	public OfferPlanContentResponse getOffers(String locale, String companyCode, String brandId,
+			String servStreetNum, String servStreetName,
+			String servStreetAptNum, String servZipCode, String promoCode,
+			String tdspCode, String esid, String sessionId,String transactionType) {
+		
+		OfferPlanContentResponse response = new OfferPlanContentResponse();
+		OfferResponse offerResponse = oeBO.getOffers(locale, companyCode,
+				brandId, servStreetNum, servStreetName, servStreetAptNum,
+				servZipCode, promoCode, tdspCode, esid,
+				sessionId, transactionType);
+		
+		List<ContractOffer> contractList = new LinkedList<>();
+		Set <String> offerCode = null;
+		
+		OfferDO[] offerStrAr = offerResponse.getOfferDOList();
+		
+		if (offerStrAr != null && offerStrAr.length > 1) {
+			
+			offerCode =  new TreeSet<>();
+			for (OfferDO offerVO : offerStrAr) {
+				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
+					ContractOffer contractOffer = new ContractOffer();
+					offerCode.add(contentHelper.loadContractOfferResponse(contractOffer, offerVO));
+					contractList.add(contractOffer);
+				}
+			}
+			
+			response.setPlans(contractList);
+			
+			
+		}
+		return response;
+	}
 
 }

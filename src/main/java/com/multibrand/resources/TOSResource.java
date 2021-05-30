@@ -46,6 +46,7 @@ import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.EsidProfileResponse;
 import com.multibrand.vo.response.OetdspResponse;
 import com.multibrand.vo.response.OfferOfContractResponse;
+import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PermitCheckResponse;
 import com.multibrand.vo.response.ProgramAccountInfoResponse;
 import com.multibrand.vo.response.TOSEligibleNonEligibleProductsResponse;
@@ -54,6 +55,7 @@ import com.multibrand.vo.response.TdspByESIDResponse;
 import com.multibrand.vo.response.TdspByZipResponse;
 import com.multibrand.vo.response.TosAmbWebResponse;
 import com.multibrand.vo.response.TransferServiceResponse;
+import com.multibrand.vo.response.tosResponse.OfferPlanContentResponse;
 
 @Component
 @Path("tos")
@@ -728,4 +730,36 @@ public class TOSResource extends BaseResource{
 		
 	}
 	
+	/**
+	 * @return OfferResponse
+	 */
+	@POST
+	@Path("tosChangePlanOffers")
+	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
+	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
+	public Response tosChangePlanOffers(@FormParam("languageCode") String locale,
+			@FormParam("companyCode") String companyCode,
+			@FormParam("brandId") String brandId,
+			@FormParam("servStreetNum") String servStreetNum,
+			@FormParam("servStreetName") String servStreetName,
+			@FormParam("servStreetAptNum") String servStreetAptNum,
+			@FormParam("servZipCode") String servZipCode,
+			@FormParam("promoCode") String promoCode,
+			@FormParam("tdspCode") String tdspCode,
+			@FormParam("esid") String esid,
+			@FormParam("transactionType") String transactionType){
+		logger.debug("TOSResource.tosChangePlanOffers ::: START");
+		
+		Response response = null;
+		
+		OfferPlanContentResponse offerResponse = tosBO.getOffers(locale, companyCode,
+				brandId, servStreetNum, servStreetName, servStreetAptNum,
+				servZipCode, promoCode, tdspCode, esid,
+				httpRequest.getSession(true).getId(), transactionType);
+		response = Response.status(200).entity(offerResponse).build();
+
+		return response;
+			
+		
+	}	
 }
