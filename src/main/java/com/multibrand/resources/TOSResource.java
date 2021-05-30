@@ -734,10 +734,10 @@ public class TOSResource extends BaseResource{
 	 * @return OfferResponse
 	 */
 	@POST
-	@Path("tosChangePlanOffers")
+	@Path("tosmoveoutplans")
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})	
-	public Response tosChangePlanOffers(@FormParam("languageCode") String locale,
+	public Response tosMoveOutPlans(@FormParam("languageCode") String locale,
 			@FormParam("companyCode") String companyCode,
 			@FormParam("brandId") String brandId,
 			@FormParam("servStreetNum") String servStreetNum,
@@ -748,11 +748,11 @@ public class TOSResource extends BaseResource{
 			@FormParam("tdspCode") String tdspCode,
 			@FormParam("esid") String esid,
 			@FormParam("transactionType") String transactionType){
-		logger.debug("TOSResource.tosChangePlanOffers ::: START");
+		logger.debug("TOSResource.tosMoveOutPlans ::: START");
 		
 		Response response = null;
 		
-		OfferPlanContentResponse offerResponse = tosBO.getOffers(locale, companyCode,
+		OfferPlanContentResponse offerResponse = tosBO.tosMoveOutPlans(locale, companyCode,
 				brandId, servStreetNum, servStreetName, servStreetAptNum,
 				servZipCode, promoCode, tdspCode, esid,
 				httpRequest.getSession(true).getId(), transactionType);
