@@ -983,17 +983,18 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 			for (OfferDO offerVO : offerStrAr) {
 				if (StringUtils.isNotBlank(offerVO.getStrOfferCode())) {
 					ContractOffer contractOffer = new ContractOffer();
-					offerCode.add(contentHelper.loadContractOfferResponse(contractOffer, offerVO));
+					
+					contentHelper.loadContractOfferResponse(contractOffer, offerVO);
+					
+					offerCode.add(contractOffer.getOfferCode());
 					
 					List<OfferPriceWraperDO> offerPriceWraperDOList = offerVO.getAvgPriceMap();
 					
 					String avgPrice = getAvgPrice( offerPriceWraperDOList);
-					
-					String offerFamily = getOfferFamilyPrice(offerPriceWraperDOList);
-					
+										
 					contractOffer.setPrice(avgPrice);
-					contractOffer.setOfferFamily(offerFamily);
-					
+					contractOffer.setOfferFamily(contractOffer.getOfferCode());
+										
 					contractList.add(contractOffer);
 				}
 			}
