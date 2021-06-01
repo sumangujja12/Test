@@ -3,27 +3,30 @@ package com.multibrand.dto.request;
 import javax.validation.constraints.Size;
 
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 
 public class SalesTDSPRequest extends SalesBaseRequest{
 
 	private static final long serialVersionUID = 1L;
 
+
+	@Size(max = 10)
 	private String servStreetNum;
 
+
+	@Size(max = 60)
 	private String servStreetName;
 
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String servStreetAptNum;
 
 	@NotEmpty
-	@Size(min = 5, max = 10, groups = SizeConstraint.class)
+	@Size(min = 5, max = 10)
 	private String servZipCode;
 
-	@Size(max = 3, groups = SizeConstraint.class)
+	@Size(max = 3)
 	private String transactionType; // MVI or SWI
 
-	@Size(max = 32, groups = SizeConstraint.class)
+	@Size(max = 32)
 	private String esid;
 
 	public String getServStreetNum() {

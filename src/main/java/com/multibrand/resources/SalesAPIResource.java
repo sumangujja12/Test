@@ -4,7 +4,6 @@ package com.multibrand.resources;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -39,7 +38,9 @@ import com.multibrand.dto.request.SalesOfferRequest;
 import com.multibrand.dto.request.SalesTDSPRequest;
 import com.multibrand.dto.request.SalesUCCDataRequest;
 
+import com.multibrand.dto.request.ValidateCARequest;
 import com.multibrand.dto.request.ValidateEsidRequest;
+import com.multibrand.dto.request.ValidateUserIdRequest;
 import com.multibrand.dto.response.AffiliateOfferResponse;
 import com.multibrand.dto.response.EsidResponse;
 import com.multibrand.dto.response.EsidValidationAddressResponse;
@@ -50,6 +51,8 @@ import com.multibrand.dto.response.SalesHoldLookupResponse;
 import com.multibrand.dto.response.SalesOfferResponse;
 import com.multibrand.dto.response.SalesTDSPResponse;
 import com.multibrand.dto.response.SalesUCCDataResponse;
+import com.multibrand.dto.response.ValidateCAResponse;
+import com.multibrand.dto.response.ValidateUserIdResponse;
 
 import com.multibrand.exception.OEException;
 import com.multibrand.helper.UtilityLoggerHelper;
@@ -120,7 +123,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_IDENTITY)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performPosidAndBpMatch(@Valid IdentityRequest request) {
+	public Response performPosidAndBpMatch( IdentityRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -144,7 +147,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_AVAILABLE_DATES)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDAndCalendarDates(@Valid SalesEsidCalendarRequest request) {
+	public Response getESIDAndCalendarDates( SalesEsidCalendarRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -168,7 +171,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditCheck(@Valid SalesCreditCheckRequest request) {
+	public Response performCreditCheck( SalesCreditCheckRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -192,7 +195,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_RECHECK_CREDIT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response performCreditRecheck(@Valid SalesCreditReCheckRequest request)  {
+	public Response performCreditRecheck( SalesCreditReCheckRequest request)  {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -216,7 +219,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_SUBMIT_ENROLLMENT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitEnrollment(@Valid SalesEnrollmentRequest request)
+	public Response submitEnrollment( SalesEnrollmentRequest request)
 			throws OEException {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
@@ -238,7 +241,7 @@ public class SalesAPIResource extends BaseResource {
     @Path(API_GET_KBA_QUESTIONS)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestions(@Valid GetKBAQuestionsRequest request) {
+    public Response getKBAQuestions( GetKBAQuestionsRequest request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
@@ -257,7 +260,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_KBA_RESULT)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response submitKBAAnswers(@Valid KbaAnswerRequest request) throws Exception {
+	public Response submitKBAAnswers( KbaAnswerRequest request) throws Exception {
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
 		
@@ -320,7 +323,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDDetails(@Valid EsidRequest request){
+	public Response getESIDDetails( EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -339,7 +342,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_ESID_RESIDENTIAL)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
     @Produces({ MediaType.APPLICATION_JSON })
-	public Response getESIDResidentialDetails(@Valid EsidRequest request){
+	public Response getESIDResidentialDetails( EsidRequest request){
 		Response response = null;
 		long startTime = CommonUtil.getStartTime();
 		try{
@@ -358,7 +361,7 @@ public class SalesAPIResource extends BaseResource {
     @Path(KBA_OE)
     @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED})
     @Produces({ MediaType.APPLICATION_JSON })
-    public Response getKBAQuestionsWithinOE(@Valid GetOEKBAQuestionsRequest request){
+    public Response getKBAQuestionsWithinOE( GetOEKBAQuestionsRequest request){
 		long startTime = CommonUtil.getStartTime();
 		Response response=null;
        try{
@@ -379,7 +382,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_CLEANUP_ADDRESS)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response cleanupAddress(@Valid SalesCleanupAddressRequest  request) {
+	public Response cleanupAddress( SalesCleanupAddressRequest  request) {
 		long startTime = CommonUtil.getStartTime();
 		Response response = null;
 		try{
@@ -443,7 +446,7 @@ public class SalesAPIResource extends BaseResource {
 	@Path(API_TDSP)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response getTDSP(@Valid SalesTDSPRequest request) {
+	public Response getTDSP( SalesTDSPRequest request) {
 		logger.info("SalesTDSPRequest : {}", request);
 		Response response = null;
 		try{
@@ -464,8 +467,10 @@ public class SalesAPIResource extends BaseResource {
 	@Path(SALES_API_ESID_VALIDATION)
 	@Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED })
 	@Produces({ MediaType.APPLICATION_JSON })
-	public Response validateEsid(@Valid ValidateEsidRequest validateEsidRequest) {
+
+	public Response validateEsid( ValidateEsidRequest validateEsidRequest) {
 		logger.info("In validateEsid");
+
 		Response response = null;
 			
 		try {
@@ -473,9 +478,7 @@ public class SalesAPIResource extends BaseResource {
 			Response.Status status = esidAddressResponse.getHttpStatus() != null ? esidAddressResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status)
 					.entity(esidAddressResponse).build();
-			response = Response.status(200).entity(esidAddressResponse).build();
  
-			logger.info("Exit validateEsid");
 		} catch (Exception e) {
 			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new EsidValidationAddressResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateEsidRequest.getLanguageCode()))).build();
    			logger.error(e.fillInStackTrace());
@@ -505,4 +508,47 @@ public class SalesAPIResource extends BaseResource {
 		return response;
 	}
 
+	@GET
+	@Path(SALES_API_CA_VALIDATION)
+	@Produces({ MediaType.APPLICATION_JSON})
+	public Response validateCA(@InjectParam ValidateCARequest validateCARequest) {
+		Response response = null;
+			
+		try {
+			ValidateCAResponse validateCAResponse = salesBO.validateCA(validateCARequest);
+			Response.Status status = validateCAResponse.getHttpStatus() != null ? validateCAResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(validateCAResponse).build();
+ 
+		} catch (Exception e) {
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new ValidateCAResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateCARequest.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+		}
+       return response;
+	}
+	
+	/**
+	 * s
+	 * @param validateUserIdRequest
+	 * @return
+	 */
+	@GET
+	@Path(SALES_API_USERNAME_VALIDATION)
+	@Produces({ MediaType.APPLICATION_JSON })
+	public Response validateUsername(@InjectParam ValidateUserIdRequest validateUserIdRequest) {
+		Response response = null;
+			
+		try {
+			ValidateUserIdResponse validateUserIdResponse = salesBO.validateUserName(validateUserIdRequest);
+			Response.Status status = validateUserIdResponse.getHttpStatus() != null ? validateUserIdResponse.getHttpStatus() :Response.Status.OK;
+			response = Response.status(status).entity(validateUserIdResponse).build();
+ 
+			logger.info("Exit validateUsernames");
+		} catch (Exception e) {
+			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new ValidateUserIdResponse()).populateGenericErrorResponse(e, salesBO.getTechnicalErrorMessage(validateUserIdRequest.getLanguageCode()))).build();
+   			logger.error(e.fillInStackTrace());
+		}
+       return response;
+	}
+	
+	
 }

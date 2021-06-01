@@ -25,6 +25,7 @@ public class ESIDData implements Serializable{
 	private String switchHoldStatus;
 	private String blockStatus;
 	private String esidStatusBrand;
+	private String meterNumber;
 	
 	public String getEsidNumber() {
 		return esidNumber;
@@ -145,6 +146,16 @@ public class ESIDData implements Serializable{
 
 	public void setEsidStatusBrand(String esidStatusBrand) {
 		this.esidStatusBrand = esidStatusBrand;
+	}
+
+
+	public String getMeterNumber() {
+		return meterNumber;
+	}
+
+
+	public void setMeterNumber(String meterNumber) {
+		this.meterNumber = meterNumber;
 	}
 
 

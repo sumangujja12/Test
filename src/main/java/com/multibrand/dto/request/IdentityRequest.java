@@ -9,7 +9,6 @@ import com.multibrand.request.validation.FormatConstraint;
 import com.multibrand.request.validation.MandotoryFieldCheck;
 import com.multibrand.request.validation.NoidCheck;
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 import com.multibrand.request.validation.ValidAge;
 import com.multibrand.request.validation.ValidDateTime;
 
@@ -20,14 +19,14 @@ public class IdentityRequest extends SalesBaseRequest {
 	private static final long serialVersionUID = 1068351198219357955L;
 	
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String lastName;
 	
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String firstName;
 	
-	@Size(max = 40 ,groups = SizeConstraint.class)
+	@Size(max = 40 )
 	String middleName;
 
 	@NotEmpty
@@ -35,80 +34,81 @@ public class IdentityRequest extends SalesBaseRequest {
 	@ValidAge
 	String dob;
 	
-	@Size(max = 40,groups = SizeConstraint.class)
+	@Size(max = 40)
 	String maidenName; 
 	
 	String trackingId;
 	
 	@NotEmpty
-	@Size(max = 100, groups = SizeConstraint.class)
+	@Size(max = 100)
 	@Email(groups = FormatConstraint.class)
 	String email;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	@Pattern(regexp = "\\d{10}", groups = FormatConstraint.class, message="is invalid")
 	String phoneNum;
 	
-	@Size(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1)
 	String mktPref;
 	
 	String transactionType;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String servStreetNum;
 
 	@NotEmpty
-	@Size(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60)
 	private String servStreetName;
 
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String servStreetAptNum;
 	
 	@NotEmpty
-	@Size(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30)
 	String servCity;
 	
 	@NotEmpty
-	@Size(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2)
 	String servState;
 	
 	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	String servZipCode;
 	
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	String billStreetNum;
 	
-	@Size(max = 60, groups = SizeConstraint.class)
+	@Size(max = 60)
 	String billStreetName;
 	
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	String billStreetAptNum;
 	
-	@Size(max = 30, groups = SizeConstraint.class)
+	@Size(max = 30)
 	String billCity;
 	
-	@Size(min = 2, max = 2, groups = SizeConstraint.class)
+	@Size(min = 2, max = 2)
 	String billState;
 	
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	String billZipCode;
 	
-	@Size(max = 25, groups = SizeConstraint.class)
+	@Size(max = 25)
 	String billPOBox;
 	
 	String preferredLanguage;
 	
 	
-	@Size(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20)
 	String tokenizedTDL;
 	
 	
-	@Size(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20)
 	String tokenizedSSN;
 	
+	@Size(max = 10)
 	String agentID;
 	
 	String ipAddress;
@@ -120,16 +120,16 @@ public class IdentityRequest extends SalesBaseRequest {
 	String etfFlag;
 	
 	//Start : OE : Sprint3 : 13643 - Add Missing Columns to  SLA table :Kdeshmu1
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	String partnerId;
 	
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String partnerName;
 	
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	String locationId;
 	
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String locationName;
 	
 	String guid;

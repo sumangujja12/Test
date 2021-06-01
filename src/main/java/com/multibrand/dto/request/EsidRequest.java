@@ -8,7 +8,6 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 
 
 public class EsidRequest extends SalesBaseRequest implements Serializable {
@@ -24,7 +23,7 @@ public class EsidRequest extends SalesBaseRequest implements Serializable {
 	private String servZipCode;
 	@NotEmpty
 	private String servCity;
-	@Size(max = 10, groups = SizeConstraint.class)
+	@Size(max = 10)
 	private String servStreetAptNum;
 	public String getServStreet() {
 		return servStreet;
