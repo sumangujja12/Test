@@ -1725,26 +1725,14 @@ public interface Constants {
 	public static final String GIACT_ERROR_03="GIACT_ERROR_03";
 	public static final String BANK_AUTOPAY_INVALID_BANK_ACCOUNT = "MSG_CCSERR_2_INVALID_BNK";
 	
-
-	
-
-	
 	public static final String SALES_API_CA_VALIDATION = "validate-ca";
 	public static final String SALES_API_USERNAME_VALIDATION = "validate-username";
 
 
-
-	
-	public static final String ZIRTUE_RECEIPT_NUMBER = "ZIRTUE.REL.0102.1";
-
-
-
-	
 	public static final String SALES_API_SUBMIT_UCC_DATA= "submitUCCData";
 	
 	public static final String SOURCE_AFFILIATE="AFFILIATE";
 
-
-	
+		
 }
 	
