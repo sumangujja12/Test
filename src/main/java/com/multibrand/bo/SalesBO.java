@@ -538,11 +538,20 @@ public class SalesBO extends OeBoHelper implements Constants {
 				return salesUCCDataResponse;
 			}
 			
-				serviceLocationResponse=oeBO.getEnrollmentData(salesUCCDatarequest.getTrackingId());
-				if (null!= serviceLocationResponse){
+				serviceLocationResponse=oeBO.getEnrollmentData(salesUCCDatarequest.getTrackingId());			
+				
+				if (null!= serviceLocationResponse){				
 					
 					if(!oeBO.isEnrollmentAlreadySubmitted(serviceLocationResponse)){
 						
+						if(StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), TRANSACTIONTYPE_N) && StringUtils.isBlank(salesUCCDatarequest.getMviDate())) {
+							salesUCCDataResponse.setStatusCode(Constants.STATUS_CODE_STOP);
+							salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+							salesUCCDataResponse.setErrorDescription("mviDate is required for move-in");
+							salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+				            return salesUCCDataResponse;
+				        }
+												
 						if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), salesUCCDatarequest.getFirstName())) 
 								|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), salesUCCDatarequest.getLastName())) ) {
 							salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
