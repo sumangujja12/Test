@@ -2,7 +2,7 @@ package com.multibrand.dto.request;
 
 import javax.validation.constraints.Size;
 
-
+import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.NotEmpty;
 
 public class SalesUCCDataRequest extends SalesBaseRequest{
@@ -42,7 +42,18 @@ public class SalesUCCDataRequest extends SalesBaseRequest{
 	String creditBucket;
 		
 	@Size(max = 2000)
-	String creditFactors;
+	String creditFactors;	
+
+	@CurrentOrFutureDate
+    private String mviDate;
+
+	public String getMviDate() {
+		return mviDate;
+	}
+
+	public void setMviDate(String mviDate) {
+		this.mviDate = mviDate;
+	}
 
 	public String getTrackingId() {
 		return trackingId;

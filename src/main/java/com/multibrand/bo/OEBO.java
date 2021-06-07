@@ -4923,8 +4923,12 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		if (StringUtils.isNotEmpty(uccDataRequest.getTrackingId()))
 			requestData.setTrackingId(uccDataRequest.getTrackingId());
 		requestData.setCompanyCode(uccDataRequest.getCompanyCode());
+	   
+		if(StringUtils.isNotBlank(uccDataRequest.getMviDate())) {
+			
+			requestData.setServiceStartDate(uccDataRequest.getMviDate());
+		}
 		
-
 		ServiceLocationResponse serviceLocationResponse =  getEnrollmentData(uccDataRequest.getTrackingId());
 		
 		if(serviceLocationResponse != null){
