@@ -170,13 +170,12 @@ public class SalesBOTest implements Constants{
 	public void testSubmitUCCDataForMandatoryParam(){
 		SalesUCCDataRequest salesUCCDatarequest =new SalesUCCDataRequest();
 		salesUCCDatarequest.setDepositAmount("125");
-		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();
-		String httpServletRequest = "123456";
+		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();		
 		ServiceLocationResponse serviceLocationResponse = null;
 		try{
 			when(oebo.isEnrollmentAlreadySubmitted(serviceLocationResponse)).thenReturn(false);
 			when(oebo.getEnrollmentData(salesUCCDatarequest.getTrackingId())).thenReturn(serviceLocationResponse);
-	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
+	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -195,7 +194,7 @@ public class SalesBOTest implements Constants{
 		try{
 			when(oebo.isEnrollmentAlreadySubmitted(serviceLocationResponse)).thenReturn(false);
 			when(oebo.getEnrollmentData(salesUCCDatarequest.getTrackingId())).thenReturn(serviceLocationResponse);
-	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
+	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -218,7 +217,7 @@ public class SalesBOTest implements Constants{
 		try{
 			when(oebo.isEnrollmentAlreadySubmitted(serviceLocationResponse)).thenReturn(false);
 			when(oebo.getEnrollmentData(salesUCCDatarequest.getTrackingId())).thenReturn(serviceLocationResponse);
-	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
+	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -231,15 +230,14 @@ public class SalesBOTest implements Constants{
 		salesUCCDatarequest.setDepositAmount("125");
 		salesUCCDatarequest.setFirstName("test1");
 		salesUCCDatarequest.setLastName("test");
-		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();
-		String httpServletRequest = "123456";
+		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();		
 		ServiceLocationResponse serviceLocationResponse = new ServiceLocationResponse();
 		PersonResponse personResponse=new PersonResponse();
 		serviceLocationResponse.setPersonResponse(personResponse);
 		try{
 			when(oebo.isEnrollmentAlreadySubmitted(serviceLocationResponse)).thenReturn(true);
 			when(oebo.getEnrollmentData(salesUCCDatarequest.getTrackingId())).thenReturn(serviceLocationResponse);
-	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
+	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -253,13 +251,13 @@ public class SalesBOTest implements Constants{
 		salesUCCDatarequest.setFirstName("test1");
 		salesUCCDatarequest.setLastName("test");
 		SalesUCCDataResponse salesUCCDataResponse =new SalesUCCDataResponse();
-		String httpServletRequest = "123456";
+		
 		ServiceLocationResponse serviceLocationResponse = null;
 		
 		try{
 			when(oebo.isEnrollmentAlreadySubmitted(serviceLocationResponse)).thenReturn(true);
 			when(oebo.getEnrollmentData(salesUCCDatarequest.getTrackingId())).thenReturn(serviceLocationResponse);
-	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest, httpServletRequest);
+	    salesUCCDataResponse = salesBO.submitUCCData(salesUCCDatarequest);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
