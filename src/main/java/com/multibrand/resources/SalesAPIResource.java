@@ -500,8 +500,7 @@ public class SalesAPIResource extends BaseResource {
 		logger.info("In SubmitUCCData");
 		Response response = null;
 		try {
-			SalesUCCDataResponse uccDataResponse = salesBO.submitUCCData(request,
-					httpRequest.getSession(true).getId());
+			SalesUCCDataResponse uccDataResponse = salesBO.submitUCCData(request);
 			Response.Status status = uccDataResponse.getHttpStatus() != null ? uccDataResponse.getHttpStatus() :Response.Status.OK;
 			response = Response.status(status)
 					.entity(uccDataResponse).build();

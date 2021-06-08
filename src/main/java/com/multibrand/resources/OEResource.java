@@ -867,8 +867,7 @@ public class OEResource extends BaseResource {
 				}
 		
 		
-		UCCDataResponse uccResp = oeBO.submitUCCData(request,
-				httpRequest.getSession(true).getId());
+		UCCDataResponse uccResp = oeBO.submitUCCData(request);
 		response = Response.status(Response.Status.OK).entity(uccResp).build();
 		} catch (Exception e) {
    			response=Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity((new GenericResponse()).getGenericErrorResponse(e, oeBO.getTechnicalErrorMessage(request.getLanguageCode()))).build();

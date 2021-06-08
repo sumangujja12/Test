@@ -4,6 +4,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.NotEmpty;
 import com.multibrand.request.validation.SizeConstraint;
 
@@ -43,6 +44,18 @@ public class UCCDataRequest extends BaseAffiliateRequest {
 		
 	@Size(max = 2000, groups = SizeConstraint.class)
 	String creditFactors;
+	
+	@CurrentOrFutureDate
+    private String mviDate;
+
+	public String getMviDate() {
+		return mviDate;
+	}
+
+	public void setMviDate(String mviDate) {
+		this.mviDate = mviDate;
+	}
+
 
 	public String getTrackingId() {
 		return trackingId;
