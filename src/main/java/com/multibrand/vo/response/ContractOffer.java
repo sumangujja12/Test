@@ -12,6 +12,9 @@ public class ContractOffer implements Constants {
 	private String yrracDocId="";
 	private String tosDocId="";
 	private String numberOfTreesSaved="";
+	private String totalPoundOfCO2="";
+	private String totalMilesNotDriven="";
+	private String totalNewsPapersRectcled="";
 	private String offerTeaser="";
 	private String planDisclaimer="";
 	private String eflDocId="";
@@ -571,7 +574,40 @@ public class ContractOffer implements Constants {
 	public void setOfferFamily(String offerFamily) {
 		this.offerFamily = offerFamily;
 	}
-	
-	
-	
+	/**
+	 * @return the totalPoundOfCO2
+	 */
+	public String getTotalPoundOfCO2() {
+		return totalPoundOfCO2;
+	}
+	/**
+	 * @param totalPoundOfCO2 the totalPoundOfCO2 to set
+	 */
+	public void setTotalPoundOfCO2(String totalPoundOfCO2) {
+		this.totalPoundOfCO2 = totalPoundOfCO2;
+	}
+	/**
+	 * @return the totalMilesNotDriven
+	 */
+	public String getTotalMilesNotDriven() {
+		return totalMilesNotDriven;
+	}
+	/**
+	 * @param totalMilesNotDriven the totalMilesNotDriven to set
+	 */
+	public void setTotalMilesNotDriven(String totalMilesNotDriven) {
+		this.totalMilesNotDriven = totalMilesNotDriven;
+	}
+	/**
+	 * @return the totalNewsPapersRectcled
+	 */
+	public String getTotalNewsPapersRectcled() {
+		return totalNewsPapersRectcled;
+	}
+	/**
+	 * @param totalNewsPapersRectcled the totalNewsPapersRectcled to set
+	 */
+	public void setTotalNewsPapersRectcled(String totalNewsPapersRectcled) {
+		this.totalNewsPapersRectcled = totalNewsPapersRectcled;
+	}	
 }

@@ -1,7 +1,10 @@
 package com.multibrand.util;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface Constants {
 	
@@ -1220,27 +1223,32 @@ public interface Constants {
 	 public static final String PRODUCT_CONTENT_TWO ="15% Wind";
 	 public static final String PRODUCT_CONTENT_THREE ="95% Wind, 5% Solar";
 	 public static final String PRODUCT_CONTENT_FOUR ="100% Solar";
+	 public static final String PRODUCT_CONTENT_EIGHT ="90% Wind, 10% Solar";
 	
-	 public static enum ENUM_PRODUCT_CONTENT {
-		ONE(1, PRODUCT_CONTENT_ONE), TWO(2, PRODUCT_CONTENT_TWO), THREE(3, PRODUCT_CONTENT_THREE),
-		FOUR(4, PRODUCT_CONTENT_FOUR);
-
-		public final String productContent;
-		public final Integer productKey;
-
-		ENUM_PRODUCT_CONTENT(Integer productKey, String productContent) {
-			this.productContent = productContent;
-			this.productKey = productKey;
+	 public static Map<Integer, String> BY_PRODUCT_KEY_IMG = Collections.unmodifiableMap(new HashMap<Integer, String>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put(1, "https://signup.greenmountain.com/en_US/images/wind.png");
+				put(2, PRODUCT_CONTENT_TWO);
+				put(3, "https://signup.greenmountain.com/en_US/images/wind-and-solar.png");
+				put(4, PRODUCT_CONTENT_FOUR);
+				put(8, "https://signup.greenmountain.com/en_US/images/wind-and-solar.png");
+			}
+		});
+	 
+	
+	public static Map<Integer, String> BY_PRODUCT_KEY = Collections.unmodifiableMap(new HashMap<Integer, String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			put(1, PRODUCT_CONTENT_ONE);
+			put(2, PRODUCT_CONTENT_TWO);
+			put(3, PRODUCT_CONTENT_THREE);
+			put(4, PRODUCT_CONTENT_FOUR);
+			put(8, PRODUCT_CONTENT_FOUR);
 		}
-		
-		public String getProductContent() {
-			return productContent;
-		}
+	});
+	 
 
-		public int getProductKey() {
-			return productKey;
-		}
-	 }
 	
 	 public static final String EMPTY_DATE = "00000000";
 	 public static final String EMPTY_OFFER = "00000000";
@@ -1732,7 +1740,13 @@ public interface Constants {
 	public static final String SALES_API_SUBMIT_UCC_DATA= "submitUCCData";
 	
 	public static final String SOURCE_AFFILIATE="AFFILIATE";
+	
+	public static final String YRLYTREES_2000 = "YRLYTREES_2000";
+	public static final String YRLYCO2AV_2000 = "YRLYCO2AV_2000";
+	public static final String YRLYMND_2000 = "YRLYMND_2000";
+	public static final String YRLYNEWS_2000 = "YRLYNEWS_2000";
+	public static final String RENEW_PERCENT_CD = "RENEW_PERCENT_CD";
+	
 
-		
 }
 	
