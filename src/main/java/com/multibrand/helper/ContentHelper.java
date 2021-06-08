@@ -516,48 +516,7 @@ public class ContentHelper implements Constants {
 		com.multibrand.vo.response.CampEnvironmentDO[] campEnvironmentDetails = offerDO
 				.getCampEnvironmentDetails();
 
-		if (campEnvironmentDetails != null) {
-			for (com.multibrand.vo.response.CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
-				if (campEnvironment.getCalcOperand().equalsIgnoreCase("YRLYTREES_2000")) {
-					contractOffer.setNumberOfTreesSaved(campEnvironment.getValue());
-
-				}
-				if (campEnvironment.getCalcOperand().equalsIgnoreCase("RENEW_PERCENT_CD")) {
-					if(StringUtils.isNotBlank(campEnvironment.getValue())) {
-						int key = 0;
-						try {
-						 key =  (int) Double.parseDouble(campEnvironment.getValue());
-						} catch (Exception e) {
-							logger.info("RENEW_PERCENT_CD FROM SAP IS"+campEnvironment.getValue());
-						}
-						switch (key) {
-							case 1 :
-									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.ONE.getProductContent());
-									break;						
-							case 2 :
-									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.TWO.getProductContent());
-									break;
-								
-							case 3 :
-									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.THREE.getProductContent());
-									break;
-								
-							case 4:
-									contractOffer.setProductContent(Constants.ENUM_PRODUCT_CONTENT.FOUR.getProductContent());
-									break;
-									
-							default :
-								contractOffer.setProductContent(Constants.BLANK);
-	
-						}
-						 
-					}
-										
-				}
-				
-			}
-
-		}
+		handleEnvImpactResponse(contractOffer, campEnvironmentDetails);
 		
 		 if(!StringUtils.isNotBlank(OfferEFamily)) {
 			 OfferEFamily = contractOffer.getOfferCode();
@@ -566,7 +525,46 @@ public class ContentHelper implements Constants {
 		 return OfferEFamily;
 	}
 	
-	
+	/**
+	 * @param contractOffer
+	 * @param campEnvironmentDetails
+	 */
+	public void handleEnvImpactResponse(ContractOffer contractOffer,
+			com.multibrand.vo.response.CampEnvironmentDO[] campEnvironmentDetails) {
+		if (campEnvironmentDetails != null) {
+			
+			contractOffer.setNumberOfTreesSaved(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYTREES_2000));
+			contractOffer.setTotalPoundOfCO2(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYCO2AV_2000));
+			contractOffer.setTotalMilesNotDriven(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYMND_2000));
+			contractOffer.setTotalNewsPapersRectcled(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYNEWS_2000));
+			
+			int key =  (int) Double.parseDouble(getEnvironmentImpactValueByKey(campEnvironmentDetails, RENEW_PERCENT_CD));
+			contractOffer.setProductContent(com.multibrand.util.Constants.BY_PRODUCT_KEY.getOrDefault(key, Constants.BLANK));
+
+
+		}
+	}
+
+	/**
+	 * @param campEnvironmentDetails
+	 */
+	public String getEnvironmentImpactValueByKey(com.multibrand.vo.response.CampEnvironmentDO[] campEnvironmentDetails, String filterValue) {
+		
+		String value = "";
+		
+		for (com.multibrand.vo.response.CampEnvironmentDO campEnvironment : campEnvironmentDetails) {
+			
+			
+			if (campEnvironment.getCalcOperand().equalsIgnoreCase(filterValue)) {
+				value =  campEnvironment.getValue();
+
+			}
+			
+		
+		}
+		
+		return value;
+	}	
 	private void loadContractOfferCurrenPlanResponse(ContractOffer contractOffer, com.multibrand.domain.OfferDO offerDO) {
 		String OfferEFamily = "";
 		contractOffer.setYrracDocId(offerDO.getStrYRAACDocId());
