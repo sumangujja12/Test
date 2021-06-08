@@ -1,7 +1,6 @@
 package com.multibrand.resources;
 
 import java.rmi.RemoteException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -12,14 +11,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Component;
-
 import com.multibrand.bo.OEBO;
 import com.multibrand.bo.TOSBO;
 import com.multibrand.domain.CheckPendingMVORequest;
@@ -46,7 +43,6 @@ import com.multibrand.vo.response.ESIDForAddressResponse;
 import com.multibrand.vo.response.EsidProfileResponse;
 import com.multibrand.vo.response.OetdspResponse;
 import com.multibrand.vo.response.OfferOfContractResponse;
-import com.multibrand.vo.response.OfferResponse;
 import com.multibrand.vo.response.PermitCheckResponse;
 import com.multibrand.vo.response.ProgramAccountInfoResponse;
 import com.multibrand.vo.response.TOSEligibleNonEligibleProductsResponse;
@@ -762,4 +758,8 @@ public class TOSResource extends BaseResource{
 			
 		
 	}	
+	
+	public void setHttpRequest(HttpServletRequest httpRequest) {
+		this.httpRequest = httpRequest;
+	}
 }
