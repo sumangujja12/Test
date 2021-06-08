@@ -489,7 +489,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 		return esidValidationAddressResponse;
 	}
 
-	public SalesUCCDataResponse submitUCCData(SalesUCCDataRequest salesUCCDatarequest, String httpServletRequest) {
+	public SalesUCCDataResponse submitUCCData(SalesUCCDataRequest salesUCCDatarequest) {
 		SalesUCCDataResponse salesUCCDataResponse = new SalesUCCDataResponse();
 		UCCDataRequest uccDataRequest = new UCCDataRequest();
 		ServiceLocationResponse serviceLocationResponse = null;
@@ -544,27 +544,13 @@ public class SalesBO extends OeBoHelper implements Constants {
 					
 					if(!oeBO.isEnrollmentAlreadySubmitted(serviceLocationResponse)){
 						
-						if(StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), TRANSACTIONTYPE_N) && StringUtils.isBlank(salesUCCDatarequest.getMviDate())) {
-							salesUCCDataResponse.setStatusCode(Constants.STATUS_CODE_STOP);
-							salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
-							salesUCCDataResponse.setErrorDescription("mviDate is required for move-in");
-							salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-				            return salesUCCDataResponse;
-				        }
-												
-						if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), salesUCCDatarequest.getFirstName())) 
-								|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), salesUCCDatarequest.getLastName())) ) {
-							salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
-							salesUCCDataResponse.setErrorDescription(MESSAGE_TEXT_INFO_MISMATCH);
-							salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
-							salesUCCDataResponse.setMessageCode(MESSAGE_CODE_INFO_MISMATCH);
-							salesUCCDataResponse.setMessageText(MESSAGE_TEXT_INFO_MISMATCH);
-							salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+						salesUCCDataResponse = validateServiceLocationResponse(serviceLocationResponse, salesUCCDatarequest);
+						if(StringUtils.equalsIgnoreCase(salesUCCDataResponse.getStatusCode(), STATUS_CODE_STOP)) {
 							return salesUCCDataResponse;
 						}
 						
 						BeanUtils.copyProperties(salesUCCDatarequest, uccDataRequest);
-						UCCDataResponse uccResp = oeBO.submitUCCData(uccDataRequest, httpServletRequest);
+						UCCDataResponse uccResp = oeBO.submitUCCData(uccDataRequest);
 						BeanUtils.copyProperties(uccResp, salesUCCDataResponse);
 					}
 					else{
@@ -584,6 +570,31 @@ public class SalesBO extends OeBoHelper implements Constants {
 		return salesUCCDataResponse;
 	}
 	
+	
+	private SalesUCCDataResponse validateServiceLocationResponse(ServiceLocationResponse serviceLocationResponse, SalesUCCDataRequest salesUCCDatarequest) {
+		
+		SalesUCCDataResponse salesUCCDataResponse = new SalesUCCDataResponse();
+		if(StringUtils.equalsIgnoreCase(serviceLocationResponse.getServiceRequestTypeCode(), TRANSACTIONTYPE_N) && StringUtils.isBlank(salesUCCDatarequest.getMviDate())) {			
+			salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+			salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+			salesUCCDataResponse.setErrorDescription("mviDate is required for move-in");
+			salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+           
+        }
+								
+		if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), salesUCCDatarequest.getFirstName())) 
+				|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), salesUCCDatarequest.getLastName())) ) {
+			salesUCCDataResponse.setErrorCode(HTTP_BAD_REQUEST);
+			salesUCCDataResponse.setErrorDescription(MESSAGE_TEXT_INFO_MISMATCH);
+			salesUCCDataResponse.setHttpStatus(Response.Status.BAD_REQUEST);
+			salesUCCDataResponse.setMessageCode(MESSAGE_CODE_INFO_MISMATCH);
+			salesUCCDataResponse.setMessageText(MESSAGE_TEXT_INFO_MISMATCH);
+			salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
+			
+		}
+		return salesUCCDataResponse;
+	}
+
 	private SalesUCCDataResponse getSalesUCCDataResponseBasedOnErrorDesc(String errorDesc,SalesUCCDataResponse salesUCCDataResponse){
 		if (StringUtils.isNotBlank(errorDesc)) {
 			salesUCCDataResponse.setStatusCode(STATUS_CODE_STOP);
