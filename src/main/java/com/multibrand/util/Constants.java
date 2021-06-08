@@ -1227,6 +1227,17 @@ public interface Constants {
 	 public static final String PRODUCT_CONTENT_FOUR ="100% Solar";
 	 public static final String PRODUCT_CONTENT_EIGHT ="90% Wind, 10% Solar";
 	
+	 public static Map<Integer, String> BY_PRODUCT_KEY_IMG = Collections.unmodifiableMap(new HashMap<Integer, String>() {
+			private static final long serialVersionUID = 1L;
+			{
+				put(1, "https://signup.greenmountain.com/en_US/images/wind.png");
+				put(2, PRODUCT_CONTENT_TWO);
+				put(3, "https://signup.greenmountain.com/en_US/images/wind-and-solar.png");
+				put(4, PRODUCT_CONTENT_FOUR);
+				put(8, "https://signup.greenmountain.com/en_US/images/wind-and-solar.png");
+			}
+		});
+	 
 	
 	public static Map<Integer, String> BY_PRODUCT_KEY = Collections.unmodifiableMap(new HashMap<Integer, String>() {
 		private static final long serialVersionUID = 1L;

@@ -540,6 +540,10 @@ public class ContentHelper implements Constants {
 			
 			int key =  (int) Double.parseDouble(getEnvironmentImpactValueByKey(campEnvironmentDetails, RENEW_PERCENT_CD));
 			contractOffer.setProductContent(com.multibrand.util.Constants.BY_PRODUCT_KEY.getOrDefault(key, Constants.BLANK));
+			
+			String baseURL= envMessageReader.getMessage(Constants.GME_BASE_URL);
+						
+			contractOffer.setEnergyTypeIcon(com.multibrand.util.Constants.BY_PRODUCT_KEY_IMG.getOrDefault(key, Constants.BLANK));
 
 
 		}
