@@ -538,7 +538,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				return salesUCCDataResponse;
 			}
 			
-				serviceLocationResponse=oeBO.getEnrollmentData(salesUCCDatarequest.getTrackingId());			
+				serviceLocationResponse=oeBO.getEnrollmentData(salesUCCDatarequest.getTrackingId(),salesUCCDatarequest.getGuid());			
 				
 				if (null!= serviceLocationResponse){				
 					
