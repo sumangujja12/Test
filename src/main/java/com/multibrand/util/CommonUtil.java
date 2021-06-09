@@ -1537,6 +1537,8 @@ public class CommonUtil implements Constants {
 	 * @return Company name.
 	 */
 	public static String getCompanyName(String brandId, String companyCode) {
+
+		//TODO: Add DE Company code to BrandId match
 		String companyName = StringUtils.EMPTY;
 		if (COMPANY_CODE_RELIANT.equalsIgnoreCase(companyCode)
 				|| BRAND_ID_RELIANT.equalsIgnoreCase(brandId)) {
@@ -1991,7 +1993,8 @@ public class CommonUtil implements Constants {
  }
 	public static String getBrandIdFromCompanycodeForCCS(String companyCode, String brandId){
 		String brandName = EMPTY;
-		
+
+		//TODO: Add DE BrandId
 		switch(companyCode){
 			case COMPANY_CODE_RELIANT:
 					brandName = BRAND_ID_RELIANT;
@@ -2011,7 +2014,8 @@ public class CommonUtil implements Constants {
 
 	public static String getBrandIdFromCompanycodeForTogglz(String companyCode, String brandId){
 		String brandName = EMPTY;
-		
+
+		//TODO: Add DE case to return DE BrandId
 		switch(companyCode){
 			case COMPANY_CODE_RELIANT:
 					brandName = BRAND_ID_RELIANT;

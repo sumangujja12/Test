@@ -123,6 +123,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 			logger.info("LOGGING SERVICE IS ENABLED:::");
 			try{
 				LoggingVO logvo = this.setLoggingVO(transactionType, isMask, requestData, responseData, responseSts, responseTime, confirmNum, sessionId, companyCode);			
+				//TODO: Enable DE in Utility WS
 				logvo.setEndPointURL(this.envMessageReader.getMessage(Constants.UTILITY_SERVICE_ENDPOINT_URL));
 				asycHelper.asychLogging(logvo);
 			}catch(Exception e){

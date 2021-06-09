@@ -127,6 +127,7 @@ public class AddressService extends BaseAbstractService
     GetEsiidResponse getEsiidResponse = null;
     try {
       OEDomain proxy = getOEServiceProxy();
+      //TODO: Will OEDomain get info for ESIID's from DE ?
       getEsiidResponse = proxy.getESIIDInfo(getEsiidRequest);
       if (StringUtils.isNotBlank(getEsiidResponse.getStrErrMsg())){
     	  logger.debug(getEsiidResponse.getStrErrMsg());
@@ -143,6 +144,7 @@ public class AddressService extends BaseAbstractService
 	    EsidProfileResponse esidProfileResponse = null;
 	    try {
 	      ProfileDomain proxy = getProfileServiceProxy();
+	      //TODO: Will ProfileDomain get ESIID profiles for DE ?
 	      esidProfileResponse = proxy.getESIDProfile(companyCode, strESIID);
 	      if (StringUtils.isNotBlank(esidProfileResponse.getErrorMessage())){
 	    	  logger.debug(esidProfileResponse.getErrorMessage());
@@ -186,6 +188,7 @@ public class AddressService extends BaseAbstractService
     TdspDetailsResponse tdspDetailsResponse = null;
     try {
       OEDomain proxyclient = getOEServiceProxy();
+      //TODO: Enable DE in OEDomain to get TDSP
       tdspDetailsResponse = proxyclient.getTdspDetails(tdspDetailsRequest);
       if (StringUtils.isNotBlank(tdspDetailsResponse.getStrErrMessage())){
     	  logger.debug(tdspDetailsResponse.getStrErrMessage());
@@ -395,6 +398,7 @@ public class AddressService extends BaseAbstractService
 		
 		try{
 			OEDomain proxyclient = getOEServiceProxy();
+			//TODO: Make DE available OEDomain
 			tdspDetailsResponse = proxyclient.getTdspDetails(tdspDetailsRequest);
 			tdspCode = tdspDetailsResponse.getStrTdsp();
 			

@@ -72,6 +72,7 @@ ws.endpointURL.oeDomain=http://stg1-ws.nrgenergy.com/NRGWS02/OEDomain
 ws.endpointURL.paymentDomain=http://stg1-ws.nrgenergy.com/NRGWS02/PaymentDomain
 ws.endpointURL.profileDomain=http://stg1-ws.nrgenergy.com/NRGWS02/ProfileDomain
 ws.endpointURL.swapDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SwapDomain
+#TODO: Enable DE in  TOSDomain
 ws.endpointURL.tosDomain=http://stg1-ws.nrgenergy.com/NRGWS02/TOSDomain
 ws.endpointURL.ssDomain=http://stg1-ws.nrgenergy.com/NRGWS02/SSDomain
 ws.endpointURL.temperatureService=http://txaixsexbls03:13180/UsageHistoryRest

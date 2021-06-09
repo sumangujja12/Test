@@ -342,6 +342,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			try {
 				oeSignupVO.setCompanyCode(companyCode);
 				oeSignupVO.setBrandId(brandId);
+				//TODO: is there any charityId for DE brandId?
 				if(null!=brandId && brandId.equals(CIRRO_BRAND_NAME)){
 					oeSignupVO.setCharityId(CIRRO_DUMMY_CHARITY_ID); //Setting Dummy CharityId for Cirro for Reactive offers call
 				}
@@ -361,6 +362,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						tdspCodeCCS = tdspCodeCCS.trim();
 						oeSignupVO.setTdspCodeCCS(tdspCodeCCS);
 						offerResponse.setStrTDSPCode(tdspCodeCCS);
+						//TODO: Add TDSP (D000 entry) for DE code in appConstants.properties
 						oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."+ tdspCodeCCS,null, null));
 						oeSignupVO.setTdspName(this.appConstMessageSource.getMessage(tdspCodeCCS, null,null));
 						oeSignupVO.setGeoZone(null);
@@ -429,6 +431,7 @@ public class OEBO extends OeBoHelper implements Constants{
 								strESIDNumber = oeSignupVO.getEsidNumber();
 								offerResponse.setEsid(strESIDNumber);
 								logger.debug("OEBO.getOffers() Getting TDSP Code for ESID Number="+ oeSignupVO.getEsidNumber());
+								//TODO: Enable TOS for DE to return TDSP code ( D000 entry )
 								TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(strESIDNumber,oeSignupVO.getCompanyCode(),sessionId);
 								if ((tdspByESIDResponse != null) && (StringUtils.isNotBlank(tdspByESIDResponse.getServiceId()))) {
 									String tdspCodeCCS = tdspByESIDResponse.getServiceId();

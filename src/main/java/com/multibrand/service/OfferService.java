@@ -115,6 +115,7 @@ public class OfferService extends BaseAbstractService {
 		PromoOfferResponse promoOfferResponse = null;
 		try {
 			OEDomain proxyclient = getOEServiceProxy();
+			//TODO: DE enabled in OEDomain
 			promoOfferResponse = proxyclient
 					.getOfferPricingFromCCS(offerPricingRequest);
 

@@ -216,6 +216,7 @@ public class OEService extends BaseAbstractService {
 		{
 			BpMatchCCSResponse bpMatchCCSResponse = null ;
 			try {
+				//TODO: Make DE available in OEDomain
 				bpMatchCCSResponse = oeDomainPortProxy.getBPMatchStatusFromCCS(request);
 			} catch (Exception e) {
 				logger.error("error while executing getBPMatchStatusFromCCS() method from OEDomain web service");
@@ -578,6 +579,8 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 			ProspectResponse  response = null;
 			try {
 				//OEDomain proxyclient = getOEServiceProxy();
+
+				//TODO: Make DE available in OEDomain
 				response= oeDomainPortProxy.getProsectData(request);
 			} catch (Exception e) {
 				logger.error("Error in method: submitKbaAnswer");

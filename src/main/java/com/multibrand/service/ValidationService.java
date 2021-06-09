@@ -98,7 +98,7 @@ public class ValidationService extends BaseAbstractService {
 			long startTime=CommonUtil.getStartTime();
 			logger.debug(" START *******ValidationService:: validatePosID API**********");
 			try{
-				
+				//TODO: DE available in ValidationDomain
 				response = validationDomainPortProxy.validatePosID(validatePosIdReq);
 				logger.debug("inside service validatePosId:: after call ::"+CommonUtil.doRender(validatePosIdReq));
 				logger.debug("inside validatePosId:: response is :: "+CommonUtil.doRender(response));
@@ -132,7 +132,7 @@ public class ValidationService extends BaseAbstractService {
 			long startTime=CommonUtil.getStartTime();
 			logger.debug(" START *******ValidationService:: validatePosIdWihKBA API**********");
 			try{
-				
+				//TODO: Enable DE in Validation Domain
 				response = validationDomainPortProxy.validatePosidWithKBA(validatePosIdKBAReq);
 				logger.debug("inside service validatePosIdWihKBA:: after call ::"+CommonUtil.doRender(validatePosIdKBAReq));
 				logger.debug("inside validatePosIdWihKBA:: response is :: "+CommonUtil.doRender(response));
@@ -170,7 +170,7 @@ public class ValidationService extends BaseAbstractService {
 			try {
 				logger.debug("inside service validateReferralId:: inside try");
 				
-
+				//TODO: DE available in ValidationDomain
 				response = validationDomainPortProxy.validateReferralId(validateReferralIdRequest);
 				logger.debug("inside service validateReferralId:: after call ::"+CommonUtil.doRender(validateReferralIdRequest));
 				logger.debug("inside validateReferralId:: response is :: "+CommonUtil.doRender(response));
