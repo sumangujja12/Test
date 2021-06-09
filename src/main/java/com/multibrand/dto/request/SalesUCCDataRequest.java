@@ -5,16 +5,13 @@ import javax.validation.constraints.Size;
 import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.NotEmpty;
 
-public class SalesUCCDataRequest extends SalesBaseRequest{
+public class SalesUCCDataRequest extends SalesOERequest{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	@NotEmpty
-	@Size(max = 10)
-	private String trackingId;
 	
 	@NotEmpty
 	@Size(max = 40)
@@ -53,14 +50,6 @@ public class SalesUCCDataRequest extends SalesBaseRequest{
 
 	public void setMviDate(String mviDate) {
 		this.mviDate = mviDate;
-	}
-
-	public String getTrackingId() {
-		return trackingId;
-	}
-
-	public void setTrackingId(String trackingId) {
-		this.trackingId = trackingId;
 	}
 
 	public String getLastName() {
