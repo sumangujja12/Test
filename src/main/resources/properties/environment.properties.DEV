@@ -134,6 +134,9 @@ ws.rest.ccs.google.product.set.url=http://sapcmq02:8001/sap/opu/odata/sap/ZE_WEB
 GME.MYACCOUNT.LOGIN.URL=https://myaccount-test.greenmountain.com/
 GME.MYACCOUNT.PASSWORD.RESET.URL=https://myaccount-test.greenmountain.com/ResetPassword/
 
+
+# TODO : Any need for DE content server ?
+
 #Content server props
 gm.content.server.endpoint.url=http://txaixebxindxs01:13180/cd-service/gme/cdws/odata.svc/
 content.rest.server.url=http://txaixebxindxs02:13180/contentService/content/getContentData

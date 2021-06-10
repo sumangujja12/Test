@@ -809,6 +809,8 @@ public class ContentHelper implements Constants {
 			brandId = CommonUtil.getBrandIdFromCompanycodeForTogglz(companyCode, brandId);
 			ContentDataRequest contentDataRequest  = new ContentDataRequest();			
 			contentDataRequest.setBrandId(brandId);
+			
+			// TODO: Handle DE URL if Togglz entry is added for DE Brand
 			contentDataRequest.setEndPointUri(getEndPointURL(brandId));
 			contentDataRequest.setPublicationId(getPublicationId(brandId, languageCode));
 			if(StringUtils.equalsIgnoreCase(companyCode, COMPANY_CODE_GME)) {

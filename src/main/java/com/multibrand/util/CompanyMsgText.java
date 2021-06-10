@@ -33,7 +33,7 @@ public static enum CREDIT_AGENCY_ENUM{
 
 	}
 	
-	
+	//TODO: Add DE company code entry
 	public static enum COMPANY_CODE_ENUM{
 		CC0121("0121",  "www.reliant.com","1-866-RELIANT" ),
 		CC0271("0271", "www.greenmountainenergy.com","1-855-236-1312"),

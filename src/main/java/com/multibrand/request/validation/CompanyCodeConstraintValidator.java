@@ -13,6 +13,8 @@ public class CompanyCodeConstraintValidator implements
 ConstraintValidator<ValidateCompanyCode, String>, Constants{
 
 	private List<String> companyCodeList = null;
+	
+	//TODO : Add DE Company Code
 	private String[] companyCodeArr = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
 	
 	@Override

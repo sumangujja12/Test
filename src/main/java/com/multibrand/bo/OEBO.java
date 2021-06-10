@@ -2302,6 +2302,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	                        }
 	                }
 						CompanyMsgText.COMPANY_CODE_ENUM companyCodeEnum = null;
+						
+						//TODO: DE specific condition check ?
 						if(StringUtils.isNotEmpty (creditCheckRequest.getBrandId()) && (creditCheckRequest.getBrandId().equals("CE"))){
 							companyCodeEnum = CompanyMsgText.COMPANY_CODE_ENUM.valueOf("CC"+creditCheckRequest.getCompanyCode()+"_"+creditCheckRequest.getBrandId()); 
 						}else{
@@ -3181,6 +3183,8 @@ public class OEBO extends OeBoHelper implements Constants{
 
 		try {
 			String urlNewOccpConfForm = StringUtils.EMPTY;
+			
+			//TODO : Add Condition for DE Company Code and URL in appConstant ?
 			if (COMPANY_NAME_RELIANT.equalsIgnoreCase(companyName)) {
 				urlNewOccpConfForm = appConstMessageSource.getMessage(
 						MSG_KEY_URL_NEW_CONF_FORM_RELIANT, null, null);
@@ -6317,6 +6321,8 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 				.round(newCreditScoreResponse.getStrDepositAmt()
 						.floatValue()))));
 			
+			
+			//TODO : Check for DE specific company code ?
 			if(StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_TYPE_AA)
 					&& ( StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ||
 							StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT))) {

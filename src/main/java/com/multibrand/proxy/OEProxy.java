@@ -136,7 +136,8 @@ public class OEProxy extends BaseAbstractService {
 		NewCreditScoreResponse response = null;
 
 		try {
-
+			
+			//TODO: Make DE available in OEDomain
 			// Call NRGWS OEDomain.getNewCreditScore
 			response = oeDomainPortProxy.getNewCreditScore(creditScoreRequest);
 		
