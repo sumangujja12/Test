@@ -77,7 +77,8 @@ public class ContentHelper implements Constants {
 	public String getPublicationId(String brandId, String languageCode) {
 
 		brandId = brandId != null ? brandId : StringUtils.EMPTY;
-
+		
+		//TODO: DE: ? check if DE needs to be added
 		if (languageCode != null && Constants.LANG_ES.equalsIgnoreCase(languageCode)) {
 			return envMessageReader.getMessage(brandId.toLowerCase() + Constants.PUB + Constants.ES.toLowerCase());
 		} else {
@@ -810,7 +811,7 @@ public class ContentHelper implements Constants {
 			ContentDataRequest contentDataRequest  = new ContentDataRequest();			
 			contentDataRequest.setBrandId(brandId);
 			
-			// TODO: Handle DE URL if Togglz entry is added for DE Brand
+			//TODO: DE: Handle DE URL if Togglz entry is added for DE Brand
 			contentDataRequest.setEndPointUri(getEndPointURL(brandId));
 			contentDataRequest.setPublicationId(getPublicationId(brandId, languageCode));
 			if(StringUtils.equalsIgnoreCase(companyCode, COMPANY_CODE_GME)) {

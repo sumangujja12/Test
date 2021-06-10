@@ -106,11 +106,17 @@ public interface Constants {
 	public static final String COMPANY_CODE_EE = "0400";
 	public static final String COMPANY_CODE_DISCOUNTPOWER = "0391";
 	
+	//FIXED: DE: Added company code entry for DE
+	public static final String COMPANY_CODE_DE = "0315";
+	
 	public static final String COMPANY_NAME_RELIANT = "Reliant";
 	public static final String COMPANY_NAME_GME = "Green Mountain";
 	public static final String COMPANY_NAME_PENNYWISE = "Discount Power";
 	public static final String COMPANY_NAME_CIRRO = "Cirro";
 	public static final String COMPANY_NAME_EE = "Everything Energy";
+	
+	//FIXED: DE: Added company name entry for Direct Energy
+	public static final String COMPANY_NAME_DE = "Direct Energy";
 	
 	public static final String BRAND_ID_RELIANT = "RE";
 	public static final String BRAND_ID_GME = "GM";
@@ -120,6 +126,10 @@ public interface Constants {
 	public static final String BRAND_ID_DISCOUNTPOWER = "DP";
 	public static final String CCS_BRAND_ID_GME = "GR";
 	public static final String BRAND_ID_GMD = "GMD";
+	
+	//FIXED: DE: Added brandId entry for DE
+	public static final String BRAND_ID_DE = "DE";
+	
 	
 	public static final String ALT_BRAND_ID_RELIANT = "REL";
 	public static final String ALT_BRAND_ID_GME = "GME";
@@ -132,6 +142,9 @@ public interface Constants {
 	public static final String BRAND_NAME_PENNYWISE = "Discount Power";
 	public static final String BRAND_NAME_CIRRO = "Cirro";
 	public static final String BRAND_NAME_EE = "Everything Energy";
+	
+	//FIXED: DE: Added brandName entry for DE
+	public static final String BRAND_NAME_DE = "Direct Energy";
 	
 	public static final String LDAP_ORG_GME = "greenmountainresidential.com";
 	public static final int OAM_LOCKOUT_EXPIRY = 24;
@@ -833,6 +846,9 @@ public interface Constants {
 	public static final String MSG_KEY_URL_NEW_CONF_FORM_GME = "url.new.occupant.confirmation.form.gme";
 	public static final String MSG_KEY_URL_NEW_CONF_FORM_CIRRO = "url.new.occupant.confirmation.form.cirro";
 	public static final String MSG_KEY_URL_NEW_CONF_FORM_PENNYWISE = "url.new.occupant.confirmation.form.pennywise";
+	
+	//FIXED: DE: Added entry for MSG KEY for NEW CONF FORM of DE
+	public static final String MSG_KEY_URL_NEW_CONF_FORM_DE = "url.new.occupant.confirmation.form.de";
 	
 	public static final String PLAN_TYPE_FIXED = "Fixed";
 	public static final String PLAN_TYPE_VARIABLE = "Variable";

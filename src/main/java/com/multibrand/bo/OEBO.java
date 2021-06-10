@@ -3197,6 +3197,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			} else if (COMPANY_NAME_PENNYWISE.equalsIgnoreCase(companyName)) {
 				urlNewOccpConfForm = appConstMessageSource.getMessage(
 						MSG_KEY_URL_NEW_CONF_FORM_PENNYWISE, null, null);
+			} else if (COMPANY_NAME_DE.equalsIgnoreCase(companyName)) {//FIXED: DE: Added Condition for DE Company Code
+				urlNewOccpConfForm = appConstMessageSource.getMessage(
+						MSG_KEY_URL_NEW_CONF_FORM_DE, null, null);
 			}
 			messageCodeText = msgSource.getMessage(
 					MESSAGE_CODE_NOTIFY_SWITCH_HOLD,

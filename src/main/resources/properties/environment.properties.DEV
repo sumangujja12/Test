@@ -144,6 +144,9 @@ re.content.server.endpoint.url=https://stg-content.nrg.com/reliant/content/clien
 pw.content.server.endpoint=http://txaixebxbls01:18081/client/v2/content.svc/
 ce.content.server.endpoint=http://txaixebxindxs01:13180/cd-service/cirro/cdws/odata.svc/
 
+# FIXED: DE: Added key for DE content server, needs review and addition of URL if needed
+de.content.server.endpoint=
+
 #Tempalte Id's
 re.tempalte.id_desktop=111201
 re.tempalte.id_mobile=TODO

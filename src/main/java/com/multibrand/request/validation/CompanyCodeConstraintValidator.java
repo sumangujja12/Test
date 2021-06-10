@@ -14,8 +14,8 @@ ConstraintValidator<ValidateCompanyCode, String>, Constants{
 
 	private List<String> companyCodeList = null;
 	
-	//TODO : Add DE Company Code
-	private String[] companyCodeArr = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
+	//FIXED : Added DE Company Code
+	private String[] companyCodeArr = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE, COMPANY_CODE_DE} ;
 	
 	@Override
 	public void initialize(ValidateCompanyCode constraintAnnotation) {

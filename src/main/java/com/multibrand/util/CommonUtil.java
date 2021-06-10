@@ -1556,6 +1556,9 @@ public class CommonUtil implements Constants {
 		} else if (BRAND_ID_EE.equalsIgnoreCase(brandId)
 				|| COMPANY_CODE_EE.equalsIgnoreCase(companyCode)) {
 			companyName = COMPANY_NAME_EE;
+		}else if (BRAND_ID_DE.equalsIgnoreCase(brandId)
+				|| COMPANY_CODE_DE.equalsIgnoreCase(companyCode)) {//FIXED: DE: Added DE Company code to BrandId match
+			companyName = COMPANY_NAME_DE;
 		}
 		return companyName;
 	}
