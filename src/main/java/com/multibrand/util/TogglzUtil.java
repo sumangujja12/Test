@@ -60,7 +60,7 @@ public class TogglzUtil implements Constants {
 		boolean featureStatus = false;
 		List<Feature> features = new ArrayList<>();
 		try {
-			//TODO: DE features should exit in SalesAPI instances
+			//TODO: DE: DE features should exit in SalesAPI instances
 			response = togglzHelper.checkIfFeatureIsEnabled(getEnvProperty(Constants.DEFAULT_GROUP_NAME, null), featureName);
 			
 			features = response.get("nonCacheableFeatures");

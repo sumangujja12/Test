@@ -168,7 +168,7 @@ public class TOSService extends BaseAbstractService
         TOSDomain proxyclient = getTOSDomainProxy();
         long startTime = CommonUtil.getStartTime();
     try {
-    	//TODO: Enable DE in TOSDomain
+    	//TODO: DE: Enable DE in TOSDomain
         tdspByESIDResponse = proxyclient.getTDSPFromESID(tdspByESIDRequest);
         this.utilityloggerHelper.logTransaction("ccsGetTDSPFromESID", false, tdspByESIDRequest, tdspByESIDResponse, tdspByESIDResponse.getStrErrMsg(), CommonUtil.getElapsedTime(startTime), "", sessionId, companyCode);
         if(logger.isDebugEnabled()){

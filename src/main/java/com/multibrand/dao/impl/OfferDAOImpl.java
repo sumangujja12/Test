@@ -59,7 +59,7 @@ public class OfferDAOImpl implements OfferDAOIF,DBConstants,Constants{
 		Map<String,Object> resultMap = new HashMap<String, Object>();
 		BaseStoredProcedure storedProc = null;
 		String companyName = StringUtils.EMPTY;
-		//TODO: Will DE have any POW offers?
+		//TODO: DE: Will DE have any POW offers?
 		if( (StringUtils.equals(companyCode,CIRRO_COMPANY_CODE) &&  (StringUtils.equals(brandId, CIRRO_BRAND_NAME)) )  ){
 			companyName ="cirro";
 		} else if ( StringUtils.equals(companyCode,GME_RES_COMPANY_CODE)) {
@@ -67,7 +67,7 @@ public class OfferDAOImpl implements OfferDAOIF,DBConstants,Constants{
 		}  else if(StringUtils.equals(companyCode,COMPANY_CODE_RELIANT)) {
 			companyName ="reliant";
 		}
-		//TODO: create store proc for DE if necessary
+		//TODO: DE: create store proc for DE if necessary
 		String sqlQuery = sqlMessage.getMessage(companyName+"."+PROC_CPDB_GET_POW_OFFER , null, null );
 		 //Ends - POD POW Changes -Arumugam
 		logger.info("sqlQuery from getPOWOffer():: "+sqlQuery);

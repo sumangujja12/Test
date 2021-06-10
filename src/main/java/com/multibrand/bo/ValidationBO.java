@@ -291,12 +291,12 @@ public class ValidationBO extends BaseBO {
 			 * Step 5: Make validatePosId call
 			 */
 			recentCallMade=RECENT_CALL_MADE_POSID;
-			//TODO: Add DE to togglz CommonUtil
+			//TODO: DE: Add DE to togglz CommonUtil
 			boolean isNewPosidCallEnabled = togglzUtil.getFeatureStatusFromTogglzByBrandId(TOGGLZ_FEATURE_NEW_POSID_CALL,performPosIdBpRequest.getCompanyCode(), performPosIdBpRequest.getBrandId());
 			if(isNewPosidCallEnabled){
-				//TODO: Add DE CommonUtil.getBrandIdFromCompanycodeForCCS
+				//TODO: DE: Add DE CommonUtil.getBrandIdFromCompanycodeForCCS
 				ValidatePosIdKBARequest validatePosIdReq= validateRequestHandler.createPoisdWithKBARequest(performPosIdBpRequest);
-				//TODO: enable DE in ValidationDomain
+				//TODO: DE: enable DE in ValidationDomain
 				validatePosIdKBAResponse=validationService.validatePosIdWihKBA(validatePosIdReq);
 			} else{
 				validatePosIdKBAResponse= validatePosIdOldCSSCall(performPosIdBpRequest);

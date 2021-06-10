@@ -342,7 +342,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			try {
 				oeSignupVO.setCompanyCode(companyCode);
 				oeSignupVO.setBrandId(brandId);
-				//TODO: is there any charityId for DE brandId?
+				//TODO: DE: is there any charityId for DE brandId?
 				if(null!=brandId && brandId.equals(CIRRO_BRAND_NAME)){
 					oeSignupVO.setCharityId(CIRRO_DUMMY_CHARITY_ID); //Setting Dummy CharityId for Cirro for Reactive offers call
 				}
@@ -362,7 +362,7 @@ public class OEBO extends OeBoHelper implements Constants{
 						tdspCodeCCS = tdspCodeCCS.trim();
 						oeSignupVO.setTdspCodeCCS(tdspCodeCCS);
 						offerResponse.setStrTDSPCode(tdspCodeCCS);
-						//TODO: Add TDSP (D000 entry) for DE code in appConstants.properties
+						//TODO: DE: Add TDSP (D000 entry) for DE code in appConstants.properties
 						oeSignupVO.setTdspCode(this.appConstMessageSource.getMessage("ccs.tdsp.web.equivalent."+ tdspCodeCCS,null, null));
 						oeSignupVO.setTdspName(this.appConstMessageSource.getMessage(tdspCodeCCS, null,null));
 						oeSignupVO.setGeoZone(null);
@@ -431,7 +431,7 @@ public class OEBO extends OeBoHelper implements Constants{
 								strESIDNumber = oeSignupVO.getEsidNumber();
 								offerResponse.setEsid(strESIDNumber);
 								logger.debug("OEBO.getOffers() Getting TDSP Code for ESID Number="+ oeSignupVO.getEsidNumber());
-								//TODO: Enable TOS for DE to return TDSP code ( D000 entry )
+								//TODO: DE: Enable TOS for DE to return TDSP code ( D000 entry )
 								TdspByESIDResponse tdspByESIDResponse = this.tosService.ccsGetTDSPFromESID(strESIDNumber,oeSignupVO.getCompanyCode(),sessionId);
 								if ((tdspByESIDResponse != null) && (StringUtils.isNotBlank(tdspByESIDResponse.getServiceId()))) {
 									String tdspCodeCCS = tdspByESIDResponse.getServiceId();
@@ -2303,7 +2303,7 @@ public class OEBO extends OeBoHelper implements Constants{
 	                }
 						CompanyMsgText.COMPANY_CODE_ENUM companyCodeEnum = null;
 						
-						//TODO: DE specific condition check ?
+						//TODO: DE: specific condition check ?
 						if(StringUtils.isNotEmpty (creditCheckRequest.getBrandId()) && (creditCheckRequest.getBrandId().equals("CE"))){
 							companyCodeEnum = CompanyMsgText.COMPANY_CODE_ENUM.valueOf("CC"+creditCheckRequest.getCompanyCode()+"_"+creditCheckRequest.getBrandId()); 
 						}else{
@@ -3184,7 +3184,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		try {
 			String urlNewOccpConfForm = StringUtils.EMPTY;
 			
-			//TODO : Add Condition for DE Company Code and URL in appConstant ?
+			//TODO: DE: Add Condition for DE Company Code and URL in appConstant ?
 			if (COMPANY_NAME_RELIANT.equalsIgnoreCase(companyName)) {
 				urlNewOccpConfForm = appConstMessageSource.getMessage(
 						MSG_KEY_URL_NEW_CONF_FORM_RELIANT, null, null);
@@ -6322,7 +6322,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 						.floatValue()))));
 			
 			
-			//TODO : Check for DE specific company code ?
+			//TODO: DE: Check for DE specific company code ?
 			if(StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_TYPE_AA)
 					&& ( StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ||
 							StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT))) {

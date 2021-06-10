@@ -140,7 +140,7 @@ public class OEService extends BaseAbstractService {
 	    String response = null;
 	    long startTime = CommonUtil.getStartTime();
 	 try{
-		 	//TODO: Make DE available in OEDomain
+		 	//TODO: DE: Make DE available in OEDomain
 	        response = oeDomainPortProxy.getTDSPSpecificCalendarDates(request);
 	        this.utilityloggerHelper.logTransaction("getTDSPSpecificCalendarDates", false, request, response,"", CommonUtil.getElapsedTime(startTime), "", sessionId, request.getStrCompanyCode());
 	        if(logger.isDebugEnabled()){
@@ -217,7 +217,7 @@ public class OEService extends BaseAbstractService {
 		{
 			BpMatchCCSResponse bpMatchCCSResponse = null ;
 			try {
-				//TODO: Make DE available in OEDomain
+				//TODO: DE: Make DE available in OEDomain
 				bpMatchCCSResponse = oeDomainPortProxy.getBPMatchStatusFromCCS(request);
 			} catch (Exception e) {
 				logger.error("error while executing getBPMatchStatusFromCCS() method from OEDomain web service");
@@ -581,7 +581,7 @@ public ProspectResponse getProspectData(ProspectRequest request)   {
 			try {
 				//OEDomain proxyclient = getOEServiceProxy();
 
-				//TODO: Make DE available in OEDomain
+				//TODO: DE: Make DE available in OEDomain
 				response= oeDomainPortProxy.getProsectData(request);
 			} catch (Exception e) {
 				logger.error("Error in method: submitKbaAnswer");
