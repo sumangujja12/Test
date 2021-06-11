@@ -14,7 +14,7 @@ public class ContractOffer implements Constants {
 	private String numberOfTreesSaved="";
 	private String totalPoundOfCO2="";
 	private String totalMilesNotDriven="";
-	private String totalNewsPapersRectcled="";
+	private String totalNewsPapersRecycled="";
 	private String offerTeaser="";
 	private String planDisclaimer="";
 	private String eflDocId="";
@@ -599,15 +599,15 @@ public class ContractOffer implements Constants {
 		this.totalMilesNotDriven = totalMilesNotDriven;
 	}
 	/**
-	 * @return the totalNewsPapersRectcled
+	 * @return the totalNewsPapersRecycled
 	 */
-	public String getTotalNewsPapersRectcled() {
-		return totalNewsPapersRectcled;
+	public String getTotalNewsPapersRecycled() {
+		return totalNewsPapersRecycled;
 	}
 	/**
-	 * @param totalNewsPapersRectcled the totalNewsPapersRectcled to set
+	 * @param totalNewsPapersRecycled the totalNewsPapersRecycled to set
 	 */
-	public void setTotalNewsPapersRectcled(String totalNewsPapersRectcled) {
-		this.totalNewsPapersRectcled = totalNewsPapersRectcled;
+	public void setTotalNewsPapersRecycled(String totalNewsPapersRecycled) {
+		this.totalNewsPapersRecycled = totalNewsPapersRecycled;
 	}	
 }
