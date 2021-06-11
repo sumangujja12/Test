@@ -1,6 +1,5 @@
 package com.multibrand.bo;
 
-import java.math.BigDecimal;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -19,7 +18,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.validation.ConstraintValidatorContext;
 import javax.validation.Valid;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -32,8 +30,6 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.NoSuchMessageException;
@@ -62,7 +58,6 @@ import com.multibrand.domain.KbaErrorDTO;
 import com.multibrand.domain.KbaQuestionDTO;
 import com.multibrand.domain.KbaQuestionRequest;
 import com.multibrand.domain.KbaQuestionResponse;
-import com.multibrand.domain.KbaQuizAnswerDTO;
 import com.multibrand.domain.KbaResponseAssessmentDTO;
 import com.multibrand.domain.KbaResponseOutputDTO;
 import com.multibrand.domain.KbaResponseReasonDTO;
@@ -82,7 +77,6 @@ import com.multibrand.domain.PromoOfferOutDataAvgPriceMapEntry;
 import com.multibrand.domain.PromoOfferRequest;
 import com.multibrand.domain.PromoOfferResponse;
 import com.multibrand.domain.PromoOfferTDSPCharge;
-import com.multibrand.domain.ProspectEFLRequest;
 import com.multibrand.domain.ProspectEFLResponse;
 import com.multibrand.domain.ProspectRequest;
 import com.multibrand.domain.ProspectResponse;
@@ -134,11 +128,9 @@ import com.multibrand.dto.response.CheckPermitResponse;
 import com.multibrand.dto.response.EnrollmentResponse;
 import com.multibrand.dto.response.EsidDetailsResponse;
 import com.multibrand.dto.response.EsidResponse;
-import com.multibrand.dto.response.IdentityResponse;
 import com.multibrand.dto.response.PersonResponse;
 import com.multibrand.dto.response.SalesBaseResponse;
 import com.multibrand.dto.response.SalesHoldLookupResponse;
-import com.multibrand.dto.response.SalesOfferDetailsResponse;
 import com.multibrand.dto.response.ServiceLocationResponse;
 import com.multibrand.dto.response.TLPOfferResponse;
 import com.multibrand.dto.response.UCCDataResponse;
@@ -148,7 +140,6 @@ import com.multibrand.exception.OEException;
 import com.multibrand.helper.ContentHelper;
 import com.multibrand.proxy.OEProxy;
 import com.multibrand.request.handlers.OERequestHandler;
-import com.multibrand.request.validation.CompanyCodeConstraintValidator;
 import com.multibrand.service.AddressService;
 import com.multibrand.service.OEService;
 import com.multibrand.service.OfferService;
@@ -168,7 +159,6 @@ import com.multibrand.vo.request.ESIDDO;
 import com.multibrand.vo.request.ESIDData;
 import com.multibrand.vo.request.EnrollmentReportDataRequest;
 import com.multibrand.vo.request.GetAddressOrEsidFromErcotRequest;
-import com.multibrand.vo.request.KBAQuestionAnswerVO;
 import com.multibrand.vo.request.OESignupVO;
 import com.multibrand.vo.request.TokenRequestVO;
 import com.multibrand.vo.response.AffiliateOfferDO;
@@ -4913,18 +4903,21 @@ private TLPOfferDO[] constructTLPOfferDOList(
 
 	
 
-	public UCCDataResponse submitUCCData(UCCDataRequest uccDataRequest, String sessionId){
+	public UCCDataResponse submitUCCData(UCCDataRequest uccDataRequest){
 		
 		
 		UCCDataResponse uccDataResponse = new UCCDataResponse();
-		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();
-		LinkedHashSet<String> serviceLocationResponseErrorList = new LinkedHashSet<>();
+		UpdateServiceLocationRequest requestData = new UpdateServiceLocationRequest();		
 
 		if (StringUtils.isNotEmpty(uccDataRequest.getTrackingId()))
 			requestData.setTrackingId(uccDataRequest.getTrackingId());
 		requestData.setCompanyCode(uccDataRequest.getCompanyCode());
+	   
+		if(StringUtils.isNotBlank(uccDataRequest.getMviDate())) {
+			
+			requestData.setServiceStartDate(uccDataRequest.getMviDate());
+		}
 		
-
 		ServiceLocationResponse serviceLocationResponse =  getEnrollmentData(uccDataRequest.getTrackingId());
 		
 		if(serviceLocationResponse != null){
@@ -4933,9 +4926,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 			{
 				uccDataResponse.populateAlreadySubmittedEnrollmentResponse();
 				return uccDataResponse;	
-			}
-			
-			serviceLocationResponseErrorList = CommonUtil.getSetFromPipeSeparatedString(serviceLocationResponse.getErrorCdlist());
+			}			
 			
 			if( (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getFirstName(), uccDataRequest.getFirstName())) 
 					|| (!StringUtils.equalsIgnoreCase(serviceLocationResponse.getPersonResponse().getLastName(), uccDataRequest.getLastName())) ) {
@@ -4946,91 +4937,7 @@ private TLPOfferDO[] constructTLPOfferDOList(
 				uccDataResponse.setMessageText(MESSAGE_TEXT_INFO_MISMATCH);
 				
 			}else{
-				
-				String personId = getPersonIdByTrackingNo(requestData
-						.getTrackingId());
-		
-				// Update service location and person table only when a valid person
-				// id
-				// is returned from getPersonIdByTrackingNo
-		
-				if (StringUtils.isNotEmpty(personId)) {
-		
-					/* Setting service addresses */
-					requestData.setRecentCallMade(UCC_DATA);
-					
-					requestData.setSecurityMethod(SECURITY_METHOD_UCC);
-					
-					if(!StringUtils.equals(ZERO, uccDataRequest.getDepositAmount())) {
-						requestData.setPayCode(YES);	
-						requestData.setDepositCode(DEPOSIT_OWED);
-						requestData.setDepositAmount(uccDataRequest.getDepositAmount());
-						serviceLocationResponseErrorList.add(DEPOSITHOLD);
-						
-					} else {					
-						requestData.setPayCode(FLAG_NO);
-						requestData.setDepositCode(DEPOSIT_NONE);
-						requestData.setDepositAmount(ZERO);
-						serviceLocationResponseErrorList.remove(DEPOSITHOLD);
-					}
-					
-		
-					/* Updating service location affiliate table */
-					requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(uccDataRequest.getCallExecuted(),serviceLocationResponse.getCallExecutedFromDB()));
-					requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
-					String errorCode = this.updateServiceLocation(requestData);
-					if (StringUtils.isNotBlank(errorCode)){
-						logger.debug("Finished processing updateServiceLocation, errorCode = "
-								+ errorCode);
-																				
-						uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-						uccDataResponse.setStatusCode(STATUS_CODE_STOP);
-						uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
-						uccDataResponse.setMessageText(MESSAGE_TEXT_TRACKING_NUMBER_NOT_UPDATED);
-						
-					} else {
-						uccDataResponse.setResultCode(RESULT_CODE_SUCCESS);
-						uccDataResponse.setStatusCode(STATUS_CODE_CONTINUE);
-					}
-		
-					UpdatePersonRequest requestDataPerson = new UpdatePersonRequest();
-					/* Updating person affiliate table */
-					errorCode = EMPTY;
-					requestDataPerson.setPersonId(personId);
-					// requestDataPerson.setLanguageCode(locale);
-					requestDataPerson.setFirstName(uccDataRequest.getFirstName());
-					requestDataPerson.setLastName(uccDataRequest.getLastName());					
-						requestDataPerson.setSsn(uccDataRequest.getTokenizedSSN());		
-						requestDataPerson.setCredLevelNum(uccDataRequest
-								.getCreditBucket());
-						requestDataPerson.setCredSourceNum(uccDataRequest
-								.getCreditSource());
-						requestDataPerson.setCredScoreNum(uccDataRequest
-								.getCreditScore());
-						requestDataPerson.setAdvActionData(uccDataRequest
-								.getCreditFactors());
-		
-					errorCode = this.updatePerson(requestDataPerson);
-					if (StringUtils.isNotBlank(errorCode)) {
-						logger.debug("Finished processing updateServiceLocation, errorCode = "
-								+ errorCode);
-						
-						uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-						uccDataResponse.setStatusCode(STATUS_CODE_STOP);
-						uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
-						uccDataResponse.setMessageText(MESSAGE_TEXT_PERSON_NOT_UPDATED);
-						
-					} else {
-						uccDataResponse.setResultCode(RESULT_CODE_SUCCESS);
-						uccDataResponse.setStatusCode(STATUS_CODE_CONTINUE);
-					}
-				}else{
-					uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
-					uccDataResponse.setStatusCode(STATUS_CODE_STOP);
-					uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
-					uccDataResponse.setMessageText(MESSAGE_TEXT_PERSON_NOT_FOUND);
-					
-				}
+				uccDataResponse = updateServiceLocationWithValidPersonId(requestData,uccDataRequest,serviceLocationResponse);
 			}
 		}else{
 			uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
@@ -5040,6 +4947,103 @@ private TLPOfferDO[] constructTLPOfferDOList(
 		}
 		
 		return uccDataResponse;
+	}
+	
+	 
+	private UCCDataResponse updateServiceLocationWithValidPersonId(UpdateServiceLocationRequest requestData,UCCDataRequest uccDataRequest, ServiceLocationResponse serviceLocationResponse) {
+
+		UCCDataResponse uccDataResponse = new UCCDataResponse();
+		LinkedHashSet<String> serviceLocationResponseErrorList=null;
+		serviceLocationResponseErrorList = CommonUtil.getSetFromPipeSeparatedString(serviceLocationResponse.getErrorCdlist());
+		String personId = getPersonIdByTrackingNo(requestData
+				.getTrackingId());
+
+		// Update service location and person table only when a valid person
+		// id
+		// is returned from getPersonIdByTrackingNo
+
+		if (StringUtils.isNotEmpty(personId)) {
+			
+			if(serviceLocationResponseErrorList==null) {
+				serviceLocationResponseErrorList = new LinkedHashSet<>();
+			}
+			
+			/* Setting service addresses */
+			requestData.setRecentCallMade(UCC_DATA);
+			
+			requestData.setSecurityMethod(SECURITY_METHOD_UCC);
+			
+			if(!StringUtils.equals(ZERO, uccDataRequest.getDepositAmount())) {				
+				requestData.setPayCode(YES);	
+				requestData.setDepositCode(DEPOSIT_OWED);
+				requestData.setDepositAmount(uccDataRequest.getDepositAmount());
+				serviceLocationResponseErrorList.add(DEPOSITHOLD);
+				
+			} else {					
+				requestData.setPayCode(FLAG_NO);
+				requestData.setDepositCode(DEPOSIT_NONE);
+				requestData.setDepositAmount(ZERO);
+				serviceLocationResponseErrorList.remove(DEPOSITHOLD);
+			}
+			
+
+			/* Updating service location affiliate table */
+			requestData.setCallExecuted(CommonUtil.getPipeSeperatedCallExecutedParamForDB(uccDataRequest.getCallExecuted(),serviceLocationResponse.getCallExecutedFromDB()));
+			requestData.setErrorCdList(StringUtils.join(serviceLocationResponseErrorList,SYMBOL_PIPE));
+			String errorCode = this.updateServiceLocation(requestData);
+			if (StringUtils.isNotBlank(errorCode)){
+				logger.debug("Finished processing updateServiceLocation, errorCode = "
+						+ errorCode);
+																		
+				uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+				uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+				uccDataResponse.setMessageText(MESSAGE_TEXT_TRACKING_NUMBER_NOT_UPDATED);
+				
+			} else {
+				uccDataResponse.setResultCode(RESULT_CODE_SUCCESS);
+				uccDataResponse.setStatusCode(STATUS_CODE_CONTINUE);
+			}
+
+			UpdatePersonRequest requestDataPerson = new UpdatePersonRequest();
+			/* Updating person affiliate table */
+			errorCode = EMPTY;
+			requestDataPerson.setPersonId(personId);
+			// requestDataPerson.setLanguageCode(locale);
+			requestDataPerson.setFirstName(uccDataRequest.getFirstName());
+			requestDataPerson.setLastName(uccDataRequest.getLastName());					
+				requestDataPerson.setSsn(uccDataRequest.getTokenizedSSN());		
+				requestDataPerson.setCredLevelNum(uccDataRequest
+						.getCreditBucket());
+				requestDataPerson.setCredSourceNum(uccDataRequest
+						.getCreditSource());
+				requestDataPerson.setCredScoreNum(uccDataRequest
+						.getCreditScore());
+				requestDataPerson.setAdvActionData(uccDataRequest
+						.getCreditFactors());
+
+			errorCode = this.updatePerson(requestDataPerson);
+			if (StringUtils.isNotBlank(errorCode)) {
+				logger.debug("Finished processing updateServiceLocation, errorCode = "
+						+ errorCode);
+				
+				uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+				uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+				uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+				uccDataResponse.setMessageText(MESSAGE_TEXT_PERSON_NOT_UPDATED);
+				
+			} else {
+				uccDataResponse.setResultCode(RESULT_CODE_SUCCESS);
+				uccDataResponse.setStatusCode(STATUS_CODE_CONTINUE);
+			}
+		}else{
+			uccDataResponse.setResultCode(RESULT_CODE_EXCEPTION_FAILURE);
+			uccDataResponse.setStatusCode(STATUS_CODE_STOP);
+			uccDataResponse.setMessageCode(MESSAGE_CODE_TECHNICAL_ERROR);
+			uccDataResponse.setMessageText(MESSAGE_TEXT_PERSON_NOT_FOUND);
+			
+		}
+	  return uccDataResponse;
 	}
 	
 	/**

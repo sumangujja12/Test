@@ -2,49 +2,45 @@ package com.multibrand.dto.request;
 
 import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Length;
-
 import com.multibrand.request.validation.CurrentOrFutureDate;
 import com.multibrand.request.validation.NotEmpty;
-import com.multibrand.request.validation.SizeConstraint;
 
-public class UCCDataRequest extends BaseAffiliateRequest {
+public class SalesUCCDataRequest extends SalesOERequest{
 
+	/**
+	 * 
+	 */
 	private static final long serialVersionUID = 1L;
 	
-		
-	@NotEmpty
-	@Size(max = 10, groups = SizeConstraint.class)
-	private String trackingId;
 	
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String lastName;
 	
 
 	@NotEmpty
-	@Size(max = 40, groups = SizeConstraint.class)
+	@Size(max = 40)
 	String firstName;
 		
-	@Size(max = 20, groups = SizeConstraint.class)
+	@Size(max = 20)
 	String tokenizedSSN;
 	
 	@NotEmpty
-	@Size(max = 8, groups = SizeConstraint.class)
+	@Size(max = 8)
 	String depositAmount;
 	
-	@Size(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4)
 	String creditScore;
 	
-	@Size(max = 4, groups = SizeConstraint.class)
+	@Size(max = 4)
 	String creditSource;
 	
-	@Size(max = 1, groups = SizeConstraint.class)
+	@Size(max = 1)
 	String creditBucket;
 		
-	@Size(max = 2000, groups = SizeConstraint.class)
-	String creditFactors;
-	
+	@Size(max = 2000)
+	String creditFactors;	
+
 	@CurrentOrFutureDate
     private String mviDate;
 
@@ -54,15 +50,6 @@ public class UCCDataRequest extends BaseAffiliateRequest {
 
 	public void setMviDate(String mviDate) {
 		this.mviDate = mviDate;
-	}
-
-
-	public String getTrackingId() {
-		return trackingId;
-	}
-
-	public void setTrackingId(String trackingId) {
-		this.trackingId = trackingId;
 	}
 
 	public String getLastName() {
@@ -129,9 +116,6 @@ public class UCCDataRequest extends BaseAffiliateRequest {
 		this.creditFactors = creditFactors;
 	}
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}	
 	
 	
 }

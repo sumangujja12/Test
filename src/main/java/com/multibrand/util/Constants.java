@@ -1673,5 +1673,6 @@ public interface Constants {
 	public static final String ZIRTUE_RECEIPT_NUMBER = "ZIRTUE.REL.0102.1";
 	
 	public static final String FLAG_OTHER = "Other";
+	public static final String SALES_API_SUBMIT_UCC_DATA= "submitUCCData";
 
 }
