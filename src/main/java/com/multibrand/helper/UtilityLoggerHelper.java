@@ -59,13 +59,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 	    		|| StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
 	    	Gson gson = new Gson();
 	    	txnLogRequest.setRequestData(gson.toJson(logvo.getRequestData()));
-	    	if(logvo.getResponseData() instanceof Response) {
-	    		Object responsePojo = ((Response)logvo.getResponseData()).getEntity();
-	    		txnLogRequest.setResponseData(gson.toJson(responsePojo));
-	    		
-	    	} else {
-	    		txnLogRequest.setResponseData(gson.toJson(logvo.getResponseData()));
-	    	}
+	    	txnLogRequest = getTxnLogRequest(logvo,txnLogRequest,gson);
 	    	
 	    } else {
 	 	    txnLogRequest.setRequestData(XmlUtil.pojoToXMLwithRootElement(logvo.getRequestData(),logvo.getTransactionType()));
@@ -78,8 +72,7 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 			client.setUserLoginID(logvo.getUserId());
 		    client.setUserUniqueID(logvo.getUserUniqueId());
 	    txnLogRequest.setClient(client);}*/
-	    if(StringUtils.isNotBlank(logvo.getUserId()) 
-	    		&& (StringUtils.contains(logvo.getTransactionType(), OE_RESOURCE_API_BASE_PATH) || StringUtils.contains(logvo.getTransactionType(), SALES_API_BASE_PATH))){
+	    if(StringUtils.isNotBlank(logvo.getUserId())){
 	    	Client client= new Client();
 	    	client.setUserLoginID(logvo.getUserId());
 	    	if(StringUtils.isNotBlank(logvo.getConfirmationNumber())) 	client.setConfirmationNumber(CommonUtil.generateConfirmationNumber());
@@ -261,5 +254,16 @@ public class UtilityLoggerHelper extends BaseAbstractService implements Constant
 			}
 		}
 		
+	}
+	
+	private TransactionLogRequest getTxnLogRequest(LoggingVO logvo,TransactionLogRequest txnLogRequest,Gson gson){
+		if(logvo.getResponseData() instanceof Response) {
+    		Object responsePojo = ((Response)logvo.getResponseData()).getEntity();
+    		txnLogRequest.setResponseData(gson.toJson(responsePojo));
+    		
+    	} else {
+    		txnLogRequest.setResponseData(gson.toJson(logvo.getResponseData()));
+    	}
+		return txnLogRequest;
 	}
 }

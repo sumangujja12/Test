@@ -125,7 +125,7 @@ public class SalesBO extends OeBoHelper implements Constants {
 				response.getMetadata().add(CONST_TRACKING_ID, identityResponse.getTrackingId());
 				response.getMetadata().add(CONST_GUID, identityResponse.getGuid());
 				
-				if(StringUtils.isEmpty(identityResponse.getTrackingId())){
+				if(StringUtils.isEmpty(identityResponse.getTrackingId()) && StringUtils.isEmpty(identityResponse.getStatusCode())){
 					IdentityResponse bpMatchResponse = new IdentityResponse();
 					bpMatchResponse.setStatusCode(Constants.STATUS_CODE_STOP);
 					bpMatchResponse.setErrorCode(HTTP_INTERNAL_SERVER_ERROR);
