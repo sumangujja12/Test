@@ -536,7 +536,7 @@ public class ContentHelper implements Constants {
 			contractOffer.setNumberOfTreesSaved(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYTREES_2000));
 			contractOffer.setTotalPoundOfCO2(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYCO2AV_2000));
 			contractOffer.setTotalMilesNotDriven(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYMND_2000));
-			contractOffer.setTotalNewsPapersRectcled(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYNEWS_2000));
+			contractOffer.setTotalNewsPapersRecycled(getEnvironmentImpactValueByKey(campEnvironmentDetails, YRLYNEWS_2000));
 			
 			int key =  (int) Double.parseDouble(getEnvironmentImpactValueByKey(campEnvironmentDetails, RENEW_PERCENT_CD));
 			contractOffer.setProductContent(com.multibrand.util.Constants.BY_PRODUCT_KEY.getOrDefault(key, Constants.BLANK));
