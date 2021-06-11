@@ -1059,8 +1059,6 @@ public interface Constants {
 	public static final String COURTESY_CREDIT_FAILURE_CODE   = "99";
 	public static final String FAILURE_CODE_01   = "01";
 	public static final String COURTESY_CREDIT_RES_CODE_DESC   = "Failure";
-	public static final List<String>  FREEZE_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE = Arrays.asList("A", "B" ,"F");
-	public static final List<String> FRAUD_OR_MILITARY_CREDIT_CHECK_ZES_SEC_NOTI_HOLD_ALERT_CODE = Arrays.asList ("01","05","06","07","03","02","V","X","W","N","Q","R","T");
 	public static final String MESSAGE_CREDIT_FREEZE= "CREDIT_FREEZE";
 	public static final String MESSAGE_CREDIT_FRAUD= "CREDIT_FRAUD";
 	
@@ -1674,5 +1672,20 @@ public interface Constants {
 	
 	public static final String FLAG_OTHER = "Other";
 	public static final String SALES_API_SUBMIT_UCC_DATA= "submitUCCData";
-
+	
+	public static final String OESIGNUPVO="OESIGNUPVO";
+	public static final String PROMOCHARITYOUTDATA="promoCharityOutData[";
+	public static final String CHARITYDETAILSVO="charityDetailsVO[";
+	public static final String START="Start:";
+	public static final String OEBO_EXCEPTION_LOG="OEBO.getESIDInfo() Exception occurred when invoking getESIDInfo";
+	public static final String PROCESSING_UPDATESERVICELOCATION="Processing updateServiceLocation ...";
+	public static final String TRACKING_NOT_NULL="trackingId must not be null.";
+	public static final String LOGGER_REQUEST="request = ";
+	public static final String LOGGER_PERFORMPOSIDBPMATCH="inside performPosidAndBpMatch:: affiliate Id : ";
+	public static final String TOKENRESPONSE="tokenResponse";
+	public static final String TOKENTDL="tokenTdl";
+	public static final String TOKENSSN="tokenSSN";
+	public static final String FINISH_PROCESS_UPDATESERVLOCATION="Finished processing updateServiceLocation, errorCode = ";
+	public static final String PROMOCODE_NOT_EMPTY="promoCode may not be Empty";
+	public static final String COMPANYCODE="Company code ";
 }

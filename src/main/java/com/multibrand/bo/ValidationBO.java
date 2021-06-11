@@ -426,9 +426,9 @@ public class ValidationBO extends BaseBO {
 			ValidateAddressRequest requestDto)
 					throws OEException {
 
-		String METHOD_NAME = "ValidationBO: validateAddress(..)";
+		String methodName = "ValidationBO: validateAddress(..)";
 
-		logger.debug("Start:" + METHOD_NAME);
+		logger.debug("Start :{}" , methodName);
 
 		ValidateAddressResponse responseDto = new ValidateAddressResponse();
 
@@ -448,15 +448,15 @@ public class ValidationBO extends BaseBO {
 					addressValidateResponse);
 
 		} catch (RemoteException e) {
-			logger.error("SERVICE ERROR:" + METHOD_NAME, e);
-			handleServiceException(responseDto, METHOD_NAME, e, Boolean.FALSE);
+			logger.error("SERVICE ERROR:{}" , methodName, e);
+			handleServiceException(responseDto, methodName, e, Boolean.FALSE);
 
 		} catch (Exception e) {
-			logger.error("ERROR:" + METHOD_NAME, e);
-			handleServiceException(responseDto, METHOD_NAME, e, Boolean.FALSE);
+			logger.error("ERROR:{}" , methodName, e);
+			handleServiceException(responseDto, methodName, e, Boolean.FALSE);
 		}
 
-		logger.debug("END:" + METHOD_NAME);
+		logger.debug("END:{}" , methodName);
 
 		return responseDto;
 	}
