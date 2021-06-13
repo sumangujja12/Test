@@ -50,6 +50,7 @@ public class ContractOffer implements Constants {
 	
 	@SerializedName("messageKey")
 	private String offerCode="";
+	private String OfferCellTrackCode="";
 	private String errorMessage="";
 	private transient  String offerFamily ="";
 	
@@ -609,5 +610,17 @@ public class ContractOffer implements Constants {
 	 */
 	public void setTotalNewsPapersRecycled(String totalNewsPapersRecycled) {
 		this.totalNewsPapersRecycled = totalNewsPapersRecycled;
+	}
+	/**
+	 * @return the offerCellTrackCode
+	 */
+	public String getOfferCellTrackCode() {
+		return OfferCellTrackCode;
+	}
+	/**
+	 * @param offerCellTrackCode the offerCellTrackCode to set
+	 */
+	public void setOfferCellTrackCode(String offerCellTrackCode) {
+		OfferCellTrackCode = offerCellTrackCode;
 	}	
 }

@@ -993,6 +993,7 @@ public com.multibrand.vo.response.EsidProfileResponse getESIDProfile(String esid
 					String avgPrice = getAvgPrice( offerPriceWraperDOList);
 										
 					contractOffer.setPrice(avgPrice);
+					contractOffer.setOfferCellTrackCode(offerVO.getStrOfferCellTrackCode());
 					contractOffer.setOfferFamily(contractOffer.getOfferCode());
 										
 					contractList.add(contractOffer);
