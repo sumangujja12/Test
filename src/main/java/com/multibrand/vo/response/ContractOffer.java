@@ -50,7 +50,7 @@ public class ContractOffer implements Constants {
 	
 	@SerializedName("messageKey")
 	private String offerCode="";
-	private String OfferCellTrackCode="";
+	private String offerCellTrackCode="";
 	private String errorMessage="";
 	private transient  String offerFamily ="";
 	
@@ -615,12 +615,13 @@ public class ContractOffer implements Constants {
 	 * @return the offerCellTrackCode
 	 */
 	public String getOfferCellTrackCode() {
-		return OfferCellTrackCode;
+		return offerCellTrackCode;
 	}
 	/**
 	 * @param offerCellTrackCode the offerCellTrackCode to set
 	 */
 	public void setOfferCellTrackCode(String offerCellTrackCode) {
-		OfferCellTrackCode = offerCellTrackCode;
-	}	
+		this.offerCellTrackCode = offerCellTrackCode;
+	}
+	
 }
