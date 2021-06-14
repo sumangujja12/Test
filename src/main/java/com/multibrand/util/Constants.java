@@ -762,7 +762,7 @@ public interface Constants {
 	public static final String LOCALE_LANGUAGE_CODE_S = "S";
 	public static final String INSUFFICIENT_INPUTS="INSUFFICIENT INPUTS";
 	// Jenith
-	public static final String APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX = "ccs.tdsp.web.equivalent.";
+	public static final String APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX = "ccs.tdsp.web.equivalent."; 
 	
 	public static enum ADDRESS_MATCH {
 		COMPLETE_MATCH, PARTIAL_MATCH, NO_MATCH, NOT_VALID_ADDRESS, INVALID_APT, MISSING_APT, SYS_ERROR
