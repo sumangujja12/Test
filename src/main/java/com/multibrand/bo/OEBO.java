@@ -2331,7 +2331,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			populateDepositReasonTextInResponse(response, newCreditScoreResponse, creditCheckRequest, localeObj);
 			 // Start Relient.com | 94809 | Sprint -33| vsingh | 24/03/2021
 			
-				
+			//TODO: DE: Any scenario for DE ?
 				if((StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_RELIANT) ||
 						StringUtils.equalsIgnoreCase(creditCheckRequest.getCompanyCode(), COMPANY_CODE_GME) ) &&
 						StringUtils.equalsIgnoreCase(creditCheckRequest.getChannelType(), CHANNEL_AA)
