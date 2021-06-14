@@ -1747,6 +1747,9 @@ public interface Constants {
 	public static final String YRLYNEWS_2000 = "YRLYNEWS_2000";
 	public static final String RENEW_PERCENT_CD = "RENEW_PERCENT_CD";
 	
+	public static final String PREDICTABLE12_CATEGORY = "PREDICTABLE12";
+	public static final String E_FIXEDCHG="E_FIXEDCHG";
+	
 
 }
 	

@@ -65,6 +65,8 @@ public class OfferDO {
 
   private TDSPChargeDO tdspChargeDO;
   
+  private String externalDunsNumber;
+  
   
 public String getStrTDSPCode() {
 	return strTDSPCode;
@@ -489,5 +491,12 @@ public String getStrProductType() {
  */
 public void setStrProductType(String strProductType) {
 	this.strProductType = strProductType;
-}  
+}
+public String getExternalDunsNumber() {
+	return externalDunsNumber;
+}
+public void setExternalDunsNumber(String externalDunsNumber) {
+	this.externalDunsNumber = externalDunsNumber;
+}
+
 }

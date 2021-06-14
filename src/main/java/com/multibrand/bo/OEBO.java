@@ -4233,7 +4233,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	private AffiliateOfferDO[] constructAffiliateOfferDOList(
 			OfferResponse offerResponse, AffiliateOfferRequest request,StringBuffer erpErrorOffers) {
 		OfferDO[] offerDOArr = offerResponse.getOfferDOList();		
-		ArrayList<AffiliateOfferDO> affiliateOfferDOList = new ArrayList<AffiliateOfferDO>();
+		
+		ArrayList<AffiliateOfferDO> affiliateOfferDOList = new ArrayList<>();
 		if (offerDOArr != null) {			
 			int i = 0;
 			for (OfferDO offerDO : offerDOArr) {
@@ -4257,28 +4258,15 @@ public class OEBO extends OeBoHelper implements Constants{
 						.getStrContractTerm()) ? ZERO : offerDO
 						.getStrContractTerm();
 				int intContractTerm = Integer.parseInt(contractTerm);
-
-				if (intContractTerm > 1) {
-					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
-					affiliateOfferDO.setContractTerm(contractTerm);
-				} else {
-					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
-					affiliateOfferDO.setContractTerm(ZERO);
-				}
+				affiliateOfferDO = getPlanTypeAndContractTerm(affiliateOfferDO,intContractTerm,contractTerm);
 
                 /*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
 				if(StringUtils.equals(request.getCompanyCode(), COMPANY_CODE_RELIANT)){
 				String prodType = getProdType(offerDO);
-				if (StringUtils.contains(prodType,Constants.TOU) || StringUtils.contains(prodType,Constants.IND)) {
-					affiliateOfferDO.setPlanType(PLAN_TYPE_INDEXED);
-				}else if (StringUtils.startsWithIgnoreCase(prodType,Constants.RATETYPE_VARIABLE)) {
-					affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
-				}else {
-					affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
-				}
+				/*START | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
+                affiliateOfferDO = getPlanType(prodType,affiliateOfferDO);
 
 				}
-
 				/*END | 59040: INDEXED plans are showing up with prodType as VARIABLE or FIXED in NRGREST API Response for getOffers call | asingh | 14/10/2020 */
 
 				String docId = offerDO.getStrEFLDocID();
@@ -4289,8 +4277,6 @@ public class OEBO extends OeBoHelper implements Constants{
 				logger.debug("get Web URL in constructAffiliateOfferDO  "+webURL);
 				affiliateOfferDO.setEflURL(webURL + eflUri);
 
-				//affiliateOfferDO.setEflURL(webURL + CONST_FILES
-				//		+ offerDO.getStrEFLDocID() + CONST_DOT_PDF);
 
 				affiliateOfferDO.setTosURL(webURL + CONST_FILES
 						+ offerDO.getStrTOSDocID() + CONST_DOT_PDF);
@@ -4319,68 +4305,18 @@ public class OEBO extends OeBoHelper implements Constants{
 				affiliateOfferDO.setCreditMinUsageThreshold(getAveragePriceMinThreshold(offerDO));
 				//End - Alt Channels -- US14171
 				
-				if (!StringUtils.equalsIgnoreCase(
-						offerDO.getStrOfferCategory(), CATEGORY_TWW)) {
-					affiliateOfferDO
-							.setAveragePrice500(getAveragePrice500(offerDO));
-					affiliateOfferDO
-							.setAveragePrice1000(getAveragePrice1000(offerDO));
-					affiliateOfferDO
-							.setAveragePrice2000(getAveragePrice2000(offerDO));
-				} else {
-					affiliateOfferDO.setAveragePrice500(getKeyPrice(
-							offerDO, EFL_1R0500));
-					affiliateOfferDO.setAveragePrice1000(getKeyPrice(
-							offerDO, EFL_1R1000));
-					affiliateOfferDO.setAveragePrice2000(getKeyPrice(
-							offerDO, EFL_1R2000));
-				}
-
+				affiliateOfferDO = getStrOfferCategoryBasedOnOffer(offerDO,affiliateOfferDO);
+				
+			/*START:PBI 110800 |Update sales/offer-details API to return Predictable 12 monthly price | asingh |06/10/2021*/
+				String fixedMonthlyCharge = getKeyPrice(offerDO, E_FIXEDCHG);
+				affiliateOfferDO = getStrFixedMonthlyCharge(fixedMonthlyCharge,affiliateOfferDO);
+					
+				
+		    /*END 110800 |Update sales/offer-details API to return Predictable 12 monthly price | asingh |06/10/2021*/
 				affiliateOfferDO.setOfferCategory(offerDO
 						.getStrOfferCategory());
-
-				if (OFFER_CATEGORY_LIST_CONSERVATION.contains(affiliateOfferDO.getOfferCategory()) 
-						|| (StringUtils.equalsIgnoreCase(affiliateOfferDO.getOfferCategory(), OFFER_CATEGORY_CONS600)) 
-						|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_SEASONAL, affiliateOfferDO.getOfferCategory())) 
-						|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_3TIER_500, affiliateOfferDO.getOfferCategory())) 
-						|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_3TIER_1350, affiliateOfferDO.getOfferCategory()))) 
-				{
-					String energyCharge = getEnergyCharge(offerDO,
-							request.getCompanyCode());
-					String energyCharge2 = getEnergyCharge2(offerDO) ;
-					affiliateOfferDO.setEnergyChargeText(msgSource
-							.getMessage(
-									CONSERVATION_ENERGY_CHARGE,
-									new String[] {
-											energyCharge,
-											energyCharge2 },
-									CommonUtil.localeCode(request
-											.getLanguageCode())));
-					affiliateOfferDO.setEnergyCharge(energyCharge);
-					affiliateOfferDO.setEnergyChargeOther(energyCharge2);
-				} else if((StringUtils.equalsIgnoreCase(OFFER_CATEGORY_EV_PLAN, affiliateOfferDO.getOfferCategory()))){
-					String energyCharge = getKeyPrice(offerDO,
-							EFL_ONPK);
-					String energyCharge2 = getKeyPrice(offerDO,
-							EFL_OFFPK1);					
-					affiliateOfferDO.setEnergyCharge(energyCharge);
-					affiliateOfferDO.setEnergyChargeOther(energyCharge2);
-				}else {
-					String energyCharge = getEnergyCharge(offerDO,
-							request.getCompanyCode());
-					affiliateOfferDO.setEnergyChargeText(msgSource
-							.getMessage(
-									NOT_CONSERVATION_ENERGY_CHARGE,
-									new String[] { energyCharge },
-									CommonUtil.localeCode(request
-											.getLanguageCode())));
-					affiliateOfferDO.setEnergyCharge(energyCharge);
-					if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
-							|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
-							|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
-						affiliateOfferDO.setEnergyChargeOther(DEFAULT_PRICE_VALUE);
-					}
-				}
+				affiliateOfferDO = getEnergyChargeBasedOnOfferCategory(affiliateOfferDO,offerDO,request);
+				
 				String energyCharge = getEnergyCharge(offerDO,
 						request.getCompanyCode());
 				String usageAmt = getKeyPrice(offerDO, LPP_CAP);
@@ -4394,47 +4330,11 @@ public class OEBO extends OeBoHelper implements Constants{
 				//else
 					//affiliateOfferDO.setUsageCharge(null);
 				//End : PBI 76839 | Single Offer API | 11-16-2020 
+
 				
-				if (!StringUtils.isEmpty(baseCharge)) {
+				affiliateOfferDO = getBaseUsageChargeSingleOfferAPI(baseCharge,affiliateOfferDO,request,usageAmt,offerDO);
 
-					//Start : PBI 76839 | Single Offer API | 11-16-2020 
-					affiliateOfferDO.setBaseCharge(baseCharge);
-					//End : PBI 76839 | Single Offer API | 11-16-2020 
 
-					String baseChargeText = msgSource.getMessage(
-							BASE_CHARGE_PER_MONTH, new String[] { baseCharge },
-							CommonUtil.localeCode(request.getLanguageCode()));
-					if (StringUtils.isEmpty(usageAmt)) {
-						affiliateOfferDO.setBaseUsageChargeText(baseChargeText);
-						//Start : PBI 76839 | Single Offer API | 11-16-2020 
-						affiliateOfferDO.setUsageChargeThreshold(null);
-						//End : PBI 76839 | Single Offer API | 11-16-2020 
-					} else {
-
-						//Start : PBI 76839 | Single Offer API | 11-16-2020 
-						affiliateOfferDO.setUsageChargeThreshold(usageAmt);
-						//End : PBI 76839 | Single Offer API | 11-16-2020 
-
-						DecimalFormat decimalformat = new DecimalFormat("#0");
-						usageAmt = decimalformat.format(Double
-								.parseDouble(usageAmt));
-
-						String usageChargeText = msgSource.getMessage(
-								USAGE_CHARGE_PER_MONTH, new String[] {
-										getKeyPrice(offerDO, S_CUSTCHR2),
-										usageAmt }, CommonUtil
-										.localeCode(request.getLanguageCode()));
-						affiliateOfferDO
-								.setBaseUsageChargeText(baseChargeText + "; "
-										+ usageChargeText);
-					}
-
-				} else {
-					//Start : PBI 76839 | Single Offer API | 11-16-2020 
-					affiliateOfferDO.setBaseCharge(null);
-					//End : PBI 76839 | Single Offer API | 11-16-2020 
-					affiliateOfferDO.setBaseUsageChargeText(StringUtils.EMPTY);					
-				}
 				
 				boolean validOffer = checkMandatoryFields(affiliateOfferDO, energyCharge);
 				if(!validOffer){
@@ -4442,32 +4342,8 @@ public class OEBO extends OeBoHelper implements Constants{
 					continue;
 				}
 				
-
-					if (StringUtils.isEmpty(offerDO.getTdspChargeDO()
-							.getPerMonthValue())
-							&& StringUtils.isEmpty(offerDO.getTdspChargeDO()
-									.getPerKWValue())) {
-						affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
-					} else {
-						affiliateOfferDO.setTdspChargeText(msgSource
-								.getMessage(TDSP_CHARGE_TEXT,
-										new String[] {
-												offerDO.getTdspChargeDO()
-														.getPerMonthValue(),
-												offerDO.getTdspChargeDO()
-														.getPerKWValue() },
-										CommonUtil.localeCode(request
-												.getLanguageCode())));
-						affiliateOfferDO.setTdspChargeKWh(offerDO.getTdspChargeDO()
-								.getPerKWValue()+SYMBOL_CENTS);
-						affiliateOfferDO.setTdspChargeMo(SYMBOL_DOLLAR+offerDO.getTdspChargeDO().getPerMonthValue());
-						if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
-								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
-								|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
-							affiliateOfferDO.setTdspChargeOther(SYMBOL_DOLLAR+DEFAULT_PRICE_VALUE);
-						}
-						
-					}
+				affiliateOfferDO = getTdspChargeBasedOnOfferCategory(affiliateOfferDO,offerDO,request);
+					
 				
 				affiliateOfferDOList.add(affiliateOfferDO);
 			}
@@ -7065,6 +6941,7 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 	}
 
 
+
 	
 	private void setPriceInOfferPriceDO(PromoOfferOutDataAvgPriceMapEntry promoOfferOutDataAvgPriceMapEntry,OfferPriceDO offerPriceDO) {
 		DecimalFormat decimalformat = new DecimalFormat("#0.0");
@@ -7263,5 +7140,179 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 
 		return validateUserIdResponse;
 	}
+
+
+	
+	private AffiliateOfferDO getPlanType(String prodType,AffiliateOfferDO affiliateOfferDO){
+		 if (StringUtils.contains(prodType,Constants.TOU) || StringUtils.contains(prodType,Constants.IND)) {
+				affiliateOfferDO.setPlanType(PLAN_TYPE_INDEXED);
+			}else if (StringUtils.startsWithIgnoreCase(prodType,Constants.RATETYPE_VARIABLE)) {
+				affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
+			}else {
+				affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
+			}
+		 return affiliateOfferDO;
+	}
+	
+	private AffiliateOfferDO getStrOfferCategoryBasedOnOffer(OfferDO offerDO,AffiliateOfferDO affiliateOfferDO){
+		if (!StringUtils.equalsIgnoreCase(
+				offerDO.getStrOfferCategory(), CATEGORY_TWW)) {
+			affiliateOfferDO
+					.setAveragePrice500(getAveragePrice500(offerDO));
+			affiliateOfferDO
+					.setAveragePrice1000(getAveragePrice1000(offerDO));
+			affiliateOfferDO
+					.setAveragePrice2000(getAveragePrice2000(offerDO));
+		} else {
+			affiliateOfferDO.setAveragePrice500(getKeyPrice(
+					offerDO, EFL_1R0500));
+			affiliateOfferDO.setAveragePrice1000(getKeyPrice(
+					offerDO, EFL_1R1000));
+			affiliateOfferDO.setAveragePrice2000(getKeyPrice(
+					offerDO, EFL_1R2000));
+		}
+		return affiliateOfferDO;
+	}
+	
+	private AffiliateOfferDO getStrFixedMonthlyCharge(String fixedMonthlyCharge,AffiliateOfferDO affiliateOfferDO){
+		DecimalFormat decimalFormatTwoPlace = new DecimalFormat("#0.00");
+		if(StringUtils.isNotBlank(fixedMonthlyCharge)){
+			affiliateOfferDO.setStrFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(fixedMonthlyCharge)));
+			}else{
+				affiliateOfferDO.setStrFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(ZERO)));
+		    }
+		return affiliateOfferDO;
+	}
+	
+	private AffiliateOfferDO getEnergyChargeBasedOnOfferCategory(AffiliateOfferDO affiliateOfferDO,OfferDO offerDO,AffiliateOfferRequest request){
+		if (OFFER_CATEGORY_LIST_CONSERVATION.contains(affiliateOfferDO.getOfferCategory()) 
+				|| (StringUtils.equalsIgnoreCase(affiliateOfferDO.getOfferCategory(), OFFER_CATEGORY_CONS600)) 
+				|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_SEASONAL, affiliateOfferDO.getOfferCategory())) 
+				|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_3TIER_500, affiliateOfferDO.getOfferCategory())) 
+				|| (StringUtils.equalsIgnoreCase(OFFER_CATEGORY_3TIER_1350, affiliateOfferDO.getOfferCategory()))) 
+		{
+			String energyCharge = getEnergyCharge(offerDO,
+					request.getCompanyCode());
+			String energyCharge2 = getEnergyCharge2(offerDO) ;
+			affiliateOfferDO.setEnergyChargeText(msgSource
+					.getMessage(
+							CONSERVATION_ENERGY_CHARGE,
+							new String[] {
+									energyCharge,
+									energyCharge2 },
+							CommonUtil.localeCode(request
+									.getLanguageCode())));
+			affiliateOfferDO.setEnergyCharge(energyCharge);
+			affiliateOfferDO.setEnergyChargeOther(energyCharge2);
+		} else if((StringUtils.equalsIgnoreCase(OFFER_CATEGORY_EV_PLAN, affiliateOfferDO.getOfferCategory()))){
+			String energyCharge = getKeyPrice(offerDO,
+					EFL_ONPK);
+			String energyCharge2 = getKeyPrice(offerDO,
+					EFL_OFFPK1);					
+			affiliateOfferDO.setEnergyCharge(energyCharge);
+			affiliateOfferDO.setEnergyChargeOther(energyCharge2);
+		}else {
+			String energyCharge = getEnergyCharge(offerDO,
+					request.getCompanyCode());
+			affiliateOfferDO.setEnergyChargeText(msgSource
+					.getMessage(
+							NOT_CONSERVATION_ENERGY_CHARGE,
+							new String[] { energyCharge },
+							CommonUtil.localeCode(request
+									.getLanguageCode())));
+			affiliateOfferDO.setEnergyCharge(energyCharge);
+			if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
+					|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
+					|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
+				affiliateOfferDO.setEnergyChargeOther(DEFAULT_PRICE_VALUE);
+			}
+		}
+		return affiliateOfferDO;
+	}
+	
+	private AffiliateOfferDO getBaseUsageChargeSingleOfferAPI(String baseCharge,AffiliateOfferDO affiliateOfferDO,AffiliateOfferRequest request,String usageAmt,OfferDO offerDO){
+		if (!StringUtils.isEmpty(baseCharge)) {
+			
+			//Start : PBI 76839 | Single Offer API | 11-16-2020 
+			affiliateOfferDO.setBaseCharge(baseCharge);
+			//End : PBI 76839 | Single Offer API | 11-16-2020 
+			
+			String baseChargeText = msgSource.getMessage(
+					BASE_CHARGE_PER_MONTH, new String[] { baseCharge },
+					CommonUtil.localeCode(request.getLanguageCode()));
+			if (StringUtils.isEmpty(usageAmt)) {
+				affiliateOfferDO.setBaseUsageChargeText(baseChargeText);
+				//Start : PBI 76839 | Single Offer API | 11-16-2020 
+				affiliateOfferDO.setUsageChargeThreshold(null);
+				//End : PBI 76839 | Single Offer API | 11-16-2020 
+			} else {
+			
+				//Start : PBI 76839 | Single Offer API | 11-16-2020 
+				affiliateOfferDO.setUsageChargeThreshold(usageAmt);
+				//End : PBI 76839 | Single Offer API | 11-16-2020 
+				
+				DecimalFormat decimalformat = new DecimalFormat("#0");
+				usageAmt = decimalformat.format(Double
+						.parseDouble(usageAmt));
+
+				String usageChargeText = msgSource.getMessage(
+						USAGE_CHARGE_PER_MONTH, new String[] {
+								getKeyPrice(offerDO, S_CUSTCHR2),
+								usageAmt }, CommonUtil
+								.localeCode(request.getLanguageCode()));
+				affiliateOfferDO
+						.setBaseUsageChargeText(baseChargeText + "; "
+								+ usageChargeText);
+			}
+
+		} else {
+			//Start : PBI 76839 | Single Offer API | 11-16-2020 
+			affiliateOfferDO.setBaseCharge(null);
+			//End : PBI 76839 | Single Offer API | 11-16-2020 
+			affiliateOfferDO.setBaseUsageChargeText(StringUtils.EMPTY);					
+		}
+	return affiliateOfferDO;	
+	}
+	
+	private AffiliateOfferDO getTdspChargeBasedOnOfferCategory(AffiliateOfferDO affiliateOfferDO,OfferDO offerDO,AffiliateOfferRequest request){
+		if (StringUtils.isEmpty(offerDO.getTdspChargeDO()
+				.getPerMonthValue())
+				&& StringUtils.isEmpty(offerDO.getTdspChargeDO()
+						.getPerKWValue())) {
+			affiliateOfferDO.setTdspChargeText(StringUtils.EMPTY);
+		} else {
+			affiliateOfferDO.setTdspChargeText(msgSource
+					.getMessage(TDSP_CHARGE_TEXT,
+							new String[] {
+									offerDO.getTdspChargeDO()
+											.getPerMonthValue(),
+									offerDO.getTdspChargeDO()
+											.getPerKWValue() },
+							CommonUtil.localeCode(request
+									.getLanguageCode())));
+			affiliateOfferDO.setTdspChargeKWh(offerDO.getTdspChargeDO()
+					.getPerKWValue()+SYMBOL_CENTS);
+			affiliateOfferDO.setTdspChargeMo(SYMBOL_DOLLAR+offerDO.getTdspChargeDO().getPerMonthValue());
+			if(OFFER_CATEGORY_LIST_TRULYFREEWKND.contains(affiliateOfferDO.getOfferCategory())
+					|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_NIGHTS, affiliateOfferDO.getOfferCategory())
+					|| StringUtils.equalsIgnoreCase(OFFER_CATEGORY_TRUELY_FREE_DAYS, affiliateOfferDO.getOfferCategory())){
+				affiliateOfferDO.setTdspChargeOther(SYMBOL_DOLLAR+DEFAULT_PRICE_VALUE);
+			}
+			
+		}
+		return affiliateOfferDO;
+	}
+	
+	private AffiliateOfferDO getPlanTypeAndContractTerm(AffiliateOfferDO affiliateOfferDO,int intContractTerm,String contractTerm){
+		if (intContractTerm > 1) {
+			affiliateOfferDO.setPlanType(PLAN_TYPE_FIXED);
+			affiliateOfferDO.setContractTerm(contractTerm);
+		} else {
+			affiliateOfferDO.setPlanType(PLAN_TYPE_VARIABLE);
+			affiliateOfferDO.setContractTerm(ZERO);
+		}
+		return affiliateOfferDO;
+	}
+	
 
 }
