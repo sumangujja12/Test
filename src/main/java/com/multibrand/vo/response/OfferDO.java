@@ -65,7 +65,7 @@ public class OfferDO {
 
   private TDSPChargeDO tdspChargeDO;
   
-  private String externalDunsNumber;
+  private String externalDunsNumber; 
   
   
 public String getStrTDSPCode() {
