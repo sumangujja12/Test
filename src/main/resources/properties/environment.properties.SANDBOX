@@ -245,6 +245,9 @@ duplicate.payment.check =X
 0391.CE.web.url=https://stg-signup.cirroenergy.com
 0400.web.url=https://stg-www.everythingenergytx.com
 
+#TODO: DE: Add DE Web URL
+0315.web.url=
+
 # Adode Analytics
 adobe.analytic.template.url=https://reliantenergy.sc.omtrdc.net/b/ss/[ReportSuite]/0?
 template.url.query.list.parameter.one=AQB=1&ndh=1&pageName=myaccount:swap:notification&ch=App%20API&server=api.[BRAND].com&vid=[CANumber]&c.&mycocode=[CompanyCode]&myca=[CANumber]&mymsgid=[MsgId]

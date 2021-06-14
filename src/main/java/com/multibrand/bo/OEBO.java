@@ -3197,9 +3197,9 @@ public class OEBO extends OeBoHelper implements Constants{
 			} else if (COMPANY_NAME_PENNYWISE.equalsIgnoreCase(companyName)) {
 				urlNewOccpConfForm = appConstMessageSource.getMessage(
 						MSG_KEY_URL_NEW_CONF_FORM_PENNYWISE, null, null);
-			} else if (COMPANY_NAME_DE.equalsIgnoreCase(companyName)) {//FIXED: DE: Added Condition for DE Company Code
-				urlNewOccpConfForm = appConstMessageSource.getMessage(
-						MSG_KEY_URL_NEW_CONF_FORM_DE, null, null);
+				} else if (COMPANY_NAME_DE.equalsIgnoreCase(companyName)) {//FIXED: DE: Added Condition for DE Company Code
+					urlNewOccpConfForm = appConstMessageSource.getMessage(
+							MSG_KEY_URL_NEW_CONF_FORM_DE, null, null);
 			}
 			messageCodeText = msgSource.getMessage(
 					MESSAGE_CODE_NOTIFY_SWITCH_HOLD,
@@ -4666,6 +4666,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	
 	private String getEnergyCharge(OfferDO offerDO,String companyCode){
 		String operandName = StringUtils.EMPTY; 
+		
+		//TODO: DE: Any condition for DE ?
 		if(StringUtils.equals(companyCode, COMPANY_CODE_RELIANT)) {
 			operandName = S_UNBUNDLE;
 		}else if(StringUtils.equals(companyCode, COMPANY_CODE_GME)) {
@@ -5571,7 +5573,10 @@ public SalesBaseResponse getKBAQuestionsWithinOE(GetOEKBAQuestionsRequest getOEK
 	ServiceLocationResponse serviceLocationResponse = null;
 	try {
 					
-		if(!StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_CIRRO))
+		//TODO: DE: Add condition for DE
+		//FIXED: DE: Add condition for DE
+		
+		if(!StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_RELIANT) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_GME) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_CIRRO) && !StringUtils.equals(getOEKBAQuestionsRequest.getCompanyCode(), COMPANY_CODE_DE))
 		{  
 			response.setStatusCode(Constants.STATUS_CODE_STOP);
 			response.setErrorCode(HTTP_BAD_REQUEST);

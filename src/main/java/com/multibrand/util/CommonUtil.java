@@ -92,7 +92,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 @Component
 public class CommonUtil implements Constants {
 	static Logger logger = LogManager.getLogger("CommonUtil");
-	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE};
+	protected static final String[] COMPANY_CODE_ARRAY = {COMPANY_CODE_RELIANT, COMPANY_CODE_GME, COMPANY_CODE_PENNYWISE, COMPANY_CODE_EE, COMPANY_CODE_DE};
 	protected static HashSet<String> privacyDataParams = null;
 	protected static HashSet<String> logExcludeResponseMethodList = null;
 	private static final Random rand = new Random();
@@ -2008,6 +2008,9 @@ public class CommonUtil implements Constants {
 			case COMPANY_CODE_PENNYWISE:
 					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_PENNYWISE);
 					break;
+			case COMPANY_CODE_DE: //Fixed: DE: Added case for DE BrandId
+				brandName = BRAND_ID_DE; 
+				break;
 			default:
 				break;
 		}
@@ -2029,6 +2032,9 @@ public class CommonUtil implements Constants {
 			case COMPANY_CODE_DISCOUNTPOWER:
 					brandName = (StringUtils.equalsIgnoreCase(brandId, BRAND_ID_CIRRO) ? BRAND_ID_CIRRO: BRAND_ID_DISCOUNTPOWER);
 					break;
+			case COMPANY_CODE_DE: //Fixed: DE: Added case for DE BrandId
+				brandName = BRAND_ID_DE;
+				break;
 			default:
 				break;
 		}
@@ -2036,6 +2042,8 @@ public class CommonUtil implements Constants {
 		return brandName;
 	}
 	
+	
+	//TODO: DE: No possibility for entry related to DE, need clarification
 	public static String getChannelTypeForTogglz(String channelType){
 		String channel = CHANNEL_AFF;
 		if(channelType == null){

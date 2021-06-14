@@ -254,6 +254,7 @@ private String getLangCode(ProductOfferRequest productOfferRequest) {
 }
 
 
+//TODO: DE: Add entry in appConstants for DE
 private String getBrandNameByCompanyCode(ProductOfferRequest productOfferRequest) {
 	return appConstMessageSource.getMessage(productOfferRequest.getCompanyCode(), null, null);
 }
