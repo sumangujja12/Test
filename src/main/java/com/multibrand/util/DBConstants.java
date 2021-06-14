@@ -301,7 +301,7 @@ public interface DBConstants {
 	public static final String QUERY_GET_SERVICE_LOCATION_AFFILIATE_DETAILS_BY_TRACKING_ID = "query.get.serviceLocationAffiliate.details.by.trackingId";
 	public static final String QUERY_GET_ENROLLMENT_DETAILS_BY_TRACKING_ID_GUID = "query.get.enrollment.details.by.trackingId.guid";
 	public static final String QUERY_GET_ESIDCOUNT = "query.get.esidCount.sqlQuery";
-	public static final String QUERY_GET_EXTERNALID = "query.get.external.sqlQuery";
+	public static final String QUERY_GET_EXTERNALID = "query.get.external.sqlQuery"; 
 	public static final String QUERY_GET_ESIDTYPE = "query.get.esidType.sqlQuery";
 	
 	//CHG0019468 Changes Start

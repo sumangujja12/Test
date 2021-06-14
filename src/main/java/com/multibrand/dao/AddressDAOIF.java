@@ -23,7 +23,7 @@ public interface AddressDAOIF{
 	
 	public EsidResponse getESIDDetails(EsidRequest esidRequest) throws SQLException,Exception;
 	
-	public String getExternalIDfromTDSP(String tdspCd);
+	public String getExternalIDfromTDSP(String tdspCd); 
 }
 
 
