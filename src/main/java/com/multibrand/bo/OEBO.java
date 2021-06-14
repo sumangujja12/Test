@@ -4374,7 +4374,7 @@ public class OEBO extends OeBoHelper implements Constants{
 			for (OfferDO offerDO : offerDOArr) {
 				
 				AffiliateOfferDO affiliateOfferDO = new AffiliateOfferDO();
-				affiliateOfferDO.setExternalDunsNumber(offerDO.getExternalDunsNumber());
+				affiliateOfferDO.setExternalDunsNumber(offerDO.getExternalDunsNumber()); 
 				affiliateOfferDO.setSapPlanName(offerDO.getStrPlanName());
 				affiliateOfferDO.setSapOfferTagline(offerDO
 						.getStrOfferCodeTitle());
