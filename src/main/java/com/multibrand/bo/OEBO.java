@@ -954,7 +954,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		List<OfferDO> offerDOList = new ArrayList<OfferDO>();
 		DecimalFormat decimalformat = new DecimalFormat("#0");
 		PromoOfferOutData[] promoOfferOutDataArr=null;
-		String strExternalDunsNumber=null;
+		String strExternalDunsNumber=null; 
 		if (promoOfferResponse == null) {
 			resultMap.put(ERR_CODE_KEY, ERR_GET_OFFER);
 			resultMap.put(ERROR_TYPE, ERROR_TYPE_CCS);
@@ -1069,7 +1069,7 @@ public class OEBO extends OeBoHelper implements Constants{
 					offerDO.setStrEflUrl(CommonUtil.getDynamicEflUrl(promoOfferOutData.getStrEFLDocID(), promoOfferOutData.getStrEFLSmartCode()));
 					//Start PBI 111082: Update sales/offer-details API to return dunsNumber | vsing | 14/06/2021
 				    strExternalDunsNumber=addressDAO.getExternalIDfromTDSP(appConstMessageSource.getMessage(APP_KEY_CCS_TDSP_TO_WEB_TDSP_PREFIX+ promoOfferOutData.getOfferTDSPCharges()[0].getStrTdsp(), null, null));
-					offerDO.setExternalDunsNumber(strExternalDunsNumber);
+					offerDO.setExternalDunsNumber(strExternalDunsNumber); 
 					
 					// End PBI 111082: Update sales/offer-details API to return dunsNumber | vsing | 14/06/2021
 					
@@ -4372,8 +4372,9 @@ public class OEBO extends OeBoHelper implements Constants{
 		if (offerDOArr != null) {			
 			int i = 0;
 			for (OfferDO offerDO : offerDOArr) {
+				
 				AffiliateOfferDO affiliateOfferDO = new AffiliateOfferDO();
-				affiliateOfferDO.setExternalDunsNumber(offerDO.getExternalDunsNumber());
+				affiliateOfferDO.setExternalDunsNumber(offerDO.getExternalDunsNumber()); 
 				affiliateOfferDO.setSapPlanName(offerDO.getStrPlanName());
 				affiliateOfferDO.setSapOfferTagline(offerDO
 						.getStrOfferCodeTitle());

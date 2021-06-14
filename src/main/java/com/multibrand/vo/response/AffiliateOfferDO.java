@@ -58,7 +58,7 @@ public class AffiliateOfferDO {
 	
 	private String strFixedMonthlyCharge;
 	
-	private String externalDunsNumber;
+	private String externalDunsNumber; 
 
 	public String getSapPlanName() {
 		return sapPlanName;
