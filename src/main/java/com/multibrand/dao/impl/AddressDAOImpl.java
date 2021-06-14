@@ -223,4 +223,29 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 		
 		return esiidResponse;
 	}
+	//Start PBI 111082: Update sales/offer-details API to return dunsNumber | vsing | 14/06/2021
+	public String getExternalIDfromTDSP(String tdspCd) {
+		if(logger.isDebugEnabled()) { 
+			logger.debug("getExternalIDfromTDSP : Entered the method : tdspCd= {}" , tdspCd );
+		}
+		String strExternalDunsNumber =null ;
+		String sqlQuery = sqlMessage.getMessage(QUERY_GET_EXTERNALID, new Object [] {"'"+tdspCd+"'"}, null);
+		logger.debug("getExternalIDfromTDSP : sqlQuery for strExternalDunsNumber: {}" , sqlQuery);
+		
+		strExternalDunsNumber = getDataWithOutParam(sqlQuery);
+		
+		try{
+		   if(StringUtils.isNotBlank(strExternalDunsNumber)){
+			   return  strExternalDunsNumber;
+		   }
+		}catch(Exception e){
+			strExternalDunsNumber=null;
+			logger.debug("::::AddressDAOImpl:::getExternalIDfromTDSP:::failed::",e);
+        }
+		if(logger.isDebugEnabled()) {
+			logger.debug("getExternalIDfromTDSP : before returning value of strExternalDunsNumber :{} " , strExternalDunsNumber);
+		}
+		return strExternalDunsNumber;
+	}
+	//End PBI 111082: Update sales/offer-details API to return dunsNumber | vsing | 14/06/2021
 }

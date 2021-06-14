@@ -22,6 +22,8 @@ public interface AddressDAOIF{
 	List<Map<String,Object>> getESIDTypeList(String esidNumber);
 	
 	public EsidResponse getESIDDetails(EsidRequest esidRequest) throws SQLException,Exception;
+	
+	public String getExternalIDfromTDSP(String tdspCd); 
 }
 
 
