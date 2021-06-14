@@ -1219,7 +1219,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		logger.debug("OEBO.populatePriceInfo() start");
 		PromoOfferOutDataAvgPriceMapEntry[] priceArr = matchingCCSOffer
 				.getAvgPriceMap();
-		List<OfferPriceWraperDO> offerPriceWraperDOList = new ArrayList<OfferPriceWraperDO>();
+		List<OfferPriceWraperDO> offerPriceWraperDOList = new ArrayList<>();
 		for (int j = 0; j < priceArr.length; j++) {
 			OfferPriceWraperDO offerPriceWraperDO = new OfferPriceWraperDO();
 			OfferPriceDO offerPriceDO = new OfferPriceDO();
@@ -4360,7 +4360,8 @@ public class OEBO extends OeBoHelper implements Constants{
 	private AffiliateOfferDO[] constructAffiliateOfferDOList(
 			OfferResponse offerResponse, AffiliateOfferRequest request,StringBuffer erpErrorOffers) {
 		OfferDO[] offerDOArr = offerResponse.getOfferDOList();		
-		ArrayList<AffiliateOfferDO> affiliateOfferDOList = new ArrayList<AffiliateOfferDO>();
+		DecimalFormat decimalFormatTwoPlace = new DecimalFormat("#0.00");
+		ArrayList<AffiliateOfferDO> affiliateOfferDOList = new ArrayList<>();
 		if (offerDOArr != null) {			
 			int i = 0;
 			for (OfferDO offerDO : offerDOArr) {
@@ -4455,7 +4456,15 @@ public class OEBO extends OeBoHelper implements Constants{
 					affiliateOfferDO.setAveragePrice2000(getKeyPrice(
 							offerDO, EFL_1R2000));
 				}
-
+			/*START:PBI 110800 |Update sales/offer-details API to return Predictable 12 monthly price | asingh |06/10/2021*/
+				String fixedMonthlyCharge = getKeyPrice(offerDO, E_FIXEDCHG);
+				if(StringUtils.isNotBlank(fixedMonthlyCharge)){
+				affiliateOfferDO.setStrFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(fixedMonthlyCharge)));
+				}else{
+					affiliateOfferDO.setStrFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(ZERO)));
+			    }	
+				
+		    /*END 110800 |Update sales/offer-details API to return Predictable 12 monthly price | asingh |06/10/2021*/
 				affiliateOfferDO.setOfferCategory(offerDO
 						.getStrOfferCategory());
 
