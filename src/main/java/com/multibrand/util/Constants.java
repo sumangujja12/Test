@@ -1666,10 +1666,7 @@ public interface Constants {
 	public static final String GIACT_ERROR_02="GIACT_ERROR_02";
 	public static final String GIACT_ERROR_03="GIACT_ERROR_03";
 	public static final String BANK_AUTOPAY_INVALID_BANK_ACCOUNT = "MSG_CCSERR_2_INVALID_BNK";
-	
-
-	public static final String ZIRTUE_RECEIPT_NUMBER = "ZIRTUE.REL.0102.1";
-	
+		
 	public static final String FLAG_OTHER = "Other";
 	public static final String SALES_API_SUBMIT_UCC_DATA= "submitUCCData";
 	

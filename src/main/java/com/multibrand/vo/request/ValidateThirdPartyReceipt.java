@@ -5,6 +5,8 @@ public class ValidateThirdPartyReceipt {
 	private String contractAccountNumber;
 	private String paymentAmount;
 	private String companyCode;
+	private String checkDigit;
+	private String receiptNumber;
 		
 	public String getContractAccountNumber() {
 		return contractAccountNumber;
@@ -23,6 +25,18 @@ public class ValidateThirdPartyReceipt {
 	}
 	public void setCompanyCode(String companyCode) {
 		this.companyCode = companyCode;
+	}
+	public String getCheckDigit() {
+		return checkDigit;
+	}
+	public void setCheckDigit(String checkDigit) {
+		this.checkDigit = checkDigit;
+	}
+	public String getReceiptNumber() {
+		return receiptNumber;
+	}
+	public void setReceiptNumber(String receiptNumber) {
+		this.receiptNumber = receiptNumber;
 	}
 	
 	

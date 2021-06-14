@@ -1318,8 +1318,8 @@ public class ValidationBO extends BaseBO {
 			validatePaymentReceiptRequest.setContractAccountNumber(validateThirdPartyReceipt.getContractAccountNumber());
 			validatePaymentReceiptRequest.setPaymentAmount(validateThirdPartyReceipt.getPaymentAmount());
 			validatePaymentReceiptRequest.setCompanyCode(validateThirdPartyReceipt.getCompanyCode());
-			validatePaymentReceiptRequest.setCheckDigit("");
-			validatePaymentReceiptRequest.setReceiptNumber(ZIRTUE_RECEIPT_NUMBER);
+			validatePaymentReceiptRequest.setCheckDigit(validateThirdPartyReceipt.getCheckDigit());
+			validatePaymentReceiptRequest.setReceiptNumber(validateThirdPartyReceipt.getReceiptNumber());
 			
 			Date date = new Date();
 			String formattedPaymentDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
