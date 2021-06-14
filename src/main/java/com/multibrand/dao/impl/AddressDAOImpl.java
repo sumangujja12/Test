@@ -40,6 +40,9 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 	@Autowired
 	@Qualifier("appConstMessageSource")
 	protected ReloadableResourceBundleMessageSource appConstMessageSource;
+	
+	@Autowired
+	StoredProcedureManager storedProcedure;
 
 	@Autowired(required = true)
 	public AddressDAOImpl(
@@ -119,8 +122,8 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 						new GetPendingEnrollmentRequestRowMapper()));
 
 		// Get Store procedure manager service instance
-		StoredProcedureManager storedProcedure = StoredProcedureManager
-				.getInstance();
+		//StoredProcedureManager storedProcedure = StoredProcedureManager
+			//	.getInstance();
 		// execute the procedure
 		storedProc = storedProcedure.createStoredProcedure(getJdbcTemplate(),
 				sqlQuery, inParams, inParamsTypeMap, outParamsTypeMap, OUTPUT);
@@ -179,7 +182,7 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 	public EsidResponse getESIDDetails(EsidRequest getEsiidRequest) throws SQLException,Exception {
 		logger.debug("AddressDAOImpl ::getESIDDetails");
 		EsidResponse esiidResponse=new EsidResponse();
-		BaseStoredProcedure storedProc = null;
+		//BaseStoredProcedure storedProc = null;
 		Map<String, Object> inParams = null;
 		Map<String, Integer> inParamsTypeMap = null;
 		Map<String, ResultObject> outParamsTypeMap = null;
@@ -209,8 +212,8 @@ public class AddressDAOImpl extends AbstractSpringDAO implements
 		}
 		/*inParams.forEach((inputParamValue,inputParamCount) -> logger.info("inParams value"+ inputParamValue +"  inputParamCount "+inputParamCount));*/
 		outParamsTypeMap.put(OUT_CURR_GET_ESI, new ResultObject(OracleTypes.CURSOR,new EsiidInfoResponseRowMapper()));
-		StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
-		storedProc = storedProcedure.createStoredProcedure(getJdbcTemplate(),sqlQuery, inParams, inParamsTypeMap, outParamsTypeMap, OUTPUT);
+		//StoredProcedureManager storedProcedure = StoredProcedureManager.getInstance();
+		BaseStoredProcedure storedProc = storedProcedure.createStoredProcedure(getJdbcTemplate(),sqlQuery, inParams, inParamsTypeMap, outParamsTypeMap, OUTPUT);
 		storedProcResult = storedProc.execute();
 		esiidResponse.setEsidList((List<ESIDData>)storedProcResult.get(OUT_CURR_GET_ESI));
 		for(ESIDData esidData : esiidResponse.getEsidList()){

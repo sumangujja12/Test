@@ -1,36 +1,24 @@
 package com.multibrand.resource;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.web.AnnotationConfigWebContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -39,27 +27,34 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.multibrand.bo.TOSBO;
 import com.multibrand.config.WSConfig;
+import com.multibrand.dao.AddressDAOIF;
+import com.multibrand.dao.ResultObject;
 import com.multibrand.domain.CheckPendingMVORequest;
 import com.multibrand.domain.CheckPendingMVOResponse;
+import com.multibrand.domain.CheckPendingMoveInRequest;
+import com.multibrand.domain.CheckPendingMoveInResponse;
+import com.multibrand.domain.OfferOfContractRequest;
+import com.multibrand.domain.OfferOfContractResponse;
 import com.multibrand.domain.TOSDomain;
+import com.multibrand.manager.StoredProcedureManager;
 import com.multibrand.resources.TOSResource;
+import com.multibrand.resources.requestHandlers.TOSRequestHandler;
 import com.multibrand.service.TOSService;
+//import com.sun.javafx.collections.MappingChange.Map;
+import java.util.Map;
+import com.multibrand.manager.BaseStoredProcedure;
 
 
 
-
-@WebAppConfiguration
-@ActiveProfiles("test")
-@RunWith(SpringJUnit4ClassRunner.class)
-//@PropertySources({@PropertySource("classpath:properties/environment_mobile.properties")})
-@PropertySource("classpath:properties/environment.properties")
-//@ContextConfiguration(classes = { WSConfig.class, MockDatabaseConfig.class }, loader = AnnotationConfigWebContextLoader.class)
-@ContextConfiguration(classes = { WSConfig.class }, loader = AnnotationConfigWebContextLoader.class)
-public class TOSResourceTest {
+public class TOSResourceTest extends AbstractJunitTest{
 	
 	@Autowired
 	@InjectMocks
 	TOSResource tosResource;
+	
+	@Autowired
+	@InjectMocks
+	TOSRequestHandler tOSRequestHandler;
 	
 	
 	private MockMvc mockMvc;
@@ -78,67 +73,51 @@ public class TOSResourceTest {
 	
 	@Autowired
 	@InjectMocks
-	private TOSService tosService;
+	TOSBO tosBO1;
+	
+	//@Mock
+	//TOSBO tosBO;
 	
 	/*@Mock
-	AddressValidationDomain addressValidationDomain;
+	private TOSService tosService;*/
 	
 	@Mock
-	private AddressProxy addressProxy;
-	
-	
-	@Mock
-	private OEDomain oeDomain;
+	private TOSService tosService;
 	
 	@Mock
-	private OEDomainProxy oeDomainProxy;
+	javax.ws.rs.core.Response resp;
+	
+	/*@Mock
+	BaseStoredProcedure baseStoredProcedure;
 	
 	@Mock
-	private TransferServiceDataAccessDomain transferServiceDataAccessDomain;
+	StoredProcedureManager storedProcedure;
 	
 	@Mock
-	private  TransferServiceDataAccessProxy transferServiceDataAccessProxy;
-	
-	@Mock
-	TransferServiceDataAccessDomainProxy transferServiceDataAccessDomainProxy;*/
-	
-	//@Autowired
-	//@InjectMocks
-	//private TOSBO tosBO;
+    //@Qualifier("podJdbcTemplate")
+    private JdbcTemplate jdbcTemplate;*/
 	
 	/*@Autowired
 	@InjectMocks
-	private TOSHelper tosHelper;
+	private AddressDAOIF addressDAO;*/
 	
-	@Autowired
-	@InjectMocks
-	private TosRBService tosRBService;
+	//@Mock
+	//private HttpServletRequest httpRequest;
 	
-	@Mock
-	private ProfileDomainProxy profileDomainProxy;
+		
+	/*@Mock
+	ContentDaoImpl contentDao;*/
 	
-	@Mock
-	private ProfileDomain profileDomain;
-	
-	@Autowired
-	@InjectMocks
-	ChoiceWebDAOImpl choiceWebDAOImpl;
-	
-	@Mock
-	JdbcTemplate jdbcTemplateCPDB;
-	
-	@Mock
-	BaseStoredProcedure baseStoredProcedure;
-	@Mock
-	StoredProcedureManager storedProcedure;
-*/	
+	//@Mock
+	//AbstractMessageSource sqlMessage;
 	
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 
 		// Set up Spring test in web app mode
-		mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+		//mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+		tosResource.setHttpRequest(new MockHttpServletRequest());
 	}
 
 	@Test
@@ -149,33 +128,66 @@ public class TOSResourceTest {
 		response.setMoveOutDate("01/08/2020");
 		response.setPendingMoveOutExists("X");
 		response.setForcedMoveOut("Y");
-				
-		//TdspByESIDResponse tdspByESIDResponse = new TdspByESIDResponse();
+		Mockito.when(tosService.getTOSDomainProxy()).thenReturn(tosDomain);
 		
-		//tdspByESIDResponse.setServiceId("10443720001032191");
+		Mockito.when(tosDomain.checkPendingMoveOut(Mockito.any(CheckPendingMVORequest.class))).thenReturn(response);
+		com.multibrand.vo.response.CheckPendingMVOResponse checkPendingMVOResponse = new com.multibrand.vo.response.CheckPendingMVOResponse();
+		Mockito.when(tosService.checkingPendingMVO(Mockito.any(CheckPendingMVORequest.class), Mockito.any(String.class), Mockito.any(String.class))).thenReturn(response);
+		//Mockito.when(tosBO.checkPendingMVO(Mockito.any(CheckPendingMVORequest.class), Mockito.any(String.class), Mockito.any(String.class))).thenReturn(checkPendingMVOResponse);
+		resp = tosResource.checkPendingMVO("000070555574", "021");
+						
+		}
+	
+	@Test
+	public void testCheckPendingMVI() throws Exception {
 		
-		//when(tosDomainProxy.getTOSDomainProxyClient()).thenReturn(tosDomain);
-		when(tosDomain.checkPendingMoveOut(Mockito.any(CheckPendingMVORequest.class))).thenReturn(response);
+		CheckPendingMoveInResponse chkPndgMovResp = new CheckPendingMoveInResponse();
+		chkPndgMovResp.setErrCode("400");
+		Mockito.when(tosService.getTOSDomainProxy()).thenReturn(tosDomain);
+		Mockito.when(tosDomain.checkPendingMVI(Mockito.any(CheckPendingMoveInRequest.class))).thenReturn(chkPndgMovResp);
 		
-		//when(oeDomainProxy.getOEDomainProxyClient()).thenReturn(oeDomain);
-		//when(oeDomain.getTDSPSpecificCalendarDates(Mockito.anyObject())).thenReturn("12/08/2020");
-		
-		//when(tosDomain.getTDSPFromESID(Mockito.anyObject())).thenReturn(tdspByESIDResponse);
-		
-		
-		this.mockMvc.perform(post("/tos/checkPendingMVO")
-				.content(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-				.param("contractAccountNumber", "000070555574")
-				.param("contractId", "0071399859")
-				.param("businessPartnerNumber", "6005802361")
-				.param("newEsiId", "10443720001032191")
-				.param("oldEsiId", "10443720001032191")
-				.param("newTdsp", "D0002")
-				.param("oldTdsp", "D0002")
-				.param("permitType", "NO_PERMIT"))
-				.andExpect(status().isOk());
+		Mockito.when(tosService.checkingPendingMVI(Mockito.any(CheckPendingMoveInRequest.class), Mockito.any(String.class), Mockito.any(String.class))).thenReturn(chkPndgMovResp);
+		resp = tosResource.checkPendingMVI("000070555574", "6010617433", "P1234568", "021");
+						
 	}
 	
+	/*@Test
+	public void testGetESIDForAddress() throws Exception {
+		
+		
+		
+		ArgumentCaptor<Map<String, Object>> argCaptor = ArgumentCaptor.forClass(Map.class);
+		
+		ArgumentCaptor<Map<String, Integer>> argCaptor1 = ArgumentCaptor.forClass(Map.class);
+		
+		ArgumentCaptor<Map<String, ResultObject>> argCaptor2 = ArgumentCaptor.forClass(Map.class);
+		
+		when(storedProcedure.createStoredProcedure(Mockito.any(JdbcTemplate.class), Mockito.any(String.class), ArgumentMatchers.<Map<String, Object>>any(), ArgumentMatchers.<Map<String, Integer>>any(), ArgumentMatchers.<Map<String, ResultObject>>any(), Mockito.any(String.class))).thenReturn(baseStoredProcedure);
+		//when(baseStoredProcedure.execute()).thenReturn(storedProcResult);
+		
+		//Mockito.when(tosService.getTOSDomainProxy()).thenReturn(tosDomain);
+		//Mockito.when(tosDomain.checkPendingMVI(Mockito.any(CheckPendingMoveInRequest.class))).thenReturn(chkPndgMovResp);
+		
+		//Mockito.when(tosDomain.checkPendingMoveOut(Mockito.any(CheckPendingMVORequest.class))).thenReturn(response);
+		//com.multibrand.vo.response.CheckPendingMVOResponse checkPendingMVOResponse = new com.multibrand.vo.response.CheckPendingMVOResponse();
+		//Mockito.when(tosService.checkingPendingMVI(Mockito.any(CheckPendingMoveInRequest.class), Mockito.any(String.class), Mockito.any(String.class))).thenReturn(chkPndgMovResp);
+		//Mockito.when(tosBO.checkPendingMVO(Mockito.any(CheckPendingMVORequest.class), Mockito.any(String.class), Mockito.any(String.class))).thenReturn(checkPendingMVOResponse);
+		resp = tosResource.getESIDForAddress("356", "HOUSTON", "USA", "CALIFORNIA", "BSE", "12", "509103", "021");
+						
+	}*/
+	
+	@Test
+	public void testGetOfferOfContract() throws Exception {
+		
+		OfferOfContractResponse offContratResp = new OfferOfContractResponse();
+		offContratResp.setErrCode("400");
+		Mockito.when(tosService.getTOSDomainProxy()).thenReturn(tosDomain);
+		Mockito.when(tosDomain.getOfferOfContract(Mockito.any(OfferOfContractRequest.class))).thenReturn(offContratResp);
+		
+		Mockito.when(tosService.getOfferOfContract(Mockito.any(OfferOfContractRequest.class), Mockito.any(String.class))).thenReturn(offContratResp);
+		resp = tosResource.getOfferOfContract("000070555574", "021", "EN");
+						
+	}
 	
 	/*@Test
 	public void testTosPreCheckConditions_ForcedMoveOut_Y() throws Exception {

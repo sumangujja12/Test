@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.client.CredentialsProvider;
 
 @Configuration
+@ImportResource("classpath:properties/NRGREST-appContext.xml")
 @PropertySource({ "classpath:properties/environment.properties" })
 @ComponentScan("com.multibrand")
 public class WSConfig {
@@ -187,7 +189,7 @@ public class WSConfig {
 		return webServiceTemplate;
 	}
 	
-/*	@Bean(name = "webServiceTemplateForKBAMatrixUpdate")
+	@Bean(name = "webServiceTemplateForKBAMatrixUpdate")
 	public WebServiceTemplate webServiceTemplateForKBAMatrixUpdate() {
 		WebServiceTemplate webServiceTemplate = new WebServiceTemplate();
 		webServiceTemplate.setMarshaller(jaxb2Marshaller());
@@ -199,7 +201,7 @@ public class WSConfig {
         
 		webServiceTemplate.setMessageSender(httpComponentsMessageSender());
 		return webServiceTemplate;
-	}*/
+	}
 
 	@Bean
 	public HttpComponentsMessageSender httpComponentsMessageSender() {

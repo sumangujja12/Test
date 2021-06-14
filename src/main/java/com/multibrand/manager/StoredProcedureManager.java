@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Service;
 
 import com.multibrand.dao.ResultObject;
 
@@ -19,7 +20,7 @@ import com.multibrand.dao.ResultObject;
  * 
  * 
  */
-
+@Service("storedProcedure")
 public class StoredProcedureManager implements com.multibrand.util.DBConstants{
 	/**
 	 * Holds a Logger instance

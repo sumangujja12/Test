@@ -299,6 +299,10 @@ public class AutoPayResource {
 		return response;
 	}
 	
+	public void setHttpRequest(HttpServletRequest httpReq){
+		this.httpRequest = httpReq;
+	}
+	
 	
 
 }

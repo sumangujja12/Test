@@ -79,9 +79,9 @@
     
 	<!-- SPRING CONFIG FILES TO DEFINE ALL THE NRGWS CLIENT STUBS -->
 	 
-   	<import resource="/properties/oeDomainNrgWsStubsConfig.xml" />
-   	<import resource="/properties/profileDomainNrgWsStubsConfig.xml" />
-   	<import resource="/properties/billingDomainNrgWsStubsConfig.xml" />
-   	<import resource="/properties/addressvalidationDomainNrgWsStubsConfig.xml" />
+   	<import resource="/domain/oeDomainNrgWsStubsConfig.xml" />
+   	<import resource="/domain/profileDomainNrgWsStubsConfig.xml" />
+   	<import resource="/domain/billingDomainNrgWsStubsConfig.xml" />
+   	<import resource="/domain/addressvalidationDomainNrgWsStubsConfig.xml" />
    	
 </beans>

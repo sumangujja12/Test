@@ -728,4 +728,8 @@ public class TOSResource extends BaseResource{
 		
 	}
 	
+	public void setHttpRequest(HttpServletRequest httpReq){
+		this.httpRequest = httpReq;
+	}
+	
 }
