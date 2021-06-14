@@ -55,6 +55,8 @@ public class AffiliateOfferDO {
 	private String usageCharge;
 	private String usageChargeThreshold;
 	//End : PBI 76839 | Single Offer API | 11-16-2020 
+	
+	private String strFixedMonthlyCharge;
 
 	public String getSapPlanName() {
 		return sapPlanName;
@@ -364,4 +366,12 @@ public class AffiliateOfferDO {
 		this.cmsLegalese = cmsLegalese;
 	}
 	//End : PBI 76839 | Single Offer API | 11-16-2020 
+	public String getStrFixedMonthlyCharge() {
+		return strFixedMonthlyCharge;
+	}
+	public void setStrFixedMonthlyCharge(String strFixedMonthlyCharge) {
+		this.strFixedMonthlyCharge = strFixedMonthlyCharge;
+	}
+	
+	
 }

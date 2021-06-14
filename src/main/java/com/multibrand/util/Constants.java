@@ -1673,5 +1673,9 @@ public interface Constants {
 	public static final String ZIRTUE_RECEIPT_NUMBER = "ZIRTUE.REL.0102.1";
 	
 	public static final String FLAG_OTHER = "Other";
+	
+	public static final String PREDICTABLE12_CATEGORY = "PREDICTABLE12";
+	public static final String E_FIXEDCHG="E_FIXEDCHG";
+	
 
 }
