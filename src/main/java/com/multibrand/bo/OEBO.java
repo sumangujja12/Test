@@ -954,7 +954,7 @@ public class OEBO extends OeBoHelper implements Constants{
 		List<OfferDO> offerDOList = new ArrayList<OfferDO>();
 		DecimalFormat decimalformat = new DecimalFormat("#0");
 		PromoOfferOutData[] promoOfferOutDataArr=null;
-		String strExternalDunsNumber=null;
+		String strExternalDunsNumber=null; 
 		if (promoOfferResponse == null) {
 			resultMap.put(ERR_CODE_KEY, ERR_GET_OFFER);
 			resultMap.put(ERROR_TYPE, ERROR_TYPE_CCS);
