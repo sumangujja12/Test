@@ -58,7 +58,6 @@ public class AffiliateOfferDO {
 	
 	private String fixedMonthlyCharge;
 	
-	private String externalDunsNumber; 
 
 	public String getSapPlanName() {
 		return sapPlanName;
@@ -369,17 +368,11 @@ public class AffiliateOfferDO {
 	}
 	//End : PBI 76839 | Single Offer API | 11-16-2020 
 	
-	public String getExternalDunsNumber() {
-		return externalDunsNumber;
-	}
 	public String getFixedMonthlyCharge() {
 		return fixedMonthlyCharge;
 	}
 	public void setFixedMonthlyCharge(String fixedMonthlyCharge) {
 		this.fixedMonthlyCharge = fixedMonthlyCharge;
-	}
-	public void setExternalDunsNumber(String externalDunsNumber) {
-		this.externalDunsNumber = externalDunsNumber;
 	}
 	
 	
