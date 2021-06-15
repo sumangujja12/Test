@@ -7184,9 +7184,9 @@ public boolean updateErrorCodeinSLA(String TrackingId, String guid, String error
 	private AffiliateOfferDO getStrFixedMonthlyCharge(String fixedMonthlyCharge,AffiliateOfferDO affiliateOfferDO){
 		DecimalFormat decimalFormatTwoPlace = new DecimalFormat("#0.00");
 		if(StringUtils.isNotBlank(fixedMonthlyCharge)){
-			affiliateOfferDO.setStrFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(fixedMonthlyCharge)));
+			affiliateOfferDO.setFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(fixedMonthlyCharge)));
 			}else{
-				affiliateOfferDO.setStrFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(ZERO)));
+				affiliateOfferDO.setFixedMonthlyCharge(decimalFormatTwoPlace.format(Double.valueOf(ZERO)));
 		    }
 		return affiliateOfferDO;
 	}

@@ -56,7 +56,7 @@ public class AffiliateOfferDO {
 	private String usageChargeThreshold;
 	//End : PBI 76839 | Single Offer API | 11-16-2020 
 	
-	private String strFixedMonthlyCharge;
+	private String fixedMonthlyCharge;
 	
 	private String externalDunsNumber; 
 
@@ -368,14 +368,15 @@ public class AffiliateOfferDO {
 		this.cmsLegalese = cmsLegalese;
 	}
 	//End : PBI 76839 | Single Offer API | 11-16-2020 
-	public String getStrFixedMonthlyCharge() {
-		return strFixedMonthlyCharge;
-	}
-	public void setStrFixedMonthlyCharge(String strFixedMonthlyCharge) {
-		this.strFixedMonthlyCharge = strFixedMonthlyCharge;
-	}
+	
 	public String getExternalDunsNumber() {
 		return externalDunsNumber;
+	}
+	public String getFixedMonthlyCharge() {
+		return fixedMonthlyCharge;
+	}
+	public void setFixedMonthlyCharge(String fixedMonthlyCharge) {
+		this.fixedMonthlyCharge = fixedMonthlyCharge;
 	}
 	public void setExternalDunsNumber(String externalDunsNumber) {
 		this.externalDunsNumber = externalDunsNumber;
