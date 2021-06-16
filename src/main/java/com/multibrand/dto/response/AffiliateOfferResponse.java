@@ -11,7 +11,7 @@ public class AffiliateOfferResponse extends GenericResponse {
 	private String tdspCodeCCS;
 	private String cmsErrorOffers;
 	private String erpErrorOffers;
-	
+	private String externalDunsNumber;
 	private AffiliateOfferDO[] affiliateOfferList;
 	
 	private Response.Status httpStatus;
@@ -72,6 +72,14 @@ public class AffiliateOfferResponse extends GenericResponse {
 
 	public void setHttpStatus(Response.Status httpStatus) {
 		this.httpStatus = httpStatus;
+	}
+
+	public String getExternalDunsNumber() {
+		return externalDunsNumber;
+	}
+
+	public void setExternalDunsNumber(String externalDunsNumber) {
+		this.externalDunsNumber = externalDunsNumber;
 	}
 	
 
