@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import javax.ws.rs.core.HttpHeaders;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -104,7 +106,8 @@ public class ValidationBO extends BaseBO {
 	 * @return response Provide balance data in GetArResponse object.
 	 */
 	public com.multibrand.vo.response.AddressValidateResponse validateBillingAddress(String aptNumber, String city,
-			String country, String state, String streetName, String streetNum, String zipCode, String companyCode,String poBox, String sessionId, String brandName) {
+			String country, String state, String streetName, String streetNum, String zipCode, String companyCode,String poBox, String sessionId, 
+			String brandName, boolean isMobileAPPRequest) {
 
 		AddressValidateResponse response = null;
 
@@ -130,8 +133,10 @@ public class ValidationBO extends BaseBO {
 			{
 				addressValidationResponse.setResultCode(RESULT_CODE_NO_DATA);
 				addressValidationResponse.setResultDescription(response.getMatchStatusFlag());
-			}
-			else
+			} else if (isMobileAPPRequest &&  !StringUtils.contains(response.getZipCode(), zipCode)) {
+				addressValidationResponse.setResultCode(RESULT_CODE_NO_DATA);
+				addressValidationResponse.setResultDescription(NO_MATCH);
+			} else
 			{
 				addressValidationResponse.setResultCode(RESULT_CODE_SUCCESS);
 				addressValidationResponse.setResultDescription(response.getMatchStatusFlag());
@@ -1416,5 +1421,4 @@ public class ValidationBO extends BaseBO {
 	logger.debug(performPosIdBpRequest.getTrackingId(), "inside validatePosId:: Tracking Number :: {}", performPosIdBpRequest.getAffiliateId(),":: affiliate Id : {}",updateSrvLocationErrorCode,"errorCode from updateservicelocation call is ::{}");
 	logger.debug(" END *******ValidationBO:: validatePosID API**********");
 }
-	
 }

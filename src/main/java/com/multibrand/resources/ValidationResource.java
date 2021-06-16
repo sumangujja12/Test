@@ -8,10 +8,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -64,10 +67,23 @@ public class ValidationResource extends ValidationAddressResource {
 	@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public Response validateBillingAddress(@FormParam("aptNumber") String aptNumber, @FormParam("city") String city,
 			@FormParam("country") String country, @FormParam("state") String state, @FormParam("streetName") String streetName, @FormParam("streetNum") String streetNum, 
-			@FormParam("zipCode") String zipCode, @FormParam("companyCode") String companyCode,@FormParam("poBox") String poBox, @FormParam("brandName")String brandName){
+			@FormParam("zipCode") String zipCode, @FormParam("companyCode") String companyCode,@FormParam("poBox") String poBox, @FormParam("brandName")String brandName,
+			@Context HttpHeaders hh){
 		logger.info(" START ******* validateBillingAddress API**********");
 		Response response = null;
-		AddressValidateResponse addressValidationResponse = validationBO.validateBillingAddress(aptNumber,city,country,state,streetName,streetNum,zipCode,companyCode,poBox,httpRequest.getSession(true).getId(),brandName);
+		String host = "";
+		boolean isMobileAPPRequest = false;
+		MultivaluedMap<String, String> requestHeadersMap = hh.getRequestHeaders();
+		
+		if (requestHeadersMap!=null&&requestHeadersMap.containsKey("Host")){
+			host = requestHeadersMap.getFirst("Host");
+		}
+		
+		if( StringUtils.isNotEmpty(host) && host.indexOf("service.nrg.com") > -1)	 {
+			isMobileAPPRequest = true;
+		}
+		
+		AddressValidateResponse addressValidationResponse = validationBO.validateBillingAddress(aptNumber,city,country,state,streetName,streetNum,zipCode,companyCode,poBox,httpRequest.getSession(true).getId(),brandName, isMobileAPPRequest);
 		response = Response.status(200).entity(addressValidationResponse).build();
 		logger.info(" END ******* validateBillingAddress API**********");
 		return response;		
